@@ -3,13 +3,14 @@ import React from 'react';
 import APIService from '../../services/API.service';
 import { IPokemonGenderRatio } from '../../core/models/pokemon.model';
 import { IGenderComponent } from '../models/component.model';
+import { TypeSex } from '../../enums/type.enum';
 
 const Gender = (props: IGenderComponent) => {
   const theme = useTheme();
   const calculateRatio = (sex: string, ratio: IPokemonGenderRatio) => {
     const maleRatio = ratio.M;
     const femaleRatio = ratio.F;
-    return sex.toLowerCase() === 'male' ? maleRatio * 100 : femaleRatio * 100;
+    return sex.toLowerCase() === TypeSex.MALE ? maleRatio * 100 : femaleRatio * 100;
   };
 
   return (
@@ -27,7 +28,7 @@ const Gender = (props: IGenderComponent) => {
             height={96}
             alt="img-pokemon"
             src={
-              props.sex.toLowerCase() === 'male'
+              props.sex.toLowerCase() === TypeSex.MALE
                 ? props.defaultM || props.defaultF || APIService.getPokeSprite(0)
                 : props.defaultF || props.defaultM || APIService.getPokeSprite(0)
             }
@@ -42,7 +43,7 @@ const Gender = (props: IGenderComponent) => {
             height={96}
             alt="img-pokemon"
             src={
-              props.sex.toLowerCase() === 'male'
+              props.sex.toLowerCase() === TypeSex.MALE
                 ? props.shinyM || props.shinyF || APIService.getPokeSprite(0)
                 : props.shinyF || props.shinyM || APIService.getPokeSprite(0)
             }

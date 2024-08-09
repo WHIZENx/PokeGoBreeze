@@ -5,6 +5,7 @@ import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
+import { TypeTheme } from '../../enums/type.enum';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme();
@@ -98,7 +99,7 @@ const Defender = (prop: ITypeEffComponent) => {
                   <ul>
                     {types.map((value, index) => (
                       <li
-                        className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+                        className={'container card-pokemon' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
                         style={{ backgroundColor: theme.palette.background.default }}
                         key={index}
                         onMouseDown={() => changeTypePri(value)}
@@ -146,7 +147,7 @@ const Defender = (prop: ITypeEffComponent) => {
                   <ul>
                     {types.map((value, index) => (
                       <li
-                        className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+                        className={'container card-pokemon' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
                         style={{ backgroundColor: theme.palette.background.default }}
                         key={index}
                         onMouseDown={() => changeTypeSec(value)}

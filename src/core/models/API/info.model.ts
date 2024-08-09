@@ -266,7 +266,7 @@ export class PokemonDetail implements IPokemonDetail {
   moves: Move[] = [];
   name: string = '';
   species!: Path;
-  sprites!: IPokemonSprit;
+  sprites: IPokemonSprit = new PokemonSprit();
   stats: Stats[] = [];
   types: Type[] = [];
   weight: number = 0;

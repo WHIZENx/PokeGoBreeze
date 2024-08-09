@@ -28,6 +28,7 @@ import Primal from '../Primal/Primal';
 import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
+import { TypeSex } from '../../../enums/type.enum';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -58,24 +59,25 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const findFormData = (name: string) => {
     const currentData = props.pokeData.find((item) => name === item.name);
-    const currentForm = props.formList?.map((item) => item.find((item) => item.form.name === name)).find((item) => item);
+    const currentForm = props.formList?.flatMap((item) => item).find((item) => item.form.name === name);
     props.setData(currentData);
     props.setForm(currentForm);
     const originForm = splitAndCapitalize(currentForm?.form.formName, '-', '-');
     props.setOriginForm(originForm);
 
+    let weight = props.pokeData.at(0)?.weight ?? 0,
+      height = props.pokeData.at(0)?.height ?? 0;
     if (currentData) {
-      props.setWH((prevWH) => ({ ...prevWH, weight: currentData.weight, height: currentData.height }));
+      weight = currentData.weight;
+      height = currentData.height;
     } else if (currentForm) {
       const oriForm = props.pokeData.at(0);
-      props.setWH((prevWH) => ({ ...prevWH, weight: oriForm?.weight ?? 0, height: oriForm?.height ?? 0 }));
-    } else {
-      props.setWH((prevWH) => ({
-        ...prevWH,
-        weight: props.pokeData.at(0)?.weight ?? 0,
-        height: props.pokeData.at(0)?.height ?? 0,
-      }));
+      if (oriForm) {
+        weight = oriForm.weight;
+        height = oriForm.height;
+      }
     }
+    props.setWH((prevWH) => ({ ...prevWH, weight, height }));
   };
 
   useEffect(() => {
@@ -172,7 +174,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           {props.ratio?.M !== 0 && (
             <Gender
               ratio={props.ratio}
-              sex="Male"
+              sex={capitalize(TypeSex.MALE)}
               defaultM={props.form?.form.sprites?.frontDefault}
               shinyM={props.form?.form.sprites?.frontShiny}
               defaultF={props.form?.form.sprites?.frontFemale}
@@ -182,7 +184,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           {props.ratio?.F !== 0 && (
             <Gender
               ratio={props.ratio}
-              sex="Female"
+              sex={capitalize(TypeSex.FEMALE)}
               defaultM={props.form?.form.sprites?.frontDefault}
               shinyM={props.form?.form.sprites?.frontShiny}
               defaultF={props.form?.form.sprites?.frontFemale}
@@ -192,7 +194,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       ) : (
         <Gender
-          sex="Genderless"
+          sex={capitalize(TypeSex.GENDERLESS)}
           defaultM={props.form?.form.sprites?.frontDefault}
           shinyM={props.form?.form.sprites?.frontShiny}
           defaultF={props.form?.form.sprites?.frontFemale}

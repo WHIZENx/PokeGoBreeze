@@ -226,7 +226,7 @@ class APIService {
       name += '_2';
     }
     if (!name.includes('-mega') && !name.includes('-primal')) {
-      name = name.replace('-', '');
+      name = name.replaceAll('-', '');
     }
     return `${APIUrl.POKE_GIF_SPRITES_API_URL}${name}.gif`;
   }

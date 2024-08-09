@@ -10,6 +10,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
+import { TypeAction } from '../../../enums/type.enum';
 
 const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
@@ -72,9 +73,9 @@ const Stats = (props: IStatsComponent) => {
     if (props.isShadow) {
       return Math.round(
         stats *
-          (type === 'atk'
+          (type === TypeAction.ATK
             ? SHADOW_ATK_BONUS(data?.options)
-            : type === 'def'
+            : type === TypeAction.DEF
             ? SHADOW_DEF_BONUS(data?.options)
             : SHADOW_ATK_BONUS(data?.options) * SHADOW_DEF_BONUS(data?.options))
       );

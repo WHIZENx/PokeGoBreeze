@@ -54,7 +54,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonData, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { TypeMove } from '../../../enums/move.enum';
+import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';

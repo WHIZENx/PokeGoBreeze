@@ -3,7 +3,7 @@ import TypeInfo from '../../../components/Sprites/Type/Type';
 import '../PVP.scss';
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 
-import { convertNameRankingToOri, splitAndCapitalize, capitalize, getStyleSheet } from '../../../util/Utils';
+import { convertNameRankingToOri, splitAndCapitalize, capitalize, getStyleSheet, replaceTempMovePvpName } from '../../../util/Utils';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
@@ -120,23 +120,11 @@ const RankingPVP = () => {
             styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
           }
 
-          let fMoveData = item.moveset.at(0),
-            cMoveDataPri = item.moveset.at(1),
-            cMoveDataSec = item.moveset.at(2);
+          let fMoveData = item.moveset.at(0);
+          const cMoveDataPri = replaceTempMovePvpName(item.moveset.at(1) ?? '');
+          const cMoveDataSec = replaceTempMovePvpName(item.moveset.at(2) ?? '');
           if (fMoveData?.includes('HIDDEN_POWER')) {
             fMoveData = 'HIDDEN_POWER';
-          }
-          if (cMoveDataPri === 'FUTURE_SIGHT') {
-            cMoveDataPri = 'FUTURESIGHT';
-          }
-          if (cMoveDataSec === 'FUTURE_SIGHT') {
-            cMoveDataSec = 'FUTURESIGHT';
-          }
-          if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') {
-            cMoveDataPri = 'TECHNO_BLAST_WATER';
-          }
-          if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') {
-            cMoveDataSec = 'TECHNO_BLAST_WATER';
           }
 
           let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);

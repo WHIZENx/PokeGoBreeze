@@ -7,7 +7,7 @@ import './Select.scss';
 import { retrieveMoves, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
-import { TypeMove } from '../../enums/move.enum';
+import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';

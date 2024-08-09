@@ -1,4 +1,4 @@
-import { capitalize } from '../../util/Utils';
+import { capitalize, replaceTempMoveName } from '../../util/Utils';
 import { ICombat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
 import { IStatsPokemon, StatsPokemon } from './stats.model';
@@ -488,13 +488,13 @@ export class PokemonData implements IPokemonData {
     obj.isShadow = pokemon.shadow ? true : false;
     obj.formChange = pokemon.formChange ?? [];
 
-    obj.quickMoves = pokemon.quickMoves?.map((move) => move?.toString().replace('_FAST', '')) ?? [];
-    obj.cinematicMoves = pokemon.cinematicMoves?.map((move) => move?.toString()) ?? [];
-    obj.eliteQuickMove = pokemon.eliteQuickMove?.map((move) => move?.toString().replace('_FAST', '')) ?? [];
-    obj.eliteCinematicMove = pokemon.eliteCinematicMove?.map((move) => move?.toString()) ?? [];
-    obj.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => move?.toString()) ?? [];
-    obj.shadowMoves = options?.shadowMoves ?? [];
-    obj.purifiedMoves = options?.purifiedMoves ?? [];
+    obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move?.toString())) ?? [];
+    obj.cinematicMoves = pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move?.toString())) ?? [];
+    obj.eliteQuickMove = pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move?.toString())) ?? [];
+    obj.eliteCinematicMove = pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move?.toString())) ?? [];
+    obj.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move?.toString())) ?? [];
+    obj.shadowMoves = options?.shadowMoves?.map((move) => replaceTempMoveName(move?.toString())) ?? [];
+    obj.purifiedMoves = options?.purifiedMoves?.map((move) => replaceTempMoveName(move?.toString())) ?? [];
 
     obj.evoList = options?.evoList ?? [];
     obj.tempEvo = options?.tempEvo ?? [];

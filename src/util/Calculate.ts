@@ -22,7 +22,7 @@ import {
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
-import { TypeMove } from '../enums/move.enum';
+import { TypeMove } from '../enums/type.enum';
 import { IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
 import {
   DEFAULT_DAMAGE_CONST,

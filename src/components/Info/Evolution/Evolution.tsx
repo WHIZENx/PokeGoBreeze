@@ -41,6 +41,8 @@ import {
 } from '../../../util/Constants';
 import { IForm } from '../../../core/models/API/form.model';
 import { IEvolutionComponent } from '../../models/component.model';
+import { TypeSex } from '../../../enums/type.enum';
+import { Action } from 'history';
 
 interface IPokemonEvo {
   prev?: string;
@@ -442,15 +444,15 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.genderRequirement && (
                           <span className="caption">
-                            {form === 'male' ? (
+                            {form === TypeSex.MALE ? (
                               <MaleIcon fontSize="small" />
                             ) : (
                               <Fragment>
-                                {form === 'female' ? (
+                                {form === TypeSex.FEMALE ? (
                                   <FemaleIcon fontSize="small" />
                                 ) : (
                                   <Fragment>
-                                    {data?.quest?.genderRequirement === 'MALE' ? (
+                                    {data?.quest?.genderRequirement === TypeSex.MALE.toUpperCase() ? (
                                       <MaleIcon fontSize="small" />
                                     ) : (
                                       <FemaleIcon fontSize="small" />
@@ -708,7 +710,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         <div
                           className="select-evo"
                           onClick={() => {
-                            if (props.pokemonRouter?.action === 'POP') {
+                            if (props.pokemonRouter?.action === Action.Pop) {
                               props.pokemonRouter.action = null as any;
                             }
                             props.setId?.(value.id);

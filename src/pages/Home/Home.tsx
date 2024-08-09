@@ -37,6 +37,7 @@ import {
 import { StoreState, StatsState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { TypeTheme } from '../../enums/type.enum';
 
 const VersionProps = {
   PaperProps: {
@@ -259,7 +260,7 @@ const Home = () => {
                 className={
                   'btn-select-type w-100 border-types btn-' +
                   theme.palette.mode +
-                  (selectTypes.includes(item) ? ' select-type' + (theme.palette.mode === 'dark' ? '-dark' : '') : '')
+                  (selectTypes.includes(item) ? ' select-type' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '') : '')
                 }
                 style={{ padding: 10, transition: TRANSITION_TIME }}
               >
@@ -274,11 +275,13 @@ const Home = () => {
             <div className="row" style={{ margin: 0 }}>
               <div className="col-xl-4" style={{ padding: 0 }}>
                 <div className="d-flex">
-                  <span className={'input-group-text ' + (theme.palette.mode === 'dark' ? 'input-group-dark' : '')}>Search name or ID</span>
+                  <span className={'input-group-text ' + (theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>
+                    Search name or ID
+                  </span>
                   <input
                     type="text"
                     style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
-                    className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+                    className={'form-control input-search' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
                     onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
@@ -382,7 +385,9 @@ const Home = () => {
                   </FormControl>
                 </div>
                 <div className="input-group border-input">
-                  <span className={'input-group-text ' + (theme.palette.mode === 'dark' ? 'input-group-dark' : '')}>Filter only by</span>
+                  <span className={'input-group-text ' + (theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>
+                    Filter only by
+                  </span>
                   <FormControlLabel
                     control={
                       <Checkbox

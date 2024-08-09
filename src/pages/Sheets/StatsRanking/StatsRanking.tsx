@@ -23,6 +23,7 @@ import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
 import { Form } from '../../../core/models/API/form.model';
+import { TypeAction } from '../../../enums/type.enum';
 
 const columnPokemon: any = [
   {
@@ -173,11 +174,11 @@ const StatsRanking = () => {
   const sortRanking = (pokemon: IPokemonStatsRanking[], id: number) => {
     let sortBy: string[] = [];
     if (id === ColumnType.Atk) {
-      sortBy = ['atk', 'attack'];
+      sortBy = [TypeAction.ATK, 'attack'];
     } else if (id === ColumnType.Def) {
-      sortBy = ['def', 'defense'];
+      sortBy = [TypeAction.DEF, 'defense'];
     } else if (id === ColumnType.Sta) {
-      sortBy = ['sta', 'stamina'];
+      sortBy = [TypeAction.STA, 'stamina'];
     } else if (id === ColumnType.Prod) {
       sortBy = ['statProd', 'prod'];
     }
@@ -196,11 +197,11 @@ const StatsRanking = () => {
     let idSort = ColumnType.Prod;
     const statsBy = location.state?.stats;
     if (statsBy) {
-      if (statsBy === 'atk') {
+      if (statsBy === TypeAction.ATK) {
         idSort = ColumnType.Atk;
-      } else if (statsBy === 'def') {
+      } else if (statsBy === TypeAction.DEF) {
         idSort = ColumnType.Def;
-      } else if (statsBy === 'sta') {
+      } else if (statsBy === TypeAction.STA) {
         idSort = ColumnType.Sta;
       }
     }

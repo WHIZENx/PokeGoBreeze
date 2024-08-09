@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
+import { TypeAction } from '../../enums/type.enum';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
@@ -69,12 +70,15 @@ const Tools = (props: IToolsComponent) => {
       setCurrDataPoke(convertStatsEffort(props.dataPoke.find((item) => item.id === props.id)?.stats));
 
       if (props.onSetStats && formATK && formDEF && formSTA) {
-        props.onSetStats('atk', props.isRaid && props.tier && !props.hide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack);
         props.onSetStats(
-          'def',
+          TypeAction.ATK,
+          props.isRaid && props.tier && !props.hide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack
+        );
+        props.onSetStats(
+          TypeAction.DEF,
           props.isRaid && props.tier && !props.hide ? calculateRaidStat(formDEF.defense, props.tier) : formDEF.defense
         );
-        props.onSetStats('sta', props.isRaid && props.tier && !props.hide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
+        props.onSetStats(TypeAction.STA, props.isRaid && props.tier && !props.hide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
         if (props.setForm) {
           props.setForm(props.currForm);
         }

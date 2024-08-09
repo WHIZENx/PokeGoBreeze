@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import update from 'immutability-helper';
-import { TypeMove } from '../../enums/move.enum';
+import { TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
 import { IPokemonRaidComponent } from '../models/component.model';
 

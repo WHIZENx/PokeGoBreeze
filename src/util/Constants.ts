@@ -1,5 +1,6 @@
 import { IOptions } from '../core/models/options.model';
 import { getOption } from '../core/options';
+import { TypeAction } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { RaidTier } from './models/constants.model';
 
@@ -87,6 +88,7 @@ export const DEFAULT_TYPES = [
 ];
 
 export const FORM_NORMAL = 'NORMAL';
+export const FORM_SPECIAL = 'SPECIAL';
 export const FORM_SHADOW = 'SHADOW';
 export const FORM_PURIFIED = 'PURIFIED';
 export const FORM_MEGA = 'MEGA';
@@ -101,6 +103,8 @@ export const FORM_HERO = 'HERO';
 export const FORM_STANDARD = 'STANDARD';
 export const FORM_INCARNATE = 'INCARNATE';
 export const FORM_ARMOR = 'ARMOR';
+export const FORM_MEGA_X = 'MEGA_X';
+export const FORM_MEGA_Y = 'MEGA_Y';
 
 export const TYPE_LEGENDARY = 'LEGENDARY';
 export const TYPE_MYTHIC = 'MYTHIC';
@@ -157,10 +161,10 @@ export const MULTIPLY_THROW_CHARGE = (options: IOptions | undefined, type: strin
 
 /* Shadow exclusive bonus for Pokémon in battle */
 export const SHADOW_ATK_BONUS = (options: IOptions | undefined) => {
-  return getOption<number>(options, ['combatOptions', 'shadowBonus', 'atk']) || 1;
+  return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.ATK]) || 1;
 };
 export const SHADOW_DEF_BONUS = (options: IOptions | undefined) => {
-  return getOption<number>(options, ['combatOptions', 'shadowBonus', 'def']) || 1;
+  return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.DEF]) || 1;
 };
 
 export const genList: { [x: number]: number[] } = {

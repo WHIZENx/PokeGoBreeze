@@ -235,7 +235,7 @@ export const loadAssets = async (
 
     if (imageFolderPath && soundFolderPath) {
       await Promise.all([
-        APIService.getFetchUrl<APITree>(imageFolderPath?.url, options),
+        APIService.getFetchUrl<APITree>(imageFolderPath.url, options),
         APIService.getFetchUrl<APITree>(soundFolderPath.url, options),
       ]).then(async ([image, sound]) => {
         const imagePath = image.data.tree.find((item) => item.path === 'Pokemon');
@@ -282,37 +282,39 @@ export const loadPVP = (
     const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();
     if (pvpDate !== JSON.parse(stateTimestamp).pvp) {
       const pvpUrl = res.data.at(0)?.commit.tree.url;
-      setStateTimestamp(
-        JSON.stringify({
-          ...JSON.parse(stateTimestamp),
-          pvp: pvpDate,
-        })
-      );
-      APIService.getFetchUrl<APITree>(pvpUrl ?? '', options)
-        .then((pvpRoot) => {
-          const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');
-          return APIService.getFetchUrl<APITree>(pvpRootPath?.url + '', options);
-        })
-        .then((pvpFolder) => {
-          const pvpFolderPath = pvpFolder.data.tree.find((item) => item.path === 'data');
-          return APIService.getFetchUrl<APITree>(pvpFolderPath?.url + '?recursive=1', options);
-        })
-        .then((pvp) => {
-          const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
-          const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
+      if (pvpUrl) {
+        setStateTimestamp(
+          JSON.stringify({
+            ...JSON.parse(stateTimestamp),
+            pvp: pvpDate,
+          })
+        );
+        APIService.getFetchUrl<APITree>(pvpUrl, options)
+          .then((pvpRoot) => {
+            const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');
+            return APIService.getFetchUrl<APITree>(pvpRootPath?.url + '', options);
+          })
+          .then((pvpFolder) => {
+            const pvpFolderPath = pvpFolder.data.tree.find((item) => item.path === 'data');
+            return APIService.getFetchUrl<APITree>(pvpFolderPath?.url + '?recursive=1', options);
+          })
+          .then((pvp) => {
+            const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
+            const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 
-          const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(pvpFindFirstPath(pvp.data.tree, 'training/analysis/'));
+            const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(pvpFindFirstPath(pvp.data.tree, 'training/analysis/'));
 
-          setStatePVP(JSON.stringify(pvpData));
+            setStatePVP(JSON.stringify(pvpData));
 
-          dispatch({
-            type: LOAD_PVP,
-            payload: {
-              rankings: pvpRank,
-              trains: pvpTrain,
-            },
+            dispatch({
+              type: LOAD_PVP,
+              payload: {
+                rankings: pvpRank,
+                trains: pvpTrain,
+              },
+            });
           });
-        });
+      }
     } else {
       const pvpRank = pvpFindPath(JSON.parse(statePVP), 'rankings/');
       const pvpTrain = pvpFindPath(JSON.parse(statePVP), 'training/analysis/');

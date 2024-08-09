@@ -18,7 +18,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { TypeMove } from '../../enums/move.enum';
+import { TypeAction, TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -118,7 +118,7 @@ const Move = (props: IMovePage) => {
         }
         if (move) {
           setMove(move);
-          document.title = `#${move?.track} - ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}`;
+          document.title = `#${move?.track} - ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`;
         } else {
           enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
           if (id) {
@@ -150,7 +150,7 @@ const Move = (props: IMovePage) => {
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
             <h1 className="text-move">
-              <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</b>
+              <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</b>
             </h1>
             <TypeBar type={move?.type} />
           </div>
@@ -188,9 +188,7 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={3}>
-                  {'Stats ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+') + ' in Pokémon GO'}
-                </th>
+                <th colSpan={3}>{'Stats ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ') + ' in Pokémon GO'}</th>
               </tr>
             </thead>
             <tbody>
@@ -203,7 +201,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Name</td>
                 <td colSpan={2}>
-                  <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</b>
+                  <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</b>
                 </td>
               </tr>
               <tr>
@@ -330,7 +328,7 @@ const Move = (props: IMovePage) => {
                       <td>
                         {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}
                         <span className="d-inline-block caption">
-                          {value.type === 'atk' ? 'Attack ' : 'Defense '}
+                          {value.type === TypeAction.ATK ? 'Attack ' : 'Defense '}
                           <span className={'buff-power ' + (value.power > 0 ? 'text-success' : 'text-danger')}>
                             <b>
                               {value.power > 0 && '+'}
@@ -389,9 +387,7 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-damage-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={2}>
-                  {'Damage ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+') + ' Simulator'}
-                </th>
+                <th colSpan={2}>{'Damage ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ') + ' Simulator'}</th>
               </tr>
             </thead>
             <tbody>
@@ -454,7 +450,7 @@ const Move = (props: IMovePage) => {
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>
                   <div className="input-group align-items-center justify-content-center">
-                    <span>{'Top Pokémon in move ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+                    <span>{'Top Pokémon in move ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</span>
                     <FormControlLabel
                       control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
                       label={

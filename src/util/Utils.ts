@@ -322,15 +322,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
 export const findMoveTeam = (move: string, moveSet: string[]) => {
   const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
-    if (value === 'FUTURESIGHT') {
-      value = 'FUTURE_SIGHT';
-    }
-    if (value === 'ROLLOUT') {
-      value = 'ROLL_OUT';
-    }
-    if (value === 'TECHNO_BLAST_DOUSE') {
-      value = 'TECHNO_BLAST_WATER';
-    }
+    value = replaceTempMovePvpName(value);
     const m = value.split('_');
     if (m.length === result?.length) {
       let count = 0;
@@ -340,10 +332,7 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
         }
       }
       if (count === m.length) {
-        return value
-          .replace('FUTURE_SIGHT', 'FUTURESIGHT')
-          .replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE')
-          .replace('ROLL_OUT', 'ROLLOUT');
+        return value;
       }
     }
   }
@@ -790,4 +779,26 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
     }
   }
   return pokemonForm;
+};
+
+export const replaceTempMoveName = (name: string) => {
+  if (name.endsWith('_FAST')) {
+    name = name.replace('_FAST', '');
+  } else if (name.endsWith('_PLUS')) {
+    name = name.replaceAll('_PLUS', '+');
+  }
+  return name;
+};
+
+export const replaceTempMovePvpName = (name: string) => {
+  if (name.includes('_BLASTOISE')) {
+    name = name.replace('_BLASTOISE', '');
+  } else if (name === 'TECHNO_BLAST_WATER') {
+    name = name = 'TECHNO_BLAST_DOUSE';
+  } else if (name === 'FUTURE_SIGHT') {
+    name = name = 'FUTURESIGHT';
+  } else if (name === 'ROLLOUT') {
+    name = 'ROLL_OUT';
+  }
+  return name;
 };

@@ -13,9 +13,9 @@ import {
 import { ISticker, Sticker } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
-import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm } from '../util/Utils';
+import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm, replaceTempMoveName } from '../util/Utils';
 import { ITypeSet, TypeSet } from './models/type.model';
-import { TypeMove } from '../enums/move.enum';
+import { TypeAction, TypeMove } from '../enums/type.enum';
 import {
   Encounter,
   IPokemonData,
@@ -26,7 +26,17 @@ import {
   PokemonModel,
 } from './models/pokemon.model';
 import { ITypeEff } from './models/type-eff.model';
-import { FORM_ARMOR, FORM_GALARIAN, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_SHADOW } from '../util/Constants';
+import {
+  FORM_ARMOR,
+  FORM_GALARIAN,
+  FORM_MEGA,
+  FORM_MEGA_X,
+  FORM_MEGA_Y,
+  FORM_NORMAL,
+  FORM_PRIMAL,
+  FORM_SHADOW,
+  FORM_SPECIAL,
+} from '../util/Constants';
 import { APIUrl } from '../services/constants';
 import { BuddyFriendship, PokemonDataGM, IPokemonPermission, TrainerFriendship, Options, PokemonPermission } from './models/options.model';
 import { calculateStatsByTag } from '../util/Calculate';
@@ -355,11 +365,13 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       const pokemonOrigin = result.find((pk) => pk.num === pokemon.id && pk.forme === FORM_NORMAL);
       if (pokemonOrigin) {
         optional.shadowMoves?.forEach((move) => {
+          move = replaceTempMoveName(move);
           if (!pokemonOrigin.shadowMoves?.includes(move)) {
             pokemonOrigin.shadowMoves?.push(move);
           }
         });
         optional.purifiedMoves?.forEach((move) => {
+          move = replaceTempMoveName(move);
           if (!pokemonOrigin.purifiedMoves?.includes(move)) {
             pokemonOrigin.purifiedMoves?.push(move);
           }
@@ -368,7 +380,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     }
 
     if (pokemon.form !== FORM_SHADOW) {
-      result.push(PokemonData.create(pokemon, types, optional));
+      const pokemonData = PokemonData.create(pokemon, types, optional);
+      result.push(pokemonData);
     }
   });
 
@@ -461,7 +474,8 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       optional.baseForme = item.baseForme?.toUpperCase();
       optional.baseStatsGO = true;
 
-      result.push(PokemonData.create(pokemon, types, optional));
+      const pokemonData = PokemonData.create(pokemon, types, optional);
+      result.push(pokemonData);
     });
 };
 
@@ -608,7 +622,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
           new ImageModel({
             gender: 3,
             pokemonId: result.id,
-            form: formSet.length === 2 ? FORM_MEGA : formSet[index].includes('_51') ? 'MEGA_X' : 'MEGA_Y',
+            form: formSet.length === 2 ? FORM_MEGA : formSet[index].includes('_51') ? FORM_MEGA_X : FORM_MEGA_Y,
             default: formSet[index],
             shiny: formSet[index + 1],
           })
@@ -687,7 +701,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       soundForm.forEach((sound) => {
         result.sound.cry.push(
           new CryPath({
-            form: soundForm.length !== 2 ? FORM_MEGA : sound.includes('_51') ? 'MEGA_X' : 'MEGA_Y',
+            form: soundForm.length !== 2 ? FORM_MEGA : sound.includes('_51') ? FORM_MEGA_X : FORM_MEGA_Y,
             path: sound,
           })
         );
@@ -700,7 +714,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       soundForm.forEach((sound) => {
         result.sound.cry.push(
           new CryPath({
-            form: sound.includes('_31') ? 'SPECIAL' : FORM_NORMAL,
+            form: sound.includes('_31') ? FORM_SPECIAL : FORM_NORMAL,
             path: sound,
           })
         );
@@ -737,7 +751,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       const result = new Combat();
       result.name = item.data.combatMove.uniqueId;
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-      if (item.templateId.includes(TypeMove.FAST)) {
+      if (item.templateId.endsWith(TypeMove.FAST)) {
         result.typeMove = TypeMove.FAST;
       } else {
         result.typeMove = TypeMove.CHARGE;
@@ -753,7 +767,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             if (buff.includes('target')) {
               result.buffs.push(
                 new Buff({
-                  type: 'atk',
+                  type: TypeAction.ATK,
                   target: 'target',
                   power: item.data.combatMove.buffs[buff],
                 })
@@ -761,7 +775,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             } else {
               result.buffs.push(
                 new Buff({
-                  type: 'atk',
+                  type: TypeAction.ATK,
                   target: 'attacker',
                   power: item.data.combatMove.buffs[buff],
                 })
@@ -771,7 +785,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             if (buff.includes('target')) {
               result.buffs.push(
                 new Buff({
-                  type: 'def',
+                  type: TypeAction.DEF,
                   target: 'target',
                   power: item.data.combatMove.buffs[buff],
                 })
@@ -779,7 +793,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             } else {
               result.buffs.push(
                 new Buff({
-                  type: 'def',
+                  type: TypeAction.DEF,
                   target: 'attacker',
                   power: item.data.combatMove.buffs[buff],
                 })
@@ -790,9 +804,10 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         });
       }
       const move = moves.find((move) => move.movementId === result.name);
+      const name = replaceTempMoveName(result.name.toString());
       result.id = move?.id ?? 0;
       result.track = move?.id ?? 0;
-      result.name = result.name?.toString().replace('_FAST', '');
+      result.name = name;
       result.pvePower = move?.power ?? 0.0;
       if (result.name === 'STRUGGLE') {
         result.pveEnergy = -33;

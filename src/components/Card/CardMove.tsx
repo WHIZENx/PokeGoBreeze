@@ -31,7 +31,7 @@ const CardMove = (props: ICardMoveComponent) => {
             src={APIService.getTypeSprite(capitalize(data?.type ?? ''))}
           />
           <span style={{ marginRight: 5 }}>
-            <b>{splitAndCapitalize(data?.name.replaceAll('_PLUS', '+'), '_', ' ')}</b>
+            <b>{splitAndCapitalize(data?.name, '_', ' ')}</b>
           </span>
           <span className="d-flex">
             {data?.elite && <span className="type-icon-small ic elite-ic">Elite</span>}

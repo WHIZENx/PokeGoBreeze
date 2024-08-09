@@ -16,7 +16,7 @@ import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
-import { TypeMove } from '../../../enums/move.enum';
+import { TypeAction, TypeMove } from '../../../enums/type.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -288,9 +288,9 @@ const CalculatePoint = () => {
     return (
       <div className="d-flex">
         <div className="border-type-stat text-center">
-          <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === 'def' ? `Tier ${tier}` : null}>
+          <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === TypeAction.DEF ? `Tier ${tier}` : null}>
             <span className="position-relative" style={{ width: 96 }}>
-              <img className="position-absolute" alt="img-logo" height={36} src={pri === 'atk' ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
+              <img className="position-absolute" alt="img-logo" height={36} src={pri === TypeAction.ATK ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
@@ -304,13 +304,13 @@ const CalculatePoint = () => {
           </Badge>
           <span className="caption">{splitAndCapitalize(form?.form.name ?? '', '-', ' ')}</span>
           <span className="caption">
-            <b>{pri === 'atk' ? 'Attacker' : 'Defender'}</b>
+            <b>{pri === TypeAction.ATK ? 'Attacker' : 'Defender'}</b>
           </span>
         </div>
         <div className="border-type-stat text-center">
-          <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === 'def' ? `Tier ${tier}` : null}>
+          <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === TypeAction.DEF ? `Tier ${tier}` : null}>
             <span className="position-relative" style={{ width: 96 }}>
-              <img className="position-absolute" alt="img-logo" height={36} src={sec === 'atk' ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
+              <img className="position-absolute" alt="img-logo" height={36} src={sec === TypeAction.ATK ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
@@ -324,7 +324,7 @@ const CalculatePoint = () => {
           </Badge>
           <span className="caption">{splitAndCapitalize(formDef?.form.name ?? '', '-', ' ')}</span>
           <span className="caption">
-            <b>{sec === 'atk' ? 'Attacker' : 'Defender'}</b>
+            <b>{sec === TypeAction.ATK ? 'Attacker' : 'Defender'}</b>
           </span>
         </div>
       </div>
@@ -452,7 +452,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8">
                   <h3>Attacker Breakpoint</h3>
-                  {resultBreakPointAtk && setIconBattle('atk', 'def')}
+                  {resultBreakPointAtk && setIconBattle(TypeAction.ATK, TypeAction.DEF)}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
@@ -579,7 +579,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8">
                   <h3>Defender Breakpoint</h3>
-                  {resultBreakPointDef && setIconBattle('atk', 'def')}
+                  {resultBreakPointDef && setIconBattle(TypeAction.ATK, TypeAction.DEF)}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
@@ -828,7 +828,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8" style={{ overflowX: 'auto' }}>
                   <h3>BulkPoint</h3>
-                  {resultBulkPointDef && setIconBattle('atk', 'def')}
+                  {resultBulkPointDef && setIconBattle(TypeAction.ATK, TypeAction.DEF)}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">

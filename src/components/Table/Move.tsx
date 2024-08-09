@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
 import { retrieveMoves, splitAndCapitalize } from '../../util/Utils';
 import { useSelector } from 'react-redux';
-import { TypeMove } from '../../enums/move.enum';
+import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
@@ -95,7 +95,7 @@ const Move = (props: IMoveComponent) => {
             {currentMove ? (
               <CardType
                 value={findType(currentMove.name) ?? ''}
-                name={splitAndCapitalize(currentMove?.name.replaceAll('_PLUS', '+'), '_', ' ')}
+                name={splitAndCapitalize(currentMove?.name, '_', ' ')}
                 elite={currentMove.elite}
                 shadow={currentMove.shadow}
                 purified={currentMove.purified}
@@ -132,7 +132,7 @@ const Move = (props: IMoveComponent) => {
                           >
                             <CardType
                               value={findType(value.name) ?? ''}
-                              name={splitAndCapitalize(value.name.replaceAll('_PLUS', '+'), '_', ' ')}
+                              name={splitAndCapitalize(value.name, '_', ' ')}
                               elite={value.elite}
                               shadow={value.shadow}
                               purified={value.purified}

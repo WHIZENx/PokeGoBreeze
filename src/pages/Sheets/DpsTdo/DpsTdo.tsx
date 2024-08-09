@@ -44,7 +44,7 @@ import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDPSSheetPage } from '../../../store/actions/options.action';
 import { Action } from 'history';
-import { TypeMove } from '../../../enums/move.enum';
+import { TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -83,8 +83,8 @@ const fMoveSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
 };
 
 const cMoveSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
-  const a = rowA.cMove?.name.toLowerCase().replaceAll(' plus', '+');
-  const b = rowB.cMove?.name.toLowerCase().replaceAll(' plus', '+');
+  const a = rowA.cMove?.name.toLowerCase();
+  const b = rowB.cMove?.name.toLowerCase();
   return a === b ? 0 : (a ?? 0) > (b ?? 0) ? 1 : -1;
 };
 
@@ -166,11 +166,7 @@ const columns: any = [
   {
     name: 'Charged Move',
     selector: (row: PokemonSheetData) => (
-      <Link
-        className="d-flex align-items-center"
-        to={'/move/' + row.cMove?.id}
-        title={`${splitAndCapitalize(row.cMove?.name, '_', ' ').replaceAll(' Plus', '+')}`}
-      >
+      <Link className="d-flex align-items-center" to={'/move/' + row.cMove?.id} title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
           width={25}
@@ -179,7 +175,7 @@ const columns: any = [
           src={APIService.getTypeSprite(capitalize(row.cMove?.type))}
         />{' '}
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ').replaceAll(' Plus', '+')}</span>
+          <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ')}</span>
           {row.elite?.cMove && (
             <span className="type-icon-small ic elite-ic">
               <span>Elite</span>

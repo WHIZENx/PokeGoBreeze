@@ -53,6 +53,7 @@ import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { StatsPokemon } from '../../../core/models/stats.model';
+import { TypeAction } from '../../../enums/type.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -489,8 +490,8 @@ const Battle = () => {
                     ...player2,
                     stats: {
                       ...player2.stats,
-                      atk: value.type === 'atk' ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
-                      def: value.type === 'def' ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
+                      atk: value.type === TypeAction.ATK ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
+                      def: value.type === TypeAction.DEF ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
                     },
                   });
                   arrBufTarget.push(value);
@@ -499,8 +500,8 @@ const Battle = () => {
                     ...player1,
                     stats: {
                       ...player1.stats,
-                      atk: value.type === 'atk' ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
-                      def: value.type === 'def' ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
+                      atk: value.type === TypeAction.ATK ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
+                      def: value.type === TypeAction.DEF ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
                     },
                   });
                   arrBufAtk.push(value);
@@ -543,8 +544,8 @@ const Battle = () => {
                     ...player1,
                     stats: {
                       ...player1.stats,
-                      atk: value.type === 'atk' ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
-                      def: value.type === 'def' ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
+                      atk: value.type === TypeAction.ATK ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
+                      def: value.type === TypeAction.DEF ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
                     },
                   });
                   arrBufTarget.push(value);
@@ -553,8 +554,8 @@ const Battle = () => {
                     ...player2,
                     stats: {
                       ...player2.stats,
-                      atk: value.type === 'atk' ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
-                      def: value.type === 'def' ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
+                      atk: value.type === TypeAction.ATK ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
+                      def: value.type === TypeAction.DEF ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
                     },
                   });
                   arrBufAtk.push(value);
@@ -985,7 +986,7 @@ const Battle = () => {
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
         {move?.buffs.map((value, index) => (
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
-            <img width={15} height={15} alt="img-atk" src={value.type === 'atk' ? ATK_LOGO : DEF_LOGO} />
+            <img width={15} height={15} alt="img-atk" src={value.type === TypeAction.ATK ? ATK_LOGO : DEF_LOGO} />
             <div className="position-absolute icon-buff">
               {value.power === 2 ? (
                 <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />

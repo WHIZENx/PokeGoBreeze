@@ -1,7 +1,7 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertNameRankingToOri, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/Utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -58,9 +58,10 @@ const PokemonPVP = () => {
       const cp = parseInt(params.cp ?? '');
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
-        (await APIService.getFetchUrl(APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, params.type ?? '')))
-          .data as RankingsPVP[]
-      ).find((pokemon) => pokemon.speciesId === paramName);
+        await APIService.getFetchUrl<RankingsPVP[]>(
+          APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, params.type ?? '')
+        )
+      ).data.find((pokemon) => pokemon.speciesId === paramName);
 
       if (!data) {
         setFound(false);
@@ -75,23 +76,11 @@ const PokemonPVP = () => {
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
-      let fMoveData = data.moveset.at(0),
-        cMoveDataPri = data.moveset.at(1),
-        cMoveDataSec = data.moveset.at(2);
+      let fMoveData = data.moveset.at(0);
+      const cMoveDataPri = replaceTempMovePvpName(data.moveset.at(1) ?? '');
+      const cMoveDataSec = replaceTempMovePvpName(data.moveset.at(2) ?? '');
       if (fMoveData?.includes('HIDDEN_POWER')) {
         fMoveData = 'HIDDEN_POWER';
-      }
-      if (cMoveDataPri === 'FUTURE_SIGHT') {
-        cMoveDataPri = 'FUTURESIGHT';
-      }
-      if (cMoveDataSec === 'FUTURE_SIGHT') {
-        cMoveDataSec = 'FUTURESIGHT';
-      }
-      if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') {
-        cMoveDataPri = 'TECHNO_BLAST_WATER';
-      }
-      if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') {
-        cMoveDataSec = 'TECHNO_BLAST_WATER';
       }
 
       let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);

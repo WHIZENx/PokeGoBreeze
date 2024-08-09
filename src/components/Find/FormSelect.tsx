@@ -34,6 +34,7 @@ import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IFormSelectComponent } from '../models/component.model';
+import { TypeRaid } from '../../enums/type.enum';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -51,7 +52,7 @@ const FormSelect = (props: IFormSelectComponent) => {
     [] as IPokemonFormModify[][]
   );
 
-  const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
+  const [typePoke, setTypePoke] = useState(props.raid ? TypeRaid.BOSS.toString() : TypeRaid.POKEMON.toString());
   const [tier, setTier] = useState(props.tier ?? 1);
 
   const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
@@ -370,7 +371,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             onChange={(e) => {
               setTypePoke(e.target.value);
               if (props.setRaid) {
-                props.setRaid(e.target.value === 'pokemon' ? false : true);
+                props.setRaid(e.target.value === TypeRaid.POKEMON ? false : true);
               }
               if (props.onClearStats) {
                 props.onClearStats(true);
@@ -404,7 +405,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <Tools
         hide={props.hide}
-        isRaid={typePoke === 'pokemon' ? false : true}
+        isRaid={typePoke === TypeRaid.POKEMON ? false : true}
         tier={tier}
         setTier={onSetTier}
         setForm={props.setForm}

@@ -17,6 +17,7 @@ import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BON
 import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
+import { TypeMove } from '../../../enums/type.enum';
 
 interface PokemonMoves {
   fastMoves: (ICombat | undefined)[];
@@ -64,6 +65,15 @@ class TableSort implements ITableSort {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
+enum TypeSorted {
+  // eslint-disable-next-line no-unused-vars
+  EFF = 'eff',
+}
+
+const tableDefensive = 'defensive';
+const tableOffensive = 'offensive';
+
 const TableMove = (props: ITableMoveComponent) => {
   const theme = useTheme();
   const data = useSelector((state: StoreState) => state.store.data);
@@ -79,13 +89,13 @@ const TableMove = (props: ITableMoveComponent) => {
         fast: false,
         charged: false,
         eff: true,
-        sortBy: 'eff',
+        sortBy: TypeSorted.EFF,
       },
       defensive: {
         fast: false,
         charged: false,
         eff: true,
-        sortBy: 'eff',
+        sortBy: TypeSorted.EFF,
       },
     })
   );
@@ -176,7 +186,7 @@ const TableMove = (props: ITableMoveComponent) => {
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fMove.type))} />
             </div>
-            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.fMove.elite && (
                 <span className="type-icon-small ic elite-ic">
@@ -191,7 +201,7 @@ const TableMove = (props: ITableMoveComponent) => {
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cMove.type))} />
             </div>
-            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.cMove.elite && (
                 <span className="type-icon-small ic elite-ic">
@@ -217,7 +227,7 @@ const TableMove = (props: ITableMoveComponent) => {
           </Link>
         </td>
         <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
-          {Math.round(((type === 'offensive' ? value.eDPS.offensive : value.eDPS.defensive) * 100) / max)}
+          {Math.round(((type === tableOffensive ? value.eDPS.offensive : value.eDPS.defensive) * 100) / max)}
         </td>
       </tr>
     );
@@ -233,7 +243,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                   <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value?.type))} />
                 </div>
-                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value?.name.toLowerCase(), '_', ' ')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
                   {value?.elite && (
                     <span className="type-icon-small ic elite-ic">
@@ -265,13 +275,13 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const arrowSort = (table: string, type: string) => {
-    if (table === 'offensive') {
+    if (table === tableOffensive) {
       if (offensive.sortBy === type) {
         const prev = (offensive as unknown as { [x: string]: boolean })[type];
         (offensive as unknown as { [x: string]: boolean })[type] = !prev;
       }
       offensive.sortBy = type;
-    } else if (table === 'defensive') {
+    } else if (table === tableDefensive) {
       if (defensive.sortBy === type) {
         const prev = (defensive as unknown as { [x: string]: boolean })[type];
         (defensive as unknown as { [x: string]: boolean })[type] = !prev;
@@ -336,19 +346,25 @@ const TableMove = (props: ITableMoveComponent) => {
                   </th>
                 </tr>
                 <tr className="text-center">
-                  <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('offensive', 'fast')}>
+                  <th
+                    className="table-column-head main-move cursor-pointer"
+                    onClick={() => arrowSort(tableOffensive, TypeMove.FAST.toLowerCase())}
+                  >
                     Fast
-                    <span style={{ opacity: stateSorted.offensive.sortBy === 'fast' ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.offensive.sortBy === TypeMove.FAST.toLowerCase() ? 1 : 0.3 }}>
                       {stateSorted.offensive.fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
-                  <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('offensive', 'charged')}>
+                  <th
+                    className="table-column-head main-move cursor-pointer"
+                    onClick={() => arrowSort(tableOffensive, TypeMove.CHARGE.toLowerCase())}
+                  >
                     Charged
-                    <span style={{ opacity: stateSorted.offensive.sortBy === 'charged' ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.offensive.sortBy === TypeMove.CHARGE.toLowerCase() ? 1 : 0.3 }}>
                       {stateSorted.offensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
-                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort('offensive', 'eff')}>
+                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort(tableOffensive, 'eff')}>
                     %
                     <span style={{ opacity: stateSorted.offensive.sortBy === 'eff' ? 1 : 0.3 }}>
                       {stateSorted.offensive.eff ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
@@ -360,19 +376,25 @@ const TableMove = (props: ITableMoveComponent) => {
                 {[...move.data]
                   .sort((a, b) => {
                     const sortedBy = stateSorted.offensive.sortBy;
-                    if (sortedBy === 'eff') {
+                    if (sortedBy === TypeSorted.EFF) {
                       return stateSorted.offensive.eff ? b.eDPS.offensive - a.eDPS.offensive : a.eDPS.offensive - b.eDPS.offensive;
                     } else {
-                      if (a[sortedBy === 'fast' ? 'fMove' : 'cMove'].name < b[sortedBy === 'fast' ? 'fMove' : 'cMove'].name) {
+                      if (
+                        a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name <
+                        b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
+                      ) {
                         return (stateSorted.offensive as unknown as { [x: string]: boolean })[sortedBy] ? -1 : 1;
-                      } else if (a[sortedBy === 'fast' ? 'fMove' : 'cMove'].name > b[sortedBy === 'fast' ? 'fMove' : 'cMove'].name) {
+                      } else if (
+                        a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name >
+                        b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
+                      ) {
                         return (stateSorted.offensive as unknown as { [x: string]: boolean })[sortedBy] ? 1 : -1;
                       }
                       return 0;
                     }
                   })
                   .map((value, index) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff ?? 0, 'offensive')}</Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff ?? 0, tableOffensive)}</Fragment>
                   ))}
               </tbody>
             </table>
@@ -388,21 +410,27 @@ const TableMove = (props: ITableMoveComponent) => {
                   </th>
                 </tr>
                 <tr className="text-center">
-                  <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('defensive', 'fast')}>
+                  <th
+                    className="table-column-head main-move cursor-pointer"
+                    onClick={() => arrowSort(tableDefensive, TypeMove.FAST.toLowerCase())}
+                  >
                     Fast
-                    <span style={{ opacity: stateSorted.defensive.sortBy === 'fast' ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.defensive.sortBy === TypeMove.FAST.toLowerCase() ? 1 : 0.3 }}>
                       {stateSorted.defensive.fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
-                  <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort('defensive', 'charged')}>
+                  <th
+                    className="table-column-head main-move cursor-pointer"
+                    onClick={() => arrowSort(tableDefensive, TypeMove.CHARGE.toLowerCase())}
+                  >
                     Charged
-                    <span style={{ opacity: stateSorted.defensive.sortBy === 'charged' ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.defensive.sortBy === TypeMove.CHARGE.toLowerCase() ? 1 : 0.3 }}>
                       {stateSorted.defensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
-                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort('defensive', 'eff')}>
+                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort(tableDefensive, TypeSorted.EFF)}>
                     %
-                    <span className="cursor-pointer" style={{ opacity: stateSorted.defensive.sortBy === 'eff' ? 1 : 0.3 }}>
+                    <span className="cursor-pointer" style={{ opacity: stateSorted.defensive.sortBy === TypeSorted.EFF ? 1 : 0.3 }}>
                       {stateSorted.defensive.eff ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
@@ -412,19 +440,25 @@ const TableMove = (props: ITableMoveComponent) => {
                 {[...move.data]
                   .sort((a, b) => {
                     const sortedBy = stateSorted.defensive.sortBy;
-                    if (sortedBy === 'eff') {
+                    if (sortedBy === TypeSorted.EFF) {
                       return stateSorted.defensive.eff ? b.eDPS.defensive - a.eDPS.defensive : a.eDPS.defensive - b.eDPS.defensive;
                     } else {
-                      if (a[sortedBy === 'fast' ? 'fMove' : 'cMove'].name < b[sortedBy === 'fast' ? 'fMove' : 'cMove'].name) {
+                      if (
+                        a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name <
+                        b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
+                      ) {
                         return (stateSorted.defensive as unknown as { [x: string]: boolean })[sortedBy] ? -1 : 1;
-                      } else if (a[sortedBy === 'fast' ? 'fMove' : 'cMove'].name > b[sortedBy === 'fast' ? 'fMove' : 'cMove'].name) {
+                      } else if (
+                        a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name >
+                        b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
+                      ) {
                         return (stateSorted.defensive as unknown as { [x: string]: boolean })[sortedBy] ? 1 : -1;
                       }
                       return 0;
                     }
                   })
                   .map((value, index) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef ?? 0, 'defensive')}</Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef ?? 0, tableDefensive)}</Fragment>
                   ))}
               </tbody>
             </table>

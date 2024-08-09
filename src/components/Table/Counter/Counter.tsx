@@ -13,6 +13,7 @@ import DataTable, { TableStyles } from 'react-data-table-component';
 import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
+import { TypeTheme } from '../../../enums/type.enum';
 
 const customStyles: TableStyles = {
   head: {
@@ -96,7 +97,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="d-flex justify-content-center">
             <div
               className={
-                (theme.palette.mode === 'light' ? 'filter-shadow-hover' : 'filter-light-shadow-hover') +
+                (theme.palette.mode === TypeTheme.LIGHT ? 'filter-shadow-hover' : 'filter-light-shadow-hover') +
                 ' position-relative group-pokemon-sprite'
               }
             >
@@ -128,7 +129,7 @@ const Counter = (props: ICounterComponent) => {
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fMove.type))} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
-            {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+            {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
             {row.fMove.elite && (
@@ -149,7 +150,7 @@ const Counter = (props: ICounterComponent) => {
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cMove.type))} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
-            {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+            {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
             {row.cMove.elite && (

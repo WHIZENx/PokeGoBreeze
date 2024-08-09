@@ -10,7 +10,7 @@ import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
-import { TypeMove } from '../../../enums/move.enum';
+import { TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { DEFAULT_TYPES } from '../../../util/Constants';
@@ -100,12 +100,8 @@ const columnMove: any = [
   {
     name: 'Move Name',
     selector: (row: ICombat) => (
-      <Link
-        className="d-flex align-items-center"
-        to={'/move/' + row.id}
-        title={`${splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}`}
-      >
-        {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
+      <Link className="d-flex align-items-center" to={'/move/' + row.id} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
+        {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),
     sortable: true,
