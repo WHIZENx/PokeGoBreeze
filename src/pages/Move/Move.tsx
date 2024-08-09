@@ -18,7 +18,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { TypeMove } from '../../enums/move.enum';
+import { TypeAction, TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -118,7 +118,7 @@ const Move = (props: IMovePage) => {
         }
         if (move) {
           setMove(move);
-          document.title = `#${move?.track} - ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}`;
+          document.title = `#${move?.track} - ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`;
         } else {
           enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
           if (id) {
@@ -150,7 +150,7 @@ const Move = (props: IMovePage) => {
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
             <h1 className="text-move">
-              <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</b>
+              <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</b>
             </h1>
             <TypeBar type={move?.type} />
           </div>
@@ -188,9 +188,7 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={3}>
-                  {'Stats ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+') + ' in Pokémon GO'}
-                </th>
+                <th colSpan={3}>{'Stats ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ') + ' in Pokémon GO'}</th>
               </tr>
             </thead>
             <tbody>
@@ -203,7 +201,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Name</td>
                 <td colSpan={2}>
-                  <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</b>
+                  <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</b>
                 </td>
               </tr>
               <tr>
@@ -219,7 +217,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Move Type</td>
                 <td colSpan={2}>
-                  <b>{move && `${capitalize(move.type_move)} Move`}</b>
+                  <b>{move && `${capitalize(move.typeMove)} Move`}</b>
                 </td>
               </tr>
               <tr>
@@ -246,7 +244,7 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>PVE Power</td>
-                <td colSpan={2}>{move?.pve_power}</td>
+                <td colSpan={2}>{move?.pvePower}</td>
               </tr>
               <tr>
                 <td>
@@ -256,8 +254,8 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{(move.pve_power * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{(move.pve_power * 0.2).toFixed(2)}</span>
+                      <span>{(move.pvePower * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
+                      <span className="text-success d-inline-block caption">+{(move.pvePower * 0.2).toFixed(2)}</span>
                     </>
                   )}
                 </td>
@@ -265,15 +263,15 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVE Energy</td>
                 <td colSpan={2}>
-                  {(move?.pve_energy ?? 0) > 0 && '+'}
-                  {move?.pve_energy}
+                  {(move?.pveEnergy ?? 0) > 0 && '+'}
+                  {move?.pveEnergy}
                 </td>
               </tr>
-              {move?.type_move === TypeMove.CHARGE && (
+              {move?.typeMove === TypeMove.CHARGE && (
                 <tr>
                   <td>PVE Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(true, move?.pve_energy)} color={move?.type?.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(true, move?.pveEnergy)} color={move?.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
@@ -284,7 +282,7 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>PVP Power</td>
-                <td colSpan={2}>{move?.pvp_power}</td>
+                <td colSpan={2}>{move?.pvpPower}</td>
               </tr>
               <tr>
                 <td>
@@ -294,8 +292,8 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{(move.pvp_power * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{(move.pvp_power * 0.2).toFixed(2)}</span>
+                      <span>{(move.pvpPower * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
+                      <span className="text-success d-inline-block caption">+{(move.pvpPower * 0.2).toFixed(2)}</span>
                     </>
                   )}
                 </td>
@@ -303,15 +301,15 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVP Energy</td>
                 <td colSpan={2}>
-                  {(move?.pvp_energy ?? 0) > 0 && '+'}
-                  {move?.pvp_energy}
+                  {(move?.pvpEnergy ?? 0) > 0 && '+'}
+                  {move?.pvpEnergy}
                 </td>
               </tr>
-              {move?.type_move === TypeMove.CHARGE && (
+              {move?.typeMove === TypeMove.CHARGE && (
                 <tr>
                   <td>PVP Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(false, move?.pvp_energy)} color={move?.type?.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(false, move?.pvpEnergy)} color={move?.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
@@ -330,7 +328,7 @@ const Move = (props: IMovePage) => {
                       <td>
                         {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}
                         <span className="d-inline-block caption">
-                          {value.type === 'atk' ? 'Attack ' : 'Defense '}
+                          {value.type === TypeAction.ATK ? 'Attack ' : 'Defense '}
                           <span className={'buff-power ' + (value.power > 0 ? 'text-success' : 'text-danger')}>
                             <b>
                               {value.power > 0 && '+'}
@@ -389,9 +387,7 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-damage-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={2}>
-                  {'Damage ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+') + ' Simulator'}
-                </th>
+                <th colSpan={2}>{'Damage ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ') + ' Simulator'}</th>
               </tr>
             </thead>
             <tbody>
@@ -402,14 +398,14 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>DPS</td>
-                <td>{move && `${(move?.pve_power / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${(move?.pvePower / (move?.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move?.pve_power * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${((move?.pvePower * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
@@ -417,7 +413,7 @@ const Move = (props: IMovePage) => {
                   <span className="caption">(2 Effect Bonus)</span>
                 </td>
                 <td>
-                  {move && `${((move?.pve_power * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move?.durationMs / 1000)).toFixed(2)}`}
+                  {move && `${((move?.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move?.durationMs / 1000)).toFixed(2)}`}
                 </td>
               </tr>
               <tr>
@@ -426,13 +422,13 @@ const Move = (props: IMovePage) => {
                   <span className="caption">(STAB+Weather+Shadow Bonus)</span>
                 </td>
                 <td>
-                  {move && `${((move?.pve_power * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move?.durationMs / 1000)).toFixed(2)}`}
+                  {move && `${((move?.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move?.durationMs / 1000)).toFixed(2)}`}
                 </td>
               </tr>
-              {move?.type_move === TypeMove.FAST && (
+              {move?.typeMove === TypeMove.FAST && (
                 <tr>
                   <td>EPS</td>
-                  <td>{move && `${(move?.pve_energy / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                  <td>{move && `${(move?.pveEnergy / (move?.durationMs / 1000)).toFixed(2)}`}</td>
                 </tr>
               )}
               <tr className="text-center">
@@ -442,19 +438,19 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>DPS</td>
-                <td>{move && `${(move?.pvp_power / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${(move?.pvpPower / (move?.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move?.pvp_power * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${((move?.pvpPower * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>
                   <div className="input-group align-items-center justify-content-center">
-                    <span>{'Top Pokémon in move ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}</span>
+                    <span>{'Top Pokémon in move ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</span>
                     <FormControlLabel
                       control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
                       label={

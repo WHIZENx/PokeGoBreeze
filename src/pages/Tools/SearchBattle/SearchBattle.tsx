@@ -127,7 +127,7 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const isForm = form?.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form?.form.form_name.replaceAll('-', '_').toUpperCase();
+      const isForm = form?.form.formName?.toUpperCase() === '' ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
       let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isForm === i.evoToForm));
       if (curr?.length === 0) {
         if (isForm === FORM_NORMAL) {
@@ -250,7 +250,7 @@ const FindBattle = () => {
         enqueueSnackbar(
           `Search success at CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${
             result.IV.sta
-          } found in ${name} ${splitAndCapitalize(form?.form.form_name, '-', ' ')}`,
+          } found in ${name} ${splitAndCapitalize(form?.form.formName, '-', ' ')}`,
           { variant: 'success' }
         );
       }, 500);
@@ -259,7 +259,7 @@ const FindBattle = () => {
   );
 
   const getImageList = (id: number) => {
-    const isForm = form?.form.form_name?.toUpperCase() === '' ? FORM_NORMAL : form?.form.form_name.replaceAll('-', '_').toUpperCase();
+    const isForm = form?.form.formName?.toUpperCase() === '' ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
     let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form?.includes(isForm ?? FORM_NORMAL));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
@@ -425,7 +425,7 @@ const FindBattle = () => {
                       />
                       <span className="caption text-black border-best-poke best-name">
                         <b>
-                          #{value.id} {splitAndCapitalize(value.name, '_', ' ')} {splitAndCapitalize(form?.form.form_name, '-', ' ')}
+                          #{value.id} {splitAndCapitalize(value.name, '_', ' ')} {splitAndCapitalize(form?.form.formName, '-', ' ')}
                         </b>
                       </span>
                     </div>
@@ -490,7 +490,7 @@ const FindBattle = () => {
                               <div>
                                 <b>
                                   #{item.id} {splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}{' '}
-                                  {splitAndCapitalize(form?.form.form_name, '-', ' ')}
+                                  {splitAndCapitalize(form?.form.formName, '-', ' ')}
                                 </b>
                               </div>
                             </Link>
@@ -528,11 +528,11 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center" style={{ marginRight: 5 }}>
-                                            {(item.battleLeague.little.result_between_candy ?? 0) + getCandyEvo(value, item.id)}
+                                            {(item.battleLeague.little.resultBetweenCandy ?? 0) + getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
-                                          {item.battleLeague.little.result_between_xl_candy}
+                                          {item.battleLeague.little.resultBetweenXLCandy}
                                         </span>
                                       </li>
                                       <li>
@@ -542,7 +542,7 @@ const FindBattle = () => {
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />{' '}
-                                        {item.battleLeague.little.result_between_stadust}
+                                        {item.battleLeague.little.resultBetweenStadust}
                                       </li>
                                     </ul>
                                   ) : (
@@ -582,11 +582,11 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {(item.battleLeague.great.result_between_candy ?? 0) + getCandyEvo(value, item.id)}
+                                            {(item.battleLeague.great.resultBetweenCandy ?? 0) + getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
-                                          {item.battleLeague.great.result_between_xl_candy}
+                                          {item.battleLeague.great.resultBetweenXLCandy}
                                         </span>
                                       </li>
                                       <li>
@@ -596,7 +596,7 @@ const FindBattle = () => {
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />{' '}
-                                        {item.battleLeague.great.result_between_stadust}
+                                        {item.battleLeague.great.resultBetweenStadust}
                                       </li>
                                     </ul>
                                   ) : (
@@ -636,11 +636,11 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {(item.battleLeague.ultra.result_between_candy ?? 0) + getCandyEvo(value, item.id)}
+                                            {(item.battleLeague.ultra.resultBetweenCandy ?? 0) + getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
-                                          {item.battleLeague.ultra.result_between_xl_candy}
+                                          {item.battleLeague.ultra.resultBetweenXLCandy}
                                         </span>
                                       </li>
                                       <li>
@@ -650,7 +650,7 @@ const FindBattle = () => {
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />{' '}
-                                        {item.battleLeague.ultra.result_between_stadust}
+                                        {item.battleLeague.ultra.resultBetweenStadust}
                                       </li>
                                     </ul>
                                   ) : (
@@ -690,11 +690,11 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {(item.battleLeague.master.result_between_candy ?? 0) + getCandyEvo(value, item.id)}
+                                            {(item.battleLeague.master.resultBetweenCandy ?? 0) + getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
-                                          {item.battleLeague.master.result_between_xl_candy}
+                                          {item.battleLeague.master.resultBetweenXLCandy}
                                         </span>
                                       </li>
                                       <li>
@@ -704,7 +704,7 @@ const FindBattle = () => {
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />{' '}
-                                        {item.battleLeague.master.result_between_stadust}
+                                        {item.battleLeague.master.resultBetweenStadust}
                                       </li>
                                     </ul>
                                   ) : (

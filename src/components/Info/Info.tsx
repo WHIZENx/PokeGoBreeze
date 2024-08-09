@@ -27,32 +27,32 @@ const Info = (props: IInfoComponent) => {
 
   const getTypeEffective = (types: string[]) => {
     const data = TypeEffChart.create({
-      very_weak: [],
+      veryWeak: [],
       weak: [],
-      super_resist: [],
-      very_resist: [],
+      superResist: [],
+      veryResist: [],
       resist: [],
       neutral: [],
     });
     Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
-      let valueEffective = 1;
-      types?.forEach((type) => {
-        valueEffective *= value[type?.toUpperCase()];
-      });
-      if (valueEffective >= 2.56) {
-        data.very_weak?.push(key);
-      } else if (valueEffective >= 1.6) {
-        data.weak?.push(key);
-      } else if (valueEffective === 1) {
-        data.neutral?.push(key);
-      } else if (valueEffective >= 0.625) {
-        data.resist?.push(key);
-      } else if (valueEffective >= 0.39) {
-        data.very_resist?.push(key);
-      } else if (valueEffective >= 0.2) {
-        data.super_resist?.push(key);
-      } else {
-        data.neutral?.push(key);
+      if (types.length > 0) {
+        let valueEffective = 1;
+        types.forEach((type) => {
+          valueEffective *= value[type?.toUpperCase()];
+        });
+        if (valueEffective >= 2.56) {
+          data.veryWeak?.push(key);
+        } else if (valueEffective >= 1.6) {
+          data.weak?.push(key);
+        } else if (valueEffective === 1) {
+          data.neutral?.push(key);
+        } else if (valueEffective >= 0.625) {
+          data.resist?.push(key);
+        } else if (valueEffective >= 0.39) {
+          data.veryResist?.push(key);
+        } else if (valueEffective >= 0.2) {
+          data.superResist?.push(key);
+        }
       }
     });
     return data;
@@ -66,7 +66,7 @@ const Info = (props: IInfoComponent) => {
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={props.currForm?.form.types ?? []} style={{ marginLeft: 15 }} />
+      <TypeInfo arr={props.currForm?.form.types ?? []} style={{ marginLeft: 15 }} isShow={true} />
       <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm?.form.types ?? [])} />
       <TypeEffective typeEffective={getTypeEffective(props.currForm?.form.types ?? [])} />
     </div>

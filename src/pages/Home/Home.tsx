@@ -37,6 +37,7 @@ import {
 import { StoreState, StatsState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { TypeTheme } from '../../enums/type.enum';
 
 const VersionProps = {
   PaperProps: {
@@ -79,10 +80,10 @@ const Home = () => {
     primal: false,
     legendary: false,
     mythic: false,
-    ultrabeast: false,
+    ultraBeast: false,
   });
 
-  const { match, releasedGO, allShiny, gen, version, mega, gmax, primal, legendary, mythic, ultrabeast } = filters;
+  const { match, releasedGO, allShiny, gen, version, mega, gmax, primal, legendary, mythic, ultraBeast } = filters;
 
   const [btnSelected, setBtnSelected] = useState({
     gen: true,
@@ -141,7 +142,7 @@ const Home = () => {
             const boolPrimal = primal ? item.forme?.toUpperCase().includes(FORM_PRIMAL) : true;
             const boolLegend = legendary ? item.class === TYPE_LEGENDARY : true;
             const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
-            const boolUltra = ultrabeast ? item.class === TYPE_ULTRA_BEAST : true;
+            const boolUltra = ultraBeast ? item.class === TYPE_ULTRA_BEAST : true;
 
             const findGen = item.gen === 0 ? true : gen.includes((item.gen ?? 0) - 1);
             const findVersion = item.version === -1 ? true : version.includes(item?.version);
@@ -168,7 +169,7 @@ const Home = () => {
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [dataList, searchTerm, selectTypes, match, releasedGO, mega, gmax, primal, legendary, mythic, ultrabeast, gen, version]);
+  }, [dataList, searchTerm, selectTypes, match, releasedGO, mega, gmax, primal, legendary, mythic, ultraBeast, gen, version]);
 
   useEffect(() => {
     const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
@@ -210,7 +211,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        gen: versionList.map((_, index: number) => index),
+        gen: versionList.map((_, index) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -232,7 +233,7 @@ const Home = () => {
     } else {
       setFilters({
         ...filters,
-        version: versionList.map((_, index: number) => index),
+        version: versionList.map((_, index) => index),
       });
       setBtnSelected({
         ...btnSelected,
@@ -259,7 +260,7 @@ const Home = () => {
                 className={
                   'btn-select-type w-100 border-types btn-' +
                   theme.palette.mode +
-                  (selectTypes.includes(item) ? ' select-type' + (theme.palette.mode === 'dark' ? '-dark' : '') : '')
+                  (selectTypes.includes(item) ? ' select-type' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '') : '')
                 }
                 style={{ padding: 10, transition: TRANSITION_TIME }}
               >
@@ -274,11 +275,13 @@ const Home = () => {
             <div className="row" style={{ margin: 0 }}>
               <div className="col-xl-4" style={{ padding: 0 }}>
                 <div className="d-flex">
-                  <span className={'input-group-text ' + (theme.palette.mode === 'dark' ? 'input-group-dark' : '')}>Search name or ID</span>
+                  <span className={'input-group-text ' + (theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>
+                    Search name or ID
+                  </span>
                   <input
                     type="text"
                     style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
-                    className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+                    className={'form-control input-search' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
                     onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
@@ -360,7 +363,7 @@ const Home = () => {
                       value={version}
                       onChange={handleChangeVersion}
                       input={<OutlinedInput label="Version(s)" />}
-                      renderValue={(selected) => selected.map((item: number) => versionList[item]).join(', ')}
+                      renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
                       MenuProps={VersionProps}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
@@ -372,7 +375,7 @@ const Home = () => {
                           }
                         />
                       </MenuItem>
-                      {versionList.map((value: string, index: number) => (
+                      {versionList.map((value, index) => (
                         <MenuItem key={index} value={index}>
                           <Checkbox checked={version.includes(index)} />
                           <ListItemText primary={value} />
@@ -382,7 +385,9 @@ const Home = () => {
                   </FormControl>
                 </div>
                 <div className="input-group border-input">
-                  <span className={'input-group-text ' + (theme.palette.mode === 'dark' ? 'input-group-dark' : '')}>Filter only by</span>
+                  <span className={'input-group-text ' + (theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>
+                    Filter only by
+                  </span>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -440,7 +445,7 @@ const Home = () => {
                             ...filters,
                             legendary: check,
                             mythic: check ? false : filters.mythic,
-                            ultrabeast: check ? false : filters.ultrabeast,
+                            ultraBeast: check ? false : filters.ultraBeast,
                           })
                         }
                       />
@@ -456,7 +461,7 @@ const Home = () => {
                             ...filters,
                             mythic: check,
                             legendary: check ? false : filters.legendary,
-                            ultrabeast: check ? false : filters.ultrabeast,
+                            ultraBeast: check ? false : filters.ultraBeast,
                           })
                         }
                       />
@@ -466,11 +471,11 @@ const Home = () => {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={ultrabeast}
+                        checked={ultraBeast}
                         onChange={(_, check) =>
                           setFilters({
                             ...filters,
-                            ultrabeast: check,
+                            ultraBeast: check,
                             legendary: check ? false : filters.legendary,
                             mythic: check ? false : filters.mythic,
                           })

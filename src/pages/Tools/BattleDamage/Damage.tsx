@@ -12,7 +12,7 @@ import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Box } from '@mui/system';
 import DamageTable from './DamageTable';
 
-import atk_logo from '../../../assets/attack.png';
+import ATK_LOGO from '../../../assets/attack.png';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Find from '../../../components/Find/Find';
 import StatsTable from './StatsDamageTable';
@@ -85,8 +85,8 @@ const Damage = () => {
     weather: false,
     dodge: false,
     trainer: false,
-    flevel: 0,
-    clevel: 3,
+    fLevel: 0,
+    cLevel: 3,
   });
   const { weather, dodge, trainer } = battleState;
   const [result, setResult]: [IPokemonDmgOption, React.Dispatch<React.SetStateAction<IPokemonDmgOption>>] = useState(
@@ -154,17 +154,17 @@ const Damage = () => {
           stab: findStabType(form?.form.types ?? [], move.type ?? ''),
           wb: battleState.weather,
           dodge: battleState.dodge,
-          mega: form?.form.form_name?.toUpperCase().includes(FORM_MEGA) ?? false,
+          mega: form?.form.formName?.toUpperCase().includes(FORM_MEGA) ?? false,
           trainer: battleState.trainer,
-          flevel: enableFriend ? battleState.flevel : 0,
-          clevel: battleState.clevel,
+          fLevel: enableFriend ? battleState.fLevel : 0,
+          cLevel: battleState.cLevel,
           effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types ?? []),
         };
         setResult((r) => ({
           ...r,
           battleState: eff,
           move,
-          damage: calculateDamagePVE(globalOptions, statLvATK, statLvDEFObj, move.pve_power, eff),
+          damage: calculateDamagePVE(globalOptions, statLvATK, statLvDEFObj, move.pvePower, eff),
           hp: statLvSTAObj,
           currPoke: form,
           objPoke: formObj,
@@ -281,7 +281,7 @@ const Damage = () => {
                 {move && (
                   <div style={{ width: 300, margin: 'auto' }}>
                     <p>
-                      - Move Ability Type: <b>{capitalize(move.type_move)}</b>
+                      - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
                     </p>
                     <p>
                       - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
@@ -290,7 +290,7 @@ const Damage = () => {
                     <p>
                       - Damage:{' '}
                       <b>
-                        {move.pve_power}
+                        {move.pvePower}
                         {findStabType(form?.form.types ?? [], move.type ?? '') && (
                           <span className={'caption-small text-success'}> (x1.2)</span>
                         )}
@@ -315,7 +315,7 @@ const Damage = () => {
                             setEnableFriend(check);
                             setBattleState({
                               ...battleState,
-                              flevel: 0,
+                              fLevel: 0,
                             });
                           }}
                         />
@@ -327,26 +327,26 @@ const Damage = () => {
                       onChange={(_, value) => {
                         setBattleState({
                           ...battleState,
-                          flevel: value ?? 0,
+                          fLevel: value ?? 0,
                         });
                       }}
                       defaultValue={0}
                       max={4}
                       size="large"
-                      value={battleState.flevel}
+                      value={battleState.fLevel}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{getDataWithKey<ITrainerFriendship>(globalOptions?.trainer_friendship, battleState.flevel).atk_bonus?.toFixed(2)}
+                      x{getDataWithKey<ITrainerFriendship>(globalOptions?.trainerFriendship, battleState.fLevel).atkBonus?.toFixed(2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
                     <FormControl sx={{ width: 200 }}>
                       <InputLabel id="demo-simple-select-label">Charge ability</InputLabel>
                       <Select
-                        name="clevel"
-                        value={battleState.clevel}
+                        name="cLevel"
+                        value={battleState.cLevel}
                         label="Charge ability"
                         onChange={(event) => {
                           setBattleState({
@@ -355,7 +355,7 @@ const Damage = () => {
                           });
                         }}
                       >
-                        {Object.entries(globalOptions?.throw_charge ?? new ThrowOption()).map(([type, value], index) => (
+                        {Object.entries(globalOptions?.throwCharge ?? new ThrowOption()).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={`caption-small dropdown-caption ${labels[index].style}`}>x{value}</span>
@@ -365,7 +365,7 @@ const Damage = () => {
                     </FormControl>
                   </Box>
                   <button type="submit" className="btn btn-primary element-top">
-                    <img alt="atk" width={20} height={20} src={atk_logo} /> Battle
+                    <img alt="atk" width={20} height={20} src={ATK_LOGO} /> Battle
                   </button>
                 </div>
               </div>

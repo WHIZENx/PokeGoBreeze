@@ -13,6 +13,7 @@ import DataTable, { TableStyles } from 'react-data-table-component';
 import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
+import { TypeTheme } from '../../../enums/type.enum';
 
 const customStyles: TableStyles = {
   head: {
@@ -92,29 +93,29 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Pokémon',
       selector: (row: ICounterModel) => (
-        <Link to={`/pokemon/${row.pokemon_id}${row.pokemon_forme ? `?form=${row.pokemon_forme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
+        <Link to={`/pokemon/${row.pokemonId}${row.pokemonForme ? `?form=${row.pokemonForme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
           <div className="d-flex justify-content-center">
             <div
               className={
-                (theme.palette.mode === 'light' ? 'filter-shadow-hover' : 'filter-light-shadow-hover') +
+                (theme.palette.mode === TypeTheme.LIGHT ? 'filter-shadow-hover' : 'filter-light-shadow-hover') +
                 ' position-relative group-pokemon-sprite'
               }
             >
-              {row.cmove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-              {row.cmove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+              {row.cMove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+              {row.cMove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
               <img
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme ?? '')
-                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme ?? ''))
-                    : APIService.getPokeFullSprite(row.pokemon_id)
+                  findAssetForm(data?.assets ?? [], row.pokemonId, row.pokemonForme ?? '')
+                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemonId, row.pokemonForme ?? ''))
+                    : APIService.getPokeFullSprite(row.pokemonId)
                 }
               />
             </div>
           </div>
           <span className="caption text-overflow" style={{ color: theme.palette.text.primary }}>
-            #{row.pokemon_id} {splitAndCapitalize(row.pokemon_name, '-', ' ')}
+            #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
           </span>
         </Link>
       ),
@@ -123,15 +124,15 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Fast',
       selector: (row: ICounterModel) => (
-        <Link to={'../move/' + row.fmove.id} className="d-grid">
+        <Link to={'../move/' + row.fMove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fmove.type))} />
+            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fMove.type))} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
-            {splitAndCapitalize(row.fmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+            {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.fmove.elite && (
+            {row.fMove.elite && (
               <span className="type-icon-small ic elite-ic">
                 <span>Elite</span>
               </span>
@@ -144,30 +145,30 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Charged',
       selector: (row: ICounterModel) => (
-        <Link to={'../move/' + row.cmove.id} className="d-grid">
+        <Link to={'../move/' + row.cMove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cmove.type))} />
+            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cMove.type))} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
-            {splitAndCapitalize(row.cmove.name.toLowerCase(), '_', ' ').replaceAll(' Plus', '+')}
+            {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.cmove.elite && (
+            {row.cMove.elite && (
               <span className="type-icon-small ic elite-ic">
                 <span>Elite</span>
               </span>
             )}
-            {row.cmove.shadow && (
+            {row.cMove.shadow && (
               <span className="type-icon-small ic shadow-ic">
                 <span>{capitalize(FORM_SHADOW)}</span>
               </span>
             )}
-            {row.cmove.purified && (
+            {row.cMove.purified && (
               <span className="type-icon-small ic purified-ic">
                 <span>{capitalize(FORM_PURIFIED)}</span>
               </span>
             )}
-            {row.cmove.special && (
+            {row.cMove.special && (
               <span className="type-icon-small ic special-ic">
                 <span>Special</span>
               </span>
@@ -299,13 +300,13 @@ const Counter = (props: ICounterComponent) => {
             if (showMega) {
               return true;
             }
-            return !pokemon.pokemon_forme?.includes(FORM_MEGA) && !pokemon.pokemon_forme?.includes(FORM_PRIMAL);
+            return !pokemon.pokemonForme?.includes(FORM_MEGA) && !pokemon.pokemonForme?.includes(FORM_PRIMAL);
           })
           .filter((pokemon) => {
             if (!releasedGO) {
               return true;
             }
-            const result = checkPokemonGO(pokemon.pokemon_id, convertPokemonDataName(pokemon.pokemon_name), data?.pokemon ?? []);
+            const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data?.pokemon ?? []);
             return pokemon.releasedGO ?? result?.releasedGO ?? false;
           })}
       />

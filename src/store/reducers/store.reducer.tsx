@@ -1,4 +1,6 @@
+import { PokemonRankingMove } from '../../core/models/pvp.model';
 import { convertPVPRankings, convertPVPTrain } from '../../core/pvp';
+import { replaceTempMovePvpName } from '../../util/Utils';
 import {
   LOAD_ASSETS,
   LOAD_COMBAT,
@@ -117,11 +119,8 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
     case LOAD_PVP_MOVES: {
       const result = state.data?.combat?.map((move) => {
         const movePVP = action.payload.find(
-          (data: { moveId: string }) =>
-            data.moveId ===
-            (move.name === 'HIDDEN_POWER'
-              ? 'HIDDEN_POWER_BUG'
-              : move.name.replace('_BLASTOISE', '').replaceAll('_PLUS', '').replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE'))
+          (data: PokemonRankingMove) =>
+            data.moveId === (move.name === 'HIDDEN_POWER' ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
         );
         move.archetype = movePVP?.archetype;
         return move;

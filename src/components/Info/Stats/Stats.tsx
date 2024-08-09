@@ -10,6 +10,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
+import { TypeAction } from '../../../enums/type.enum';
 
 const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
@@ -61,10 +62,10 @@ const Stats = (props: IStatsComponent) => {
         sta,
         prod,
       },
-      atk: (atk * 100) / (props.pokemonStats?.attack.max_stats ?? 1),
-      def: (def * 100) / (props.pokemonStats?.defense.max_stats ?? 1),
-      sta: (sta * 100) / (props.pokemonStats?.stamina.max_stats ?? 1),
-      prod: (prod * 100) / (props.pokemonStats?.statProd.max_stats ?? 1),
+      atk: (atk * 100) / (props.pokemonStats?.attack.maxStats ?? 1),
+      def: (def * 100) / (props.pokemonStats?.defense.maxStats ?? 1),
+      sta: (sta * 100) / (props.pokemonStats?.stamina.maxStats ?? 1),
+      prod: (prod * 100) / (props.pokemonStats?.statProd.maxStats ?? 1),
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.isShadow]);
 
@@ -72,9 +73,9 @@ const Stats = (props: IStatsComponent) => {
     if (props.isShadow) {
       return Math.round(
         stats *
-          (type === 'atk'
+          (type === TypeAction.ATK
             ? SHADOW_ATK_BONUS(data?.options)
-            : type === 'def'
+            : type === TypeAction.DEF
             ? SHADOW_DEF_BONUS(data?.options)
             : SHADOW_ATK_BONUS(data?.options) * SHADOW_DEF_BONUS(data?.options))
       );

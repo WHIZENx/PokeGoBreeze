@@ -4,7 +4,7 @@ export interface IArrayStats {
   id: number;
   name: string;
   form: string;
-  base_stats: IStatsPokemon;
+  baseStats: IStatsPokemon;
   baseStatsPokeGo:
     | {
         attack: number;
@@ -19,8 +19,7 @@ export class ArrayStats implements IArrayStats {
   id: number = 0;
   name: string = '';
   form: string = '';
-  // tslint:disable-next-line:variable-name
-  base_stats: IStatsPokemon = new StatsPokemon();
+  baseStats: IStatsPokemon = new StatsPokemon();
   baseStatsPokeGo:
     | {
         attack: number;

@@ -10,7 +10,7 @@ import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
-import { TypeMove } from '../../../enums/move.enum';
+import { TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { DEFAULT_TYPES } from '../../../util/Constants';
@@ -100,12 +100,8 @@ const columnMove: any = [
   {
     name: 'Move Name',
     selector: (row: ICombat) => (
-      <Link
-        className="d-flex align-items-center"
-        to={'/move/' + row.id}
-        title={`${splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}`}
-      >
-        {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
+      <Link className="d-flex align-items-center" to={'/move/' + row.id} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
+        {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),
     sortable: true,
@@ -114,25 +110,25 @@ const columnMove: any = [
   },
   {
     name: 'Power PVE',
-    selector: (row: ICombat) => row.pve_power,
+    selector: (row: ICombat) => row.pvePower,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Power PVP',
-    selector: (row: ICombat) => row.pvp_power,
+    selector: (row: ICombat) => row.pvpPower,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVE',
-    selector: (row: ICombat) => `${row.pve_energy > 0 ? '+' : ''}${row.pve_energy}`,
+    selector: (row: ICombat) => `${row.pveEnergy > 0 ? '+' : ''}${row.pveEnergy}`,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVP',
-    selector: (row: ICombat) => `${row.pvp_energy > 0 ? '+' : ''}${row.pvp_energy}`,
+    selector: (row: ICombat) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
     sortable: true,
     width: '120px',
   },
@@ -154,8 +150,8 @@ const SearchTypes = () => {
   });
   const allData = {
     pokemon: (data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length ?? 1) - 1,
-    fastMoves: data?.combat?.filter((type) => type.type_move === TypeMove.FAST)?.length,
-    chargedMoves: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE)?.length,
+    fastMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST)?.length,
+    chargedMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE)?.length,
   };
 
   const [showType, setShowType] = useState(false);
@@ -182,8 +178,8 @@ const SearchTypes = () => {
         pokemonList: data?.pokemon
           ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
           .filter((pokemon) => pokemon.types.includes(currentType)),
-        fastMove: data?.combat?.filter((type) => type.type_move === TypeMove.FAST && type.type === currentType),
-        chargedMove: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE && type.type === currentType),
+        fastMove: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType),
+        chargedMove: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType),
       });
     }
   }, [currentType, releasedGO, data?.pokemon]);

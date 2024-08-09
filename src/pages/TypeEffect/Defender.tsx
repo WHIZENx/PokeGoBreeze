@@ -5,6 +5,7 @@ import { capitalize } from '../../util/Utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
+import { TypeTheme } from '../../enums/type.enum';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme();
@@ -21,10 +22,10 @@ const Defender = (prop: ITypeEffComponent) => {
 
   const getTypeEffective = useCallback(() => {
     const data = TypeEffChart.create({
-      very_weak: [],
+      veryWeak: [],
       weak: [],
-      super_resist: [],
-      very_resist: [],
+      superResist: [],
+      veryResist: [],
       resist: [],
       neutral: [],
     });
@@ -33,7 +34,7 @@ const Defender = (prop: ITypeEffComponent) => {
       valueEffective *= value[currentTypePri];
       valueEffective *= currentTypeSec === '' ? 1 : value[currentTypeSec];
       if (valueEffective >= 2.56) {
-        data.very_weak?.push(key);
+        data.veryWeak?.push(key);
       } else if (valueEffective >= 1.6) {
         data.weak?.push(key);
       } else if (valueEffective >= 1) {
@@ -41,9 +42,9 @@ const Defender = (prop: ITypeEffComponent) => {
       } else if (valueEffective >= 0.625) {
         data.resist?.push(key);
       } else if (valueEffective >= 0.39) {
-        data.very_resist?.push(key);
+        data.veryResist?.push(key);
       } else if (value > 0) {
-        data.super_resist?.push(key);
+        data.superResist?.push(key);
       }
     });
     setTypeEffective(data);
@@ -98,7 +99,7 @@ const Defender = (prop: ITypeEffComponent) => {
                   <ul>
                     {types.map((value, index) => (
                       <li
-                        className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+                        className={'container card-pokemon' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
                         style={{ backgroundColor: theme.palette.background.default }}
                         key={index}
                         onMouseDown={() => changeTypePri(value)}
@@ -146,7 +147,7 @@ const Defender = (prop: ITypeEffComponent) => {
                   <ul>
                     {types.map((value, index) => (
                       <li
-                        className={'container card-pokemon' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+                        className={'container card-pokemon' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
                         style={{ backgroundColor: theme.palette.background.default }}
                         key={index}
                         onMouseDown={() => changeTypeSec(value)}

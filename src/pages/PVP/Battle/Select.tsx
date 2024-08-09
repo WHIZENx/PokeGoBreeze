@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/Constants';
-import { ICombat } from '../../../core/models/combat.model';
+import { Combat, ICombat } from '../../../core/models/combat.model';
 import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { PokemonBattleData } from '../models/battle.model';
@@ -50,22 +50,12 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       fMoveCombat.type = value.moveset?.at(0)?.split('_').at(2) ?? '';
     }
     setFMove(fMoveCombat);
+    cMovePri = replaceTempMovePvpName(cMovePri);
 
-    if (cMovePri === 'FUTURE_SIGHT') {
-      cMovePri = 'FUTURESIGHT';
-    }
-    if (cMovePri === 'TECHNO_BLAST_DOUSE') {
-      cMovePri = 'TECHNO_BLAST_WATER';
-    }
     const cMovePriCombat = combat.find((item) => item.name === cMovePri);
     setCMovePri(cMovePriCombat);
+    cMoveSec = replaceTempMovePvpName(cMoveSec);
 
-    if (cMoveSec === 'FUTURE_SIGHT') {
-      cMoveSec = 'FUTURESIGHT';
-    }
-    if (cMoveSec === 'TECHNO_BLAST_DOUSE') {
-      cMoveSec = 'TECHNO_BLAST_WATER';
-    }
     const cMoveSecCombat = combat.find((item) => item.name === cMoveSec);
     setCMoveSec(cMoveSecCombat);
 
@@ -95,9 +85,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           form: value.form ?? '',
           shadow: value.shadow ?? false,
           hp: value.stats.hp ?? 0,
-          fmove: fMoveCombat ?? null,
-          cmove: cMovePriCombat ?? null,
-          cmoveSec: cMoveSecCombat ?? null,
+          fMove: fMoveCombat ?? null,
+          cMove: cMovePriCombat ?? null,
+          cMoveSec: cMoveSecCombat ?? null,
           energy: 0,
           block: 0,
           turn: 0,
@@ -245,11 +235,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     if (move.includes('HIDDEN_POWER')) {
                       move = 'HIDDEN_POWER';
                     }
-                    let fmove = combat.find((item) => item.name === move);
-                    if (fmove && value.moveId.includes('HIDDEN_POWER')) {
-                      fmove = { ...fmove, type: value.moveId.split('_').at(2) ?? '' };
+                    let fMove = combat.find((item) => item.name === move);
+                    if (fMove && value.moveId.includes('HIDDEN_POWER')) {
+                      fMove = Combat.create({ ...fMove, type: value.moveId.split('_').at(2) ?? '' });
                     }
-                    return fmove;
+                    return fMove;
                   })
                   .filter((value) => value?.name !== fMove?.name)
                   .map((value, index) => (
@@ -303,13 +293,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                   {props.data
                     .find((value) => value?.speciesId === pokemon.speciesId)
                     ?.moves.chargedMoves.map((value) => {
-                      let move = value.moveId;
-                      if (move === 'FUTURE_SIGHT') {
-                        move = 'FUTURESIGHT';
-                      }
-                      if (move === 'TECHNO_BLAST_DOUSE') {
-                        move = 'TECHNO_BLAST_WATER';
-                      }
+                      const move = replaceTempMovePvpName(value.moveId);
                       return combat.find((item) => item.name === move);
                     })
                     .filter((value) => value?.name !== cMovePri?.name && value?.name !== cMoveSec?.name)
@@ -375,13 +359,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                   {props.data
                     .find((value) => value?.speciesId === pokemon.speciesId)
                     ?.moves.chargedMoves.map((value) => {
-                      let move = value.moveId;
-                      if (move === 'FUTURE_SIGHT') {
-                        move = 'FUTURESIGHT';
-                      }
-                      if (move === 'TECHNO_BLAST_DOUSE') {
-                        move = 'TECHNO_BLAST_WATER';
-                      }
+                      const move = replaceTempMovePvpName(value.moveId);
                       return combat.find((item) => item.name === move);
                     })
                     .filter((value) => (!cMoveSec || value?.name !== cMoveSec?.name) && value?.name !== cMovePri?.name)

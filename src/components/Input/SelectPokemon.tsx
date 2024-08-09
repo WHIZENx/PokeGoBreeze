@@ -7,7 +7,7 @@ import './Select.scss';
 import { retrieveMoves, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
-import { TypeMove } from '../../enums/move.enum';
+import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
@@ -78,8 +78,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   const findMove = useCallback(
     (id: number, form: string, type: string) => {
       const result = retrieveMoves(pokemonData, id, form);
-      const simpleMove: ISelectMoveModel[] = [];
       if (result) {
+        const simpleMove: ISelectMoveModel[] = [];
         if (type === TypeMove.FAST) {
           result.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
@@ -104,8 +104,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, true));
           });
         }
+        return simpleMove[0];
       }
-      return simpleMove[0];
     },
     [pokemonData]
   );

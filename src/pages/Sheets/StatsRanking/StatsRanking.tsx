@@ -23,6 +23,7 @@ import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
 import { Form } from '../../../core/models/API/form.model';
+import { TypeAction } from '../../../enums/type.enum';
 
 const columnPokemon: any = [
   {
@@ -122,6 +123,7 @@ const customStyles = {
 };
 
 const StatsRanking = () => {
+  const icon = useSelector((state: StoreState) => state.store.icon);
   useChangeTitle('Stats Ranking');
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -172,11 +174,11 @@ const StatsRanking = () => {
   const sortRanking = (pokemon: IPokemonStatsRanking[], id: number) => {
     let sortBy: string[] = [];
     if (id === ColumnType.Atk) {
-      sortBy = ['atk', 'attack'];
+      sortBy = [TypeAction.ATK, 'attack'];
     } else if (id === ColumnType.Def) {
-      sortBy = ['def', 'defense'];
+      sortBy = [TypeAction.DEF, 'defense'];
     } else if (id === ColumnType.Sta) {
-      sortBy = ['sta', 'stamina'];
+      sortBy = [TypeAction.STA, 'stamina'];
     } else if (id === ColumnType.Prod) {
       sortBy = ['statProd', 'prod'];
     }
@@ -195,11 +197,11 @@ const StatsRanking = () => {
     let idSort = ColumnType.Prod;
     const statsBy = location.state?.stats;
     if (statsBy) {
-      if (statsBy === 'atk') {
+      if (statsBy === TypeAction.ATK) {
         idSort = ColumnType.Atk;
-      } else if (statsBy === 'def') {
+      } else if (statsBy === TypeAction.DEF) {
         idSort = ColumnType.Def;
-      } else if (statsBy === 'sta') {
+      } else if (statsBy === TypeAction.STA) {
         idSort = ColumnType.Sta;
       }
     }
@@ -217,8 +219,8 @@ const StatsRanking = () => {
   const [select, setSelect]: [IPokemonStatsRanking | undefined, React.Dispatch<React.SetStateAction<IPokemonStatsRanking | undefined>>] =
     useState();
 
-  const [filters, setFilters] = useState({ match: false });
-  const { match } = filters;
+  const [filters, setFilters] = useState({ match: false, releasedGO: false });
+  const { match, releasedGO } = filters;
 
   const [progress, setProgress] = useState({ isLoadedForms: false });
   const { isLoadedForms } = progress;
@@ -263,35 +265,34 @@ const StatsRanking = () => {
     if (pokemonList.length > 0) {
       const timeOutId = setTimeout(() => {
         setPokemonFilter(
-          pokemonList.filter(
-            (pokemon) =>
-              search === '' ||
-              (match
-                ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
-                : pokemon.num.toString().includes(search) ||
-                  splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
-          )
+          pokemonList
+            .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
+            .filter(
+              (pokemon) =>
+                search === '' ||
+                (match
+                  ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
+                  : pokemon.num.toString().includes(search) ||
+                    splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
+            )
         );
       }, 100);
       return () => clearTimeout(timeOutId);
     }
-  }, [search, match, pokemonList]);
+  }, [search, match, releasedGO, pokemonList]);
 
   const convertToPokemonForm = (pokemon: IPokemonData | IPokemonStatsRanking) => {
     return Form.create({
-      form_name: pokemon.forme ?? '',
-      form_names: [],
-      form_order: 0,
+      formName: pokemon.forme ?? '',
       id: pokemon.num,
-      is_battle_only: false,
-      is_default: true,
-      is_mega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
+      isDefault: true,
+      isMega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
       name: pokemon.name,
       sprites: undefined,
       types: pokemon.types ?? [],
-      version_group: { name: pokemon.version ?? '' },
-      is_shadow: false,
-      is_purified: false,
+      versionGroup: { name: pokemon.version ?? '' },
+      isShadow: false,
+      isPurified: false,
     });
   };
 
@@ -372,6 +373,22 @@ const StatsRanking = () => {
           control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
           label="Match Pokémon"
         />
+        <FormControlLabel
+          control={<Checkbox checked={releasedGO} onChange={(_, check) => setFilters({ ...filters, releasedGO: check })} />}
+          label={
+            <span className="d-flex align-items-center">
+              Released in GO
+              <img
+                className={releasedGO ? '' : 'filter-gray'}
+                width={28}
+                height={28}
+                style={{ marginLeft: 5 }}
+                alt="pokemon-go-icon"
+                src={APIService.getPokemonGoIcon(icon)}
+              />
+            </span>
+          }
+        />
       </div>
       <DataTable
         columns={columnPokemon}
@@ -387,7 +404,7 @@ const StatsRanking = () => {
         }}
         onSort={(rows) => {
           if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonList, parseInt(rows.id?.toString() ?? '0')));
+            setPokemonFilter(sortRanking(pokemonFilter, parseInt(rows.id?.toString() ?? '0')));
             setSortId(parseInt(rows.id?.toString() ?? ''));
           }
         }}

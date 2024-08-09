@@ -64,23 +64,20 @@ export class TypeEff implements ITypeEff {
 }
 
 export interface ITypeEffChart {
-  very_weak?: string[];
+  veryWeak?: string[];
   weak?: string[];
-  super_resist?: string[];
-  very_resist?: string[];
+  superResist?: string[];
+  veryResist?: string[];
   resist?: string[];
   neutral?: string[];
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class TypeEffChart implements ITypeEffChart {
-  // tslint:disable-next-line:variable-name
-  very_weak?: string[];
+  veryWeak?: string[];
   weak?: string[];
-  // tslint:disable-next-line:variable-name
-  super_resist?: string[];
-  // tslint:disable-next-line:variable-name
-  very_resist?: string[];
+  superResist?: string[];
+  veryResist?: string[];
   resist?: string[];
   neutral?: string[];
 

@@ -1,7 +1,7 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertNameRankingToOri, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertNameRankingToOri, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/Utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -58,9 +58,10 @@ const PokemonPVP = () => {
       const cp = parseInt(params.cp ?? '');
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
-        (await APIService.getFetchUrl(APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, params.type ?? '')))
-          .data as RankingsPVP[]
-      ).find((pokemon) => pokemon.speciesId === paramName);
+        await APIService.getFetchUrl<RankingsPVP[]>(
+          APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, params.type ?? '')
+        )
+      ).data.find((pokemon) => pokemon.speciesId === paramName);
 
       if (!data) {
         setFound(false);
@@ -75,34 +76,22 @@ const PokemonPVP = () => {
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
-      let fmoveData = data.moveset.at(0),
-        cMoveDataPri = data.moveset.at(1),
-        cMoveDataSec = data.moveset.at(2);
-      if (fmoveData?.includes('HIDDEN_POWER')) {
-        fmoveData = 'HIDDEN_POWER';
-      }
-      if (cMoveDataPri === 'FUTURE_SIGHT') {
-        cMoveDataPri = 'FUTURESIGHT';
-      }
-      if (cMoveDataSec === 'FUTURE_SIGHT') {
-        cMoveDataSec = 'FUTURESIGHT';
-      }
-      if (cMoveDataPri === 'TECHNO_BLAST_DOUSE') {
-        cMoveDataPri = 'TECHNO_BLAST_WATER';
-      }
-      if (cMoveDataSec === 'TECHNO_BLAST_DOUSE') {
-        cMoveDataSec = 'TECHNO_BLAST_WATER';
+      let fMoveData = data.moveset.at(0);
+      const cMoveDataPri = replaceTempMovePvpName(data.moveset.at(1) ?? '');
+      const cMoveDataSec = replaceTempMovePvpName(data.moveset.at(2) ?? '');
+      if (fMoveData?.includes('HIDDEN_POWER')) {
+        fMoveData = 'HIDDEN_POWER';
       }
 
-      let fmove = dataStore?.combat?.find((item) => item.name === fmoveData);
-      const cmovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
-      let cmoveSec;
+      let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);
+      const cMovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
+      let cMoveSec;
       if (cMoveDataSec) {
-        cmoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
+        cMoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
       }
 
-      if (fmove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
-        fmove = { ...fmove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
+      if (fMove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
+        fMove = { ...fMove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
       }
 
       const maxCP = parseInt(params.cp ?? '');
@@ -140,13 +129,13 @@ const PokemonPVP = () => {
           def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
           sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
           prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
-          fmove,
-          cmovePri,
-          cmoveSec,
+          fMove,
+          cMovePri,
+          cMoveSec,
           bestStats,
           shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`) ?? false,
           purified:
-            (pokemon?.purifiedMoves?.includes(cmovePri?.name ?? '') ||
+            (pokemon?.purifiedMoves?.includes(cMovePri?.name ?? '') ||
               (cMoveDataSec !== null && cMoveDataSec !== undefined && pokemon?.purifiedMoves?.includes(cMoveDataSec))) ??
             false,
         })
@@ -272,31 +261,31 @@ const PokemonPVP = () => {
                       find={true}
                       title="Fast Move"
                       color={'white'}
-                      move={rankingPoke?.fmove}
-                      elite={rankingPoke?.pokemon?.eliteQuickMove?.includes(rankingPoke?.fmove?.name ?? '')}
+                      move={rankingPoke?.fMove}
+                      elite={rankingPoke?.pokemon?.eliteQuickMove?.includes(rankingPoke?.fMove?.name ?? '')}
                     />
                     <TypeBadge
                       grow={true}
                       find={true}
                       title="Primary Charged Move"
                       color={'white'}
-                      move={rankingPoke?.cmovePri}
-                      elite={rankingPoke?.pokemon?.eliteCinematicMove?.includes(rankingPoke?.cmovePri?.name ?? '')}
-                      shadow={rankingPoke?.pokemon?.shadowMoves?.includes(rankingPoke?.cmovePri?.name ?? '')}
-                      purified={rankingPoke?.pokemon?.purifiedMoves?.includes(rankingPoke?.cmovePri?.name ?? '')}
-                      special={rankingPoke?.pokemon?.specialMoves?.includes(rankingPoke?.cmovePri?.name ?? '')}
+                      move={rankingPoke?.cMovePri}
+                      elite={rankingPoke?.pokemon?.eliteCinematicMove?.includes(rankingPoke?.cMovePri?.name ?? '')}
+                      shadow={rankingPoke?.pokemon?.shadowMoves?.includes(rankingPoke?.cMovePri?.name ?? '')}
+                      purified={rankingPoke?.pokemon?.purifiedMoves?.includes(rankingPoke?.cMovePri?.name ?? '')}
+                      special={rankingPoke?.pokemon?.specialMoves?.includes(rankingPoke?.cMovePri?.name ?? '')}
                     />
-                    {rankingPoke?.cmoveSec && (
+                    {rankingPoke?.cMoveSec && (
                       <TypeBadge
                         grow={true}
                         find={true}
                         title="Secondary Charged Move"
                         color={'white'}
-                        move={rankingPoke?.cmoveSec}
-                        elite={rankingPoke?.pokemon?.eliteCinematicMove?.includes(rankingPoke?.cmoveSec.name)}
-                        shadow={rankingPoke?.pokemon?.shadowMoves?.includes(rankingPoke?.cmoveSec.name)}
-                        purified={rankingPoke?.pokemon?.purifiedMoves?.includes(rankingPoke?.cmoveSec.name)}
-                        special={rankingPoke?.pokemon?.specialMoves?.includes(rankingPoke?.cmoveSec?.name)}
+                        move={rankingPoke?.cMoveSec}
+                        elite={rankingPoke?.pokemon?.eliteCinematicMove?.includes(rankingPoke?.cMoveSec.name)}
+                        shadow={rankingPoke?.pokemon?.shadowMoves?.includes(rankingPoke?.cMoveSec.name)}
+                        purified={rankingPoke?.pokemon?.purifiedMoves?.includes(rankingPoke?.cMoveSec.name)}
+                        special={rankingPoke?.pokemon?.specialMoves?.includes(rankingPoke?.cMoveSec?.name)}
                       />
                     )}
                   </div>

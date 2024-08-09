@@ -20,13 +20,21 @@ import { setSearchToolPage } from '../../store/actions/searching.action';
 import { Action } from 'history';
 import { ToolSearching } from '../../core/models/searching.model';
 import { IPokemonName } from '../../core/models/pokemon.model';
-import { Form, PokemonForm, IPokemonFormModify, PokemonFormModify } from '../../core/models/API/form.model';
+import {
+  Form,
+  PokemonForm,
+  IPokemonFormModify,
+  PokemonFormModify,
+  PokemonFormDetail,
+  IPokemonFormDetail,
+} from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
-import { PokemonInfo } from '../../core/models/API/info.model';
+import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
 import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IFormSelectComponent } from '../models/component.model';
+import { TypeRaid } from '../../enums/type.enum';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -37,12 +45,14 @@ interface OptionsPokemon {
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
 
-  const [pokeData, setPokeData]: [PokemonInfo[], React.Dispatch<React.SetStateAction<PokemonInfo[]>>] = useState([] as PokemonInfo[]);
+  const [pokeData, setPokeData]: [IPokemonDetail[], React.Dispatch<React.SetStateAction<IPokemonDetail[]>>] = useState(
+    [] as IPokemonDetail[]
+  );
   const [formList, setFormList]: [IPokemonFormModify[][], React.Dispatch<React.SetStateAction<IPokemonFormModify[][]>>] = useState(
     [] as IPokemonFormModify[][]
   );
 
-  const [typePoke, setTypePoke] = useState(props.raid ? 'boss' : 'pokemon');
+  const [typePoke, setTypePoke] = useState(props.raid ? TypeRaid.BOSS.toString() : TypeRaid.POKEMON.toString());
   const [tier, setTier] = useState(props.tier ?? 1);
 
   const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
@@ -62,16 +72,20 @@ const FormSelect = (props: IFormSelectComponent) => {
   const fetchMap = async (data: Species) => {
     setFormList([]);
     setPokeData([]);
-    const dataPokeList: PokemonInfo[] = [];
-    const dataFormList: PokemonForm[][] = [];
+    const dataPokeList: IPokemonDetail[] = [];
+    const dataFormList: IPokemonFormDetail[][] = [];
     const cancelToken = axiosSource.current.token;
     await Promise.all(
       data.varieties.map(async (value) => {
         const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken })).data;
         const pokeForm = await Promise.all(
-          pokeInfo.forms.map(async (item) => (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data)
+          pokeInfo.forms.map(async (item) => {
+            const form = (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data;
+            return PokemonFormDetail.setDetails(form);
+          })
         );
-        dataPokeList.push(pokeInfo);
+        const pokeDetail = PokemonDetail.setDetails(pokeInfo);
+        dataPokeList.push(pokeDetail);
         dataFormList.push(pokeForm);
       })
     ).catch(() => {
@@ -81,17 +95,16 @@ const FormSelect = (props: IFormSelectComponent) => {
     const formListResult = dataFormList
       .map((item) =>
         item
-          .map(
-            (item) =>
-              new PokemonFormModify(
-                data.id,
-                data.name,
-                data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-                new Form({
-                  ...item,
-                  form_name: item.form_name.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.form_name,
-                })
-              )
+          .map((item) =>
+            PokemonFormModify.setForm(
+              data.id,
+              data.name,
+              data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+              new Form({
+                ...item,
+                formName: item.formName.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.formName,
+              })
+            )
           )
           .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
       )
@@ -102,13 +115,13 @@ const FormSelect = (props: IFormSelectComponent) => {
     setPokeData(dataPokeList);
     setFormList(formListResult);
 
-    const defaultFrom = formListResult.map((value) => value.find((item) => item.form.is_default)).filter((item) => item);
+    const defaultFrom = formListResult.map((value) => value.find((item) => item.form.isDefault)).filter((item) => item);
     let currentForm = defaultFrom?.find((item) => item?.form.id === data.id);
     if (props.searching) {
       const defaultFormSearch = formListResult.find((value) =>
         value.find(
           (item) =>
-            item?.form.form_name === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
+            item?.form.formName === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
         )
       );
       if (defaultFormSearch) {
@@ -171,8 +184,8 @@ const FormSelect = (props: IFormSelectComponent) => {
               ...(props.searching as ToolSearching),
               obj: {
                 id: props.id ?? 0,
-                name: currentForm?.default_name,
-                form: currentForm?.form.form_name,
+                name: currentForm?.defaultName,
+                form: currentForm?.form.formName,
                 fullName: currentForm?.form.name,
                 timestamp: new Date(),
               },
@@ -180,8 +193,8 @@ const FormSelect = (props: IFormSelectComponent) => {
           : setSearchToolPage({
               ...props.searching,
               id: props.id ?? 0,
-              name: currentForm?.default_name,
-              form: currentForm?.form.form_name,
+              name: currentForm?.defaultName,
+              form: currentForm?.form.formName,
               fullName: currentForm?.form.name,
               timestamp: new Date(),
             })
@@ -255,7 +268,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         alt="img-full-pokemon"
         src={
           currentForm?.form
-            ? APIService.getPokeFullSprite(dataStorePokemon?.current?.id, convertPokemonImageName(currentForm?.form.form_name))
+            ? APIService.getPokeFullSprite(dataStorePokemon?.current?.id, convertPokemonImageName(currentForm?.form.formName))
             : APIService.getPokeFullSprite(dataStorePokemon?.current?.id)
         }
         onError={(e) => {
@@ -294,7 +307,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <div className="element-top" style={{ height: 64 }}>
-        {currentForm?.default_id && <TypeInfo arr={currentForm.form.types} />}
+        {currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}
       </div>
       <h4>
         <b>
@@ -303,7 +316,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         </b>
       </h4>
       <div className="scroll-card">
-        {currentForm?.default_id && pokeData.length > 0 && formList.length > 0 ? (
+        {currentForm?.defaultId && pokeData.length > 0 && formList.length > 0 ? (
           <Fragment>
             {formList.map((value, index) => (
               <Fragment key={index}>
@@ -321,10 +334,10 @@ const FormSelect = (props: IFormSelectComponent) => {
                         e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                       }}
                       alt="img-icon-form"
-                      src={formIconAssets(value, currentForm?.default_id ?? 0)}
+                      src={formIconAssets(value, currentForm?.defaultId ?? 0)}
                     />
-                    <p>{!value.form.form_name ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.form_name, '-', ' ')}</p>
-                    {(value.form.id ?? 0 > 0) && value.form.id === currentForm?.default_id && (
+                    <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
+                    {(value.form.id ?? 0 > 0) && value.form.id === currentForm?.defaultId && (
                       <b>
                         <small>(Default)</small>
                       </b>
@@ -358,7 +371,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             onChange={(e) => {
               setTypePoke(e.target.value);
               if (props.setRaid) {
-                props.setRaid(e.target.value === 'pokemon' ? false : true);
+                props.setRaid(e.target.value === TypeRaid.POKEMON ? false : true);
               }
               if (props.onClearStats) {
                 props.onClearStats(true);
@@ -392,7 +405,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <Tools
         hide={props.hide}
-        isRaid={typePoke === 'pokemon' ? false : true}
+        isRaid={typePoke === TypeRaid.POKEMON ? false : true}
         tier={tier}
         setTier={onSetTier}
         setForm={props.setForm}

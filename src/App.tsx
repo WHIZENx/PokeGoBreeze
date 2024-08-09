@@ -45,6 +45,7 @@ import { getDesignThemes } from './assets/themes/themes';
 import { TRANSITION_TIME } from './util/Constants';
 import { setDevice } from './store/actions/device.action';
 import { PaletteMode } from '@mui/material';
+import { TypeTheme } from './enums/type.enum';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -123,7 +124,7 @@ export default function Main() {
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        setMode((prevMode) => (prevMode === TypeTheme.LIGHT ? TypeTheme.DARK : TypeTheme.LIGHT));
       },
     }),
     []

@@ -13,6 +13,7 @@ import { RouterState, SearchingState, StoreState } from '../../../store/models/s
 import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { TypeTheme } from '../../../enums/type.enum';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');
@@ -116,11 +117,11 @@ const Search = () => {
         </h1>
         <div className="input-group mb-12 element-top">
           <div className="input-group-prepend">
-            <span className={'input-group-text ' + (theme.palette.mode === 'dark' ? 'input-group-dark' : '')}>Search</span>
+            <span className={'input-group-text ' + (theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>Search</span>
           </div>
           <input
             type="text"
-            className={'form-control input-search' + (theme.palette.mode === 'dark' ? '-dark' : '')}
+            className={'form-control input-search' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
             style={{ backgroundColor: (theme.palette.background as any).input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}

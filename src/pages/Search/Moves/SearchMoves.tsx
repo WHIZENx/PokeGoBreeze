@@ -6,15 +6,15 @@ import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../.
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
-import { TypeMove } from '../../../enums/move.enum';
+import { TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
-  const a = rowA.name.toLowerCase().replaceAll(' plus', '+');
-  const b = rowB.name.toLowerCase().replaceAll(' plus', '+');
+  const a = rowA.name.toLowerCase();
+  const b = rowB.name.toLowerCase();
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
@@ -40,7 +40,7 @@ const columns: any = [
     name: 'Name',
     selector: (row: ICombat) => (
       <Link to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type?.toLowerCase() : '')}>
-        {splitAndCapitalize(row.name, '_', ' ').replaceAll(' Plus', '+')}
+        {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),
     sortable: true,
@@ -49,13 +49,13 @@ const columns: any = [
   },
   {
     name: 'Power (PVE/PVP)',
-    selector: (row: ICombat) => `${row.pve_power}/${row.pvp_power}`,
+    selector: (row: ICombat) => `${row.pvePower}/${row.pvpPower}`,
     sortable: true,
     width: '150px',
   },
   {
     name: 'DPS',
-    selector: (row: ICombat) => parseFloat((row.pve_power / (row.durationMs / 1000)).toFixed(2)),
+    selector: (row: ICombat) => parseFloat((row.pvePower / (row.durationMs / 1000)).toFixed(2)),
     sortable: true,
   },
 ];
@@ -98,11 +98,10 @@ const Search = () => {
 
   const searchMove = (category: string, type: string, name: string) => {
     return combat
-      .filter((item) => item.type_move === category)
+      .filter((item) => item.typeMove === category)
       .filter(
         (move) =>
-          (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(name.toLowerCase()) ||
-            move.track.toString().includes(name)) &&
+          (splitAndCapitalize(move.name, '_', ' ').toLowerCase().includes(name.toLowerCase()) || move.track.toString().includes(name)) &&
           (type === 'all' || type === capitalize(move.type))
       );
   };

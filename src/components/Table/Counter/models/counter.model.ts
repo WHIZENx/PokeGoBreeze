@@ -1,26 +1,23 @@
 import { Combat, ICombat } from '../../../../core/models/combat.model';
 
 export interface ICounterModel {
-  cmove: ICombat;
+  cMove: ICombat;
   dps: number;
-  fmove: ICombat;
-  pokemon_forme: string | null;
-  pokemon_id: number;
-  pokemon_name: string | null;
+  fMove: ICombat;
+  pokemonForme: string | null;
+  pokemonId: number;
+  pokemonName: string | null;
   ratio: number;
   releasedGO: boolean;
 }
 
 export class CounterModel implements ICounterModel {
-  cmove: ICombat = new Combat();
+  cMove: ICombat = new Combat();
   dps: number = 0;
-  fmove: ICombat = new Combat();
-  // tslint:disable-next-line:variable-name
-  pokemon_forme: string | null = '';
-  // tslint:disable-next-line:variable-name
-  pokemon_id: number = 0;
-  // tslint:disable-next-line:variable-name
-  pokemon_name: string | null = '';
+  fMove: ICombat = new Combat();
+  pokemonForme: string | null = '';
+  pokemonId: number = 0;
+  pokemonName: string | null = '';
   ratio: number = 0;
   releasedGO: boolean = false;
 

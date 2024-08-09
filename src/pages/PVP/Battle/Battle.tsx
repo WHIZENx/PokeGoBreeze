@@ -31,9 +31,9 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
-import atk_logo from '../../../assets/attack.png';
-import def_logo from '../../../assets/defense.png';
-import hp_logo from '../../../assets/hp.png';
+import ATK_LOGO from '../../../assets/attack.png';
+import DEF_LOGO from '../../../assets/defense.png';
+import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -53,6 +53,7 @@ import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { StatsPokemon } from '../../../core/models/stats.model';
+import { TypeAction } from '../../../enums/type.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -162,7 +163,7 @@ const Battle = () => {
       pokeObj.shadow ??= false;
       return (
         (atkPoke *
-          (move?.pvp_power ?? 0) *
+          (move?.pvpPower ?? 0) *
           (poke.pokemon?.types.includes(move?.type ?? '') ? STAB_MULTIPLY(dataStore?.options) : 1) *
           (poke.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
           getTypeEffective(dataStore?.typeEff, move?.type ?? '', pokeObj.pokemon?.types ?? [])) /
@@ -179,9 +180,9 @@ const Battle = () => {
       currentStats: poke.pokemonData?.currentStats,
       bestStats: poke.pokemonData?.bestStats,
       pokemon: poke.pokemonData?.pokemon ?? null,
-      fmove: poke.fMove ?? null,
-      cmove: poke.cMovePri ?? null,
-      cmoveSec: poke.cMoveSec ?? null,
+      fMove: poke.fMove ?? null,
+      cMove: poke.cMovePri ?? null,
+      cMoveSec: poke.cMoveSec ?? null,
       energy: poke.energy ?? 0,
       block: poke.block ?? DEFAULT_BLOCK,
       turn: Math.ceil((poke.fMove?.durationMs ?? 0) / 500),
@@ -209,17 +210,17 @@ const Battle = () => {
     let player2 = Pokemon(pokemonObj);
 
     if (player1.disableCMovePri) {
-      player1.cmove = player1.cmoveSec;
+      player1.cMove = player1.cMoveSec;
     }
     if (player1.disableCMoveSec) {
-      player1.cmoveSec = player1.cmove;
+      player1.cMoveSec = player1.cMove;
     }
 
     if (player2.disableCMovePri) {
-      player2.cmove = player2.cmoveSec;
+      player2.cMove = player2.cMoveSec;
     }
     if (player2.disableCMoveSec) {
-      player2.cmoveSec = player2.cmove;
+      player2.cMoveSec = player2.cMove;
     }
 
     const timelinePri: ITimeline[] = [];
@@ -253,28 +254,28 @@ const Battle = () => {
         if (
           (!player1.disableCMovePri || !player1.disableCMoveSec) &&
           !preChargeSec &&
-          (player1.energy >= Math.abs(player1.cmove?.pvp_energy ?? 0) || player1.energy >= Math.abs(player1.cmoveSec?.pvp_energy ?? 0))
+          (player1.energy >= Math.abs(player1.cMove?.pvpEnergy ?? 0) || player1.energy >= Math.abs(player1.cMoveSec?.pvpEnergy ?? 0))
         ) {
-          if (player1.energy >= Math.abs(player1.cmove?.pvp_energy ?? 0)) {
+          if (player1.energy >= Math.abs(player1.cMove?.pvpEnergy ?? 0)) {
             chargeType = ChargeType.Primary;
-            player1.energy += player1.cmove?.pvp_energy ?? 0;
+            player1.energy += player1.cMove?.pvpEnergy ?? 0;
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
-              color: player1.cmove?.type?.toLowerCase() ?? null,
+              color: player1.cMove?.type?.toLowerCase() ?? null,
               size: DEFAULT_SIZE,
-              move: player1.cmove,
+              move: player1.cMove,
             });
           }
-          if (player1.energy >= Math.abs(player1.cmoveSec?.pvp_energy ?? 0)) {
+          if (player1.energy >= Math.abs(player1.cMoveSec?.pvpEnergy ?? 0)) {
             chargeType = ChargeType.Secondary;
-            player1.energy += player1.cmoveSec?.pvp_energy ?? 0;
+            player1.energy += player1.cMoveSec?.pvpEnergy ?? 0;
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
-              color: player1.cmoveSec?.type?.toLowerCase() ?? null,
+              color: player1.cMoveSec?.type?.toLowerCase() ?? null,
               size: DEFAULT_SIZE,
-              move: player2.cmoveSec,
+              move: player2.cMoveSec,
             });
           }
           if (tapSec) {
@@ -287,28 +288,28 @@ const Battle = () => {
         if (
           (!player2.disableCMovePri || !player2.disableCMoveSec) &&
           !preChargePri &&
-          (player2.energy >= Math.abs(player2.cmove?.pvp_energy ?? 0) || player2.energy >= Math.abs(player2.cmoveSec?.pvp_energy ?? 0))
+          (player2.energy >= Math.abs(player2.cMove?.pvpEnergy ?? 0) || player2.energy >= Math.abs(player2.cMoveSec?.pvpEnergy ?? 0))
         ) {
-          if (player2.energy >= Math.abs(player2.cmove?.pvp_energy ?? 0)) {
+          if (player2.energy >= Math.abs(player2.cMove?.pvpEnergy ?? 0)) {
             chargeType = ChargeType.Primary;
-            player2.energy += player2.cmove?.pvp_energy ?? 0;
+            player2.energy += player2.cMove?.pvpEnergy ?? 0;
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
-              color: player2.cmove?.type?.toLowerCase() ?? null,
+              color: player2.cMove?.type?.toLowerCase() ?? null,
               size: DEFAULT_SIZE,
-              move: player2.cmove,
+              move: player2.cMove,
             });
           }
-          if (player2.energy >= Math.abs(player2.cmoveSec?.pvp_energy ?? 0)) {
+          if (player2.energy >= Math.abs(player2.cMoveSec?.pvpEnergy ?? 0)) {
             chargeType = ChargeType.Secondary;
-            player2.energy += player2.cmoveSec?.pvp_energy ?? 0;
+            player2.energy += player2.cMoveSec?.pvpEnergy ?? 0;
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
-              color: player2.cmoveSec?.type?.toLowerCase() ?? null,
+              color: player2.cMoveSec?.type?.toLowerCase() ?? null,
               size: DEFAULT_SIZE,
-              move: player2.cmoveSec,
+              move: player2.cMoveSec,
             });
           }
           if (tapPri) {
@@ -322,7 +323,7 @@ const Battle = () => {
           if (!tapPri) {
             tapPri = true;
             if (!preChargeSec) {
-              timelinePri[timer] = new TimelineModel({ ...timelinePri[timer], tap: true, move: player1.fmove });
+              timelinePri[timer] = new TimelineModel({ ...timelinePri[timer], tap: true, move: player1.fMove });
             } else {
               timelinePri[timer].tap = false;
             }
@@ -336,14 +337,14 @@ const Battle = () => {
           if (tapPri && fastPriDelay === 0) {
             tapPri = false;
             if (!preChargeSec) {
-              player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
+              player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
             }
-            player1.energy += player1.fmove?.pvp_energy ?? 0;
+            player1.energy += player1.fMove?.pvpEnergy ?? 0;
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Fast,
-              color: player1.fmove?.type?.toLowerCase() ?? null,
-              move: player1.fmove,
+              color: player1.fMove?.type?.toLowerCase() ?? null,
+              move: player1.fMove,
               dmgImmune: preChargeSec,
               tap: preChargeSec && player1.turn === 1 ? true : timelinePri[timer].tap,
             });
@@ -359,7 +360,7 @@ const Battle = () => {
           if (!tapSec) {
             tapSec = true;
             if (!preChargePri) {
-              timelineSec[timer] = new TimelineModel({ ...timelineSec[timer], tap: true, move: player2.fmove });
+              timelineSec[timer] = new TimelineModel({ ...timelineSec[timer], tap: true, move: player2.fMove });
             } else {
               timelineSec[timer].tap = false;
             }
@@ -373,16 +374,16 @@ const Battle = () => {
           if (tapSec && fastSecDelay === 0) {
             tapSec = false;
             if (!preChargePri) {
-              player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
+              player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
             } else {
               immuneSec = true;
             }
-            player2.energy += player2.fmove?.pvp_energy ?? 0;
+            player2.energy += player2.fMove?.pvpEnergy ?? 0;
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Fast,
-              color: player2.fmove?.type?.toLowerCase() ?? null,
-              move: player2.fmove,
+              color: player2.fMove?.type?.toLowerCase() ?? null,
+              move: player2.fMove,
               dmgImmune: preChargePri,
               tap: preChargePri && player2.turn === 1 ? true : timelineSec[timer].tap,
             });
@@ -402,18 +403,18 @@ const Battle = () => {
               timelinePri[timer] = new TimelineModel({
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player1.cmove?.type?.toLowerCase() ?? null,
+                color: player1.cMove?.type?.toLowerCase() ?? null,
                 size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
-                move: player1.cmove,
+                move: player1.cMove,
               });
             }
             if (chargeType === ChargeType.Secondary) {
               timelinePri[timer] = new TimelineModel({
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player1.cmoveSec?.type?.toLowerCase() ?? null,
+                color: player1.cMoveSec?.type?.toLowerCase() ?? null,
                 size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
-                move: player1.cmoveSec,
+                move: player1.cMoveSec,
               });
             }
           }
@@ -433,18 +434,18 @@ const Battle = () => {
               timelineSec[timer] = new TimelineModel({
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player2.cmove?.type?.toLowerCase() ?? null,
+                color: player2.cMove?.type?.toLowerCase() ?? null,
                 size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
-                move: player2.cmove,
+                move: player2.cMove,
               });
             }
             if (chargeType === ChargeType.Secondary) {
               timelineSec[timer] = new TimelineModel({
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player2.cmoveSec?.type?.toLowerCase() ?? null,
+                color: player2.cMoveSec?.type?.toLowerCase() ?? null,
                 size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
-                move: player2.cmoveSec,
+                move: player2.cMoveSec,
               });
             }
           }
@@ -470,15 +471,15 @@ const Battle = () => {
           } else {
             if (player2.block === 0) {
               if (chargeType === ChargeType.Primary) {
-                player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmove);
+                player2.hp -= calculateMoveDmgActual(player1, player2, player1.cMove);
               }
               if (chargeType === ChargeType.Secondary) {
-                player2.hp -= calculateMoveDmgActual(player1, player2, player1.cmoveSec);
+                player2.hp -= calculateMoveDmgActual(player1, player2, player1.cMoveSec);
               }
             } else {
               player2.block -= 1;
             }
-            const moveType = chargeType === ChargeType.Primary ? player1.cmove : player1.cmoveSec;
+            const moveType = chargeType === ChargeType.Primary ? player1.cMove : player1.cMoveSec;
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
@@ -489,8 +490,8 @@ const Battle = () => {
                     ...player2,
                     stats: {
                       ...player2.stats,
-                      atk: value.type === 'atk' ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
-                      def: value.type === 'def' ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
+                      atk: value.type === TypeAction.ATK ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
+                      def: value.type === TypeAction.DEF ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
                     },
                   });
                   arrBufTarget.push(value);
@@ -499,8 +500,8 @@ const Battle = () => {
                     ...player1,
                     stats: {
                       ...player1.stats,
-                      atk: value.type === 'atk' ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
-                      def: value.type === 'def' ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
+                      atk: value.type === TypeAction.ATK ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
+                      def: value.type === TypeAction.DEF ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
                     },
                   });
                   arrBufAtk.push(value);
@@ -524,15 +525,15 @@ const Battle = () => {
           } else {
             if (player1.block === 0) {
               if (chargeType === ChargeType.Primary) {
-                player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmove);
+                player1.hp -= calculateMoveDmgActual(player2, player1, player2.cMove);
               }
               if (chargeType === ChargeType.Secondary) {
-                player1.hp -= calculateMoveDmgActual(player2, player1, player2.cmoveSec);
+                player1.hp -= calculateMoveDmgActual(player2, player1, player2.cMoveSec);
               }
             } else {
               player1.block -= 1;
             }
-            const moveType = chargeType === ChargeType.Primary ? player2.cmove : player2.cmoveSec;
+            const moveType = chargeType === ChargeType.Primary ? player2.cMove : player2.cMoveSec;
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
@@ -543,8 +544,8 @@ const Battle = () => {
                     ...player1,
                     stats: {
                       ...player1.stats,
-                      atk: value.type === 'atk' ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
-                      def: value.type === 'def' ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
+                      atk: value.type === TypeAction.ATK ? player1.stats?.atk ?? 0 + value.power : player1.stats?.atk ?? 0,
+                      def: value.type === TypeAction.DEF ? player1.stats?.def ?? 0 + value.power : player1.stats?.def ?? 0,
                     },
                   });
                   arrBufTarget.push(value);
@@ -553,8 +554,8 @@ const Battle = () => {
                     ...player2,
                     stats: {
                       ...player2.stats,
-                      atk: value.type === 'atk' ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
-                      def: value.type === 'def' ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
+                      atk: value.type === TypeAction.ATK ? player2.stats?.atk ?? 0 + value.power : player2.stats?.atk ?? 0,
+                      def: value.type === TypeAction.DEF ? player2.stats?.def ?? 0 + value.power : player2.stats?.def ?? 0,
                     },
                   });
                   arrBufAtk.push(value);
@@ -587,10 +588,10 @@ const Battle = () => {
           tapPri = false;
           tapSec = false;
           if (immunePri) {
-            player2.hp -= calculateMoveDmgActual(player1, player2, player1.fmove);
+            player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
             timelinePri[timer].dmgImmune = true;
           } else if (immuneSec) {
-            player1.hp -= calculateMoveDmgActual(player2, player1, player2.fmove);
+            player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
             timelineSec[timer].dmgImmune = true;
           }
           immunePri = false;
@@ -985,7 +986,7 @@ const Battle = () => {
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
         {move?.buffs.map((value, index) => (
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
-            <img width={15} height={15} alt="img-atk" src={value.type === 'atk' ? atk_logo : def_logo} />
+            <img width={15} height={15} alt="img-atk" src={value.type === TypeAction.ATK ? ATK_LOGO : DEF_LOGO} />
             <div className="position-absolute icon-buff">
               {value.power === 2 ? (
                 <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
@@ -1152,7 +1153,7 @@ const Battle = () => {
               {pokemon.pokemonData?.currentStats?.IV?.sta ?? 0}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
+            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
             Attack:{' '}
             <b>
               {Math.floor(
@@ -1160,7 +1161,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
+            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
             Defense:{' '}
             <b>
               {Math.floor(
@@ -1168,7 +1169,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
+            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
             HP: <b>{Math.floor(pokemon.pokemonData?.currentStats?.stats?.statsSTA ?? 0)}</b>
             <br />
             Stats Prod:{' '}
@@ -1344,7 +1345,7 @@ const Battle = () => {
                     type={pokemon.cMovePri?.type}
                     size={80}
                     maxEnergy={100}
-                    moveEnergy={Math.abs(pokemon.cMovePri?.pvp_energy ?? 0)}
+                    moveEnergy={Math.abs(pokemon.cMovePri?.pvpEnergy ?? 0)}
                     energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
                     disable={pokemon.disableCMovePri}
                   />
@@ -1354,7 +1355,7 @@ const Battle = () => {
                       type={pokemon.cMoveSec.type}
                       size={80}
                       maxEnergy={100}
-                      moveEnergy={Math.abs(pokemon.cMoveSec.pvp_energy)}
+                      moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
                       energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
                       disable={pokemon.disableCMoveSec}
                     />
@@ -1572,8 +1573,8 @@ const Battle = () => {
           <div className="text-center element-top">
             <button className="btn btn-primary" onClick={() => battleAnimation()}>
               <span className="position-relative">
-                <img height={36} alt="atk-left" src={atk_logo} />
-                <img className="battle-logo" height={36} alt="atk-right" src={atk_logo} />
+                <img height={36} alt="atk-left" src={ATK_LOGO} />
+                <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
               </span>{' '}
               Battle Simulator
             </button>
