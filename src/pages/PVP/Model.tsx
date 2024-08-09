@@ -8,7 +8,7 @@ import TypeInfo from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 import { calculateCP, calStatsProd } from '../../util/Calculate';
 import { computeBgType, findAssetForm } from '../../util/Compute';
-import { convertNameRankingToForm, convertNameRankingToOri, splitAndCapitalize } from '../../util/Utils';
+import { convertNameRankingToForm, convertNameRankingToOri, replaceTempMovePvpName, splitAndCapitalize } from '../../util/Utils';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
@@ -444,12 +444,7 @@ export const MoveSet = (
         <div className="type-rank-list">
           {moves?.chargedMoves
             .map((move) => {
-              if (move.moveId === 'FUTURE_SIGHT') {
-                move.moveId = 'FUTURESIGHT';
-              }
-              if (move.moveId === 'TECHNO_BLAST_DOUSE') {
-                move.moveId = 'TECHNO_BLAST_WATER';
-              }
+              move.moveId = replaceTempMovePvpName(move.moveId);
               if (!move.uses) {
                 move.uses = 0;
               }

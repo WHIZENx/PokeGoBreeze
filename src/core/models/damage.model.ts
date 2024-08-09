@@ -14,8 +14,8 @@ export interface IPokemonDmgOption {
     wb: boolean;
     dodge: boolean;
     trainer: boolean;
-    flevel: number;
-    clevel: string | number;
+    fLevel: number;
+    cLevel: string | number;
     effective: string | number;
   };
   damage?: number;
@@ -35,8 +35,8 @@ export class PokemonDmgOption implements IPokemonDmgOption {
     wb: boolean;
     dodge: boolean;
     trainer: boolean;
-    flevel: number;
-    clevel: string | number;
+    fLevel: number;
+    cLevel: string | number;
     effective: string | number;
   };
   damage?: number;

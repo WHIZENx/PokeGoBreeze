@@ -1,7 +1,7 @@
 import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
-import { FORM_NORMAL } from './Constants';
+import { FORM_GMAX, FORM_NORMAL } from './Constants';
 import { getStyleRuleValue } from './Utils';
 
 export const priorityBadge = (priority: number) => {
@@ -135,7 +135,7 @@ export const computeBgType = (
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {
   const pokemonAssets = assets?.find((asset) => asset.id === id);
-  if (!pokemonAssets) {
+  if (!pokemonAssets || name?.toUpperCase() === FORM_GMAX) {
     return null;
   }
   const asset = pokemonAssets?.image.find((img) => img.form === name);

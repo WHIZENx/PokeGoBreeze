@@ -5,9 +5,9 @@ import { raidEgg } from '../../util/Compute';
 import { FORM_MEGA, FORM_PRIMAL, RAID_BOSS_TIER, TYPE_ULTRA_BEAST } from '../../util/Constants';
 import { calculateRaidCP, calculateRaidStat } from '../../util/Calculate';
 
-import atk_logo from '../../assets/attack.png';
-import def_logo from '../../assets/defense.png';
-import sta_logo from '../../assets/stamina.png';
+import ATK_LOGO from '../../assets/attack.png';
+import DEF_LOGO from '../../assets/defense.png';
+import STA_LOGO from '../../assets/stamina.png';
 
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
@@ -31,14 +31,14 @@ const Raid = (props: IRaidComponent) => {
     if (
       tier > 5 &&
       props.currForm &&
-      !props.currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
-      props.currForm.form.form_name?.toUpperCase() !== FORM_PRIMAL
+      !props.currForm.form.formName?.toUpperCase().includes(FORM_MEGA) &&
+      props.currForm.form.formName?.toUpperCase() !== FORM_PRIMAL
     ) {
       setTier(5);
     } else if (
       tier === 5 &&
       props.currForm &&
-      (props.currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) || props.currForm.form.form_name?.toUpperCase() === FORM_PRIMAL) &&
+      (props.currForm.form.formName?.toUpperCase().includes(FORM_MEGA) || props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL) &&
       pokemonClass
     ) {
       setTier(6);
@@ -94,27 +94,27 @@ const Raid = (props: IRaidComponent) => {
           <optgroup label="Normal Tiers">
             <option value={1}>Tier 1</option>
             <option value={3}>Tier 3</option>
-            {(!props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) || !pokemonClass) && <option value={5}>Tier 5</option>}
+            {(!props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) || !pokemonClass) && <option value={5}>Tier 5</option>}
           </optgroup>
           <optgroup label="Legacy Tiers">
             <option value={2}>Tier 2</option>
-            {(!props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) || pokemonClass) && <option value={4}>Tier 4</option>}
+            {(!props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) || pokemonClass) && <option value={4}>Tier 4</option>}
           </optgroup>
           {props.currForm &&
-            (props.currForm.form.form_name?.toUpperCase().includes(FORM_MEGA) ||
-              props.currForm.form.form_name?.toUpperCase() === FORM_PRIMAL) && (
+            (props.currForm.form.formName?.toUpperCase().includes(FORM_MEGA) ||
+              props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL) && (
               <Fragment>
                 {pokemonClass ? (
                   <optgroup
                     label={
                       'Legendary ' +
-                      (props.currForm.form.form_name?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)) +
+                      (props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)) +
                       ' Tier 6'
                     }
                   >
                     <option value={6}>
                       {'Tier ' +
-                        (props.currForm.form.form_name?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA))}
+                        (props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA))}
                     </option>
                   </optgroup>
                 ) : (
@@ -150,8 +150,8 @@ const Raid = (props: IRaidComponent) => {
             alt="img-raid-egg"
             src={raidEgg(
               tier,
-              !pokemonClass && (props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) ?? false),
-              pokemonClass !== null && pokemonClass !== undefined && props.currForm?.form.form_name?.toUpperCase() === FORM_PRIMAL,
+              !pokemonClass && (props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) ?? false),
+              pokemonClass !== null && pokemonClass !== undefined && props.currForm?.form.formName?.toUpperCase() === FORM_PRIMAL,
               pokemonData.find((pokemon) => pokemon.num === props.id)?.pokemonClass === TYPE_ULTRA_BEAST
             )}
           />
@@ -167,7 +167,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center" style={{ color: theme.palette.text.primary }}>
@@ -176,7 +176,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center" style={{ color: theme.palette.text.primary }}>
@@ -185,7 +185,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={sta_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={STA_LOGO} />
                   STA
                 </td>
                 <td className="text-center" style={{ color: theme.palette.text.primary }}>

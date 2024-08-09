@@ -139,38 +139,36 @@ export class PokemonPermission implements IPokemonPermission {
 
 interface ICombatOption {
   stab: number;
-  shadow_bonus: IStatsBase;
+  shadowBonus: IStatsBase;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 class CombatOption implements ICombatOption {
   stab: number;
-  // tslint:disable-next-line:variable-name
-  shadow_bonus: IStatsBase;
+  shadowBonus: IStatsBase;
 
   constructor() {
     this.stab = 0;
-    this.shadow_bonus = new StatsBase(0, 0, 0);
+    this.shadowBonus = new StatsBase(0, 0, 0);
   }
 }
 
 interface IBattleOption {
   enemyAttackInterval: number;
   stab: number;
-  shadow_bonus: IStatsBase;
+  shadowBonus: IStatsBase;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 class BattleOption implements IBattleOption {
   enemyAttackInterval: number;
   stab: number;
-  // tslint:disable-next-line:variable-name
-  shadow_bonus: IStatsBase;
+  shadowBonus: IStatsBase;
 
   constructor() {
     this.enemyAttackInterval = 0;
     this.stab = 0;
-    this.shadow_bonus = new StatsBase(0, 0, 0);
+    this.shadowBonus = new StatsBase(0, 0, 0);
   }
 }
 
@@ -215,48 +213,42 @@ export class BuddyFriendship implements IBuddyFriendship {
 
 export interface ITrainerFriendship {
   level: number;
-  atk_bonus: number;
+  atkBonus: number;
   unlockedTrading?: string[];
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class TrainerFriendship implements ITrainerFriendship {
   level: number;
-  // tslint:disable-next-line:variable-name
-  atk_bonus: number;
+  atkBonus: number;
 
   constructor() {
     this.level = 0;
-    this.atk_bonus = 0;
+    this.atkBonus = 0;
   }
 }
 
 export interface IOptions {
-  combat_options: ICombatOption;
-  battle_options: IBattleOption;
-  throw_charge: IThrowOption;
-  buddy_friendship: { [x: string]: IBuddyFriendship };
-  trainer_friendship: { [x: string]: ITrainerFriendship };
+  combatOptions: ICombatOption;
+  battleOptions: IBattleOption;
+  throwCharge: IThrowOption;
+  buddyFriendship: { [x: string]: IBuddyFriendship };
+  trainerFriendship: { [x: string]: ITrainerFriendship };
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class Options implements IOptions {
-  // tslint:disable-next-line:variable-name
-  combat_options: ICombatOption;
-  // tslint:disable-next-line:variable-name
-  battle_options: IBattleOption;
-  // tslint:disable-next-line:variable-name
-  throw_charge: IThrowOption;
-  // tslint:disable-next-line:variable-name
-  buddy_friendship: { [x: string]: IBuddyFriendship };
-  // tslint:disable-next-line:variable-name
-  trainer_friendship: { [x: string]: ITrainerFriendship };
+  combatOptions: ICombatOption;
+  battleOptions: IBattleOption;
+  throwCharge: IThrowOption;
+  buddyFriendship: { [x: string]: IBuddyFriendship };
+  trainerFriendship: { [x: string]: ITrainerFriendship };
 
   constructor() {
-    this.combat_options = new CombatOption();
-    this.battle_options = new BattleOption();
-    this.throw_charge = new ThrowOption();
-    this.buddy_friendship = {};
-    this.trainer_friendship = {};
+    this.combatOptions = new CombatOption();
+    this.battleOptions = new BattleOption();
+    this.throwCharge = new ThrowOption();
+    this.buddyFriendship = {};
+    this.trainerFriendship = {};
   }
 }

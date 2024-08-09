@@ -13,9 +13,9 @@ import {
 import { ISticker, Sticker } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
-import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm } from '../util/Utils';
+import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm, replaceTempMoveName } from '../util/Utils';
 import { ITypeSet, TypeSet } from './models/type.model';
-import { TypeMove } from '../enums/move.enum';
+import { TypeAction, TypeMove } from '../enums/type.enum';
 import {
   Encounter,
   IPokemonData,
@@ -26,18 +26,28 @@ import {
   PokemonModel,
 } from './models/pokemon.model';
 import { ITypeEff } from './models/type-eff.model';
-import { FORM_ARMOR, FORM_GALARIAN, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_SHADOW } from '../util/Constants';
+import {
+  FORM_ARMOR,
+  FORM_GALARIAN,
+  FORM_MEGA,
+  FORM_MEGA_X,
+  FORM_MEGA_Y,
+  FORM_NORMAL,
+  FORM_PRIMAL,
+  FORM_SHADOW,
+  FORM_SPECIAL,
+} from '../util/Constants';
 import { APIUrl } from '../services/constants';
 import { BuddyFriendship, PokemonDataGM, IPokemonPermission, TrainerFriendship, Options, PokemonPermission } from './models/options.model';
 import { calculateStatsByTag } from '../util/Calculate';
 import { APITree } from '../services/models/api.model';
 
-export const getOption = (options: any, args: string[]) => {
+export const getOption = <T>(options: any, args: string[]): T => {
   if (!options) {
     return options;
   }
 
-  args.forEach((arg: string) => {
+  args.forEach((arg) => {
     options = options[arg];
   });
   return options;
@@ -48,31 +58,31 @@ export const optionSettings = (data: PokemonDataGM[]) => {
 
   data.forEach((item) => {
     if (item.templateId === 'COMBAT_SETTINGS') {
-      settings.combat_options.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
-      settings.combat_options.shadow_bonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
-      settings.combat_options.shadow_bonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
+      settings.combatOptions.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
+      settings.combatOptions.shadowBonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
+      settings.combatOptions.shadowBonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
 
-      settings.throw_charge.normal = item.data.combatSettings.chargeScoreBase;
-      settings.throw_charge.nice = item.data.combatSettings.chargeScoreNice;
-      settings.throw_charge.great = item.data.combatSettings.chargeScoreGreat;
-      settings.throw_charge.excellent = item.data.combatSettings.chargeScoreExcellent;
+      settings.throwCharge.normal = item.data.combatSettings.chargeScoreBase;
+      settings.throwCharge.nice = item.data.combatSettings.chargeScoreNice;
+      settings.throwCharge.great = item.data.combatSettings.chargeScoreGreat;
+      settings.throwCharge.excellent = item.data.combatSettings.chargeScoreExcellent;
     } else if (item.templateId === 'BATTLE_SETTINGS') {
-      settings.battle_options.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
-      settings.battle_options.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
-      settings.battle_options.shadow_bonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
-      settings.battle_options.shadow_bonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
+      settings.battleOptions.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
+      settings.battleOptions.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
+      settings.battleOptions.shadowBonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
+      settings.battleOptions.shadowBonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
     } else if (item.templateId.includes('BUDDY_LEVEL_')) {
       const level = item.templateId.replace('BUDDY_LEVEL_', '');
-      settings.buddy_friendship[level] = new BuddyFriendship();
-      settings.buddy_friendship[level].level = parseInt(level);
-      settings.buddy_friendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0;
-      settings.buddy_friendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
+      settings.buddyFriendship[level] = new BuddyFriendship();
+      settings.buddyFriendship[level].level = parseInt(level);
+      settings.buddyFriendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired ?? 0;
+      settings.buddyFriendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
     } else if (item.templateId.includes('FRIENDSHIP_LEVEL_')) {
       const level = item.templateId.replace('FRIENDSHIP_LEVEL_', '');
-      settings.trainer_friendship[level] = new TrainerFriendship();
-      settings.trainer_friendship[level].level = parseInt(level);
-      settings.trainer_friendship[level].atk_bonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
-      settings.trainer_friendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
+      settings.trainerFriendship[level] = new TrainerFriendship();
+      settings.trainerFriendship[level].level = parseInt(level);
+      settings.trainerFriendship[level].atkBonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
+      settings.trainerFriendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
     }
   });
   return settings;
@@ -355,11 +365,13 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       const pokemonOrigin = result.find((pk) => pk.num === pokemon.id && pk.forme === FORM_NORMAL);
       if (pokemonOrigin) {
         optional.shadowMoves?.forEach((move) => {
+          move = replaceTempMoveName(move);
           if (!pokemonOrigin.shadowMoves?.includes(move)) {
             pokemonOrigin.shadowMoves?.push(move);
           }
         });
         optional.purifiedMoves?.forEach((move) => {
+          move = replaceTempMoveName(move);
           if (!pokemonOrigin.purifiedMoves?.includes(move)) {
             pokemonOrigin.purifiedMoves?.push(move);
           }
@@ -368,7 +380,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     }
 
     if (pokemon.form !== FORM_SHADOW) {
-      result.push(PokemonData.create(pokemon, types, optional));
+      const pokemonData = PokemonData.create(pokemon, types, optional);
+      result.push(pokemonData);
     }
   });
 
@@ -461,7 +474,8 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       optional.baseForme = item.baseForme?.toUpperCase();
       optional.baseStatsGO = true;
 
-      result.push(PokemonData.create(pokemon, types, optional));
+      const pokemonData = PokemonData.create(pokemon, types, optional);
+      result.push(pokemonData);
     });
 };
 
@@ -608,7 +622,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
           new ImageModel({
             gender: 3,
             pokemonId: result.id,
-            form: formSet.length === 2 ? FORM_MEGA : formSet[index].includes('_51') ? 'MEGA_X' : 'MEGA_Y',
+            form: formSet.length === 2 ? FORM_MEGA : formSet[index].includes('_51') ? FORM_MEGA_X : FORM_MEGA_Y,
             default: formSet[index],
             shiny: formSet[index + 1],
           })
@@ -687,7 +701,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       soundForm.forEach((sound) => {
         result.sound.cry.push(
           new CryPath({
-            form: soundForm.length !== 2 ? FORM_MEGA : sound.includes('_51') ? 'MEGA_X' : 'MEGA_Y',
+            form: soundForm.length !== 2 ? FORM_MEGA : sound.includes('_51') ? FORM_MEGA_X : FORM_MEGA_Y,
             path: sound,
           })
         );
@@ -700,7 +714,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       soundForm.forEach((sound) => {
         result.sound.cry.push(
           new CryPath({
-            form: sound.includes('_31') ? 'SPECIAL' : FORM_NORMAL,
+            form: sound.includes('_31') ? FORM_SPECIAL : FORM_NORMAL,
             path: sound,
           })
         );
@@ -737,13 +751,13 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       const result = new Combat();
       result.name = item.data.combatMove.uniqueId;
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-      if (item.templateId.includes(TypeMove.FAST)) {
-        result.type_move = TypeMove.FAST;
+      if (item.templateId.endsWith(TypeMove.FAST)) {
+        result.typeMove = TypeMove.FAST;
       } else {
-        result.type_move = TypeMove.CHARGE;
+        result.typeMove = TypeMove.CHARGE;
       }
-      result.pvp_power = item.data.combatMove.power ?? 0.0;
-      result.pvp_energy = item.data.combatMove.energyDelta ?? 0;
+      result.pvpPower = item.data.combatMove.power ?? 0.0;
+      result.pvpEnergy = item.data.combatMove.energyDelta ?? 0;
       const seq = sequence.find((seq) => seq.id === result.name);
       result.sound = seq?.path ?? null;
       if (item.data.combatMove.buffs) {
@@ -753,7 +767,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             if (buff.includes('target')) {
               result.buffs.push(
                 new Buff({
-                  type: 'atk',
+                  type: TypeAction.ATK,
                   target: 'target',
                   power: item.data.combatMove.buffs[buff],
                 })
@@ -761,7 +775,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             } else {
               result.buffs.push(
                 new Buff({
-                  type: 'atk',
+                  type: TypeAction.ATK,
                   target: 'attacker',
                   power: item.data.combatMove.buffs[buff],
                 })
@@ -771,7 +785,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             if (buff.includes('target')) {
               result.buffs.push(
                 new Buff({
-                  type: 'def',
+                  type: TypeAction.DEF,
                   target: 'target',
                   power: item.data.combatMove.buffs[buff],
                 })
@@ -779,7 +793,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             } else {
               result.buffs.push(
                 new Buff({
-                  type: 'def',
+                  type: TypeAction.DEF,
                   target: 'attacker',
                   power: item.data.combatMove.buffs[buff],
                 })
@@ -790,14 +804,15 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         });
       }
       const move = moves.find((move) => move.movementId === result.name);
+      const name = replaceTempMoveName(result.name.toString());
       result.id = move?.id ?? 0;
       result.track = move?.id ?? 0;
-      result.name = result.name?.toString().replace('_FAST', '');
-      result.pve_power = move?.power ?? 0.0;
+      result.name = name;
+      result.pvePower = move?.power ?? 0.0;
       if (result.name === 'STRUGGLE') {
-        result.pve_energy = -33;
+        result.pveEnergy = -33;
       } else {
-        result.pve_energy = move?.energyDelta ?? 0;
+        result.pveEnergy = move?.energyDelta ?? 0;
       }
       result.durationMs = move?.durationMs ?? 0;
       result.damageWindowStartMs = move?.damageWindowStartMs ?? 0;

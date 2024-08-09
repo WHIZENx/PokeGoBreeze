@@ -1,5 +1,6 @@
 import { IOptions } from '../core/models/options.model';
 import { getOption } from '../core/options';
+import { TypeAction } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { RaidTier } from './models/constants.model';
 
@@ -87,6 +88,7 @@ export const DEFAULT_TYPES = [
 ];
 
 export const FORM_NORMAL = 'NORMAL';
+export const FORM_SPECIAL = 'SPECIAL';
 export const FORM_SHADOW = 'SHADOW';
 export const FORM_PURIFIED = 'PURIFIED';
 export const FORM_MEGA = 'MEGA';
@@ -101,6 +103,8 @@ export const FORM_HERO = 'HERO';
 export const FORM_STANDARD = 'STANDARD';
 export const FORM_INCARNATE = 'INCARNATE';
 export const FORM_ARMOR = 'ARMOR';
+export const FORM_MEGA_X = 'MEGA_X';
+export const FORM_MEGA_Y = 'MEGA_Y';
 
 export const TYPE_LEGENDARY = 'LEGENDARY';
 export const TYPE_MYTHIC = 'MYTHIC';
@@ -114,7 +118,7 @@ export const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
 export const DEFAULT_POKEMON_LEVEL = 40;
 
 export const DEFAULT_ENERGY_PER_HP_LOST = 0.5;
-export const DEFAULT_DAMAGE_MULTIPLY = 0.5;
+export const DEFAULT_DAMAGE_MULTIPLY: number = 0.5;
 export const DEFAULT_DAMAGE_CONST = 1;
 export const DEFAULT_ENEMY_ATK_DELAY = 2;
 
@@ -146,21 +150,21 @@ export const MIN_IV = 0;
 export const MAX_IV = 15;
 
 export const STAB_MULTIPLY = (options: IOptions | undefined) => {
-  return getOption(options, ['battle_options', 'stab']) ?? 1;
+  return getOption<number>(options, ['battleOptions', 'stab']) || 1;
 };
 export const MULTIPLY_LEVEL_FRIENDSHIP = (options: IOptions | undefined, level = DEFAULT_POKEMON_FRIEND_LEVEL) => {
-  return getOption(options, ['trainer_friendship', level.toString(), 'atk_bonus']) ?? 1;
+  return getOption<number>(options, ['trainerFriendship', level.toString(), 'atkBonus']) || 1;
 };
 export const MULTIPLY_THROW_CHARGE = (options: IOptions | undefined, type: string) => {
-  return getOption(options, ['throw_charge', type]) ?? 1;
+  return getOption<number>(options, ['throwCharge', type]) || 1;
 };
 
 /* Shadow exclusive bonus for Pokémon in battle */
 export const SHADOW_ATK_BONUS = (options: IOptions | undefined) => {
-  return getOption(options, ['combat_options', 'shadow_bonus', 'atk']) ?? 1;
+  return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.ATK]) || 1;
 };
 export const SHADOW_DEF_BONUS = (options: IOptions | undefined) => {
-  return getOption(options, ['combat_options', 'shadow_bonus', 'def']) ?? 1;
+  return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.DEF]) || 1;
 };
 
 export const genList: { [x: number]: number[] } = {

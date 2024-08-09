@@ -1,6 +1,7 @@
 import { createPool } from '@vercel/postgres';
 import { CPMData } from '../core/models/cpm.model';
-import { PokemonInfo } from '../core/models/API/info.model';
+import { IPokemonDetail } from '../core/models/API/info.model';
+import { PokemonEncounter } from '../core/models/pokemon.model';
 
 const db = createPool({
   connectionString: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
@@ -36,7 +37,7 @@ export const getDbPokemonName = async () => {
   return await db.sql`SELECT * from tblPokemonName`;
 };
 
-export const createDbPokemonName = async (pokemon: PokemonInfo) => {
+export const createDbPokemonName = async (pokemon: IPokemonDetail) => {
   return await db.sql`INSERT INTO tblPokemonName(
     Id,
     Name
@@ -50,7 +51,7 @@ export const getDbPokemonEncounter = async () => {
   return await db.sql`SELECT * from tblPokemonEncounter`;
 };
 
-export const createDbPokemonEncounter = async (pokemon: { name: string; baseCaptureRate: number; baseFleeRate: number }, index: number) => {
+export const createDbPokemonEncounter = async (pokemon: PokemonEncounter, index: number) => {
   return await db.sql`INSERT INTO tblPokemonEncounter(
     Id,
     Name,
@@ -59,7 +60,7 @@ export const createDbPokemonEncounter = async (pokemon: { name: string; baseCapt
   ) VALUES (
     ${parseInt(index.toString() + 1)},
     ${pokemon.name},
-    ${parseFloat(pokemon.baseCaptureRate.toString())},
-    ${parseFloat(pokemon.baseFleeRate.toString())}
+    ${parseFloat(pokemon.basecapturerate.toString())},
+    ${parseFloat(pokemon.basefleerate.toString())}
   )`;
 };

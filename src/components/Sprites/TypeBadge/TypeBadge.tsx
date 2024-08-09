@@ -51,7 +51,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
               )}
             </span>
           )}
-          <span>{splitAndCapitalize(props.move?.name.replaceAll('_PLUS', '+'), '_', ' ')}</span>
+          <span>{splitAndCapitalize(props.move?.name, '_', ' ')}</span>
         </span>
         <span className={move?.type?.toLowerCase() + ' type-icon-border'}>
           <div style={{ width: 35 }}>

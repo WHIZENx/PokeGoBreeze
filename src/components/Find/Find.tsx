@@ -9,6 +9,7 @@ import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import loading from '../../assets/loading.png';
 import { IFindComponent } from '../models/component.model';
+import { TypeAction } from '../../enums/type.enum';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -75,11 +76,11 @@ const Find = (props: IFindComponent) => {
   };
 
   const handleSetStats = (type: string, value: number) => {
-    if (type === 'atk' && props.setStatATK) {
+    if (type === TypeAction.ATK && props.setStatATK) {
       props.setStatATK(value);
-    } else if (type === 'def' && props.setStatDEF) {
+    } else if (type === TypeAction.DEF && props.setStatDEF) {
       props.setStatDEF(value);
-    } else if (type === 'sta' && props.setStatSTA) {
+    } else if (type === TypeAction.STA && props.setStatSTA) {
       props.setStatSTA(value);
     }
   };

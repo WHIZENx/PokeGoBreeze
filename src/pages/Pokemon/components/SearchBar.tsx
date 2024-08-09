@@ -5,6 +5,7 @@ import { splitAndCapitalize } from '../../../util/Utils';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ISearchBarComponent } from '../../models/page.model';
+import { Action } from 'history';
 
 const SearchBar = (props: ISearchBarComponent) => {
   return (
@@ -14,7 +15,7 @@ const SearchBar = (props: ISearchBarComponent) => {
           <div
             className="d-flex justify-content-start align-items-center"
             onClick={() => {
-              if (props.router?.action === 'POP') {
+              if (props.router?.action === Action.Pop) {
                 props.router.action = null as any;
               }
               props.onDecId?.();
@@ -52,7 +53,7 @@ const SearchBar = (props: ISearchBarComponent) => {
           <div
             className="d-flex justify-content-end align-items-center"
             onClick={() => {
-              if (props.router?.action === 'POP') {
+              if (props.router?.action === Action.Pop) {
                 props.router.action = null as any;
               }
               props.onIncId?.();

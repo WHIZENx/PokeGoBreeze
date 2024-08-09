@@ -6,9 +6,9 @@ import { calculateStatsBattle } from '../../../util/Calculate';
 
 import APIService from '../../../services/API.service';
 
-import atk_logo from '../../../assets/attack.png';
-import def_logo from '../../../assets/defense.png';
-import hp_logo from '../../../assets/hp.png';
+import ATK_LOGO from '../../../assets/attack.png';
+import DEF_LOGO from '../../../assets/defense.png';
+import HP_LOGO from '../../../assets/hp.png';
 import { useSelector } from 'react-redux';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { StoreState } from '../../../store/models/state.model';
@@ -141,7 +141,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center">
@@ -156,7 +156,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center">
@@ -171,7 +171,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                   HP
                 </td>
                 <td className="text-center">{calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel, true)}</td>

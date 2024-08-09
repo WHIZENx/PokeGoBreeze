@@ -17,7 +17,7 @@ import {
 } from '../../core/models/stats.model';
 import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
-import { PokemonInfo } from '../../core/models/API/info.model';
+import { IPokemonDetail } from '../../core/models/API/info.model';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -133,7 +133,7 @@ export interface IToolsComponent {
   id: number | undefined;
   currForm: IPokemonFormModify | undefined;
   formList: IPokemonFormModify[][];
-  dataPoke: PokemonInfo[];
+  dataPoke: IPokemonDetail[];
   stats: IStatsRank | null;
   setForm: ((form: IPokemonFormModify | undefined) => void) | undefined;
   onSetStats: ((type: string, value: number) => void) | undefined;
@@ -173,15 +173,15 @@ export interface IFormInfoComponent {
   form: IPokemonFormModify | undefined;
   setForm: React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>;
   setOriginForm: React.Dispatch<React.SetStateAction<string | undefined>>;
-  data: PokemonInfo | undefined;
-  setData: React.Dispatch<React.SetStateAction<PokemonInfo | undefined>>;
+  data: IPokemonDetail | undefined;
+  setData: React.Dispatch<React.SetStateAction<IPokemonDetail | undefined>>;
   setWH: React.Dispatch<
     React.SetStateAction<{
       weight: number;
       height: number;
     }>
   >;
-  pokeData: PokemonInfo[];
+  pokeData: IPokemonDetail[];
   formList: IPokemonFormModify[][] | undefined;
   ratio: IPokemonGenderRatio | undefined;
   setId?: (id: number) => void;
@@ -221,10 +221,10 @@ export interface IStatsComponent {
 export interface IGenderComponent {
   sex: string;
   ratio?: IPokemonGenderRatio | undefined;
-  default_m?: string;
-  default_f?: string;
-  shiny_m?: string;
-  shiny_f?: string;
+  defaultM?: string;
+  defaultF?: string;
+  shinyM?: string;
+  shinyF?: string;
 }
 
 export interface IInfoComponent {

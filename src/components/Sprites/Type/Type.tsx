@@ -5,6 +5,7 @@ import { capitalize } from '../../../util/Utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
+import { TypeTheme } from '../../../enums/type.enum';
 
 const TypeInfo = (props: ITypeComponent) => {
   const theme = useTheme();
@@ -50,7 +51,9 @@ const TypeInfo = (props: ITypeComponent) => {
                           src={APIService.getTypeSprite(value)}
                         />
                         <span
-                          className={'caption' + (props.shadow ? ' text-shadow' + (theme.palette.mode === 'dark' ? '-white' : '') : '')}
+                          className={
+                            'caption' + (props.shadow ? ' text-shadow' + (theme.palette.mode === TypeTheme.DARK ? '-white' : '') : '')
+                          }
                           style={{ color: props.color ?? theme.palette.text.primary }}
                         >
                           {capitalize(value)}

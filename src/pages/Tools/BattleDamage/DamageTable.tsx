@@ -2,9 +2,9 @@ import React, { Fragment } from 'react';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
-import atk_logo from '../../../assets/attack.png';
-import def_logo from '../../../assets/defense.png';
-import hp_logo from '../../../assets/hp.png';
+import ATK_LOGO from '../../../assets/attack.png';
+import DEF_LOGO from '../../../assets/defense.png';
+import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
 import { capitalize, splitAndCapitalize } from '../../../util/Utils';
@@ -95,11 +95,11 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>Move name</td>
-              <td>{props.result.move ? splitAndCapitalize(props.result.move.name.replaceAll('_PLUS', '+'), '_', ' ') : '-'}</td>
+              <td>{props.result.move ? splitAndCapitalize(props.result.move.name, '_', ' ') : '-'}</td>
             </tr>
             <tr>
               <td>Move damage</td>
-              <td>{props.result.move ? props.result.move.pve_power : '-'}</td>
+              <td>{props.result.move ? props.result.move.pvePower : '-'}</td>
             </tr>
             <tr>
               <td>Stab</td>
@@ -159,14 +159,14 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>Pokémon Friendship level</td>
-              <td>{props.result.battleState ? props.result.battleState.flevel : '-'}</td>
+              <td>{props.result.battleState ? props.result.battleState.fLevel : '-'}</td>
             </tr>
             <tr>
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
                   ? capitalize(
-                      Object.keys(globalOptions?.throw_charge ?? new ThrowOption()).at(parseInt(props.result.battleState.clevel.toString()))
+                      Object.keys(globalOptions?.throwCharge ?? new ThrowOption()).at(parseInt(props.result.battleState.cLevel.toString()))
                     )
                   : '-'}
               </td>
@@ -185,25 +185,24 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>
-                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
+                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                 Damage Taken
               </td>
               <td>{props.result.damage ? <b>{props.result.damage}</b> : '-'}</td>
             </tr>
             <tr>
               <td>
-                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
+                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                 Damage Reduced
               </td>
               <td>
                 {props.result.damage ? (
                   <Fragment>
-                    {props.result.damage < (props.result.move?.pve_power ?? 0) ? (
+                    {props.result.damage < (props.result.move?.pvePower ?? 0) ? (
                       <b className="text-success">
-                        {(
-                          (((props.result.move?.pve_power ?? 0) - props.result.damage) * 100) /
-                          (props.result.move?.pve_power ?? 0)
-                        ).toFixed(2)}
+                        {((((props.result.move?.pvePower ?? 0) - props.result.damage) * 100) / (props.result.move?.pvePower ?? 0)).toFixed(
+                          2
+                        )}
                         %
                       </b>
                     ) : (
@@ -217,7 +216,7 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>
-                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
+                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                 HP Object remaining
               </td>
               <td>

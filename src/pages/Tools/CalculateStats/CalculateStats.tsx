@@ -10,9 +10,9 @@ import APIService from '../../../services/API.service';
 
 import './CalculateStats.scss';
 
-import atk_logo from '../../../assets/attack.png';
-import def_logo from '../../../assets/defense.png';
-import hp_logo from '../../../assets/hp.png';
+import ATK_LOGO from '../../../assets/attack.png';
+import DEF_LOGO from '../../../assets/defense.png';
+import HP_LOGO from '../../../assets/hp.png';
 import Find from '../../../components/Find/Find';
 import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
@@ -326,19 +326,19 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.result_between_stadust != null ? (
+                            statData?.resultBetweenStadust != null ? (
                               <span>
-                                {statData?.result_between_stadust}
-                                {statData?.type !== '' && (statData?.result_between_stadust_diff ?? 0) > 0 && (
+                                {statData?.resultBetweenStadust}
+                                {statData?.type !== '' && (statData?.resultBetweenStadustDiff ?? 0) > 0 && (
                                   <Fragment>
                                     {statData?.type?.toUpperCase() === FORM_SHADOW && (
-                                      <span className="shadow-text"> (+{statData?.result_between_stadust_diff})</span>
+                                      <span className="shadow-text"> (+{statData?.resultBetweenStadustDiff})</span>
                                     )}
                                     {statData?.type?.toUpperCase() === FORM_PURIFIED && (
-                                      <span className="purified-text"> (-{statData?.result_between_stadust_diff})</span>
+                                      <span className="purified-text"> (-{statData?.resultBetweenStadustDiff})</span>
                                     )}
                                     {statData?.type === 'buddy' && (
-                                      <span className="buddy-text"> (-{statData?.result_between_stadust_diff})</span>
+                                      <span className="buddy-text"> (-{statData?.resultBetweenStadustDiff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -362,19 +362,19 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.result_between_candy != null ? (
+                            statData?.resultBetweenCandy != null ? (
                               <span>
-                                {statData?.result_between_candy}
-                                {statData?.type !== '' && (statData?.result_between_candy_diff ?? 0) > 0 && (
+                                {statData?.resultBetweenCandy}
+                                {statData?.type !== '' && (statData?.resultBetweenCandyDiff ?? 0) > 0 && (
                                   <Fragment>
                                     {statData?.type?.toUpperCase() === FORM_SHADOW && (
-                                      <span className="shadow-text"> (+{statData?.result_between_candy_diff})</span>
+                                      <span className="shadow-text"> (+{statData?.resultBetweenCandyDiff})</span>
                                     )}
                                     {statData?.type?.toUpperCase() === FORM_PURIFIED && (
-                                      <span className="purified-text"> (-{statData?.result_between_candy_diff})</span>
+                                      <span className="purified-text"> (-{statData?.resultBetweenCandyDiff})</span>
                                     )}
                                     {statData?.type === 'buddy' && (
-                                      <span className="buddy-text"> (-{statData?.result_between_candy_diff})</span>
+                                      <span className="buddy-text"> (-{statData?.resultBetweenCandyDiff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -403,19 +403,19 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.result_between_xl_candy != null ? (
+                            statData?.resultBetweenXLCandy != null ? (
                               <span>
-                                {statData?.result_between_xl_candy}
-                                {statData?.type !== '' && (statData?.result_between_xl_candy_diff ?? 0) > 0 && (
+                                {statData?.resultBetweenXLCandy}
+                                {statData?.type !== '' && (statData?.resultBetweenXLCandyDiff ?? 0) > 0 && (
                                   <Fragment>
                                     {statData?.type?.toUpperCase() === FORM_SHADOW && (
-                                      <span className="shadow-text"> (+{statData?.result_between_xl_candy_diff})</span>
+                                      <span className="shadow-text"> (+{statData?.resultBetweenXLCandyDiff})</span>
                                     )}
                                     {statData?.type?.toUpperCase() === FORM_PURIFIED && (
-                                      <span className="purified-text"> (-{statData?.result_between_xl_candy_diff})</span>
+                                      <span className="purified-text"> (-{statData?.resultBetweenXLCandyDiff})</span>
                                     )}
                                     {statData?.type === 'buddy' && (
-                                      <span className="buddy-text"> (-{statData?.result_between_xl_candy_diff})</span>
+                                      <span className="buddy-text"> (-{statData?.resultBetweenXLCandyDiff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -435,7 +435,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           ATK
                         </td>
                         <td>
@@ -444,11 +444,11 @@ const Calculate = () => {
                               calculateStatsBattle(statATK, pokeStats?.IV.atk ?? 0, statLevel, true)
                             ) : (
                               <Fragment>
-                                {statData?.atk_stat}
-                                {(statData?.atk_stat_diff ?? 0) > 0 && (
+                                {statData?.atkStat}
+                                {(statData?.atkStatDiff ?? 0) > 0 && (
                                   <span className="text-success" style={{ fontWeight: 500 }}>
                                     {' '}
-                                    (+{statData?.atk_stat_diff})
+                                    (+{statData?.atkStatDiff})
                                   </span>
                                 )}
                               </Fragment>
@@ -460,7 +460,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           DEF
                         </td>
                         <td>
@@ -469,11 +469,11 @@ const Calculate = () => {
                               calculateStatsBattle(statDEF, pokeStats?.IV.def ?? 0, statLevel, true)
                             ) : (
                               <Fragment>
-                                {statData?.def_stat}
-                                {(statData?.def_stat_diff ?? 0) > 0 && (
+                                {statData?.defStat}
+                                {(statData?.defStatDiff ?? 0) > 0 && (
                                   <span className="text-danger" style={{ fontWeight: 500 }}>
                                     {' '}
-                                    (-{statData?.def_stat_diff})
+                                    (-{statData?.defStatDiff})
                                   </span>
                                 )}
                               </Fragment>
@@ -485,7 +485,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           HP
                         </td>
                         <td>{statData ? calculateStatsBattle(statSTA, pokeStats?.IV.sta ?? 0, statLevel, true) : '-'}</td>
@@ -536,7 +536,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataLittleLeague && dataLittleLeague.elidge ? (
-                            <span className={statData?.type + '-text'}>{dataLittleLeague.rangeValue?.result_between_stadust}</span>
+                            <span className={statData?.type + '-text'}>{dataLittleLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -560,7 +560,7 @@ const Calculate = () => {
                             )}
                             {dataLittleLeague && dataLittleLeague.elidge ? (
                               <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
-                                {dataLittleLeague.rangeValue?.result_between_candy}
+                                {dataLittleLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
                               '-'
@@ -579,7 +579,7 @@ const Calculate = () => {
                             )}
                             {dataLittleLeague && dataLittleLeague.elidge ? (
                               <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
-                                {dataLittleLeague.rangeValue?.result_between_xl_candy}
+                                {dataLittleLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
                               '-'
@@ -590,7 +590,7 @@ const Calculate = () => {
                       <tr>
                         <td>Stats</td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           {dataLittleLeague && dataLittleLeague.elidge ? (
                             <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
                               {dataLittleLeague.stats?.atk}
@@ -600,7 +600,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           {dataLittleLeague && dataLittleLeague.elidge ? (
                             <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
                               {dataLittleLeague.stats?.def}
@@ -610,7 +610,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           {dataLittleLeague && dataLittleLeague.elidge ? dataLittleLeague.stats?.sta : '-'}
                         </td>
                       </tr>
@@ -649,7 +649,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataGreatLeague && dataGreatLeague.elidge ? (
-                            <span className={statData?.type + '-text'}>{dataGreatLeague.rangeValue?.result_between_stadust}</span>
+                            <span className={statData?.type + '-text'}>{dataGreatLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -673,7 +673,7 @@ const Calculate = () => {
                             )}
                             {dataGreatLeague && dataGreatLeague.elidge ? (
                               <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
-                                {dataGreatLeague.rangeValue?.result_between_candy}
+                                {dataGreatLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
                               '-'
@@ -692,7 +692,7 @@ const Calculate = () => {
                             )}
                             {dataGreatLeague && dataGreatLeague.elidge ? (
                               <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
-                                {dataGreatLeague.rangeValue?.result_between_xl_candy}
+                                {dataGreatLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
                               '-'
@@ -703,7 +703,7 @@ const Calculate = () => {
                       <tr>
                         <td>Stats</td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           {dataGreatLeague && dataGreatLeague.elidge ? (
                             <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
                               {dataGreatLeague.stats?.atk}
@@ -713,7 +713,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           {dataGreatLeague && dataGreatLeague.elidge ? (
                             <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
                               {dataGreatLeague.stats?.def}
@@ -723,7 +723,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           {dataGreatLeague && dataGreatLeague.elidge ? dataGreatLeague.stats?.sta : '-'}
                         </td>
                       </tr>
@@ -762,7 +762,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataUltraLeague && dataUltraLeague.elidge ? (
-                            <span className={statData?.type + '-text'}>{dataUltraLeague.rangeValue?.result_between_stadust}</span>
+                            <span className={statData?.type + '-text'}>{dataUltraLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -786,7 +786,7 @@ const Calculate = () => {
                             )}
                             {dataUltraLeague && dataUltraLeague.elidge ? (
                               <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
-                                {dataUltraLeague.rangeValue?.result_between_candy}
+                                {dataUltraLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
                               '-'
@@ -805,7 +805,7 @@ const Calculate = () => {
                             )}
                             {dataUltraLeague && dataUltraLeague.elidge ? (
                               <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
-                                {dataUltraLeague.rangeValue?.result_between_xl_candy}
+                                {dataUltraLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
                               '-'
@@ -816,7 +816,7 @@ const Calculate = () => {
                       <tr>
                         <td>Stats</td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           {dataUltraLeague && dataUltraLeague.elidge ? (
                             <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
                               {dataUltraLeague.stats?.atk}
@@ -826,7 +826,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           {dataUltraLeague && dataUltraLeague.elidge ? (
                             <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
                               {dataUltraLeague.stats?.def}
@@ -836,7 +836,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           {dataUltraLeague && dataUltraLeague.elidge ? dataUltraLeague.stats?.sta : '-'}
                         </td>
                       </tr>
@@ -872,7 +872,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataMasterLeague ? (
-                            <span className={statData?.type + '-text'}>{dataMasterLeague.rangeValue?.result_between_stadust}</span>
+                            <span className={statData?.type + '-text'}>{dataMasterLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -896,7 +896,7 @@ const Calculate = () => {
                             )}
                             {dataMasterLeague ? (
                               <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
-                                {dataMasterLeague.rangeValue?.result_between_candy}
+                                {dataMasterLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
                               '-'
@@ -915,7 +915,7 @@ const Calculate = () => {
                             )}
                             {dataMasterLeague ? (
                               <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
-                                {dataMasterLeague.rangeValue?.result_between_xl_candy}
+                                {dataMasterLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
                               '-'
@@ -926,7 +926,7 @@ const Calculate = () => {
                       <tr>
                         <td>Stats</td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={atk_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           {dataMasterLeague ? (
                             <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
                               {dataMasterLeague.stats?.atk}
@@ -936,7 +936,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={def_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           {dataMasterLeague ? (
                             <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
                               {dataMasterLeague.stats?.def}
@@ -946,7 +946,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={hp_logo} />
+                          <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           {dataMasterLeague ? dataMasterLeague.stats?.sta : '-'}
                         </td>
                       </tr>

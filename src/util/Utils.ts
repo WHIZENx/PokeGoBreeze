@@ -23,8 +23,8 @@ import {
   StatsRankPokemonGO,
   StatsPokemon,
 } from '../core/models/stats.model';
-import { PokemonInfo, Stats } from '../core/models/API/info.model';
-import { PokemonForm, IPokemonFormModify, PokemonFormModifyModel, PokemonSprit } from '../core/models/API/form.model';
+import { IPokemonDetail, Stats } from '../core/models/API/info.model';
+import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 
@@ -322,15 +322,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
 export const findMoveTeam = (move: string, moveSet: string[]) => {
   const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
-    if (value === 'FUTURESIGHT') {
-      value = 'FUTURE_SIGHT';
-    }
-    if (value === 'ROLLOUT') {
-      value = 'ROLL_OUT';
-    }
-    if (value === 'TECHNO_BLAST_DOUSE') {
-      value = 'TECHNO_BLAST_WATER';
-    }
+    value = replaceTempMovePvpName(value);
     const m = value.split('_');
     if (m.length === result?.length) {
       let count = 0;
@@ -340,10 +332,7 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
         }
       }
       if (count === m.length) {
-        return value
-          .replace('FUTURE_SIGHT', 'FUTURESIGHT')
-          .replace('TECHNO_BLAST_WATER', 'TECHNO_BLAST_DOUSE')
-          .replace('ROLL_OUT', 'ROLLOUT');
+        return value;
       }
     }
   }
@@ -424,12 +413,12 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: St
 
 export const calRank = (
   pokemonStats: {
-    [x: string]: { max_rank: number };
+    [x: string]: { maxRank: number };
   },
   type: string,
   rank: number
 ) => {
-  return ((pokemonStats[type].max_rank - rank + 1) * 100) / pokemonStats[type].max_rank;
+  return ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
 };
 
 export const mappingPokemonName = (pokemonData: IPokemonData[]) => {
@@ -492,10 +481,10 @@ export const getCustomThemeDataTable = (theme: Theme) => {
   };
 };
 
-export function getDataWithKey<T>(data: any, key: string | number) {
+export const getDataWithKey = <T>(data: any, key: string | number) => {
   const result = Object.entries(data ?? new Object()).find((k) => k.at(0) === key.toString());
-  return result ? (result[1] as T) : (new Object() as T);
-}
+  return (result ? result[1] : new Object()) as T;
+};
 
 export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | undefined) => {
   if (!pokemon) {
@@ -668,14 +657,14 @@ export const convertPokemonImageName = (text: string | undefined | null, default
 
 export const generatePokemonGoForms = (
   pokemonData: IPokemonData[],
-  dataFormList: PokemonForm[][],
+  dataFormList: IPokemonFormDetail[][],
   formListResult: IPokemonFormModify[][],
   id: number,
   name: string,
   index = 0
 ) => {
   const formList: string[] = [];
-  dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.form_name || FORM_NORMAL))));
+  dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.formName || FORM_NORMAL))));
   pokemonData
     .filter((pokemon) => pokemon.num === id)
     .forEach((pokemon) => {
@@ -704,17 +693,17 @@ export const generatePokemonGoForms = (
 };
 
 export const generatePokemonGoShadowForms = (
-  dataPokeList: PokemonInfo[],
+  dataPokeList: IPokemonDetail[],
   formListResult: IPokemonFormModify[][],
   id: number,
   name: string,
   index = 0
 ) => {
   dataPokeList
-    .filter((p) => p.is_include_shadow)
+    .filter((p) => p.isIncludeShadow)
     .forEach((p) => {
       let form = '';
-      if (!p.is_default) {
+      if (!p.isDefault) {
         form = p.name.replace(`${name}-`, '') + '-';
       }
       index--;
@@ -790,4 +779,26 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
     }
   }
   return pokemonForm;
+};
+
+export const replaceTempMoveName = (name: string) => {
+  if (name.endsWith('_FAST')) {
+    name = name.replace('_FAST', '');
+  } else if (name.endsWith('_PLUS')) {
+    name = name.replaceAll('_PLUS', '+');
+  }
+  return name;
+};
+
+export const replaceTempMovePvpName = (name: string) => {
+  if (name.includes('_BLASTOISE')) {
+    name = name.replace('_BLASTOISE', '');
+  } else if (name === 'TECHNO_BLAST_WATER') {
+    name = name = 'TECHNO_BLAST_DOUSE';
+  } else if (name === 'FUTURE_SIGHT') {
+    name = name = 'FUTURESIGHT';
+  } else if (name === 'ROLLOUT') {
+    name = 'ROLL_OUT';
+  }
+  return name;
 };

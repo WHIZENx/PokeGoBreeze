@@ -7,19 +7,40 @@ import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
-export interface BattleCalculate {
+export interface IBattleCalculate {
   atk?: number;
   def: number;
   hp?: number;
-  fmove?: ICombat;
-  cmove?: ICombat;
+  fMove?: ICombat;
+  cMove?: ICombat;
   types: string[];
   shadow?: boolean;
+  isStab?: boolean;
   WEATHER_BOOSTS?: string;
   POKEMON_FRIEND?: boolean;
   POKEMON_FRIEND_LEVEL?: number;
   isDoubleCharge?: boolean;
-  cmove2?: ICombat;
+  cMoveSec?: ICombat;
+}
+
+export class BattleCalculate implements IBattleCalculate {
+  atk?: number = 0;
+  def: number = 0;
+  hp?: number;
+  fMove?: ICombat;
+  cMove?: ICombat;
+  types: string[] = [];
+  shadow?: boolean;
+  isStab?: boolean;
+  WEATHER_BOOSTS?: string;
+  POKEMON_FRIEND?: boolean;
+  POKEMON_FRIEND_LEVEL?: number;
+  isDoubleCharge?: boolean;
+  cMoveSec?: ICombat;
+
+  constructor({ ...props }: IBattleCalculate) {
+    Object.assign(this, props);
+  }
 }
 
 interface IStatsLeagueCalculate {
@@ -27,6 +48,7 @@ interface IStatsLeagueCalculate {
   level: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class StatsLeagueCalculate implements IStatsLeagueCalculate {
   CP: number = 0;
   level: number = 0;
@@ -44,45 +66,35 @@ export interface IStatsCalculate {
 
 export interface IBetweenLevelCalculate {
   CP: number;
-  result_between_stadust: number;
-  result_between_stadust_diff?: number;
-  result_between_candy: number;
-  result_between_candy_diff?: number;
-  result_between_xl_candy: number;
-  result_between_xl_candy_diff?: number;
+  resultBetweenStadust: number;
+  resultBetweenStadustDiff?: number;
+  resultBetweenCandy: number;
+  resultBetweenCandyDiff?: number;
+  resultBetweenXLCandy: number;
+  resultBetweenXLCandyDiff?: number;
   powerUpCount?: number;
   type?: string;
-  atk_stat?: number;
-  def_stat?: number;
-  atk_stat_diff?: number;
-  def_stat_diff?: number;
+  atkStat?: number;
+  defStat?: number;
+  atkStatDiff?: number;
+  defStatDiff?: number;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class BetweenLevelCalculate implements IBetweenLevelCalculate {
   CP: number = 0;
-  // tslint:disable-next-line:variable-name
-  result_between_stadust: number = 0;
-  // tslint:disable-next-line:variable-name
-  result_between_stadust_diff?: number;
-  // tslint:disable-next-line:variable-name
-  result_between_candy: number = 0;
-  // tslint:disable-next-line:variable-name
-  result_between_candy_diff?: number;
-  // tslint:disable-next-line:variable-name
-  result_between_xl_candy: number = 0;
-  // tslint:disable-next-line:variable-name
-  result_between_xl_candy_diff?: number;
+  resultBetweenStadust: number = 0;
+  resultBetweenStadustDiff?: number;
+  resultBetweenCandy: number = 0;
+  resultBetweenCandyDiff?: number;
+  resultBetweenXLCandy: number = 0;
+  resultBetweenXLCandyDiff?: number;
   powerUpCount?: number;
   type?: string;
-  // tslint:disable-next-line:variable-name
-  atk_stat?: number;
-  // tslint:disable-next-line:variable-name
-  def_stat?: number;
-  // tslint:disable-next-line:variable-name
-  atk_stat_diff?: number;
-  // tslint:disable-next-line:variable-name
-  def_stat_diff?: number;
+  atkStat?: number;
+  defStat?: number;
+  atkStatDiff?: number;
+  defStatDiff?: number;
 
   constructor({ ...props }: IBetweenLevelCalculate) {
     Object.assign(this, props);
@@ -261,12 +273,12 @@ export interface IBattleBaseStats {
   powerUpCount?: number;
   rank?: number;
   ratio?: number;
-  result_between_candy?: number;
-  result_between_candy_diff?: number;
-  result_between_stadust?: number;
-  result_between_stadust_diff?: number;
-  result_between_xl_candy?: number;
-  result_between_xl_candy_diff?: number;
+  resultBetweenCandy?: number;
+  resultBetweenCandyDiff?: number;
+  resultBetweenStadust?: number;
+  resultBetweenStadustDiff?: number;
+  resultBetweenXLCandy?: number;
+  resultBetweenXLCandyDiff?: number;
   stats?: IStatsBaseCalculate;
   statsProds?: number;
   type?: string;
@@ -285,18 +297,12 @@ export class BattleBaseStats implements IBattleBaseStats {
   powerUpCount?: number;
   rank?: number;
   ratio?: number;
-  // tslint:disable-next-line:variable-name
-  result_between_candy?: number;
-  // tslint:disable-next-line:variable-name
-  result_between_candy_diff?: number;
-  // tslint:disable-next-line:variable-name
-  result_between_stadust?: number;
-  // tslint:disable-next-line:variable-name
-  result_between_stadust_diff?: number;
-  // tslint:disable-next-line:variable-name
-  result_between_xl_candy?: number;
-  // tslint:disable-next-line:variable-name
-  result_between_xl_candy_diff?: number;
+  resultBetweenCandy?: number;
+  resultBetweenCandyDiff?: number;
+  resultBetweenStadust?: number;
+  resultBetweenStadustDiff?: number;
+  resultBetweenXLCandy?: number;
+  resultBetweenXLCandyDiff?: number;
   stats?: IStatsBaseCalculate;
   statsProds?: number;
   type?: string;

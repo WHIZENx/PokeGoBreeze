@@ -41,10 +41,10 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
 
   const getTypeEffect = (effect: number, types: string[]) => {
     const data = TypeEffChart.create({
-      very_weak: [],
+      veryWeak: [],
       weak: [],
-      super_resist: [],
-      very_resist: [],
+      superResist: [],
+      veryResist: [],
       resist: [],
       neutral: [],
     });
@@ -55,7 +55,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective >= 2.56) {
-          data.very_weak?.push(key);
+          data.veryWeak?.push(key);
         } else if (valueEffective >= 1.6) {
           data.weak?.push(key);
         }
@@ -63,7 +63,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
 
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
-          {renderEffective('2.56', data.very_weak ?? [])}
+          {renderEffective('2.56', data.veryWeak ?? [])}
           {renderEffective('1.6', data.weak ?? [])}
         </div>
       );
@@ -89,17 +89,17 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective <= 0.3) {
-          data.super_resist?.push(key);
+          data.superResist?.push(key);
         } else if (valueEffective <= 0.39) {
-          data.very_resist?.push(key);
+          data.veryResist?.push(key);
         } else if (valueEffective <= 0.625) {
           data.resist?.push(key);
         }
       });
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
-          {renderEffective('0.244', data.super_resist ?? [])}
-          {renderEffective('0.391', data.very_resist ?? [])}
+          {renderEffective('0.244', data.superResist ?? [])}
+          {renderEffective('0.391', data.veryResist ?? [])}
           {renderEffective('0.625', data.resist ?? [])}
         </div>
       );

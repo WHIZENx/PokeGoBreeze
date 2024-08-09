@@ -8,14 +8,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import update from 'immutability-helper';
-import { TypeMove } from '../../enums/move.enum';
+import { TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
 import { IPokemonRaidComponent } from '../models/component.model';
 
 const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
-  const [fmoveTargetPokemon, setFmoveTargetPokemon] = useState(props.pokemon.fmoveTargetPokemon);
-  const [cmoveTargetPokemon, setCmoveTargetPokemon] = useState(props.pokemon.cmoveTargetPokemon);
+  const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState(props.pokemon.fMoveTargetPokemon);
+  const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState(props.pokemon.cMoveTargetPokemon);
 
   useEffect(() => {
     props.setData(
@@ -23,13 +23,13 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         [props.id]: {
           $merge: {
             dataTargetPokemon,
-            fmoveTargetPokemon,
-            cmoveTargetPokemon,
+            fMoveTargetPokemon,
+            cMoveTargetPokemon,
           },
         },
       })
     );
-  }, [props.data, dataTargetPokemon, fmoveTargetPokemon, cmoveTargetPokemon, props.id, props.setData]);
+  }, [props.data, dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, props.id, props.setData]);
 
   return (
     <div className="position-relative">
@@ -79,8 +79,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               onClick={() => {
                 if (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon)) {
                   setDataTargetPokemon(props.data[props.id + 1]?.dataTargetPokemon);
-                  setFmoveTargetPokemon(props.data[props.id + 1]?.fmoveTargetPokemon);
-                  setCmoveTargetPokemon(props.data[props.id + 1]?.cmoveTargetPokemon);
+                  setFMoveTargetPokemon(props.data[props.id + 1]?.fMoveTargetPokemon);
+                  setCMoveTargetPokemon(props.data[props.id + 1]?.cMoveTargetPokemon);
                   props.onRemovePokemon(props.id);
                 }
               }}
@@ -96,8 +96,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         pokemon={dataTargetPokemon}
         defaultSetting={props.defaultSetting}
         setCurrentPokemon={setDataTargetPokemon}
-        setFMovePokemon={setFmoveTargetPokemon}
-        setCMovePokemon={setCmoveTargetPokemon}
+        setFMovePokemon={setFMoveTargetPokemon}
+        setCMovePokemon={setCMoveTargetPokemon}
         maxHeight={148}
       />
       <span className="input-group-text justify-content-center">
@@ -109,8 +109,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           inputType={'small'}
           clearData={props.clearData}
           pokemon={dataTargetPokemon}
-          move={fmoveTargetPokemon}
-          setMovePokemon={setFmoveTargetPokemon}
+          move={fMoveTargetPokemon}
+          setMovePokemon={setFMoveTargetPokemon}
           moveType={TypeMove.FAST}
         />
       ) : (
@@ -130,8 +130,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           inputType={'small'}
           clearData={props.clearData}
           pokemon={dataTargetPokemon}
-          move={cmoveTargetPokemon}
-          setMovePokemon={setCmoveTargetPokemon}
+          move={cMoveTargetPokemon}
+          setMovePokemon={setCMoveTargetPokemon}
           moveType={TypeMove.CHARGE}
         />
       ) : (
