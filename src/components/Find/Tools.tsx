@@ -5,10 +5,10 @@ import { calculateRaidStat } from '../../util/Calculate';
 import { Form } from 'react-bootstrap';
 import { FORM_MEGA, RAID_BOSS_TIER } from '../../util/Constants';
 
-import atk_logo from '../../assets/attack.png';
-import def_logo from '../../assets/defense.png';
-import hp_logo from '../../assets/hp.png';
-import sta_logo from '../../assets/stamina.png';
+import ATK_LOGO from '../../assets/attack.png';
+import DEF_LOGO from '../../assets/defense.png';
+import HP_LOGO from '../../assets/hp.png';
+import STA_LOGO from '../../assets/stamina.png';
 
 import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/Utils';
 import { useSelector } from 'react-redux';
@@ -29,19 +29,19 @@ const Tools = (props: IToolsComponent) => {
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined) =>
-      getFormFromForms(stats, props.id, props.currForm?.form.form_name),
-    [props.id, props.currForm?.form.form_name]
+      getFormFromForms(stats, props.id, props.currForm?.form.formName),
+    [props.id, props.currForm?.form.formName]
   );
 
   useEffect(() => {
-    if (parseInt(props.tier.toString()) > 5 && !props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA)) {
+    if (parseInt(props.tier.toString()) > 5 && !props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA)) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
     } else if (
       parseInt(props.tier.toString()) === 5 &&
-      props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) &&
+      props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) &&
       pokemonData.find((item) => item.num === props.id)?.pokemonClass
     ) {
       setCurrTier(6);
@@ -49,7 +49,7 @@ const Tools = (props: IToolsComponent) => {
         props.setTier(6);
       }
     }
-  }, [props.currForm?.form.form_name, props.id, props.setTier, props.tier]);
+  }, [props.currForm?.form.formName, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
     const formATK = filterFormList(props.stats?.attack.ranking) as IStatsAtk;
@@ -114,13 +114,13 @@ const Tools = (props: IToolsComponent) => {
             <optgroup label="Normal Tiers">
               <option value={1}>Tier 1</option>
               <option value={3}>Tier 3</option>
-              {!props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) && <option value={5}>Tier 5</option>}
+              {!props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) && <option value={5}>Tier 5</option>}
             </optgroup>
             <optgroup label="Legacy Tiers">
               <option value={2}>Tier 2</option>
               <option value={4}>Tier 4</option>
             </optgroup>
-            {props.currForm?.form.form_name?.toUpperCase().includes(FORM_MEGA) && (
+            {props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) && (
               <Fragment>
                 {pokemonData.find((item) => item.num === props.id)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">
@@ -144,21 +144,21 @@ const Tools = (props: IToolsComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center">{statsPokemon?.atk?.attack ?? 0}</td>
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center">{statsPokemon?.def?.defense ?? 0}</td>
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={sta_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={STA_LOGO} />
                   STA
                 </td>
                 <td className="text-center">
@@ -167,7 +167,7 @@ const Tools = (props: IToolsComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
+                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
                   HP
                 </td>
                 <td className="text-center">{RAID_BOSS_TIER[props.tier].sta}</td>
@@ -184,7 +184,7 @@ const Tools = (props: IToolsComponent) => {
           pokemonStats={props.stats}
           stats={currDataPoke}
           id={props.id}
-          form={convertPokemonAPIDataName(props.currForm?.form.form_name)}
+          form={convertPokemonAPIDataName(props.currForm?.form.formName)}
         />
       )}
     </Fragment>

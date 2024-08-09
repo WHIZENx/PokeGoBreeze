@@ -19,10 +19,10 @@ const Attacker = (prop: ITypeEffComponent) => {
 
   const getTypeEffective = useCallback(() => {
     const data = TypeEffChart.create({
-      very_weak: [],
+      veryWeak: [],
       weak: [],
-      super_resist: [],
-      very_resist: [],
+      superResist: [],
+      veryResist: [],
       resist: [],
       neutral: [],
     });
@@ -35,7 +35,7 @@ const Attacker = (prop: ITypeEffComponent) => {
         } else if (value === 0.625) {
           data.resist?.push(key);
         } else if (value > 0) {
-          data.very_resist?.push(key);
+          data.veryResist?.push(key);
         }
       }
     );

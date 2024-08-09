@@ -27,10 +27,10 @@ const Info = (props: IInfoComponent) => {
 
   const getTypeEffective = (types: string[]) => {
     const data = TypeEffChart.create({
-      very_weak: [],
+      veryWeak: [],
       weak: [],
-      super_resist: [],
-      very_resist: [],
+      superResist: [],
+      veryResist: [],
       resist: [],
       neutral: [],
     });
@@ -41,7 +41,7 @@ const Info = (props: IInfoComponent) => {
           valueEffective *= value[type?.toUpperCase()];
         });
         if (valueEffective >= 2.56) {
-          data.very_weak?.push(key);
+          data.veryWeak?.push(key);
         } else if (valueEffective >= 1.6) {
           data.weak?.push(key);
         } else if (valueEffective === 1) {
@@ -49,9 +49,9 @@ const Info = (props: IInfoComponent) => {
         } else if (valueEffective >= 0.625) {
           data.resist?.push(key);
         } else if (valueEffective >= 0.39) {
-          data.very_resist?.push(key);
+          data.veryResist?.push(key);
         } else if (valueEffective >= 0.2) {
-          data.super_resist?.push(key);
+          data.superResist?.push(key);
         }
       }
     });

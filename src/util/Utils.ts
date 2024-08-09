@@ -23,8 +23,8 @@ import {
   StatsRankPokemonGO,
   StatsPokemon,
 } from '../core/models/stats.model';
-import { PokemonInfo, Stats } from '../core/models/API/info.model';
-import { PokemonForm, IPokemonFormModify, PokemonFormModifyModel, PokemonSprit } from '../core/models/API/form.model';
+import { IPokemonDetail, Stats } from '../core/models/API/info.model';
+import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 
@@ -424,12 +424,12 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: St
 
 export const calRank = (
   pokemonStats: {
-    [x: string]: { max_rank: number };
+    [x: string]: { maxRank: number };
   },
   type: string,
   rank: number
 ) => {
-  return ((pokemonStats[type].max_rank - rank + 1) * 100) / pokemonStats[type].max_rank;
+  return ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
 };
 
 export const mappingPokemonName = (pokemonData: IPokemonData[]) => {
@@ -668,14 +668,14 @@ export const convertPokemonImageName = (text: string | undefined | null, default
 
 export const generatePokemonGoForms = (
   pokemonData: IPokemonData[],
-  dataFormList: PokemonForm[][],
+  dataFormList: IPokemonFormDetail[][],
   formListResult: IPokemonFormModify[][],
   id: number,
   name: string,
   index = 0
 ) => {
   const formList: string[] = [];
-  dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.form_name || FORM_NORMAL))));
+  dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.formName || FORM_NORMAL))));
   pokemonData
     .filter((pokemon) => pokemon.num === id)
     .forEach((pokemon) => {
@@ -704,17 +704,17 @@ export const generatePokemonGoForms = (
 };
 
 export const generatePokemonGoShadowForms = (
-  dataPokeList: PokemonInfo[],
+  dataPokeList: IPokemonDetail[],
   formListResult: IPokemonFormModify[][],
   id: number,
   name: string,
   index = 0
 ) => {
   dataPokeList
-    .filter((p) => p.is_include_shadow)
+    .filter((p) => p.isIncludeShadow)
     .forEach((p) => {
       let form = '';
-      if (!p.is_default) {
+      if (!p.isDefault) {
         form = p.name.replace(`${name}-`, '') + '-';
       }
       index--;

@@ -102,9 +102,9 @@ const TableMove = (props: ITableMoveComponent) => {
       eliteFastMoves: combat.eliteQuickMove?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
       eliteChargedMoves: combat.eliteCinematicMove?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
       purifiedMoves:
-        (props.form?.is_shadow ? [] : combat.purifiedMoves?.map((move) => data?.combat?.find((item) => item.name === move))) ?? [],
+        (props.form?.isShadow ? [] : combat.purifiedMoves?.map((move) => data?.combat?.find((item) => item.name === move))) ?? [],
       shadowMoves:
-        (props.form?.is_purified ? [] : combat.shadowMoves?.map((move) => data?.combat?.find((item) => item.name === move))) ?? [],
+        (props.form?.isPurified ? [] : combat.shadowMoves?.map((move) => data?.combat?.find((item) => item.name === move))) ?? [],
       specialMoves: combat.specialMoves?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
     });
   };
@@ -112,19 +112,19 @@ const TableMove = (props: ITableMoveComponent) => {
   const findMove = useCallback(() => {
     const combatPoke = data?.pokemon
       ?.filter((item) =>
-        props.form?.id || props.form?.is_shadow || props.form?.is_purified
+        props.form?.id || props.form?.isShadow || props.form?.isPurified
           ? item.num === props.data?.num ?? 0
           : item.fullName === (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_')
       )
       .map((c) => {
         return {
           ...c,
-          purifiedMoves: props.form?.is_shadow ? [] : c.purifiedMoves,
-          shadowMoves: props.form?.is_purified ? [] : c.shadowMoves,
+          purifiedMoves: props.form?.isShadow ? [] : c.purifiedMoves,
+          shadowMoves: props.form?.isPurified ? [] : c.shadowMoves,
         };
       });
     if (combatPoke) {
-      if (combatPoke.length === 1 || (typeof props.form === 'string' ? props.form : props.form?.form_name)?.toUpperCase() === FORM_GMAX) {
+      if (combatPoke.length === 1 || (typeof props.form === 'string' ? props.form : props.form?.formName)?.toUpperCase() === FORM_GMAX) {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
       } else if (combatPoke.length === 0 && props.id) {
@@ -151,8 +151,8 @@ const TableMove = (props: ITableMoveComponent) => {
       data?.weatherBoost,
       data?.combat ?? [],
       result,
-      props.statATK * (props.form?.is_shadow ? SHADOW_ATK_BONUS(data?.options) : 1),
-      props.statDEF * (props.form?.is_shadow ? SHADOW_DEF_BONUS(data?.options) : 1),
+      props.statATK * (props.form?.isShadow ? SHADOW_ATK_BONUS(data?.options) : 1),
+      props.statDEF * (props.form?.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
       props.statSTA,
       props.data?.types?.map((type) => capitalize(type)) ?? []
     );

@@ -282,19 +282,16 @@ const StatsRanking = () => {
 
   const convertToPokemonForm = (pokemon: IPokemonData | IPokemonStatsRanking) => {
     return Form.create({
-      form_name: pokemon.forme ?? '',
-      form_names: [],
-      form_order: 0,
+      formName: pokemon.forme ?? '',
       id: pokemon.num,
-      is_battle_only: false,
-      is_default: true,
-      is_mega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
+      isDefault: true,
+      isMega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
       name: pokemon.name,
       sprites: undefined,
       types: pokemon.types ?? [],
-      version_group: { name: pokemon.version ?? '' },
-      is_shadow: false,
-      is_purified: false,
+      versionGroup: { name: pokemon.version ?? '' },
+      isShadow: false,
+      isPurified: false,
     });
   };
 

@@ -12,8 +12,8 @@ import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 import { useSnackbar } from 'notistack';
 
-import atk_logo from '../../../assets/attack.png';
-import def_logo from '../../../assets/defense.png';
+import ATK_LOGO from '../../../assets/attack.png';
+import DEF_LOGO from '../../../assets/defense.png';
 import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../../enums/move.enum';
@@ -149,7 +149,7 @@ const CalculatePoint = () => {
           globalOptions,
           calculateStatsBattle(statATK, j, i, true),
           statDefDEF,
-          move ? (!isRaid && pvpDmg ? move.pvp_power : move.pve_power) : 0,
+          move ? (!isRaid && pvpDmg ? move.pvpPower : move.pvePower) : 0,
           {
             effective: getTypeEffective(typeEff, move?.type ?? '', formDef?.form.types ?? []),
             stab: findStabType(form?.form.types ?? [], move?.type ?? ''),
@@ -182,7 +182,7 @@ const CalculatePoint = () => {
           globalOptions,
           statDefATK,
           calculateStatsBattle(statDEF, j, i, true),
-          moveDef ? (!isRaid && pvpDmg ? moveDef.pvp_power : moveDef.pve_power) : 0,
+          moveDef ? (!isRaid && pvpDmg ? moveDef.pvpPower : moveDef.pvePower) : 0,
           {
             effective: getTypeEffective(typeEff, moveDef?.type ?? '', form?.form.types ?? []),
             stab: findStabType(formDef?.form.types ?? [], moveDef?.type ?? ''),
@@ -239,7 +239,7 @@ const CalculatePoint = () => {
               globalOptions,
               statDefATK,
               calculateStatsBattle(statDEF, DEFIv, lv, true),
-              (!isRaid && pvpDmg ? cMove?.pvp_power : cMove?.pve_power) ?? 0,
+              (!isRaid && pvpDmg ? cMove?.pvpPower : cMove?.pvePower) ?? 0,
               {
                 effective: getTypeEffective(typeEff, cMove?.type ?? '', form?.form.types ?? []),
                 stab: findStabType(formDef?.form.types ?? [], cMove?.type ?? ''),
@@ -251,7 +251,7 @@ const CalculatePoint = () => {
             globalOptions,
             statDefATK,
             calculateStatsBattle(statDEF, DEFIv, lv, true),
-            (!isRaid && pvpDmg ? fMove?.pvp_power : fMove?.pve_power) ?? 0,
+            (!isRaid && pvpDmg ? fMove?.pvpPower : fMove?.pvePower) ?? 0,
             {
               effective: getTypeEffective(typeEff, fMove?.type ?? '', form?.form.types ?? []),
               stab: findStabType(formDef?.form.types ?? [], fMove?.type ?? ''),
@@ -290,7 +290,7 @@ const CalculatePoint = () => {
         <div className="border-type-stat text-center">
           <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === 'def' ? `Tier ${tier}` : null}>
             <span className="position-relative" style={{ width: 96 }}>
-              <img className="position-absolute" alt="img-logo" height={36} src={pri === 'atk' ? `${atk_logo}` : `${def_logo}`} />
+              <img className="position-absolute" alt="img-logo" height={36} src={pri === 'atk' ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
@@ -310,7 +310,7 @@ const CalculatePoint = () => {
         <div className="border-type-stat text-center">
           <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === 'def' ? `Tier ${tier}` : null}>
             <span className="position-relative" style={{ width: 96 }}>
-              <img className="position-absolute" alt="img-logo" height={36} src={sec === 'atk' ? `${atk_logo}` : `${def_logo}`} />
+              <img className="position-absolute" alt="img-logo" height={36} src={sec === 'atk' ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
@@ -424,7 +424,7 @@ const CalculatePoint = () => {
                   {move && (
                     <div style={{ width: 300, margin: 'auto' }}>
                       <p>
-                        - Move Ability Type: <b>{capitalize(move.type_move)}</b>
+                        - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
                       </p>
                       <p>
                         - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
@@ -433,7 +433,7 @@ const CalculatePoint = () => {
                       <p>
                         - Damage:{' '}
                         <b>
-                          {move.pve_power}
+                          {move.pvePower}
                           {findStabType(form?.form.types ?? [], move.type ?? '') && (
                             <span className={'caption-small text-success'}> (x1.2)</span>
                           )}
@@ -551,7 +551,7 @@ const CalculatePoint = () => {
                   {moveDef && (
                     <div style={{ width: 300, margin: 'auto' }}>
                       <p>
-                        - Move Ability Type: <b>{capitalize(moveDef.type_move)}</b>
+                        - Move Ability Type: <b>{capitalize(moveDef.typeMove)}</b>
                       </p>
                       <p>
                         - Move Type: <span className={'type-icon-small ' + moveDef.type?.toLowerCase()}>{capitalize(moveDef.type)}</span>
@@ -560,7 +560,7 @@ const CalculatePoint = () => {
                       <p>
                         - Damage:{' '}
                         <b>
-                          {moveDef.pve_power}
+                          {moveDef.pvePower}
                           {findStabType(formDef?.form.types ?? [], moveDef?.type ?? '') && (
                             <span className={'caption-small text-success'}> (x1.2)</span>
                           )}
@@ -706,7 +706,7 @@ const CalculatePoint = () => {
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
                         <p>
-                          - Move Ability Type: <b>{capitalize(fMove.type_move)}</b>
+                          - Move Ability Type: <b>{capitalize(fMove.typeMove)}</b>
                         </p>
                         <p>
                           - Move Type: <span className={'type-icon-small ' + fMove?.type?.toLowerCase()}>{capitalize(fMove.type)}</span>
@@ -715,7 +715,7 @@ const CalculatePoint = () => {
                         <p>
                           - Damage:{' '}
                           <b>
-                            {fMove.pve_power}
+                            {fMove.pvePower}
                             {findStabType(formDef?.form.types ?? [], fMove?.type ?? '') && (
                               <span className={'caption-small text-success'}> (x1.2)</span>
                             )}
@@ -739,7 +739,7 @@ const CalculatePoint = () => {
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
                         <p>
-                          - Move Ability Type: <b>{capitalize(cMove.type_move)}</b>
+                          - Move Ability Type: <b>{capitalize(cMove.typeMove)}</b>
                         </p>
                         <p>
                           - Move Type: <span className={'type-icon-small ' + cMove?.type?.toLowerCase()}>{capitalize(cMove.type)}</span>
@@ -748,7 +748,7 @@ const CalculatePoint = () => {
                         <p>
                           - Damage:{' '}
                           <b>
-                            {cMove.pve_power}
+                            {cMove.pvePower}
                             {findStabType(formDef?.form.types ?? [], cMove?.type ?? '') && (
                               <span className={'caption-small text-success'}> (x1.2)</span>
                             )}

@@ -31,9 +31,9 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
-import atk_logo from '../../../assets/attack.png';
-import def_logo from '../../../assets/defense.png';
-import hp_logo from '../../../assets/hp.png';
+import ATK_LOGO from '../../../assets/attack.png';
+import DEF_LOGO from '../../../assets/defense.png';
+import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -162,7 +162,7 @@ const Battle = () => {
       pokeObj.shadow ??= false;
       return (
         (atkPoke *
-          (move?.pvp_power ?? 0) *
+          (move?.pvpPower ?? 0) *
           (poke.pokemon?.types.includes(move?.type ?? '') ? STAB_MULTIPLY(dataStore?.options) : 1) *
           (poke.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
           getTypeEffective(dataStore?.typeEff, move?.type ?? '', pokeObj.pokemon?.types ?? [])) /
@@ -253,11 +253,11 @@ const Battle = () => {
         if (
           (!player1.disableCMovePri || !player1.disableCMoveSec) &&
           !preChargeSec &&
-          (player1.energy >= Math.abs(player1.cMove?.pvp_energy ?? 0) || player1.energy >= Math.abs(player1.cMoveSec?.pvp_energy ?? 0))
+          (player1.energy >= Math.abs(player1.cMove?.pvpEnergy ?? 0) || player1.energy >= Math.abs(player1.cMoveSec?.pvpEnergy ?? 0))
         ) {
-          if (player1.energy >= Math.abs(player1.cMove?.pvp_energy ?? 0)) {
+          if (player1.energy >= Math.abs(player1.cMove?.pvpEnergy ?? 0)) {
             chargeType = ChargeType.Primary;
-            player1.energy += player1.cMove?.pvp_energy ?? 0;
+            player1.energy += player1.cMove?.pvpEnergy ?? 0;
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
@@ -266,9 +266,9 @@ const Battle = () => {
               move: player1.cMove,
             });
           }
-          if (player1.energy >= Math.abs(player1.cMoveSec?.pvp_energy ?? 0)) {
+          if (player1.energy >= Math.abs(player1.cMoveSec?.pvpEnergy ?? 0)) {
             chargeType = ChargeType.Secondary;
-            player1.energy += player1.cMoveSec?.pvp_energy ?? 0;
+            player1.energy += player1.cMoveSec?.pvpEnergy ?? 0;
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
@@ -287,11 +287,11 @@ const Battle = () => {
         if (
           (!player2.disableCMovePri || !player2.disableCMoveSec) &&
           !preChargePri &&
-          (player2.energy >= Math.abs(player2.cMove?.pvp_energy ?? 0) || player2.energy >= Math.abs(player2.cMoveSec?.pvp_energy ?? 0))
+          (player2.energy >= Math.abs(player2.cMove?.pvpEnergy ?? 0) || player2.energy >= Math.abs(player2.cMoveSec?.pvpEnergy ?? 0))
         ) {
-          if (player2.energy >= Math.abs(player2.cMove?.pvp_energy ?? 0)) {
+          if (player2.energy >= Math.abs(player2.cMove?.pvpEnergy ?? 0)) {
             chargeType = ChargeType.Primary;
-            player2.energy += player2.cMove?.pvp_energy ?? 0;
+            player2.energy += player2.cMove?.pvpEnergy ?? 0;
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
@@ -300,9 +300,9 @@ const Battle = () => {
               move: player2.cMove,
             });
           }
-          if (player2.energy >= Math.abs(player2.cMoveSec?.pvp_energy ?? 0)) {
+          if (player2.energy >= Math.abs(player2.cMoveSec?.pvpEnergy ?? 0)) {
             chargeType = ChargeType.Secondary;
-            player2.energy += player2.cMoveSec?.pvp_energy ?? 0;
+            player2.energy += player2.cMoveSec?.pvpEnergy ?? 0;
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
@@ -338,7 +338,7 @@ const Battle = () => {
             if (!preChargeSec) {
               player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
             }
-            player1.energy += player1.fMove?.pvp_energy ?? 0;
+            player1.energy += player1.fMove?.pvpEnergy ?? 0;
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Fast,
@@ -377,7 +377,7 @@ const Battle = () => {
             } else {
               immuneSec = true;
             }
-            player2.energy += player2.fMove?.pvp_energy ?? 0;
+            player2.energy += player2.fMove?.pvpEnergy ?? 0;
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Fast,
@@ -985,7 +985,7 @@ const Battle = () => {
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
         {move?.buffs.map((value, index) => (
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
-            <img width={15} height={15} alt="img-atk" src={value.type === 'atk' ? atk_logo : def_logo} />
+            <img width={15} height={15} alt="img-atk" src={value.type === 'atk' ? ATK_LOGO : DEF_LOGO} />
             <div className="position-absolute icon-buff">
               {value.power === 2 ? (
                 <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
@@ -1152,7 +1152,7 @@ const Battle = () => {
               {pokemon.pokemonData?.currentStats?.IV?.sta ?? 0}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={atk_logo} />
+            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
             Attack:{' '}
             <b>
               {Math.floor(
@@ -1160,7 +1160,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={def_logo} />
+            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
             Defense:{' '}
             <b>
               {Math.floor(
@@ -1168,7 +1168,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={hp_logo} />
+            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
             HP: <b>{Math.floor(pokemon.pokemonData?.currentStats?.stats?.statsSTA ?? 0)}</b>
             <br />
             Stats Prod:{' '}
@@ -1344,7 +1344,7 @@ const Battle = () => {
                     type={pokemon.cMovePri?.type}
                     size={80}
                     maxEnergy={100}
-                    moveEnergy={Math.abs(pokemon.cMovePri?.pvp_energy ?? 0)}
+                    moveEnergy={Math.abs(pokemon.cMovePri?.pvpEnergy ?? 0)}
                     energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
                     disable={pokemon.disableCMovePri}
                   />
@@ -1354,7 +1354,7 @@ const Battle = () => {
                       type={pokemon.cMoveSec.type}
                       size={80}
                       maxEnergy={100}
-                      moveEnergy={Math.abs(pokemon.cMoveSec.pvp_energy)}
+                      moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
                       energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
                       disable={pokemon.disableCMoveSec}
                     />
@@ -1572,8 +1572,8 @@ const Battle = () => {
           <div className="text-center element-top">
             <button className="btn btn-primary" onClick={() => battleAnimation()}>
               <span className="position-relative">
-                <img height={36} alt="atk-left" src={atk_logo} />
-                <img className="battle-logo" height={36} alt="atk-right" src={atk_logo} />
+                <img height={36} alt="atk-left" src={ATK_LOGO} />
+                <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
               </span>{' '}
               Battle Simulator
             </button>

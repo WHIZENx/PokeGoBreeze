@@ -48,7 +48,7 @@ const StatsBar = (props: IStatsBarComponent) => {
       {props.pokemonStats && (
         <BoxText className={`box-text rank-text`} isRank={true}>
           <span>
-            Rank: {props.rank} / {props.pokemonStats?.attack.max_rank}
+            Rank: {props.rank} / {props.pokemonStats?.attack.maxRank}
           </span>
         </BoxText>
       )}

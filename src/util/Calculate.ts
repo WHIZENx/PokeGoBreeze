@@ -283,31 +283,31 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
   return new StatsRank({
     attack: StatsRankAtk.create({
       ranking: attackStats,
-      min_rank: 1,
-      max_rank: attackRanking.length,
-      min_stats: minATK,
-      max_stats: maxATK,
+      minRank: 1,
+      maxRank: attackRanking.length,
+      minStats: minATK,
+      maxStats: maxATK,
     }),
     defense: StatsRankDef.create({
       ranking: defenseStats,
-      min_rank: 1,
-      max_rank: defenseRanking.length,
-      min_stats: minDEF,
-      max_stats: maxDEF,
+      minRank: 1,
+      maxRank: defenseRanking.length,
+      minStats: minDEF,
+      maxStats: maxDEF,
     }),
     stamina: StatsRankSta.create({
       ranking: staminaStats,
-      min_rank: 1,
-      max_rank: staminaRanking.length,
-      min_stats: minSTA,
-      max_stats: maxSTA,
+      minRank: 1,
+      maxRank: staminaRanking.length,
+      minStats: minSTA,
+      maxStats: maxSTA,
     }),
     statProd: StatsRankProd.create({
       ranking: prodStats,
-      min_rank: 1,
-      max_rank: prodRanking.length,
-      min_stats: minPROD,
-      max_stats: maxPROD,
+      minRank: 1,
+      maxRank: prodRanking.length,
+      minStats: minPROD,
+      maxStats: maxPROD,
     }),
   });
 };
@@ -456,9 +456,9 @@ export const calculateBetweenLevel = (
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
-      result_between_stadust: 0,
-      result_between_candy: 0,
-      result_between_xl_candy: 0,
+      resultBetweenStadust: 0,
+      resultBetweenCandy: 0,
+      resultBetweenXLCandy: 0,
       powerUpCount: 0,
     });
   } else {
@@ -496,21 +496,21 @@ export const calculateBetweenLevel = (
 
     const dataList = new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
-      result_between_stadust: betweenStadust,
-      result_between_stadust_diff: betweenStadustDiff,
-      result_between_candy: betweenCandy,
-      result_between_candy_diff: betweenCandyDiff,
-      result_between_xl_candy: betweenXlCandy,
-      result_between_xl_candy_diff: betweenXlCandyDiff,
+      resultBetweenStadust: betweenStadust,
+      resultBetweenStadustDiff: betweenStadustDiff,
+      resultBetweenCandy: betweenCandy,
+      resultBetweenCandyDiff: betweenCandyDiff,
+      resultBetweenXLCandy: betweenXlCandy,
+      resultBetweenXLCandyDiff: betweenXlCandyDiff,
       powerUpCount,
       type,
     });
 
     if (type.toUpperCase() === FORM_SHADOW) {
-      dataList.atk_stat = atkStat;
-      dataList.def_stat = defStat;
-      dataList.atk_stat_diff = atkStatDiff;
-      dataList.def_stat_diff = defStatDiff;
+      dataList.atkStat = atkStat;
+      dataList.defStat = defStat;
+      dataList.atkStatDiff = atkStatDiff;
+      dataList.defStatDiff = defStatDiff;
     }
 
     return dataList;
@@ -746,10 +746,10 @@ export const calculateAvgDPS = (
     shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
     multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, options?.POKEMON_FRIEND_LEVEL);
 
-  const FPow = fMove?.pve_power ?? 0;
-  const CPow = cMove?.pve_power ?? 0;
-  const FE = Math.abs(fMove?.pve_energy ?? 0);
-  const CE = Math.abs(cMove?.pve_energy ?? 0);
+  const FPow = fMove?.pvePower ?? 0;
+  const CPow = cMove?.pvePower ?? 0;
+  const FE = Math.abs(fMove?.pveEnergy ?? 0);
+  const CE = Math.abs(cMove?.pveEnergy ?? 0);
   const FDur = (fMove?.durationMs ?? 0) / 1000;
   const CDur = (cMove?.durationMs ?? 0) / 1000;
   const FType = capitalize(fMove?.type);
@@ -851,9 +851,9 @@ export const calculateBattleDPSDefender = (
     shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
     shadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
 
-  const FPowDef = defender.fMove?.pve_power;
-  const CPowDef = defender.cMove?.pve_power;
-  const CEDef = Math.abs(defender.cMove?.pve_energy ?? 0);
+  const FPowDef = defender.fMove?.pvePower;
+  const CPowDef = defender.cMove?.pvePower;
+  const CEDef = Math.abs(defender.cMove?.pveEnergy ?? 0);
   const FDurDef = (defender.fMove?.durationMs ?? 0) / 1000;
   const CDurDef = (defender.cMove?.durationMs ?? 0) / 1000;
   const FTypeDef = capitalize(defender.fMove?.type);
@@ -905,10 +905,10 @@ export const calculateBattleDPS = (
     shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
     multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.POKEMON_FRIEND_LEVEL);
 
-  const FPow = attacker.fMove?.pve_power;
-  const CPow = attacker.cMove?.pve_power;
-  const FE = Math.abs(attacker.fMove?.pve_energy ?? 0);
-  const CE = Math.abs(attacker.cMove?.pve_energy ?? 0);
+  const FPow = attacker.fMove?.pvePower;
+  const CPow = attacker.cMove?.pvePower;
+  const FE = Math.abs(attacker.fMove?.pveEnergy ?? 0);
+  const CE = Math.abs(attacker.cMove?.pveEnergy ?? 0);
   const FDur = (attacker.fMove?.durationMs ?? 0) / 1000;
   const CDur = (attacker.cMove?.durationMs ?? 0) / 1000;
   const FType = capitalize(attacker.fMove?.type?.toLowerCase());
@@ -965,8 +965,8 @@ export const calculateBattleDPS = (
   let DPSSec = 0;
   if (attacker.isDoubleCharge) {
     const moveSec = attacker.cMoveSec;
-    const CPowSec = moveSec?.pve_power;
-    const CESec = Math.abs(moveSec?.pve_energy ?? 0);
+    const CPowSec = moveSec?.pvePower;
+    const CESec = Math.abs(moveSec?.pveEnergy ?? 0);
     const CTypeSec = capitalize(moveSec?.type);
     const CDurSec = (moveSec?.durationMs ?? 0) / 1000;
     const CDWSSec = (moveSec?.damageWindowStartMs ?? 0) / 1000;
@@ -1028,13 +1028,13 @@ export const queryTopMove = (
       let pokemonList = false;
       let isElite = false;
       let isSpecial = false;
-      if (move?.type_move === TypeMove.FAST) {
+      if (move?.typeMove === TypeMove.FAST) {
         pokemonList = value.quickMoves?.includes(move.name) ?? false;
         if (!pokemonList) {
           pokemonList = value.eliteQuickMove?.includes(move.name) ?? false;
           isElite = true;
         }
-      } else if (move?.type_move === TypeMove.CHARGE) {
+      } else if (move?.typeMove === TypeMove.CHARGE) {
         pokemonList = value.cinematicMoves?.includes(move.name) ?? false;
         if (!pokemonList) {
           pokemonList = value.shadowMoves?.includes(move.name) ?? false;
@@ -1363,9 +1363,9 @@ const queryMoveCounter = (
 
       data.dataList.push(
         new PokemonQueryCounter({
-          pokemon_id: data.pokemon.num,
-          pokemon_name: data.pokemon.name,
-          pokemon_forme: data.pokemon.forme,
+          pokemonId: data.pokemon.num,
+          pokemonName: data.pokemon.name,
+          pokemonForme: data.pokemon.forme,
           releasedGO: data.pokemon.releasedGO,
           dps: dpsOff,
           fMove: { ...mf, elite: fElite },

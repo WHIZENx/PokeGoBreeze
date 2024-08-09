@@ -92,7 +92,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Pokémon',
       selector: (row: ICounterModel) => (
-        <Link to={`/pokemon/${row.pokemon_id}${row.pokemon_forme ? `?form=${row.pokemon_forme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
+        <Link to={`/pokemon/${row.pokemonId}${row.pokemonForme ? `?form=${row.pokemonForme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
           <div className="d-flex justify-content-center">
             <div
               className={
@@ -106,15 +106,15 @@ const Counter = (props: ICounterComponent) => {
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme ?? '')
-                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemon_id, row.pokemon_forme ?? ''))
-                    : APIService.getPokeFullSprite(row.pokemon_id)
+                  findAssetForm(data?.assets ?? [], row.pokemonId, row.pokemonForme ?? '')
+                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemonId, row.pokemonForme ?? ''))
+                    : APIService.getPokeFullSprite(row.pokemonId)
                 }
               />
             </div>
           </div>
           <span className="caption text-overflow" style={{ color: theme.palette.text.primary }}>
-            #{row.pokemon_id} {splitAndCapitalize(row.pokemon_name, '-', ' ')}
+            #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
           </span>
         </Link>
       ),
@@ -299,13 +299,13 @@ const Counter = (props: ICounterComponent) => {
             if (showMega) {
               return true;
             }
-            return !pokemon.pokemon_forme?.includes(FORM_MEGA) && !pokemon.pokemon_forme?.includes(FORM_PRIMAL);
+            return !pokemon.pokemonForme?.includes(FORM_MEGA) && !pokemon.pokemonForme?.includes(FORM_PRIMAL);
           })
           .filter((pokemon) => {
             if (!releasedGO) {
               return true;
             }
-            const result = checkPokemonGO(pokemon.pokemon_id, convertPokemonDataName(pokemon.pokemon_name), data?.pokemon ?? []);
+            const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data?.pokemon ?? []);
             return pokemon.releasedGO ?? result?.releasedGO ?? false;
           })}
       />

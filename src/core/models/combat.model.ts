@@ -19,15 +19,15 @@ export class Buff implements IBuff {
 export interface ICombat {
   name: string;
   type: string | null;
-  type_move: string | null;
-  pvp_power: number;
-  pvp_energy: number;
+  typeMove: string | null;
+  pvpPower: number;
+  pvpEnergy: number;
   sound: string | null;
   buffs: IBuff[];
   id: number;
   track: number;
-  pve_power: number;
-  pve_energy: number;
+  pvePower: number;
+  pveEnergy: number;
   durationMs: number;
   damageWindowStartMs: number;
   damageWindowEndMs: number;
@@ -45,20 +45,15 @@ export interface ICombat {
 export class Combat implements ICombat {
   name: string;
   type: string | null = null;
-  // tslint:disable-next-line:variable-name
-  type_move: string | null = null;
-  // tslint:disable-next-line:variable-name
-  pvp_power: number;
-  // tslint:disable-next-line:variable-name
-  pvp_energy: number;
+  typeMove: string | null = null;
+  pvpPower: number;
+  pvpEnergy: number;
   sound: string | null = null;
   buffs: IBuff[];
   id: number;
   track: number;
-  // tslint:disable-next-line:variable-name
-  pve_power: number;
-  // tslint:disable-next-line:variable-name
-  pve_energy: number;
+  pvePower: number;
+  pveEnergy: number;
   durationMs: number;
   damageWindowStartMs: number;
   damageWindowEndMs: number;
@@ -73,13 +68,13 @@ export class Combat implements ICombat {
 
   constructor() {
     this.name = '';
-    this.pvp_power = 0;
-    this.pvp_energy = 0;
+    this.pvpPower = 0;
+    this.pvpEnergy = 0;
     this.buffs = [];
     this.id = 0;
     this.track = 0;
-    this.pve_power = 0;
-    this.pve_energy = 0;
+    this.pvePower = 0;
+    this.pveEnergy = 0;
     this.durationMs = 0;
     this.damageWindowStartMs = 0;
     this.damageWindowEndMs = 0;

@@ -1,6 +1,6 @@
 import { createPool } from '@vercel/postgres';
 import { CPMData } from '../core/models/cpm.model';
-import { PokemonInfo } from '../core/models/API/info.model';
+import { IPokemonDetail } from '../core/models/API/info.model';
 import { PokemonEncounter } from '../core/models/pokemon.model';
 
 const db = createPool({
@@ -37,7 +37,7 @@ export const getDbPokemonName = async () => {
   return await db.sql`SELECT * from tblPokemonName`;
 };
 
-export const createDbPokemonName = async (pokemon: PokemonInfo) => {
+export const createDbPokemonName = async (pokemon: IPokemonDetail) => {
   return await db.sql`INSERT INTO tblPokemonName(
     Id,
     Name

@@ -1,8 +1,8 @@
 interface OptionsRank {
-  min_rank: number;
-  max_rank: number;
-  min_stats: number;
-  max_stats: number;
+  minRank: number;
+  maxRank: number;
+  minStats: number;
+  maxStats: number;
 }
 
 interface IStatsRankAtk extends OptionsRank {
@@ -11,14 +11,10 @@ interface IStatsRankAtk extends OptionsRank {
 
 export class StatsRankAtk implements IStatsRankAtk {
   ranking: IStatsAtk[] = [];
-  // tslint:disable-next-line:variable-name
-  min_rank: number = 0;
-  // tslint:disable-next-line:variable-name
-  max_rank: number = 0;
-  // tslint:disable-next-line:variable-name
-  min_stats: number = 0;
-  // tslint:disable-next-line:variable-name
-  max_stats: number = 0;
+  minRank: number = 0;
+  maxRank: number = 0;
+  minStats: number = 0;
+  maxStats: number = 0;
 
   static create(value: IStatsRankAtk) {
     const obj = new StatsRankAtk();
@@ -34,14 +30,10 @@ interface IStatsRankDef extends OptionsRank {
 // tslint:disable-next-line:max-classes-per-file
 export class StatsRankDef implements IStatsRankDef {
   ranking: IStatsDef[] = [];
-  // tslint:disable-next-line:variable-name
-  min_rank: number = 0;
-  // tslint:disable-next-line:variable-name
-  max_rank: number = 0;
-  // tslint:disable-next-line:variable-name
-  min_stats: number = 0;
-  // tslint:disable-next-line:variable-name
-  max_stats: number = 0;
+  minRank: number = 0;
+  maxRank: number = 0;
+  minStats: number = 0;
+  maxStats: number = 0;
 
   static create(value: IStatsRankDef) {
     const obj = new StatsRankDef();
@@ -57,14 +49,10 @@ interface IStatsRankSta extends OptionsRank {
 // tslint:disable-next-line:max-classes-per-file
 export class StatsRankSta implements IStatsRankSta {
   ranking: IStatsSta[] = [];
-  // tslint:disable-next-line:variable-name
-  min_rank: number = 0;
-  // tslint:disable-next-line:variable-name
-  max_rank: number = 0;
-  // tslint:disable-next-line:variable-name
-  min_stats: number = 0;
-  // tslint:disable-next-line:variable-name
-  max_stats: number = 0;
+  minRank: number = 0;
+  maxRank: number = 0;
+  minStats: number = 0;
+  maxStats: number = 0;
 
   static create(value: IStatsRankSta) {
     const obj = new StatsRankSta();
@@ -80,14 +68,10 @@ interface IStatsRankProd extends OptionsRank {
 // tslint:disable-next-line:max-classes-per-file
 export class StatsRankProd implements IStatsRankProd {
   ranking: IStatsProd[] = [];
-  // tslint:disable-next-line:variable-name
-  min_rank: number = 0;
-  // tslint:disable-next-line:variable-name
-  max_rank: number = 0;
-  // tslint:disable-next-line:variable-name
-  min_stats: number = 0;
-  // tslint:disable-next-line:variable-name
-  max_stats: number = 0;
+  minRank: number = 0;
+  maxRank: number = 0;
+  minStats: number = 0;
+  maxStats: number = 0;
 
   static create(value: IStatsRankProd) {
     const obj = new StatsRankProd();

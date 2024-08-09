@@ -16,7 +16,7 @@ const Mega = (props: IFormSpecialComponent) => {
 
   useEffect(() => {
     setArrEvoList(
-      props.formList.filter((item) => item.at(0)?.form.form_name?.toUpperCase().includes(FORM_MEGA)).map((item) => item.at(0)?.form)
+      props.formList.filter((item) => item.at(0)?.form.formName?.toUpperCase().includes(FORM_MEGA)).map((item) => item.at(0)?.form)
     );
   }, [props.formList]);
 
@@ -53,7 +53,7 @@ const Mega = (props: IFormSpecialComponent) => {
                 src={APIService.getPokeGifSprite(value?.name ?? '')}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = `${value?.sprites?.front_default}`;
+                  e.currentTarget.src = `${value?.sprites?.frontDefault}`;
                 }}
               />
               <div id="id-pokemon" style={{ color: 'black' }}>

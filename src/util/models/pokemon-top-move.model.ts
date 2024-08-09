@@ -87,9 +87,9 @@ export class PokemonQueryRankMove implements IPokemonQueryRankMove {
 }
 
 export interface IPokemonQueryCounter {
-  pokemon_id: number;
-  pokemon_name: string;
-  pokemon_forme: string | null;
+  pokemonId: number;
+  pokemonName: string;
+  pokemonForme: string | null;
   releasedGO: boolean;
   dps: number;
   fMove: ICombat;
@@ -98,12 +98,9 @@ export interface IPokemonQueryCounter {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonQueryCounter implements IPokemonQueryCounter {
-  // tslint:disable-next-line:variable-name
-  pokemon_id: number = 0;
-  // tslint:disable-next-line:variable-name
-  pokemon_name: string = '';
-  // tslint:disable-next-line:variable-name
-  pokemon_forme: string | null = '';
+  pokemonId: number = 0;
+  pokemonName: string = '';
+  pokemonForme: string | null = '';
   releasedGO: boolean = false;
   dps: number = 0;
   fMove: ICombat = new Combat();

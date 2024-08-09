@@ -114,25 +114,25 @@ const columnMove: any = [
   },
   {
     name: 'Power PVE',
-    selector: (row: ICombat) => row.pve_power,
+    selector: (row: ICombat) => row.pvePower,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Power PVP',
-    selector: (row: ICombat) => row.pvp_power,
+    selector: (row: ICombat) => row.pvpPower,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVE',
-    selector: (row: ICombat) => `${row.pve_energy > 0 ? '+' : ''}${row.pve_energy}`,
+    selector: (row: ICombat) => `${row.pveEnergy > 0 ? '+' : ''}${row.pveEnergy}`,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVP',
-    selector: (row: ICombat) => `${row.pvp_energy > 0 ? '+' : ''}${row.pvp_energy}`,
+    selector: (row: ICombat) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
     sortable: true,
     width: '120px',
   },
@@ -154,8 +154,8 @@ const SearchTypes = () => {
   });
   const allData = {
     pokemon: (data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length ?? 1) - 1,
-    fastMoves: data?.combat?.filter((type) => type.type_move === TypeMove.FAST)?.length,
-    chargedMoves: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE)?.length,
+    fastMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST)?.length,
+    chargedMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE)?.length,
   };
 
   const [showType, setShowType] = useState(false);
@@ -182,8 +182,8 @@ const SearchTypes = () => {
         pokemonList: data?.pokemon
           ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
           .filter((pokemon) => pokemon.types.includes(currentType)),
-        fastMove: data?.combat?.filter((type) => type.type_move === TypeMove.FAST && type.type === currentType),
-        chargedMove: data?.combat?.filter((type) => type.type_move === TypeMove.CHARGE && type.type === currentType),
+        fastMove: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType),
+        chargedMove: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType),
       });
     }
   }, [currentType, releasedGO, data?.pokemon]);

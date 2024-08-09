@@ -219,7 +219,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Move Type</td>
                 <td colSpan={2}>
-                  <b>{move && `${capitalize(move.type_move)} Move`}</b>
+                  <b>{move && `${capitalize(move.typeMove)} Move`}</b>
                 </td>
               </tr>
               <tr>
@@ -246,7 +246,7 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>PVE Power</td>
-                <td colSpan={2}>{move?.pve_power}</td>
+                <td colSpan={2}>{move?.pvePower}</td>
               </tr>
               <tr>
                 <td>
@@ -256,8 +256,8 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{(move.pve_power * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{(move.pve_power * 0.2).toFixed(2)}</span>
+                      <span>{(move.pvePower * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
+                      <span className="text-success d-inline-block caption">+{(move.pvePower * 0.2).toFixed(2)}</span>
                     </>
                   )}
                 </td>
@@ -265,15 +265,15 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVE Energy</td>
                 <td colSpan={2}>
-                  {(move?.pve_energy ?? 0) > 0 && '+'}
-                  {move?.pve_energy}
+                  {(move?.pveEnergy ?? 0) > 0 && '+'}
+                  {move?.pveEnergy}
                 </td>
               </tr>
-              {move?.type_move === TypeMove.CHARGE && (
+              {move?.typeMove === TypeMove.CHARGE && (
                 <tr>
                   <td>PVE Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(true, move?.pve_energy)} color={move?.type?.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(true, move?.pveEnergy)} color={move?.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
@@ -284,7 +284,7 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>PVP Power</td>
-                <td colSpan={2}>{move?.pvp_power}</td>
+                <td colSpan={2}>{move?.pvpPower}</td>
               </tr>
               <tr>
                 <td>
@@ -294,8 +294,8 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{(move.pvp_power * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{(move.pvp_power * 0.2).toFixed(2)}</span>
+                      <span>{(move.pvpPower * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
+                      <span className="text-success d-inline-block caption">+{(move.pvpPower * 0.2).toFixed(2)}</span>
                     </>
                   )}
                 </td>
@@ -303,15 +303,15 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVP Energy</td>
                 <td colSpan={2}>
-                  {(move?.pvp_energy ?? 0) > 0 && '+'}
-                  {move?.pvp_energy}
+                  {(move?.pvpEnergy ?? 0) > 0 && '+'}
+                  {move?.pvpEnergy}
                 </td>
               </tr>
-              {move?.type_move === TypeMove.CHARGE && (
+              {move?.typeMove === TypeMove.CHARGE && (
                 <tr>
                   <td>PVP Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(false, move?.pvp_energy)} color={move?.type?.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(false, move?.pvpEnergy)} color={move?.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
@@ -402,14 +402,14 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>DPS</td>
-                <td>{move && `${(move?.pve_power / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${(move?.pvePower / (move?.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move?.pve_power * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${((move?.pvePower * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
@@ -417,7 +417,7 @@ const Move = (props: IMovePage) => {
                   <span className="caption">(2 Effect Bonus)</span>
                 </td>
                 <td>
-                  {move && `${((move?.pve_power * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move?.durationMs / 1000)).toFixed(2)}`}
+                  {move && `${((move?.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move?.durationMs / 1000)).toFixed(2)}`}
                 </td>
               </tr>
               <tr>
@@ -426,13 +426,13 @@ const Move = (props: IMovePage) => {
                   <span className="caption">(STAB+Weather+Shadow Bonus)</span>
                 </td>
                 <td>
-                  {move && `${((move?.pve_power * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move?.durationMs / 1000)).toFixed(2)}`}
+                  {move && `${((move?.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move?.durationMs / 1000)).toFixed(2)}`}
                 </td>
               </tr>
-              {move?.type_move === TypeMove.FAST && (
+              {move?.typeMove === TypeMove.FAST && (
                 <tr>
                   <td>EPS</td>
-                  <td>{move && `${(move?.pve_energy / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                  <td>{move && `${(move?.pveEnergy / (move?.durationMs / 1000)).toFixed(2)}`}</td>
                 </tr>
               )}
               <tr className="text-center">
@@ -442,14 +442,14 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>DPS</td>
-                <td>{move && `${(move?.pvp_power / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${(move?.pvpPower / (move?.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move?.pvp_power * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${((move?.pvpPower * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>

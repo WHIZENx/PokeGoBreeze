@@ -165,8 +165,8 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainJSON = (id: number, forme: IForm) => {
-    let form = forme.form_name === '' || forme.form_name?.toUpperCase().includes(FORM_MEGA) ? null : forme.form_name;
-    if (forme.form_name === '10') {
+    let form = forme.formName === '' || forme.formName?.toUpperCase().includes(FORM_MEGA) ? null : forme.formName;
+    if (forme.formName === '10') {
       form += '%';
     }
     if (forme.name === 'necrozma-dawn') {
@@ -302,11 +302,11 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainStore = (id: number, forme: IForm) => {
-    const formName = forme.form_name?.toUpperCase() ?? '';
+    const formName = forme.formName?.toUpperCase() ?? '';
     const form =
       formName === '' || formName.includes(FORM_MEGA)
         ? FORM_NORMAL
-        : forme.is_purified || forme.is_shadow
+        : forme.isPurified || forme.isShadow
         ? formName === FORM_SHADOW || formName === FORM_PURIFIED
           ? FORM_NORMAL
           : formName.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
@@ -354,7 +354,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   useEffect(() => {
     if (props.id && props.forme) {
-      if (props.forme.form_name?.toUpperCase() !== FORM_GMAX) {
+      if (props.forme.formName?.toUpperCase() !== FORM_GMAX) {
         getEvoChainStore(props.id, props.forme);
       } else {
         getGmaxChain(props.id, props.forme);
@@ -391,7 +391,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
-    const form = value.form ?? props.forme?.form_name ?? '';
+    const form = value.form ?? props.forme?.formName ?? '';
     let offsetY = 35;
     offsetY += value.baby ? 20 : 0;
     offsetY += arrEvoList.length === 1 ? 20 : 0;
@@ -609,7 +609,7 @@ const Evolution = (props: IEvolutionComponent) => {
         </span>
         {value.baby && <span className="caption text-danger">(Baby)</span>}
         <p>
-          {value.id === props.id && form === (convertPokemonAPIDataName(props.forme?.form_name) || FORM_NORMAL) && (
+          {value.id === props.id && form === (convertPokemonAPIDataName(props.forme?.formName) || FORM_NORMAL) && (
             <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
               Current
             </span>

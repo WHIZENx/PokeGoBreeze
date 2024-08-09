@@ -96,7 +96,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3 }}
               height={10}
               value={props.pokemonStat.atk}
-              maxValue={props.stats?.attack.max_stats ?? 0}
+              maxValue={props.stats?.attack.maxStats ?? 0}
               bgColor={'#ececec'}
               color={'var(--bs-danger)'}
             />
@@ -107,7 +107,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
               value={props.pokemonStat.def}
-              maxValue={props.stats?.defense.max_stats ?? 0}
+              maxValue={props.stats?.defense.maxStats ?? 0}
               bgColor={'#ececec'}
               color={'var(--bs-success)'}
             />
@@ -118,7 +118,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
               value={props.pokemonStat.sta}
-              maxValue={props.stats?.stamina.max_stats ?? 0}
+              maxValue={props.stats?.stamina.maxStats ?? 0}
               bgColor={'#ececec'}
               color={'var(--bs-info)'}
             />

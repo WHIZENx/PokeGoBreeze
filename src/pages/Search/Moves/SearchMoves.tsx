@@ -49,13 +49,13 @@ const columns: any = [
   },
   {
     name: 'Power (PVE/PVP)',
-    selector: (row: ICombat) => `${row.pve_power}/${row.pvp_power}`,
+    selector: (row: ICombat) => `${row.pvePower}/${row.pvpPower}`,
     sortable: true,
     width: '150px',
   },
   {
     name: 'DPS',
-    selector: (row: ICombat) => parseFloat((row.pve_power / (row.durationMs / 1000)).toFixed(2)),
+    selector: (row: ICombat) => parseFloat((row.pvePower / (row.durationMs / 1000)).toFixed(2)),
     sortable: true,
   },
 ];
@@ -98,7 +98,7 @@ const Search = () => {
 
   const searchMove = (category: string, type: string, name: string) => {
     return combat
-      .filter((item) => item.type_move === category)
+      .filter((item) => item.typeMove === category)
       .filter(
         (move) =>
           (splitAndCapitalize(move.name, '_', ' ').replaceAll(' Plus', '+').toLowerCase().includes(name.toLowerCase()) ||
