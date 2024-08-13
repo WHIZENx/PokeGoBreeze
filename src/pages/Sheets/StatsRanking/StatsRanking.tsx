@@ -210,14 +210,10 @@ const StatsRanking = () => {
 
   const [page, setPage] = useState(1);
   const [sortId, setSortId] = useState(getSortId());
-  const [pokemonList, setPokemonList]: [IPokemonStatsRanking[], React.Dispatch<React.SetStateAction<IPokemonStatsRanking[]>>] = useState(
-    [] as IPokemonStatsRanking[]
-  );
-  const [pokemonFilter, setPokemonFilter]: [IPokemonStatsRanking[], React.Dispatch<React.SetStateAction<IPokemonStatsRanking[]>>] =
-    useState([] as IPokemonStatsRanking[]);
+  const [pokemonList, setPokemonList] = useState<IPokemonStatsRanking[]>([]);
+  const [pokemonFilter, setPokemonFilter] = useState<IPokemonStatsRanking[]>([]);
 
-  const [select, setSelect]: [IPokemonStatsRanking | undefined, React.Dispatch<React.SetStateAction<IPokemonStatsRanking | undefined>>] =
-    useState();
+  const [select, setSelect] = useState<IPokemonStatsRanking>();
 
   const [filters, setFilters] = useState({ match: false, releasedGO: false });
   const { match, releasedGO } = filters;

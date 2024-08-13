@@ -31,13 +31,13 @@ const Leagues = () => {
   useChangeTitle('Battle Leagues List');
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
-  const [leagues, setLeagues]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
-  const [openedLeague, setOpenedLeague]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
-  const [leagueFilter, setLeagueFilter]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
+  const [leagues, setLeagues] = useState<ILeague[]>([]);
+  const [openedLeague, setOpenedLeague] = useState<ILeague[]>([]);
+  const [leagueFilter, setLeagueFilter] = useState<ILeague[]>([]);
   const [search, setSearch] = useState('');
   const [rank, setRank] = useState(1);
-  const [setting, setSetting]: [SettingLeague | undefined, React.Dispatch<React.SetStateAction<SettingLeague | undefined>>] = useState();
-  const [showData, setShowData]: [LeagueData | undefined, React.Dispatch<React.SetStateAction<LeagueData | undefined>>] = useState();
+  const [setting, setSetting] = useState<SettingLeague>();
+  const [showData, setShowData] = useState<LeagueData>();
 
   const getAssetPokeGo = (id: number, form: string) => {
     const asset = queryAssetForm(dataStore?.assets ?? [], id, form);

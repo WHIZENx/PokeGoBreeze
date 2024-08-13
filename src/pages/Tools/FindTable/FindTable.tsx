@@ -116,12 +116,8 @@ const FindTable = () => {
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [preIvArr, setPreIvArr]: [
-    IPredictStatsCalculate | undefined,
-    React.Dispatch<React.SetStateAction<IPredictStatsCalculate | undefined>>
-  ] = useState();
-  const [preCpArr, setPreCpArr]: [IPredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<IPredictCPCalculate | undefined>>] =
-    useState();
+  const [preIvArr, setPreIvArr] = useState<IPredictStatsCalculate>();
+  const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
 
   const { enqueueSnackbar } = useSnackbar();
 

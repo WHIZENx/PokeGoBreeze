@@ -7,8 +7,7 @@ import { IPredictCPCalculate } from '../../util/models/calculate.model';
 import { IDynamicInputCPComponent } from '../models/component.model';
 
 const DynamicInputCP = (props: IDynamicInputCPComponent) => {
-  const [preCpArr, setPreCpArr]: [IPredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<IPredictCPCalculate | undefined>>] =
-    useState();
+  const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
 
   const findStatsCP = useCallback(() => {
     if (

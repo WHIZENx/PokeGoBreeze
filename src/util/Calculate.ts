@@ -349,33 +349,33 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
   cp = parseInt(cp.toString());
   let minLevel = MIN_LEVEL + 1;
   let maxLevel = MIN_LEVEL + 1;
-  for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
-    if (cp <= calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, i)) {
-      minLevel = i;
+  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
+    if (cp <= calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level)) {
+      minLevel = level;
       break;
     }
   }
-  for (let i = minLevel; i <= MAX_LEVEL; i += 0.5) {
-    if (calculateCP(atk, def, sta, i) >= cp) {
-      maxLevel = i;
+  for (let level = minLevel; level <= MAX_LEVEL; level += 0.5) {
+    if (calculateCP(atk, def, sta, level) >= cp) {
+      maxLevel = level;
       break;
     }
   }
 
   const predictArr: IPredictStatsModel[] = [];
-  for (let l = minLevel; l <= maxLevel; l += 0.5) {
-    for (let i = MIN_IV; i <= MAX_IV; i++) {
-      for (let j = MIN_IV; j <= MAX_IV; j++) {
-        for (let k = MIN_IV; k <= MAX_IV; k++) {
-          if (calculateCP(atk + i, def + j, sta + k, l) === cp) {
+  for (let level = minLevel; level <= maxLevel; level += 0.5) {
+    for (let atkIV = MIN_IV; atkIV <= MAX_IV; atkIV++) {
+      for (let defIV = MIN_IV; defIV <= MAX_IV; defIV++) {
+        for (let staIV = MIN_IV; staIV <= MAX_IV; staIV++) {
+          if (calculateCP(atk + atkIV, def + defIV, sta + staIV, level) === cp) {
             predictArr.push(
               PredictStatsModel.create({
-                atk: i,
-                def: j,
-                sta: k,
-                level: l,
-                percent: parseFloat((((i + j + k) * 100) / 45).toFixed(2)),
-                hp: Math.max(1, calculateStatsBattle(sta, k, l, true)),
+                atk: atkIV,
+                def: defIV,
+                sta: staIV,
+                level,
+                percent: parseFloat((((atkIV + defIV + staIV) * 100) / 45).toFixed(2)),
+                hp: Math.max(1, calculateStatsBattle(sta, staIV, level, true)),
               })
             );
           }
@@ -399,12 +399,12 @@ export const predictCPList = (
   IVsta = parseInt(IVsta.toString());
 
   const predictArr: IPredictCPModel[] = [];
-  for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
+  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
     predictArr.push(
       PredictCPModel.create({
-        level: i,
-        CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i),
-        hp: Math.max(1, calculateStatsBattle(sta, IVsta, i, true)),
+        level,
+        CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, level),
+        hp: Math.max(1, calculateStatsBattle(sta, IVsta, level, true)),
       })
     );
   }
@@ -416,9 +416,9 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
 
   const dataStat = new StatsCalculate(IVatk, IVdef, IVsta, cp, 0);
 
-  for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
-    if (cp === calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i)) {
-      dataStat.level = i;
+  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
+    if (cp === calculateCP(atk + IVatk, def + IVdef, sta + IVsta, level)) {
+      dataStat.level = level;
       break;
     }
   }
@@ -544,13 +544,13 @@ export const calculateBattleLeague = (
       dataBattle.CP = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, level);
       dataBattle.limit = false;
     } else {
-      for (let i = MIN_LEVEL; i <= level; i += 0.5) {
+      for (let l = MIN_LEVEL; l <= level; l += 0.5) {
         if (
-          dataBattle.CP < calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i) &&
-          calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i) <= maxCp
+          dataBattle.CP < calculateCP(atk + IVatk, def + IVdef, sta + IVsta, l) &&
+          calculateCP(atk + IVatk, def + IVdef, sta + IVsta, l) <= maxCp
         ) {
-          dataBattle.level = i;
-          dataBattle.CP = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i);
+          dataBattle.level = l;
+          dataBattle.CP = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, l);
           dataBattle.limit = false;
         }
       }
@@ -617,20 +617,20 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
     return dataList;
   }
   let seqId = 0;
-  for (let l = MIN_LEVEL; l <= MAX_LEVEL; l += 0.5) {
-    for (let i = MIN_IV; i <= MAX_IV; ++i) {
-      for (let j = MIN_IV; j <= MAX_IV; ++j) {
-        for (let k = MIN_IV; k <= MAX_IV; ++k) {
-          const cp = calculateCP(atk + i, def + j, sta + k, l);
+  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
+    for (let atkIV = MIN_IV; atkIV <= MAX_IV; ++atkIV) {
+      for (let defIV = MIN_IV; defIV <= MAX_IV; ++defIV) {
+        for (let staIV = MIN_IV; staIV <= MAX_IV; ++staIV) {
+          const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
           if ((!minCP || minCP <= cp) && (!maxCP || cp <= maxCP)) {
-            const statsATK = calculateStatsBattle(atk, i, l);
-            const statsDEF = calculateStatsBattle(def, j, l);
-            const statsSTA = calculateStatsBattle(sta, k, l);
+            const statsATK = calculateStatsBattle(atk, atkIV, level);
+            const statsDEF = calculateStatsBattle(def, defIV, level);
+            const statsSTA = calculateStatsBattle(sta, staIV, level);
             dataList.push(
               BattleBaseStats.create({
-                IV: { atk: i, def: j, sta: k },
+                IV: { atk: atkIV, def: defIV, sta: staIV },
                 CP: cp,
-                level: l,
+                level,
                 stats: { statsATK, statsDEF, statsSTA },
                 statsProds: statsATK * statsDEF * statsSTA,
                 id: seqId,
@@ -718,7 +718,7 @@ export const calculateDamagePVE = (
   return Math.floor(0.5 * power * (atk / defObj) * modifier) + 1;
 };
 
-export const getBarCharge = (isRaid: boolean, energy: number) => {
+export const getBarCharge = (energy: number, isRaid = false) => {
   energy = Math.abs(energy);
   if (isRaid) {
     const bar = Math.ceil(100 / energy);
@@ -818,7 +818,7 @@ export const calculateAvgDPS = (
 
   let x = 0.5 * CE + 0.5 * FE;
   if (options?.specific) {
-    const bar = getBarCharge(true, CE);
+    const bar = getBarCharge(CE, true);
     const λ = 3 / bar;
     x += 0.5 * λ * options.specific.FDmgEnemy + options.specific.CDmgEnemy * λ + 1;
   }

@@ -100,8 +100,7 @@ const RaidBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -112,17 +111,11 @@ const RaidBattle = () => {
 
   const [tier, setTier] = useState(1);
 
-  const [fMove, setFMove]: [ISelectMoveModel | undefined, React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>] = useState();
-  const [cMove, setCMove]: [ISelectMoveModel | undefined, React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>] = useState();
+  const [fMove, setFMove] = useState<ISelectMoveModel>();
+  const [cMove, setCMove] = useState<ISelectMoveModel>();
 
-  const [resultFMove, setResultFMove]: [
-    ISelectMoveModel[] | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel[] | undefined>>
-  ] = useState();
-  const [resultCMove, setResultCMove]: [
-    ISelectMoveModel[] | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel[] | undefined>>
-  ] = useState();
+  const [resultFMove, setResultFMove] = useState<ISelectMoveModel[]>();
+  const [resultCMove, setResultCMove] = useState<ISelectMoveModel[]>();
 
   const [options, setOptions] = useState({
     weatherBoss: false,
@@ -168,18 +161,14 @@ const RaidBattle = () => {
 
   const [timeAllow, setTimeAllow] = useState(0);
 
-  const [resultBoss, setResultBoss]: [BattleResult | undefined, React.Dispatch<React.SetStateAction<BattleResult | undefined>>] =
-    useState();
-  const [resultRaid, setResultRaid]: [RaidResult[] | undefined, React.Dispatch<React.SetStateAction<RaidResult[] | undefined>>] =
-    useState();
-  const [result, setResult]: [PokemonMoveData[], React.Dispatch<React.SetStateAction<PokemonMoveData[]>>] = useState(
-    [] as PokemonMoveData[]
-  );
+  const [resultBoss, setResultBoss] = useState<BattleResult>();
+  const [resultRaid, setResultRaid] = useState<RaidResult[]>();
+  const [result, setResult] = useState<PokemonMoveData[]>([]);
 
   const [show, setShow] = useState(false);
   const [showOption, setShowOption] = useState(false);
 
-  const [showSettingPokemon, setShowSettingPokemon]: [RaidSetting, React.Dispatch<React.SetStateAction<RaidSetting>>] = useState({
+  const [showSettingPokemon, setShowSettingPokemon] = useState<RaidSetting>({
     id: 0,
   });
 
@@ -277,16 +266,11 @@ const RaidBattle = () => {
     trainerId: 1,
   };
 
-  const [trainerBattle, setTrainerBattle]: [TrainerBattle[], React.Dispatch<React.SetStateAction<TrainerBattle[]>>] = useState([
-    initTrainer,
-  ]);
+  const [trainerBattle, setTrainerBattle] = useState<TrainerBattle[]>([initTrainer]);
 
   const [trainerBattleId, setTrainerBattleId] = useState(0);
-  const [pokemonBattle, setPokemonBattle]: [PokemonRaidModel[], React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>] = useState(
-    [] as PokemonRaidModel[]
-  );
-  const [tempPokemonBattle, setTempPokemonBattle]: [PokemonRaidModel[], React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>] =
-    useState([] as PokemonRaidModel[]);
+  const [pokemonBattle, setPokemonBattle] = useState<PokemonRaidModel[]>([]);
+  const [tempPokemonBattle, setTempPokemonBattle] = useState<PokemonRaidModel[]>([]);
   const [countTrainer, setCountTrainer] = useState(1);
   const [isLoadedForms, setIsLoadedForms] = useState(false);
 

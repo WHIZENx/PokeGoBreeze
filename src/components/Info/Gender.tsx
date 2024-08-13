@@ -4,9 +4,10 @@ import APIService from '../../services/API.service';
 import { IPokemonGenderRatio } from '../../core/models/pokemon.model';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const Gender = (props: IGenderComponent) => {
-  const theme = useTheme();
+  const theme: ThemeModify = useTheme();
   const calculateRatio = (sex: string, ratio: IPokemonGenderRatio) => {
     const maleRatio = ratio.M;
     const femaleRatio = ratio.F;
@@ -33,7 +34,7 @@ const Gender = (props: IGenderComponent) => {
                 : props.defaultF || props.defaultM || APIService.getPokeSprite(0)
             }
           />
-          <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+          <span className="caption" style={{ color: theme.palette.customText.caption }}>
             Default
           </span>
         </div>
@@ -48,7 +49,7 @@ const Gender = (props: IGenderComponent) => {
                 : props.shinyF || props.shinyM || APIService.getPokeSprite(0)
             }
           />
-          <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+          <span className="caption" style={{ color: theme.palette.customText.caption }}>
             Shiny
           </span>
         </div>

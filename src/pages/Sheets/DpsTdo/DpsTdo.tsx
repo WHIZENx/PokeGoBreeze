@@ -49,7 +49,7 @@ import { OptionsSheetState, RouterState, StoreState } from '../../../store/model
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { OptionFiltersDPS, IOptionOtherDPS, OptionOtherDPS } from '../../../store/models/options.model';
+import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
@@ -239,26 +239,13 @@ const DpsTdo = () => {
 
   const [types, setTypes] = useState(DEFAULT_TYPES);
 
-  const [dpsTable, setDpsTable]: [PokemonSheetData[], React.Dispatch<React.SetStateAction<PokemonSheetData[]>>] = useState(
-    [] as PokemonSheetData[]
-  );
-  const [dataFilter, setDataFilter]: [PokemonSheetData[], React.Dispatch<React.SetStateAction<PokemonSheetData[]>>] = useState(
-    [] as PokemonSheetData[]
-  );
+  const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
+  const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
   const [searchTerm, setSearchTerm] = useState(optionStore?.dpsSheet?.searchTerm ?? '');
 
-  const [dataTargetPokemon, setDataTargetPokemon]: [
-    IPokemonData | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonData | undefined>>
-  ] = useState(optionStore?.dpsSheet?.dataTargetPokemon);
-  const [fMoveTargetPokemon, setFMoveTargetPokemon]: [
-    ISelectMoveModel | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>
-  ] = useState(optionStore?.dpsSheet?.fMoveTargetPokemon);
-  const [cMoveTargetPokemon, setCMoveTargetPokemon]: [
-    ISelectMoveModel | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>
-  ] = useState(optionStore?.dpsSheet?.cMoveTargetPokemon);
+  const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(optionStore?.dpsSheet?.dataTargetPokemon);
+  const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.fMoveTargetPokemon);
+  const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.cMoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
@@ -305,7 +292,7 @@ const DpsTdo = () => {
     POKEMON_LEVEL,
   } = filters;
 
-  const [options, setOptions]: [IOptionOtherDPS, React.Dispatch<React.SetStateAction<IOptionOtherDPS>>] = useState(new OptionOtherDPS());
+  const [options, setOptions] = useState(new OptionOtherDPS());
   const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
 
   const [showSpinner, setShowSpinner] = useState(false);
@@ -1161,7 +1148,7 @@ const DpsTdo = () => {
           }}
           onSort={(selectedColumn, sortDirection) => {
             setDefaultSorted({
-              selectedColumn: selectedColumn.id as number,
+              selectedColumn: parseInt(selectedColumn.id?.toString() ?? '1'),
               sortDirection,
             });
           }}

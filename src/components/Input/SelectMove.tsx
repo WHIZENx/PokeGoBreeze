@@ -12,9 +12,7 @@ import { ISelectMoveComponent } from '../models/component.model';
 
 const SelectMove = (props: ISelectMoveComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [resultMove, setResultMove]: [ISelectMoveModel[], React.Dispatch<React.SetStateAction<ISelectMoveModel[]>>] = useState(
-    [] as ISelectMoveModel[]
-  );
+  const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
 
   const changeMove = (value: ISelectMoveModel) => {

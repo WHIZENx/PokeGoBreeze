@@ -1,4 +1,4 @@
-import { RadioGroup, Rating, Slider, styled, Theme } from '@mui/material';
+import { RadioGroup, Rating, Slider, styled } from '@mui/material';
 import Moment from 'moment';
 import {
   FORM_ALOLA,
@@ -22,11 +22,13 @@ import {
   IStatsSta,
   StatsRankPokemonGO,
   StatsPokemon,
+  OptionsRank,
 } from '../core/models/stats.model';
 import { IPokemonDetail, Stats } from '../core/models/API/info.model';
 import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
+import { ThemeModify } from '../assets/themes/themes';
 
 class Mask {
   value: number;
@@ -393,7 +395,7 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: St
   const data = new StatsRankPokemonGO();
   const checkRankAtk = pokemonStats?.attack.ranking.find((item) => item.attack === stats.atk);
   const checkRankDef = pokemonStats?.defense.ranking.find((item) => item.defense === stats.def);
-  const checkRankSta = pokemonStats?.stamina.ranking.find((item) => item.stamina === (stats?.sta ?? 0));
+  const checkRankSta = pokemonStats?.stamina.ranking.find((item) => item.stamina === stats.sta);
   const checkRankProd = pokemonStats?.statProd.ranking.find((item) => item.prod === stats.prod);
   if (checkRankAtk) {
     data.attackRank = checkRankAtk.rank;
@@ -413,7 +415,7 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: St
 
 export const calRank = (
   pokemonStats: {
-    [x: string]: { maxRank: number };
+    [x: string]: OptionsRank;
   },
   type: string,
   rank: number
@@ -446,30 +448,30 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   return new PokemonModel(result?.num ?? 0, result?.name ?? '');
 };
 
-export const getCustomThemeDataTable = (theme: Theme) => {
+export const getCustomThemeDataTable = (theme: ThemeModify) => {
   return {
     rows: {
       style: {
         color: theme.palette.text.primary,
-        backgroundColor: (theme.palette.background as any).tablePrimary,
+        backgroundColor: theme.palette.background.tablePrimary,
         '&:not(:last-of-type)': {
-          borderBottomColor: (theme.palette.background as any).tableDivided,
+          borderBottomColor: theme.palette.background.tableDivided,
         },
       },
       stripedStyle: {
         color: theme.palette.text.primary,
-        backgroundColor: (theme.palette.background as any).tableStrip,
+        backgroundColor: theme.palette.background.tableStrip,
       },
       highlightOnHoverStyle: {
         color: theme.palette.text.primary,
-        backgroundColor: (theme.palette.background as any).tableHover,
-        borderBottomColor: (theme.palette.background as any).tableDivided,
-        outlineColor: (theme.palette.background as any).tablePrimary,
+        backgroundColor: theme.palette.background.tableHover,
+        borderBottomColor: theme.palette.background.tableDivided,
+        outlineColor: theme.palette.background.tablePrimary,
       },
     },
     headCells: {
       style: {
-        backgroundColor: (theme.palette.background as any).tablePrimary,
+        backgroundColor: theme.palette.background.tablePrimary,
         color: theme.palette.text.primary,
       },
     },

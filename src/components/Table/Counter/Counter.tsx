@@ -14,6 +14,7 @@ import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } 
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const customStyles: TableStyles = {
   head: {
@@ -79,12 +80,10 @@ const customStyles: TableStyles = {
 };
 
 const Counter = (props: ICounterComponent) => {
-  const theme = useTheme();
+  const theme: ThemeModify = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const [counterList, setCounterList]: [ICounterModel[], React.Dispatch<React.SetStateAction<ICounterModel[]>>] = useState(
-    [] as ICounterModel[]
-  );
+  const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [frame, setFrame] = useState(true);
   const [releasedGO, setReleaseGO] = useState(true);
   const [showMega, setShowMega] = useState(false);
@@ -188,12 +187,9 @@ const Counter = (props: ICounterComponent) => {
 
   const CounterLoader = () => (
     <div className="w-100 counter-none" style={{ verticalAlign: 'top' }}>
-      <div className="text-origin text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+      <div className="text-origin text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
         <div className="ph-item">
-          <div
-            className="ph-col-12"
-            style={{ padding: 10, margin: 0, gap: 10, backgroundColor: (theme.palette.background as any).tablePrimary }}
-          >
+          <div className="ph-col-12" style={{ padding: 10, margin: 0, gap: 10, backgroundColor: theme.palette.background.tablePrimary }}>
             {[...Array(5).keys()].map((_, index) => (
               <div key={index} className="ph-row d-flex" style={{ gap: '5%' }}>
                 <div className="ph-picture" style={{ width: '25%', height: 100 }} />

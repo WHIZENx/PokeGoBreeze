@@ -45,95 +45,88 @@ interface OptionsPokemon {
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
 
-  const [pokeData, setPokeData]: [IPokemonDetail[], React.Dispatch<React.SetStateAction<IPokemonDetail[]>>] = useState(
-    [] as IPokemonDetail[]
-  );
-  const [formList, setFormList]: [IPokemonFormModify[][], React.Dispatch<React.SetStateAction<IPokemonFormModify[][]>>] = useState(
-    [] as IPokemonFormModify[][]
-  );
+  const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);
+  const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
   const [typePoke, setTypePoke] = useState(props.raid ? TypeRaid.BOSS.toString() : TypeRaid.POKEMON.toString());
   const [tier, setTier] = useState(props.tier ?? 1);
 
-  const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
-  const [dataStorePokemon, setDataStorePokemon]: [
-    OptionsPokemon | undefined,
-    React.Dispatch<React.SetStateAction<OptionsPokemon | undefined>>
-  ] = useState();
+  const [data, setData] = useState<Species>();
+  const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
 
-  const [currentForm, setCurrentForm]: [
-    IPokemonFormModify | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>
-  ] = useState();
+  const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
 
   const axiosSource = useRef(APIService.getCancelToken());
   const { enqueueSnackbar } = useSnackbar();
 
-  const fetchMap = async (data: Species) => {
-    setFormList([]);
-    setPokeData([]);
-    const dataPokeList: IPokemonDetail[] = [];
-    const dataFormList: IPokemonFormDetail[][] = [];
-    const cancelToken = axiosSource.current.token;
-    await Promise.all(
-      data.varieties.map(async (value) => {
-        const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken })).data;
-        const pokeForm = await Promise.all(
-          pokeInfo.forms.map(async (item) => {
-            const form = (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data;
-            return PokemonFormDetail.setDetails(form);
-          })
-        );
-        const pokeDetail = PokemonDetail.setDetails(pokeInfo);
-        dataPokeList.push(pokeDetail);
-        dataFormList.push(pokeForm);
-      })
-    ).catch(() => {
-      return;
-    });
+  const fetchMap = useCallback(
+    async (data: Species) => {
+      setFormList([]);
+      setPokeData([]);
+      const dataPokeList: IPokemonDetail[] = [];
+      const dataFormList: IPokemonFormDetail[][] = [];
+      const cancelToken = axiosSource.current.token;
+      await Promise.all(
+        data.varieties.map(async (value) => {
+          const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken })).data;
+          const pokeForm = await Promise.all(
+            pokeInfo.forms.map(async (item) => {
+              const form = (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data;
+              return PokemonFormDetail.setDetails(form);
+            })
+          );
+          const pokeDetail = PokemonDetail.setDetails(pokeInfo);
+          dataPokeList.push(pokeDetail);
+          dataFormList.push(pokeForm);
+        })
+      ).catch(() => {
+        return;
+      });
 
-    const formListResult = dataFormList
-      .map((item) =>
-        item
-          .map((item) =>
-            PokemonFormModify.setForm(
-              data.id,
-              data.name,
-              data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
-              new Form({
-                ...item,
-                formName: item.formName.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.formName,
-              })
+      const formListResult = dataFormList
+        .map((item) =>
+          item
+            .map((item) =>
+              PokemonFormModify.setForm(
+                data.id,
+                data.name,
+                data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                new Form({
+                  ...item,
+                  formName: item.formName.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.formName,
+                })
+              )
             )
-          )
-          .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
-      )
-      .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
-
-    generatePokemonGoForms(props.data, dataFormList, formListResult, data.id, data.name);
-
-    setPokeData(dataPokeList);
-    setFormList(formListResult);
-
-    const defaultFrom = formListResult.map((value) => value.find((item) => item.form.isDefault)).filter((item) => item);
-    let currentForm = defaultFrom?.find((item) => item?.form.id === data.id);
-    if (props.searching) {
-      const defaultFormSearch = formListResult.find((value) =>
-        value.find(
-          (item) =>
-            item?.form.formName === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
+            .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
         )
-      );
-      if (defaultFormSearch) {
-        currentForm = defaultFormSearch.at(0);
+        .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
+
+      generatePokemonGoForms(props.data, dataFormList, formListResult, data.id, data.name);
+
+      setPokeData(dataPokeList);
+      setFormList(formListResult);
+
+      const defaultFrom = formListResult.flatMap((value) => value).filter((item) => item.form.isDefault);
+      let currentForm = defaultFrom?.find((item) => item?.form.id === data.id);
+      if (props.searching) {
+        const defaultFormSearch = formListResult
+          .flatMap((value) => value)
+          .find(
+            (item) =>
+              item?.form.formName === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
+          );
+        if (defaultFormSearch) {
+          currentForm = defaultFormSearch;
+        }
       }
-    }
-    if (!currentForm) {
-      currentForm = formListResult.map((value) => value.find((item) => item.form.id === data.id)).find((item) => item);
-    }
-    setCurrentForm(currentForm ?? defaultFrom.at(0));
-    setData(data);
-  };
+      if (!currentForm) {
+        currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === data.id);
+      }
+      setCurrentForm(currentForm ?? defaultFrom.at(0));
+      setData(data);
+    },
+    [props.searching]
+  );
 
   const queryPokemon = useCallback(
     (id: string) => {
@@ -154,7 +147,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: 'error' });
         });
     },
-    [enqueueSnackbar]
+    [enqueueSnackbar, fetchMap]
   );
 
   useEffect(() => {
@@ -217,7 +210,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   const changeForm = (name: string) => {
     setCurrentForm(undefined);
-    const findForm = formList.map((item) => item.find((item) => item.form.name === name)).find((item) => item);
+    const findForm = formList.flatMap((item) => item).find((item) => item.form.name === name);
     setCurrentForm(findForm);
     if (props.onClearStats) {
       props.onClearStats();

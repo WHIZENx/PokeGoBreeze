@@ -11,10 +11,11 @@ import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
-  const theme = useTheme();
+  const theme: ThemeModify = useTheme();
   const [isAvailable, setIsAvailable] = useState(new StatsRankPokemonGO());
 
   const [currentStats, setCurrentStats] = useState({
@@ -84,7 +85,7 @@ const Stats = (props: IStatsComponent) => {
   };
 
   return (
-    <div className="element-top" style={{ color: (theme.palette as any).constant.text }}>
+    <div className="element-top" style={{ color: theme.palette.constant.text }}>
       <StatsBar
         tag="ATK"
         class="bg-danger"

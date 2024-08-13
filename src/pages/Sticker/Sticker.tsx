@@ -23,15 +23,11 @@ const Sticker = () => {
   useChangeTitle('Stickers List');
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
-  const [pokemonStickerFilter, setPokemonStickerFilter]: [ISticker[], React.Dispatch<React.SetStateAction<ISticker[]>>] = useState(
-    [] as ISticker[]
-  );
+  const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);
 
   const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);
 
-  const [selectPokemon, setSelectPokemon]: [PokemonStickerModel[], React.Dispatch<React.SetStateAction<PokemonStickerModel[]>>] = useState(
-    [] as PokemonStickerModel[]
-  );
+  const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 
   useEffect(() => {
     if (pokeStickerList.length > 0) {

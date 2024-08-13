@@ -25,11 +25,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   const [search, setSearch] = useState('');
 
-  const [pokemon, setPokemon]: [IBattlePokemonData | undefined, React.Dispatch<React.SetStateAction<IBattlePokemonData | undefined>>] =
-    useState();
-  const [fMove, setFMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
-  const [cMovePri, setCMovePri]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
-  const [cMoveSec, setCMoveSec]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [pokemon, setPokemon] = useState<IBattlePokemonData>();
+  const [fMove, setFMove] = useState<ICombat>();
+  const [cMovePri, setCMovePri] = useState<ICombat>();
+  const [cMoveSec, setCMoveSec] = useState<ICombat>();
 
   const [pokemonIcon, setPokemonIcon] = useState('');
   const [score, setScore] = useState(0);

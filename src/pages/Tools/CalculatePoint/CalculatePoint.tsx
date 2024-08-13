@@ -57,9 +57,8 @@ const CalculatePoint = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
-  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
+  const [move, setMove] = useState<ICombat>();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -79,25 +78,15 @@ const CalculatePoint = () => {
 
   const [idDef, setIdDef] = useState(searching?.obj ? searching.obj.id : 1);
   const [nameDef, setNameDef] = useState(splitAndCapitalize(searching?.obj?.fullName, '-', ' '));
-  const [formDef, setFormDef]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
-  const [moveDef, setMoveDef]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [formDef, setFormDef] = useState<IPokemonFormModify>();
+  const [moveDef, setMoveDef] = useState<ICombat>();
 
-  const [fMove, setFMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
-  const [cMove, setCMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [fMove, setFMove] = useState<ICombat>();
+  const [cMove, setCMove] = useState<ICombat>();
 
-  const [resultBreakPointAtk, setResultBreakPointAtk]: [
-    BreakPointAtk | undefined,
-    React.Dispatch<React.SetStateAction<BreakPointAtk | undefined>>
-  ] = useState();
-  const [resultBreakPointDef, setResultBreakPointDef]: [
-    BreakPointDef | undefined,
-    React.Dispatch<React.SetStateAction<BreakPointDef | undefined>>
-  ] = useState();
-  const [resultBulkPointDef, setResultBulkPointDef]: [
-    BulkPointDef | undefined,
-    React.Dispatch<React.SetStateAction<BulkPointDef | undefined>>
-  ] = useState();
+  const [resultBreakPointAtk, setResultBreakPointAtk] = useState<BreakPointAtk>();
+  const [resultBreakPointDef, setResultBreakPointDef] = useState<BreakPointDef>();
+  const [resultBulkPointDef, setResultBulkPointDef] = useState<BulkPointDef>();
 
   const { enqueueSnackbar } = useSnackbar();
 

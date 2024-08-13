@@ -22,27 +22,26 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
           <h5 className="element-top">
             <li>Pokémon Type Effective</li>
           </h5>
-          <h6 className="element-top">
-            <span className="type-title weakness-title">
-              <b>Weakness</b>
-            </span>
-          </h6>
-          {(props.typeEffective.veryWeak ?? []).length !== 0 || (props.typeEffective.weak ?? []).length !== 0 ? (
-            <Fragment>
-              <TypeInfo text={'2.56x damage from'} arr={props.typeEffective.veryWeak ?? []} style={{ marginLeft: 15 }} />
-              <TypeInfo text={'1.6x damage from'} arr={props.typeEffective.weak ?? []} style={{ marginLeft: 15 }} />
-            </Fragment>
-          ) : (
-            noneSprit()
-          )}
+          {(props.typeEffective.veryWeak ?? []).length > 0 ||
+            ((props.typeEffective.weak ?? []).length > 0 && (
+              <Fragment>
+                <h6 className="element-top">
+                  <span className="type-title weakness-title">
+                    <b>Weakness</b>
+                  </span>
+                </h6>
+                <TypeInfo text={'2.56x damage from'} arr={props.typeEffective.veryWeak ?? []} style={{ marginLeft: 15 }} />
+                <TypeInfo text={'1.6x damage from'} arr={props.typeEffective.weak ?? []} style={{ marginLeft: 15 }} />
+              </Fragment>
+            ))}
           <h6 className="element-top">
             <span className="type-title resistance-title">
               <b>Resistance</b>
             </span>
           </h6>
-          {(props.typeEffective.superResist ?? []).length !== 0 ||
-          (props.typeEffective.veryResist ?? []).length !== 0 ||
-          (props.typeEffective.resist ?? []).length !== 0 ? (
+          {(props.typeEffective.superResist ?? []).length > 0 ||
+          (props.typeEffective.veryResist ?? []).length > 0 ||
+          (props.typeEffective.resist ?? []).length > 0 ? (
             <Fragment>
               <TypeInfo text={'0.244x damage from'} arr={props.typeEffective.superResist ?? []} style={{ marginLeft: 15 }} />
               <TypeInfo text={'0.391x damage from'} arr={props.typeEffective.veryResist ?? []} style={{ marginLeft: 15 }} />
@@ -56,7 +55,7 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               <b>Neutral</b>
             </span>
           </h6>
-          {(props.typeEffective.neutral ?? []).length !== 0 ? (
+          {(props.typeEffective.neutral ?? []).length > 0 ? (
             <TypeInfo text={'1x damage from'} arr={props.typeEffective.neutral ?? []} style={{ marginLeft: 15 }} />
           ) : (
             noneSprit()

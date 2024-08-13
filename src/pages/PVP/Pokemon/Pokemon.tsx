@@ -39,10 +39,7 @@ const PokemonPVP = () => {
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
-  const [rankingPoke, setRankingPoke]: [
-    IPokemonBattleRanking | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonBattleRanking | undefined>>
-  ] = useState();
+  const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 

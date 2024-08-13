@@ -11,8 +11,7 @@ import { IFormSpecialComponent } from '../../models/component.model';
 
 const Primal = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [arrEvoList, setArrEvoList]: [(IForm | undefined)[] | undefined, React.Dispatch<React.SetStateAction<(IForm | undefined)[]>>] =
-    useState([] as (IForm | undefined)[]);
+  const [arrEvoList, setArrEvoList] = useState<(IForm | undefined)[]>([]);
 
   useEffect(() => {
     setArrEvoList(

@@ -36,10 +36,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [statsPokemon, setStatsPokemon]: [
-    StatsRankingPokemonGO | undefined,
-    React.Dispatch<React.SetStateAction<StatsRankingPokemonGO | undefined>>
-  ] = useState();
+  const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) => getFormFromForms(stats, props.defaultId, props.form?.form.formName),

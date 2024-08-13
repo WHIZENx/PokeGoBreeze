@@ -24,7 +24,7 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { ITrainerFriendship, ThrowOption } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { IPokemonDmgOption, PokemonDmgOption } from '../../../core/models/damage.model';
+import { PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const labels: { [x: number]: { color: string; style: string } } = {
@@ -54,9 +54,8 @@ const Damage = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
-  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
+  const [move, setMove] = useState<ICombat>();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -67,8 +66,7 @@ const Damage = () => {
   const [statLevel, setStatLevel] = useState(1);
   const [statType, setStatType] = useState('');
 
-  const [formObj, setFormObj]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
+  const [formObj, setFormObj] = useState<IPokemonFormModify>();
 
   const [statATKObj, setStatATKObj] = useState(0);
   const [statDEFObj, setStatDEFObj] = useState(0);
@@ -89,9 +87,7 @@ const Damage = () => {
     cLevel: 3,
   });
   const { weather, dodge, trainer } = battleState;
-  const [result, setResult]: [IPokemonDmgOption, React.Dispatch<React.SetStateAction<IPokemonDmgOption>>] = useState(
-    new PokemonDmgOption()
-  );
+  const [result, setResult] = useState(new PokemonDmgOption());
 
   const { enqueueSnackbar } = useSnackbar();
 

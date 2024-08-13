@@ -18,12 +18,12 @@ const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
-  const [currStatType, setCurrStatType]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
+  const [currStatType, setCurrStatType] = useState<string>();
 
   const onHandleLevel = useCallback(
-    (_: Event, v: number | number[]) => {
+    (v: number) => {
       if (props.setStatLevel) {
-        props.setStatLevel(v as number);
+        props.setStatLevel(v);
       }
       if (props.setStatLvATK) {
         props.setStatLvATK(
@@ -126,7 +126,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               step={0.5}
               min={MIN_LEVEL}
               max={currStatType === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
-              onChange={onHandleLevel}
+              onChange={(_, v) => onHandleLevel(v as number)}
             />
           </Box>
         </div>

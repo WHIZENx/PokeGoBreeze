@@ -36,8 +36,7 @@ const FindBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
   const [maxCP, setMaxCP] = useState(0);
 
   const [searchCP, setSearchCP] = useState('');
@@ -50,12 +49,8 @@ const FindBattle = () => {
   const [DEFIv, setDEFIv] = useState(0);
   const [STAIv, setSTAIv] = useState(0);
 
-  const [evoChain, setEvoChain]: [IQueryStatesEvoChain[][], React.Dispatch<React.SetStateAction<IQueryStatesEvoChain[][]>>] = useState(
-    [] as IQueryStatesEvoChain[][]
-  );
-  const [bestInLeague, setBestInLeague]: [IBattleBaseStats[], React.Dispatch<React.SetStateAction<IBattleBaseStats[]>>] = useState(
-    [] as IBattleBaseStats[]
-  );
+  const [evoChain, setEvoChain] = useState<IQueryStatesEvoChain[][]>([]);
+  const [bestInLeague, setBestInLeague] = useState<IBattleBaseStats[]>([]);
 
   const { enqueueSnackbar } = useSnackbar();
 

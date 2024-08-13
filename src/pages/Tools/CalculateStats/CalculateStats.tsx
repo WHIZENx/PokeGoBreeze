@@ -43,30 +43,14 @@ const Calculate = () => {
 
   const [typePoke, setTypePoke] = useState('');
 
-  const [pokeStats, setPokeStats]: [IStatsCalculate | undefined, React.Dispatch<React.SetStateAction<IStatsCalculate | undefined>>] =
-    useState();
+  const [pokeStats, setPokeStats] = useState<IStatsCalculate>();
   const [statLevel, setStatLevel] = useState(1);
-  const [statData, setStatData]: [
-    IBetweenLevelCalculate | undefined,
-    React.Dispatch<React.SetStateAction<IBetweenLevelCalculate | undefined>>
-  ] = useState();
+  const [statData, setStatData] = useState<IBetweenLevelCalculate>();
 
-  const [dataLittleLeague, setDataLittleLeague]: [
-    IBattleLeagueCalculate | undefined,
-    React.Dispatch<React.SetStateAction<IBattleLeagueCalculate | undefined>>
-  ] = useState();
-  const [dataGreatLeague, setDataGreatLeague]: [
-    IBattleLeagueCalculate | undefined,
-    React.Dispatch<React.SetStateAction<IBattleLeagueCalculate | undefined>>
-  ] = useState();
-  const [dataUltraLeague, setDataUltraLeague]: [
-    IBattleLeagueCalculate | undefined,
-    React.Dispatch<React.SetStateAction<IBattleLeagueCalculate | undefined>>
-  ] = useState();
-  const [dataMasterLeague, setDataMasterLeague]: [
-    IBattleLeagueCalculate | undefined,
-    React.Dispatch<React.SetStateAction<IBattleLeagueCalculate | undefined>>
-  ] = useState();
+  const [dataLittleLeague, setDataLittleLeague] = useState<IBattleLeagueCalculate>();
+  const [dataGreatLeague, setDataGreatLeague] = useState<IBattleLeagueCalculate>();
+  const [dataUltraLeague, setDataUltraLeague] = useState<IBattleLeagueCalculate>();
+  const [dataMasterLeague, setDataMasterLeague] = useState<IBattleLeagueCalculate>();
 
   const [urlEvo, setUrlEvo] = useState({ url: '' });
 

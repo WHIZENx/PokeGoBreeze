@@ -63,43 +63,27 @@ const Pokemon = (props: IPokemonPage) => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [pokeData, setPokeData]: [IPokemonDetail[], React.Dispatch<React.SetStateAction<IPokemonDetail[]>>] = useState(
-    [] as IPokemonDetail[]
-  );
-  const [currentData, setCurrentData]: [IPokemonDetail | undefined, React.Dispatch<React.SetStateAction<IPokemonDetail | undefined>>] =
-    useState();
-  const [formList, setFormList]: [
-    IPokemonFormModify[][] | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonFormModify[][] | undefined>>
-  ] = useState();
+  const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);
+  const [currentData, setCurrentData] = useState<IPokemonDetail>();
+  const [formList, setFormList] = useState<IPokemonFormModify[][]>();
 
-  const [data, setData]: [Species | undefined, React.Dispatch<React.SetStateAction<Species | undefined>>] = useState();
-  const [dataStorePokemon, setDataStorePokemon]: [
-    OptionsPokemon | undefined,
-    React.Dispatch<React.SetStateAction<OptionsPokemon | undefined>>
-  ] = useState();
-  const [pokeRatio, setPokeRatio]: [
-    IPokemonGenderRatio | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonGenderRatio | undefined>>
-  ] = useState();
+  const [data, setData] = useState<Species>();
+  const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
+  const [pokeRatio, setPokeRatio] = useState<IPokemonGenderRatio>();
 
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
   const [generation, setGeneration] = useState('');
   const [WH, setWH] = useState({ weight: -1, height: -1 });
-  const [formName, setFormName]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
-  const [originForm, setOriginForm]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
-  const [originSoundCry, setOriginSoundCry] = useState([] as IFormSoundCry[]);
+  const [formName, setFormName] = useState<string>();
+  const [originForm, setOriginForm] = useState<string>();
+  const [originSoundCry, setOriginSoundCry] = useState<IFormSoundCry[]>([]);
   const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
-  const [currentForm, setCurrentForm]: [
-    IPokemonFormModify | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>
-  ] = useState();
-  const [pokemonDetails, setPokemonDetails]: [IPokemonData | undefined, React.Dispatch<React.SetStateAction<IPokemonData | undefined>>] =
-    useState();
+  const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
+  const [pokemonDetails, setPokemonDetails] = useState<IPokemonData>();
 
-  const [costModifier, setCostModifier]: [TypeCost | undefined, React.Dispatch<React.SetStateAction<TypeCost | undefined>>] = useState();
+  const [costModifier, setCostModifier] = useState<TypeCost>();
 
   const [progress, setProgress] = useState({ isLoadedForms: false });
 
@@ -125,7 +109,7 @@ const Pokemon = (props: IPokemonPage) => {
           );
           const pokeDetail = PokemonDetail.setDetails({
             ...pokeInfo,
-            is_include_shadow: checkPokemonIncludeShadowForm(pokemonData, pokeInfo.name),
+            isIncludeShadow: checkPokemonIncludeShadowForm(pokemonData, pokeInfo.name),
           });
           soundCries.push(new FormSoundCry(pokeDetail));
           dataPokeList.push(pokeDetail);
@@ -179,17 +163,17 @@ const Pokemon = (props: IPokemonPage) => {
       // Set Default Form
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
       const formParams = searchParams.get('form')?.toLowerCase().replaceAll('_', '-');
-      const defaultForm = formListResult.map((value) => value.find((item) => item.form.isDefault)).filter((item) => item);
+      const defaultForm = formListResult.flatMap((item) => item).filter((item) => item.form.isDefault);
       if (formParams) {
-        const defaultFormSearch = formListResult.find((value) =>
-          value.find(
+        const defaultFormSearch = formListResult
+          .flatMap((form) => form)
+          .find(
             (item) =>
               convertPokemonAPIDataName(item.form.formName).toLowerCase().replaceAll('_', '-') === formParams ||
               convertPokemonAPIDataName(item.form.name).toLowerCase().replaceAll('_', '-') === `${item.defaultName}-${formParams}`
-          )
-        );
-        if (defaultFormSearch && defaultFormSearch.length > 0) {
-          currentForm = defaultFormSearch.at(0);
+          );
+        if (defaultFormSearch) {
+          currentForm = defaultFormSearch;
         } else {
           currentForm = defaultForm.find((item) => item?.form.id === data.id);
           searchParams.delete('form');
@@ -201,7 +185,7 @@ const Pokemon = (props: IPokemonPage) => {
         currentForm = defaultForm.find((item) => item?.form.id === data.id);
       }
       if (!currentForm) {
-        currentForm = formListResult.map((value) => value.find((item) => item.form.id === data.id)).find((item) => item);
+        currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === data.id);
       }
       let defaultData = dataPokeList.find((value) => value.name === currentForm?.form.name);
       if (!defaultData) {
@@ -209,7 +193,7 @@ const Pokemon = (props: IPokemonPage) => {
       }
       setWH((prevWH) => ({ ...prevWH, weight: defaultData?.weight ?? 0, height: defaultData?.height ?? 0 }));
       setCurrentData(defaultData);
-      setCurrentForm(currentForm);
+      setCurrentForm(currentForm ?? defaultForm.at(0));
       setData(data);
 
       setProgress((p) => ({ ...p, isLoadedForms: true }));

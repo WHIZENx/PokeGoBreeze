@@ -5,7 +5,7 @@ import { HexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
 
 const Hexagon = (props: IHexagonComponent) => {
-  const canvasHex: React.MutableRefObject<HTMLCanvasElement | undefined> = useRef();
+  const canvasHex = useRef<HTMLCanvasElement>();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
 
@@ -144,7 +144,7 @@ const Hexagon = (props: IHexagonComponent) => {
     }
   }, [drawHexagon, defaultStats, props.animation, props.stats]);
 
-  const animateId: React.MutableRefObject<number | undefined> = useRef();
+  const animateId = useRef<number>();
   const onPlayAnimation = () => {
     if (animateId.current) {
       cancelAnimationFrame(animateId.current);

@@ -37,7 +37,7 @@ const TeamPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
   const params = useParams();
 
-  const [rankingData, setRankingData]: [TeamsPVP | undefined, React.Dispatch<React.SetStateAction<TeamsPVP | undefined>>] = useState();
+  const [rankingData, setRankingData] = useState<TeamsPVP>();
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [sortedBy, setSortedBy] = useState('teamScore');
@@ -46,7 +46,7 @@ const TeamPVP = () => {
   const [sortedTeamBy, setSortedTeamBy] = useState('teamScore');
   const [sortedTeam, setSortedTeam] = useState(1);
 
-  const styleSheet: React.MutableRefObject<CSSStyleSheet | undefined> = useRef();
+  const styleSheet = useRef<CSSStyleSheet>();
 
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');

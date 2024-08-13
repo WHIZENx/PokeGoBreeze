@@ -56,15 +56,13 @@ const CatchChance = () => {
   const CIRCLE_DISTANCE = 200;
 
   const [id, setId] = useState(searching ? searching.id : 1);
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [data, setData]: [PokemonCatchChance | undefined, React.Dispatch<React.SetStateAction<PokemonCatchChance | undefined>>] =
-    useState();
+  const [data, setData] = useState<PokemonCatchChance>();
   const [dataAdv, setDataAdv] = useState({
     result: 0,
     ballName: '',

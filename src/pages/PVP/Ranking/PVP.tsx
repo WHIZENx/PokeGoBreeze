@@ -46,15 +46,13 @@ const RankingPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
   const params = useParams();
 
-  const [rankingData, setRankingData]: [IPokemonBattleRanking[], React.Dispatch<React.SetStateAction<IPokemonBattleRanking[]>>] = useState(
-    [] as IPokemonBattleRanking[]
-  );
-  const [storeStats, setStoreStats]: [boolean[] | undefined, React.Dispatch<React.SetStateAction<boolean[] | undefined>>] = useState();
+  const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
+  const [storeStats, setStoreStats] = useState<boolean[]>();
   const [onLoadData, setOnLoadData] = useState(false);
   const sortedBy = useRef('score');
   const [sorted, setSorted] = useState(1);
 
-  const styleSheet: React.MutableRefObject<CSSStyleSheet | undefined> = useRef();
+  const styleSheet = useRef<CSSStyleSheet>();
 
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
