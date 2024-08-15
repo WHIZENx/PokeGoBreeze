@@ -16,7 +16,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action'
 import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/Constants';
+import { FORM_NORMAL, FORM_SHADOW, MAX_IV, maxLevel, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
@@ -39,10 +39,7 @@ const PokemonPVP = () => {
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
-  const [rankingPoke, setRankingPoke]: [
-    IPokemonBattleRanking | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonBattleRanking | undefined>>
-  ] = useState();
+  const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
 
@@ -99,7 +96,7 @@ const PokemonPVP = () => {
       let bestStats = new BattleBaseStats();
       if (maxCP < 10000) {
         let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, maxLevel);
 
         if (maxPokeCP < minCP) {
           if (maxPokeCP <= 500) {

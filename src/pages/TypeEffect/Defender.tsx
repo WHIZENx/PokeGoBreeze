@@ -9,10 +9,9 @@ import { TypeTheme } from '../../enums/type.enum';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme();
-  const [types, setTypes] = useState([] as string[]);
+  const [types, setTypes] = useState<string[]>([]);
 
-  const [typeEffective, setTypeEffective]: [ITypeEffChart | undefined, React.Dispatch<React.SetStateAction<ITypeEffChart | undefined>>] =
-    useState();
+  const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');
   const [currentTypeSec, setCurrentTypeSec] = useState('');

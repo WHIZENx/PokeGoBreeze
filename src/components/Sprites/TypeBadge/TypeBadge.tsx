@@ -13,7 +13,7 @@ import { ITypeBadgeComponent } from '../../models/component.model';
 const TypeBadge = (props: ITypeBadgeComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [move, setMove] = useState<ICombat>();
   useEffect(() => {
     if (props.move?.name && combat.length > 0) {
       setMove(combat.find((item) => item.name === props.move?.name));

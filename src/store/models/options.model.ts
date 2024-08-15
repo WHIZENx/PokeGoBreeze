@@ -40,10 +40,10 @@ interface IOptionFiltersDPS {
   enableDelay: boolean;
   releasedGO: boolean;
   bestOf: number;
-  IV_ATK: number;
-  IV_DEF: number;
-  IV_HP: number;
-  POKEMON_LEVEL: number;
+  ivAtk: number;
+  ivDef: number;
+  ivHp: number;
+  pokemonLevel: number;
 }
 
 export class OptionFiltersDPS implements IOptionFiltersDPS {
@@ -68,10 +68,10 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
   enableDelay: boolean;
   releasedGO: boolean;
   bestOf: number;
-  IV_ATK: number;
-  IV_DEF: number;
-  IV_HP: number;
-  POKEMON_LEVEL: number;
+  ivAtk: number;
+  ivDef: number;
+  ivHp: number;
+  pokemonLevel: number;
 
   constructor() {
     this.match = false;
@@ -95,10 +95,10 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
     this.enableDelay = false;
     this.releasedGO = true;
     this.bestOf = 3;
-    this.IV_ATK = MAX_IV;
-    this.IV_DEF = MAX_IV;
-    this.IV_HP = MAX_IV;
-    this.POKEMON_LEVEL = 40;
+    this.ivAtk = MAX_IV;
+    this.ivDef = MAX_IV;
+    this.ivHp = MAX_IV;
+    this.pokemonLevel = 40;
   }
 }
 
@@ -108,11 +108,11 @@ export interface IOptionOtherDPS {
   WEATHER_BOOSTS?: string;
   TRAINER_FRIEND?: boolean;
   POKEMON_FRIEND_LEVEL?: number;
-  POKEMON_DEF_OBJ: number;
-  IV_ATK: number;
-  IV_DEF: number;
-  IV_HP: number;
-  POKEMON_LEVEL: number;
+  pokemonDefObj: number;
+  ivAtk: number;
+  ivDef: number;
+  ivHp: number;
+  pokemonLevel: number;
   objTypes?: string[];
 }
 
@@ -123,11 +123,11 @@ export class OptionOtherDPS implements IOptionOtherDPS {
   WEATHER_BOOSTS?: string;
   TRAINER_FRIEND?: boolean;
   POKEMON_FRIEND_LEVEL?: number;
-  POKEMON_DEF_OBJ: number = DEFAULT_POKEMON_DEF_OBJ;
-  IV_ATK: number = MAX_IV;
-  IV_DEF: number = MAX_IV;
-  IV_HP: number = MAX_IV;
-  POKEMON_LEVEL: number = DEFAULT_POKEMON_LEVEL;
+  pokemonDefObj: number = DEFAULT_POKEMON_DEF_OBJ;
+  ivAtk: number = MAX_IV;
+  ivDef: number = MAX_IV;
+  ivHp: number = MAX_IV;
+  pokemonLevel: number = DEFAULT_POKEMON_LEVEL;
   objTypes?: string[];
 
   // tslint:disable-next-line:no-empty

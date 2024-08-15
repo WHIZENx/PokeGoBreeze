@@ -10,7 +10,7 @@ import { ICardMoveComponent } from '../models/component.model';
 const CardMove = (props: ICardMoveComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [data, setData]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [data, setData] = useState<ICombat>();
 
   useEffect(() => {
     if (combat.length > 0 && props.value) {

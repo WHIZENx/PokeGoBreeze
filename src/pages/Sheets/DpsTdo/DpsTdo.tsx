@@ -9,7 +9,7 @@ import {
   FORM_PURIFIED,
   FORM_SHADOW,
   MAX_IV,
-  MAX_LEVEL,
+  maxLevel,
   MIN_IV,
   MIN_LEVEL,
   TYPE_LEGENDARY,
@@ -49,7 +49,7 @@ import { OptionsSheetState, RouterState, StoreState } from '../../../store/model
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { OptionFiltersDPS, IOptionOtherDPS, OptionOtherDPS } from '../../../store/models/options.model';
+import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
@@ -239,26 +239,13 @@ const DpsTdo = () => {
 
   const [types, setTypes] = useState(DEFAULT_TYPES);
 
-  const [dpsTable, setDpsTable]: [PokemonSheetData[], React.Dispatch<React.SetStateAction<PokemonSheetData[]>>] = useState(
-    [] as PokemonSheetData[]
-  );
-  const [dataFilter, setDataFilter]: [PokemonSheetData[], React.Dispatch<React.SetStateAction<PokemonSheetData[]>>] = useState(
-    [] as PokemonSheetData[]
-  );
+  const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
+  const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
   const [searchTerm, setSearchTerm] = useState(optionStore?.dpsSheet?.searchTerm ?? '');
 
-  const [dataTargetPokemon, setDataTargetPokemon]: [
-    IPokemonData | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonData | undefined>>
-  ] = useState(optionStore?.dpsSheet?.dataTargetPokemon);
-  const [fMoveTargetPokemon, setFMoveTargetPokemon]: [
-    ISelectMoveModel | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>
-  ] = useState(optionStore?.dpsSheet?.fMoveTargetPokemon);
-  const [cMoveTargetPokemon, setCMoveTargetPokemon]: [
-    ISelectMoveModel | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>
-  ] = useState(optionStore?.dpsSheet?.cMoveTargetPokemon);
+  const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(optionStore?.dpsSheet?.dataTargetPokemon);
+  const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.fMoveTargetPokemon);
+  const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.cMoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
@@ -299,14 +286,14 @@ const DpsTdo = () => {
     enableUltraBeast,
     releasedGO,
     bestOf,
-    IV_ATK,
-    IV_DEF,
-    IV_HP,
-    POKEMON_LEVEL,
+    ivAtk,
+    ivDef,
+    ivHp,
+    pokemonLevel,
   } = filters;
 
-  const [options, setOptions]: [IOptionOtherDPS, React.Dispatch<React.SetStateAction<IOptionOtherDPS>>] = useState(new OptionOtherDPS());
-  const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
+  const [options, setOptions] = useState(new OptionOtherDPS());
+  const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, pokemonDefObj } = options;
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [selectTypes, setSelectTypes] = useState(optionStore?.dpsSheet?.selectTypes ?? []);
@@ -330,9 +317,9 @@ const DpsTdo = () => {
       if (fMove && cMove) {
         const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
         const statsAttacker = new BattleCalculate({
-          atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
-          def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
-          hp: calculateStatsBattle(stats?.sta ?? 0, IV_HP, POKEMON_LEVEL),
+          atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
+          def: calculateStatsBattle(stats.def, ivDef, pokemonLevel),
+          hp: calculateStatsBattle(stats?.sta ?? 0, ivHp, pokemonLevel),
           fMove,
           cMove,
           types: pokemon.types,
@@ -346,9 +333,9 @@ const DpsTdo = () => {
         if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
           const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
           const statsDefender = new BattleCalculate({
-            atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
-            def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
-            hp: calculateStatsBattle(statsDef?.sta ?? 0, IV_HP, POKEMON_LEVEL),
+            atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
+            def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
+            hp: calculateStatsBattle(statsDef?.sta ?? 0, ivHp, pokemonLevel),
             fMove: data?.combat?.find((item) => item.name === fMoveTargetPokemon.name),
             cMove: data?.combat?.find((item) => item.name === cMoveTargetPokemon.name),
             types: dataTargetPokemon.types,
@@ -393,7 +380,7 @@ const DpsTdo = () => {
             fMove: fElite,
             cMove: cElite,
           },
-          cp: calculateCP(stats.atk + IV_ATK, stats.def + IV_DEF, (stats?.sta ?? 0) + IV_HP, POKEMON_LEVEL),
+          cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, (stats?.sta ?? 0) + ivHp, pokemonLevel),
         });
       }
     });
@@ -969,7 +956,7 @@ const DpsTdo = () => {
                 <Box className="col-5 input-group" style={{ padding: 0 }}>
                   <span className="input-group-text">IV ATK</span>
                   <input
-                    defaultValue={IV_ATK}
+                    defaultValue={ivAtk}
                     type="number"
                     className="form-control"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
@@ -979,15 +966,15 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        IV_ATK: e.target.value ? parseInt(e.target.value) : 0,
+                        ivAtk: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
-                    name="IV_ATK"
+                    name="ivAtk"
                     style={{ width: 40 }}
                   />
                   <span className="input-group-text">IV DEF</span>
                   <input
-                    defaultValue={IV_DEF}
+                    defaultValue={ivDef}
                     type="number"
                     className="form-control"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
@@ -997,15 +984,15 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        IV_DEF: e.target.value ? parseInt(e.target.value) : 0,
+                        ivDef: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
-                    name="IV_DEF"
+                    name="ivDef"
                     style={{ width: 40 }}
                   />
                   <span className="input-group-text">IV HP</span>
                   <input
-                    defaultValue={IV_HP}
+                    defaultValue={ivHp}
                     type="number"
                     className="form-control"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
@@ -1015,10 +1002,10 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        IV_HP: e.target.value ? parseInt(e.target.value) : 0,
+                        ivHp: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
-                    name="IV_HP"
+                    name="ivHp"
                     style={{ width: 40 }}
                   />
                   <div className="input-group-prepend">
@@ -1027,15 +1014,15 @@ const DpsTdo = () => {
                   <Form.Select
                     style={{ borderRadius: 0 }}
                     className="form-control"
-                    defaultValue={POKEMON_LEVEL}
+                    defaultValue={pokemonLevel}
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        POKEMON_LEVEL: e.target.value ? parseFloat(e.target.value) : 0,
+                        pokemonLevel: e.target.value ? parseFloat(e.target.value) : 0,
                       })
                     }
                   >
-                    {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+                    {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
                       <option key={index} value={value}>
                         {value}
                       </option>
@@ -1045,7 +1032,7 @@ const DpsTdo = () => {
                 <Box className="col-7 input-group" style={{ padding: 0 }}>
                   <span className="input-group-text">DEF Target</span>
                   <input
-                    defaultValue={POKEMON_DEF_OBJ}
+                    defaultValue={pokemonDefObj}
                     type="number"
                     className="form-control"
                     placeholder="Defense target"
@@ -1055,10 +1042,10 @@ const DpsTdo = () => {
                     onInput={(e) =>
                       setOptions({
                         ...options,
-                        POKEMON_DEF_OBJ: parseFloat(e.currentTarget.value),
+                        pokemonDefObj: parseFloat(e.currentTarget.value),
                       })
                     }
-                    name="POKEMON_DEF_OBJ"
+                    name="pokemonDefObj"
                   />
                   <div className="input-group-prepend">
                     <label className="input-group-text">Weather Boosts</label>
@@ -1161,7 +1148,7 @@ const DpsTdo = () => {
           }}
           onSort={(selectedColumn, sortDirection) => {
             setDefaultSorted({
-              selectedColumn: selectedColumn.id as number,
+              selectedColumn: parseInt(selectedColumn.id?.toString() ?? '1'),
               sortDirection,
             });
           }}

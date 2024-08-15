@@ -15,7 +15,7 @@ import {
   GOLD_RAZZ_BERRY_INC_CHANCE,
   GREAT_BALL_INC_CHANCE,
   GREAT_THROW_INC_CHANCE,
-  MAX_LEVEL,
+  maxLevel,
   MIN_LEVEL,
   NICE_THROW_INC_CHANCE,
   NORMAL_THROW_INC_CHANCE,
@@ -56,15 +56,13 @@ const CatchChance = () => {
   const CIRCLE_DISTANCE = 200;
 
   const [id, setId] = useState(searching ? searching.id : 1);
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [data, setData]: [PokemonCatchChance | undefined, React.Dispatch<React.SetStateAction<PokemonCatchChance | undefined>>] =
-    useState();
+  const [data, setData] = useState<PokemonCatchChance>();
   const [dataAdv, setDataAdv] = useState({
     result: 0,
     ballName: '',
@@ -454,7 +452,7 @@ const CatchChance = () => {
                   ]}
                   step={0.5}
                   min={MIN_LEVEL}
-                  max={MAX_LEVEL - 1}
+                  max={maxLevel - 1}
                   disabled={data ? false : true}
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />

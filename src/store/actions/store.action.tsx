@@ -13,7 +13,7 @@ import {
   mappingReleasedPokemonGO,
 } from '../../core/options';
 import { pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
-import { BASE_CPM, MAX_LEVEL, MIN_LEVEL } from '../../util/Constants';
+import { BASE_CPM, maxLevel, MIN_LEVEL } from '../../util/Constants';
 import APIService from '../../services/API.service';
 import { Dispatch } from 'redux';
 import { loadStats } from './stats.action';
@@ -72,7 +72,7 @@ export const loadPokeGOLogo = (dispatch: Dispatch) => {
 };
 
 export const loadCPM = (dispatch: Dispatch) => {
-  const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
+  const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, maxLevel);
   dispatch({
     type: LOAD_CPM,
     payload: cpm,

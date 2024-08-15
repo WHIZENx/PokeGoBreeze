@@ -13,17 +13,16 @@ import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const PokemonModel = (props: IAssetPokemonModelComponent) => {
-  const theme = useTheme();
+  const theme: ThemeModify = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
 
-  const [pokeAssets, setPokeAssets]: [IPokemonModelComponent[], React.Dispatch<React.SetStateAction<IPokemonModelComponent[]>>] = useState(
-    [] as IPokemonModelComponent[]
-  );
-  const gender: React.MutableRefObject<PokemonGender | null | undefined> = useRef();
-  const sound: React.MutableRefObject<IAsset | undefined> = useRef();
+  const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
+  const gender = useRef<PokemonGender>();
+  const sound = useRef<IAsset>();
 
   const getImageList = (id: number) => {
     sound.current = data?.assets?.find((item) => item.id === id);
@@ -82,7 +81,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
                           <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.default)} />
                         </div>
                       </div>
-                      <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+                      <span className="caption" style={{ color: theme.palette.customText.caption }}>
                         Default
                       </span>
                     </div>
@@ -93,7 +92,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
                             <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.shiny)} />
                           </div>
                         </div>
-                        <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+                        <span className="caption" style={{ color: theme.palette.customText.caption }}>
                           Shiny
                         </span>
                       </div>

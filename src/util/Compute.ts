@@ -119,7 +119,7 @@ export const computeBgType = (
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
     return (color || defaultBg).split(')').at(0) + `, ${opacity ?? 1})` || defaultBg;
   } else {
-    types?.forEach((type: string) => {
+    types?.forEach((type) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
       colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${opacity ?? 1})`);
     });

@@ -7,7 +7,7 @@ import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 const Effect = (prop: IWeatherEffComponent) => {
-  const [types, setTypes] = useState([] as string[]);
+  const [types, setTypes] = useState<string[]>([]);
 
   const [currentTypePri, setCurrentTypePri] = useState('BUG');
   const [currentTypeSec, setCurrentTypeSec] = useState('');
@@ -15,7 +15,7 @@ const Effect = (prop: IWeatherEffComponent) => {
   const [showTypePri, setShowTypePri] = useState(false);
   const [showTypeSec, setShowTypeSec] = useState(false);
 
-  const [weatherEffective, setWeatherEffective] = useState([] as string[]);
+  const [weatherEffective, setWeatherEffective] = useState<string[]>([]);
 
   const getWeatherEffective = useCallback(() => {
     const data: string[] = [];

@@ -32,7 +32,7 @@ const PVPHome = () => {
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
-  const [options, setOptions]: [OptionsHome, React.Dispatch<React.SetStateAction<OptionsHome>>] = useState({});
+  const [options, setOptions] = useState<OptionsHome>({});
 
   const { rank, team } = options;
 

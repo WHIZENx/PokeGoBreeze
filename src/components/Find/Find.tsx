@@ -26,13 +26,10 @@ const Find = (props: IFindComponent) => {
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
   );
 
-  const [pokemonList, setPokemonList]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] = useState(
-    [] as IPokemonSearching[]
-  );
+  const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] =
-    useState([] as IPokemonSearching[]);
+  const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
 
   useEffect(() => {
     if (pokemonData.length > 0) {

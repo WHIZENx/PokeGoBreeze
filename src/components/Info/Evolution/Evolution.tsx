@@ -43,6 +43,7 @@ import { IForm } from '../../../core/models/API/form.model';
 import { IEvolutionComponent } from '../../models/component.model';
 import { TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 interface IPokemonEvo {
   prev?: string;
@@ -85,14 +86,12 @@ const customTheme = createTheme({
       fontSize: '0.75rem',
     },
   },
-} as any);
+} as ThemeModify);
 
 const Evolution = (props: IEvolutionComponent) => {
-  const theme = useTheme();
+  const theme: ThemeModify = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [arrEvoList, setArrEvoList]: [IPokemonEvo[][], React.Dispatch<React.SetStateAction<IPokemonEvo[][]>>] = useState(
-    [] as IPokemonEvo[][]
-  );
+  const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
     return new PokemonEvo(
@@ -150,18 +149,23 @@ const Evolution = (props: IEvolutionComponent) => {
     if (evos.length === 0) {
       return;
     }
-    arr.push(
-      evos
-        .filter((name) => pokemonData.find((pokemon) => pokemon.name === name))
-        .map((name) => {
-          const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
-          return formatEvoChain(pokemon);
-        })
-    );
+    if (arr.flatMap((form) => form).some((p) => !evos.includes(p.form))) {
+      arr.push(
+        evos
+          .filter((name) => pokemonData.find((pokemon) => pokemon.name === name))
+          .map((name) => {
+            const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
+            return formatEvoChain(pokemon);
+          })
+      );
+    }
     evos.forEach((name) => {
       const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
       if (pokemon) {
-        getNextEvoChainJSON(pokemon.evos, arr);
+        getNextEvoChainJSON(
+          pokemon.evos.filter((e) => e !== name),
+          arr
+        );
       }
     });
   };
@@ -313,7 +317,6 @@ const Evolution = (props: IEvolutionComponent) => {
           ? FORM_NORMAL
           : formName.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
         : convertPokemonAPIDataName(formName);
-    const result: IPokemonEvo[][] = [];
     const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
     let pokemon = pokemons.find((p) => p.forme === form);
     if (!pokemon) {
@@ -322,6 +325,7 @@ const Evolution = (props: IEvolutionComponent) => {
     if (!pokemon) {
       getEvoChainJSON(id, forme);
     } else {
+      const result: IPokemonEvo[][] = [];
       getPrevEvoChainStore(pokemon, result);
       getCurrEvoChainStore(pokemon, result);
       getNextEvoChainStore(pokemon, result);
@@ -422,7 +426,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {!data?.itemCost && (data?.candyCost || data?.purificationEvoCandyCost) && (
                           <span
                             className="d-flex align-items-center caption"
-                            style={{ color: (theme.palette as any).customText.caption, width: 'max-content' }}
+                            style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                           >
                             <Candy id={parseInt(value.id.toString())} />
                             <span style={{ marginLeft: 2 }}>{`x${props.purified ? data?.purificationEvoCandyCost : data?.candyCost}`}</span>
@@ -492,7 +496,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             {data?.itemCost && (
                               <span
                                 className="d-flex align-items-center caption"
-                                style={{ color: (theme.palette as any).customText.caption, width: 'max-content', marginLeft: 2 }}
+                                style={{ color: theme.palette.customText.caption, width: 'max-content', marginLeft: 2 }}
                               >{`x${data.itemCost ?? 0}`}</span>
                             )}
                           </Fragment>
@@ -612,7 +616,7 @@ const Evolution = (props: IEvolutionComponent) => {
         {value.baby && <span className="caption text-danger">(Baby)</span>}
         <p>
           {value.id === props.id && form === (convertPokemonAPIDataName(props.forme?.formName) || FORM_NORMAL) && (
-            <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+            <span className="caption" style={{ color: theme.palette.customText.caption }}>
               Current
             </span>
           )}
@@ -711,7 +715,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           className="select-evo"
                           onClick={() => {
                             if (props.pokemonRouter?.action === Action.Pop) {
-                              props.pokemonRouter.action = null as any;
+                              props.pokemonRouter.action = Action.Replace;
                             }
                             props.setId?.(value.id);
                           }}

@@ -14,10 +14,11 @@ import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../../enums/type.enum';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');
-  const theme = useTheme();
+  const theme: ThemeModify = useTheme();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
@@ -32,11 +33,8 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
 
-  const [pokemonList, setPokemonList]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] = useState(
-    [] as IPokemonSearching[]
-  );
-  const [pokemonListFilter, setPokemonListFilter]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] =
-    useState([] as IPokemonSearching[]);
+  const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
+  const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
 
   useEffect(() => {
     if (pokemonName.length > 0) {
@@ -122,7 +120,7 @@ const Search = () => {
           <input
             type="text"
             className={'form-control input-search' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
-            style={{ backgroundColor: (theme.palette.background as any).input, color: theme.palette.text.primary, zIndex: 1 }}
+            style={{ backgroundColor: theme.palette.background.input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}
             onFocus={(e) => {

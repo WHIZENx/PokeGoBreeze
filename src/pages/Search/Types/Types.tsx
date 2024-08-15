@@ -16,6 +16,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { DEFAULT_TYPES } from '../../../util/Constants';
 import { ICombat } from '../../../core/models/combat.model';
 import { TypeEff } from '../../../core/models/type-eff.model';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const nameSort = (rowA: IPokemonData | ICombat | undefined, rowB: IPokemonData | ICombat | undefined) => {
   const a = rowA?.name.toLowerCase();
@@ -135,10 +136,10 @@ const columnMove: any = [
 ];
 
 const SearchTypes = () => {
-  const theme = useTheme();
+  const theme: ThemeModify = useTheme();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const [typeList, setTypeList] = useState([] as string[]);
+  const [typeList, setTypeList] = useState<string[]>([]);
 
   const [releasedGO, setReleaseGO] = useState(true);
 

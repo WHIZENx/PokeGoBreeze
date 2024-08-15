@@ -11,11 +11,8 @@ const Move = (props: IMoveComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
 
   const [countFM, setCountFM] = useState(0);
-  const [resultMove, setResultMove]: [ISelectMoveModel[], React.Dispatch<React.SetStateAction<ISelectMoveModel[]>>] = useState(
-    [] as ISelectMoveModel[]
-  );
-  const [currentMove, setCurrentMove]: [ISelectMoveModel | undefined, React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>] =
-    useState();
+  const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
+  const [currentMove, setCurrentMove] = useState<ISelectMoveModel>();
   const [showMove, setShowMove] = useState(false);
 
   const findMoveData = useCallback(

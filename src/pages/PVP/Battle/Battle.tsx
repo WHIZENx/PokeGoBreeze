@@ -9,7 +9,7 @@ import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffectiv
 import {
   FORM_NORMAL,
   MAX_IV,
-  MAX_LEVEL,
+  maxLevel,
   MIN_IV,
   MIN_LEVEL,
   SHADOW_ATK_BONUS,
@@ -85,31 +85,28 @@ const Battle = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
-  const [data, setData]: [(IBattlePokemonData | undefined)[], React.Dispatch<React.SetStateAction<(IBattlePokemonData | undefined)[]>>] =
-    useState([] as (IBattlePokemonData | undefined)[]);
-  const [options, setOptions] = useState({
+  const [data, setData] = useState<(IBattlePokemonData | undefined)[]>([]);
+  const [options, setOptions] = useState<OptionsBattle>({
     showTap: false,
     timelineType: 1,
     duration: 1,
     league: params.cp ? parseInt(params.cp) : 500,
   });
-  const { showTap, timelineType, duration, league }: OptionsBattle = options;
+  const { showTap, timelineType, duration, league } = options;
 
-  const timelineFit: React.MutableRefObject<Element | undefined> = useRef();
-  const timelineNormal: React.MutableRefObject<Element | undefined> = useRef();
-  const timelineNormalContainer: React.MutableRefObject<Element | undefined> = useRef();
-  const playLine: React.MutableRefObject<Element | undefined> = useRef();
+  const timelineFit = useRef<Element>();
+  const timelineNormal = useRef<Element>();
+  const timelineNormalContainer = useRef<Element>();
+  const playLine = useRef<Element>();
 
   let timelineInterval: NodeJS.Timeout;
   let turnInterval: NodeJS.Timeout;
 
-  const [pokemonCurr, setPokemonCurr]: [IPokemonBattle, React.Dispatch<React.SetStateAction<IPokemonBattle>>] = useState(
-    new PokemonBattle()
-  );
+  const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
 
-  const [pokemonObj, setPokemonObj]: [IPokemonBattle, React.Dispatch<React.SetStateAction<IPokemonBattle>>] = useState(new PokemonBattle());
+  const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
 
-  const [playTimeline, setPlayTimeline]: [BattleState, React.Dispatch<React.SetStateAction<BattleState>>] = useState({
+  const [playTimeline, setPlayTimeline] = useState<BattleState>({
     pokemonCurr: new PokemonBattleData(),
     pokemonObj: new PokemonBattleData(),
   });
@@ -1196,7 +1193,7 @@ const Battle = () => {
                   type="number"
                   step={0.5}
                   min={MIN_LEVEL}
-                  max={MAX_LEVEL}
+                  max={maxLevel}
                 />
               </div>
               <div className="input-group">

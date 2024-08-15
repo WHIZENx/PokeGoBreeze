@@ -1,4 +1,4 @@
-interface OptionsRank {
+export interface OptionsRank {
   minRank: number;
   maxRank: number;
   minStats: number;

@@ -11,6 +11,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -62,7 +63,7 @@ const columns: any = [
 
 const Search = () => {
   useChangeTitle('Moves - Search');
-  const theme = useTheme();
+  const theme: ThemeModify = useTheme();
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
   const types = useSelector((state: StoreState) => state.store.data?.typeEff);
 
@@ -75,8 +76,8 @@ const Search = () => {
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
-  const [resultFMove, setResultFMove]: [ICombat[], React.Dispatch<React.SetStateAction<ICombat[]>>] = useState([] as ICombat[]);
-  const [resultCMove, setResultCMove]: [ICombat[], React.Dispatch<React.SetStateAction<ICombat[]>>] = useState([] as ICombat[]);
+  const [resultFMove, setResultFMove] = useState<ICombat[]>([]);
+  const [resultCMove, setResultCMove] = useState<ICombat[]>([]);
 
   useEffect(() => {
     if (combat.length > 0) {

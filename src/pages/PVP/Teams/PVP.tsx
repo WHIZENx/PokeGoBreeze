@@ -26,6 +26,7 @@ import { FORM_NORMAL, FORM_SHADOW } from '../../../util/Constants';
 const TeamPVP = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
+  const allMoves = useSelector((state: StoreState) => state.store.data?.combat?.map((c) => c.name) ?? []);
   const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(
     'timestamp',
@@ -37,7 +38,7 @@ const TeamPVP = () => {
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
   const params = useParams();
 
-  const [rankingData, setRankingData]: [TeamsPVP | undefined, React.Dispatch<React.SetStateAction<TeamsPVP | undefined>>] = useState();
+  const [rankingData, setRankingData] = useState<TeamsPVP>();
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [sortedBy, setSortedBy] = useState('teamScore');
@@ -46,7 +47,7 @@ const TeamPVP = () => {
   const [sortedTeamBy, setSortedTeamBy] = useState('teamScore');
   const [sortedTeam, setSortedTeam] = useState(1);
 
-  const styleSheet: React.MutableRefObject<CSSStyleSheet | undefined> = useRef();
+  const styleSheet = useRef<CSSStyleSheet>();
 
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
@@ -70,26 +71,38 @@ const TeamPVP = () => {
       [fMoveText, cMovePriText, cMoveSecText] = moveSet.split('/');
     }
 
-    const fastMoveSet = pokemon?.quickMoves?.concat(pokemon?.eliteQuickMove ?? []);
-    const chargedMoveSet = pokemon?.cinematicMoves?.concat(
-      pokemon?.eliteCinematicMove ?? [],
-      pokemon?.shadowMoves ?? [],
-      pokemon?.purifiedMoves ?? [],
-      pokemon?.specialMoves ?? []
-    );
-    fMove = dataStore?.combat?.find((item) => item.name === findMoveTeam(fMoveText, fastMoveSet ?? []));
-    cMovePri = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMovePriText, chargedMoveSet ?? []));
+    const fastMoveSet = pokemon?.quickMoves?.concat(pokemon?.eliteQuickMove ?? []) ?? [];
+    const chargedMoveSet =
+      pokemon?.cinematicMoves?.concat(
+        pokemon?.eliteCinematicMove ?? [],
+        pokemon?.shadowMoves ?? [],
+        pokemon?.purifiedMoves ?? [],
+        pokemon?.specialMoves ?? []
+      ) ?? [];
+
+    const fCombatName = findMoveTeam(fMoveText, fastMoveSet);
+    let cCombatName = findMoveTeam(cMovePriText, chargedMoveSet);
+    let cSecCombatName = findMoveTeam(cMoveSecText, chargedMoveSet);
+
+    fMove = dataStore?.combat?.find((item) => item.name === fCombatName);
+    cMovePri = dataStore?.combat?.find((item) => item.name === cCombatName);
     if (!cMovePri) {
-      cMovePri = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMoveSecText, dataStore?.combat?.map((c) => c.name) ?? []));
+      cCombatName = findMoveTeam(cMoveSecText, allMoves);
+      cMovePri = dataStore?.combat?.find((item) => item.name === cCombatName);
     }
     if (cMoveSecText) {
-      cMoveSec = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMoveSecText, chargedMoveSet ?? []));
+      cMoveSec = dataStore?.combat?.find((item) => item.name === cSecCombatName);
       if (!cMoveSec) {
-        cMoveSec = dataStore?.combat?.find((item) => item.name === findMoveTeam(cMoveSecText, dataStore?.combat?.map((c) => c.name) ?? []));
+        cSecCombatName = findMoveTeam(cMoveSecText, allMoves);
+        cMoveSec = dataStore?.combat?.find((item) => item.name === cSecCombatName);
       }
     }
 
-    return new PokemonTeamData({
+    if (cMovePri?.id === cMoveSec?.id) {
+      cMoveSec = undefined;
+    }
+
+    const result = new PokemonTeamData({
       id,
       name,
       speciesId,
@@ -106,6 +119,7 @@ const TeamPVP = () => {
       purified:
         (cMovePri && pokemon?.purifiedMoves?.includes(cMovePri.name)) || (cMoveSec && pokemon?.purifiedMoves?.includes(cMoveSec.name)),
     });
+    return result;
   };
 
   useEffect(() => {

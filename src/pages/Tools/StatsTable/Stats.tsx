@@ -73,12 +73,10 @@ const StatsTable = () => {
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const currStatBattle: React.MutableRefObject<IBattleBaseStats[]> = useRef([]);
+  const currStatBattle = useRef<IBattleBaseStats[]>([]);
   const [battleLeague, setBattleLeague] = useState(500);
 
-  const [statsBattle, setStatsBattle]: [IBattleBaseStats[], React.Dispatch<React.SetStateAction<IBattleBaseStats[]>>] = useState(
-    [] as IBattleBaseStats[]
-  );
+  const [statsBattle, setStatsBattle] = useState<IBattleBaseStats[]>([]);
 
   useEffect(() => {
     const battleTable = calStatsProd(statATK, statDEF, statSTA, 0, battleLeague);
@@ -174,9 +172,9 @@ const StatsTable = () => {
                 statATK={statATK}
                 statDEF={statDEF}
                 statSTA={statSTA}
-                IV_ATK={ATKIv}
-                IV_DEF={DEFIv}
-                IV_STA={STAIv}
+                ivAtk={ATKIv}
+                ivDef={DEFIv}
+                ivSta={STAIv}
                 searchCP={searchCP}
                 setSearchCP={setSearchCP}
                 label={'Input CP'}

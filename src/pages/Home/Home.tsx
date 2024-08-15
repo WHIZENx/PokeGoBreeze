@@ -55,16 +55,10 @@ const Home = () => {
   const stats = useSelector((state: StatsState) => state.stats);
 
   const [types, setTypes] = useState(DEFAULT_TYPES);
-  const [dataList, setDataList]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
-    [] as IPokemonHomeModel[]
-  );
-  const [selectTypes, setSelectTypes] = useState([] as string[]);
-  const [listOfPokemon, setListOfPokemon]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
-    [] as IPokemonHomeModel[]
-  );
-  const [result, setResult]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
-    [] as IPokemonHomeModel[]
-  );
+  const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
+  const [selectTypes, setSelectTypes] = useState<string[]>([]);
+  const [listOfPokemon, setListOfPokemon] = useState<IPokemonHomeModel[]>([]);
+  const [result, setResult] = useState<IPokemonHomeModel[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollID = useRef(0);

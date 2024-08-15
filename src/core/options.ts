@@ -195,10 +195,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       };
     }
 
-    const gender = data.find(
-      (item) =>
-        item.templateId === `SPAWN_V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(pokemonSettings.pokemonId)}`
-    );
+    const goForm = replacePokemonGoForm(pokemonSettings.pokemonId);
+    const gender = data.find((item) => item.templateId === `SPAWN_V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${goForm}`);
 
     optional.genderRatio = PokemonGenderRatio.create(
       gender?.data.genderSettings.gender?.malePercent ?? 0,
@@ -411,15 +409,12 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
         ...item,
       });
 
-      const pokemonGO = data.find(
-        (i) =>
-          i.templateId ===
-          `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
-            pokemon.form?.toString().includes(FORM_MEGA) || pokemon.form?.toString() === FORM_PRIMAL
-              ? pokemon.pokemonId
-              : convertPokemonDataName(item.baseFormeSlug ?? item.slug)
-          )}`
-      );
+      const goTemplate = `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
+        pokemon.form?.toString().includes(FORM_MEGA) || pokemon.form?.toString() === FORM_PRIMAL
+          ? pokemon.pokemonId
+          : convertPokemonDataName(item.baseFormeSlug ?? item.slug)
+      )}`;
+      const pokemonGO = data.find((i) => i.templateId === goTemplate);
 
       if (pokemonGO) {
         const pokemonSettings = pokemonGO.data?.pokemonSettings;
@@ -870,16 +865,16 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           result.conditions.timestamp.end = con.pokemonCaughtTimestamp.beforeTimestamp ?? null;
         }
         if (con.type === 'WITH_UNIQUE_POKEMON') {
-          result.conditions.unique_selected = true;
+          result.conditions.uniqueSelected = true;
         }
         if (con.type === 'WITH_POKEMON_TYPE') {
-          result.conditions.unique_type = con.withPokemonType.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''));
+          result.conditions.uniqueType = con.withPokemonType.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''));
         }
         if (con.type === 'POKEMON_LEVEL_RANGE') {
-          result.conditions.max_level = con.pokemonLevelRange.maxLevel;
+          result.conditions.maxLevel = con.pokemonLevelRange.maxLevel;
         }
         if (con.type === 'WITH_POKEMON_CP_LIMIT') {
-          result.conditions.max_cp = con.withPokemonCpLimit.maxCp;
+          result.conditions.maxCp = con.withPokemonCpLimit.maxCp;
         }
         if (con.type === 'POKEMON_WHITELIST') {
           result.conditions.whiteList = con.pokemonWhiteList.pokemon.map((poke) => {

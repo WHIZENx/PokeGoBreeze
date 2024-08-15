@@ -42,6 +42,7 @@ export interface Performers {
   pokemon: string;
   teamScore: number;
   performersTotalGames: number;
+  usageTrend: string[];
 }
 
 interface Properties {

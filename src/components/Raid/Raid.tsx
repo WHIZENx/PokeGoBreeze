@@ -18,9 +18,8 @@ import { IRaidComponent } from '../models/component.model';
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [tier, setTier]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(1);
-  const [pokemonClass, setPokemonClass]: [string | null | undefined, React.Dispatch<React.SetStateAction<string | null | undefined>>] =
-    useState();
+  const [tier, setTier] = useState(1);
+  const [pokemonClass, setPokemonClass] = useState<string | null>();
 
   useEffect(() => {
     setPokemonClass(pokemonData.find((item) => item.num === props.id)?.pokemonClass);
