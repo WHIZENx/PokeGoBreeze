@@ -143,7 +143,8 @@ const TableMove = (props: ITableMoveComponent) => {
         return setMove(setRankMove(combatPoke?.at(0)));
       }
 
-      const result = combatPoke.find((item) => props.form && item.fullName === convertPokemonAPIDataName(props.form?.name));
+      const formName = convertPokemonAPIDataName(props.form?.name);
+      const result = combatPoke.find((item) => props.form && item.fullName === formName);
       if (result === undefined) {
         filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
         setMove(setRankMove(combatPoke.at(0)));

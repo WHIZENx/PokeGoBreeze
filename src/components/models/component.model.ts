@@ -235,9 +235,9 @@ export interface IDynamicInputCPComponent {
   statATK: number;
   statDEF: number;
   statSTA: number;
-  IV_ATK: number;
-  IV_DEF: number;
-  IV_STA: number;
+  ivAtk: number;
+  ivDef: number;
+  ivSta: number;
   searchCP: string;
   setSearchCP: React.Dispatch<React.SetStateAction<string>>;
   label?: string;

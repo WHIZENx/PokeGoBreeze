@@ -11,7 +11,7 @@ import {
   FORM_STANDARD,
   MAX_IV,
 } from './Constants';
-import { IPokemonData, PokemonModel } from '../core/models/pokemon.model';
+import { IPokemonData, PokemonData, PokemonModel } from '../core/models/pokemon.model';
 import {
   IStatsAtk,
   IStatsDef,
@@ -322,6 +322,10 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
 };
 
 export const findMoveTeam = (move: string, moveSet: string[]) => {
+  if (!move) {
+    return null;
+  }
+  move = replaceTempMovePvpFlagName(move);
   const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
     value = replaceTempMovePvpName(value);
@@ -339,16 +343,23 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
     }
   }
   for (const value of moveSet) {
-    const m = value.split('_');
-    if (m.length === result?.length) {
-      let count = 0;
-      for (let i = 0; i < result.length; i++) {
-        if (m[i].at(0) === result[i].at(0)) {
-          count++;
+    if (
+      move
+        .toLowerCase()
+        .split('')
+        .every((m) => value.toLowerCase().includes(m))
+    ) {
+      const m = value.split('_');
+      if (result && m.length === result.length) {
+        let count = 0;
+        for (let i = 0; i < result.length; i++) {
+          if (m[i].at(0) === result[i].at(0)) {
+            count++;
+          }
         }
-      }
-      if (count === m.length) {
-        return value;
+        if (count === m.length) {
+          return value;
+        }
       }
     }
   }
@@ -748,7 +759,8 @@ export const getFormFromForms = (
   formName: string | undefined
 ) => {
   const forms = stats?.filter((i) => i.id === id);
-  let filterForm = forms?.find((item) => item.form === (convertPokemonAPIDataName(formName) || FORM_NORMAL));
+  formName = convertPokemonAPIDataName(formName);
+  let filterForm = forms?.find((item) => item.form === (formName || FORM_NORMAL));
   if (!filterForm && forms && forms.length > 0) {
     filterForm = forms.find((item) => item.form === FORM_NORMAL);
     if (!filterForm) {
@@ -769,10 +781,11 @@ export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) 
 };
 
 export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form: string | null, isDefault = false) => {
-  let pokemonForm: IPokemonData | undefined;
+  let pokemonForm: IPokemonData | undefined = new PokemonData();
 
   if (form) {
-    pokemonForm = pokemonData.find((item) => item.num === id && item.fullName === convertPokemonAPIDataName(form?.replaceAll(' ', '-')));
+    const name = convertPokemonAPIDataName(form?.replaceAll(' ', '-'));
+    pokemonForm = pokemonData.find((item) => item.num === id && item.fullName === name);
 
     if (isDefault && !pokemonForm) {
       pokemonForm = pokemonData.find(
@@ -801,6 +814,17 @@ export const replaceTempMovePvpName = (name: string) => {
     name = name = 'FUTURESIGHT';
   } else if (name === 'ROLLOUT') {
     name = 'ROLL_OUT';
+  }
+  return name;
+};
+
+export const replaceTempMovePvpFlagName = (name: string) => {
+  if (name === 'Stl') {
+    name = name = 'SuS';
+  } else if (name === 'MoG') {
+    name = name = 'MoB';
+  } else if (name === 'TBl') {
+    name = name = 'Tbl';
   }
   return name;
 };

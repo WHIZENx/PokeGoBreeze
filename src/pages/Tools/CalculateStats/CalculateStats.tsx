@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
+import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -140,9 +140,9 @@ const Calculate = () => {
                   statATK={statATK}
                   statDEF={statDEF}
                   statSTA={statSTA}
-                  IV_ATK={ATKIv}
-                  IV_DEF={DEFIv}
-                  IV_STA={STAIv}
+                  ivAtk={ATKIv}
+                  ivDef={DEFIv}
+                  ivSta={STAIv}
                   searchCP={searchCP}
                   setSearchCP={setSearchCP}
                   label={'Input CP'}
@@ -268,7 +268,7 @@ const Calculate = () => {
                 valueLabelDisplay="off"
                 step={0.5}
                 min={MIN_LEVEL}
-                max={typePoke === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
+                max={typePoke === 'buddy' ? maxLevel : maxLevel - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={pokeStats ? false : true}
                 onChange={(_, value) => onHandleLevel(value as number)}
@@ -306,7 +306,7 @@ const Calculate = () => {
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          Stadust Required
+                          Stardust Required
                         </td>
                         <td>
                           {statData ? (
@@ -516,7 +516,7 @@ const Calculate = () => {
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          Stadust Required
+                          Stardust Required
                         </td>
                         <td colSpan={3}>
                           {dataLittleLeague && dataLittleLeague.elidge ? (
@@ -629,7 +629,7 @@ const Calculate = () => {
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          Stadust Required
+                          Stardust Required
                         </td>
                         <td colSpan={3}>
                           {dataGreatLeague && dataGreatLeague.elidge ? (
@@ -742,7 +742,7 @@ const Calculate = () => {
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          Stadust Required
+                          Stardust Required
                         </td>
                         <td colSpan={3}>
                           {dataUltraLeague && dataUltraLeague.elidge ? (
@@ -852,7 +852,7 @@ const Calculate = () => {
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          Stadust Required
+                          Stardust Required
                         </td>
                         <td colSpan={3}>
                           {dataMasterLeague ? (

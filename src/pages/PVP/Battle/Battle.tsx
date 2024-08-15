@@ -9,7 +9,7 @@ import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffectiv
 import {
   FORM_NORMAL,
   MAX_IV,
-  MAX_LEVEL,
+  maxLevel,
   MIN_IV,
   MIN_LEVEL,
   SHADOW_ATK_BONUS,
@@ -1193,7 +1193,7 @@ const Battle = () => {
                   type="number"
                   step={0.5}
                   min={MIN_LEVEL}
-                  max={MAX_LEVEL}
+                  max={maxLevel}
                 />
               </div>
               <div className="input-group">

@@ -11,20 +11,20 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
 
   const findStatsCP = useCallback(() => {
     if (
-      props.IV_ATK < MIN_IV ||
-      props.IV_ATK > MAX_IV ||
-      props.IV_DEF < MIN_IV ||
-      props.IV_DEF > MAX_IV ||
-      props.IV_STA < MIN_IV ||
-      props.IV_STA > MAX_IV
+      props.ivAtk < MIN_IV ||
+      props.ivAtk > MAX_IV ||
+      props.ivDef < MIN_IV ||
+      props.ivDef > MAX_IV ||
+      props.ivSta < MIN_IV ||
+      props.ivSta > MAX_IV
     ) {
       return;
     }
     if (props.statATK && props.statDEF && props.statSTA) {
-      const result = predictCPList(props.statATK, props.statDEF, props.statSTA, props.IV_ATK, props.IV_DEF, props.IV_STA);
+      const result = predictCPList(props.statATK, props.statDEF, props.statSTA, props.ivAtk, props.ivDef, props.ivSta);
       setPreCpArr(result);
     }
-  }, [props.statATK, props.statDEF, props.statSTA, props.IV_ATK, props.IV_DEF, props.IV_STA]);
+  }, [props.statATK, props.statDEF, props.statSTA, props.ivAtk, props.ivDef, props.ivSta]);
 
   useEffect(() => {
     findStatsCP();

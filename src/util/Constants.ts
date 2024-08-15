@@ -144,7 +144,7 @@ export const GREAT_THROW_INC_CHANCE = [1.3, 1.7];
 export const EXCELLENT_THROW_INC_CHANCE = [1.7, 2.0];
 
 export const MIN_LEVEL = 1;
-export const MAX_LEVEL = 51;
+export const maxLevel = 51;
 
 export const MIN_IV = 0;
 export const MAX_IV = 15;
@@ -219,25 +219,25 @@ export const typeCostPowerUp = (type: string) => {
   switch (type.toUpperCase()) {
     case FORM_SHADOW:
       return {
-        stadust: 1.2,
+        stardust: 1.2,
         candy: 1.2,
         type,
       };
     case FORM_PURIFIED:
       return {
-        stadust: 0.9,
+        stardust: 0.9,
         candy: 0.9,
         type,
       };
     case 'LUCKY':
       return {
-        stadust: 0.5,
+        stardust: 0.5,
         candy: 1,
         type,
       };
     default:
       return {
-        stadust: 1,
+        stardust: 1,
         candy: 1,
         type,
       };

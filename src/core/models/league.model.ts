@@ -21,10 +21,10 @@ interface ILeagueCondition {
     start: number;
     end: number;
   };
-  unique_selected: boolean;
-  unique_type: string[];
-  max_level: number | null;
-  max_cp: number;
+  uniqueSelected: boolean;
+  uniqueType: string[];
+  maxLevel: number | null;
+  maxCp: number;
   whiteList: IPokemonPermission[];
   banned: IPokemonPermission[];
 }
@@ -142,10 +142,10 @@ export class League implements ILeague {
   constructor() {
     this.title = '';
     this.conditions = {
-      unique_selected: false,
-      unique_type: [],
-      max_level: null,
-      max_cp: 0,
+      uniqueSelected: false,
+      uniqueType: [],
+      maxLevel: null,
+      maxCp: 0,
       whiteList: [],
       banned: [],
     };

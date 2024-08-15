@@ -318,9 +318,9 @@ const FindBattle = () => {
                 statATK={statATK}
                 statDEF={statDEF}
                 statSTA={statSTA}
-                IV_ATK={ATKIv}
-                IV_DEF={DEFIv}
-                IV_STA={STAIv}
+                ivAtk={ATKIv}
+                ivDef={DEFIv}
+                ivSta={STAIv}
                 searchCP={searchCP}
                 setSearchCP={setSearchCP}
                 label={'Input CP'}

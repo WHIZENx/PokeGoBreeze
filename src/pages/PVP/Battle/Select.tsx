@@ -9,7 +9,7 @@ import CardPokemon from '../../../components/Card/CardPokemon';
 import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/Constants';
+import { FORM_SHADOW, MAX_IV, maxLevel } from '../../../util/Constants';
 import { Combat, ICombat } from '../../../core/models/combat.model';
 import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
@@ -60,7 +60,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
     let minCP = props.league === 500 ? 0 : props.league === 1500 ? 500 : props.league === 2500 ? 1500 : 2500;
-    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, maxLevel);
 
     if (maxPokeCP < minCP) {
       if (maxPokeCP <= 500) {

@@ -174,13 +174,13 @@ const Leagues = () => {
             <ul style={{ listStyleType: 'inherit' }}>
               <li style={{ fontWeight: 500 }}>
                 <h6>
-                  <b>Max CP:</b> <span>{league.conditions.max_cp}</span>
+                  <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
                 </h6>
               </li>
-              {league.conditions.max_level && (
+              {league.conditions.maxLevel && (
                 <li style={{ fontWeight: 500 }}>
                   <h6>
-                    <b>Max Level:</b> <span>{league.conditions.max_level}</span>
+                    <b>Max Level:</b> <span>{league.conditions.maxLevel}</span>
                   </h6>
                 </li>
               )}
@@ -198,12 +198,12 @@ const Leagues = () => {
               )}
               <li style={{ fontWeight: 500 }}>
                 <h6 className="title-leagues">Unique Selected</h6>
-                {league.conditions.unique_selected ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+                {league.conditions.uniqueSelected ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
               </li>
-              {league.conditions.unique_type && (
+              {league.conditions.uniqueType && (
                 <li style={{ fontWeight: 500 }} className="unique-type">
                   <h6 className="title-leagues">Unique Type</h6>
-                  <TypeInfo arr={league.conditions.unique_type ?? []} style={{ marginLeft: 15 }} />
+                  <TypeInfo arr={league.conditions.uniqueType ?? []} style={{ marginLeft: 15 }} />
                 </li>
               )}
               {league.conditions.whiteList.length !== 0 && (

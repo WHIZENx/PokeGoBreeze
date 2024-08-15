@@ -15,7 +15,7 @@ import {
   GOLD_RAZZ_BERRY_INC_CHANCE,
   GREAT_BALL_INC_CHANCE,
   GREAT_THROW_INC_CHANCE,
-  MAX_LEVEL,
+  maxLevel,
   MIN_LEVEL,
   NICE_THROW_INC_CHANCE,
   NORMAL_THROW_INC_CHANCE,
@@ -452,7 +452,7 @@ const CatchChance = () => {
                   ]}
                   step={0.5}
                   min={MIN_LEVEL}
-                  max={MAX_LEVEL - 1}
+                  max={maxLevel - 1}
                   disabled={data ? false : true}
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />
