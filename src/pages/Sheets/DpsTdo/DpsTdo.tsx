@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/Utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty } from '../../../util/Utils';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -373,9 +373,9 @@ const DpsTdo = () => {
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           shadow,
-          purified: purified && specialMove.length > 0 && specialMove?.includes(statsAttacker.cMove?.name ?? ''),
+          purified: purified && isNotEmpty(specialMove) && specialMove.includes(statsAttacker.cMove?.name ?? ''),
           special,
-          mShadow: shadow && specialMove.length > 0 && specialMove?.includes(statsAttacker.cMove?.name ?? ''),
+          mShadow: shadow && isNotEmpty(specialMove) && specialMove.includes(statsAttacker.cMove?.name ?? ''),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -390,7 +390,7 @@ const DpsTdo = () => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, false, fElite, false);
       if (!pokemon.forme || isShadow) {
-        if (pokemon.shadowMoves && pokemon.shadowMoves.length > 0) {
+        if (isNotEmpty(pokemon.shadowMoves)) {
           addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, true, false, false, fElite, false, pokemon.shadowMoves);
           addCPokeData(dataList, pokemon.eliteCinematicMove ?? [], pokemon, vf, true, false, false, fElite, true, pokemon.shadowMoves);
         }
@@ -426,7 +426,7 @@ const DpsTdo = () => {
   const searchFilter = () => {
     let result = dpsTable.filter((item) => {
       const boolFilterType =
-        selectTypes.length === 0 ||
+        !isNotEmpty(selectTypes) ||
         (selectTypes.includes(item.fMove?.type?.toUpperCase() ?? '') && selectTypes.includes(item.cMove?.type?.toUpperCase() ?? ''));
       const boolFilterPoke =
         searchTerm === '' ||
@@ -516,7 +516,7 @@ const DpsTdo = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    if (data?.pokemon && data?.pokemon.length > 0 && data?.combat && data?.options && data?.typeEff && data?.weatherBoost) {
+    if (isNotEmpty(data?.pokemon) && isNotEmpty(data?.combat) && data?.options && data?.typeEff && data?.weatherBoost) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDpsTable(calculateDPSTable());
@@ -535,7 +535,7 @@ const DpsTdo = () => {
   ]);
 
   useEffect(() => {
-    if (dpsTable.length > 0) {
+    if (isNotEmpty(dpsTable)) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDataFilter(searchFilter());
@@ -545,7 +545,7 @@ const DpsTdo = () => {
   }, [dpsTable, searchTerm]);
 
   useEffect(() => {
-    if (dpsTable.length > 0) {
+    if (isNotEmpty(dpsTable)) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDataFilter(searchFilter());
@@ -631,7 +631,7 @@ const DpsTdo = () => {
 
   return (
     <div className="position-relative">
-      {dpsTable.length === 0 && (
+      {!isNotEmpty(dpsTable) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
           <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
         </div>

@@ -5,7 +5,7 @@ import loadingImg from '../../assets/loading.png';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
 import {
@@ -122,7 +122,7 @@ const Home = () => {
         () => {
           const result = dataList?.filter((item) => {
             const boolFilterType =
-              selectTypes.length === 0 ||
+              !isNotEmpty(selectTypes) ||
               (item.types?.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
             const boolFilterPoke =
               searchTerm === '' ||
@@ -238,7 +238,7 @@ const Home = () => {
 
   return (
     <div className="position-relative">
-      {dataList.length === 0 && (
+      {!isNotEmpty(dataList) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
           <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
         </div>

@@ -1029,30 +1029,30 @@ export const queryTopMove = (
       move.name = 'HIDDEN_POWER';
     }
     if (value) {
-      let pokemonList = false;
+      let isInclude = false;
       let isElite = false;
       let isSpecial = false;
       if (move?.typeMove === TypeMove.FAST) {
-        pokemonList = value.quickMoves?.includes(move.name) ?? false;
-        if (!pokemonList) {
-          pokemonList = value.eliteQuickMove?.includes(move.name) ?? false;
-          isElite = true;
+        isInclude = value.quickMoves?.includes(move.name) ?? false;
+        if (!isInclude) {
+          isInclude = value.eliteQuickMove?.includes(move.name) ?? false;
+          isElite = isInclude;
         }
       } else if (move?.typeMove === TypeMove.CHARGE) {
-        pokemonList = value.cinematicMoves?.includes(move.name) ?? false;
-        if (!pokemonList) {
-          pokemonList = value.shadowMoves?.includes(move.name) ?? false;
+        isInclude = value.cinematicMoves?.includes(move.name) ?? false;
+        if (!isInclude) {
+          isInclude = value.shadowMoves?.includes(move.name) ?? false;
         }
-        if (!pokemonList) {
-          pokemonList = value.purifiedMoves?.includes(move.name) ?? false;
+        if (!isInclude) {
+          isInclude = value.purifiedMoves?.includes(move.name) ?? false;
         }
-        if (!pokemonList) {
-          pokemonList = value.eliteCinematicMove?.includes(move.name) ?? false;
-          isElite = true;
+        if (!isInclude) {
+          isInclude = value.eliteCinematicMove?.includes(move.name) ?? false;
+          isElite = isInclude;
         }
-        if (!pokemonList) {
-          pokemonList = value.specialMoves?.includes(move.name) ?? false;
-          isSpecial = true;
+        if (!isInclude) {
+          isInclude = value.specialMoves?.includes(move.name) ?? false;
+          isSpecial = isInclude;
         }
       }
       if (pokemonList) {

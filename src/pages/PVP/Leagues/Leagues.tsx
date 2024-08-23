@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize } from '../../../util/Utils';
+import { getTime, splitAndCapitalize, capitalize, isNotEmpty } from '../../../util/Utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -70,7 +70,7 @@ const Leagues = () => {
   }, [dataStore?.leagues]);
 
   useEffect(() => {
-    if (leagues.length > 0) {
+    if (isNotEmpty(leagues)) {
       const timeOutId = setTimeout(() => {
         setLeagueFilter(
           leagues.filter((value) => {
@@ -206,7 +206,7 @@ const Leagues = () => {
                   <TypeInfo arr={league.conditions.uniqueType ?? []} style={{ marginLeft: 15 }} />
                 </li>
               )}
-              {league.conditions.whiteList.length !== 0 && (
+              {isNotEmpty(league.conditions.whiteList) && (
                 <li style={{ fontWeight: 500 }}>
                   <h6 className="title-leagues text-success">White List</h6>
                   {league.conditions.whiteList.map((item, index) => (
@@ -235,7 +235,7 @@ const Leagues = () => {
                   ))}
                 </li>
               )}
-              {league.conditions.banned.length !== 0 && (
+              {isNotEmpty(league.conditions.banned) && (
                 <li style={{ fontWeight: 500 }}>
                   <h6 className="title-leagues text-danger">Ban List</h6>
                   {league.conditions.banned.map((item, index) => (
@@ -667,7 +667,7 @@ const Leagues = () => {
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
                 </Link>
               ))}
-            {showData.data.filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank).length > 0 && (
+            {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank)) && (
               <Fragment>
                 <hr />
                 <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>

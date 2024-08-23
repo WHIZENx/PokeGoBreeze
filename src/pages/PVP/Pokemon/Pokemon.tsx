@@ -22,6 +22,7 @@ import { RouterState, StatsState, StoreState } from '../../../store/models/state
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { BattleBaseStats } from '../../../util/models/calculate.model';
+import { Combat } from '../../../core/models/combat.model';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -88,7 +89,7 @@ const PokemonPVP = () => {
       }
 
       if (fMove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
-        fMove = { ...fMove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
+        fMove = Combat.create({ ...fMove, type: data.moveset.at(0)?.split('_').at(2) ?? '' });
       }
 
       const maxCP = parseInt(params.cp ?? '');

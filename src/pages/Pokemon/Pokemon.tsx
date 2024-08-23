@@ -29,6 +29,7 @@ import {
   generatePokemonGoShadowForms,
   getPokemonById,
   getPokemonDetails,
+  isNotEmpty,
   splitAndCapitalize,
 } from '../../util/Utils';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
@@ -249,7 +250,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = params.id?.toLowerCase() ?? props.id;
-    if (id && (data?.id ?? 0) !== parseInt(id) && pokemonData.length > 0) {
+    if (id && (data?.id ?? 0) !== parseInt(id) && isNotEmpty(pokemonData)) {
       clearData(true);
       queryPokemon(id);
     }
@@ -280,7 +281,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = params.id ? params.id.toLowerCase() : props.id;
-    if (id && pokemonData.length > 0) {
+    if (id && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.loading) {
           const currentId = getPokemonById(pokemonData, parseInt(id));
@@ -365,7 +366,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = params.id?.toLowerCase() ?? props.id;
-    if (pokemonData.length > 0 && id && parseInt(id.toString()) > 0) {
+    if (isNotEmpty(pokemonData) && id && parseInt(id.toString()) > 0) {
       const currentId = getPokemonById(pokemonData, parseInt(id.toString()));
       if (currentId) {
         setDataStorePokemon({
@@ -375,7 +376,7 @@ const Pokemon = (props: IPokemonPage) => {
         });
       }
     }
-  }, [pokemonData.length, params.id, props.id]);
+  }, [pokemonData, params.id, props.id]);
 
   const reload = (element: JSX.Element, color = '#f5f5f5') => {
     if (isLoadedForms) {

@@ -10,6 +10,7 @@ import {
   formIconAssets,
   generatePokemonGoForms,
   getPokemonById,
+  isNotEmpty,
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../util/Utils';
@@ -157,17 +158,17 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [props.setName, props.name, currentForm]);
 
   useEffect(() => {
-    if (props.id && (data?.id ?? 0) !== props.id && props.data.length > 0) {
+    if (props.id && (data?.id ?? 0) !== props.id && isNotEmpty(props.data)) {
       props.setForm?.(undefined);
       setCurrentForm(undefined);
       queryPokemon(props.id.toString());
     }
     return () => {
-      if (data) {
+      if (props.searching && data?.id) {
         APIService.cancel(axiosSource.current);
       }
     };
-  }, [props.id, props.data.length, data, queryPokemon]);
+  }, [props.id, props.data, data?.id, props.searching, queryPokemon]);
 
   useEffect(() => {
     if (currentForm || (!props.searching && props.router.action === Action.Push)) {
@@ -196,7 +197,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [currentForm]);
 
   useEffect(() => {
-    if (props.data.length > 0 && (props.id ?? 0) > 0) {
+    if (isNotEmpty(props.data) && (props.id ?? 0) > 0) {
       const currentId = getPokemonById(props.data, props.id ?? 0);
       if (currentId) {
         setDataStorePokemon({
@@ -309,7 +310,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         </b>
       </h4>
       <div className="scroll-card">
-        {currentForm?.defaultId && pokeData.length > 0 && formList.length > 0 ? (
+        {currentForm?.defaultId && isNotEmpty(pokeData) && isNotEmpty(formList) ? (
           <Fragment>
             {formList.map((value, index) => (
               <Fragment key={index}>

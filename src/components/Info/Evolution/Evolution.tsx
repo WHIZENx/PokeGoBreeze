@@ -20,7 +20,14 @@ import APIService from '../../../services/API.service';
 import './Evolution.scss';
 import { useTheme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { capitalize, convertFormGif, convertModelSpritName, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/Utils';
+import {
+  capitalize,
+  convertFormGif,
+  convertModelSpritName,
+  convertPokemonAPIDataName,
+  isNotEmpty,
+  splitAndCapitalize,
+} from '../../../util/Utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
@@ -146,7 +153,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getNextEvoChainJSON = (evos: string[], arr: IPokemonEvo[][]) => {
-    if (evos.length === 0) {
+    if (!isNotEmpty(evos)) {
       return;
     }
     if (arr.flatMap((form) => form).some((p) => !evos.includes(p.form))) {
@@ -211,7 +218,7 @@ const Evolution = (props: IEvolutionComponent) => {
     const pokemon = pokemonData.filter((pokemon) =>
       pokemon.evoList?.find((evo) => evo.evoToId === poke.num && evo.evoToForm === poke.forme)
     );
-    if (pokemon.length === 0) {
+    if (!isNotEmpty(pokemon)) {
       return;
     }
     pokemon
@@ -275,7 +282,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getNextEvoChainStore = (poke: IPokemonData | undefined, result: IPokemonEvo[][]) => {
-    if (!poke || (poke && poke.evoList && poke.evoList.length === 0)) {
+    if (!poke || (poke && !isNotEmpty(poke.evoList))) {
       return;
     }
     const evoList = poke.evoList?.map((evo) =>
@@ -439,7 +446,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                       </div>
                     )}
-                    {Object.keys(data?.quest ?? new EvolutionQuest()).length > 0 && (
+                    {isNotEmpty(Object.keys(data?.quest ?? new EvolutionQuest())) && (
                       <Fragment>
                         {data?.quest?.randomEvolution && (
                           <span className="caption">
@@ -626,7 +633,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const reload = (element: JSX.Element, color = '#fafafa') => {
-    if (props.isLoadedForms || (arrEvoList.length > 0 && arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id)))) {
+    if (props.isLoadedForms || (isNotEmpty(arrEvoList) && arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id)))) {
       return element;
     }
     return (
@@ -702,7 +709,7 @@ const Evolution = (props: IEvolutionComponent) => {
           <ul
             className="ul-evo d-inline-flex"
             style={{
-              columnGap: arrEvoList.length > 0 ? window.innerWidth / (6.5 * arrEvoList.length) : 0,
+              columnGap: isNotEmpty(arrEvoList) ? window.innerWidth / (6.5 * arrEvoList.length) : 0,
             }}
           >
             {arrEvoList.map((values, evo) => (

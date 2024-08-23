@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
-import { splitAndCapitalize } from '../../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
@@ -24,10 +24,10 @@ const FromChange = (props: IFromChangeComponent) => {
   };
 
   useEffect(() => {
-    if (props.details?.num && assets.length > 0) {
+    if (props.details?.num && isNotEmpty(assets)) {
       setPokeAssets(getImageList(props.details.num));
     }
-  }, [assets.length, props.details?.num]);
+  }, [assets, props.details?.num]);
 
   return (
     <Fragment>

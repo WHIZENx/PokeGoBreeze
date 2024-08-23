@@ -397,6 +397,7 @@ export interface ITypeBadgeComponent {
   shadow?: boolean;
   purified?: boolean;
   special?: boolean;
+  unavailable?: boolean;
 }
 
 export interface ITypeBarComponent {

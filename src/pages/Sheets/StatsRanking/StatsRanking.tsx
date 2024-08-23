@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails } from '../../../util/Utils';
+import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails, isNotEmpty } from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
@@ -64,7 +64,7 @@ const columnPokemon: any = [
           src={APIService.getPokeIconSprite(row.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
+            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies ?? '');
           }}
         />
         {splitAndCapitalize(row.name?.replaceAll('_', '-'), '-', ' ')}
@@ -142,27 +142,27 @@ const StatsRanking = () => {
     return pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
       const details = getPokemonDetails(pokemon, data.num, data.fullName ?? '', true);
-      return {
+      return new PokemonStatsRanking({
         ...data,
-        releasedGO: details?.releasedGO,
+        releasedGO: details?.releasedGO ?? false,
         atk: {
           attack: statsTag.atk,
-          rank: stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank,
+          rank: stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank ?? 0,
         },
         def: {
           defense: statsTag.def,
-          rank: stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank,
+          rank: stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank ?? 0,
         },
         sta: {
-          stamina: statsTag.sta,
-          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank,
+          stamina: statsTag.sta ?? 0,
+          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank ?? 0,
         },
         statProd: {
           prod: statsTag.atk * statsTag.def * (statsTag?.sta ?? 0),
-          rank: stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * (statsTag?.sta ?? 0))?.rank,
+          rank: stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * (statsTag?.sta ?? 0))?.rank ?? 0,
         },
-      };
-    }) as IPokemonStatsRanking[];
+      });
+    });
   };
 
   const setSortedPokemonRanking = (primary: IPokemonStatsRanking, secondary: IPokemonStatsRanking, sortBy: string[]) => {
@@ -222,7 +222,7 @@ const StatsRanking = () => {
   const { isLoadedForms } = progress;
 
   useEffect(() => {
-    if (pokemonData.length > 0 && pokemonList.length === 0) {
+    if (isNotEmpty(pokemonData) && !isNotEmpty(pokemonList)) {
       const pokemon = sortRanking(mappingData(pokemonData.filter((pokemon) => pokemon.num > 0)), sortId);
       setPokemonList(pokemon);
       setPokemonFilter(pokemon);
@@ -231,14 +231,14 @@ const StatsRanking = () => {
   }, [pokemonList, pokemonData]);
 
   useEffect(() => {
-    if (!select && pokemonList.length > 0) {
+    if (!select && isNotEmpty(pokemonList)) {
       setSelect(pokemonList.at(0));
     }
   }, [select, pokemonList]);
 
   useEffect(() => {
     const id = searchParams.get('id');
-    if (id && pokemonFilter.length > 0) {
+    if (id && isNotEmpty(pokemonFilter)) {
       const form = searchParams.get('form');
       const index = pokemonFilter.findIndex(
         (row) => row.num === parseInt(id) && row.forme === (form?.replaceAll('-', '_').toUpperCase() || FORM_NORMAL)
@@ -253,12 +253,12 @@ const StatsRanking = () => {
 
   const setFilterParams = (select: IPokemonStatsRanking) => {
     searchParams.set('id', select.num.toString());
-    searchParams.set('form', select.forme?.replace(FORM_NORMAL, '').replaceAll('_', '-').toLowerCase());
+    searchParams.set('form', select.forme?.replace(FORM_NORMAL, '').replaceAll('_', '-').toLowerCase() ?? '');
     setSearchParams(searchParams);
   };
 
   useEffect(() => {
-    if (pokemonList.length > 0) {
+    if (isNotEmpty(pokemonList)) {
       const timeOutId = setTimeout(() => {
         setPokemonFilter(
           pokemonList
@@ -322,8 +322,8 @@ const StatsRanking = () => {
               id={select?.num}
               gen={select?.gen}
               formName={select?.name}
-              region={select?.region}
-              version={select?.version}
+              region={select?.region ?? ''}
+              version={select?.version ?? ''}
               weight={select?.weightkg ?? 0}
               height={select?.heightm ?? 0}
               className={'table-stats-ranking'}
@@ -352,7 +352,7 @@ const StatsRanking = () => {
         statProd={select?.statProd}
         pokemonStats={stats}
         id={select?.num}
-        form={select?.forme}
+        form={select?.forme ?? ''}
       />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>

@@ -2,7 +2,7 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
@@ -204,11 +204,11 @@ const Counter = (props: ICounterComponent) => {
 
   useEffect(() => {
     const controller = new AbortController();
-    if (counterList.length > 0) {
+    if (isNotEmpty(counterList)) {
       setCounterList([]);
       setFrame(true);
     }
-    if (props.isShadow !== undefined && (props.types ?? []).length > 0) {
+    if (props.isShadow !== undefined && isNotEmpty(props.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
@@ -257,7 +257,7 @@ const Counter = (props: ICounterComponent) => {
       <div className="sub-header input-group align-items-center justify-content-center">
         <span className="sub-title">Best Pokémon Counter</span>
         <FormControlLabel
-          control={<Switch disabled={counterList.length === 0} checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
+          control={<Switch disabled={!isNotEmpty(counterList)} checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
           label={
             <span className="d-flex align-items-center">
               Released in GO
@@ -274,7 +274,7 @@ const Counter = (props: ICounterComponent) => {
           disabled={!open}
         />
         <FormControlLabel
-          control={<Checkbox disabled={counterList.length === 0} checked={showMega} onChange={(_, check) => setShowMega(check)} />}
+          control={<Checkbox disabled={!isNotEmpty(counterList)} checked={showMega} onChange={(_, check) => setShowMega(check)} />}
           label="Mega/Primal"
         />
       </div>

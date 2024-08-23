@@ -4,7 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, retrieveMoves, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, checkPokemonGO, isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
@@ -442,8 +442,19 @@ const RaidBattle = () => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, fElite, false, null, pokemonTarget);
       if (!pokemon.forme || isShadow) {
-        if (pokemon.shadowMoves && pokemon.shadowMoves.length > 0) {
-          addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, true, false, fElite, false, pokemon.shadowMoves, pokemonTarget);
+        if (isNotEmpty(pokemon.shadowMoves)) {
+          addCPokeData(
+            dataList,
+            pokemon.cinematicMoves ?? [],
+            pokemon,
+            vf,
+            true,
+            false,
+            fElite,
+            false,
+            pokemon.shadowMoves ?? [],
+            pokemonTarget
+          );
         }
         addCPokeData(
           dataList,
@@ -472,8 +483,7 @@ const RaidBattle = () => {
       }
       if (
         (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) &&
-        pokemon.shadowMoves &&
-        pokemon.shadowMoves.length > 0
+        isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(
           dataList,
@@ -484,7 +494,7 @@ const RaidBattle = () => {
           false,
           fElite,
           true,
-          pokemon.shadowMoves,
+          pokemon.shadowMoves ?? [],
           pokemonTarget
         );
       } else {
@@ -599,8 +609,8 @@ const RaidBattle = () => {
 
   const calculateTrainerBattle = (trainerBattle: TrainerBattle[]) => {
     const trainer = trainerBattle.map((trainer) => trainer.pokemons);
-    const trainerNoPokemon = trainer.filter((pokemon) => pokemon.filter((item) => !item.dataTargetPokemon)?.length > 0);
-    if (trainerNoPokemon.length > 0) {
+    const trainerNoPokemon = trainer.filter((pokemon) => isNotEmpty(pokemon.filter((item) => !item.dataTargetPokemon)));
+    if (isNotEmpty(trainerNoPokemon)) {
       enqueueSnackbar('Please select Pokémon to raid battle!', { variant: 'error' });
       return;
     }
@@ -1187,7 +1197,7 @@ const RaidBattle = () => {
             </button>
           </div>
         </div>
-        {result.length > 0 && (
+        {isNotEmpty(result) && (
           <div className="top-raid-group">
             {result
               .filter((obj) => {

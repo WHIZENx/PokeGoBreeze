@@ -12,8 +12,12 @@ import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/Compute';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
-// tslint:disable-next-line:class-name
-interface OptionsHome {
+interface IOptionsHome {
+  rank?: PVPInfo | undefined;
+  team?: PVPInfo | undefined;
+}
+
+class OptionsHome implements IOptionsHome {
   rank?: PVPInfo | undefined;
   team?: PVPInfo | undefined;
 }
@@ -32,7 +36,7 @@ const PVPHome = () => {
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
-  const [options, setOptions] = useState<OptionsHome>({});
+  const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
   const { rank, team } = options;
 

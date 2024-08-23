@@ -13,7 +13,7 @@ import { FORM_SHADOW, MAX_IV, maxLevel } from '../../../util/Constants';
 import { Combat, ICombat } from '../../../core/models/combat.model';
 import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
-import { PokemonBattleData } from '../models/battle.model';
+import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
 import { PokemonData } from '../../../core/models/pokemon.model';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
@@ -93,6 +93,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           allStats,
           currentStats: allStats[allStats.length - 1],
           bestStats: allStats[allStats.length - 1],
+          disableCMovePri: false,
+          disableCMoveSec: false,
         }),
         fMove: fMoveCombat,
         cMovePri: cMovePriCombat,
@@ -110,33 +112,39 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const selectFMove = (value: ICombat | undefined) => {
     props.clearData(false);
     setFMove(value);
-    props.setPokemonBattle({
-      ...props.pokemonBattle,
-      fMove: value,
-      audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
-    });
+    props.setPokemonBattle(
+      PokemonBattle.create({
+        ...props.pokemonBattle,
+        fMove: value,
+        audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+      })
+    );
     setShowFMove(false);
   };
 
   const selectCMovePri = (value: ICombat | undefined) => {
     props.clearData(false);
     setCMovePri(value);
-    props.setPokemonBattle({
-      ...props.pokemonBattle,
-      cMovePri: value,
-      audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
-    });
+    props.setPokemonBattle(
+      PokemonBattle.create({
+        ...props.pokemonBattle,
+        cMovePri: value,
+        audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+      })
+    );
     setShowCMovePri(false);
   };
 
   const selectCMoveSec = (value: ICombat | undefined) => {
     props.clearData(false);
     setCMoveSec(value);
-    props.setPokemonBattle({
-      ...props.pokemonBattle,
-      cMoveSec: value,
-      audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
-    });
+    props.setPokemonBattle(
+      PokemonBattle.create({
+        ...props.pokemonBattle,
+        cMoveSec: value,
+        audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+      })
+    );
     setShowCMoveSec(false);
   };
 
@@ -257,7 +265,16 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           checked={!props.pokemonBattle.disableCMovePri}
           onChange={(_, check) => {
             props.clearData(false);
-            props.setPokemonBattle({ ...props.pokemonBattle, disableCMovePri: !check });
+            props.setPokemonBattle({
+              ...props.pokemonBattle,
+              disableCMovePri: !check,
+              chargeSlot:
+                check === false
+                  ? props.pokemonBattle.disableCMoveSec
+                    ? ChargeType.None
+                    : ChargeType.Secondary
+                  : props.pokemonBattle.chargeSlot,
+            });
           }}
         />
         <div
@@ -321,7 +338,16 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           checked={!props.pokemonBattle.disableCMoveSec}
           onChange={(_, check) => {
             props.clearData(false);
-            props.setPokemonBattle({ ...props.pokemonBattle, disableCMoveSec: !check });
+            props.setPokemonBattle({
+              ...props.pokemonBattle,
+              disableCMoveSec: !check,
+              chargeSlot:
+                check === false
+                  ? props.pokemonBattle.disableCMovePri
+                    ? ChargeType.None
+                    : ChargeType.Primary
+                  : props.pokemonBattle.chargeSlot,
+            });
           }}
         />
         <div

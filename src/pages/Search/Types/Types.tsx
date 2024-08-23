@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
@@ -168,7 +168,7 @@ const SearchTypes = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    if (typeList.length > 0 && !currentType) {
+    if (isNotEmpty(typeList) && !currentType) {
       setCurrentType(typeList.at(0) ?? '');
     }
   }, [typeList, currentType]);

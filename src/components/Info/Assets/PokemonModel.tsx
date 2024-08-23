@@ -5,7 +5,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
@@ -103,7 +103,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
               <div className="desc text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
             </div>
           ))}
-          {pokeAssets.length === 0 && (
+          {!isNotEmpty(pokeAssets) && (
             <div className="text-danger" style={{ marginBottom: 15 }}>
               &emsp;Assets in Pokémon GO unavailable
             </div>
@@ -120,7 +120,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
         </div>
       ) : (
         <Fragment>
-          {props.originSoundCry.length === 0 ? (
+          {!isNotEmpty(props.originSoundCry) ? (
             <div className="text-danger">&emsp;Sound in Pokémon unavailable.</div>
           ) : (
             <ul style={{ margin: 0 }}>
@@ -155,7 +155,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
         </div>
       ) : (
         <Fragment>
-          {!sound.current || sound.current.sound.cry.length === 0 ? (
+          {!isNotEmpty(sound.current?.sound.cry) ? (
             <div className="text-danger">&emsp;Sound in Pokémon GO unavailable.</div>
           ) : (
             <ul style={{ margin: 0 }}>

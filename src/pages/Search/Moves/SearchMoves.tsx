@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -80,7 +80,7 @@ const Search = () => {
   const [resultCMove, setResultCMove] = useState<ICombat[]>([]);
 
   useEffect(() => {
-    if (combat.length > 0) {
+    if (isNotEmpty(combat)) {
       const timeOutId = setTimeout(() => {
         setResultFMove(searchMove(TypeMove.FAST, fMoveType, fMoveName));
       });
@@ -89,7 +89,7 @@ const Search = () => {
   }, [combat, fMoveType, fMoveName]);
 
   useEffect(() => {
-    if (combat.length > 0) {
+    if (isNotEmpty(combat)) {
       const timeOutId = setTimeout(() => {
         setResultCMove(searchMove(TypeMove.CHARGE, cMoveType, cMoveName));
       });

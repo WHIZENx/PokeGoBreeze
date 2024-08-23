@@ -197,7 +197,8 @@ const CatchChance = () => {
   };
 
   const findCatchCapture = (id: number, form: IPokemonFormModify) => {
-    const pokemon = pokemonData.find((data) => data.num === id && data.fullName === convertPokemonAPIDataName(form.form.name));
+    const formName = convertPokemonAPIDataName(form.form.name);
+    const pokemon = pokemonData.find((data) => data.num === id && data.fullName === formName);
     if (!pokemon || !pokemon.encounter) {
       return setEncounter(false);
     }

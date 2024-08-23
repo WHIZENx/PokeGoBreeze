@@ -142,6 +142,10 @@ export const HundoRate = styled(Rating)(() => ({
   },
 }));
 
+export const isNotEmpty = <T>(array: T[] | null | undefined = []) => {
+  return (array && array.length > 0) ?? false;
+};
+
 export const capitalize = (str: string | undefined | null) => {
   if (!str) {
     return '';
@@ -665,7 +669,9 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/^Purified$/, '')
     .replace(/^Normal$/, '')
     .replace(/-Shadow$/, '')
-    .replace(/-Purified$/, '');
+    .replace(/-Purified$/, '')
+    .replace(/-Mane$/, '')
+    .replace(/-Wings$/, '');
 };
 
 export const generatePokemonGoForms = (
@@ -761,17 +767,17 @@ export const getFormFromForms = (
   const forms = stats?.filter((i) => i.id === id);
   formName = convertPokemonAPIDataName(formName);
   let filterForm = forms?.find((item) => item.form === (formName || FORM_NORMAL));
-  if (!filterForm && forms && forms.length > 0) {
-    filterForm = forms.find((item) => item.form === FORM_NORMAL);
+  if (!filterForm && isNotEmpty(forms)) {
+    filterForm = forms?.find((item) => item.form === FORM_NORMAL);
     if (!filterForm) {
-      filterForm = forms.at(0);
+      filterForm = forms?.at(0);
     }
   }
   return filterForm;
 };
 
 export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) => {
-  if (combat.length > 0) {
+  if (isNotEmpty(combat)) {
     const resultFirst = combat.filter((item) => item.num === id);
     form =
       form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase().replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;

@@ -34,7 +34,6 @@ export interface Performers {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  combatPoke: IPokemonData | undefined;
   shadow: boolean;
   purified: boolean | undefined;
   games: number;

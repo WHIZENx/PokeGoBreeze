@@ -6,7 +6,7 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, mappingPokemonName } from '../../../util/Utils';
+import { getPokemonById, isNotEmpty, mappingPokemonName } from '../../../util/Utils';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
@@ -37,7 +37,7 @@ const Search = () => {
   const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
 
   useEffect(() => {
-    if (pokemonName.length > 0) {
+    if (isNotEmpty(pokemonName)) {
       const result = mappingPokemonName(pokemonName);
       setPokemonList(result);
     }
@@ -45,7 +45,7 @@ const Search = () => {
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
-      if (pokemonList.length > 0) {
+      if (isNotEmpty(pokemonList)) {
         const results = pokemonList.filter(
           (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
         );

@@ -18,9 +18,9 @@ import {
   LOAD_WEATHER_BOOST,
   RESET_STORE,
 } from '../actions/store.action';
-import { StoreModel } from '../models/store.model';
+import { Store, StoreModel } from '../models/store.model';
 
-const initialize: StoreModel = {};
+const initialize: StoreModel = new Store();
 
 const StoreReducer = (state: StoreModel = initialize, action: { type: string; payload: any }) => {
   switch (action.type) {

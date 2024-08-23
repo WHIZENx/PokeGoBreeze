@@ -3,7 +3,14 @@ import TypeInfo from '../../../components/Sprites/Type/Type';
 import '../PVP.scss';
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 
-import { convertNameRankingToOri, splitAndCapitalize, capitalize, getStyleSheet, replaceTempMovePvpName } from '../../../util/Utils';
+import {
+  convertNameRankingToOri,
+  splitAndCapitalize,
+  capitalize,
+  getStyleSheet,
+  replaceTempMovePvpName,
+  isNotEmpty,
+} from '../../../util/Utils';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
@@ -29,6 +36,7 @@ import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
+import { Combat } from '../../../core/models/combat.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -133,7 +141,7 @@ const RankingPVP = () => {
           }
 
           if (fMove && item.moveset.at(0)?.includes('HIDDEN_POWER')) {
-            fMove = { ...fMove, type: item.moveset.at(0)?.split('_').at(2) ?? '' };
+            fMove = Combat.create({ ...fMove, type: item.moveset.at(0)?.split('_').at(2) ?? '' });
           }
 
           return new PokemonBattleRanking({
@@ -170,12 +178,12 @@ const RankingPVP = () => {
         );
       }
     };
-    if (statsRanking && dataStore?.combat && dataStore?.pokemon?.length > 0 && dataStore?.assets && !onLoadData) {
+    if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && dataStore?.assets && !onLoadData) {
       setOnLoadData(true);
       if (router.action === Action.Push) {
         router.action = null as any;
         setTimeout(() => fetchPokemon(), 100);
-      } else if (rankingData.length === 0 && pvp) {
+      } else if (!isNotEmpty(rankingData) && pvp) {
         fetchPokemon();
       }
     }

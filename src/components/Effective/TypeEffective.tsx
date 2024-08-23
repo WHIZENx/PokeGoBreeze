@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import TypeInfo from '../Sprites/Type/Type';
 import { ITypeEffectiveComponent } from '../models/component.model';
+import { isNotEmpty } from '../../util/Utils';
 
 const TypeEffective = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => {
@@ -22,8 +23,8 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
           <h5 className="element-top">
             <li>Pokémon Type Effective</li>
           </h5>
-          {(props.typeEffective.veryWeak ?? []).length > 0 ||
-            ((props.typeEffective.weak ?? []).length > 0 && (
+          {isNotEmpty(props.typeEffective.veryWeak) ||
+            (isNotEmpty(props.typeEffective.weak) && (
               <Fragment>
                 <h6 className="element-top">
                   <span className="type-title weakness-title">
@@ -39,9 +40,9 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               <b>Resistance</b>
             </span>
           </h6>
-          {(props.typeEffective.superResist ?? []).length > 0 ||
-          (props.typeEffective.veryResist ?? []).length > 0 ||
-          (props.typeEffective.resist ?? []).length > 0 ? (
+          {isNotEmpty(props.typeEffective.superResist) ||
+          isNotEmpty(props.typeEffective.veryResist) ||
+          isNotEmpty(props.typeEffective.resist) ? (
             <Fragment>
               <TypeInfo text={'0.244x damage from'} arr={props.typeEffective.superResist ?? []} style={{ marginLeft: 15 }} />
               <TypeInfo text={'0.391x damage from'} arr={props.typeEffective.veryResist ?? []} style={{ marginLeft: 15 }} />
@@ -55,7 +56,7 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               <b>Neutral</b>
             </span>
           </h6>
-          {(props.typeEffective.neutral ?? []).length > 0 ? (
+          {isNotEmpty(props.typeEffective.neutral) ? (
             <TypeInfo text={'1x damage from'} arr={props.typeEffective.neutral ?? []} style={{ marginLeft: 15 }} />
           ) : (
             noneSprit()

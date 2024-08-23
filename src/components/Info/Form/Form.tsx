@@ -9,6 +9,7 @@ import {
   convertStatsEffort,
   formIconAssets,
   getFormFromForms,
+  isNotEmpty,
   splitAndCapitalize,
 } from '../../../util/Utils';
 import APIService from '../../../services/API.service';
@@ -285,9 +286,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           isLoadedForms={props.isLoadedForms}
         />
       )}
-      {(props.pokemonDetail?.formChange?.length ?? 0) > 0 && (
-        <FromChange details={props.pokemonDetail} defaultName={props.form?.defaultName} />
-      )}
+      {isNotEmpty(props.pokemonDetail?.formChange) && <FromChange details={props.pokemonDetail} defaultName={props.form?.defaultName} />}
     </Fragment>
   );
 };
