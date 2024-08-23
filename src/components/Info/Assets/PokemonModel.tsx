@@ -16,7 +16,7 @@ import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../assets/themes/themes';
 
 const PokemonModel = (props: IAssetPokemonModelComponent) => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
 

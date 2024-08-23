@@ -16,7 +16,6 @@ import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { marks, PokeGoSlider } from '../../../util/Utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
@@ -27,6 +26,7 @@ import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain } from '../../.
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { SpinnerActions } from '../../../store/actions';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -213,14 +213,14 @@ const FindBattle = () => {
           bestLeague = evoBaseStats.filter((item) => (item.ratio ?? 0) > (currBastStats?.ratio ?? 0));
         }
         if (!isNotEmpty(bestLeague)) {
-          dispatch(hideSpinner());
+          dispatch(SpinnerActions.HideSpinner.create());
           return setBestInLeague([currBastStats]);
         }
         if ((currBastStats.ratio ?? 0) >= 90) {
           bestLeague.push(currBastStats);
         }
         setBestInLeague(bestLeague.sort((a, b) => (a.maxCP ?? 0) - (b.maxCP ?? 0)));
-        dispatch(hideSpinner());
+        dispatch(SpinnerActions.HideSpinner.create());
       }
     },
     [dispatch, dataStore?.options, ATKIv, DEFIv, STAIv, getEvoChain, id]
@@ -239,7 +239,7 @@ const FindBattle = () => {
           { variant: 'error' }
         );
       }
-      dispatch(showSpinner());
+      dispatch(SpinnerActions.ShowSpinner.create());
       setTimeout(() => {
         searchStatsPoke(result.level);
         enqueueSnackbar(

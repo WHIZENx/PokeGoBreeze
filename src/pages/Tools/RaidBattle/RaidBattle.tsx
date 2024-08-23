@@ -50,7 +50,6 @@ import { Modal, Button, Form } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonData, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
@@ -58,6 +57,7 @@ import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
+import { SpinnerActions } from '../../../store/actions';
 
 interface TrainerBattle {
   pokemons: PokemonRaidModel[];
@@ -533,7 +533,7 @@ const RaidBattle = () => {
         .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
         .sort((a, b) => b.dpsAtk - a.dpsAtk);
       setResult(dataList);
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     }
   };
 
@@ -696,7 +696,7 @@ const RaidBattle = () => {
   }, [findMove, id, form]);
 
   const handleCalculate = () => {
-    dispatch(showSpinner());
+    dispatch(SpinnerActions.ShowSpinner.create());
     clearData();
     clearDataTarget();
     setTimeout(() => {

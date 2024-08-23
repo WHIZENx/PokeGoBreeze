@@ -16,9 +16,9 @@ export interface IBattleCalculate {
   types: string[];
   shadow?: boolean;
   isStab?: boolean;
-  WEATHER_BOOSTS?: string;
-  POKEMON_FRIEND?: boolean;
-  POKEMON_FRIEND_LEVEL?: number;
+  weatherBoosts?: string;
+  pokemonFriend?: boolean;
+  pokemonFriendLevel?: number;
   isDoubleCharge?: boolean;
   cMoveSec?: ICombat;
 }
@@ -32,9 +32,9 @@ export class BattleCalculate implements IBattleCalculate {
   types: string[] = [];
   shadow?: boolean;
   isStab?: boolean;
-  WEATHER_BOOSTS?: string;
-  POKEMON_FRIEND?: boolean;
-  POKEMON_FRIEND_LEVEL?: number;
+  weatherBoosts?: string;
+  pokemonFriend?: boolean;
+  pokemonFriendLevel?: number;
   isDoubleCharge?: boolean;
   cMoveSec?: ICombat;
 

@@ -7,7 +7,7 @@ import { TypeSex } from '../../enums/type.enum';
 import { ThemeModify } from '../../assets/themes/themes';
 
 const Gender = (props: IGenderComponent) => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const calculateRatio = (sex: string, ratio: IPokemonGenderRatio) => {
     const maleRatio = ratio.M;
     const femaleRatio = ratio.F;

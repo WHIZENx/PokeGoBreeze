@@ -23,18 +23,17 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
           <h5 className="element-top">
             <li>Pokémon Type Effective</li>
           </h5>
-          {isNotEmpty(props.typeEffective.veryWeak) ||
-            (isNotEmpty(props.typeEffective.weak) && (
-              <Fragment>
-                <h6 className="element-top">
-                  <span className="type-title weakness-title">
-                    <b>Weakness</b>
-                  </span>
-                </h6>
-                <TypeInfo text={'2.56x damage from'} arr={props.typeEffective.veryWeak ?? []} style={{ marginLeft: 15 }} />
-                <TypeInfo text={'1.6x damage from'} arr={props.typeEffective.weak ?? []} style={{ marginLeft: 15 }} />
-              </Fragment>
-            ))}
+          {(isNotEmpty(props.typeEffective.veryWeak) || isNotEmpty(props.typeEffective.weak)) && (
+            <Fragment>
+              <h6 className="element-top">
+                <span className="type-title weakness-title">
+                  <b>Weakness</b>
+                </span>
+              </h6>
+              <TypeInfo text={'2.56x damage from'} arr={props.typeEffective.veryWeak ?? []} style={{ marginLeft: 15 }} />
+              <TypeInfo text={'1.6x damage from'} arr={props.typeEffective.weak ?? []} style={{ marginLeft: 15 }} />
+            </Fragment>
+          )}
           <h6 className="element-top">
             <span className="type-title resistance-title">
               <b>Resistance</b>

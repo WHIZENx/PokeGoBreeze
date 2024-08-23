@@ -80,7 +80,7 @@ const customStyles: TableStyles = {
 };
 
 const Counter = (props: ICounterComponent) => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);

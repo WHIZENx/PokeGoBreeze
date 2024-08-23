@@ -161,3 +161,18 @@ export class BattlePokemonData implements IBattlePokemonData {
     return obj;
   }
 }
+
+export interface PokemonPVPMove {
+  abbreviation: string;
+  archetype: string;
+  cooldown: number;
+  energy: number;
+  energyGain: number;
+  moveId: string;
+  name: string;
+  power: number;
+  type: string;
+  buffApplyChance?: string;
+  buffTarget?: string;
+  buffs?: number[];
+}

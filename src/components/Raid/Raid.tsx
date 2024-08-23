@@ -14,9 +14,10 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
 import { capitalize } from '../../util/Utils';
 import { IRaidComponent } from '../models/component.model';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const Raid = (props: IRaidComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [tier, setTier] = useState(1);
   const [pokemonClass, setPokemonClass] = useState<string | null>();

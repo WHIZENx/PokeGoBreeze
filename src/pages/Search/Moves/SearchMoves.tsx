@@ -63,7 +63,7 @@ const columns: any = [
 
 const Search = () => {
   useChangeTitle('Moves - Search');
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
   const types = useSelector((state: StoreState) => state.store.data?.typeEff);
 
@@ -109,7 +109,7 @@ const Search = () => {
 
   return (
     <div className="container" style={{ marginTop: 20, marginBottom: 20 }}>
-      <div className="table-head">Movesets list in Pokémon GO</div>
+      <div className="table-head">Moveset list in Pokémon GO</div>
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-xl table-movesets-col" style={{ padding: 0 }}>
           <table className="table-info table-movesets">

@@ -3,9 +3,10 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
 import { IWeatherComponent } from '../models/component.model';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const Weather = (props: IWeatherComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
 
   return (
     <Fragment>

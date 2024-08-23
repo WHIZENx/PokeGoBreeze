@@ -17,7 +17,6 @@ import {
 import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { setSearchToolPage } from '../../store/actions/searching.action';
 import { Action } from 'history';
 import { ToolSearching } from '../../core/models/searching.model';
 import { IPokemonName } from '../../core/models/pokemon.model';
@@ -36,6 +35,7 @@ import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid } from '../../enums/type.enum';
+import { SearchingActions } from '../../store/actions';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -174,7 +174,7 @@ const FormSelect = (props: IFormSelectComponent) => {
     if (currentForm || (!props.searching && props.router.action === Action.Push)) {
       dispatch(
         props.objective
-          ? setSearchToolPage({
+          ? SearchingActions.SetPokemonToolSearch.create({
               ...(props.searching as ToolSearching),
               obj: {
                 id: props.id ?? 0,
@@ -184,7 +184,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 timestamp: new Date(),
               },
             })
-          : setSearchToolPage({
+          : SearchingActions.SetPokemonToolSearch.create({
               ...props.searching,
               id: props.id ?? 0,
               name: currentForm?.defaultName,

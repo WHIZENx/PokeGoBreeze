@@ -1,47 +1,31 @@
-import { PokemonRankingMove } from '../../core/models/pvp.model';
 import { convertPVPRankings, convertPVPTrain } from '../../core/pvp';
 import { replaceTempMovePvpName } from '../../util/Utils';
-import {
-  LOAD_ASSETS,
-  LOAD_COMBAT,
-  LOAD_CPM,
-  LOAD_LEAGUES,
-  LOAD_LOGO_POKEGO,
-  LOAD_OPTIONS,
-  LOAD_POKEMON,
-  LOAD_PVP,
-  LOAD_PVP_MOVES,
-  LOAD_STICKER,
-  LOAD_STORE,
-  LOAD_TIMESTAMP,
-  LOAD_TYPE_EFF,
-  LOAD_WEATHER_BOOST,
-  RESET_STORE,
-} from '../actions/store.action';
 import { Store, StoreModel } from '../models/store.model';
+import { StoreActions } from '../../store/actions';
+import { StoreActionsUnion } from '../actions/store.action';
 
 const initialize: StoreModel = new Store();
 
-const StoreReducer = (state: StoreModel = initialize, action: { type: string; payload: any }) => {
+const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion) => {
   switch (action.type) {
-    case LOAD_STORE:
-      return action.payload;
-    case LOAD_CPM:
+    case StoreActions.StoreActionTypes.getStore:
+      return state;
+    case StoreActions.StoreActionTypes.setCPM:
       return {
         ...state,
         cpm: action.payload,
       };
-    case LOAD_TIMESTAMP:
+    case StoreActions.StoreActionTypes.setTimestamp:
       return {
         ...state,
         timestamp: action.payload,
       };
-    case LOAD_LOGO_POKEGO:
+    case StoreActions.StoreActionTypes.setLogoPokeGO:
       return {
         ...state,
         icon: action.payload,
       };
-    case LOAD_OPTIONS:
+    case StoreActions.StoreActionTypes.setOptions:
       return {
         ...state,
         data: {
@@ -49,7 +33,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           options: action.payload,
         },
       };
-    case LOAD_TYPE_EFF:
+    case StoreActions.StoreActionTypes.setTypeEff:
       return {
         ...state,
         data: {
@@ -57,7 +41,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           typeEff: action.payload,
         },
       };
-    case LOAD_WEATHER_BOOST:
+    case StoreActions.StoreActionTypes.setWeatherBoost:
       return {
         ...state,
         data: {
@@ -65,7 +49,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           weatherBoost: action.payload,
         },
       };
-    case LOAD_POKEMON:
+    case StoreActions.StoreActionTypes.setPokemon:
       return {
         ...state,
         data: {
@@ -73,7 +57,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           pokemon: action.payload,
         },
       };
-    case LOAD_STICKER:
+    case StoreActions.StoreActionTypes.setSticker:
       return {
         ...state,
         data: {
@@ -81,7 +65,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           stickers: action.payload,
         },
       };
-    case LOAD_COMBAT:
+    case StoreActions.StoreActionTypes.setCombat:
       return {
         ...state,
         data: {
@@ -89,7 +73,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           combat: action.payload,
         },
       };
-    case LOAD_ASSETS:
+    case StoreActions.StoreActionTypes.setAssets:
       return {
         ...state,
         data: {
@@ -97,7 +81,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           assets: action.payload,
         },
       };
-    case LOAD_LEAGUES:
+    case StoreActions.StoreActionTypes.setLeagues:
       return {
         ...state,
         data: {
@@ -105,7 +89,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           leagues: action.payload,
         },
       };
-    case LOAD_PVP:
+    case StoreActions.StoreActionTypes.setPVP:
       return {
         ...state,
         data: {
@@ -116,13 +100,13 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
           },
         },
       };
-    case LOAD_PVP_MOVES: {
+    case StoreActions.StoreActionTypes.setPVPMoves: {
       const result = state.data?.combat?.map((move) => {
         const movePVP = action.payload.find(
-          (data: PokemonRankingMove) =>
-            data.moveId === (move.name === 'HIDDEN_POWER' ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
+          (data) => data.moveId === (move.name === 'HIDDEN_POWER' ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
         );
-        move.archetype = movePVP?.archetype;
+        move.archetype = movePVP?.archetype ?? null;
+        move.abbreviation = movePVP?.abbreviation ?? null;
         return move;
       });
       return {
@@ -133,7 +117,7 @@ const StoreReducer = (state: StoreModel = initialize, action: { type: string; pa
         },
       };
     }
-    case RESET_STORE:
+    case StoreActions.StoreActionTypes.resetStore:
       return {
         ...state,
         timestamp: new Date().getTime(),

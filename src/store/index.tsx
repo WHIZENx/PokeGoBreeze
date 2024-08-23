@@ -15,13 +15,12 @@ const devTools =
     ? applyMiddleware(thunk, routerMiddleware)
     : composeWithDevTools(applyMiddleware(thunk, routerMiddleware));
 
-export default function configureStore(preloadedState?: any) {
+export default function configureStore() {
   return createStore(
     combineReducers({
       router: createRouterReducer(history),
       ...rootReducer,
     }),
-    preloadedState,
     devTools
   );
 }

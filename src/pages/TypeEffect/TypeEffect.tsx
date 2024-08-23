@@ -10,11 +10,12 @@ import Defender from './Defender';
 import './TypeEffect.scss';
 import { StoreState } from '../../store/models/state.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const TypeEffect = () => {
   useChangeTitle('Type Effectiveness');
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
 
   return (
     <div className="container element-top" style={{ paddingBottom: 15 }}>

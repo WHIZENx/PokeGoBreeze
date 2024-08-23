@@ -21,8 +21,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
-import { loadPVP } from '../../../store/actions/store.action';
+import { loadPVP } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -30,6 +29,7 @@ import { Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 import { FORM_NORMAL, FORM_SHADOW } from '../../../util/Constants';
 import { IPokemonData } from '../../../core/models/pokemon.model';
+import { SpinnerActions } from '../../../store/actions';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -138,7 +138,7 @@ const TeamPVP = () => {
 
   useEffect(() => {
     const fetchPokemon = async () => {
-      dispatch(showSpinner());
+      dispatch(SpinnerActions.ShowSpinner.create());
       try {
         const cp = parseInt(params.cp ?? '');
         const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie ?? '', cp))).data;
@@ -172,21 +172,28 @@ const TeamPVP = () => {
           };
         });
         setRankingData(file);
-        dispatch(hideSpinner());
+        dispatch(SpinnerActions.HideSpinner.create());
       } catch (e: any) {
         dispatch(
-          showSpinner({
+          SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            msg: e.message,
+            message: e.message,
           })
         );
       }
     };
-    if (!rankingData && pvp && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && dataStore?.assets && statsRanking) {
+    if (
+      !rankingData &&
+      pvp &&
+      isNotEmpty(dataStore?.combat) &&
+      isNotEmpty(dataStore?.pokemon) &&
+      isNotEmpty(dataStore?.assets) &&
+      statsRanking
+    ) {
       fetchPokemon();
     }
     return () => {
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     };
   }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, statsRanking]);
 

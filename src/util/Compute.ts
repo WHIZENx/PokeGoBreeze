@@ -157,7 +157,7 @@ export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, n
   if (form) {
     return form.default;
   }
-  return null;
+  return form;
 };
 
 export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: string) => {
@@ -165,11 +165,11 @@ export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: st
   if (form) {
     return form.shiny;
   }
-  return null;
+  return form;
 };
 
 export const findStabType = (types: string[], findType: string) => {
-  return types.some((type) => type.toLowerCase() === findType.toLowerCase());
+  return types.some((type) => type.toUpperCase() === findType.toUpperCase());
 };
 
 export const getPokemonBattleLeagueName = (cp: number) => {

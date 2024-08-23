@@ -24,6 +24,7 @@ import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
 import { TypeMove } from '../enums/type.enum';
 import { IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
+import { findStabType } from './Compute';
 import {
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,
@@ -745,7 +746,7 @@ export const calculateAvgDPS = (
   const stabMultiply = STAB_MULTIPLY(globalOptions),
     shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
     shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
-    multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, options?.POKEMON_FRIEND_LEVEL);
+    multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, options?.pokemonFriendLevel);
 
   const FPow = fMove?.pvePower ?? 0;
   const CPow = cMove?.pvePower ?? 0;
@@ -757,9 +758,8 @@ export const calculateAvgDPS = (
   const CType = capitalize(cMove?.type);
   const CDWS = (cMove?.damageWindowStartMs ?? 0) / 1000;
 
-  typePoke = typePoke.map((type) => type.toUpperCase());
-  const FMulti = (typePoke.includes(FType.toUpperCase()) ? stabMultiply : 1) * (fMove?.accuracyChance ?? 0);
-  const CMulti = (typePoke.includes(CType.toUpperCase()) ? stabMultiply : 1) * (cMove?.accuracyChance ?? 0);
+  const FMulti = (findStabType(typePoke, FType) ? stabMultiply : 1) * (fMove?.accuracyChance ?? 0);
+  const CMulti = (findStabType(typePoke, CType) ? stabMultiply : 1) * (cMove?.accuracyChance ?? 0);
 
   let y = 0,
     FDmg = 0,
@@ -772,15 +772,15 @@ export const calculateAvgDPS = (
       FPow *
       FMulti *
       (isShadow ? shadowAtkBonus : 1) *
-      weatherMultiple(globalOptions, weatherBoost, options.WEATHER_BOOSTS, FType) *
-      (options.TRAINER_FRIEND ? multiplyLevelFriendship : 1);
+      weatherMultiple(globalOptions, weatherBoost, options.weatherBoosts, FType) *
+      (options.trainerFriend ? multiplyLevelFriendship : 1);
     CDmgBase =
       DEFAULT_DAMAGE_MULTIPLY *
       CPow *
       CMulti *
       (isShadow ? shadowAtkBonus : 1) *
-      weatherMultiple(globalOptions, weatherBoost, options.WEATHER_BOOSTS, CType) *
-      (options.TRAINER_FRIEND ? multiplyLevelFriendship : 1);
+      weatherMultiple(globalOptions, weatherBoost, options.weatherBoosts, CType) *
+      (options.trainerFriend ? multiplyLevelFriendship : 1);
 
     const FTypeEff = getTypeEffective(typeEff, FType, options.objTypes ?? []);
     const CTypeEff = getTypeEffective(typeEff, CType, options.objTypes ?? []);
@@ -861,9 +861,8 @@ export const calculateBattleDPSDefender = (
   const FTypeDef = capitalize(defender.fMove?.type);
   const CTypeDef = capitalize(defender.cMove?.type);
 
-  defender.types = defender.types.map((type) => type.toUpperCase());
-  const FMultiDef = (defender.types.includes(FTypeDef.toUpperCase()) ? stabMultiply : 1) * (defender.fMove?.accuracyChance ?? 0);
-  const CMultiDef = (defender.types.includes(CTypeDef.toUpperCase()) ? stabMultiply : 1) * (defender.cMove?.accuracyChance ?? 0);
+  const FMultiDef = (findStabType(defender.types, FTypeDef) ? stabMultiply : 1) * (defender.fMove?.accuracyChance ?? 0);
+  const CMultiDef = (findStabType(defender.types, CTypeDef) ? stabMultiply : 1) * (defender.cMove?.accuracyChance ?? 0);
 
   const lambdaMod = (CEDef / 100) * 3;
   const defDuration = lambdaMod * (FDurDef + DEFAULT_ENEMY_ATK_DELAY) + (CDurDef + DEFAULT_ENEMY_ATK_DELAY);
@@ -873,13 +872,13 @@ export const calculateBattleDPSDefender = (
     (FPowDef ?? 0) *
     FMultiDef *
     (defender.shadow ? shadowAtkBonus : 1) *
-    (defender.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, defender.WEATHER_BOOSTS, FTypeDef));
+    (defender.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, defender.weatherBoosts, FTypeDef));
   const CDmgBaseDef =
     DEFAULT_DAMAGE_MULTIPLY *
     (CPowDef ?? 0) *
     CMultiDef *
     (defender.shadow ? shadowAtkBonus : 1) *
-    (defender.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, defender.WEATHER_BOOSTS, CTypeDef));
+    (defender.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, defender.weatherBoosts, CTypeDef));
 
   const FTypeEff = getTypeEffective(typeEff, FTypeDef, attacker.types);
   const CTypeEff = getTypeEffective(typeEff, CTypeDef, attacker.types);
@@ -906,7 +905,7 @@ export const calculateBattleDPS = (
   const stabMultiply = STAB_MULTIPLY(globalOptions),
     shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
     shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
-    multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.POKEMON_FRIEND_LEVEL);
+    multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.pokemonFriendLevel);
 
   const FPow = attacker.fMove?.pvePower;
   const CPow = attacker.cMove?.pvePower;
@@ -918,24 +917,23 @@ export const calculateBattleDPS = (
   const CType = capitalize(attacker.cMove?.type?.toLowerCase());
   const CDWS = (attacker.cMove?.damageWindowStartMs ?? 0) / 1000;
 
-  attacker.types = defender.types.map((type) => type.toUpperCase());
-  const FMulti = (attacker.types.includes(FType.toUpperCase()) ? stabMultiply : 1) * (attacker.fMove?.accuracyChance ?? 0);
-  const CMulti = (attacker.types.includes(CType.toUpperCase()) ? stabMultiply : 1) * (attacker.cMove?.accuracyChance ?? 0);
+  const FMulti = (findStabType(attacker.types, FType) ? stabMultiply : 1) * (attacker.fMove?.accuracyChance ?? 0);
+  const CMulti = (findStabType(attacker.types, CType) ? stabMultiply : 1) * (attacker.cMove?.accuracyChance ?? 0);
 
   const FDmgBase =
     DEFAULT_DAMAGE_MULTIPLY *
     (FPow ?? 0) *
     FMulti *
     (attacker.shadow ? shadowAtkBonus : 1) *
-    (attacker.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, attacker.WEATHER_BOOSTS, FType)) *
-    (attacker.POKEMON_FRIEND ? multiplyLevelFriendship : 1);
+    (attacker.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, attacker.weatherBoosts, FType)) *
+    (attacker.pokemonFriend ? multiplyLevelFriendship : 1);
   const CDmgBase =
     DEFAULT_DAMAGE_MULTIPLY *
     (CPow ?? 0) *
     CMulti *
     (attacker.shadow ? shadowAtkBonus : 1) *
-    (attacker.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, attacker.WEATHER_BOOSTS, CType)) *
-    (attacker.POKEMON_FRIEND ? multiplyLevelFriendship : 1);
+    (attacker.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, attacker.weatherBoosts, CType)) *
+    (attacker.pokemonFriend ? multiplyLevelFriendship : 1);
 
   const FTypeEff = getTypeEffective(typeEff, FType, defender.types);
   const CTypeEff = getTypeEffective(typeEff, CType, defender.types);
@@ -982,8 +980,8 @@ export const calculateBattleDPS = (
       (CPowSec ?? 0) *
       CMultiSec *
       (attacker.shadow ? shadowAtkBonus : 1) *
-      weatherMultiple(globalOptions, weatherBoost, attacker.WEATHER_BOOSTS, CTypeSec) *
-      (attacker.POKEMON_FRIEND ? multiplyLevelFriendship : 1);
+      weatherMultiple(globalOptions, weatherBoost, attacker.weatherBoosts, CTypeSec) *
+      (attacker.pokemonFriend ? multiplyLevelFriendship : 1);
 
     const CTypeEffSec = getTypeEffective(typeEff, CTypeSec, defender.types);
 

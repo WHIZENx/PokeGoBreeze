@@ -1,12 +1,12 @@
 import { SearchingOptionsModel } from '../../core/models/searching.model';
-import { SET_DPS_SHEET_OPTIONS } from '../actions/options.action';
-import { OptionDPSModel } from '../models/options.model';
+import { OptionsActions } from '../actions';
+import { OptionsActionsUnion } from '../actions/options.action';
 
 const initialize = null;
 
-const OptionsReducer = (state: SearchingOptionsModel | null = initialize, action: { type: string; payload: OptionDPSModel }) => {
+const OptionsReducer = (state: SearchingOptionsModel | null = initialize, action: OptionsActionsUnion) => {
   switch (action.type) {
-    case SET_DPS_SHEET_OPTIONS:
+    case OptionsActions.OptionsActionTypes.setDpsSheetOptions:
       return {
         ...state,
         dpsSheet: action.payload,

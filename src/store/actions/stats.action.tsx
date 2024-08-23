@@ -1,31 +1,36 @@
+/* eslint-disable no-unused-vars */
+import { Action } from 'redux';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { sortStatsPokemon } from '../../util/Calculate';
-import { FORM_NORMAL } from '../../util/Constants';
-import { ArrayStats } from '../../util/models/util.model';
 
-export const LOAD_STATS = 'LOAD_STATS';
-export const RESET_STATS = 'RESET_STATS';
+export enum StatsActionTypes {
+  setStats = 'SET_STATS',
+  resetStats = 'RESET_STATS',
+}
 
-const convertArrStats = (data: IPokemonData[]) => {
-  return data
-    .filter((pokemon) => pokemon.num > 0)
-    .map((value) => {
-      return new ArrayStats({
-        id: value.num,
-        name: value.slug,
-        form: value.forme ?? FORM_NORMAL,
-        baseStats: value.baseStats,
-        baseStatsPokeGo: { attack: value.baseStats.atk, defense: value.baseStats.def, stamina: value.baseStats.sta ?? 0 },
-        baseStatsProd: value.baseStats.atk * value.baseStats.def * (value.baseStats.sta ?? 0),
-      });
-    });
-};
+export class SetStats implements Action {
+  readonly type = StatsActionTypes.setStats;
 
-export const loadStats = (pokemonData: IPokemonData[]) => ({
-  type: LOAD_STATS,
-  payload: sortStatsPokemon(convertArrStats(pokemonData)),
-});
+  constructor(public payload: IPokemonData[]) {}
 
-export const resetStats = () => ({
-  type: RESET_STATS,
-});
+  static create(value: IPokemonData[]) {
+    const { type, payload } = new SetStats(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class ResetStats implements Action {
+  readonly type = StatsActionTypes.resetStats;
+
+  static create() {
+    const { type } = new ResetStats();
+    return {
+      type,
+    };
+  }
+}
+
+export type StatsActionsUnion = SetStats | ResetStats;

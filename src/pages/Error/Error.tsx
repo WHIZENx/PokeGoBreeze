@@ -4,8 +4,8 @@ import { Link, useLocation } from 'react-router-dom';
 import './Error.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { SpinnerState } from '../../store/models/state.model';
-import { hideSpinner } from '../../store/actions/spinner.action';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { SpinnerActions } from '../../store/actions';
 
 const Error = () => {
   const dispatch = useDispatch();
@@ -15,7 +15,7 @@ const Error = () => {
 
   useEffect(() => {
     if (spinner.loading) {
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     }
   }, [spinner.loading]);
 

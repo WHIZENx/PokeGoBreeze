@@ -46,6 +46,7 @@ import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
+import { ThemeModify } from '../../assets/themes/themes';
 
 interface TypeCost {
   purified: PokemonTypeCost;
@@ -53,7 +54,7 @@ interface TypeCost {
 }
 
 const Pokemon = (props: IPokemonPage) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);

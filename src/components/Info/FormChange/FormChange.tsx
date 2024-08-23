@@ -11,7 +11,7 @@ import { IFromChangeComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../assets/themes/themes';
 
 const FromChange = (props: IFromChangeComponent) => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const assets = useSelector((state: StoreState) => state.store.data?.assets ?? []);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);

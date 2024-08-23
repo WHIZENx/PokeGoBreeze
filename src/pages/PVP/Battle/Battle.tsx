@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
-import { findAssetForm } from '../../../util/Compute';
+import { findAssetForm, findStabType } from '../../../util/Compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/Calculate';
 import {
   FORM_NORMAL,
@@ -38,7 +38,6 @@ import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -62,6 +61,7 @@ import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { StatsPokemon } from '../../../core/models/stats.model';
 import { TypeAction } from '../../../enums/type.enum';
+import { SpinnerActions } from '../../../store/actions';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -159,9 +159,7 @@ const Battle = () => {
       return (
         (atkPoke *
           (move?.pvpPower ?? 0) *
-          (poke.pokemon?.types?.map((type) => type.toUpperCase()).includes(move?.type?.toUpperCase() ?? '')
-            ? STAB_MULTIPLY(dataStore?.options)
-            : 1) *
+          (findStabType(poke.pokemon?.types ?? [], move?.type ?? '') ? STAB_MULTIPLY(dataStore?.options) : 1) *
           (poke.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
           getTypeEffective(dataStore?.typeEff, move?.type ?? '', pokeObj.pokemon?.types ?? [])) /
         (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))
@@ -699,7 +697,7 @@ const Battle = () => {
 
   const fetchPokemonBattle = useCallback(
     async (league: number) => {
-      dispatch(showSpinner());
+      dispatch(SpinnerActions.ShowSpinner.create());
       try {
         clearData();
         const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile('all', league, 'overall'))).data;
@@ -736,12 +734,12 @@ const Battle = () => {
             })
             .filter((pokemon) => pokemon)
         );
-        dispatch(hideSpinner());
+        dispatch(SpinnerActions.HideSpinner.create());
       } catch (e: any) {
         dispatch(
-          showSpinner({
+          SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            msg: e.message,
+            message: e.message,
           })
         );
       }
@@ -757,7 +755,7 @@ const Battle = () => {
       fetchPokemon(league);
     }
     return () => {
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     };
   }, [fetchPokemonBattle, league]);
 
@@ -812,7 +810,7 @@ const Battle = () => {
     if (elem && x <= (timelineNormal.current?.clientWidth ?? 0) - 2) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
-    if (!isNotEmpty(arrBound.current) && pokemonCurr.timeline) {
+    if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline)) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
         arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
       }
@@ -837,7 +835,7 @@ const Battle = () => {
     if (elem && x <= (timelineFit.current?.clientWidth ?? 0)) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
-    if ((xFit.current !== e.currentTarget.clientWidth || !isNotEmpty(arrStore.current)) && pokemonCurr.timeline) {
+    if ((xFit.current !== e.currentTarget.clientWidth || !isNotEmpty(arrStore.current)) && isNotEmpty(pokemonCurr.timeline)) {
       xFit.current = e.currentTarget.clientWidth;
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
         arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
@@ -848,7 +846,7 @@ const Battle = () => {
 
   const playingTimeLine = () => {
     setPlayState(true);
-    const range = pokemonCurr.timeline?.length ?? 0;
+    const range = pokemonCurr.timeline.length;
     const elem = document.getElementById('play-line');
     let xCurrent = 0;
     if (elem) {
@@ -969,8 +967,8 @@ const Battle = () => {
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const updateTimeline = (index: string | number, sound = false) => {
-    const pokeCurrData = pokemonCurr.timeline?.at(parseInt(index.toString()));
-    const pokeObjData = pokemonObj.timeline?.at(parseInt(index.toString()));
+    const pokeCurrData = pokemonCurr.timeline.at(parseInt(index.toString()));
+    const pokeObjData = pokemonObj.timeline.at(parseInt(index.toString()));
     // if (sound) {
     //   if (pokemonCurr.audio.fMove.paused && pokeCurrData.type === AttackType.Fast) {
     //     pokemonCurr.audio.fMove.currentTime = 0;
@@ -1006,7 +1004,7 @@ const Battle = () => {
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
       if (type) {
-        if (!isNotEmpty(arrBound.current) && pokemonCurr.timeline) {
+        if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
             arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
@@ -1020,7 +1018,7 @@ const Battle = () => {
           left: Math.min(transform, transform - timelineNormalContainer.current?.clientWidth / 2),
         });
       } else {
-        if (!isNotEmpty(arrStore.current) && pokemonCurr.timeline) {
+        if (!isNotEmpty(arrStore.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
             arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }

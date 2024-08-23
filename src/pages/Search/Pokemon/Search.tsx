@@ -18,7 +18,7 @@ import { ThemeModify } from '../../../assets/themes/themes';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);

@@ -519,7 +519,7 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | und
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) => {
-  return pokemon.some((p) => convertPokemonAPIDataName(form) === (p.fullName ?? p.name) && p.isShadow);
+  return pokemon.some((p) => p.isShadow && convertPokemonAPIDataName(form) === (p.fullName ?? p.name));
 };
 
 const convertNameEffort = (name: string) => {
@@ -698,7 +698,7 @@ export const generatePokemonGoForms = (
           pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
           'Pokémon-GO',
           pokemon.types,
-          undefined,
+          new PokemonSprit(),
           index,
           FORM_NORMAL,
           false,

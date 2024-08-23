@@ -96,7 +96,7 @@ const customTheme = createTheme({
 } as ThemeModify);
 
 const Evolution = (props: IEvolutionComponent) => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
@@ -282,10 +282,10 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getNextEvoChainStore = (poke: IPokemonData | undefined, result: IPokemonEvo[][]) => {
-    if (!poke || (poke && !isNotEmpty(poke.evoList))) {
+    if (!isNotEmpty(poke?.evoList)) {
       return;
     }
-    const evoList = poke.evoList?.map((evo) =>
+    const evoList = poke?.evoList?.map((evo) =>
       modelEvoChain(
         new EvolutionModel({
           id: evo.evoToId,
@@ -306,7 +306,7 @@ const Evolution = (props: IEvolutionComponent) => {
       }
     }
 
-    poke.evoList?.forEach((evo) => {
+    poke?.evoList?.forEach((evo) => {
       const pokemon = pokemonData.find((pokemon) => pokemon.num === evo.evoToId && pokemon.forme === evo.evoToForm);
       getNextEvoChainStore(pokemon, result);
     });

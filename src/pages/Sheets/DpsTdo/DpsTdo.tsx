@@ -42,7 +42,6 @@ import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDPSSheetPage } from '../../../store/actions/options.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
@@ -54,6 +53,7 @@ import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
 import { WeatherBoost } from '../../../core/models/weatherBoost.model';
+import { OptionsActions } from '../../../store/actions';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -293,7 +293,7 @@ const DpsTdo = () => {
   } = filters;
 
   const [options, setOptions] = useState(new OptionOtherDPS());
-  const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, pokemonDefObj } = options;
+  const { weatherBoosts, trainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [selectTypes, setSelectTypes] = useState(optionStore?.dpsSheet?.selectTypes ?? []);
@@ -319,14 +319,14 @@ const DpsTdo = () => {
         const statsAttacker = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
           def: calculateStatsBattle(stats.def, ivDef, pokemonLevel),
-          hp: calculateStatsBattle(stats?.sta ?? 0, ivHp, pokemonLevel),
+          hp: calculateStatsBattle(stats.sta ?? 0, ivHp, pokemonLevel),
           fMove,
           cMove,
           types: pokemon.types,
           shadow,
-          WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? '',
-          POKEMON_FRIEND: options.TRAINER_FRIEND,
-          POKEMON_FRIEND_LEVEL: options.POKEMON_FRIEND_LEVEL,
+          weatherBoosts: options.weatherBoosts ?? '',
+          pokemonFriend: options.trainerFriend,
+          pokemonFriendLevel: options.pokemonFriendLevel,
         });
 
         let dps, tdo;
@@ -339,7 +339,7 @@ const DpsTdo = () => {
             fMove: data?.combat?.find((item) => item.name === fMoveTargetPokemon.name),
             cMove: data?.combat?.find((item) => item.name === cMoveTargetPokemon.name),
             types: dataTargetPokemon.types,
-            WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? '',
+            weatherBoosts: options.weatherBoosts ?? '',
           });
 
           if (!statsDefender) {
@@ -579,7 +579,7 @@ const DpsTdo = () => {
 
   useEffect(() => {
     dispatch(
-      setDPSSheetPage({
+      OptionsActions.SetDpsSheetOptions.create({
         filters,
         options,
         selectTypes,
@@ -1053,11 +1053,11 @@ const DpsTdo = () => {
                   <Form.Select
                     style={{ borderRadius: 0 }}
                     className="form-control"
-                    defaultValue={String(WEATHER_BOOSTS)}
+                    defaultValue={String(weatherBoosts)}
                     onChange={(e) =>
                       setOptions({
                         ...options,
-                        WEATHER_BOOSTS: e.target.value,
+                        weatherBoosts: e.target.value,
                       })
                     }
                   >
@@ -1083,8 +1083,8 @@ const DpsTdo = () => {
                           onChange={(_, check) => {
                             setOptions({
                               ...options,
-                              TRAINER_FRIEND: check,
-                              POKEMON_FRIEND_LEVEL: 0,
+                              trainerFriend: check,
+                              pokemonFriendLevel: 0,
                             });
                           }}
                         />
@@ -1092,17 +1092,17 @@ const DpsTdo = () => {
                       label="Friendship Level:"
                     />
                     <LevelRating
-                      disabled={!TRAINER_FRIEND}
+                      disabled={!trainerFriend}
                       onChange={(_, value) => {
                         setOptions({
                           ...options,
-                          POKEMON_FRIEND_LEVEL: value ?? 0,
+                          pokemonFriendLevel: value ?? 0,
                         });
                       }}
                       defaultValue={0}
                       max={4}
                       size="large"
-                      value={POKEMON_FRIEND_LEVEL}
+                      value={pokemonFriendLevel}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />

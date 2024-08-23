@@ -76,7 +76,7 @@ const tableDefensive = 'defensive';
 const tableOffensive = 'offensive';
 
 const TableMove = (props: ITableMoveComponent) => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const data = useSelector((state: StoreState) => state.store.data);
   const [move, setMove] = useState<PokemonQueryRankMove>({
     data: [],

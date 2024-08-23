@@ -136,7 +136,7 @@ const columnMove: any = [
 ];
 
 const SearchTypes = () => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [typeList, setTypeList] = useState<string[]>([]);
