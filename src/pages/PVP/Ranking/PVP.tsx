@@ -87,13 +87,10 @@ const RankingPVP = () => {
     if (!pvp) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
-  }, [pvp]);
-
-  useEffect(() => {
-    if (dataStore?.combat?.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(dataStore?.combat) && dataStore?.combat?.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [dataStore?.combat]);
+  }, [pvp, dataStore?.combat]);
 
   useEffect(() => {
     const fetchPokemon = async () => {

@@ -751,7 +751,7 @@ const Battle = () => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (dataStore?.options && dataStore?.pokemon && dataStore?.assets) {
+    if (dataStore?.options && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
       fetchPokemon(league);
     }
     return () => {

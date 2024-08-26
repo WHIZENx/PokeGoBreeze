@@ -104,14 +104,14 @@ const Home = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    if (data?.assets && data?.pokemon) {
+    if (isNotEmpty(data?.assets) && isNotEmpty(data?.pokemon)) {
       setDataList(
-        data.pokemon
+        data?.pokemon
           .map((item) => {
-            const assetForm = queryAssetForm(data.assets, item.num, item.forme);
+            const assetForm = queryAssetForm(data?.assets ?? [], item.num, item.forme);
             return new PokemonHomeModel(item, assetForm, versionList);
           })
-          .sort((a, b) => a.id - b.id)
+          .sort((a, b) => a.id - b.id) ?? []
       );
     }
   }, [data?.assets, data?.pokemon]);
