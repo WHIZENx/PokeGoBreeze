@@ -1,5 +1,5 @@
 import { Palette, PaletteColor, PaletteMode, Theme, TypeBackground } from '@mui/material';
-import { TypeTheme } from '../../enums/type.enum';
+import { TypeTheme } from '../../../enums/type.enum';
 
 interface Constants {
   text: string;

@@ -40,7 +40,7 @@ import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { getDesignThemes } from './assets/themes/themes';
+import { getDesignThemes } from './util/models/overrides/themes.model';
 import { TRANSITION_TIME } from './util/Constants';
 import { PaletteMode } from '@mui/material';
 import { TypeTheme } from './enums/type.enum';

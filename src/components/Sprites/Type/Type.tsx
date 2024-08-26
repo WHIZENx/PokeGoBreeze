@@ -6,7 +6,7 @@ import { capitalize, isNotEmpty } from '../../../util/Utils';
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
-import { ThemeModify } from '../../../assets/themes/themes';
+import { ThemeModify } from '../../../util/models/overrides/themes.model';
 
 const TypeInfo = (props: ITypeComponent) => {
   const theme = useTheme<ThemeModify>();

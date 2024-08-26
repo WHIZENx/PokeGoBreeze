@@ -23,6 +23,7 @@ import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.mo
 import { BattleBaseStats } from '../../../util/models/calculate.model';
 import { Combat } from '../../../core/models/combat.model';
 import { SpinnerActions } from '../../../store/actions';
+import { AnyAction } from 'redux';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -159,7 +160,7 @@ const PokemonPVP = () => {
         loadPVPMoves(dispatch);
       } else {
         if (router.action === Action.Push) {
-          router.action = null as any;
+          router.action = null as AnyAction[''];
           setTimeout(() => fetchPokemon(), 100);
         } else if (!rankingPoke && pvp) {
           fetchPokemon();
