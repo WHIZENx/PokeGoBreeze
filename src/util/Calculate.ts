@@ -663,7 +663,7 @@ export const calculateStatsByTag = (
 
   if (pokemon || (baseStats && tag)) {
     if (pokemon?.baseStatsGO) {
-      return pokemon.baseStats;
+      return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, pokemon.baseStats.sta ?? 0);
     }
     const from = tag?.toLowerCase();
     const checkNerf = !from?.toUpperCase().includes(FORM_MEGA);
@@ -672,7 +672,7 @@ export const calculateStatsByTag = (
     def = calBaseDEF(baseStats, checkNerf);
     sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
   }
-  return new StatsBase(atk, def, sta);
+  return StatsBase.setValue(atk, def, sta);
 };
 
 export const calculateDamagePVE = (

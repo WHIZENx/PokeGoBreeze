@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertColumnDataType, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
@@ -16,24 +16,25 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { DEFAULT_TYPES } from '../../../util/Constants';
 import { ICombat } from '../../../core/models/combat.model';
 import { TypeEff } from '../../../core/models/type-eff.model';
-import { ThemeModify } from '../../../assets/themes/themes';
+import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 
-const nameSort = (rowA: IPokemonData | ICombat | undefined, rowB: IPokemonData | ICombat | undefined) => {
+const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = rowA?.name.toLowerCase();
   const b = rowB?.name.toLowerCase();
   return a === b ? 0 : (a ?? 0) > (b ?? 0) ? 1 : -1;
 };
 
-const columnPokemon: any = [
+const columnPokemon: TableColumnModify<IPokemonData>[] = [
   {
     name: 'ID',
-    selector: (row: IPokemonData | undefined) => row?.num,
+    selector: (row) => row?.num,
     sortable: true,
     width: '100px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: IPokemonData | undefined) => (
+    selector: (row) => (
       <Link
         to={`/pokemon/${row?.num}${row?.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row?.num} ${splitAndCapitalize(row?.name, '-', ' ')}`}
@@ -57,8 +58,8 @@ const columnPokemon: any = [
   },
   {
     name: 'Type(s)',
-    selector: (row: IPokemonData | undefined) =>
-      row?.types.map((value, index) => (
+    selector: (row) =>
+      row.types.map((value, index) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -73,34 +74,34 @@ const columnPokemon: any = [
   },
   {
     name: 'ATK',
-    selector: (row: IPokemonData | undefined) => calculateStatsByTag(row, row?.baseStats, row?.slug).atk,
+    selector: (row) => calculateStatsByTag(row, row?.baseStats, row?.slug).atk,
     sortable: true,
     width: '100px',
   },
   {
     name: 'DEF',
-    selector: (row: IPokemonData | undefined) => calculateStatsByTag(row, row?.baseStats, row?.slug).def,
+    selector: (row) => calculateStatsByTag(row, row?.baseStats, row?.slug).def,
     sortable: true,
     width: '100px',
   },
   {
     name: 'STA',
-    selector: (row: IPokemonData | undefined) => calculateStatsByTag(row, row?.baseStats, row?.slug).sta,
+    selector: (row) => calculateStatsByTag(row, row?.baseStats, row?.slug).sta ?? 0,
     sortable: true,
     width: '100px',
   },
 ];
 
-const columnMove: any = [
+const columnMove: TableColumnModify<ICombat>[] = [
   {
     name: 'ID',
-    selector: (row: ICombat) => row.id,
+    selector: (row) => row.id,
     sortable: true,
     width: '100px',
   },
   {
     name: 'Move Name',
-    selector: (row: ICombat) => (
+    selector: (row) => (
       <Link className="d-flex align-items-center" to={'/move/' + row.id} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
@@ -111,25 +112,25 @@ const columnMove: any = [
   },
   {
     name: 'Power PVE',
-    selector: (row: ICombat) => row.pvePower,
+    selector: (row) => row.pvePower,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Power PVP',
-    selector: (row: ICombat) => row.pvpPower,
+    selector: (row) => row.pvpPower,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVE',
-    selector: (row: ICombat) => `${row.pveEnergy > 0 ? '+' : ''}${row.pveEnergy}`,
+    selector: (row) => `${row.pveEnergy > 0 ? '+' : ''}${row.pveEnergy}`,
     sortable: true,
     width: '120px',
   },
   {
     name: 'Energy PVP',
-    selector: (row: ICombat) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
+    selector: (row) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
     sortable: true,
     width: '120px',
   },
@@ -312,8 +313,8 @@ const SearchTypes = () => {
           <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
             <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
               <DataTable
-                columns={columnPokemon}
-                data={result ? result.pokemonList?.filter((pokemon: IPokemonData) => pokemon.types.length === 1) : []}
+                columns={convertColumnDataType<TableColumnModify<IPokemonData>[], IPokemonData>(columnPokemon)}
+                data={result ? result.pokemonList?.filter((pokemon) => pokemon.types.length === 1) : []}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}
@@ -323,8 +324,8 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
               <DataTable
-                columns={columnPokemon}
-                data={result ? result.pokemonList?.filter((pokemon: IPokemonData) => pokemon.types.length > 1) : []}
+                columns={convertColumnDataType<TableColumnModify<IPokemonData>[], IPokemonData>(columnPokemon)}
+                data={result ? result.pokemonList?.filter((pokemon) => pokemon.types.length > 1) : []}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}
@@ -334,7 +335,7 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
               <DataTable
-                columns={columnMove}
+                columns={convertColumnDataType<TableColumnModify<ICombat>[], ICombat>(columnMove)}
                 data={result ? result.fastMove : []}
                 pagination={true}
                 defaultSortFieldId={1}
@@ -345,7 +346,7 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
               <DataTable
-                columns={columnMove}
+                columns={convertColumnDataType<TableColumnModify<ICombat>[], ICombat>(columnMove)}
                 data={result ? result.chargedMove : []}
                 pagination={true}
                 defaultSortFieldId={1}

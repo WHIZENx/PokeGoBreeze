@@ -1,7 +1,7 @@
 import { capitalize, replaceTempMoveName } from '../../util/Utils';
 import { ICombat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
-import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
+import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, ITempEvo } from './evolution.model';
 
@@ -20,7 +20,7 @@ export interface PokemonGender {
 export interface IPokemonDataStats {
   level: number;
   isShadow: boolean;
-  iv: IStatsPokemon;
+  iv: IStatsBase;
 }
 
 interface IPokemonFormChange {

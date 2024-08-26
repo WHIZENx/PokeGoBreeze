@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails, isNotEmpty } from '../../../util/Utils';
+import {
+  splitAndCapitalize,
+  capitalize,
+  convertPokemonImageName,
+  getPokemonDetails,
+  isNotEmpty,
+  convertColumnDataType,
+} from '../../../util/Utils';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/Calculate';
@@ -24,11 +31,12 @@ import { ColumnType } from './enums/column-type.enum';
 import { FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
+import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 
-const columnPokemon: any = [
+const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
     name: '',
-    selector: (row: IPokemonStatsRanking) => (
+    selector: (row) => (
       <Link
         to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
@@ -40,22 +48,22 @@ const columnPokemon: any = [
   },
   {
     name: 'Ranking',
-    selector: (row: IPokemonStatsRanking) => row.rank,
+    selector: (row) => row.rank ?? 0,
     width: '80px',
   },
   {
     name: 'ID',
-    selector: (row: IPokemonStatsRanking) => row.num,
+    selector: (row) => row.num,
     width: '80px',
   },
   {
     name: 'Released',
-    selector: (row: IPokemonStatsRanking) => (row.releasedGO ? <DoneIcon color="success" /> : <CloseIcon color="error" />),
+    selector: (row) => (row.releasedGO ? <DoneIcon color="success" /> : <CloseIcon color="error" />),
     width: '80px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: IPokemonStatsRanking) => (
+    selector: (row) => (
       <>
         <img
           height={48}
@@ -74,8 +82,8 @@ const columnPokemon: any = [
   },
   {
     name: 'Type(s)',
-    selector: (row: IPokemonStatsRanking) =>
-      row.types?.map((value, index) => (
+    selector: (row) =>
+      row.types.map((value, index) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -90,25 +98,25 @@ const columnPokemon: any = [
   },
   {
     name: 'ATK',
-    selector: (row: IPokemonStatsRanking) => row.atk.attack,
+    selector: (row) => row.atk.attack,
     sortable: true,
     width: '100px',
   },
   {
     name: 'DEF',
-    selector: (row: IPokemonStatsRanking) => row.def.defense,
+    selector: (row) => row.def.defense,
     sortable: true,
     width: '100px',
   },
   {
     name: 'STA',
-    selector: (row: IPokemonStatsRanking) => row.sta.stamina,
+    selector: (row) => row.sta.stamina,
     sortable: true,
     width: '100px',
   },
   {
     name: 'Stat Prod',
-    selector: (row: IPokemonStatsRanking) => row.statProd.prod,
+    selector: (row) => row.statProd.prod,
     sortable: true,
     width: '150px',
   },
@@ -387,7 +395,7 @@ const StatsRanking = () => {
         />
       </div>
       <DataTable
-        columns={columnPokemon}
+        columns={convertColumnDataType<TableColumnModify<IPokemonStatsRanking>[], IPokemonStatsRanking>(columnPokemon)}
         data={pokemonFilter}
         pagination={true}
         defaultSortFieldId={getSortId()}

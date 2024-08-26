@@ -37,6 +37,7 @@ import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { Combat } from '../../../core/models/combat.model';
 import { SpinnerActions } from '../../../store/actions';
+import { AnyAction } from 'redux';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -178,7 +179,7 @@ const RankingPVP = () => {
     if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets) && !onLoadData) {
       setOnLoadData(true);
       if (router.action === Action.Push) {
-        router.action = null as any;
+        router.action = null as AnyAction[''];
         setTimeout(() => fetchPokemon(), 100);
       } else if (!isNotEmpty(rankingData) && pvp) {
         fetchPokemon();

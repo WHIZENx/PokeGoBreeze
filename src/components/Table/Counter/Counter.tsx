@@ -2,7 +2,14 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, checkPokemonGO, convertPokemonDataName, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import {
+  capitalize,
+  checkPokemonGO,
+  convertColumnDataType,
+  convertPokemonDataName,
+  isNotEmpty,
+  splitAndCapitalize,
+} from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import { counterPokemon } from '../../../util/Calculate';
 
@@ -14,7 +21,8 @@ import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } 
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
-import { ThemeModify } from '../../../assets/themes/themes';
+import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -88,10 +96,10 @@ const Counter = (props: ICounterComponent) => {
   const [releasedGO, setReleaseGO] = useState(true);
   const [showMega, setShowMega] = useState(false);
 
-  const columns: any = [
+  const columns: TableColumnModify<ICounterModel>[] = [
     {
       name: 'Pokémon',
-      selector: (row: ICounterModel) => (
+      selector: (row) => (
         <Link to={`/pokemon/${row.pokemonId}${row.pokemonForme ? `?form=${row.pokemonForme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
           <div className="d-flex justify-content-center">
             <div
@@ -122,7 +130,7 @@ const Counter = (props: ICounterComponent) => {
     },
     {
       name: 'Fast',
-      selector: (row: ICounterModel) => (
+      selector: (row) => (
         <Link to={'../move/' + row.fMove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fMove.type))} />
@@ -143,7 +151,7 @@ const Counter = (props: ICounterComponent) => {
     },
     {
       name: 'Charged',
-      selector: (row: ICounterModel) => (
+      selector: (row) => (
         <Link to={'../move/' + row.cMove.id} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cMove.type))} />
@@ -179,7 +187,7 @@ const Counter = (props: ICounterComponent) => {
     },
     {
       name: '%',
-      selector: (row: ICounterModel) => parseFloat(row.ratio.toFixed(2)),
+      selector: (row) => parseFloat(row.ratio.toFixed(2)),
       sortable: true,
       width: '20%',
     },
@@ -280,7 +288,7 @@ const Counter = (props: ICounterComponent) => {
       </div>
       <DataTable
         className="table-counter-container"
-        columns={columns}
+        columns={convertColumnDataType<TableColumnModify<ICounterModel>[], ICounterModel>(columns)}
         pagination={true}
         customStyles={customStyles}
         fixedHeader={true}

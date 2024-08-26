@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
 import { TypeTheme } from '../../enums/type.enum';
-import { ThemeModify } from '../../assets/themes/themes';
+import { ThemeModify } from '../../util/models/overrides/themes.model';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme<ThemeModify>();

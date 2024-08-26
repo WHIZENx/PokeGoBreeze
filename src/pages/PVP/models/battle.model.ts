@@ -2,7 +2,7 @@
 import { Combat, IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsProd, IStatsSta, IStatsBase, StatsPokemon } from '../../../core/models/stats.model';
+import { IStatsAtk, IStatsDef, IStatsProd, IStatsSta, IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
 
@@ -153,7 +153,7 @@ export interface IPokemonTeamData {
   speciesId: string;
   pokemonData: IPokemonData | undefined;
   form: string | null;
-  stats: IStatsPokemon;
+  stats: IStatsBase;
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -171,7 +171,7 @@ export class PokemonTeamData implements IPokemonTeamData {
   speciesId: string = '';
   pokemonData: IPokemonData | undefined;
   form: string | null = '';
-  stats: IStatsPokemon = new StatsPokemon();
+  stats: IStatsBase = new StatsBase();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -193,7 +193,7 @@ export interface IPokemonBattleRanking {
   speciesId?: string;
   pokemon: IPokemonData | undefined;
   form: string | null;
-  stats: IStatsPokemon;
+  stats: IStatsBase;
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -215,7 +215,7 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   speciesId?: string;
   pokemon: IPokemonData | undefined;
   form: string | null = '';
-  stats: IStatsPokemon = new StatsPokemon();
+  stats: IStatsBase = new StatsBase();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;

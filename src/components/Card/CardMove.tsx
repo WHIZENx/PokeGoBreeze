@@ -28,16 +28,16 @@ const CardMove = (props: ICardMoveComponent) => {
             height={64}
             alt="type-logo"
             style={{ marginRight: 10 }}
-            src={APIService.getTypeSprite(capitalize(data?.type ?? ''))}
+            src={APIService.getTypeSprite(capitalize(data.type ?? ''))}
           />
           <span style={{ marginRight: 5 }}>
-            <b>{splitAndCapitalize(data?.name, '_', ' ')}</b>
+            <b>{splitAndCapitalize(data.name, '_', ' ')}</b>
           </span>
           <span className="d-flex">
-            {data?.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
-            {data?.shadow && <span className="type-icon-small ic shadow-ic">{capitalize(FORM_SHADOW)}</span>}
-            {data?.purified && <span className="type-icon-small ic purified-ic">{capitalize(FORM_PURIFIED)}</span>}
-            {data?.special && <span className="type-icon-small ic special-ic">Special</span>}
+            {data.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
+            {data.shadow && <span className="type-icon-small ic shadow-ic">{capitalize(FORM_SHADOW)}</span>}
+            {data.purified && <span className="type-icon-small ic purified-ic">{capitalize(FORM_PURIFIED)}</span>}
+            {data.special && <span className="type-icon-small ic special-ic">Special</span>}
           </span>
         </div>
       )}

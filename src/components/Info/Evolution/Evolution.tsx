@@ -50,7 +50,7 @@ import { IForm } from '../../../core/models/API/form.model';
 import { IEvolutionComponent } from '../../models/component.model';
 import { TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
-import { ThemeModify } from '../../../assets/themes/themes';
+import { ThemeModify } from '../../../util/models/overrides/themes.model';
 
 interface IPokemonEvo {
   prev?: string;

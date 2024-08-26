@@ -3,7 +3,14 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, convertPokemonDataName, isNotEmpty, splitAndCapitalize } from '../../util/Utils';
+import {
+  capitalize,
+  checkPokemonGO,
+  convertColumnDataType,
+  convertPokemonDataName,
+  isNotEmpty,
+  splitAndCapitalize,
+} from '../../util/Utils';
 import { STAB_MULTIPLY } from '../../util/Constants';
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
@@ -28,6 +35,7 @@ import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
 import { IMovePage } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { TypeEff } from '../../core/models/type-eff.model';
+import { TableColumnModify } from '../../util/models/overrides/data-table.model';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -35,16 +43,16 @@ const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const columns: any = [
+const columns: TableColumnModify<IPokemonTopMove>[] = [
   {
     name: 'Id',
-    selector: (row: IPokemonTopMove) => row.num,
+    selector: (row) => row.num,
     sortable: true,
     minWidth: '40px',
   },
   {
     name: 'Name',
-    selector: (row: IPokemonTopMove) => (
+    selector: (row) => (
       <Link to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
         <img
           height={48}
@@ -65,18 +73,18 @@ const columns: any = [
   },
   {
     name: 'Elite',
-    selector: (row: IPokemonTopMove) => (row.isElite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
+    selector: (row) => (row.isElite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
     width: '64px',
   },
   {
     name: 'DPS',
-    selector: (row: IPokemonTopMove) => parseFloat(row.dps.toFixed(2)),
+    selector: (row) => parseFloat(row.dps.toFixed(2)),
     sortable: true,
     minWidth: '90px',
   },
   {
     name: 'TDO',
-    selector: (row: IPokemonTopMove) => parseFloat(row.tdo.toFixed(2)),
+    selector: (row) => parseFloat(row.tdo.toFixed(2)),
     sortable: true,
     minWidth: '90px',
   },
@@ -471,7 +479,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td className="table-top-of-move" colSpan={2} style={{ padding: 0 }}>
                   <DataTable
-                    columns={columns}
+                    columns={convertColumnDataType<TableColumnModify<IPokemonTopMove>[], IPokemonTopMove>(columns)}
                     data={topList.filter((pokemon) => {
                       if (!releasedGO) {
                         return true;

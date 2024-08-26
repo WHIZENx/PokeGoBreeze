@@ -17,7 +17,6 @@ import {
 import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { Action } from 'history';
 import { ToolSearching } from '../../core/models/searching.model';
 import { IPokemonName } from '../../core/models/pokemon.model';
 import {
@@ -37,6 +36,7 @@ import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
+import { Action } from 'history';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;

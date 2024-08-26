@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty } from '../../../util/Utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty, convertColumnDataType } from '../../../util/Utils';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -54,6 +54,7 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
 import { WeatherBoost } from '../../../core/models/weatherBoost.model';
 import { OptionsActions } from '../../../store/actions';
+import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -88,17 +89,17 @@ const cMoveSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   return a === b ? 0 : (a ?? 0) > (b ?? 0) ? 1 : -1;
 };
 
-const columns: any = [
+const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'ID',
-    selector: (row: PokemonSheetData) => row.pokemon?.num,
+    selector: (row) => row.pokemon?.num,
     sortable: true,
     minWidth: '60px',
     maxWidth: '120px',
   },
   {
     name: 'Pokémon Name',
-    selector: (row: PokemonSheetData) => (
+    selector: (row) => (
       <Link
         to={`/pokemon/${row.pokemon?.num}${row.pokemon?.forme ? `?form=${row.pokemon?.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
@@ -124,7 +125,7 @@ const columns: any = [
   },
   {
     name: 'Type(s)',
-    selector: (row: PokemonSheetData) =>
+    selector: (row) =>
       row.pokemon?.types.map((value, index) => (
         <img
           key={index}
@@ -140,7 +141,7 @@ const columns: any = [
   },
   {
     name: 'Fast Move',
-    selector: (row: PokemonSheetData) => (
+    selector: (row) => (
       <Link className="d-flex align-items-center" to={'/move/' + row.fMove?.id} title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
@@ -165,7 +166,7 @@ const columns: any = [
   },
   {
     name: 'Charged Move',
-    selector: (row: PokemonSheetData) => (
+    selector: (row) => (
       <Link className="d-flex align-items-center" to={'/move/' + row.cMove?.id} title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
@@ -205,25 +206,25 @@ const columns: any = [
   },
   {
     name: 'DPS',
-    selector: (row: PokemonSheetData) => (row.dps ? parseFloat(row.dps?.toFixed(3)) : ''),
+    selector: (row) => (row.dps ? parseFloat(row.dps?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '80px',
   },
   {
     name: 'TDO',
-    selector: (row: PokemonSheetData) => (row.tdo ? parseFloat(row.tdo?.toFixed(3)) : ''),
+    selector: (row) => (row.tdo ? parseFloat(row.tdo?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '100px',
   },
   {
     name: 'DPS^3*TDO',
-    selector: (row: PokemonSheetData) => (row.multiDpsTdo ? parseFloat(row.multiDpsTdo?.toFixed(3)) : ''),
+    selector: (row) => (row.multiDpsTdo ? parseFloat(row.multiDpsTdo?.toFixed(3)) : ''),
     sortable: true,
     minWidth: '140px',
   },
   {
     name: 'CP',
-    selector: (row: PokemonSheetData) => row.cp ?? '',
+    selector: (row) => row.cp ?? '',
     sortable: true,
     minWidth: '100px',
   },
@@ -1130,7 +1131,7 @@ const DpsTdo = () => {
           </span>
         </div>
         <DataTable
-          columns={columns}
+          columns={convertColumnDataType<TableColumnModify<PokemonSheetData>[], PokemonSheetData>(columns)}
           data={dataFilter}
           noDataComponent={null}
           pagination={true}

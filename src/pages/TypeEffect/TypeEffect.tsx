@@ -10,7 +10,7 @@ import Defender from './Defender';
 import './TypeEffect.scss';
 import { StoreState } from '../../store/models/state.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { ThemeModify } from '../../assets/themes/themes';
+import { ThemeModify } from '../../util/models/overrides/themes.model';
 
 const TypeEffect = () => {
   useChangeTitle('Type Effectiveness');

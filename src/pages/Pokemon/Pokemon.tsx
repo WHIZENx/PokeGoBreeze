@@ -46,7 +46,7 @@ import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
-import { ThemeModify } from '../../assets/themes/themes';
+import { ThemeModify } from '../../util/models/overrides/themes.model';
 
 interface TypeCost {
   purified: PokemonTypeCost;

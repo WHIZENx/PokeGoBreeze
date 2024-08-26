@@ -59,7 +59,7 @@ import {
 import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
-import { StatsPokemon } from '../../../core/models/stats.model';
+import { StatsBase } from '../../../core/models/stats.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 
@@ -1106,7 +1106,7 @@ const Battle = () => {
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
       const statsSTA = calculateStatsBattle(statsBattle?.sta ?? 0, sta, level);
       stats = BattleBaseStats.create({
-        IV: StatsPokemon.create({ atk, def, sta }),
+        IV: StatsBase.setValue(atk, def, sta),
         CP: cp ?? 0,
         level: level ?? 0,
         stats: StatsBaseCalculate.create({ statsATK, statsDEF, statsSTA }),

@@ -149,7 +149,7 @@ class CombatOption implements ICombatOption {
 
   constructor() {
     this.stab = 0;
-    this.shadowBonus = new StatsBase(0, 0, 0);
+    this.shadowBonus = new StatsBase();
   }
 }
 
@@ -168,7 +168,7 @@ class BattleOption implements IBattleOption {
   constructor() {
     this.enemyAttackInterval = 0;
     this.stab = 0;
-    this.shadowBonus = new StatsBase(0, 0, 0);
+    this.shadowBonus = new StatsBase();
   }
 }
 

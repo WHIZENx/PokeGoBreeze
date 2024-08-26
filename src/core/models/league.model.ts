@@ -177,6 +177,12 @@ export class PokemonRewardSetLeague implements IPokemonRewardSetLeague {
     this.name = '';
     this.form = '';
   }
+
+  static create(value: IPokemonRewardSetLeague) {
+    const obj = new PokemonRewardSetLeague();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 // tslint:disable-next-line:max-classes-per-file
