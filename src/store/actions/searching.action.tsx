@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Action } from 'redux';
-import { ToolSearching } from '../../core/models/searching.model';
-import { SearchingModel } from '../models/searching.model';
+import { IToolSearching } from '../../core/models/searching.model';
+import { ISearchingModel } from '../models/searching.model';
 
 export enum SearchingActionTypes {
   setPokemonMainSearch = 'SET_POKEMON_MAIN_SEARCH',
@@ -13,9 +13,9 @@ export enum SearchingActionTypes {
 export class SetPokemonMainSearch implements Action {
   readonly type = SearchingActionTypes.setPokemonMainSearch;
 
-  constructor(public payload: SearchingModel) {}
+  constructor(public payload: ISearchingModel) {}
 
-  static create(value: SearchingModel) {
+  static create(value: ISearchingModel) {
     const { type, payload } = new SetPokemonMainSearch(value);
     return {
       type,
@@ -40,9 +40,9 @@ export class ResetPokemonMainSearch implements Action {
 export class SetPokemonToolSearch implements Action {
   readonly type = SearchingActionTypes.setPokemonToolSearch;
 
-  constructor(public payload: ToolSearching) {}
+  constructor(public payload: IToolSearching) {}
 
-  static create(value: ToolSearching) {
+  static create(value: IToolSearching) {
     const { type, payload } = new SetPokemonToolSearch(value);
     return {
       type,

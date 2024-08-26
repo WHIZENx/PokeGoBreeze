@@ -4,7 +4,7 @@ import { IForm, IFormSoundCry, IPokemonFormModify, PokemonDataForm } from '../..
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats, IPokemonGenderRatio, PokemonRaidModel } from '../../core/models/pokemon.model';
-import { ToolSearching } from '../../core/models/searching.model';
+import { IToolSearching } from '../../core/models/searching.model';
 import {
   HexagonStats,
   IStatsPokemon,
@@ -104,7 +104,7 @@ export interface IFindComponent {
 
 export interface IFormSelectComponent {
   router: ReduxRouterState;
-  searching: ToolSearching | null;
+  searching: IToolSearching | null;
   raid?: boolean | undefined;
   tier?: number;
   id?: number;

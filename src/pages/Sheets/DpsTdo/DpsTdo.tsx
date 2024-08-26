@@ -593,6 +593,7 @@ const DpsTdo = () => {
       })
     );
   }, [
+    dispatch,
     dataTargetPokemon,
     fMoveTargetPokemon,
     cMoveTargetPokemon,

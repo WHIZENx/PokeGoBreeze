@@ -47,7 +47,7 @@ const PVPHome = () => {
     if (spinner.loading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [pvp, spinner]);
+  }, [pvp, spinner, dispatch]);
 
   useEffect(() => {
     if (!rank && !team && pvp) {

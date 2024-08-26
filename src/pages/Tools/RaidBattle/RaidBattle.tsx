@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import SelectMove from '../../../components/Input/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
@@ -310,46 +310,43 @@ const RaidBattle = () => {
     });
   };
 
-  const findMove = useCallback(
-    (id: number, form: string) => {
-      const result = retrieveMoves(data?.pokemon ?? [], id, form);
-      if (result) {
-        let simpleMove: ISelectMoveModel[] = [];
-        result?.quickMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
-        });
-        result?.eliteQuickMove?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
-        });
-        setFMove(simpleMove.at(0));
-        setResultFMove(simpleMove);
-        simpleMove = [];
-        result?.cinematicMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
-        });
-        result?.eliteCinematicMove?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
-        });
-        result?.shadowMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, true, false, false));
-        });
-        result?.purifiedMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, true, false));
-        });
-        result?.specialMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, true));
-        });
-        setCMove(simpleMove.at(0));
-        setResultCMove(simpleMove);
-      } else {
-        setFMove(undefined);
-        setResultFMove(undefined);
-        setCMove(undefined);
-        setResultCMove(undefined);
-      }
-    },
-    [data?.pokemon]
-  );
+  const findMove = (id: number, form: string) => {
+    const result = retrieveMoves(data?.pokemon ?? [], id, form);
+    if (result) {
+      let simpleMove: ISelectMoveModel[] = [];
+      result?.quickMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+      });
+      result?.eliteQuickMove?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+      });
+      setFMove(simpleMove.at(0));
+      setResultFMove(simpleMove);
+      simpleMove = [];
+      result?.cinematicMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+      });
+      result?.eliteCinematicMove?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+      });
+      result?.shadowMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+      });
+      result?.purifiedMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+      });
+      result?.specialMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+      });
+      setCMove(simpleMove.at(0));
+      setResultCMove(simpleMove);
+    } else {
+      setFMove(undefined);
+      setResultFMove(undefined);
+      setCMove(undefined);
+      setResultCMove(undefined);
+    }
+  };
 
   const addCPokeData = (
     dataList: PokemonMoveData[],
@@ -690,10 +687,10 @@ const RaidBattle = () => {
   };
 
   useEffect(() => {
-    if (form) {
+    if (form && isNotEmpty(data?.pokemon)) {
       findMove(id, form.form.name);
     }
-  }, [findMove, id, form]);
+  }, [data?.pokemon, id, form]);
 
   const handleCalculate = () => {
     dispatch(SpinnerActions.ShowSpinner.create());

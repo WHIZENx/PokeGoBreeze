@@ -134,7 +134,7 @@ export interface PokemonModel {
     shoulderModeScale: number;
   };
   encounter: IEncounter;
-  stats: {
+  stats?: {
     baseStamina: number;
     baseAttack: number;
     baseDefense: number;
@@ -462,15 +462,15 @@ export class PokemonData implements IPokemonData {
     obj.genderRatio = PokemonGenderRatio.create(options?.genderRatio?.M ?? 0.5, options?.genderRatio?.F ?? 0.5);
     obj.baseStatsGO = options?.baseStatsGO === undefined ? true : options?.baseStatsGO;
     obj.baseStats = StatsPokemon.create({
-      atk: pokemon.stats.baseAttack,
-      def: pokemon.stats.baseDefense,
-      sta: pokemon.stats.baseStamina,
+      atk: pokemon.stats?.baseAttack ?? 0,
+      def: pokemon.stats?.baseDefense ?? 0,
+      sta: pokemon.stats?.baseStamina ?? 0,
     });
     obj.statsGO = StatsPokemonGO.create({
-      atk: pokemon.stats.baseAttack,
-      def: pokemon.stats.baseDefense,
-      sta: pokemon.stats.baseStamina,
-      prod: pokemon.stats?.baseAttack * pokemon.stats?.baseDefense * pokemon.stats?.baseStamina,
+      atk: obj.baseStats.atk,
+      def: obj.baseStats.def,
+      sta: obj.baseStats.sta ?? 0,
+      prod: obj.baseStats.atk * obj.baseStats.def * (obj.baseStats.sta ?? 0),
     });
     obj.heightm = pokemon.pokedexHeightM;
     obj.weightkg = pokemon.pokedexWeightKg;

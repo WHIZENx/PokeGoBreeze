@@ -256,7 +256,7 @@ const Pokemon = (props: IPokemonPage) => {
       queryPokemon(id);
     }
     return () => {
-      if (data?.id) {
+      if ((data?.id ?? 0) > 0) {
         APIService.cancel(axiosSource.current);
       }
     };

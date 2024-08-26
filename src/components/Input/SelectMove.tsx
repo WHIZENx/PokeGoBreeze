@@ -60,16 +60,18 @@ const SelectMove = (props: ISelectMoveComponent) => {
         setResultMove(simpleMove);
       }
     },
-    [props.setMovePokemon, combat, props.move]
+    [props.setMovePokemon, props.move]
   );
 
   useEffect(() => {
-    if (props.pokemon?.num) {
-      findMove(props.pokemon.num, props.pokemon?.forme ?? '', props.moveType, props.selected);
-    } else if (isNotEmpty(resultMove)) {
-      setResultMove([]);
+    if (isNotEmpty(combat)) {
+      if (props.pokemon?.num) {
+        findMove(props.pokemon.num, props.pokemon?.forme ?? '', props.moveType, props.selected);
+      } else if (resultMove.length > 0) {
+        setResultMove([]);
+      }
     }
-  }, [props.pokemon?.num, props.pokemon?.forme, props.selected, resultMove, findMove]);
+  }, [props.pokemon?.num, props.pokemon?.forme, props.selected, resultMove.length, combat, findMove]);
 
   const smallInput = () => {
     return (

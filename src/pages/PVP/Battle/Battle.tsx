@@ -744,7 +744,7 @@ const Battle = () => {
         );
       }
     },
-    [dataStore?.options, dataStore?.pokemon, dataStore?.assets]
+    [dataStore?.options, dataStore?.pokemon, dataStore?.assets, dispatch]
   );
 
   useEffect(() => {
@@ -757,7 +757,7 @@ const Battle = () => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonBattle, league]);
+  }, [fetchPokemonBattle, league, dispatch]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));

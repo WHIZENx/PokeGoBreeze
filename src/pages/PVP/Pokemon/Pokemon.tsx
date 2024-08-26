@@ -148,7 +148,7 @@ const PokemonPVP = () => {
         })
       );
     }
-  }, [params.type, params.pokemon, params.cp, statsRanking, dataStore?.combat, dataStore?.pokemon, dataStore?.assets]);
+  }, [params.type, params.pokemon, params.cp, statsRanking, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, dispatch]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -169,7 +169,7 @@ const PokemonPVP = () => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonInfo, rankingPoke, pvp, router.action]);
+  }, [fetchPokemonInfo, rankingPoke, pvp, router.action, dispatch]);
 
   const renderLeague = () => {
     const cp = parseInt(params.cp ?? '');

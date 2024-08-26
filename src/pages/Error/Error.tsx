@@ -17,7 +17,7 @@ const Error = () => {
     if (spinner.loading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [spinner.loading]);
+  }, [spinner.loading, dispatch]);
 
   return (
     <div className="d-block position-relative">
