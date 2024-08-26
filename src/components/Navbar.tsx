@@ -12,7 +12,7 @@ import { getTime } from '../util/Utils';
 import './Navbar.scss';
 import { Box, IconButton, LinearProgress, PaletteMode } from '@mui/material';
 import { SpinnerState, StoreState } from '../store/models/state.model';
-import { loadThemeData } from '../store/actions/theme.action';
+import { loadTheme } from '../store/effects/theme.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { getEdgeItem } from '../services/edge.service';
 import { EdgeKey } from '../services/constants/edgeKey';
@@ -35,8 +35,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
   const onChangeTheme = () => {
     if (!isDelay) {
       setIsDelay(true);
-      setStateTheme(props.mode === 'light' ? 'dark' : 'light');
-      dispatch(loadThemeData(props.mode === 'light' ? 'dark' : 'light'));
+      loadTheme(dispatch, props.mode === 'light' ? 'dark' : 'light', setStateTheme);
       setTimeout(() => {
         setIsDelay(false);
         props.toggleColorMode();
