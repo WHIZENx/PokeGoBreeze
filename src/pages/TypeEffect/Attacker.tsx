@@ -7,16 +7,16 @@ import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff
 import { ITypeEffComponent } from '../models/page.model';
 import { TypeModel, TypeMultiply } from '../../core/models/type.model';
 import { TypeTheme } from '../../enums/type.enum';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const Attacker = (prop: ITypeEffComponent) => {
-  const theme = useTheme();
-  const [types, setTypes] = useState([] as string[]);
+  const theme = useTheme<ThemeModify>();
+  const [types, setTypes] = useState<string[]>([]);
 
   const [currentType, setCurrentType] = useState('BUG');
   const [showType, setShowType] = useState(false);
 
-  const [typeEffective, setTypeEffective]: [ITypeEffChart | undefined, React.Dispatch<React.SetStateAction<ITypeEffChart | undefined>>] =
-    useState();
+  const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
 
   const getTypeEffective = useCallback(() => {
     const data = TypeEffChart.create({

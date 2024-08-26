@@ -1,6 +1,6 @@
 import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 
-import { splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
 
 import './Sticker.scss';
 import APIService from '../../services/API.service';
@@ -23,18 +23,14 @@ const Sticker = () => {
   useChangeTitle('Stickers List');
   const [id, setId] = useState(0);
   const [shopType, setShopType] = useState(0);
-  const [pokemonStickerFilter, setPokemonStickerFilter]: [ISticker[], React.Dispatch<React.SetStateAction<ISticker[]>>] = useState(
-    [] as ISticker[]
-  );
+  const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);
 
   const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);
 
-  const [selectPokemon, setSelectPokemon]: [PokemonStickerModel[], React.Dispatch<React.SetStateAction<PokemonStickerModel[]>>] = useState(
-    [] as PokemonStickerModel[]
-  );
+  const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 
   useEffect(() => {
-    if (pokeStickerList.length > 0) {
+    if (isNotEmpty(pokeStickerList)) {
       const result = pokeStickerList
         .reduce((prev: PokemonStickerModel[], curr) => {
           if (curr.pokemonName && !prev.map((obj) => obj.name).includes(curr.pokemonName)) {
@@ -51,7 +47,7 @@ const Sticker = () => {
   }, [pokeStickerList]);
 
   useEffect(() => {
-    if (pokeStickerList.length > 0) {
+    if (isNotEmpty(pokeStickerList)) {
       setPokemonStickerFilter(
         pokeStickerList
           ?.filter((item) => {
@@ -103,7 +99,7 @@ const Sticker = () => {
           <span>Sticker</span>
         </h5>
         <div className="sticker-group">
-          {pokemonStickerFilter.length === 0 ? (
+          {!isNotEmpty(pokemonStickerFilter) ? (
             <p>No sticker was found.</p>
           ) : (
             <Fragment>

@@ -9,11 +9,11 @@ import CardPokemon from '../../../components/Card/CardPokemon';
 import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/Constants';
+import { FORM_SHADOW, MAX_IV, maxLevel } from '../../../util/Constants';
 import { Combat, ICombat } from '../../../core/models/combat.model';
 import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
-import { PokemonBattleData } from '../models/battle.model';
+import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
 import { PokemonData } from '../../../core/models/pokemon.model';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
@@ -25,11 +25,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   const [search, setSearch] = useState('');
 
-  const [pokemon, setPokemon]: [IBattlePokemonData | undefined, React.Dispatch<React.SetStateAction<IBattlePokemonData | undefined>>] =
-    useState();
-  const [fMove, setFMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
-  const [cMovePri, setCMovePri]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
-  const [cMoveSec, setCMoveSec]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [pokemon, setPokemon] = useState<IBattlePokemonData>();
+  const [fMove, setFMove] = useState<ICombat>();
+  const [cMovePri, setCMovePri] = useState<ICombat>();
+  const [cMoveSec, setCMoveSec] = useState<ICombat>();
 
   const [pokemonIcon, setPokemonIcon] = useState('');
   const [score, setScore] = useState(0);
@@ -61,7 +60,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
     let minCP = props.league === 500 ? 0 : props.league === 1500 ? 500 : props.league === 2500 ? 1500 : 2500;
-    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, MAX_LEVEL);
+    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, maxLevel);
 
     if (maxPokeCP < minCP) {
       if (maxPokeCP <= 500) {
@@ -94,6 +93,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           allStats,
           currentStats: allStats[allStats.length - 1],
           bestStats: allStats[allStats.length - 1],
+          disableCMovePri: false,
+          disableCMoveSec: false,
         }),
         fMove: fMoveCombat,
         cMovePri: cMovePriCombat,
@@ -111,33 +112,39 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const selectFMove = (value: ICombat | undefined) => {
     props.clearData(false);
     setFMove(value);
-    props.setPokemonBattle({
-      ...props.pokemonBattle,
-      fMove: value,
-      audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
-    });
+    props.setPokemonBattle(
+      PokemonBattle.create({
+        ...props.pokemonBattle,
+        fMove: value,
+        audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+      })
+    );
     setShowFMove(false);
   };
 
   const selectCMovePri = (value: ICombat | undefined) => {
     props.clearData(false);
     setCMovePri(value);
-    props.setPokemonBattle({
-      ...props.pokemonBattle,
-      cMovePri: value,
-      audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
-    });
+    props.setPokemonBattle(
+      PokemonBattle.create({
+        ...props.pokemonBattle,
+        cMovePri: value,
+        audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+      })
+    );
     setShowCMovePri(false);
   };
 
   const selectCMoveSec = (value: ICombat | undefined) => {
     props.clearData(false);
     setCMoveSec(value);
-    props.setPokemonBattle({
-      ...props.pokemonBattle,
-      cMoveSec: value,
-      audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
-    });
+    props.setPokemonBattle(
+      PokemonBattle.create({
+        ...props.pokemonBattle,
+        cMoveSec: value,
+        audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+      })
+    );
     setShowCMoveSec(false);
   };
 
@@ -258,7 +265,16 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           checked={!props.pokemonBattle.disableCMovePri}
           onChange={(_, check) => {
             props.clearData(false);
-            props.setPokemonBattle({ ...props.pokemonBattle, disableCMovePri: !check });
+            props.setPokemonBattle({
+              ...props.pokemonBattle,
+              disableCMovePri: !check,
+              chargeSlot:
+                check === false
+                  ? props.pokemonBattle.disableCMoveSec
+                    ? ChargeType.None
+                    : ChargeType.Secondary
+                  : props.pokemonBattle.chargeSlot,
+            });
           }}
         />
         <div
@@ -322,7 +338,16 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           checked={!props.pokemonBattle.disableCMoveSec}
           onChange={(_, check) => {
             props.clearData(false);
-            props.setPokemonBattle({ ...props.pokemonBattle, disableCMoveSec: !check });
+            props.setPokemonBattle({
+              ...props.pokemonBattle,
+              disableCMoveSec: !check,
+              chargeSlot:
+                check === false
+                  ? props.pokemonBattle.disableCMovePri
+                    ? ChargeType.None
+                    : ChargeType.Primary
+                  : props.pokemonBattle.chargeSlot,
+            });
           }}
         />
         <div

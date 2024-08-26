@@ -35,6 +35,7 @@ export interface ICombat {
   criticalChance: number;
   staminaLossScalar: number;
   archetype: string | null;
+  abbreviation: string | null;
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;
@@ -61,6 +62,7 @@ export class Combat implements ICombat {
   criticalChance: number;
   staminaLossScalar: number;
   archetype: string | null = null;
+  abbreviation: string | null = null;
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;

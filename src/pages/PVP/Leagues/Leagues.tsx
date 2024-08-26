@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize } from '../../../util/Utils';
+import { getTime, splitAndCapitalize, capitalize, isNotEmpty } from '../../../util/Utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -31,13 +31,13 @@ const Leagues = () => {
   useChangeTitle('Battle Leagues List');
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
-  const [leagues, setLeagues]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
-  const [openedLeague, setOpenedLeague]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
-  const [leagueFilter, setLeagueFilter]: [ILeague[], React.Dispatch<React.SetStateAction<ILeague[]>>] = useState([] as ILeague[]);
+  const [leagues, setLeagues] = useState<ILeague[]>([]);
+  const [openedLeague, setOpenedLeague] = useState<ILeague[]>([]);
+  const [leagueFilter, setLeagueFilter] = useState<ILeague[]>([]);
   const [search, setSearch] = useState('');
   const [rank, setRank] = useState(1);
-  const [setting, setSetting]: [SettingLeague | undefined, React.Dispatch<React.SetStateAction<SettingLeague | undefined>>] = useState();
-  const [showData, setShowData]: [LeagueData | undefined, React.Dispatch<React.SetStateAction<LeagueData | undefined>>] = useState();
+  const [setting, setSetting] = useState<SettingLeague>();
+  const [showData, setShowData] = useState<LeagueData>();
 
   const getAssetPokeGo = (id: number, form: string) => {
     const asset = queryAssetForm(dataStore?.assets ?? [], id, form);
@@ -70,7 +70,7 @@ const Leagues = () => {
   }, [dataStore?.leagues]);
 
   useEffect(() => {
-    if (leagues.length > 0) {
+    if (isNotEmpty(leagues)) {
       const timeOutId = setTimeout(() => {
         setLeagueFilter(
           leagues.filter((value) => {
@@ -174,13 +174,13 @@ const Leagues = () => {
             <ul style={{ listStyleType: 'inherit' }}>
               <li style={{ fontWeight: 500 }}>
                 <h6>
-                  <b>Max CP:</b> <span>{league.conditions.max_cp}</span>
+                  <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
                 </h6>
               </li>
-              {league.conditions.max_level && (
+              {league.conditions.maxLevel && (
                 <li style={{ fontWeight: 500 }}>
                   <h6>
-                    <b>Max Level:</b> <span>{league.conditions.max_level}</span>
+                    <b>Max Level:</b> <span>{league.conditions.maxLevel}</span>
                   </h6>
                 </li>
               )}
@@ -198,15 +198,15 @@ const Leagues = () => {
               )}
               <li style={{ fontWeight: 500 }}>
                 <h6 className="title-leagues">Unique Selected</h6>
-                {league.conditions.unique_selected ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+                {league.conditions.uniqueSelected ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
               </li>
-              {league.conditions.unique_type && (
+              {league.conditions.uniqueType && (
                 <li style={{ fontWeight: 500 }} className="unique-type">
                   <h6 className="title-leagues">Unique Type</h6>
-                  <TypeInfo arr={league.conditions.unique_type ?? []} style={{ marginLeft: 15 }} />
+                  <TypeInfo arr={league.conditions.uniqueType ?? []} style={{ marginLeft: 15 }} />
                 </li>
               )}
-              {league.conditions.whiteList.length !== 0 && (
+              {isNotEmpty(league.conditions.whiteList) && (
                 <li style={{ fontWeight: 500 }}>
                   <h6 className="title-leagues text-success">White List</h6>
                   {league.conditions.whiteList.map((item, index) => (
@@ -235,7 +235,7 @@ const Leagues = () => {
                   ))}
                 </li>
               )}
-              {league.conditions.banned.length !== 0 && (
+              {isNotEmpty(league.conditions.banned) && (
                 <li style={{ fontWeight: 500 }}>
                   <h6 className="title-leagues text-danger">Ban List</h6>
                   {league.conditions.banned.map((item, index) => (
@@ -667,7 +667,7 @@ const Leagues = () => {
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
                 </Link>
               ))}
-            {showData.data.filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank).length > 0 && (
+            {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank)) && (
               <Fragment>
                 <hr />
                 <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>

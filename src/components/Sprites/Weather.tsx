@@ -1,15 +1,16 @@
 import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
-import { splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
 import { IWeatherComponent } from '../models/component.model';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const Weather = (props: IWeatherComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
 
   return (
     <Fragment>
-      {!props.arr || props.arr.length === 0 ? (
+      {!isNotEmpty(props.arr) ? (
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
           <div className="text-center" key={0}>
             <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />

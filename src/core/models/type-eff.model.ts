@@ -81,9 +81,6 @@ export class TypeEffChart implements ITypeEffChart {
   resist?: string[];
   neutral?: string[];
 
-  // tslint:disable-next-line:no-empty
-  constructor() {}
-
   static create(value: ITypeEffChart) {
     const obj = new TypeEffChart();
     Object.assign(obj, value);

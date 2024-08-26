@@ -1,10 +1,10 @@
 import CardPokemon from '../Card/CardPokemon';
 import CloseIcon from '@mui/icons-material/Close';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import './Select.scss';
-import { retrieveMoves, splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
@@ -75,45 +75,44 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     }
   };
 
-  const findMove = useCallback(
-    (id: number, form: string, type: string) => {
-      const result = retrieveMoves(pokemonData, id, form);
-      if (result) {
-        const simpleMove: ISelectMoveModel[] = [];
-        if (type === TypeMove.FAST) {
-          result.quickMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
-          });
-          result.eliteQuickMove?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
-          });
-        } else {
-          result.cinematicMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
-          });
-          result.eliteCinematicMove?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
-          });
-          result.shadowMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, true, false, false));
-          });
-          result.purifiedMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, true, false));
-          });
-          result.specialMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, true));
-          });
-        }
-        return simpleMove[0];
+  const findMove = (id: number, form: string, type: string) => {
+    const result = retrieveMoves(pokemonData, id, form);
+    if (result) {
+      const simpleMove: ISelectMoveModel[] = [];
+      if (type === TypeMove.FAST) {
+        result.quickMoves?.forEach((value) => {
+          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+        });
+        result.eliteQuickMove?.forEach((value) => {
+          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+        });
+      } else {
+        result.cinematicMoves?.forEach((value) => {
+          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+        });
+        result.eliteCinematicMove?.forEach((value) => {
+          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+        });
+        result.shadowMoves?.forEach((value) => {
+          simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+        });
+        result.purifiedMoves?.forEach((value) => {
+          simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+        });
+        result.specialMoves?.forEach((value) => {
+          simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+        });
       }
-    },
-    [pokemonData]
-  );
+      return simpleMove[0];
+    }
+  };
 
   useEffect(() => {
-    setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
-    setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
-  }, [props.pokemon]);
+    if (isNotEmpty(pokemonData)) {
+      setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
+      setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
+    }
+  }, [props.pokemon, pokemonData]);
 
   return (
     <div

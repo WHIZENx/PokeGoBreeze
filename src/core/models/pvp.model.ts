@@ -34,7 +34,6 @@ export interface Performers {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  combatPoke: IPokemonData | undefined;
   shadow: boolean;
   purified: boolean | undefined;
   games: number;
@@ -42,6 +41,7 @@ export interface Performers {
   pokemon: string;
   teamScore: number;
   performersTotalGames: number;
+  usageTrend: string[];
 }
 
 interface Properties {
@@ -152,12 +152,24 @@ export class BattlePokemonData implements IBattlePokemonData {
   shadow?: boolean;
   purified?: boolean;
 
-  // tslint:disable-next-line:no-empty
-  constructor() {}
-
   static create(value: IBattlePokemonData) {
     const obj = new BattlePokemonData();
     Object.assign(obj, value);
     return obj;
   }
+}
+
+export interface PokemonPVPMove {
+  abbreviation: string;
+  archetype: string;
+  cooldown: number;
+  energy: number;
+  energyGain: number;
+  moveId: string;
+  name: string;
+  power: number;
+  type: string;
+  buffApplyChance?: string;
+  buffTarget?: string;
+  buffs?: number[];
 }

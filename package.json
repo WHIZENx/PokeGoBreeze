@@ -24,7 +24,7 @@
     "@vercel/edge-config": "^1.2.0",
     "@vercel/postgres": "^0.4.1",
     "@vercel/speed-insights": "^1.0.8",
-    "axios": "^1.6.0",
+    "axios": "^1.7.4",
     "bootstrap": "^5.2.0-beta1",
     "history": "^5.3.0",
     "immutability-helper": "^3.1.1",
@@ -124,7 +124,6 @@
   "overrides": {
     "@adobe/css-tools": "^4.3.2",
     "@babel/traverse": "~7.23.2",
-    "axios": "^1.6.0",
     "follow-redirects": "^1.15.6",
     "stylelint-no-browser-hacks": {
       "glob-parent": "^5.1.2"
@@ -149,6 +148,7 @@
     "ejs": "3.1.10",
     "braces": "3.0.3",
     "ws": "8.17.1",
-    "fast-xml-parser": "4.4.1"
+    "fast-xml-parser": "4.4.1",
+    "micromatch": "4.0.8"
   }
 }

@@ -3,17 +3,21 @@ import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { leaguesTeamBattle } from '../../util/Constants';
-import { loadPVP } from '../../store/actions/store.action';
+import { loadPVP } from '../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
-import { hideSpinner } from '../../store/actions/spinner.action';
 import { Link } from 'react-router-dom';
 import { SpinnerState, StoreState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/Compute';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { SpinnerActions } from '../../store/actions';
 
-// tslint:disable-next-line:class-name
-interface OptionsHome {
+interface IOptionsHome {
+  rank?: PVPInfo | undefined;
+  team?: PVPInfo | undefined;
+}
+
+class OptionsHome implements IOptionsHome {
   rank?: PVPInfo | undefined;
   team?: PVPInfo | undefined;
 }
@@ -32,7 +36,7 @@ const PVPHome = () => {
   );
   const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
 
-  const [options, setOptions]: [OptionsHome, React.Dispatch<React.SetStateAction<OptionsHome>>] = useState({});
+  const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
   const { rank, team } = options;
 
@@ -41,9 +45,9 @@ const PVPHome = () => {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
     if (spinner.loading) {
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [pvp, spinner]);
+  }, [pvp, spinner, dispatch]);
 
   useEffect(() => {
     if (!rank && !team && pvp) {

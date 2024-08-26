@@ -8,7 +8,7 @@ import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
 import { findStabType } from '../../../util/Compute';
-import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
+import { MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
 import { useSnackbar } from 'notistack';
 
@@ -57,9 +57,8 @@ const CalculatePoint = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
-  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
+  const [move, setMove] = useState<ICombat>();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -79,25 +78,15 @@ const CalculatePoint = () => {
 
   const [idDef, setIdDef] = useState(searching?.obj ? searching.obj.id : 1);
   const [nameDef, setNameDef] = useState(splitAndCapitalize(searching?.obj?.fullName, '-', ' '));
-  const [formDef, setFormDef]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
-  const [moveDef, setMoveDef]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [formDef, setFormDef] = useState<IPokemonFormModify>();
+  const [moveDef, setMoveDef] = useState<ICombat>();
 
-  const [fMove, setFMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
-  const [cMove, setCMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [fMove, setFMove] = useState<ICombat>();
+  const [cMove, setCMove] = useState<ICombat>();
 
-  const [resultBreakPointAtk, setResultBreakPointAtk]: [
-    BreakPointAtk | undefined,
-    React.Dispatch<React.SetStateAction<BreakPointAtk | undefined>>
-  ] = useState();
-  const [resultBreakPointDef, setResultBreakPointDef]: [
-    BreakPointDef | undefined,
-    React.Dispatch<React.SetStateAction<BreakPointDef | undefined>>
-  ] = useState();
-  const [resultBulkPointDef, setResultBulkPointDef]: [
-    BulkPointDef | undefined,
-    React.Dispatch<React.SetStateAction<BulkPointDef | undefined>>
-  ] = useState();
+  const [resultBreakPointAtk, setResultBreakPointAtk] = useState<BreakPointAtk>();
+  const [resultBreakPointDef, setResultBreakPointDef] = useState<BreakPointDef>();
+  const [resultBulkPointDef, setResultBulkPointDef] = useState<BulkPointDef>();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -142,7 +131,7 @@ const CalculatePoint = () => {
     const dataList: number[][] = [];
     const group = [];
     let lv = 0;
-    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
+    for (let i = MIN_LEVEL; i <= maxLevel; i += 0.5) {
       dataList[lv] = dataList[lv] ?? [];
       for (let j = MIN_IV; j <= MAX_IV; j += 1) {
         const result = calculateDamagePVE(
@@ -174,7 +163,7 @@ const CalculatePoint = () => {
     const dataListSta: number[][] = [];
     const groupSta = [];
     let lv = 0;
-    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
+    for (let i = MIN_LEVEL; i <= maxLevel; i += 0.5) {
       dataListDef[lv] = dataListDef[lv] ?? [];
       dataListSta[lv] = dataListSta[lv] ?? [];
       for (let j = MIN_IV; j <= MAX_IV; j += 1) {
@@ -267,7 +256,7 @@ const CalculatePoint = () => {
     setResultBulkPointDef(undefined);
     let dataList: number[][] = [];
     let lv = 0;
-    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
+    for (let i = MIN_LEVEL; i <= maxLevel; i += 0.5) {
       let count = 0;
       dataList[lv] = dataList[lv] ?? [];
       let result = computeBulk(count, i);
@@ -478,7 +467,7 @@ const CalculatePoint = () => {
                         </tr>
                       </thead>
                       <tbody className="text-center">
-                        {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
+                        {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
                             {[...Array(MAX_IV + 1).keys()].map((iv, index) => (
@@ -605,7 +594,7 @@ const CalculatePoint = () => {
                         </tr>
                       </thead>
                       <tbody className="text-center">
-                        {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
+                        {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
                             {[...Array(MAX_IV + 1).keys()].map((iv, index) => (
@@ -657,7 +646,7 @@ const CalculatePoint = () => {
                         </tr>
                       </thead>
                       <tbody className="text-center">
-                        {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
+                        {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
                             {[...Array(MAX_IV + 1).keys()].map((_, index) => (
@@ -865,7 +854,7 @@ const CalculatePoint = () => {
                         </tr>
                       </thead>
                       <tbody className="text-center">
-                        {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
+                        {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
                             {resultBulkPointDef ? (

@@ -1,19 +1,35 @@
-import { Dispatch } from 'redux';
-import { SetValue } from '../models/state.model';
+/* eslint-disable no-unused-vars */
+import { Action } from 'redux';
 
-export const LOAD_THEME = 'LOAD_THEME';
-export const RESET_THEME = 'RESET_THEME';
+export enum ThemeActionTypes {
+  setTheme = 'SET_THEME',
+  resetTheme = 'RESET_THEME',
+}
 
-export const loadThemeData = (theme: string) => ({
-  type: LOAD_THEME,
-  payload: theme,
-});
+export class SetTheme implements Action {
+  readonly type = ThemeActionTypes.setTheme;
 
-export const resetTheme = () => ({
-  type: RESET_THEME,
-});
+  constructor(public payload: string) {}
 
-export const loadTheme = (dispatch: Dispatch, stateTheme: string, setStateTheme: SetValue<string>) => {
-  setStateTheme(stateTheme ?? 'light');
-  return dispatch(loadThemeData(stateTheme));
-};
+  static create(value: string) {
+    const { type, payload } = new SetTheme(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class ResetTheme implements Action {
+  readonly type = ThemeActionTypes.resetTheme;
+
+  static create() {
+    const { type } = new ResetTheme();
+    return {
+      type,
+    };
+  }
+}
+
+export type ThemeActionsUnion = SetTheme | ResetTheme;

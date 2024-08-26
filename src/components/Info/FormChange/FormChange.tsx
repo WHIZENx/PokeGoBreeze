@@ -2,20 +2,19 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
-import { splitAndCapitalize } from '../../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const FromChange = (props: IFromChangeComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const assets = useSelector((state: StoreState) => state.store.data?.assets ?? []);
 
-  const [pokeAssets, setPokeAssets]: [IPokemonModelComponent[], React.Dispatch<React.SetStateAction<IPokemonModelComponent[]>>] = useState(
-    [] as IPokemonModelComponent[]
-  );
+  const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
 
   const getImageList = (id: number) => {
     const model = assets.find((item) => item.id === id);
@@ -25,10 +24,10 @@ const FromChange = (props: IFromChangeComponent) => {
   };
 
   useEffect(() => {
-    if (props.details?.num && assets.length > 0) {
+    if (props.details?.num && isNotEmpty(assets)) {
       setPokeAssets(getImageList(props.details.num));
     }
-  }, [assets.length, props.details?.num]);
+  }, [assets, props.details?.num]);
 
   return (
     <Fragment>
@@ -48,7 +47,7 @@ const FromChange = (props: IFromChangeComponent) => {
                   )}
                 />
               </div>
-              <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+              <span className="caption" style={{ color: theme.palette.customText.caption }}>
                 {splitAndCapitalize(props.details?.name.replaceAll('-', '_'), '_', ' ')}
               </span>
             </div>
@@ -72,7 +71,7 @@ const FromChange = (props: IFromChangeComponent) => {
                         )}
                       />
                     </div>
-                    <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+                    <span className="caption" style={{ color: theme.palette.customText.caption }}>
                       {splitAndCapitalize(name, '_', ' ')}
                     </span>
                   </div>
@@ -90,7 +89,7 @@ const FromChange = (props: IFromChangeComponent) => {
                         {value.candyCost && (
                           <span
                             className="d-flex align-items-center caption"
-                            style={{ color: (theme.palette as any).customText.caption, width: 'max-content' }}
+                            style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                           >
                             <Candy id={props.details?.num} />
                             <span style={{ marginLeft: 2 }}> {`x${value.candyCost}`}</span>
@@ -99,7 +98,7 @@ const FromChange = (props: IFromChangeComponent) => {
                         {value.stardustCost && (
                           <span
                             className="d-flex align-items-center caption"
-                            style={{ color: (theme.palette as any).customText.caption, width: 'max-content', marginTop: 5 }}
+                            style={{ color: theme.palette.customText.caption, width: 'max-content', marginTop: 5 }}
                           >
                             <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
                               <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
@@ -109,7 +108,7 @@ const FromChange = (props: IFromChangeComponent) => {
                         )}
                         <span
                           className="d-flex flex-column caption"
-                          style={{ color: (theme.palette as any).customText.caption, width: 'max-content', marginTop: 5 }}
+                          style={{ color: theme.palette.customText.caption, width: 'max-content', marginTop: 5 }}
                         >
                           {value.item && (
                             <>

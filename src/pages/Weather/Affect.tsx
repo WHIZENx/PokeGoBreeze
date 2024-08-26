@@ -6,12 +6,12 @@ import { IWeatherAffComponent } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 
 const Affect = (prop: IWeatherAffComponent) => {
-  const [weathers, setWeathers] = useState([] as string[]);
+  const [weathers, setWeathers] = useState<string[]>([]);
 
   const [currentWeather, setCurrentWeather] = useState('CLEAR');
   const [showWeather, setShowWeather] = useState(false);
 
-  const [weatherEffective, setWeatherEffective] = useState([] as string[]);
+  const [weatherEffective, setWeatherEffective] = useState<string[]>([]);
 
   const getWeatherEffective = useCallback(() => {
     setWeatherEffective(

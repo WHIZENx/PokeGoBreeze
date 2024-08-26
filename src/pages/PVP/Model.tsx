@@ -30,8 +30,8 @@ import CandyXL from '../../components/Sprites/Candy/CandyXL';
 import { IStatsRank, IStatsPokemon } from '../../core/models/stats.model';
 import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { ICombat } from '../../core/models/combat.model';
-import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/Constants';
+import { Combat, ICombat } from '../../core/models/combat.model';
+import { FORM_NORMAL, MAX_IV, maxLevel } from '../../util/Constants';
 import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
@@ -126,7 +126,7 @@ export const Keys = (
 };
 
 export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: number | string) => {
-  const calculateStatsTopRank = (stats: IStatsPokemon | undefined, level = MAX_LEVEL) => {
+  const calculateStatsTopRank = (stats: IStatsPokemon | undefined, level = maxLevel) => {
     const maxCP = parseInt(cp.toString());
 
     let calcCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, level);
@@ -163,10 +163,10 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
     return (
       <ul className="element-top">
         <li className="element-top">
-          CP: <b>{maxCP === 10000 ? `${calculateStatsTopRank(stats, MAX_LEVEL - 1)?.CP}-${currStats?.CP}` : `${currStats?.CP ?? 0}`}</b>
+          CP: <b>{maxCP === 10000 ? `${calculateStatsTopRank(stats, maxLevel - 1)?.CP}-${currStats?.CP}` : `${currStats?.CP ?? 0}`}</b>
         </li>
         <li className={(currStats?.level ?? 0) <= 40 ? 'element-top' : ''}>
-          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${currStats?.level ?? 0}`} </b>
+          Level: <b>{maxCP === 10000 ? `${maxLevel - 1}-${maxLevel}` : `${currStats?.level ?? 0}`} </b>
           {((currStats?.level ?? 0) > 40 || maxCP === 10000) && (
             <b>
               (
@@ -327,7 +327,7 @@ export const MoveSet = (
     }
     let move = combatData.find((move) => move.name === name);
     if (move && oldName.includes('HIDDEN_POWER')) {
-      move = { ...move, type: oldName.split('_').at(2) ?? '' };
+      move = Combat.create({ ...move, type: oldName.split('_').at(2) ?? '' });
     }
 
     let elite = false;

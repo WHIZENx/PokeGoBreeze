@@ -19,14 +19,10 @@ import { TypeAction } from '../../enums/type.enum';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [currDataPoke, setCurrDataPoke]: [IStatsPokemon | undefined, React.Dispatch<React.SetStateAction<IStatsPokemon | undefined>>] =
-    useState();
+  const [currDataPoke, setCurrDataPoke] = useState<IStatsPokemon>();
   const [currTier, setCurrTier] = useState(props.tier);
 
-  const [statsPokemon, setStatsPokemon]: [
-    StatsRankingPokemonGO | undefined,
-    React.Dispatch<React.SetStateAction<StatsRankingPokemonGO | undefined>>
-  ] = useState();
+  const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined) =>

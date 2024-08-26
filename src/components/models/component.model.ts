@@ -4,7 +4,7 @@ import { IForm, IFormSoundCry, IPokemonFormModify, PokemonDataForm } from '../..
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats, IPokemonGenderRatio, PokemonRaidModel } from '../../core/models/pokemon.model';
-import { ToolSearching } from '../../core/models/searching.model';
+import { IToolSearching } from '../../core/models/searching.model';
 import {
   HexagonStats,
   IStatsPokemon,
@@ -104,7 +104,7 @@ export interface IFindComponent {
 
 export interface IFormSelectComponent {
   router: ReduxRouterState;
-  searching: ToolSearching | null;
+  searching: IToolSearching | null;
   raid?: boolean | undefined;
   tier?: number;
   id?: number;
@@ -235,9 +235,9 @@ export interface IDynamicInputCPComponent {
   statATK: number;
   statDEF: number;
   statSTA: number;
-  IV_ATK: number;
-  IV_DEF: number;
-  IV_STA: number;
+  ivAtk: number;
+  ivDef: number;
+  ivSta: number;
   searchCP: string;
   setSearchCP: React.Dispatch<React.SetStateAction<string>>;
   label?: string;
@@ -397,6 +397,7 @@ export interface ITypeBadgeComponent {
   shadow?: boolean;
   purified?: boolean;
   special?: boolean;
+  unavailable?: boolean;
 }
 
 export interface ITypeBarComponent {

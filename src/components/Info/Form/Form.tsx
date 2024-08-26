@@ -9,6 +9,7 @@ import {
   convertStatsEffort,
   formIconAssets,
   getFormFromForms,
+  isNotEmpty,
   splitAndCapitalize,
 } from '../../../util/Utils';
 import APIService from '../../../services/API.service';
@@ -36,10 +37,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [statsPokemon, setStatsPokemon]: [
-    StatsRankingPokemonGO | undefined,
-    React.Dispatch<React.SetStateAction<StatsRankingPokemonGO | undefined>>
-  ] = useState();
+  const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) => getFormFromForms(stats, props.defaultId, props.form?.form.formName),
@@ -288,9 +286,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           isLoadedForms={props.isLoadedForms}
         />
       )}
-      {(props.pokemonDetail?.formChange?.length ?? 0) > 0 && (
-        <FromChange details={props.pokemonDetail} defaultName={props.form?.defaultName} />
-      )}
+      {isNotEmpty(props.pokemonDetail?.formChange) && <FromChange details={props.pokemonDetail} defaultName={props.form?.defaultName} />}
     </Fragment>
   );
 };

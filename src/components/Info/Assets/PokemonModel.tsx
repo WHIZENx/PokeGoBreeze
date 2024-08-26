@@ -5,7 +5,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
@@ -13,17 +13,16 @@ import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const PokemonModel = (props: IAssetPokemonModelComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
 
-  const [pokeAssets, setPokeAssets]: [IPokemonModelComponent[], React.Dispatch<React.SetStateAction<IPokemonModelComponent[]>>] = useState(
-    [] as IPokemonModelComponent[]
-  );
-  const gender: React.MutableRefObject<PokemonGender | null | undefined> = useRef();
-  const sound: React.MutableRefObject<IAsset | undefined> = useRef();
+  const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
+  const gender = useRef<PokemonGender>();
+  const sound = useRef<IAsset>();
 
   const getImageList = (id: number) => {
     sound.current = data?.assets?.find((item) => item.id === id);
@@ -40,7 +39,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (data?.assets && data?.pokemon) {
+    if (isNotEmpty(data?.assets) && isNotEmpty(data?.pokemon)) {
       setPokeAssets(getImageList(props.id));
     }
   }, [data?.assets, data?.pokemon, props.id]);
@@ -82,7 +81,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
                           <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.default)} />
                         </div>
                       </div>
-                      <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+                      <span className="caption" style={{ color: theme.palette.customText.caption }}>
                         Default
                       </span>
                     </div>
@@ -93,7 +92,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
                             <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.shiny)} />
                           </div>
                         </div>
-                        <span className="caption" style={{ color: (theme.palette as any).customText.caption }}>
+                        <span className="caption" style={{ color: theme.palette.customText.caption }}>
                           Shiny
                         </span>
                       </div>
@@ -104,7 +103,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
               <div className="desc text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
             </div>
           ))}
-          {pokeAssets.length === 0 && (
+          {!isNotEmpty(pokeAssets) && (
             <div className="text-danger" style={{ marginBottom: 15 }}>
               &emsp;Assets in Pokémon GO unavailable
             </div>
@@ -121,7 +120,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
         </div>
       ) : (
         <Fragment>
-          {props.originSoundCry.length === 0 ? (
+          {!isNotEmpty(props.originSoundCry) ? (
             <div className="text-danger">&emsp;Sound in Pokémon unavailable.</div>
           ) : (
             <ul style={{ margin: 0 }}>
@@ -156,7 +155,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
         </div>
       ) : (
         <Fragment>
-          {!sound.current || sound.current.sound.cry.length === 0 ? (
+          {!isNotEmpty(sound.current?.sound.cry) ? (
             <div className="text-danger">&emsp;Sound in Pokémon GO unavailable.</div>
           ) : (
             <ul style={{ margin: 0 }}>

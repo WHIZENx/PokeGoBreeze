@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../util/Utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
@@ -10,10 +10,10 @@ import { ICardMoveComponent } from '../models/component.model';
 const CardMove = (props: ICardMoveComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
 
-  const [data, setData]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [data, setData] = useState<ICombat>();
 
   useEffect(() => {
-    if (combat.length > 0 && props.value) {
+    if (isNotEmpty(combat) && props.value) {
       const move = combat.find((item) => item.name === props.value?.name);
       setData(move);
     }

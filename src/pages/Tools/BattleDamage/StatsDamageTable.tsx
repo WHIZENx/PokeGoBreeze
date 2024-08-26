@@ -10,7 +10,7 @@ import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import { useSelector } from 'react-redux';
-import { FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_SHADOW, MAX_IV, maxLevel, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
 import { StoreState } from '../../../store/models/state.model';
 import { IStatsTableComponent } from '../../models/page.model';
 
@@ -18,12 +18,12 @@ const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
-  const [currStatType, setCurrStatType]: [string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>] = useState();
+  const [currStatType, setCurrStatType] = useState<string>();
 
   const onHandleLevel = useCallback(
-    (_: Event, v: number | number[]) => {
+    (v: number) => {
       if (props.setStatLevel) {
-        props.setStatLevel(v as number);
+        props.setStatLevel(v);
       }
       if (props.setStatLvATK) {
         props.setStatLvATK(
@@ -125,8 +125,8 @@ const StatsTable = (props: IStatsTableComponent) => {
               valueLabelDisplay="off"
               step={0.5}
               min={MIN_LEVEL}
-              max={currStatType === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
-              onChange={onHandleLevel}
+              max={currStatType === 'buddy' ? maxLevel : maxLevel - 1}
+              onChange={(_, v) => onHandleLevel(v as number)}
             />
           </Box>
         </div>

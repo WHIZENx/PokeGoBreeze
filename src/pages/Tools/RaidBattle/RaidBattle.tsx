@@ -1,10 +1,10 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import SelectMove from '../../../components/Input/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, retrieveMoves, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, checkPokemonGO, isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../../util/Utils';
 import { findAssetForm } from '../../../util/Compute';
 import {
   FORM_GMAX,
@@ -13,7 +13,7 @@ import {
   FORM_PRIMAL,
   FORM_SHADOW,
   MAX_IV,
-  MAX_LEVEL,
+  maxLevel,
   MIN_IV,
   MIN_LEVEL,
   RAID_BOSS_TIER,
@@ -50,7 +50,6 @@ import { Modal, Button, Form } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonData, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
@@ -58,6 +57,7 @@ import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
+import { SpinnerActions } from '../../../store/actions';
 
 interface TrainerBattle {
   pokemons: PokemonRaidModel[];
@@ -100,8 +100,7 @@ const RaidBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
 
   const [statATK, setStatATK] = useState(0);
   const [statDEF, setStatDEF] = useState(0);
@@ -112,17 +111,11 @@ const RaidBattle = () => {
 
   const [tier, setTier] = useState(1);
 
-  const [fMove, setFMove]: [ISelectMoveModel | undefined, React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>] = useState();
-  const [cMove, setCMove]: [ISelectMoveModel | undefined, React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>] = useState();
+  const [fMove, setFMove] = useState<ISelectMoveModel>();
+  const [cMove, setCMove] = useState<ISelectMoveModel>();
 
-  const [resultFMove, setResultFMove]: [
-    ISelectMoveModel[] | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel[] | undefined>>
-  ] = useState();
-  const [resultCMove, setResultCMove]: [
-    ISelectMoveModel[] | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel[] | undefined>>
-  ] = useState();
+  const [resultFMove, setResultFMove] = useState<ISelectMoveModel[]>();
+  const [resultCMove, setResultCMove] = useState<ISelectMoveModel[]>();
 
   const [options, setOptions] = useState({
     weatherBoss: false,
@@ -168,18 +161,14 @@ const RaidBattle = () => {
 
   const [timeAllow, setTimeAllow] = useState(0);
 
-  const [resultBoss, setResultBoss]: [BattleResult | undefined, React.Dispatch<React.SetStateAction<BattleResult | undefined>>] =
-    useState();
-  const [resultRaid, setResultRaid]: [RaidResult[] | undefined, React.Dispatch<React.SetStateAction<RaidResult[] | undefined>>] =
-    useState();
-  const [result, setResult]: [PokemonMoveData[], React.Dispatch<React.SetStateAction<PokemonMoveData[]>>] = useState(
-    [] as PokemonMoveData[]
-  );
+  const [resultBoss, setResultBoss] = useState<BattleResult>();
+  const [resultRaid, setResultRaid] = useState<RaidResult[]>();
+  const [result, setResult] = useState<PokemonMoveData[]>([]);
 
   const [show, setShow] = useState(false);
   const [showOption, setShowOption] = useState(false);
 
-  const [showSettingPokemon, setShowSettingPokemon]: [RaidSetting, React.Dispatch<React.SetStateAction<RaidSetting>>] = useState({
+  const [showSettingPokemon, setShowSettingPokemon] = useState<RaidSetting>({
     id: 0,
   });
 
@@ -277,16 +266,11 @@ const RaidBattle = () => {
     trainerId: 1,
   };
 
-  const [trainerBattle, setTrainerBattle]: [TrainerBattle[], React.Dispatch<React.SetStateAction<TrainerBattle[]>>] = useState([
-    initTrainer,
-  ]);
+  const [trainerBattle, setTrainerBattle] = useState<TrainerBattle[]>([initTrainer]);
 
   const [trainerBattleId, setTrainerBattleId] = useState(0);
-  const [pokemonBattle, setPokemonBattle]: [PokemonRaidModel[], React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>] = useState(
-    [] as PokemonRaidModel[]
-  );
-  const [tempPokemonBattle, setTempPokemonBattle]: [PokemonRaidModel[], React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>] =
-    useState([] as PokemonRaidModel[]);
+  const [pokemonBattle, setPokemonBattle] = useState<PokemonRaidModel[]>([]);
+  const [tempPokemonBattle, setTempPokemonBattle] = useState<PokemonRaidModel[]>([]);
   const [countTrainer, setCountTrainer] = useState(1);
   const [isLoadedForms, setIsLoadedForms] = useState(false);
 
@@ -326,46 +310,43 @@ const RaidBattle = () => {
     });
   };
 
-  const findMove = useCallback(
-    (id: number, form: string) => {
-      const result = retrieveMoves(data?.pokemon ?? [], id, form);
-      if (result) {
-        let simpleMove: ISelectMoveModel[] = [];
-        result?.quickMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
-        });
-        result?.eliteQuickMove?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
-        });
-        setFMove(simpleMove.at(0));
-        setResultFMove(simpleMove);
-        simpleMove = [];
-        result?.cinematicMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
-        });
-        result?.eliteCinematicMove?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
-        });
-        result?.shadowMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, true, false, false));
-        });
-        result?.purifiedMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, true, false));
-        });
-        result?.specialMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, true));
-        });
-        setCMove(simpleMove.at(0));
-        setResultCMove(simpleMove);
-      } else {
-        setFMove(undefined);
-        setResultFMove(undefined);
-        setCMove(undefined);
-        setResultCMove(undefined);
-      }
-    },
-    [data?.pokemon]
-  );
+  const findMove = (id: number, form: string) => {
+    const result = retrieveMoves(data?.pokemon ?? [], id, form);
+    if (result) {
+      let simpleMove: ISelectMoveModel[] = [];
+      result?.quickMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+      });
+      result?.eliteQuickMove?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+      });
+      setFMove(simpleMove.at(0));
+      setResultFMove(simpleMove);
+      simpleMove = [];
+      result?.cinematicMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+      });
+      result?.eliteCinematicMove?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+      });
+      result?.shadowMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+      });
+      result?.purifiedMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+      });
+      result?.specialMoves?.forEach((value) => {
+        simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+      });
+      setCMove(simpleMove.at(0));
+      setResultCMove(simpleMove);
+    } else {
+      setFMove(undefined);
+      setResultFMove(undefined);
+      setCMove(undefined);
+      setResultCMove(undefined);
+    }
+  };
 
   const addCPokeData = (
     dataList: PokemonMoveData[],
@@ -458,8 +439,19 @@ const RaidBattle = () => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, fElite, false, null, pokemonTarget);
       if (!pokemon.forme || isShadow) {
-        if (pokemon.shadowMoves && pokemon.shadowMoves.length > 0) {
-          addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, true, false, fElite, false, pokemon.shadowMoves, pokemonTarget);
+        if (isNotEmpty(pokemon.shadowMoves)) {
+          addCPokeData(
+            dataList,
+            pokemon.cinematicMoves ?? [],
+            pokemon,
+            vf,
+            true,
+            false,
+            fElite,
+            false,
+            pokemon.shadowMoves ?? [],
+            pokemonTarget
+          );
         }
         addCPokeData(
           dataList,
@@ -488,8 +480,7 @@ const RaidBattle = () => {
       }
       if (
         (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) &&
-        pokemon.shadowMoves &&
-        pokemon.shadowMoves.length > 0
+        isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(
           dataList,
@@ -500,7 +491,7 @@ const RaidBattle = () => {
           false,
           fElite,
           true,
-          pokemon.shadowMoves,
+          pokemon.shadowMoves ?? [],
           pokemonTarget
         );
       } else {
@@ -539,7 +530,7 @@ const RaidBattle = () => {
         .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
         .sort((a, b) => b.dpsAtk - a.dpsAtk);
       setResult(dataList);
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     }
   };
 
@@ -615,8 +606,8 @@ const RaidBattle = () => {
 
   const calculateTrainerBattle = (trainerBattle: TrainerBattle[]) => {
     const trainer = trainerBattle.map((trainer) => trainer.pokemons);
-    const trainerNoPokemon = trainer.filter((pokemon) => pokemon.filter((item) => !item.dataTargetPokemon)?.length > 0);
-    if (trainerNoPokemon.length > 0) {
+    const trainerNoPokemon = trainer.filter((pokemon) => isNotEmpty(pokemon.filter((item) => !item.dataTargetPokemon)));
+    if (isNotEmpty(trainerNoPokemon)) {
       enqueueSnackbar('Please select Pokémon to raid battle!', { variant: 'error' });
       return;
     }
@@ -696,13 +687,13 @@ const RaidBattle = () => {
   };
 
   useEffect(() => {
-    if (form) {
+    if (form && isNotEmpty(data?.pokemon)) {
       findMove(id, form.form.name);
     }
-  }, [findMove, id, form]);
+  }, [data?.pokemon, id, form]);
 
   const handleCalculate = () => {
-    dispatch(showSpinner());
+    dispatch(SpinnerActions.ShowSpinner.create());
     clearData();
     clearDataTarget();
     setTimeout(() => {
@@ -772,7 +763,7 @@ const RaidBattle = () => {
             className="form-control"
             onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: parseFloat(e.target.value) } })}
           >
-            {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+            {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
               <option key={index} value={value}>
                 {value}
               </option>
@@ -980,7 +971,7 @@ const RaidBattle = () => {
                 }
               }}
             >
-              {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+              {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
                 <option key={index} value={value}>
                   {value}
                 </option>
@@ -1203,7 +1194,7 @@ const RaidBattle = () => {
             </button>
           </div>
         </div>
-        {result.length > 0 && (
+        {isNotEmpty(result) && (
           <div className="top-raid-group">
             {result
               .filter((obj) => {

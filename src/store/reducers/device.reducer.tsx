@@ -1,4 +1,5 @@
-import { SET_DEVICE } from '../actions/device.action';
+import { DeviceActions } from '../actions';
+import { DeviceActionsUnion } from '../actions/device.action';
 
 export interface DeviceModel {
   isMobile: boolean;
@@ -12,9 +13,9 @@ const initialize: DeviceModel = {
   osName: null,
 };
 
-const DeviceReducer = (state: DeviceModel = initialize, action: { type: string; payload: DeviceModel }) => {
+const DeviceReducer = (state: DeviceModel = initialize, action: DeviceActionsUnion) => {
   switch (action.type) {
-    case SET_DEVICE: {
+    case DeviceActions.DeviceActionTypes.setDevice: {
       return action.payload;
     }
     default:

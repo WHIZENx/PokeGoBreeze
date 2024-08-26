@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
+import { HundoRate, isNotEmpty, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/Calculate';
 
 import DataTable, { TableColumn } from 'react-data-table-component';
@@ -116,12 +116,8 @@ const FindTable = () => {
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [preIvArr, setPreIvArr]: [
-    IPredictStatsCalculate | undefined,
-    React.Dispatch<React.SetStateAction<IPredictStatsCalculate | undefined>>
-  ] = useState();
-  const [preCpArr, setPreCpArr]: [IPredictCPCalculate | undefined, React.Dispatch<React.SetStateAction<IPredictCPCalculate | undefined>>] =
-    useState();
+  const [preIvArr, setPreIvArr] = useState<IPredictStatsCalculate>();
+  const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -130,7 +126,7 @@ const FindTable = () => {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = predictStat(statATK, statDEF, statSTA, searchCP);
-    if (result.result.length === 0) {
+    if (!isNotEmpty(result.result)) {
       setPreIvArr(undefined);
       return enqueueSnackbar(`At CP: ${result.CP} impossible found in ${name}`, { variant: 'error' });
     }
@@ -188,7 +184,7 @@ const FindTable = () => {
     const zeroStar = preIvArr?.result.filter((item) => item.percent <= 51).length;
     return (
       <Fragment>
-        {(preIvArr?.result.length ?? 0) > 0 && (
+        {isNotEmpty(preIvArr?.result) && (
           <Fragment>
             <p className="element-top">
               All of result: <b>{preIvArr?.result.length}</b>
@@ -270,7 +266,7 @@ const FindTable = () => {
     const avgHP = Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) / (preCpArr?.result.length ?? 1);
     return (
       <Fragment>
-        {(preCpArr?.result.length ?? 0) > 0 && (
+        {isNotEmpty(preCpArr?.result) && (
           <Fragment>
             <p className="element-top">
               Average of CP: <b>{Math.round(avgCp)}</b>

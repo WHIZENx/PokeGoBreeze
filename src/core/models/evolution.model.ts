@@ -4,6 +4,12 @@ interface IEvolutionQuestCondition {
   throwType?: string;
 }
 
+export class EvolutionQuestCondition implements IEvolutionQuestCondition {
+  desc?: string;
+  pokemonType?: string[];
+  throwType?: string;
+}
+
 interface IEvolutionQuest {
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
@@ -19,6 +25,7 @@ interface IEvolutionQuest {
   randomEvolution?: boolean;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class EvolutionQuest implements IEvolutionQuest {
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;

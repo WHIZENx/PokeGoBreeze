@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../util/Utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, isNotEmpty, splitAndCapitalize } from '../../util/Utils';
 import { STAB_MULTIPLY } from '../../util/Constants';
 import { getBarCharge, queryTopMove } from '../../util/Calculate';
 
@@ -88,11 +88,9 @@ const Move = (props: IMovePage) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [move, setMove]: [ICombat | undefined, React.Dispatch<React.SetStateAction<ICombat | undefined>>] = useState();
+  const [move, setMove] = useState<ICombat>();
   const [releasedGO, setReleaseGO] = useState(true);
-  const [topList, setTopList]: [IPokemonTopMove[], React.Dispatch<React.SetStateAction<IPokemonTopMove[]>>] = useState(
-    [] as IPokemonTopMove[]
-  );
+  const [topList, setTopList] = useState<IPokemonTopMove[]>([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -105,7 +103,7 @@ const Move = (props: IMovePage) => {
 
   const queryMoveData = useCallback(
     (id: string | number | undefined) => {
-      if (id && data?.combat) {
+      if (id && isNotEmpty(data?.combat)) {
         let move;
         if (id && parseInt(id.toString()) === 281) {
           move = data?.combat?.find(
@@ -138,7 +136,7 @@ const Move = (props: IMovePage) => {
   }, [params.id, props.id, queryMoveData, move]);
 
   useEffect(() => {
-    if (move && data?.options && data?.pokemon && data?.typeEff && data?.weatherBoost) {
+    if (move && data?.options && isNotEmpty(data?.pokemon) && data?.typeEff && data?.weatherBoost) {
       const result = queryTopMove(data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost, move);
       setTopList(result);
     }
@@ -271,7 +269,7 @@ const Move = (props: IMovePage) => {
                 <tr>
                   <td>PVE Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(true, move?.pveEnergy)} color={move?.type?.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(move?.pveEnergy, true)} color={move?.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
@@ -309,7 +307,7 @@ const Move = (props: IMovePage) => {
                 <tr>
                   <td>PVP Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(false, move?.pvpEnergy)} color={move?.type?.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(move?.pvpEnergy)} color={move?.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}

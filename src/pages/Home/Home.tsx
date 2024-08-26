@@ -5,7 +5,7 @@ import loadingImg from '../../assets/loading.png';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/Compute';
 import {
@@ -38,6 +38,7 @@ import { StoreState, StatsState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../enums/type.enum';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const VersionProps = {
   PaperProps: {
@@ -49,22 +50,16 @@ const VersionProps = {
 
 const Home = () => {
   useChangeTitle('Home');
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
 
   const [types, setTypes] = useState(DEFAULT_TYPES);
-  const [dataList, setDataList]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
-    [] as IPokemonHomeModel[]
-  );
-  const [selectTypes, setSelectTypes] = useState([] as string[]);
-  const [listOfPokemon, setListOfPokemon]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
-    [] as IPokemonHomeModel[]
-  );
-  const [result, setResult]: [IPokemonHomeModel[], React.Dispatch<React.SetStateAction<IPokemonHomeModel[]>>] = useState(
-    [] as IPokemonHomeModel[]
-  );
+  const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
+  const [selectTypes, setSelectTypes] = useState<string[]>([]);
+  const [listOfPokemon, setListOfPokemon] = useState<IPokemonHomeModel[]>([]);
+  const [result, setResult] = useState<IPokemonHomeModel[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollID = useRef(0);
@@ -109,14 +104,14 @@ const Home = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    if (data?.assets && data?.pokemon) {
+    if (isNotEmpty(data?.assets) && isNotEmpty(data?.pokemon)) {
       setDataList(
-        data.pokemon
+        data?.pokemon
           .map((item) => {
-            const assetForm = queryAssetForm(data.assets, item.num, item.forme);
+            const assetForm = queryAssetForm(data?.assets ?? [], item.num, item.forme);
             return new PokemonHomeModel(item, assetForm, versionList);
           })
-          .sort((a, b) => a.id - b.id)
+          .sort((a, b) => a.id - b.id) ?? []
       );
     }
   }, [data?.assets, data?.pokemon]);
@@ -128,7 +123,7 @@ const Home = () => {
         () => {
           const result = dataList?.filter((item) => {
             const boolFilterType =
-              selectTypes.length === 0 ||
+              !isNotEmpty(selectTypes) ||
               (item.types?.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
             const boolFilterPoke =
               searchTerm === '' ||
@@ -244,7 +239,7 @@ const Home = () => {
 
   return (
     <div className="position-relative">
-      {dataList.length === 0 && (
+      {!isNotEmpty(dataList) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
           <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
         </div>

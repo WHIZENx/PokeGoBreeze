@@ -1,4 +1,4 @@
-interface OptionsRank {
+export interface OptionsRank {
   minRank: number;
   maxRank: number;
   minStats: number;
@@ -118,11 +118,25 @@ export class StatsBase implements IStatsBase {
   }
 }
 
-export interface StatsPokemonGO {
+export interface IStatsPokemonGO {
   atk: number;
   def: number;
   sta: number;
   prod: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsPokemonGO implements IStatsPokemonGO {
+  atk: number = 0;
+  def: number = 0;
+  sta: number = 0;
+  prod: number = 0;
+
+  static create(value: IStatsPokemonGO) {
+    const obj = new StatsPokemonGO();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 export interface StatsRankingPokemonGO {
@@ -233,14 +247,14 @@ export interface IPokemonStatsRanking {
   num: number;
   name: string;
   slug: string;
-  forme: string;
+  forme: string | null;
   sprite: string;
-  baseForme: string;
-  baseSpecies: string;
+  baseForme: string | null;
+  baseSpecies: string | null;
   rank?: number;
   gen: number;
-  region: string;
-  version: string;
+  region: string | null;
+  version: string | null;
   weightkg: number;
   heightm: number;
   atk: IStatsAtk;
@@ -257,14 +271,14 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   num: number = 0;
   name: string = '';
   slug: string = '';
-  forme: string = '';
+  forme: string | null = '';
   sprite: string = '';
-  baseForme: string = '';
-  baseSpecies: string = '';
+  baseForme: string | null = '';
+  baseSpecies: string | null = '';
   rank?: number;
   gen: number = 0;
-  region: string = '';
-  version: string = '';
+  region: string | null = '';
+  version: string | null = '';
   weightkg: number = 0;
   heightm: number = 0;
   atk: IStatsAtk = new StatsAtk();

@@ -8,6 +8,7 @@ import { StoreState } from '../../store/models/state.model';
 import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { isNotEmpty } from '../../util/Utils';
 
 const Info = (props: IInfoComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
@@ -35,7 +36,7 @@ const Info = (props: IInfoComponent) => {
       neutral: [],
     });
     Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
-      if (types.length > 0) {
+      if (isNotEmpty(types)) {
         let valueEffective = 1;
         types.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];

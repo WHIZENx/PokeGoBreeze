@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertPokemonAPIDataName, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import { rankMove } from '../../../util/Calculate';
 
 import './MoveTable.scss';
@@ -18,6 +18,7 @@ import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/po
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { TypeMove } from '../../../enums/type.enum';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 interface PokemonMoves {
   fastMoves: (ICombat | undefined)[];
@@ -75,15 +76,14 @@ const tableDefensive = 'defensive';
 const tableOffensive = 'offensive';
 
 const TableMove = (props: ITableMoveComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const data = useSelector((state: StoreState) => state.store.data);
-  const [move, setMove]: [PokemonQueryRankMove, React.Dispatch<React.SetStateAction<PokemonQueryRankMove>>] = useState({
-    data: [] as IPokemonQueryMove[],
+  const [move, setMove] = useState<PokemonQueryRankMove>({
+    data: [],
   });
-  const [moveOrigin, setMoveOrigin]: [PokemonMoves | undefined, React.Dispatch<React.SetStateAction<PokemonMoves | undefined>>] =
-    useState();
+  const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
 
-  const [stateSorted, setStateSorted]: [ITableSort, React.Dispatch<React.SetStateAction<ITableSort>>] = useState(
+  const [stateSorted, setStateSorted] = useState<ITableSort>(
     new TableSort({
       offensive: {
         fast: false,
@@ -137,13 +137,14 @@ const TableMove = (props: ITableMoveComponent) => {
       if (combatPoke.length === 1 || (typeof props.form === 'string' ? props.form : props.form?.formName)?.toUpperCase() === FORM_GMAX) {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
-      } else if (combatPoke.length === 0 && props.id) {
+      } else if (!isNotEmpty(combatPoke) && props.id) {
         const combatPoke = data?.pokemon?.filter((item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name);
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       }
 
-      const result = combatPoke.find((item) => props.form && item.fullName === convertPokemonAPIDataName(props.form?.name));
+      const formName = convertPokemonAPIDataName(props.form?.name);
+      const result = combatPoke.find((item) => props.form && item.fullName === formName);
       if (result === undefined) {
         filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
         setMove(setRankMove(combatPoke.at(0)));
@@ -181,7 +182,7 @@ const TableMove = (props: ITableMoveComponent) => {
   const renderBestMovesetTable = (value: IPokemonQueryMove, max: number, type: string) => {
     return (
       <tr>
-        <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+        <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
           <Link to={'../move/' + value.fMove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fMove.type))} />
@@ -196,7 +197,7 @@ const TableMove = (props: ITableMoveComponent) => {
             </span>
           </Link>
         </td>
-        <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+        <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
           <Link to={'../move/' + value.cMove.id} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cMove.type))} />
@@ -226,7 +227,7 @@ const TableMove = (props: ITableMoveComponent) => {
             </span>
           </Link>
         </td>
-        <td className="text-center" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+        <td className="text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
           {Math.round(((type === tableOffensive ? value.eDPS.offensive : value.eDPS.defensive) * 100) / max)}
         </td>
       </tr>
@@ -238,7 +239,7 @@ const TableMove = (props: ITableMoveComponent) => {
       <Fragment>
         {data?.map((value, index) => (
           <tr key={index}>
-            <td className="text-origin" style={{ backgroundColor: (theme.palette.background as any).tablePrimary }}>
+            <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
               <Link to={'../move/' + value?.id} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                   <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value?.type))} />

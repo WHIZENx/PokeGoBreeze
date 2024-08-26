@@ -16,9 +16,9 @@ export interface IBattleCalculate {
   types: string[];
   shadow?: boolean;
   isStab?: boolean;
-  WEATHER_BOOSTS?: string;
-  POKEMON_FRIEND?: boolean;
-  POKEMON_FRIEND_LEVEL?: number;
+  weatherBoosts?: string;
+  pokemonFriend?: boolean;
+  pokemonFriendLevel?: number;
   isDoubleCharge?: boolean;
   cMoveSec?: ICombat;
 }
@@ -32,9 +32,9 @@ export class BattleCalculate implements IBattleCalculate {
   types: string[] = [];
   shadow?: boolean;
   isStab?: boolean;
-  WEATHER_BOOSTS?: string;
-  POKEMON_FRIEND?: boolean;
-  POKEMON_FRIEND_LEVEL?: number;
+  weatherBoosts?: string;
+  pokemonFriend?: boolean;
+  pokemonFriendLevel?: number;
   isDoubleCharge?: boolean;
   cMoveSec?: ICombat;
 
@@ -130,9 +130,6 @@ export class PredictStatsModel implements IPredictStatsModel {
   percent: number = 0;
   hp: number = 0;
 
-  // tslint:disable-next-line:no-empty
-  constructor() {}
-
   static create(value: IPredictStatsModel) {
     const obj = new PredictStatsModel();
     Object.assign(obj, value);
@@ -158,9 +155,6 @@ export class PredictCPModel implements IPredictCPModel {
   level: number = 0;
   CP: number = 0;
   hp: number = 0;
-
-  // tslint:disable-next-line:no-empty
-  constructor() {}
 
   static create(value: IPredictCPModel) {
     const obj = new PredictCPModel();
@@ -306,9 +300,6 @@ export class BattleBaseStats implements IBattleBaseStats {
   stats?: IStatsBaseCalculate;
   statsProds?: number;
   type?: string;
-
-  // tslint:disable-next-line:no-empty
-  constructor() {}
 
   static create(value: IBattleBaseStats) {
     const obj = new BattleBaseStats();

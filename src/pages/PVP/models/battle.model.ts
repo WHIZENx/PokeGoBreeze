@@ -1,9 +1,17 @@
+/* eslint-disable no-unused-vars */
 import { Combat, IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsProd, IStatsSta, IStatsBase, StatsPokemon } from '../../../core/models/stats.model';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
+
+export enum ChargeType {
+  None = -1,
+  Random = 0,
+  Primary = 1,
+  Secondary = 2,
+}
 
 export interface IPokemonBattleData {
   speciesId?: string;
@@ -23,9 +31,8 @@ export interface IPokemonBattleData {
   energy: number;
   block: number;
   turn: number;
-  combatPoke?: IPokemonData;
-  disableCMoveSec?: boolean;
-  disableCMovePri?: boolean;
+  disableCMoveSec: boolean;
+  disableCMovePri: boolean;
 }
 
 export class PokemonBattleData implements IPokemonBattleData {
@@ -46,12 +53,8 @@ export class PokemonBattleData implements IPokemonBattleData {
   energy: number = 0;
   block: number = 0;
   turn: number = 0;
-  combatPoke?: IPokemonData;
-  disableCMoveSec?: boolean;
-  disableCMovePri?: boolean;
-
-  // tslint:disable-next-line:no-empty
-  constructor() {}
+  disableCMoveSec: boolean = false;
+  disableCMovePri: boolean = false;
 
   static create(value: IPokemonBattleData) {
     const obj = new PokemonBattleData();
@@ -68,8 +71,8 @@ export class PokemonBattleData implements IPokemonBattleData {
 }
 
 export interface IPokemonBattle {
-  disableCMoveSec?: boolean;
-  disableCMovePri?: boolean;
+  disableCMoveSec: boolean;
+  disableCMovePri: boolean;
   shadow?: boolean;
   pokemonData?: IPokemonBattleData | null;
   fMove?: ICombat | null;
@@ -78,13 +81,14 @@ export interface IPokemonBattle {
   timeline: ITimeline[];
   energy: number;
   block: number;
+  chargeSlot: number;
   audio?: any;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonBattle implements IPokemonBattle {
-  disableCMoveSec?: boolean;
-  disableCMovePri?: boolean;
+  disableCMoveSec: boolean = false;
+  disableCMovePri: boolean = false;
   shadow?: boolean;
   pokemonData?: IPokemonBattleData | null;
   fMove?: ICombat | null;
@@ -93,12 +97,14 @@ export class PokemonBattle implements IPokemonBattle {
   timeline: ITimeline[];
   energy: number;
   block: number;
+  chargeSlot: number;
   audio?: any;
 
   constructor() {
     this.timeline = [];
     this.energy = 0;
     this.block = DEFAULT_BLOCK;
+    this.chargeSlot = ChargeType.Primary;
   }
 
   static create(value: IPokemonBattle) {

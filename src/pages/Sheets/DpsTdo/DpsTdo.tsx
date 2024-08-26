@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/Utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty } from '../../../util/Utils';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -9,7 +9,7 @@ import {
   FORM_PURIFIED,
   FORM_SHADOW,
   MAX_IV,
-  MAX_LEVEL,
+  maxLevel,
   MIN_IV,
   MIN_LEVEL,
   TYPE_LEGENDARY,
@@ -42,18 +42,18 @@ import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDPSSheetPage } from '../../../store/actions/options.action';
 import { Action } from 'history';
 import { TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { OptionFiltersDPS, IOptionOtherDPS, OptionOtherDPS } from '../../../store/models/options.model';
+import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
 import { WeatherBoost } from '../../../core/models/weatherBoost.model';
+import { OptionsActions } from '../../../store/actions';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -239,26 +239,13 @@ const DpsTdo = () => {
 
   const [types, setTypes] = useState(DEFAULT_TYPES);
 
-  const [dpsTable, setDpsTable]: [PokemonSheetData[], React.Dispatch<React.SetStateAction<PokemonSheetData[]>>] = useState(
-    [] as PokemonSheetData[]
-  );
-  const [dataFilter, setDataFilter]: [PokemonSheetData[], React.Dispatch<React.SetStateAction<PokemonSheetData[]>>] = useState(
-    [] as PokemonSheetData[]
-  );
+  const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
+  const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
   const [searchTerm, setSearchTerm] = useState(optionStore?.dpsSheet?.searchTerm ?? '');
 
-  const [dataTargetPokemon, setDataTargetPokemon]: [
-    IPokemonData | undefined,
-    React.Dispatch<React.SetStateAction<IPokemonData | undefined>>
-  ] = useState(optionStore?.dpsSheet?.dataTargetPokemon);
-  const [fMoveTargetPokemon, setFMoveTargetPokemon]: [
-    ISelectMoveModel | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>
-  ] = useState(optionStore?.dpsSheet?.fMoveTargetPokemon);
-  const [cMoveTargetPokemon, setCMoveTargetPokemon]: [
-    ISelectMoveModel | undefined,
-    React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>
-  ] = useState(optionStore?.dpsSheet?.cMoveTargetPokemon);
+  const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(optionStore?.dpsSheet?.dataTargetPokemon);
+  const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.fMoveTargetPokemon);
+  const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.cMoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
@@ -299,14 +286,14 @@ const DpsTdo = () => {
     enableUltraBeast,
     releasedGO,
     bestOf,
-    IV_ATK,
-    IV_DEF,
-    IV_HP,
-    POKEMON_LEVEL,
+    ivAtk,
+    ivDef,
+    ivHp,
+    pokemonLevel,
   } = filters;
 
-  const [options, setOptions]: [IOptionOtherDPS, React.Dispatch<React.SetStateAction<IOptionOtherDPS>>] = useState(new OptionOtherDPS());
-  const { WEATHER_BOOSTS, TRAINER_FRIEND, POKEMON_FRIEND_LEVEL, POKEMON_DEF_OBJ } = options;
+  const [options, setOptions] = useState(new OptionOtherDPS());
+  const { weatherBoosts, trainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [selectTypes, setSelectTypes] = useState(optionStore?.dpsSheet?.selectTypes ?? []);
@@ -330,29 +317,29 @@ const DpsTdo = () => {
       if (fMove && cMove) {
         const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
         const statsAttacker = new BattleCalculate({
-          atk: calculateStatsBattle(stats.atk, IV_ATK, POKEMON_LEVEL),
-          def: calculateStatsBattle(stats.def, IV_DEF, POKEMON_LEVEL),
-          hp: calculateStatsBattle(stats?.sta ?? 0, IV_HP, POKEMON_LEVEL),
+          atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
+          def: calculateStatsBattle(stats.def, ivDef, pokemonLevel),
+          hp: calculateStatsBattle(stats.sta ?? 0, ivHp, pokemonLevel),
           fMove,
           cMove,
           types: pokemon.types,
           shadow,
-          WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? '',
-          POKEMON_FRIEND: options.TRAINER_FRIEND,
-          POKEMON_FRIEND_LEVEL: options.POKEMON_FRIEND_LEVEL,
+          weatherBoosts: options.weatherBoosts ?? '',
+          pokemonFriend: options.trainerFriend,
+          pokemonFriendLevel: options.pokemonFriendLevel,
         });
 
         let dps, tdo;
         if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
           const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
           const statsDefender = new BattleCalculate({
-            atk: calculateStatsBattle(statsDef.atk, IV_ATK, POKEMON_LEVEL),
-            def: calculateStatsBattle(statsDef.def, IV_DEF, POKEMON_LEVEL),
-            hp: calculateStatsBattle(statsDef?.sta ?? 0, IV_HP, POKEMON_LEVEL),
+            atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
+            def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
+            hp: calculateStatsBattle(statsDef?.sta ?? 0, ivHp, pokemonLevel),
             fMove: data?.combat?.find((item) => item.name === fMoveTargetPokemon.name),
             cMove: data?.combat?.find((item) => item.name === cMoveTargetPokemon.name),
             types: dataTargetPokemon.types,
-            WEATHER_BOOSTS: options.WEATHER_BOOSTS ?? '',
+            weatherBoosts: options.weatherBoosts ?? '',
           });
 
           if (!statsDefender) {
@@ -386,14 +373,14 @@ const DpsTdo = () => {
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           shadow,
-          purified: purified && specialMove.length > 0 && specialMove?.includes(statsAttacker.cMove?.name ?? ''),
+          purified: purified && isNotEmpty(specialMove) && specialMove.includes(statsAttacker.cMove?.name ?? ''),
           special,
-          mShadow: shadow && specialMove.length > 0 && specialMove?.includes(statsAttacker.cMove?.name ?? ''),
+          mShadow: shadow && isNotEmpty(specialMove) && specialMove.includes(statsAttacker.cMove?.name ?? ''),
           elite: {
             fMove: fElite,
             cMove: cElite,
           },
-          cp: calculateCP(stats.atk + IV_ATK, stats.def + IV_DEF, (stats?.sta ?? 0) + IV_HP, POKEMON_LEVEL),
+          cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, (stats?.sta ?? 0) + ivHp, pokemonLevel),
         });
       }
     });
@@ -403,7 +390,7 @@ const DpsTdo = () => {
     movePoke.forEach((vf) => {
       addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, false, false, false, fElite, false);
       if (!pokemon.forme || isShadow) {
-        if (pokemon.shadowMoves && pokemon.shadowMoves.length > 0) {
+        if (isNotEmpty(pokemon.shadowMoves)) {
           addCPokeData(dataList, pokemon.cinematicMoves ?? [], pokemon, vf, true, false, false, fElite, false, pokemon.shadowMoves);
           addCPokeData(dataList, pokemon.eliteCinematicMove ?? [], pokemon, vf, true, false, false, fElite, true, pokemon.shadowMoves);
         }
@@ -439,7 +426,7 @@ const DpsTdo = () => {
   const searchFilter = () => {
     let result = dpsTable.filter((item) => {
       const boolFilterType =
-        selectTypes.length === 0 ||
+        !isNotEmpty(selectTypes) ||
         (selectTypes.includes(item.fMove?.type?.toUpperCase() ?? '') && selectTypes.includes(item.cMove?.type?.toUpperCase() ?? ''));
       const boolFilterPoke =
         searchTerm === '' ||
@@ -529,7 +516,7 @@ const DpsTdo = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    if (data?.pokemon && data?.pokemon.length > 0 && data?.combat && data?.options && data?.typeEff && data?.weatherBoost) {
+    if (isNotEmpty(data?.pokemon) && isNotEmpty(data?.combat) && data?.options && data?.typeEff && data?.weatherBoost) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDpsTable(calculateDPSTable());
@@ -548,7 +535,7 @@ const DpsTdo = () => {
   ]);
 
   useEffect(() => {
-    if (dpsTable.length > 0) {
+    if (isNotEmpty(dpsTable)) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDataFilter(searchFilter());
@@ -558,7 +545,7 @@ const DpsTdo = () => {
   }, [dpsTable, searchTerm]);
 
   useEffect(() => {
-    if (dpsTable.length > 0) {
+    if (isNotEmpty(dpsTable)) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDataFilter(searchFilter());
@@ -592,7 +579,7 @@ const DpsTdo = () => {
 
   useEffect(() => {
     dispatch(
-      setDPSSheetPage({
+      OptionsActions.SetDpsSheetOptions.create({
         filters,
         options,
         selectTypes,
@@ -606,6 +593,7 @@ const DpsTdo = () => {
       })
     );
   }, [
+    dispatch,
     dataTargetPokemon,
     fMoveTargetPokemon,
     cMoveTargetPokemon,
@@ -644,7 +632,7 @@ const DpsTdo = () => {
 
   return (
     <div className="position-relative">
-      {dpsTable.length === 0 && (
+      {!isNotEmpty(dpsTable) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
           <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
         </div>
@@ -969,7 +957,7 @@ const DpsTdo = () => {
                 <Box className="col-5 input-group" style={{ padding: 0 }}>
                   <span className="input-group-text">IV ATK</span>
                   <input
-                    defaultValue={IV_ATK}
+                    defaultValue={ivAtk}
                     type="number"
                     className="form-control"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
@@ -979,15 +967,15 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        IV_ATK: e.target.value ? parseInt(e.target.value) : 0,
+                        ivAtk: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
-                    name="IV_ATK"
+                    name="ivAtk"
                     style={{ width: 40 }}
                   />
                   <span className="input-group-text">IV DEF</span>
                   <input
-                    defaultValue={IV_DEF}
+                    defaultValue={ivDef}
                     type="number"
                     className="form-control"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
@@ -997,15 +985,15 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        IV_DEF: e.target.value ? parseInt(e.target.value) : 0,
+                        ivDef: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
-                    name="IV_DEF"
+                    name="ivDef"
                     style={{ width: 40 }}
                   />
                   <span className="input-group-text">IV HP</span>
                   <input
-                    defaultValue={IV_HP}
+                    defaultValue={ivHp}
                     type="number"
                     className="form-control"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
@@ -1015,10 +1003,10 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        IV_HP: e.target.value ? parseInt(e.target.value) : 0,
+                        ivHp: e.target.value ? parseInt(e.target.value) : 0,
                       })
                     }
-                    name="IV_HP"
+                    name="ivHp"
                     style={{ width: 40 }}
                   />
                   <div className="input-group-prepend">
@@ -1027,15 +1015,15 @@ const DpsTdo = () => {
                   <Form.Select
                     style={{ borderRadius: 0 }}
                     className="form-control"
-                    defaultValue={POKEMON_LEVEL}
+                    defaultValue={pokemonLevel}
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        POKEMON_LEVEL: e.target.value ? parseFloat(e.target.value) : 0,
+                        pokemonLevel: e.target.value ? parseFloat(e.target.value) : 0,
                       })
                     }
                   >
-                    {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+                    {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
                       <option key={index} value={value}>
                         {value}
                       </option>
@@ -1045,7 +1033,7 @@ const DpsTdo = () => {
                 <Box className="col-7 input-group" style={{ padding: 0 }}>
                   <span className="input-group-text">DEF Target</span>
                   <input
-                    defaultValue={POKEMON_DEF_OBJ}
+                    defaultValue={pokemonDefObj}
                     type="number"
                     className="form-control"
                     placeholder="Defense target"
@@ -1055,10 +1043,10 @@ const DpsTdo = () => {
                     onInput={(e) =>
                       setOptions({
                         ...options,
-                        POKEMON_DEF_OBJ: parseFloat(e.currentTarget.value),
+                        pokemonDefObj: parseFloat(e.currentTarget.value),
                       })
                     }
-                    name="POKEMON_DEF_OBJ"
+                    name="pokemonDefObj"
                   />
                   <div className="input-group-prepend">
                     <label className="input-group-text">Weather Boosts</label>
@@ -1066,11 +1054,11 @@ const DpsTdo = () => {
                   <Form.Select
                     style={{ borderRadius: 0 }}
                     className="form-control"
-                    defaultValue={String(WEATHER_BOOSTS)}
+                    defaultValue={String(weatherBoosts)}
                     onChange={(e) =>
                       setOptions({
                         ...options,
-                        WEATHER_BOOSTS: e.target.value,
+                        weatherBoosts: e.target.value,
                       })
                     }
                   >
@@ -1096,8 +1084,8 @@ const DpsTdo = () => {
                           onChange={(_, check) => {
                             setOptions({
                               ...options,
-                              TRAINER_FRIEND: check,
-                              POKEMON_FRIEND_LEVEL: 0,
+                              trainerFriend: check,
+                              pokemonFriendLevel: 0,
                             });
                           }}
                         />
@@ -1105,17 +1093,17 @@ const DpsTdo = () => {
                       label="Friendship Level:"
                     />
                     <LevelRating
-                      disabled={!TRAINER_FRIEND}
+                      disabled={!trainerFriend}
                       onChange={(_, value) => {
                         setOptions({
                           ...options,
-                          POKEMON_FRIEND_LEVEL: value ?? 0,
+                          pokemonFriendLevel: value ?? 0,
                         });
                       }}
                       defaultValue={0}
                       max={4}
                       size="large"
-                      value={POKEMON_FRIEND_LEVEL}
+                      value={pokemonFriendLevel}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
@@ -1161,7 +1149,7 @@ const DpsTdo = () => {
           }}
           onSort={(selectedColumn, sortDirection) => {
             setDefaultSorted({
-              selectedColumn: selectedColumn.id as number,
+              selectedColumn: parseInt(selectedColumn.id?.toString() ?? '1'),
               sortDirection,
             });
           }}

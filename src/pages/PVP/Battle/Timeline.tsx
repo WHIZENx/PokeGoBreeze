@@ -2,7 +2,7 @@ import { Badge } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -193,9 +193,9 @@ export const TimeLine = (
                 )}
                 {!value.tap && (
                   <Fragment>
-                    {value.type === AttackType.Charge && value.buff && value.buff.length > 0 ? (
+                    {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                       <div className="position-absolute icon-buff-timeline">
-                        {value.buff.map((b, i) => (
+                        {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                             {b.type?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
@@ -205,10 +205,9 @@ export const TimeLine = (
                       <Fragment>
                         {pokeObj.timeline?.at(index) &&
                         pokeObj.timeline?.at(index)?.type === AttackType.Charge &&
-                        value.buff &&
-                        value.buff.length > 0 ? (
+                        isNotEmpty(value.buff) ? (
                           <div className="position-absolute icon-buff-timeline">
-                            {value.buff.map((b, i) => (
+                            {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                                 {b.type?.toUpperCase()} {b.power}
                               </span>
@@ -334,12 +333,12 @@ export const TimeLineFit = (
                 )}
                 {!value.tap && (
                   <Fragment>
-                    {value.type === AttackType.Charge && value.buff && value.buff.length > 0 ? (
+                    {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                       <div
                         className="position-absolute icon-buff-timeline"
                         style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index), top: 10 }}
                       >
-                        {value.buff.map((b, i) => (
+                        {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                             {b.type?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
@@ -349,8 +348,7 @@ export const TimeLineFit = (
                       <Fragment>
                         {pokeObj.timeline?.at(index) &&
                         pokeObj.timeline?.at(index)?.type === AttackType.Charge &&
-                        value.buff &&
-                        value.buff.length > 0 ? (
+                        isNotEmpty(value.buff) ? (
                           <div
                             className="position-absolute icon-buff-timeline"
                             style={{
@@ -358,7 +356,7 @@ export const TimeLineFit = (
                               top: 10,
                             }}
                           >
-                            {value.buff.map((b, i) => (
+                            {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
                                 {b.type?.toUpperCase()} {b.power}
                               </span>

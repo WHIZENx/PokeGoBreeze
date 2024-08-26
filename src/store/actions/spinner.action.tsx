@@ -1,34 +1,83 @@
-export const SHOW_SPINNER = 'SHOW_SPINNER';
-export const SHOW_SPINNER_MSG = 'SHOW_SPINNER_MSG';
-export const HIDE_SPINNER = 'HIDE_SPINNER';
-export const SET_BAR = 'SET_BAR';
-export const SET_PERCENT = 'SET_PERCENT';
+/* eslint-disable no-unused-vars */
+import { Action } from 'redux';
 
-export const showSpinner = (error: any = null) => ({
-  type: SHOW_SPINNER,
-  payload: {
-    error,
-  },
-});
+export enum SpinnerActionTypes {
+  showSpinner = 'SHOW_SPINNER',
+  showSpinnerMsg = 'SHOW_SPINNER_MSG',
+  hideSpinner = 'HIDE_SPINNER',
+  setBar = 'SET_BAR',
+  setPercent = 'SET_PERCENT',
+}
 
-export const showSpinnerWithMsg = (message: string, error: any = null) => ({
-  type: SHOW_SPINNER_MSG,
-  payload: {
-    message,
-    error,
-  },
-});
+export class ShowSpinner implements Action {
+  readonly type = SpinnerActionTypes.showSpinner;
 
-export const hideSpinner = () => ({
-  type: HIDE_SPINNER,
-});
+  constructor(public payload?: { error: any }) {}
 
-export const setBar = (show: boolean) => ({
-  type: SET_BAR,
-  payload: show,
-});
+  static create(value?: { error: any }) {
+    const { type, payload } = new ShowSpinner(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
 
-export const setPercent = (percent: number) => ({
-  type: SET_PERCENT,
-  payload: percent,
-});
+// tslint:disable-next-line:max-classes-per-file
+export class ShowSpinnerMsg implements Action {
+  readonly type = SpinnerActionTypes.showSpinnerMsg;
+
+  constructor(public payload: { message: string; error: any }) {}
+
+  static create(value: { message: string; error: any }) {
+    const { type, payload } = new ShowSpinnerMsg(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class HideSpinner implements Action {
+  readonly type = SpinnerActionTypes.hideSpinner;
+
+  static create() {
+    const { type } = new HideSpinner();
+    return {
+      type,
+    };
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class SetBar implements Action {
+  readonly type = SpinnerActionTypes.setBar;
+
+  constructor(public payload: boolean) {}
+
+  static create(value: boolean) {
+    const { type, payload } = new SetBar(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class SetPercent implements Action {
+  readonly type = SpinnerActionTypes.setPercent;
+
+  constructor(public payload: number) {}
+
+  static create(value: number) {
+    const { type, payload } = new SetPercent(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+export type SpinnerActionsUnion = ShowSpinner | ShowSpinnerMsg | HideSpinner | SetBar | SetPercent;

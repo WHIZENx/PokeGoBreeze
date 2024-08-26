@@ -2,7 +2,7 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './Constants';
-import { getStyleRuleValue } from './Utils';
+import { getStyleRuleValue, isNotEmpty } from './Utils';
 
 export const priorityBadge = (priority: number) => {
   if (priority === 0) {
@@ -119,7 +119,7 @@ export const computeBgType = (
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
     return (color || defaultBg).split(')').at(0) + `, ${opacity ?? 1})` || defaultBg;
   } else {
-    types?.forEach((type: string) => {
+    types?.forEach((type) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
       colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${opacity ?? 1})`);
     });
@@ -141,7 +141,7 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: s
   const asset = pokemonAssets?.image.find((img) => img.form === name);
   if (asset) {
     return asset;
-  } else if (!asset && pokemonAssets.image.length > 0) {
+  } else if (!asset && isNotEmpty(pokemonAssets.image)) {
     const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
       return pokemonAssets.image.at(0) ?? null;
@@ -157,7 +157,7 @@ export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, n
   if (form) {
     return form.default;
   }
-  return null;
+  return form;
 };
 
 export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: string) => {
@@ -165,11 +165,11 @@ export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: st
   if (form) {
     return form.shiny;
   }
-  return null;
+  return form;
 };
 
 export const findStabType = (types: string[], findType: string) => {
-  return types.some((type) => type.toLowerCase() === findType.toLowerCase());
+  return types.some((type) => type.toUpperCase() === findType.toUpperCase());
 };
 
 export const getPokemonBattleLeagueName = (cp: number) => {

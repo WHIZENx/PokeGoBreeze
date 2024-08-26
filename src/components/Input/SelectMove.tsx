@@ -7,14 +7,12 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
-import { retrieveMoves } from '../../util/Utils';
+import { isNotEmpty, retrieveMoves } from '../../util/Utils';
 import { ISelectMoveComponent } from '../models/component.model';
 
 const SelectMove = (props: ISelectMoveComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [resultMove, setResultMove]: [ISelectMoveModel[], React.Dispatch<React.SetStateAction<ISelectMoveModel[]>>] = useState(
-    [] as ISelectMoveModel[]
-  );
+  const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
 
   const changeMove = (value: ISelectMoveModel) => {
@@ -62,16 +60,18 @@ const SelectMove = (props: ISelectMoveComponent) => {
         setResultMove(simpleMove);
       }
     },
-    [props.setMovePokemon, combat, props.move]
+    [props.setMovePokemon, props.move]
   );
 
   useEffect(() => {
-    if (props.pokemon?.num) {
-      findMove(props.pokemon.num, props.pokemon?.forme ?? '', props.moveType, props.selected);
-    } else if (resultMove.length > 0) {
-      setResultMove([]);
+    if (isNotEmpty(combat)) {
+      if (props.pokemon?.num) {
+        findMove(props.pokemon.num, props.pokemon?.forme ?? '', props.moveType, props.selected);
+      } else if (resultMove.length > 0) {
+        setResultMove([]);
+      }
     }
-  }, [props.pokemon?.num, props.pokemon?.forme, props.selected, resultMove.length, findMove]);
+  }, [props.pokemon?.num, props.pokemon?.forme, props.selected, resultMove.length, combat, findMove]);
 
   const smallInput = () => {
     return (
@@ -82,10 +82,10 @@ const SelectMove = (props: ISelectMoveComponent) => {
         }
         style={{ padding: 0, borderRadius: 0 }}
       >
-        {props.pokemon && resultMove.length === 0 && (
+        {props.pokemon && !isNotEmpty(resultMove) && (
           <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>
         )}
-        {resultMove.length > 0 && (
+        {isNotEmpty(resultMove) && (
           <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
             <CardMoveSmall value={props.move} show={props.pokemon ? true : false} disable={props.disable} select={resultMove?.length > 1} />
             {showMove && resultMove && (

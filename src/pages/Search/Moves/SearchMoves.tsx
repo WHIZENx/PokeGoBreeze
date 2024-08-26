@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -62,7 +63,7 @@ const columns: any = [
 
 const Search = () => {
   useChangeTitle('Moves - Search');
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
   const types = useSelector((state: StoreState) => state.store.data?.typeEff);
 
@@ -75,11 +76,11 @@ const Search = () => {
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
-  const [resultFMove, setResultFMove]: [ICombat[], React.Dispatch<React.SetStateAction<ICombat[]>>] = useState([] as ICombat[]);
-  const [resultCMove, setResultCMove]: [ICombat[], React.Dispatch<React.SetStateAction<ICombat[]>>] = useState([] as ICombat[]);
+  const [resultFMove, setResultFMove] = useState<ICombat[]>([]);
+  const [resultCMove, setResultCMove] = useState<ICombat[]>([]);
 
   useEffect(() => {
-    if (combat.length > 0) {
+    if (isNotEmpty(combat)) {
       const timeOutId = setTimeout(() => {
         setResultFMove(searchMove(TypeMove.FAST, fMoveType, fMoveName));
       });
@@ -88,7 +89,7 @@ const Search = () => {
   }, [combat, fMoveType, fMoveName]);
 
   useEffect(() => {
-    if (combat.length > 0) {
+    if (isNotEmpty(combat)) {
       const timeOutId = setTimeout(() => {
         setResultCMove(searchMove(TypeMove.CHARGE, cMoveType, cMoveName));
       });
@@ -108,7 +109,7 @@ const Search = () => {
 
   return (
     <div className="container" style={{ marginTop: 20, marginBottom: 20 }}>
-      <div className="table-head">Movesets list in Pokémon GO</div>
+      <div className="table-head">Moveset list in Pokémon GO</div>
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-xl table-movesets-col" style={{ padding: 0 }}>
           <table className="table-info table-movesets">

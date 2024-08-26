@@ -197,7 +197,7 @@ export interface PokemonInfo {
   stats: Stats[];
   types: Type[];
   weight: number;
-  is_include_shadow?: boolean;
+  isIncludeShadow?: boolean;
 }
 
 interface Ability {
@@ -286,7 +286,7 @@ export class PokemonDetail implements IPokemonDetail {
     obj.types = info.types;
     obj.weight = info.weight;
     obj.isDefault = info.is_default;
-    obj.isIncludeShadow = info.is_include_shadow;
+    obj.isIncludeShadow = info.isIncludeShadow;
     return obj;
   }
 }

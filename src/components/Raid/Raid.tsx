@@ -14,13 +14,13 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
 import { capitalize } from '../../util/Utils';
 import { IRaidComponent } from '../models/component.model';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const Raid = (props: IRaidComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
-  const [tier, setTier]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(1);
-  const [pokemonClass, setPokemonClass]: [string | null | undefined, React.Dispatch<React.SetStateAction<string | null | undefined>>] =
-    useState();
+  const [tier, setTier] = useState(1);
+  const [pokemonClass, setPokemonClass] = useState<string | null>();
 
   useEffect(() => {
     setPokemonClass(pokemonData.find((item) => item.num === props.id)?.pokemonClass);

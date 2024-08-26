@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -16,7 +16,6 @@ import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { marks, PokeGoSlider } from '../../../util/Utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
@@ -27,6 +26,7 @@ import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain } from '../../.
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { SpinnerActions } from '../../../store/actions';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -36,8 +36,7 @@ const FindBattle = () => {
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm]: [IPokemonFormModify | undefined, React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>] =
-    useState();
+  const [form, setForm] = useState<IPokemonFormModify>();
   const [maxCP, setMaxCP] = useState(0);
 
   const [searchCP, setSearchCP] = useState('');
@@ -50,12 +49,8 @@ const FindBattle = () => {
   const [DEFIv, setDEFIv] = useState(0);
   const [STAIv, setSTAIv] = useState(0);
 
-  const [evoChain, setEvoChain]: [IQueryStatesEvoChain[][], React.Dispatch<React.SetStateAction<IQueryStatesEvoChain[][]>>] = useState(
-    [] as IQueryStatesEvoChain[][]
-  );
-  const [bestInLeague, setBestInLeague]: [IBattleBaseStats[], React.Dispatch<React.SetStateAction<IBattleBaseStats[]>>] = useState(
-    [] as IBattleBaseStats[]
-  );
+  const [evoChain, setEvoChain] = useState<IQueryStatesEvoChain[][]>([]);
+  const [bestInLeague, setBestInLeague] = useState<IBattleBaseStats[]>([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -71,7 +66,7 @@ const FindBattle = () => {
   const currEvoChain = useCallback(
     (currId: number[] | undefined, form: string, arr: IEvolution[]) => {
       form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
-      if (currId?.length === 0) {
+      if (!isNotEmpty(currId)) {
         return arr;
       }
       let curr;
@@ -116,7 +111,7 @@ const FindBattle = () => {
         currEvoChain([i.evoToId], i.evoToForm, arr);
       });
       const curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => obj.num === i.evoToId && i.evoToForm === defaultForm));
-      if (curr && curr.length >= 1) {
+      if (isNotEmpty(curr)) {
         curr?.forEach((item) => prevEvoChain(item, defaultForm, arr, result));
       } else {
         result.push(arr);
@@ -129,14 +124,14 @@ const FindBattle = () => {
     (id: number) => {
       const isForm = form?.form.formName?.toUpperCase() === '' ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
       let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isForm === i.evoToForm));
-      if (curr?.length === 0) {
+      if (!isNotEmpty(curr)) {
         if (isForm === FORM_NORMAL) {
           curr = dataStore?.pokemon?.filter((item) => id === item.num && isForm === item.forme);
         } else {
           curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme?.includes(isForm ?? FORM_NORMAL));
         }
       }
-      if (curr?.length === 0) {
+      if (!isNotEmpty(curr)) {
         curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme === FORM_NORMAL);
       }
       const result: IEvolution[][] = [];
@@ -214,18 +209,18 @@ const FindBattle = () => {
             (item.league === 'ultra' && (item.CP ?? 0) > 1500) ||
             (item.league === 'great' && (item.CP ?? 0) > 500)
         );
-        if (bestLeague.length === 0) {
+        if (!isNotEmpty(bestLeague)) {
           bestLeague = evoBaseStats.filter((item) => (item.ratio ?? 0) > (currBastStats?.ratio ?? 0));
         }
-        if (bestLeague.length === 0) {
-          dispatch(hideSpinner());
+        if (!isNotEmpty(bestLeague)) {
+          dispatch(SpinnerActions.HideSpinner.create());
           return setBestInLeague([currBastStats]);
         }
         if ((currBastStats.ratio ?? 0) >= 90) {
           bestLeague.push(currBastStats);
         }
         setBestInLeague(bestLeague.sort((a, b) => (a.maxCP ?? 0) - (b.maxCP ?? 0)));
-        dispatch(hideSpinner());
+        dispatch(SpinnerActions.HideSpinner.create());
       }
     },
     [dispatch, dataStore?.options, ATKIv, DEFIv, STAIv, getEvoChain, id]
@@ -244,7 +239,7 @@ const FindBattle = () => {
           { variant: 'error' }
         );
       }
-      dispatch(showSpinner());
+      dispatch(SpinnerActions.ShowSpinner.create());
       setTimeout(() => {
         searchStatsPoke(result.level);
         enqueueSnackbar(
@@ -323,9 +318,9 @@ const FindBattle = () => {
                 statATK={statATK}
                 statDEF={statDEF}
                 statSTA={statSTA}
-                IV_ATK={ATKIv}
-                IV_DEF={DEFIv}
-                IV_STA={STAIv}
+                ivAtk={ATKIv}
+                ivDef={DEFIv}
+                ivSta={STAIv}
                 searchCP={searchCP}
                 setSearchCP={setSearchCP}
                 label={'Input CP'}
@@ -400,7 +395,7 @@ const FindBattle = () => {
         </div>
       </form>
       <Fragment>
-        {evoChain.length > 0 && bestInLeague.length > 0 && (
+        {isNotEmpty(evoChain) && isNotEmpty(bestInLeague) && (
           <div className="text-center">
             <div>
               <h4 className="text-decoration-underline">Recommend Battle League</h4>

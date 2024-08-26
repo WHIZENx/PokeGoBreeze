@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, mappingPokemonName } from '../../util/Utils';
+import { getPokemonById, isNotEmpty, mappingPokemonName } from '../../util/Utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
@@ -26,23 +26,20 @@ const Find = (props: IFindComponent) => {
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
   );
 
-  const [pokemonList, setPokemonList]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] = useState(
-    [] as IPokemonSearching[]
-  );
+  const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [pokemonListFilter, setPokemonListFilter]: [IPokemonSearching[], React.Dispatch<React.SetStateAction<IPokemonSearching[]>>] =
-    useState([] as IPokemonSearching[]);
+  const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
 
   useEffect(() => {
-    if (pokemonData.length > 0) {
+    if (isNotEmpty(pokemonData)) {
       const result = mappingPokemonName(pokemonData);
       setPokemonList(result);
     }
   }, [pokemonData]);
 
   useEffect(() => {
-    if (pokemonList.length > 0) {
+    if (isNotEmpty(pokemonList)) {
       const timeOutId = setTimeout(() => {
         const results = pokemonList.filter(
           (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
@@ -176,7 +173,7 @@ const Find = (props: IFindComponent) => {
     return (
       <div className="col d-flex justify-content-center text-center">
         <div>
-          {pokemonList.length > 0 && (
+          {isNotEmpty(pokemonList) && (
             <FormSelect
               router={router}
               searching={searching}
@@ -210,7 +207,7 @@ const Find = (props: IFindComponent) => {
       <h1 id="main" className="text-center" style={{ marginBottom: 15 }}>
         {props.title ?? 'Pokémon GO Tools'}
       </h1>
-      {pokemonList.length > 0 ? (
+      {isNotEmpty(pokemonList) ? (
         <div className="row search-container">
           {props.swap ? (
             <Fragment>

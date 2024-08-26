@@ -15,7 +15,7 @@ export const createDbCpMultiply = async (cpm: CPMData) => {
   return await db.sql`INSERT INTO tblCpMultiply(
     Level,
     Multiplier,
-    Stadust,
+    Stardust,
     Sum_stadust,
     Candy,
     Sum_candy,
