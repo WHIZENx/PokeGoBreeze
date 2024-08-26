@@ -30,7 +30,7 @@ import CandyXL from '../../components/Sprites/Candy/CandyXL';
 import { IStatsRank, IStatsPokemon } from '../../core/models/stats.model';
 import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { ICombat } from '../../core/models/combat.model';
+import { Combat, ICombat } from '../../core/models/combat.model';
 import { FORM_NORMAL, MAX_IV, maxLevel } from '../../util/Constants';
 import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
 import { IPokemonBattleRanking } from './models/battle.model';
@@ -327,7 +327,7 @@ export const MoveSet = (
     }
     let move = combatData.find((move) => move.name === name);
     if (move && oldName.includes('HIDDEN_POWER')) {
-      move = { ...move, type: oldName.split('_').at(2) ?? '' };
+      move = Combat.create({ ...move, type: oldName.split('_').at(2) ?? '' });
     }
 
     let elite = false;

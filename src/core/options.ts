@@ -1,6 +1,6 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
 import { Buff, Combat } from './models/combat.model';
-import { EvoList } from './models/evolution.model';
+import { EvoList, EvolutionQuest, EvolutionQuestCondition } from './models/evolution.model';
 import {
   League,
   LeagueData,
@@ -13,7 +13,7 @@ import {
 import { ISticker, Sticker } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
-import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm, replaceTempMoveName } from '../util/Utils';
+import { checkMoveSetAvailable, convertPokemonDataName, isNotEmpty, replacePokemonGoForm, replaceTempMoveName } from '../util/Utils';
 import { ITypeSet, TypeSet } from './models/type.model';
 import { TypeAction, TypeMove } from '../enums/type.enum';
 import {
@@ -144,7 +144,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
     const regId = (item.templateId.match(/\d{4}/g) || []) as string[];
-    const pokemon = new PokemonModel(regId.length > 0 ? parseInt(regId[0]) : 0, undefined, pokemonSettings);
+    const pokemon = new PokemonModel(isNotEmpty(regId) ? parseInt(regId[0]) : 0, undefined, pokemonSettings);
 
     if (!pokemonSettings.form) {
       pokemon.form = FORM_NORMAL;
@@ -251,7 +251,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
 
       if (pokemonGO) {
         const regEvoId = pokemonGO.templateId.match(/\d{4}/g) as string[];
-        dataEvo.evoToId = regEvoId && regEvoId.length > 0 ? parseInt(regEvoId[0]) : 0;
+        dataEvo.evoToId = isNotEmpty(regEvoId) ? parseInt(regEvoId[0]) : 0;
       }
 
       if (evo.candyCost) {
@@ -263,7 +263,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       if (evo.candyCostPurified) {
         dataEvo.purificationEvoCandyCost = evo.candyCostPurified;
       }
-      dataEvo.quest = {};
+      dataEvo.quest = new EvolutionQuest();
       if (evo.genderRequirement) {
         dataEvo.quest.genderRequirement = evo.genderRequirement;
       }
@@ -319,7 +319,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
         const template = data.find((template) => template.templateId === questDisplay);
         try {
           const condition = template?.data.evolutionQuestTemplate?.goals[0].condition[0];
-          dataEvo.quest.condition = {};
+          dataEvo.quest.condition = new EvolutionQuestCondition();
           dataEvo.quest.condition.desc = condition?.type.replace('WITH_', '');
           if (condition?.withPokemonType) {
             dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type) => type.split('_').at(2) ?? '');
@@ -331,7 +331,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
         } catch {} // eslint-disable-line no-empty
         dataEvo.quest.goal = template?.data.evolutionQuestTemplate?.goals[0].target;
         dataEvo.quest.type = template?.data.evolutionQuestTemplate?.questType.replace('QUEST_', '');
-      } else if (pokemonSettings.evolutionBranch && pokemonSettings.evolutionBranch.length > 1 && Object.keys(dataEvo.quest).length === 0) {
+      } else if (pokemonSettings.evolutionBranch && pokemonSettings.evolutionBranch.length > 1 && !isNotEmpty(Object.keys(dataEvo.quest))) {
         if (evo.form) {
           dataEvo.quest.randomEvolution = false;
         } else {
@@ -479,7 +479,7 @@ const cleanPokemonDupForm = (result: IPokemonData[]) => {
     const normalForm = r.filter(
       (p) => pokemon.forme === FORM_NORMAL && p.num === pokemon.num && p.baseForme && r.some((pr) => pr.baseForme === p.baseForme)
     );
-    if (normalForm.length > 0) {
+    if (isNotEmpty(normalForm)) {
       return pokemon.baseForme && pokemon.forme === FORM_NORMAL;
     }
     return !r.some(
@@ -646,7 +646,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       }
     }
 
-    if (result.image.length === 0) {
+    if (!isNotEmpty(result.image)) {
       formSet = imgs?.filter(
         (img) => !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}`)
       );
@@ -705,7 +705,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     soundForm = sounds.filter(
       (sound) => !sound.includes(`Addressable Assets/`) && sound.includes(`pv${result.id?.toString().padStart(3, '0')}`)
     );
-    if (result.sound.cry.length === 0) {
+    if (!isNotEmpty(result.sound.cry)) {
       soundForm.forEach((sound) => {
         result.sound.cry.push(
           new CryPath({
@@ -726,7 +726,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       const regId = item.templateId.match(/\d{4}/g) as string[];
       return {
         ...item.data.moveSettings,
-        id: regId.length > 0 ? parseInt(regId[0]) : 0,
+        id: isNotEmpty(regId) ? parseInt(regId[0]) : 0,
       };
     });
   const sequence = data
@@ -744,7 +744,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
     .filter((item) => item.templateId.startsWith('COMBAT_V'))
     .map((item) => {
       const result = new Combat();
-      result.name = item.data.combatMove.uniqueId;
+      result.name = item.data.combatMove.uniqueId.replace(/^V\d{4}_MOVE_/, '');
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
       if (item.templateId.endsWith(TypeMove.FAST)) {
         result.typeMove = TypeMove.FAST;
@@ -798,7 +798,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
           result.buffs[result.buffs.length - 1].buffChance = item.data.combatMove.buffs[buffKey[buffKey.length - 1]];
         });
       }
-      const move = moves.find((move) => move.movementId === result.name);
+      const move = moves.find((move) => move.movementId.replace(/^V\d{4}_MOVE_/, '') === result.name);
       const name = replaceTempMoveName(result.name.toString());
       result.id = move?.id ?? 0;
       result.track = move?.id ?? 0;

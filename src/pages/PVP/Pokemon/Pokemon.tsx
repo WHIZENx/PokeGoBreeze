@@ -1,7 +1,7 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertNameRankingToOri, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertNameRankingToOri, isNotEmpty, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/Utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -12,8 +12,7 @@ import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import Error from '../../Error/Error';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
-import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
+import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
 import { FORM_NORMAL, FORM_SHADOW, MAX_IV, maxLevel, scoreType } from '../../../util/Constants';
@@ -22,6 +21,8 @@ import { RouterState, StatsState, StoreState } from '../../../store/models/state
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { BattleBaseStats } from '../../../util/models/calculate.model';
+import { Combat } from '../../../core/models/combat.model';
+import { SpinnerActions } from '../../../store/actions';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,7 @@ const PokemonPVP = () => {
   }, [pvp]);
 
   const fetchPokemonInfo = useCallback(async () => {
-    dispatch(showSpinner());
+    dispatch(SpinnerActions.ShowSpinner.create());
     try {
       const cp = parseInt(params.cp ?? '');
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
@@ -88,7 +89,7 @@ const PokemonPVP = () => {
       }
 
       if (fMove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
-        fMove = { ...fMove, type: data.moveset.at(0)?.split('_').at(2) ?? '' };
+        fMove = Combat.create({ ...fMove, type: data.moveset.at(0)?.split('_').at(2) ?? '' });
       }
 
       const maxCP = parseInt(params.cp ?? '');
@@ -137,24 +138,24 @@ const PokemonPVP = () => {
             false,
         })
       );
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     } catch (e: any) {
       setFound(false);
       dispatch(
-        showSpinner({
+        SpinnerActions.ShowSpinnerMsg.create({
           error: true,
-          msg: e.message,
+          message: e.message,
         })
       );
     }
-  }, [params.type, params.pokemon, params.cp, statsRanking, dataStore?.combat, dataStore?.pokemon, dataStore?.assets]);
+  }, [params.type, params.pokemon, params.cp, statsRanking, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, dispatch]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
     };
-    if (statsRanking && dataStore?.combat && dataStore?.pokemon && dataStore?.assets) {
-      if (dataStore.combat.every((combat) => !combat.archetype)) {
+    if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
+      if (dataStore?.combat.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
       } else {
         if (router.action === Action.Push) {
@@ -166,9 +167,9 @@ const PokemonPVP = () => {
       }
     }
     return () => {
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonInfo, rankingPoke, pvp, router.action]);
+  }, [fetchPokemonInfo, rankingPoke, pvp, router.action, dispatch]);
 
   const renderLeague = () => {
     const cp = parseInt(params.cp ?? '');

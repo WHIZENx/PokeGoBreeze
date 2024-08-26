@@ -1,18 +1,19 @@
 import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
-import { capitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty } from '../../../util/Utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
+import { ThemeModify } from '../../../assets/themes/themes';
 
 const TypeInfo = (props: ITypeComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
 
   return (
     <Fragment>
-      {(!props.arr || props.arr.length === 0) && props.isShow ? (
+      {!isNotEmpty(props.arr) && props.isShow ? (
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
           <div className="text-center" key={0}>
             <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />
@@ -23,7 +24,7 @@ const TypeInfo = (props: ITypeComponent) => {
         </div>
       ) : (
         <>
-          {(props.arr ?? []).length > 0 && (
+          {isNotEmpty(props.arr) && (
             <div className={(props.block ? '' : 'element-top') + (props.shadow ? ' filter-shadow' : '')} style={props.style}>
               {props.text && <p>{props.text}</p>}
               <div className="d-inline-flex flex-wrap type-list align-items-center">

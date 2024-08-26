@@ -1,10 +1,11 @@
-import { LOAD_THEME, RESET_THEME } from '../actions/theme.action';
+import { ThemeActions } from '../actions';
+import { ThemeActionsUnion } from '../actions/theme.action';
 
-const ThemeReducer = (state = 'light', action: { type: string; payload: string }) => {
+const ThemeReducer = (state = 'light', action: ThemeActionsUnion) => {
   switch (action.type) {
-    case LOAD_THEME:
+    case ThemeActions.ThemeActionTypes.setTheme:
       return action.payload;
-    case RESET_THEME:
+    case ThemeActions.ThemeActionTypes.resetTheme:
       return 'light';
     default:
       return state;

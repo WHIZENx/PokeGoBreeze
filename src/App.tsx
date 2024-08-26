@@ -1,8 +1,7 @@
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/actions/store.action';
-import { setBar, setPercent } from './store/actions/spinner.action';
+import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/effects/store.effects';
 
 import './App.scss';
 
@@ -38,14 +37,14 @@ import CatchChance from './pages/Tools/CatchChance/CatchChance';
 import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
-import { loadTheme } from './store/actions/theme.action';
+import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './assets/themes/themes';
 import { TRANSITION_TIME } from './util/Constants';
-import { setDevice } from './store/actions/device.action';
 import { PaletteMode } from '@mui/material';
 import { TypeTheme } from './enums/type.enum';
+import { DeviceActions, SpinnerActions } from './store/actions';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -70,13 +69,13 @@ function App() {
     const fetchData = async () => {
       await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound);
     };
-    dispatch(setDevice());
-    dispatch(setBar(true));
-    dispatch(setPercent(0));
+    dispatch(DeviceActions.SetDevice.create());
+    dispatch(SpinnerActions.SetBar.create(true));
+    dispatch(SpinnerActions.SetPercent.create(0));
     loadTheme(dispatch, stateTheme, setStateTheme);
     loadCPM(dispatch);
     loadPokeGOLogo(dispatch);
-    dispatch(setPercent(15));
+    dispatch(SpinnerActions.SetPercent.create(15));
     fetchData();
   }, [dispatch]);
 

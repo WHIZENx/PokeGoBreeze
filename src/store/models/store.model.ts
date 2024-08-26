@@ -17,6 +17,13 @@ export interface StoreModel {
   timestamp?: number;
 }
 
+export class Store implements StoreModel {
+  icon?: string;
+  data?: DataModel;
+  searching?: SearchingOptionsModel;
+  timestamp?: number;
+}
+
 export interface DataModel {
   cpm: ICPM[];
   typeEff: ITypeEff;

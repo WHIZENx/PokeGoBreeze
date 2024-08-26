@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/Compute';
@@ -136,7 +136,7 @@ const columnMove: any = [
 ];
 
 const SearchTypes = () => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [typeList, setTypeList] = useState<string[]>([]);
@@ -168,22 +168,23 @@ const SearchTypes = () => {
   }, [data?.typeEff]);
 
   useEffect(() => {
-    if (typeList.length > 0 && !currentType) {
+    if (isNotEmpty(typeList) && !currentType) {
       setCurrentType(typeList.at(0) ?? '');
     }
   }, [typeList, currentType]);
 
   useEffect(() => {
-    if (data?.pokemon) {
+    if (isNotEmpty(data?.pokemon) && isNotEmpty(data?.combat)) {
       setResult({
-        pokemonList: data?.pokemon
-          ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-          .filter((pokemon) => pokemon.types.includes(currentType)),
-        fastMove: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType),
-        chargedMove: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType),
+        pokemonList:
+          data?.pokemon
+            ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
+            .filter((pokemon) => pokemon.types.includes(currentType)) ?? [],
+        fastMove: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType) ?? [],
+        chargedMove: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType) ?? [],
       });
     }
-  }, [currentType, releasedGO, data?.pokemon]);
+  }, [currentType, releasedGO, data?.pokemon, data?.combat]);
 
   const changeType = (value: string) => {
     setShowType(false);

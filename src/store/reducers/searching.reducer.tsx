@@ -1,35 +1,30 @@
-import { SearchingOptionsModel, ToolSearching } from '../../core/models/searching.model';
-import {
-  SET_POKEMON_MAIN_SEARCH,
-  RESET_POKEMON_MAIN_SEARCH,
-  RESET_POKEMON_TOOL_SEARCH,
-  SET_POKEMON_TOOL_SEARCH,
-} from '../actions/searching.action';
-import { SearchingModel } from '../models/searching.model';
+import { SearchingOptionsModel } from '../../core/models/searching.model';
+import { SearchingActions } from '../actions';
+import { SearchingActionsUnion } from '../actions/searching.action';
 
 const initialize = {
   mainSearching: null,
   toolSearching: null,
 };
 
-const SearchingReducer = (state: SearchingOptionsModel = initialize, action: { type: string; payload: SearchingModel | ToolSearching }) => {
+const SearchingReducer = (state: SearchingOptionsModel = initialize, action: SearchingActionsUnion) => {
   switch (action.type) {
-    case SET_POKEMON_MAIN_SEARCH:
+    case SearchingActions.SearchingActionTypes.setPokemonMainSearch:
       return {
         ...state,
         mainSearching: action.payload,
       };
-    case RESET_POKEMON_MAIN_SEARCH:
+    case SearchingActions.SearchingActionTypes.resetPokemonMainSearch:
       return {
         ...state,
         mainSearching: null,
       };
-    case SET_POKEMON_TOOL_SEARCH:
+    case SearchingActions.SearchingActionTypes.setPokemonToolSearch:
       return {
         ...state,
         toolSearching: action.payload,
       };
-    case RESET_POKEMON_TOOL_SEARCH:
+    case SearchingActions.SearchingActionTypes.resetPokemonToolSearch:
       return {
         ...state,
         toolSearching: null,

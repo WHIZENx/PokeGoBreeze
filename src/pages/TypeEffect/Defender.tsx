@@ -6,9 +6,10 @@ import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
 import { TypeTheme } from '../../enums/type.enum';
+import { ThemeModify } from '../../assets/themes/themes';
 
 const Defender = (prop: ITypeEffComponent) => {
-  const theme = useTheme();
+  const theme = useTheme<ThemeModify>();
   const [types, setTypes] = useState<string[]>([]);
 
   const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
@@ -31,7 +32,7 @@ const Defender = (prop: ITypeEffComponent) => {
     Object.entries(prop.types ?? new TypeEff()).forEach(([key, value]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
-      valueEffective *= currentTypeSec === '' ? 1 : value[currentTypeSec];
+      valueEffective *= !currentTypeSec ? 1 : value[currentTypeSec];
       if (valueEffective >= 2.56) {
         data.veryWeak?.push(key);
       } else if (valueEffective >= 1.6) {
@@ -42,7 +43,7 @@ const Defender = (prop: ITypeEffComponent) => {
         data.resist?.push(key);
       } else if (valueEffective >= 0.39) {
         data.veryResist?.push(key);
-      } else if (value > 0) {
+      } else if (valueEffective > 0) {
         data.superResist?.push(key);
       }
     });

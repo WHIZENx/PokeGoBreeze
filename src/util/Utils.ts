@@ -17,12 +17,12 @@ import {
   IStatsDef,
   IStatsRank,
   IStatsPokemon,
-  StatsPokemonGO,
   IStatsProd,
   IStatsSta,
   StatsRankPokemonGO,
   StatsPokemon,
   OptionsRank,
+  IStatsPokemonGO,
 } from '../core/models/stats.model';
 import { IPokemonDetail, Stats } from '../core/models/API/info.model';
 import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
@@ -141,6 +141,10 @@ export const HundoRate = styled(Rating)(() => ({
     color: 'red',
   },
 }));
+
+export const isNotEmpty = <T>(array: T[] | null | undefined = []) => {
+  return (array && array.length > 0) ?? false;
+};
 
 export const capitalize = (str: string | undefined | null) => {
   if (!str) {
@@ -325,7 +329,6 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
   if (!move) {
     return null;
   }
-  move = replaceTempMovePvpFlagName(move);
   const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
     value = replaceTempMovePvpName(value);
@@ -402,7 +405,7 @@ export const convertFormGif = (name: string | undefined) => {
     .replace('-hero', '');
 };
 
-export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: StatsPokemonGO) => {
+export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: IStatsPokemonGO) => {
   const data = new StatsRankPokemonGO();
   const checkRankAtk = pokemonStats?.attack.ranking.find((item) => item.attack === stats.atk);
   const checkRankDef = pokemonStats?.defense.ranking.find((item) => item.defense === stats.def);
@@ -515,7 +518,7 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | und
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) => {
-  return pokemon.some((p) => convertPokemonAPIDataName(form) === (p.fullName ?? p.name) && p.isShadow);
+  return pokemon.some((p) => p.isShadow && convertPokemonAPIDataName(form) === (p.fullName ?? p.name));
 };
 
 const convertNameEffort = (name: string) => {
@@ -665,7 +668,9 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/^Purified$/, '')
     .replace(/^Normal$/, '')
     .replace(/-Shadow$/, '')
-    .replace(/-Purified$/, '');
+    .replace(/-Purified$/, '')
+    .replace(/-Mane$/, '')
+    .replace(/-Wings$/, '');
 };
 
 export const generatePokemonGoForms = (
@@ -692,7 +697,7 @@ export const generatePokemonGoForms = (
           pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
           'Pokémon-GO',
           pokemon.types,
-          undefined,
+          new PokemonSprit(),
           index,
           FORM_NORMAL,
           false,
@@ -761,17 +766,17 @@ export const getFormFromForms = (
   const forms = stats?.filter((i) => i.id === id);
   formName = convertPokemonAPIDataName(formName);
   let filterForm = forms?.find((item) => item.form === (formName || FORM_NORMAL));
-  if (!filterForm && forms && forms.length > 0) {
-    filterForm = forms.find((item) => item.form === FORM_NORMAL);
+  if (!filterForm && isNotEmpty(forms)) {
+    filterForm = forms?.find((item) => item.form === FORM_NORMAL);
     if (!filterForm) {
-      filterForm = forms.at(0);
+      filterForm = forms?.at(0);
     }
   }
   return filterForm;
 };
 
 export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) => {
-  if (combat.length > 0) {
+  if (isNotEmpty(combat)) {
     const resultFirst = combat.filter((item) => item.num === id);
     form =
       form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase().replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
@@ -802,7 +807,7 @@ export const replaceTempMoveName = (name: string) => {
   } else if (name.endsWith('_PLUS')) {
     name = name.replaceAll('_PLUS', '+');
   }
-  return name;
+  return name.replace(/^V\d{4}_MOVE_/, '');
 };
 
 export const replaceTempMovePvpName = (name: string) => {

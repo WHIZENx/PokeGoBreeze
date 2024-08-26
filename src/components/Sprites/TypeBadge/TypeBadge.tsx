@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
@@ -15,7 +15,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {
-    if (props.move?.name && combat.length > 0) {
+    if (props.move?.name && isNotEmpty(combat)) {
       setMove(combat.find((item) => item.name === props.move?.name));
     }
   }, [combat, props.move?.name]);
@@ -27,7 +27,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
       </span>
       <Link to={'/move/' + move?.id} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
         <span className={move?.type?.toLowerCase() + ' type-border position-relative'}>
-          {(props.elite || props.shadow || props.purified || props.special) && (
+          {(props.elite || props.shadow || props.purified || props.special || props.unavailable) && (
             <span className="type-badge-border">
               {props.elite && (
                 <span className="type-icon-small ic elite-ic">
@@ -47,6 +47,11 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
               {props.special && (
                 <span className="type-icon-small ic special-ic">
                   <span>Special</span>
+                </span>
+              )}
+              {props.unavailable && (
+                <span className="type-icon-small ic unavailable-ic">
+                  <span>Unavailable</span>
                 </span>
               )}
             </span>

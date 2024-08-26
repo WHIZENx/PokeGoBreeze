@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertPokemonAPIDataName, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 import { rankMove } from '../../../util/Calculate';
 
 import './MoveTable.scss';
@@ -76,7 +76,7 @@ const tableDefensive = 'defensive';
 const tableOffensive = 'offensive';
 
 const TableMove = (props: ITableMoveComponent) => {
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const data = useSelector((state: StoreState) => state.store.data);
   const [move, setMove] = useState<PokemonQueryRankMove>({
     data: [],
@@ -137,7 +137,7 @@ const TableMove = (props: ITableMoveComponent) => {
       if (combatPoke.length === 1 || (typeof props.form === 'string' ? props.form : props.form?.formName)?.toUpperCase() === FORM_GMAX) {
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
-      } else if (combatPoke.length === 0 && props.id) {
+      } else if (!isNotEmpty(combatPoke) && props.id) {
         const combatPoke = data?.pokemon?.filter((item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name);
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));

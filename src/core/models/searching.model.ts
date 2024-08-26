@@ -1,15 +1,30 @@
-import { SearchingModel } from '../../store/models/searching.model';
+import { ISearchingModel } from '../../store/models/searching.model';
 
 export interface SearchingOptionsModel {
-  mainSearching: SearchingModel | null;
-  toolSearching: ToolSearching | null;
+  mainSearching: ISearchingModel | null;
+  toolSearching: IToolSearching | null;
 }
 
-export interface ToolSearching {
+export interface IToolSearching {
   id: number;
   name?: string;
   form?: string;
   fullName?: string;
   timestamp: Date;
-  obj?: SearchingModel;
+  obj?: ISearchingModel;
+}
+
+export class ToolSearching implements IToolSearching {
+  id: number = 0;
+  name?: string;
+  form?: string;
+  fullName?: string;
+  timestamp: Date = new Date();
+  obj?: ISearchingModel;
+
+  static create(value: IToolSearching) {
+    const obj = new ToolSearching();
+    Object.assign(obj, value);
+    return obj;
+  }
 }

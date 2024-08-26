@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { capitalize } from '../../util/Utils';
+import { capitalize, isNotEmpty } from '../../util/Utils';
 
 import './TypeEffectiveSelect.scss';
 import { StoreState } from '../../store/models/state.model';
@@ -14,7 +14,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   const renderEffective = (text: string, data: string[]) => {
     return (
       <Fragment>
-        {data.length > 0 && (
+        {isNotEmpty(data) && (
           <Fragment>
             <h6 className={props.block ? 'element-top' : ''}>
               <b className="text-shadow">x{text}</b>
@@ -73,7 +73,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         types.forEach((type) => {
           valueEffective *= value[type?.toUpperCase()];
         });
-        if (types.length > 0 && valueEffective === 1) {
+        if (isNotEmpty(types) && valueEffective === 1) {
           data.neutral?.push(key);
         }
       });

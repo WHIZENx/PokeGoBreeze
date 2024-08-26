@@ -3,7 +3,14 @@ import TypeInfo from '../../../components/Sprites/Type/Type';
 import '../PVP.scss';
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 
-import { convertNameRankingToOri, splitAndCapitalize, capitalize, getStyleSheet, replaceTempMovePvpName } from '../../../util/Utils';
+import {
+  convertNameRankingToOri,
+  splitAndCapitalize,
+  capitalize,
+  getStyleSheet,
+  replaceTempMovePvpName,
+  isNotEmpty,
+} from '../../../util/Utils';
 import { calculateStatsByTag } from '../../../util/Calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
@@ -21,14 +28,15 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner.action';
-import { loadPVP, loadPVPMoves } from '../../../store/actions/store.action';
+import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/Constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
+import { Combat } from '../../../core/models/combat.model';
+import { SpinnerActions } from '../../../store/actions';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -79,17 +87,14 @@ const RankingPVP = () => {
     if (!pvp) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
-  }, [pvp]);
-
-  useEffect(() => {
-    if (dataStore?.combat?.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(dataStore?.combat) && dataStore?.combat?.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [dataStore?.combat]);
+  }, [pvp, dataStore?.combat]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
-      dispatch(showSpinner());
+      dispatch(SpinnerActions.ShowSpinner.create());
       try {
         const cp = parseInt(params.cp ?? '');
         const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie ?? '', cp, params.type ?? '')))
@@ -133,7 +138,7 @@ const RankingPVP = () => {
           }
 
           if (fMove && item.moveset.at(0)?.includes('HIDDEN_POWER')) {
-            fMove = { ...fMove, type: item.moveset.at(0)?.split('_').at(2) ?? '' };
+            fMove = Combat.create({ ...fMove, type: item.moveset.at(0)?.split('_').at(2) ?? '' });
           }
 
           return new PokemonBattleRanking({
@@ -160,27 +165,27 @@ const RankingPVP = () => {
         });
         setRankingData(filePVP);
         setStoreStats(file.map(() => false));
-        dispatch(hideSpinner());
+        dispatch(SpinnerActions.HideSpinner.create());
       } catch (e: any) {
         dispatch(
-          showSpinner({
+          SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            msg: e.message,
+            message: e.message,
           })
         );
       }
     };
-    if (statsRanking && dataStore?.combat && dataStore?.pokemon?.length > 0 && dataStore?.assets && !onLoadData) {
+    if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets) && !onLoadData) {
       setOnLoadData(true);
       if (router.action === Action.Push) {
         router.action = null as any;
         setTimeout(() => fetchPokemon(), 100);
-      } else if (rankingData.length === 0 && pvp) {
+      } else if (!isNotEmpty(rankingData) && pvp) {
         fetchPokemon();
       }
     }
     return () => {
-      dispatch(hideSpinner());
+      dispatch(SpinnerActions.HideSpinner.create());
     };
   }, [
     dispatch,

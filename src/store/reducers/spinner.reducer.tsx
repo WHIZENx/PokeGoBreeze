@@ -1,4 +1,5 @@
-import { HIDE_SPINNER, SET_BAR, SET_PERCENT, SHOW_SPINNER, SHOW_SPINNER_MSG } from '../actions/spinner.action';
+import { SpinnerActions } from '../actions';
+import { SpinnerActionsUnion } from '../actions/spinner.action';
 
 export interface SpinnerModel {
   loading: boolean;
@@ -25,28 +26,28 @@ const initialize: SpinnerModel = {
   error: null,
 };
 
-const SpinnerReducer = (state: SpinnerModel = initialize, action: { type: string; payload: SpinnerModel }) => {
+const SpinnerReducer = (state: SpinnerModel = initialize, action: SpinnerActionsUnion) => {
   switch (action.type) {
-    case SHOW_SPINNER:
+    case SpinnerActions.SpinnerActionTypes.showSpinner:
       return {
         ...state,
         loading: true,
-        error: action.payload.error,
+        error: action.payload?.error,
       };
-    case SHOW_SPINNER_MSG:
+    case SpinnerActions.SpinnerActionTypes.showSpinnerMsg:
       return {
         ...state,
         loading: true,
         message: action.payload.message,
         error: action.payload.error,
       };
-    case HIDE_SPINNER:
+    case SpinnerActions.SpinnerActionTypes.hideSpinner:
       return {
         ...state,
         message: null,
         loading: false || (state.error ? true : false),
       };
-    case SET_BAR:
+    case SpinnerActions.SpinnerActionTypes.setBar:
       return {
         ...state,
         bar: {
@@ -54,7 +55,7 @@ const SpinnerReducer = (state: SpinnerModel = initialize, action: { type: string
           show: action.payload,
         },
       };
-    case SET_PERCENT:
+    case SpinnerActions.SpinnerActionTypes.setPercent:
       return {
         ...state,
         bar: {

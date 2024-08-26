@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { OptionsPokemon } from '../../core/models/pokemon.model';
-import { SearchingModel } from '../../store/models/searching.model';
+import { ISearchingModel } from '../../store/models/searching.model';
 import { IBattlePokemonData } from '../../core/models/pvp.model';
 import { IPokemonBattle } from '../PVP/models/battle.model';
 import { IPokemonDmgOption } from '../../core/models/damage.model';
@@ -31,7 +31,7 @@ export interface ISearchBarMainComponent {
 
 export interface IPokemonPage {
   prevRouter?: ReduxRouterState;
-  searching?: SearchingModel | null;
+  searching?: ISearchingModel | null;
   id?: string;
   onDecId?: () => void;
   onIncId?: () => void;

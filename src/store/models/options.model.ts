@@ -105,9 +105,9 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
 export interface IOptionOtherDPS {
   delay?: { fTime: number; cTime: number };
   specific?: { FDmgEnemy: number; CDmgEnemy: number };
-  WEATHER_BOOSTS?: string;
-  TRAINER_FRIEND?: boolean;
-  POKEMON_FRIEND_LEVEL?: number;
+  weatherBoosts?: string;
+  trainerFriend?: boolean;
+  pokemonFriendLevel?: number;
   pokemonDefObj: number;
   ivAtk: number;
   ivDef: number;
@@ -120,18 +120,15 @@ export interface IOptionOtherDPS {
 export class OptionOtherDPS implements IOptionOtherDPS {
   delay?: { fTime: number; cTime: number };
   specific?: { FDmgEnemy: number; CDmgEnemy: number };
-  WEATHER_BOOSTS?: string;
-  TRAINER_FRIEND?: boolean;
-  POKEMON_FRIEND_LEVEL?: number;
+  weatherBoosts?: string;
+  trainerFriend?: boolean;
+  pokemonFriendLevel?: number;
   pokemonDefObj: number = DEFAULT_POKEMON_DEF_OBJ;
   ivAtk: number = MAX_IV;
   ivDef: number = MAX_IV;
   ivHp: number = MAX_IV;
   pokemonLevel: number = DEFAULT_POKEMON_LEVEL;
   objTypes?: string[];
-
-  // tslint:disable-next-line:no-empty
-  constructor() {}
 
   static create(value: IOptionOtherDPS) {
     const obj = new OptionOtherDPS();

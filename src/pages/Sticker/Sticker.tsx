@@ -1,6 +1,6 @@
 import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 
-import { splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
 
 import './Sticker.scss';
 import APIService from '../../services/API.service';
@@ -30,7 +30,7 @@ const Sticker = () => {
   const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 
   useEffect(() => {
-    if (pokeStickerList.length > 0) {
+    if (isNotEmpty(pokeStickerList)) {
       const result = pokeStickerList
         .reduce((prev: PokemonStickerModel[], curr) => {
           if (curr.pokemonName && !prev.map((obj) => obj.name).includes(curr.pokemonName)) {
@@ -47,7 +47,7 @@ const Sticker = () => {
   }, [pokeStickerList]);
 
   useEffect(() => {
-    if (pokeStickerList.length > 0) {
+    if (isNotEmpty(pokeStickerList)) {
       setPokemonStickerFilter(
         pokeStickerList
           ?.filter((item) => {
@@ -99,7 +99,7 @@ const Sticker = () => {
           <span>Sticker</span>
         </h5>
         <div className="sticker-group">
-          {pokemonStickerFilter.length === 0 ? (
+          {!isNotEmpty(pokemonStickerFilter) ? (
             <p>No sticker was found.</p>
           ) : (
             <Fragment>
