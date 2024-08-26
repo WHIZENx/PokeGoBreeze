@@ -744,7 +744,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
     .filter((item) => item.templateId.startsWith('COMBAT_V'))
     .map((item) => {
       const result = new Combat();
-      result.name = item.data.combatMove.uniqueId;
+      result.name = item.data.combatMove.uniqueId.replace(/^V\d{4}_MOVE_/, '');
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
       if (item.templateId.endsWith(TypeMove.FAST)) {
         result.typeMove = TypeMove.FAST;
@@ -798,7 +798,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
           result.buffs[result.buffs.length - 1].buffChance = item.data.combatMove.buffs[buffKey[buffKey.length - 1]];
         });
       }
-      const move = moves.find((move) => move.movementId === result.name);
+      const move = moves.find((move) => move.movementId.replace(/^V\d{4}_MOVE_/, '') === result.name);
       const name = replaceTempMoveName(result.name.toString());
       result.id = move?.id ?? 0;
       result.track = move?.id ?? 0;

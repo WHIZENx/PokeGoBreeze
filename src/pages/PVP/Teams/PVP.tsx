@@ -21,7 +21,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { loadPVP } from '../../../store/effects/store.effects';
+import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -92,17 +92,25 @@ const TeamPVP = () => {
     let cCombatName = findMoveTeam(cMovePriText, chargedMoveSet);
     let cSecCombatName = findMoveTeam(cMoveSecText, chargedMoveSet);
 
-    fMove = dataStore?.combat?.find((item) => item.name === fCombatName);
-    cMovePri = dataStore?.combat?.find((item) => item.name === cCombatName);
+    fMove = dataStore?.combat?.find(
+      (item) => (item.abbreviation && item.abbreviation === fMoveText) || (!item.abbreviation && item.name === fCombatName)
+    );
+    cMovePri = dataStore?.combat?.find(
+      (item) => (item.abbreviation && item.abbreviation === cMovePriText) || (!item.abbreviation && item.name === cCombatName)
+    );
     if (!cMovePri) {
       cCombatName = findMoveTeam(cMoveSecText, allMoves);
-      cMovePri = dataStore?.combat?.find((item) => item.name === cCombatName);
+      cMovePri = dataStore?.combat?.find(
+        (item) => (item.abbreviation && item.abbreviation === cMoveSecText) || (!item.abbreviation && item.name === cCombatName)
+      );
     }
     if (cMoveSecText) {
       cMoveSec = dataStore?.combat?.find((item) => item.name === cSecCombatName);
       if (!cMoveSec) {
         cSecCombatName = findMoveTeam(cMoveSecText, allMoves);
-        cMoveSec = dataStore?.combat?.find((item) => item.name === cSecCombatName);
+        cMoveSec = dataStore?.combat?.find(
+          (item) => (item.abbreviation && item.abbreviation === cMoveSecText) || (!item.abbreviation && item.name === cSecCombatName)
+        );
       }
     }
 
@@ -119,7 +127,7 @@ const TeamPVP = () => {
       stats,
       atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
       def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
+      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats.sta ?? 0)),
       fMove,
       cMovePri,
       cMoveSec,
@@ -135,6 +143,12 @@ const TeamPVP = () => {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
   }, [pvp]);
+
+  useEffect(() => {
+    if (dataStore?.combat?.every((combat) => !combat.archetype)) {
+      loadPVPMoves(dispatch);
+    }
+  }, [dataStore?.combat]);
 
   useEffect(() => {
     const fetchPokemon = async () => {

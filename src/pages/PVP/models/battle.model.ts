@@ -56,9 +56,6 @@ export class PokemonBattleData implements IPokemonBattleData {
   disableCMoveSec: boolean = false;
   disableCMovePri: boolean = false;
 
-  // tslint:disable-next-line:no-empty
-  constructor() {}
-
   static create(value: IPokemonBattleData) {
     const obj = new PokemonBattleData();
     Object.assign(obj, value);

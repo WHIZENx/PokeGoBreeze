@@ -1,7 +1,7 @@
 import { capitalize, replaceTempMoveName } from '../../util/Utils';
 import { ICombat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
-import { IStatsPokemon, StatsPokemon } from './stats.model';
+import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, ITempEvo } from './evolution.model';
 
@@ -210,6 +210,7 @@ export interface IPokemonData {
   types: string[];
   genderRatio: IPokemonGenderRatio;
   baseStats: IStatsPokemon;
+  statsGO?: IStatsPokemonGO;
   heightm: number;
   weightkg: number;
   color: string;
@@ -385,6 +386,7 @@ export class PokemonData implements IPokemonData {
   types: string[] = [];
   genderRatio: IPokemonGenderRatio = new PokemonGenderRatio();
   baseStats: IStatsPokemon = new StatsPokemon();
+  statsGO?: IStatsPokemonGO = new StatsPokemonGO();
   heightm: number = 0;
   weightkg: number = 0;
   color: string = '';
@@ -439,9 +441,6 @@ export class PokemonData implements IPokemonData {
   changesFrom: string | null = null;
   cannotDynamax: boolean = false;
 
-  // tslint:disable-next-line:no-empty
-  constructor() {}
-
   static create(pokemon: PokemonModel, types: string[], options?: IPokemonDataOptional) {
     const obj = new PokemonData();
     Object.entries(genList).forEach(([key, value]) => {
@@ -462,11 +461,17 @@ export class PokemonData implements IPokemonData {
     obj.types = types;
     obj.genderRatio = PokemonGenderRatio.create(options?.genderRatio?.M ?? 0.5, options?.genderRatio?.F ?? 0.5);
     obj.baseStatsGO = options?.baseStatsGO === undefined ? true : options?.baseStatsGO;
-    obj.baseStats = {
-      atk: pokemon.stats?.baseAttack,
-      def: pokemon.stats?.baseDefense,
-      sta: pokemon.stats?.baseStamina,
-    };
+    obj.baseStats = StatsPokemon.create({
+      atk: pokemon.stats.baseAttack,
+      def: pokemon.stats.baseDefense,
+      sta: pokemon.stats.baseStamina,
+    });
+    obj.statsGO = StatsPokemonGO.create({
+      atk: pokemon.stats.baseAttack,
+      def: pokemon.stats.baseDefense,
+      sta: pokemon.stats.baseStamina,
+      prod: pokemon.stats?.baseAttack * pokemon.stats?.baseDefense * pokemon.stats?.baseStamina,
+    });
     obj.heightm = pokemon.pokedexHeightM;
     obj.weightkg = pokemon.pokedexWeightKg;
     obj.color = options?.color ?? 'None';

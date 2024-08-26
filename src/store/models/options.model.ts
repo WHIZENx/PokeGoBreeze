@@ -130,9 +130,6 @@ export class OptionOtherDPS implements IOptionOtherDPS {
   pokemonLevel: number = DEFAULT_POKEMON_LEVEL;
   objTypes?: string[];
 
-  // tslint:disable-next-line:no-empty
-  constructor() {}
-
   static create(value: IOptionOtherDPS) {
     const obj = new OptionOtherDPS();
     Object.assign(obj, value);

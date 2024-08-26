@@ -1053,7 +1053,7 @@ export const queryTopMove = (
           isSpecial = isInclude;
         }
       }
-      if (pokemonList) {
+      if (isInclude) {
         const stats = calculateStatsByTag(value, value.baseStats, value.slug);
         const statsAtkBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);
         const statsDefBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);

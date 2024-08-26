@@ -17,12 +17,12 @@ import {
   IStatsDef,
   IStatsRank,
   IStatsPokemon,
-  StatsPokemonGO,
   IStatsProd,
   IStatsSta,
   StatsRankPokemonGO,
   StatsPokemon,
   OptionsRank,
+  IStatsPokemonGO,
 } from '../core/models/stats.model';
 import { IPokemonDetail, Stats } from '../core/models/API/info.model';
 import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
@@ -329,7 +329,6 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
   if (!move) {
     return null;
   }
-  move = replaceTempMovePvpFlagName(move);
   const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
     value = replaceTempMovePvpName(value);
@@ -406,7 +405,7 @@ export const convertFormGif = (name: string | undefined) => {
     .replace('-hero', '');
 };
 
-export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: StatsPokemonGO) => {
+export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: IStatsPokemonGO) => {
   const data = new StatsRankPokemonGO();
   const checkRankAtk = pokemonStats?.attack.ranking.find((item) => item.attack === stats.atk);
   const checkRankDef = pokemonStats?.defense.ranking.find((item) => item.defense === stats.def);
@@ -808,7 +807,7 @@ export const replaceTempMoveName = (name: string) => {
   } else if (name.endsWith('_PLUS')) {
     name = name.replaceAll('_PLUS', '+');
   }
-  return name;
+  return name.replace(/^V\d{4}_MOVE_/, '');
 };
 
 export const replaceTempMovePvpName = (name: string) => {

@@ -118,11 +118,25 @@ export class StatsBase implements IStatsBase {
   }
 }
 
-export interface StatsPokemonGO {
+export interface IStatsPokemonGO {
   atk: number;
   def: number;
   sta: number;
   prod: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsPokemonGO implements IStatsPokemonGO {
+  atk: number = 0;
+  def: number = 0;
+  sta: number = 0;
+  prod: number = 0;
+
+  static create(value: IStatsPokemonGO) {
+    const obj = new StatsPokemonGO();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 export interface StatsRankingPokemonGO {

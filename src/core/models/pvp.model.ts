@@ -152,9 +152,6 @@ export class BattlePokemonData implements IBattlePokemonData {
   shadow?: boolean;
   purified?: boolean;
 
-  // tslint:disable-next-line:no-empty
-  constructor() {}
-
   static create(value: IBattlePokemonData) {
     const obj = new BattlePokemonData();
     Object.assign(obj, value);
