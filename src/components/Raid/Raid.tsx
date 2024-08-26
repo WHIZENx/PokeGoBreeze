@@ -14,7 +14,7 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
 import { capitalize } from '../../util/Utils';
 import { IRaidComponent } from '../models/component.model';
-import { ThemeModify } from '../../assets/themes/themes';
+import { ThemeModify } from '../../util/models/overrides/themes.model';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();

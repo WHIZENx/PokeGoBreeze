@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { capitalize, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertColumnDataType, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -11,7 +11,8 @@ import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
-import { ThemeModify } from '../../../assets/themes/themes';
+import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -25,21 +26,21 @@ const moveSort = (rowA: ICombat, rowB: ICombat) => {
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
-const columns: any = [
+const columns: TableColumnModify<ICombat>[] = [
   {
     name: 'id',
-    selector: (row: ICombat) => row.track,
+    selector: (row) => row.track,
     sortable: true,
   },
   {
     name: 'Type',
-    selector: (row: ICombat) => <div className={'type-icon-small ' + row.type?.toLowerCase()}>{capitalize(row.type)}</div>,
+    selector: (row) => <div className={'type-icon-small ' + row.type?.toLowerCase()}>{capitalize(row.type)}</div>,
     sortable: true,
     sortFunction: moveSort,
   },
   {
     name: 'Name',
-    selector: (row: ICombat) => (
+    selector: (row) => (
       <Link to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type?.toLowerCase() : '')}>
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
@@ -50,13 +51,13 @@ const columns: any = [
   },
   {
     name: 'Power (PVE/PVP)',
-    selector: (row: ICombat) => `${row.pvePower}/${row.pvpPower}`,
+    selector: (row) => `${row.pvePower}/${row.pvpPower}`,
     sortable: true,
     width: '150px',
   },
   {
     name: 'DPS',
-    selector: (row: ICombat) => parseFloat((row.pvePower / (row.durationMs / 1000)).toFixed(2)),
+    selector: (row) => parseFloat((row.pvePower / (row.durationMs / 1000)).toFixed(2)),
     sortable: true,
   },
 ];
@@ -157,7 +158,7 @@ const Search = () => {
               <tr>
                 <td className="data-table">
                   <DataTable
-                    columns={columns}
+                    columns={convertColumnDataType<TableColumnModify<ICombat>[], ICombat>(columns)}
                     data={resultFMove}
                     defaultSortFieldId={3}
                     fixedHeader={true}
@@ -213,7 +214,7 @@ const Search = () => {
               <tr>
                 <td className="data-table">
                   <DataTable
-                    columns={columns}
+                    columns={convertColumnDataType<TableColumnModify<ICombat>[], ICombat>(columns)}
                     data={resultCMove}
                     defaultSortFieldId={3}
                     fixedHeader={true}

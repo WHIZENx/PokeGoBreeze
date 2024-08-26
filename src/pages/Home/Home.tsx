@@ -38,7 +38,7 @@ import { StoreState, StatsState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../enums/type.enum';
-import { ThemeModify } from '../../assets/themes/themes';
+import { ThemeModify } from '../../util/models/overrides/themes.model';
 
 const VersionProps = {
   PaperProps: {

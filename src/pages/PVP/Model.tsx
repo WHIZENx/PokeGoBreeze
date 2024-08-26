@@ -27,7 +27,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../components/Popover/PopoverConfig';
 import CandyXL from '../../components/Sprites/Candy/CandyXL';
-import { IStatsRank, IStatsPokemon } from '../../core/models/stats.model';
+import { IStatsRank, IStatsBase } from '../../core/models/stats.model';
 import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { Combat, ICombat } from '../../core/models/combat.model';
@@ -126,7 +126,7 @@ export const Keys = (
 };
 
 export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: number | string) => {
-  const calculateStatsTopRank = (stats: IStatsPokemon | undefined, level = maxLevel) => {
+  const calculateStatsTopRank = (stats: IStatsBase | undefined, level = maxLevel) => {
     const maxCP = parseInt(cp.toString());
 
     let calcCP = calculateCP((stats?.atk ?? 0) + MAX_IV, (stats?.def ?? 0) + MAX_IV, (stats?.sta ?? 0) + MAX_IV, level);
@@ -157,7 +157,7 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
     }
   };
 
-  const renderTopStats = (stats: IStatsPokemon | undefined, id: number) => {
+  const renderTopStats = (stats: IStatsBase | undefined, id: number) => {
     const maxCP = parseInt(cp.toString());
     const currStats = calculateStatsTopRank(stats);
     return (

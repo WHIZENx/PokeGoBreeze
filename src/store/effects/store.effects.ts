@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 import { calculateCPM } from '../../core/cpm';
 import { Database } from '../../core/models/API/db.model';
 import { PokemonDataGM } from '../../core/models/options.model';
-import { IPokemonData } from '../../core/models/pokemon.model';
+import { IPokemonData, PokemonEncounter } from '../../core/models/pokemon.model';
 import { PokemonPVPMove } from '../../core/models/pvp.model';
 import {
   optionPokemonData,
@@ -116,14 +116,14 @@ export const loadGameMaster = (
 ) => {
   APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER)
     .then(async (gm) => {
-      let pokemonEncounter = new Database();
+      let pokemonEncounter = new Database<PokemonEncounter>();
       try {
         pokemonEncounter = await getDbPokemonEncounter();
       } catch (e) {
         throw e;
       }
 
-      const pokemon = optionPokemonData(gm.data, pokemonEncounter?.rows);
+      const pokemon = optionPokemonData(gm.data, pokemonEncounter.rows);
 
       const league = optionLeagues(gm.data, pokemon);
 

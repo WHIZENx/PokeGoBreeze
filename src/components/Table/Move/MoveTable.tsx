@@ -18,7 +18,7 @@ import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/po
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { TypeMove } from '../../../enums/type.enum';
-import { ThemeModify } from '../../../assets/themes/themes';
+import { ThemeModify } from '../../../util/models/overrides/themes.model';
 
 interface PokemonMoves {
   fastMoves: (ICombat | undefined)[];

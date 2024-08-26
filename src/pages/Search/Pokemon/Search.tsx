@@ -14,7 +14,7 @@ import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../../enums/type.enum';
-import { ThemeModify } from '../../../assets/themes/themes';
+import { ThemeModify } from '../../../util/models/overrides/themes.model';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');

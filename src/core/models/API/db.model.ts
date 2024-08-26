@@ -1,9 +1,9 @@
-interface IDatabase {
+interface IDatabase<T> {
   command: string;
   fields: IField[];
   rowAsArray?: boolean;
   rowCount: number;
-  rows: any[];
+  rows: T[];
   viaNeonFetch?: boolean;
 }
 
@@ -17,12 +17,12 @@ interface IField {
   tableID: number;
 }
 
-export class Database implements IDatabase {
+export class Database<T> implements IDatabase<T> {
   command: string = '';
   fields: IField[];
   rowAsArray?: boolean;
   rowCount: number = 0;
-  rows: any[];
+  rows: T[];
   viaNeonFetch?: boolean;
 
   constructor() {

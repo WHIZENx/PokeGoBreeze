@@ -8,7 +8,7 @@ import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
-import { ThemeModify } from '../../../assets/themes/themes';
+import { ThemeModify } from '../../../util/models/overrides/themes.model';
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();

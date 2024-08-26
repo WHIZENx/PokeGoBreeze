@@ -3,7 +3,7 @@ import { FORM_NORMAL } from '../../util/Constants';
 import { convertPokemonImageName, splitAndCapitalize } from '../../util/Utils';
 import { IImage } from './asset.model';
 import { IPokemonData } from './pokemon.model';
-import { IStatsPokemon } from './stats.model';
+import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 
 export interface IPokemonHomeModel {
   id: number;
@@ -17,7 +17,7 @@ export interface IPokemonHomeModel {
   gen: number;
   region: string | null;
   version: number;
-  goStats: IStatsPokemon;
+  goStats: IStatsPokemonGO;
   class: string | null;
   releasedGO: boolean;
   image: IImage;
@@ -31,11 +31,11 @@ export class PokemonHomeModel implements IPokemonHomeModel {
   color: string;
   sprite: string;
   baseSpecies: string | null;
-  baseStats: IStatsPokemon;
+  baseStats: IStatsPokemon = new StatsPokemon();
   gen: number;
   region: string | null;
   version: number;
-  goStats: IStatsPokemon;
+  goStats: IStatsPokemonGO = new StatsPokemonGO();
   class: string | null;
   releasedGO: boolean;
   image: IImage;
@@ -56,11 +56,12 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.gen = item.gen;
     this.region = item.region;
     this.version = versionList.indexOf(splitAndCapitalize(item.version, '-', ' '));
-    this.goStats = {
+    this.goStats = StatsPokemonGO.create({
       atk: item.baseStats.atk,
       def: item.baseStats.def,
-      sta: item.baseStats.sta,
-    };
+      sta: item.baseStats.sta ?? 0,
+      prod: item.baseStats.atk * item.baseStats.def * (item.baseStats.sta ?? 0),
+    });
     this.class = item.pokemonClass;
     this.releasedGO = item.releasedGO;
     this.image = {

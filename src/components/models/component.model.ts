@@ -14,6 +14,7 @@ import {
   IStatsDef,
   IStatsProd,
   IStatsSta,
+  IStatsPokemonGO,
 } from '../../core/models/stats.model';
 import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
@@ -45,7 +46,7 @@ export interface ICardPokemonInfoComponent {
   forme: string;
   defaultImg: boolean;
   types: string[];
-  pokemonStat: IStatsPokemon;
+  pokemonStat: IStatsPokemonGO;
   stats: IStatsRank | null;
   icon: string;
   releasedGO: boolean;

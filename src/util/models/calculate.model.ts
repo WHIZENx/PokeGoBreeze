@@ -2,7 +2,7 @@ import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IOptions } from '../../core/models/options.model';
 import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
-import { IStatsPokemon, StatsPokemon } from '../../core/models/stats.model';
+import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
@@ -59,7 +59,7 @@ export class StatsLeagueCalculate implements IStatsLeagueCalculate {
 }
 
 export interface IStatsCalculate {
-  IV: IStatsPokemon;
+  IV: IStatsBase;
   CP: number;
   level: number;
 }
@@ -104,12 +104,12 @@ export class BetweenLevelCalculate implements IBetweenLevelCalculate {
 export interface IBattleLeagueCalculate {
   elidge: boolean;
   maxCP: number | null;
-  IV: IStatsPokemon;
+  IV: IStatsBase;
   CP: number;
   level: number;
   limit: boolean;
   rangeValue?: IBetweenLevelCalculate;
-  stats?: IStatsPokemon;
+  stats?: IStatsBase;
 }
 
 export interface IPredictStatsModel {
@@ -164,7 +164,7 @@ export class PredictCPModel implements IPredictCPModel {
 }
 
 export interface IPredictCPCalculate {
-  IV: IStatsPokemon;
+  IV: IStatsBase;
   result: IPredictCPModel[];
 }
 
@@ -194,7 +194,7 @@ export class StatsBaseCalculate implements IStatsBaseCalculate {
 }
 
 export interface IStatsProdCalculate {
-  IV: IStatsPokemon;
+  IV: IStatsBase;
   CP: number;
   level: number;
   stats: IStatsBaseCalculate;
@@ -205,7 +205,7 @@ export interface IStatsProdCalculate {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsProdCalculate implements IStatsProdCalculate {
-  IV: IStatsPokemon;
+  IV: IStatsBase;
   CP: number;
   level: number;
   stats: IStatsBaseCalculate;
@@ -214,7 +214,7 @@ export class StatsProdCalculate implements IStatsProdCalculate {
   rank?: number;
 
   constructor() {
-    this.IV = new StatsPokemon();
+    this.IV = new StatsPokemonGO();
     this.CP = 0;
     this.level = 0;
     this.stats = new StatsBaseCalculate();
@@ -257,7 +257,7 @@ export class QueryStatesEvoChain implements IQueryStatesEvoChain {
 
 export interface IBattleBaseStats {
   CP?: number;
-  IV?: IStatsPokemon;
+  IV?: IStatsBase;
   form?: string;
   id: number;
   league?: string;
@@ -281,7 +281,7 @@ export interface IBattleBaseStats {
 // tslint:disable-next-line:max-classes-per-file
 export class BattleBaseStats implements IBattleBaseStats {
   CP?: number;
-  IV?: IStatsPokemon;
+  IV?: IStatsBase;
   form?: string;
   id: number = 0;
   league?: string;
@@ -369,7 +369,6 @@ export class QueryMovesPokemon {
   weatherBoost: IWeatherBoost | undefined;
   combat: ICombat[] = [];
   pokemon: IPokemonData = new PokemonData();
-  stats: IStatsPokemon = new StatsPokemon();
   atk: number;
   def: number;
   sta: number;
@@ -401,7 +400,7 @@ export class QueryMovesPokemon {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsCalculate implements IStatsCalculate {
-  IV: IStatsPokemon = new StatsPokemon();
+  IV: IStatsBase = new StatsBase();
   CP: number;
   level: number;
 
@@ -418,12 +417,12 @@ export class StatsCalculate implements IStatsCalculate {
 export class BattleLeagueCalculate implements IBattleLeagueCalculate {
   elidge: boolean = false;
   maxCP: number | null = 0;
-  IV: IStatsPokemon = new StatsPokemon();
+  IV: IStatsBase = new StatsBase();
   CP: number = 0;
   level: number = 0;
   limit: boolean = false;
   rangeValue?: IBetweenLevelCalculate;
-  stats?: IStatsPokemon;
+  stats?: IStatsBase;
 
   constructor(
     elidge: boolean,
@@ -437,7 +436,7 @@ export class BattleLeagueCalculate implements IBattleLeagueCalculate {
   ) {
     this.elidge = elidge;
     this.maxCP = maxCP ?? 0;
-    this.IV = new StatsPokemon();
+    this.IV = new StatsPokemonGO();
     this.IV.atk = atk ?? 0;
     this.IV.atk = def ?? 0;
     this.IV.atk = sta ?? 0;
@@ -464,11 +463,11 @@ export class PredictStatsCalculate implements IPredictStatsCalculate {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PredictCPCalculate implements IPredictCPCalculate {
-  IV: IStatsPokemon;
+  IV: IStatsBase;
   result: IPredictCPModel[];
 
   constructor(atk: number, def: number, sta: number, result: IPredictCPModel[]) {
-    this.IV = new StatsPokemon();
+    this.IV = new StatsPokemonGO();
     this.IV.atk = atk;
     this.IV.atk = def;
     this.IV.atk = sta;

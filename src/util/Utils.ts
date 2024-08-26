@@ -28,7 +28,8 @@ import { IPokemonDetail, Stats } from '../core/models/API/info.model';
 import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
-import { ThemeModify } from '../assets/themes/themes';
+import { ThemeModify } from './models/overrides/themes.model';
+import { TableColumn } from 'react-data-table-component';
 
 class Mask {
   value: number;
@@ -459,7 +460,7 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   if (!result) {
     return;
   }
-  return new PokemonModel(result?.num ?? 0, result?.name ?? '');
+  return new PokemonModel(result.num, result.name);
 };
 
 export const getCustomThemeDataTable = (theme: ThemeModify) => {
@@ -823,13 +824,6 @@ export const replaceTempMovePvpName = (name: string) => {
   return name;
 };
 
-export const replaceTempMovePvpFlagName = (name: string) => {
-  if (name === 'Stl') {
-    name = name = 'SuS';
-  } else if (name === 'MoG') {
-    name = name = 'MoB';
-  } else if (name === 'TBl') {
-    name = name = 'Tbl';
-  }
-  return name;
+export const convertColumnDataType = <T, S>(columns: T) => {
+  return columns as TableColumn<S>[];
 };

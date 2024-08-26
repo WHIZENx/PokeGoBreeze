@@ -48,7 +48,7 @@ export const createDbPokemonName = async (pokemon: IPokemonDetail) => {
 };
 
 export const getDbPokemonEncounter = async () => {
-  return await db.sql`SELECT * from tblPokemonEncounter`;
+  return await db.sql<PokemonEncounter>`SELECT * from tblPokemonEncounter`;
 };
 
 export const createDbPokemonEncounter = async (pokemon: PokemonEncounter, index: number) => {

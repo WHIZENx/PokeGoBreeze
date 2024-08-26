@@ -107,14 +107,16 @@ export interface IStatsBase {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsBase implements IStatsBase {
-  atk: number;
-  def: number;
+  atk: number = 0;
+  def: number = 0;
   sta?: number;
 
-  constructor(atk: number, def: number, sta?: number) {
-    this.atk = atk;
-    this.def = def;
-    this.sta = sta ?? 0;
+  static setValue(atk: number, def: number, sta?: number) {
+    const obj = new StatsBase();
+    obj.atk = atk;
+    obj.def = def;
+    obj.sta = sta ?? 0;
+    return obj;
   }
 }
 
@@ -261,7 +263,7 @@ export interface IPokemonStatsRanking {
   def: IStatsDef;
   sta: IStatsSta;
   statProd: IStatsProd;
-  types?: string[];
+  types: string[];
   url?: string;
   releasedGO: boolean;
 }
@@ -285,7 +287,7 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   def: IStatsDef = new StatsDef();
   sta: IStatsSta = new StatsSta();
   statProd: IStatsProd = new StatsProd();
-  types?: string[];
+  types: string[] = [];
   url?: string;
   releasedGO: boolean = false;
 
