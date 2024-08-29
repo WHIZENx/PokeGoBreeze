@@ -24,7 +24,7 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { ITrainerFriendship, ThrowOption } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { PokemonDmgOption } from '../../../core/models/damage.model';
+import { BattleState, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const labels: { [x: number]: { color: string; style: string } } = {
@@ -146,7 +146,7 @@ const Damage = () => {
     (e: { preventDefault: () => void }) => {
       e.preventDefault();
       if (move) {
-        const eff = {
+        const eff = BattleState.create({
           stab: findStabType(form?.form.types ?? [], move.type ?? ''),
           wb: battleState.weather,
           dodge: battleState.dodge,
@@ -155,7 +155,7 @@ const Damage = () => {
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,
           effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types ?? []),
-        };
+        });
         setResult((r) => ({
           ...r,
           battleState: eff,

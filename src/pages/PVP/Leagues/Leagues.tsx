@@ -200,7 +200,7 @@ const Leagues = () => {
                 <h6 className="title-leagues">Unique Selected</h6>
                 {league.conditions.uniqueSelected ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
               </li>
-              {league.conditions.uniqueType && (
+              {isNotEmpty(league.conditions.uniqueType) && (
                 <li style={{ fontWeight: 500 }} className="unique-type">
                   <h6 className="title-leagues">Unique Type</h6>
                   <TypeInfo arr={league.conditions.uniqueType ?? []} style={{ marginLeft: 15 }} />

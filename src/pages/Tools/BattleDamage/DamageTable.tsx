@@ -165,9 +165,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize(
-                      Object.keys(globalOptions?.throwCharge ?? new ThrowOption()).at(parseInt(props.result.battleState.cLevel.toString()))
-                    )
+                  ? capitalize(Object.keys(globalOptions?.throwCharge ?? new ThrowOption()).at(props.result.battleState.cLevel ?? 0))
                   : '-'}
               </td>
             </tr>
@@ -175,8 +173,8 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Damage Effective</td>
               <td>
                 {props.result.battleState ? (
-                  <span className={'eff-' + eff[parseInt(props.result.battleState.effective.toString())].style}>
-                    {'x' + eff[parseInt(props.result.battleState.effective.toString())].label}
+                  <span className={'eff-' + eff[props.result.battleState.effective].style}>
+                    {'x' + eff[props.result.battleState.effective].label}
                   </span>
                 ) : (
                   '-'

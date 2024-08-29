@@ -1,23 +1,14 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import {
-  capitalize,
-  convertNameRankingToOri,
-  getAllMoves,
-  isNotEmpty,
-  replaceTempMovePvpName,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, convertNameRankingToOri, isNotEmpty, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import TypeInfo from '../../../components/Sprites/Type/Type';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
 import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
-import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import Error from '../../Error/Error';
-import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
+import { Body, Header, MoveSet, OverAllStats, TypeEffective } from '../Model';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
@@ -243,60 +234,10 @@ const PokemonPVP = () => {
                     src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke?.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
                   />
                 </div>
-                <div>
-                  <div className="d-flex flex-wrap align-items-center" style={{ gap: 15 }}>
-                    <h3 className="text-white text-shadow">
-                      {rankingPoke?.id && (
-                        <b>
-                          #{rankingPoke.id} {splitAndCapitalize(rankingPoke?.name, '-', ' ')}
-                        </b>
-                      )}
-                    </h3>
-                    <TypeInfo shadow={true} block={true} color={'white'} arr={rankingPoke?.pokemon?.types} />
-                  </div>
-                  <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
-                    Recommend Moveset in PVP
-                  </h6>
-                  <div className="d-flex flex-wrap element-top" style={{ columnGap: 10 }}>
-                    <TypeBadge
-                      grow={true}
-                      find={true}
-                      title="Fast Move"
-                      color={'white'}
-                      move={rankingPoke?.fMove}
-                      elite={rankingPoke?.pokemon?.eliteQuickMove?.includes(rankingPoke?.fMove?.name ?? '')}
-                    />
-                    <TypeBadge
-                      grow={true}
-                      find={true}
-                      title="Primary Charged Move"
-                      color={'white'}
-                      move={rankingPoke?.cMovePri}
-                      elite={rankingPoke?.pokemon?.eliteCinematicMove?.includes(rankingPoke?.cMovePri?.name ?? '')}
-                      shadow={rankingPoke?.pokemon?.shadowMoves?.includes(rankingPoke?.cMovePri?.name ?? '')}
-                      purified={rankingPoke?.pokemon?.purifiedMoves?.includes(rankingPoke?.cMovePri?.name ?? '')}
-                      special={rankingPoke?.pokemon?.specialMoves?.includes(rankingPoke?.cMovePri?.name ?? '')}
-                      unavailable={rankingPoke?.cMovePri && !getAllMoves(rankingPoke?.pokemon).includes(rankingPoke?.cMovePri?.name ?? '')}
-                    />
-                    {rankingPoke?.cMoveSec && (
-                      <TypeBadge
-                        grow={true}
-                        find={true}
-                        title="Secondary Charged Move"
-                        color={'white'}
-                        move={rankingPoke.cMoveSec}
-                        elite={rankingPoke.pokemon?.eliteCinematicMove?.includes(rankingPoke.cMoveSec.name)}
-                        shadow={rankingPoke.pokemon?.shadowMoves?.includes(rankingPoke.cMoveSec.name)}
-                        purified={rankingPoke.pokemon?.purifiedMoves?.includes(rankingPoke.cMoveSec.name)}
-                        special={rankingPoke.pokemon?.specialMoves?.includes(rankingPoke.cMoveSec.name)}
-                        unavailable={rankingPoke.cMoveSec && !getAllMoves(rankingPoke.pokemon).includes(rankingPoke.cMoveSec.name)}
-                      />
-                    )}
-                  </div>
-                </div>
+                <div>{Header(rankingPoke)}</div>
               </div>
               <hr />
-              {Keys(dataStore?.assets ?? [], dataStore?.pokemon ?? [], rankingPoke?.data, params.cp, params.type)}
+              {Body(dataStore?.assets ?? [], dataStore?.pokemon ?? [], rankingPoke?.data, params.cp, params.type)}
             </div>
             <div className="container">
               <hr />

@@ -21,6 +21,7 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { BattleState } from '../../../core/models/damage.model';
 
 class ColorTone {
   number: number;
@@ -139,11 +140,11 @@ const CalculatePoint = () => {
           calculateStatsBattle(statATK, j, i, true),
           statDefDEF,
           move ? (!isRaid && pvpDmg ? move.pvpPower : move.pvePower) : 0,
-          {
+          BattleState.create({
             effective: getTypeEffective(typeEff, move?.type ?? '', formDef?.form.types ?? []),
             stab: findStabType(form?.form.types ?? [], move?.type ?? ''),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
-          },
+          }),
           false
         );
         dataList[lv].push(result);
@@ -172,11 +173,11 @@ const CalculatePoint = () => {
           statDefATK,
           calculateStatsBattle(statDEF, j, i, true),
           moveDef ? (!isRaid && pvpDmg ? moveDef.pvpPower : moveDef.pvePower) : 0,
-          {
+          BattleState.create({
             effective: getTypeEffective(typeEff, moveDef?.type ?? '', form?.form.types ?? []),
             stab: findStabType(formDef?.form.types ?? [], moveDef?.type ?? ''),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
-          },
+          }),
           false
         );
         dataListDef[lv].push(resultDef);
@@ -229,11 +230,11 @@ const CalculatePoint = () => {
               statDefATK,
               calculateStatsBattle(statDEF, DEFIv, lv, true),
               (!isRaid && pvpDmg ? cMove?.pvpPower : cMove?.pvePower) ?? 0,
-              {
+              BattleState.create({
                 effective: getTypeEffective(typeEff, cMove?.type ?? '', form?.form.types ?? []),
                 stab: findStabType(formDef?.form.types ?? [], cMove?.type ?? ''),
                 wb: (!pvpDmg || isRaid) && weatherBoosts,
-              },
+              }),
               false
             )) /
           calculateDamagePVE(
@@ -241,11 +242,11 @@ const CalculatePoint = () => {
             statDefATK,
             calculateStatsBattle(statDEF, DEFIv, lv, true),
             (!isRaid && pvpDmg ? fMove?.pvpPower : fMove?.pvePower) ?? 0,
-            {
+            BattleState.create({
               effective: getTypeEffective(typeEff, fMove?.type ?? '', form?.form.types ?? []),
               stab: findStabType(formDef?.form.types ?? [], fMove?.type ?? ''),
               wb: (!pvpDmg || isRaid) && weatherBoosts,
-            },
+            }),
             false
           )
       )

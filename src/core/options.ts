@@ -1,6 +1,6 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
 import { Buff, Combat } from './models/combat.model';
-import { EvoList, EvolutionQuest, EvolutionQuestCondition } from './models/evolution.model';
+import { EvoList, EvolutionQuest, EvolutionQuestCondition, PokemonTypeCost } from './models/evolution.model';
 import {
   League,
   LeagueData,
@@ -9,6 +9,8 @@ import {
   IPokemonRewardLeague,
   IRankRewardLeague,
   PokemonRewardLeague,
+  LeagueTimestamp,
+  Season,
 } from './models/league.model';
 import { ISticker, Sticker } from './models/sticker.model';
 
@@ -24,6 +26,7 @@ import {
   PokemonEncounter,
   PokemonGenderRatio,
   PokemonModel,
+  StatsGO,
 } from './models/pokemon.model';
 import { ITypeEff } from './models/type-eff.model';
 import {
@@ -113,7 +116,7 @@ export const optionPokemonTypes = (data: PokemonDataGM[]) => {
 const optionFormNoneSpecial = (data: PokemonDataGM[]) => {
   const result: string[] = [];
   data
-    .filter((item) => /^FORMS_V\d{4}_POKEMON_*/g.test(item.templateId) && item.data?.formSettings?.forms)
+    .filter((item) => /^FORMS_V\d{4}_POKEMON_*/g.test(item.templateId) && isNotEmpty(item.data?.formSettings?.forms))
     .forEach((item) => {
       item.data.formSettings.forms.forEach((f) => {
         if (f.form && !f.isCostume && !f.assetBundleSuffix) {
@@ -183,16 +186,16 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     if (pokemonSettings.shadow) {
       optional.shadowMoves = [pokemonSettings.shadow.shadowChargeMove];
       optional.purifiedMoves = [pokemonSettings.shadow.purifiedChargeMove];
-      optional.purified = {
+      optional.purified = PokemonTypeCost.create({
         stardust: pokemonSettings.shadow.purificationStardustNeeded,
         candy: pokemonSettings.shadow.purificationCandyNeeded,
-      };
+      });
     }
     if (pokemonSettings.thirdMove) {
-      optional.thirdMove = {
+      optional.thirdMove = PokemonTypeCost.create({
         stardust: pokemonSettings.thirdMove.stardustToUnlock,
         candy: pokemonSettings.thirdMove.candyToUnlock,
-      };
+      });
     }
 
     const goForm = replacePokemonGoForm(pokemonSettings.pokemonId);
@@ -455,11 +458,11 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
 
       if (!pokemon.stats?.baseAttack && !pokemon.stats?.baseAttack && !pokemon.stats?.baseAttack) {
         const stats = calculateStatsByTag(undefined, item.baseStats, item.slug);
-        pokemon.stats = {
+        pokemon.stats = StatsGO.create({
           baseAttack: stats.atk,
           baseDefense: stats.def,
           baseStamina: stats.sta ?? 0,
-        };
+        });
       }
 
       optional.genderRatio = PokemonGenderRatio.create(item.genderRatio.M, item.genderRatio.F);
@@ -857,10 +860,10 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       result.enabled = item.data.combatLeague.enabled;
       item.data.combatLeague.pokemonCondition.forEach((con) => {
         if (con.type === 'POKEMON_CAUGHT_TIMESTAMP') {
-          result.conditions.timestamp = {
+          result.conditions.timestamp = LeagueTimestamp.create({
             start: 0,
             end: 0,
-          };
+          });
           result.conditions.timestamp.start = con.pokemonCaughtTimestamp?.afterTimestamp;
           result.conditions.timestamp.end = con.pokemonCaughtTimestamp?.beforeTimestamp;
         }
@@ -1031,17 +1034,17 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     });
 
   if (seasons) {
-    result.season = {
+    result.season = Season.create({
       season: seasons.length - 1,
-      timestamp: {
-        start: seasons[seasons.length - 3],
-        end: seasons[seasons.length - 2],
-      },
+      timestamp: LeagueTimestamp.create({
+        start: parseInt(seasons[seasons.length - 3]),
+        end: parseInt(seasons[seasons.length - 2]),
+      }),
       rewards,
       settings:
         data.find((item) => item.templateId === `COMBAT_RANKING_SETTINGS_S${seasons.length - 1}`)?.data.combatRankingProtoSettings
           .rankLevel ?? [],
-    };
+    });
   }
 
   return result;

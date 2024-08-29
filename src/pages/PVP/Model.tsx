@@ -8,7 +8,13 @@ import TypeInfo from '../../components/Sprites/Type/Type';
 import APIService from '../../services/API.service';
 import { calculateCP, calStatsProd } from '../../util/calculate';
 import { computeBgType, findAssetForm } from '../../util/compute';
-import { convertNameRankingToForm, convertNameRankingToOri, replaceTempMovePvpName, splitAndCapitalize } from '../../util/utils';
+import {
+  convertNameRankingToForm,
+  convertNameRankingToOri,
+  getAllMoves,
+  replaceTempMovePvpName,
+  splitAndCapitalize,
+} from '../../util/utils';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
@@ -32,24 +38,75 @@ import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { Combat, ICombat } from '../../core/models/combat.model';
 import { FORM_NORMAL, MAX_IV, maxLevel } from '../../util/constants';
-import { PokemonRankingMove, RankingsPVP } from '../../core/models/pvp.model';
+import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/models/pvp.model';
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
+import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
 
-export const Keys = (
+export const Header = (data: IPokemonBattleRanking | undefined) => {
+  return (
+    <Fragment>
+      <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
+        {data && (
+          <h3 className="text-white text-shadow">
+            <b>
+              #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
+            </b>
+          </h3>
+        )}
+        <TypeInfo shadow={true} block={true} color={'white'} arr={data?.pokemon?.types} />
+      </div>
+      <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
+        Recommend Moveset in PVP
+      </h6>
+      <div className="d-flex flex-wrap element-top" style={{ columnGap: 10 }}>
+        <TypeBadge
+          grow={true}
+          find={true}
+          title="Fast Move"
+          color={'white'}
+          move={data?.fMove}
+          elite={data?.pokemon?.cinematicMoves?.includes(data.fMove?.name ?? '')}
+        />
+        <TypeBadge
+          grow={true}
+          find={true}
+          title="Primary Charged Move"
+          color={'white'}
+          move={data?.cMovePri}
+          elite={data?.pokemon?.eliteCinematicMove?.includes(data.cMovePri?.name ?? '')}
+          shadow={data?.pokemon?.shadowMoves?.includes(data.cMovePri?.name ?? '')}
+          purified={data?.pokemon?.purifiedMoves?.includes(data.cMovePri?.name ?? '')}
+          special={data?.pokemon?.specialMoves?.includes(data.cMovePri?.name ?? '')}
+          unavailable={data?.cMovePri && !getAllMoves(data?.pokemon).includes(data?.cMovePri?.name ?? '')}
+        />
+        {data?.cMoveSec && (
+          <TypeBadge
+            grow={true}
+            find={true}
+            title="Secondary Charged Move"
+            color={'white'}
+            move={data.cMoveSec}
+            elite={data.pokemon?.eliteCinematicMove?.includes(data.cMoveSec.name)}
+            shadow={data.pokemon?.shadowMoves?.includes(data.cMoveSec.name)}
+            purified={data.pokemon?.purifiedMoves?.includes(data.cMoveSec.name)}
+            special={data.pokemon?.specialMoves?.includes(data.cMoveSec.name)}
+            unavailable={data?.cMoveSec && !getAllMoves(data.pokemon).includes(data.cMoveSec.name)}
+          />
+        )}
+      </div>
+    </Fragment>
+  );
+};
+
+export const Body = (
   assets: IAsset[],
   pokemonData: IPokemonData[],
   data: RankingsPVP | undefined,
   cp: string | undefined,
   type: string | undefined
 ) => {
-  const renderItemList = (
-    data: {
-      opponent: string;
-      rating: number;
-    },
-    bgtype: number
-  ) => {
+  const renderItemList = (data: PokemonVersus, bgType: number) => {
     const name = convertNameRankingToOri(data?.opponent, convertNameRankingToForm(data?.opponent));
     const pokemon = pokemonData.find((pokemon) => pokemon.slug === name);
     const id = pokemon?.num;
@@ -84,7 +141,7 @@ export const Keys = (
         <div style={{ marginRight: 15 }}>
           <span
             className="ranking-score score-ic text-white text-shadow filter-shadow"
-            style={{ backgroundColor: bgtype === 0 ? 'lightgreen' : 'lightcoral' }}
+            style={{ backgroundColor: bgType === 0 ? 'lightgreen' : 'lightcoral' }}
           >
             {data?.rating}
           </span>
@@ -271,16 +328,7 @@ export const TypeEffective = (types: string[]) => {
   );
 };
 
-export const MoveSet = (
-  moves:
-    | {
-        chargedMoves: PokemonRankingMove[];
-        fastMoves: PokemonRankingMove[];
-      }
-    | undefined,
-  combatList: IPokemonData | undefined,
-  combatData: ICombat[]
-) => {
+export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPokemonData | undefined, combatData: ICombat[]) => {
   const findArchetype = (archetype: string) => {
     return [
       'General',

@@ -48,9 +48,18 @@ import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 
-interface TypeCost {
+interface ITypeCost {
   purified: PokemonTypeCost;
   thirdMove: PokemonTypeCost;
+}
+
+class TypeCost implements ITypeCost {
+  purified: PokemonTypeCost = new PokemonTypeCost();
+  thirdMove: PokemonTypeCost = new PokemonTypeCost();
+
+  constructor({ ...props }: ITypeCost) {
+    Object.assign(this, props);
+  }
 }
 
 const Pokemon = (props: IPokemonPage) => {
@@ -85,7 +94,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
   const [pokemonDetails, setPokemonDetails] = useState<IPokemonData>();
 
-  const [costModifier, setCostModifier] = useState<TypeCost>();
+  const [costModifier, setCostModifier] = useState<ITypeCost>();
 
   const [progress, setProgress] = useState({ isLoadedForms: false });
 
@@ -123,16 +132,18 @@ const Pokemon = (props: IPokemonPage) => {
 
       const pokemon = pokemonData.find((item) => item.num === data.id);
       setPokeRatio(pokemon?.genderRatio);
-      setCostModifier({
-        purified: {
-          candy: pokemon?.purified?.candy ?? 0,
-          stardust: pokemon?.purified?.stardust ?? 0,
-        },
-        thirdMove: {
-          candy: pokemon?.thirdMove?.candy ?? 0,
-          stardust: pokemon?.thirdMove?.stardust ?? 0,
-        },
-      });
+      setCostModifier(
+        new TypeCost({
+          purified: PokemonTypeCost.create({
+            candy: pokemon?.purified?.candy ?? 0,
+            stardust: pokemon?.purified?.stardust ?? 0,
+          }),
+          thirdMove: PokemonTypeCost.create({
+            candy: pokemon?.thirdMove?.candy ?? 0,
+            stardust: pokemon?.thirdMove?.stardust ?? 0,
+          }),
+        })
+      );
 
       const formListResult = dataFormList
         .map((item) =>

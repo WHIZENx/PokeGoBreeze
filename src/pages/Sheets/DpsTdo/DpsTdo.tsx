@@ -46,7 +46,7 @@ import { Action } from 'history';
 import { TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { IPokemonData } from '../../../core/models/pokemon.model';
+import { Elite, IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -67,7 +67,7 @@ interface PokemonSheetData {
   purified: boolean;
   special: boolean;
   mShadow: boolean;
-  elite: { fMove: boolean; cMove: boolean };
+  elite: Elite;
   cp: number;
 }
 

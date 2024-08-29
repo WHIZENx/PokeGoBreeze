@@ -82,6 +82,7 @@ import {
   EDPS,
 } from './models/pokemon-top-move.model';
 import { IArrayStats } from './models/util.model';
+import { IBattleState } from '../core/models/damage.model';
 
 const weatherMultiple = (
   globalOptions: IOptions | undefined,
@@ -680,16 +681,7 @@ export const calculateDamagePVE = (
   atk: number,
   defObj: number,
   power: number,
-  eff: {
-    stab: boolean;
-    wb: boolean;
-    dodge?: boolean;
-    mega?: boolean;
-    trainer?: boolean;
-    fLevel?: number;
-    cLevel?: number;
-    effective: number;
-  },
+  eff: IBattleState,
   notPure?: boolean,
   stab?: boolean
 ) => {

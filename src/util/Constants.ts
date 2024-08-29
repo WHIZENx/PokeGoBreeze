@@ -67,24 +67,24 @@ export const RAID_BOSS_TIER: {
 };
 
 export const DEFAULT_TYPES = [
-  'BUG',
-  'DARK',
-  'DRAGON',
-  'ELECTRIC',
-  'FAIRY',
-  'FIGHTING',
-  'FIRE',
-  'FLYING',
-  'GHOST',
-  'GRASS',
-  'GROUND',
-  'ICE',
   'NORMAL',
+  'FIGHTING',
+  'FLYING',
   'POISON',
-  'PSYCHIC',
+  'GROUND',
   'ROCK',
+  'BUG',
+  'GHOST',
   'STEEL',
+  'FIRE',
   'WATER',
+  'GRASS',
+  'ELECTRIC',
+  'PSYCHIC',
+  'ICE',
+  'DRAGON',
+  'DARK',
+  'FAIRY',
 ];
 
 export const FORM_NORMAL = 'NORMAL';
