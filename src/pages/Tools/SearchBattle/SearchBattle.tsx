@@ -7,19 +7,19 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
-import { calculateStats, queryStatesEvoChain } from '../../../util/Calculate';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 
 import { Link } from 'react-router-dom';
-import { marks, PokeGoSlider } from '../../../util/Utils';
+import { marks, PokeGoSlider } from '../../../util/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN } from '../../../util/Constants';
+import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN } from '../../../util/constants';
 import { IEvolution } from '../../../core/models/evolution.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain } from '../../../util/models/calculate.model';

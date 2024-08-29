@@ -1,16 +1,16 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import Stats from '../Info/Stats/Stats';
-import { calculateRaidStat } from '../../util/Calculate';
+import { calculateRaidStat } from '../../util/calculate';
 
 import { Form } from 'react-bootstrap';
-import { FORM_MEGA, RAID_BOSS_TIER } from '../../util/Constants';
+import { FORM_MEGA, RAID_BOSS_TIER } from '../../util/constants';
 
 import ATK_LOGO from '../../assets/attack.png';
 import DEF_LOGO from '../../assets/defense.png';
 import HP_LOGO from '../../assets/hp.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/Utils';
+import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../core/models/stats.model';

@@ -1,13 +1,13 @@
 import { useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/Calculate';
-import { checkRankAllAvailable } from '../../../util/Utils';
+import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/calculate';
+import { checkRankAllAvailable } from '../../../util/utils';
 
 import './Stats.scss';
 import { StatsRankPokemonGO } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';

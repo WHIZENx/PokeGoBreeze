@@ -3,9 +3,9 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/Utils';
-import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
+import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
 import './Damage.scss';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -18,7 +18,7 @@ import Find from '../../../components/Find/Find';
 import StatsTable from './StatsDamageTable';
 
 import Move from '../../../components/Table/Move';
-import { findStabType } from '../../../util/Compute';
+import { findStabType } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { ITrainerFriendship, ThrowOption } from '../../../core/models/options.model';

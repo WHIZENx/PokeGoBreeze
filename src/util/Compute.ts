@@ -1,8 +1,8 @@
 import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
-import { FORM_GMAX, FORM_NORMAL } from './Constants';
-import { getStyleRuleValue, isNotEmpty } from './Utils';
+import { FORM_GMAX, FORM_NORMAL } from './constants';
+import { getStyleRuleValue, isNotEmpty } from './utils';
 
 export const priorityBadge = (priority: number) => {
   if (priority === 0) {
@@ -108,7 +108,7 @@ export const computeBgType = (
   purified = false,
   opacity = 1,
   styleSheet?: CSSStyleSheet,
-  defaultColor?: string | null
+  defaultColor?: string
 ) => {
   const defaultBg = `rgb(100, 100, 100)`;
   if (defaultColor) {

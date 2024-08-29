@@ -6,10 +6,10 @@ import { Tabs, Tab } from 'react-bootstrap';
 import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
-import { findStabType } from '../../../util/Compute';
-import { MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
+import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { findStabType } from '../../../util/compute';
+import { MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 import { useSnackbar } from 'notistack';
 
 import ATK_LOGO from '../../../assets/attack.png';

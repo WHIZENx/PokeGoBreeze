@@ -1,7 +1,7 @@
 import React from 'react';
 import APIService from '../../services/API.service';
-import { priorityBadge } from '../../util/Compute';
-import { capitalize } from '../../util/Utils';
+import { priorityBadge } from '../../util/compute';
+import { capitalize } from '../../util/utils';
 import { ISelectBadgeComponent } from '../models/component.model';
 
 const SelectBadge = (props: ISelectBadgeComponent) => {

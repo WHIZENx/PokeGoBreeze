@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
-import { isNotEmpty, retrieveMoves } from '../../util/Utils';
+import { isNotEmpty, retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
 
 const SelectMove = (props: ISelectMoveComponent) => {

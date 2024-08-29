@@ -4,27 +4,27 @@ interface ILeaguePVP {
   id: string;
   name: string;
   cp: number | number[];
-  logo: string | null;
+  logo?: string;
 }
 
 export interface ILeague {
-  id: string | null;
+  id?: string;
   title: string;
   enabled: boolean;
   conditions: ILeagueCondition;
-  iconUrl: string | null;
+  iconUrl?: string;
   league: string;
 }
 
 interface ILeagueCondition {
   timestamp?: {
-    start: number;
-    end: number;
+    start?: number;
+    end?: number;
   };
   uniqueSelected: boolean;
   uniqueType: string[];
-  maxLevel: number | null;
-  maxCp: number;
+  maxLevel?: number;
+  maxCp?: number;
   whiteList: IPokemonPermission[];
   banned: IPokemonPermission[];
 }
@@ -132,11 +132,11 @@ export class LeagueData implements ILeagueData {
 
 // tslint:disable-next-line:max-classes-per-file
 export class League implements ILeague {
-  id: string | null = null;
+  id?: string;
   title: string;
   enabled: boolean = false;
   conditions: ILeagueCondition;
-  iconUrl: string | null = null;
+  iconUrl?: string;
   league: string;
 
   constructor() {
@@ -144,8 +144,6 @@ export class League implements ILeague {
     this.conditions = {
       uniqueSelected: false,
       uniqueType: [],
-      maxLevel: null,
-      maxCp: 0,
       whiteList: [],
       banned: [],
     };
@@ -190,7 +188,7 @@ export class LeaguePVP implements ILeaguePVP {
   id: string;
   name: string;
   cp: number | number[];
-  logo: string | null = null;
+  logo?: string;
 
   constructor() {
     this.id = '';

@@ -1,6 +1,6 @@
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_LEVEL, MAX_IV } from '../../util/Constants';
+import { DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_LEVEL, MAX_IV } from '../../util/constants';
 
 export interface OptionDPSModel {
   filters: OptionFiltersDPS;

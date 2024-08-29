@@ -4,8 +4,8 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../../util/Utils';
-import { findAssetForm } from '../../../util/Compute';
+import { capitalize, checkPokemonGO, isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
+import { findAssetForm } from '../../../util/compute';
 import {
   FORM_GMAX,
   FORM_MEGA,
@@ -19,14 +19,14 @@ import {
   RAID_BOSS_TIER,
   SHADOW_ATK_BONUS,
   SHADOW_DEF_BONUS,
-} from '../../../util/Constants';
+} from '../../../util/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
   calculateStatsBattle,
   calculateStatsByTag,
   TimeToKill,
-} from '../../../util/Calculate';
+} from '../../../util/calculate';
 
 import { Badge, Checkbox, FormControlLabel, Switch } from '@mui/material';
 

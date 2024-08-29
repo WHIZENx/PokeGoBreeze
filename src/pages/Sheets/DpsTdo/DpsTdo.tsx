@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty, convertColumnDataType } from '../../../util/Utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty, convertColumnDataType } from '../../../util/utils';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -15,7 +15,7 @@ import {
   TYPE_LEGENDARY,
   TYPE_MYTHIC,
   TYPE_ULTRA_BEAST,
-} from '../../../util/Constants';
+} from '../../../util/constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -25,7 +25,7 @@ import {
   TimeToKill,
   calculateBattleDPSDefender,
   calculateStatsBattle,
-} from '../../../util/Calculate';
+} from '../../../util/calculate';
 
 import DataTable from 'react-data-table-component';
 import APIService from '../../../services/API.service';
@@ -361,8 +361,8 @@ const DpsTdo = () => {
             statsAttacker.def,
             statsAttacker.hp ?? 0,
             statsAttacker.types,
-            options,
-            statsAttacker.shadow
+            statsAttacker.shadow,
+            options
           );
           tdo = calculateTDO(data?.options, statsAttacker.def, statsAttacker.hp ?? 0, dps, statsAttacker.shadow);
         }

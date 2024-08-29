@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
-import { capitalize, isNotEmpty } from '../../../util/Utils';
+import { capitalize, isNotEmpty } from '../../../util/utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';

@@ -1,107 +1,268 @@
-import { LeagueReward, IPokemonRewardLeague, SettingLeague } from './league.model';
+import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
 import { IStatsBase, StatsBase } from './stats.model';
 
+interface CombatSetting {
+  sameTypeAttackBonusMultiplier: number;
+  shadowPokemonAttackBonusMultiplier: number;
+  shadowPokemonDefenseBonusMultiplier: number;
+  chargeScoreBase: number;
+  chargeScoreNice: number;
+  chargeScoreGreat: number;
+  chargeScoreExcellent: number;
+}
+
+interface BattleSetting {
+  enemyAttackInterval: number;
+  sameTypeAttackBonusMultiplier: number;
+  shadowPokemonAttackBonusMultiplier: number;
+  shadowPokemonDefenseBonusMultiplier: number;
+}
+
+interface BuddyLevelSetting {
+  level: string;
+  minNonCumulativePointsRequired: number;
+  unlockedTraits: string[];
+}
+
+interface FriendshipMilestoneSetting {
+  minPointsToReach: number;
+  milestoneXpReward: number;
+  attackBonusPercentage: number;
+  unlockedTrading: string[];
+}
+
+interface TypeEffective {
+  attackScalar: number[];
+  attackType: string;
+}
+
+interface WeatherAffinity {
+  weatherCondition: string;
+  pokemonType: string[];
+}
+
+interface Gender {
+  malePercent: number;
+  femalePercent: number;
+}
+
+interface GenderSetting {
+  pokemon: string;
+  gender?: Gender;
+}
+
+interface Form {
+  assetBundleSuffix?: string;
+  isCostume?: boolean;
+  form: string;
+}
+
+interface FormSetting {
+  pokemon: string;
+  forms: Form[];
+}
+
+interface PokemonFamily {
+  familyId: string;
+  candyPerXlCandy: number;
+  megaEvolvablePokemonId?: string;
+}
+
+interface IapItemDisplay {
+  sku: string;
+  category: string;
+  sortOrder: number;
+  hidden: boolean;
+  spriteId: string;
+  title: string;
+  description?: string;
+  skuEnableTime?: Date;
+  skuDisableTime?: Date;
+  skuEnableTimeUtcMs?: number;
+  skuDisableTimeUtcMs?: number;
+  imageUrl?: string;
+  sale?: boolean;
+}
+
+interface StickerMetadata {
+  stickerId: string;
+  maxCount: number;
+  stickerUrl?: string;
+  pokemonId?: string;
+  category: string[];
+  releaseDate: number;
+  regionId: number;
+}
+
+interface CombatMove {
+  uniqueId: string;
+  type: string;
+  power: number;
+  energyDelta: number;
+  vfxName: string;
+  buffs?: { [x: string]: number };
+}
+
+interface MoveSetting {
+  movementId: string;
+  animationId: number;
+  pokemonType: string;
+  power: number;
+  accuracyChance: number;
+  criticalChance: number;
+  staminaLossScalar: number;
+  trainerLevelMin: number;
+  trainerLevelMax: number;
+  vfxName: string;
+  durationMs: number;
+  damageWindowStartMs: number;
+  damageWindowEndMs: number;
+  energyDelta: number;
+}
+
+interface MoveSequenceSetting {
+  sequence: string[];
+}
+
+interface VsSeekerClientSetting {
+  allowedVsSeekerLeagueTemplateId: string[];
+}
+
+interface PokemonFromReward {
+  form: string;
+}
+
+interface PokemonReward {
+  pokemonId: string;
+  pokemonDisplay: PokemonFromReward;
+}
+
+interface GuaranteedLimitedPokemonReward {
+  pokemon: PokemonReward;
+}
+
+interface RangeOverride {
+  max: number;
+  min?: number;
+}
+
+interface IvOverride {
+  range: RangeOverride;
+}
+
+interface AvailablePokemon {
+  unlockedAtRank: number;
+  guaranteedLimitedPokemonReward?: GuaranteedLimitedPokemonReward;
+  pokemon: PokemonReward;
+  attackIvOverride: IvOverride;
+  defenseIvOverride: IvOverride;
+  staminaIvOverride: IvOverride;
+}
+
+interface VsSeekerPokemonReward {
+  availablePokemon: AvailablePokemon[];
+}
+
+interface CombatCompetitiveSeasonSetting {
+  seasonEndTimeTimestamp: string[];
+  ratingAdjustmentPercentage: number;
+  rankingAdjustmentPercentage: number;
+}
+
+interface RequiredForReward {
+  rankLevel: number;
+  additionalTotalBattlesRequired: number;
+}
+
+interface CombatRankingProtoSetting {
+  rankLevel: SettingLeague[];
+  requiredForRewards: RequiredForReward;
+  minRankToDisplayRating: number;
+  minRatingRequired: number;
+}
+
+interface VsSeekerLoot {
+  rankLevel: number;
+  reward: LeagueReward[];
+  rewardTrack?: string;
+}
+
+interface PokemonConditionPermission {
+  pokemon: IPokemonPermission[];
+}
+
+interface PokemonCaughtTimestamp {
+  afterTimestamp: number;
+  beforeTimestamp: number;
+}
+
+interface WithPokemonType {
+  pokemonType: string[];
+}
+
+interface PokemonLevelRange {
+  maxLevel: number;
+}
+
+interface WithPokemonCpLimit {
+  maxCp: number;
+}
+
+interface PokemonCondition {
+  pokemonBanList?: PokemonConditionPermission;
+  type: string;
+  pokemonCaughtTimestamp?: PokemonCaughtTimestamp;
+  withPokemonType?: WithPokemonType;
+  pokemonLevelRange?: PokemonLevelRange;
+  withPokemonCpLimit?: WithPokemonCpLimit;
+  pokemonWhiteList?: PokemonConditionPermission;
+}
+
+interface CombatLeague {
+  title: string;
+  enabled: boolean;
+  pokemonCondition: PokemonCondition[];
+  iconUrl: string;
+  badgeType: string;
+  bannedPokemon: string[];
+}
+
+interface EvolutionQuestTemplate {
+  questTemplateId: string;
+  questType: string;
+  goals: EvolutionGoal[];
+}
+
+interface DataGM {
+  pokemonSettings: PokemonModel;
+  combatSettings: CombatSetting;
+  battleSettings: BattleSetting;
+  buddyLevelSettings: BuddyLevelSetting;
+  friendshipMilestoneSettings: FriendshipMilestoneSetting;
+  typeEffective: TypeEffective;
+  weatherAffinities: WeatherAffinity;
+  genderSettings: GenderSetting;
+  formSettings: FormSetting;
+  pokemonFamily: PokemonFamily;
+  iapItemDisplay: IapItemDisplay;
+  stickerMetadata: StickerMetadata;
+  combatMove: CombatMove;
+  moveSettings: MoveSetting;
+  moveSequenceSettings: MoveSequenceSetting;
+  smeargleMovesSettings: PokemonModel;
+  vsSeekerClientSettings: VsSeekerClientSetting;
+  vsSeekerPokemonRewards: VsSeekerPokemonReward;
+  combatCompetitiveSeasonSettings: CombatCompetitiveSeasonSetting;
+  combatRankingProtoSettings: CombatRankingProtoSetting;
+  vsSeekerLoot: VsSeekerLoot;
+  combatLeague: CombatLeague;
+  evolutionQuestTemplate?: EvolutionQuestTemplate;
+}
+
 export interface PokemonDataGM {
   templateId: string;
-  data: {
-    pokemonSettings: PokemonModel;
-    combatSettings: {
-      sameTypeAttackBonusMultiplier: number;
-      shadowPokemonAttackBonusMultiplier: number;
-      shadowPokemonDefenseBonusMultiplier: number;
-      chargeScoreBase: number;
-      chargeScoreNice: number;
-      chargeScoreGreat: number;
-      chargeScoreExcellent: number;
-    };
-    battleSettings: {
-      enemyAttackInterval: number;
-      sameTypeAttackBonusMultiplier: number;
-      shadowPokemonAttackBonusMultiplier: number;
-      shadowPokemonDefenseBonusMultiplier: number;
-    };
-    buddyLevelSettings: { minNonCumulativePointsRequired: number; unlockedTraits: string[] };
-    friendshipMilestoneSettings: { attackBonusPercentage: number; unlockedTrading: string[] };
-    typeEffective: { attackScalar: number[] };
-    weatherAffinities: { weatherCondition: string; pokemonType: string[] };
-    genderSettings: {
-      pokemon: string;
-      gender:
-        | {
-            malePercent: number;
-            femalePercent: number;
-          }
-        | undefined;
-    };
-    formSettings: { pokemon: string; forms: { assetBundleSuffix: string; isCostume: boolean; form: string }[] };
-    pokemonFamily: { familyId: string };
-    iapItemDisplay: { sku: string };
-    stickerMetadata: { stickerId: string; maxCount: number; stickerUrl: string | null; pokemonId: string | undefined };
-    combatMove: {
-      uniqueId: string;
-      type: string;
-      power: number;
-      energyDelta: number;
-      buffs: { [x: string]: number };
-    };
-    moveSettings: {
-      movementId: string;
-      animationId: number;
-      pokemonType: string;
-      power: number;
-      accuracyChance: number;
-      criticalChance: number;
-      staminaLossScalar: number;
-      trainerLevelMin: number;
-      trainerLevelMax: number;
-      vfxName: string;
-      durationMs: number;
-      damageWindowStartMs: number;
-      damageWindowEndMs: number;
-      energyDelta: number;
-    };
-    moveSequenceSettings: { sequence: string[] };
-    smeargleMovesSettings: PokemonModel;
-    vsSeekerClientSettings: { allowedVsSeekerLeagueTemplateId: string[] };
-    vsSeekerPokemonRewards: {
-      availablePokemon: {
-        unlockedAtRank: number;
-        guaranteedLimitedPokemonReward: { pokemon: { pokemonId: string; pokemonDisplay: { form: string } } };
-        pokemon: { pokemonId: string; pokemonDisplay: { form: string } };
-      }[];
-    };
-    combatCompetitiveSeasonSettings: { seasonEndTimeTimestamp: string[] };
-    combatRankingProtoSettings: { rankLevel: SettingLeague[] | undefined };
-    vsSeekerLoot: {
-      rankLevel: number;
-      rank: IPokemonRewardLeague;
-      pokemon: IPokemonRewardLeague;
-      reward: LeagueReward[];
-      rewardTrack: string;
-    };
-    combatLeague: {
-      title: string;
-      enabled: boolean;
-      pokemonCondition: {
-        pokemonBanList: { pokemon: IPokemonPermission[] };
-        type: string;
-        pokemonCaughtTimestamp: { afterTimestamp: number; beforeTimestamp: number };
-        withPokemonType: { pokemonType: string[] };
-        pokemonLevelRange: { maxLevel: number };
-        withPokemonCpLimit: { maxCp: number };
-        pokemonWhiteList: { pokemon: IPokemonPermission[] };
-      }[];
-      iconUrl: string;
-      badgeType: string;
-      bannedPokemon: string[];
-    };
-    evolutionQuestTemplate?: {
-      questTemplateId: string;
-      questType: string;
-      goals: EvolutionGoal[];
-    };
-  };
+  data: DataGM;
 }
 
 interface EvolutionGoal {

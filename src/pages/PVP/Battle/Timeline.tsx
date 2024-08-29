@@ -2,7 +2,7 @@ import { Badge } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';

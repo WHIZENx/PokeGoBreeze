@@ -2,7 +2,7 @@ import { useTheme } from '@mui/material';
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { TRANSITION_TIME } from '../../util/Constants';
+import { TRANSITION_TIME } from '../../util/constants';
 
 import Attacker from './Attacker';
 import Defender from './Defender';

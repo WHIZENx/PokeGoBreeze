@@ -31,14 +31,14 @@ import {
   getPokemonDetails,
   isNotEmpty,
   splitAndCapitalize,
-} from '../../util/Utils';
+} from '../../util/utils';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
 import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, FORM_GMAX, regionList } from '../../util/Constants';
+import { KEY_LEFT, KEY_RIGHT, FORM_GMAX, regionList } from '../../util/constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';

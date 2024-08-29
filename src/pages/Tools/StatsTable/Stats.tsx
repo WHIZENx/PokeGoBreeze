@@ -2,13 +2,13 @@ import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 
-import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
-import { calStatsProd } from '../../../util/Calculate';
+import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { calStatsProd } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
 
 import Find from '../../../components/Find/Find';
-import { MIN_IV, MAX_IV } from '../../../util/Constants';
+import { MIN_IV, MAX_IV } from '../../../util/constants';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';

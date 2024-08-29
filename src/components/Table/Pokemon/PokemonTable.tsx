@@ -1,6 +1,6 @@
 import React from 'react';
-import { splitAndCapitalize } from '../../../util/Utils';
-import { genRoman } from '../../../util/Constants';
+import { splitAndCapitalize } from '../../../util/utils';
+import { genRoman } from '../../../util/constants';
 import { IPokemonTableComponent } from '../../models/component.model';
 
 const PokemonTable = (props: IPokemonTableComponent) => {

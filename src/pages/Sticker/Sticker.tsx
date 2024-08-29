@@ -1,6 +1,6 @@
 import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 
-import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../util/utils';
 
 import './Sticker.scss';
 import APIService from '../../services/API.service';

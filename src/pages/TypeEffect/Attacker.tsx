@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize } from '../../util/Utils';
+import { capitalize } from '../../util/utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';

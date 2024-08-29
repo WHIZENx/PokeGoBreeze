@@ -8,8 +8,8 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, isNotEmpty } from '../../../util/Utils';
-import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
+import { getTime, splitAndCapitalize, capitalize, isNotEmpty } from '../../../util/utils';
+import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -17,7 +17,7 @@ import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
 import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
-import { FORM_NORMAL } from '../../../util/Constants';
+import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 interface LeagueData {

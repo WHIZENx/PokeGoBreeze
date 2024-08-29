@@ -1,16 +1,5 @@
 import { RadioGroup, Rating, Slider, styled } from '@mui/material';
 import Moment from 'moment';
-import {
-  FORM_ALOLA,
-  FORM_GALARIAN,
-  FORM_GMAX,
-  FORM_HISUIAN,
-  FORM_NORMAL,
-  FORM_PURIFIED,
-  FORM_SHADOW,
-  FORM_STANDARD,
-  MAX_IV,
-} from './Constants';
 import { IPokemonData, PokemonData, PokemonModel } from '../core/models/pokemon.model';
 import {
   IStatsAtk,
@@ -25,6 +14,17 @@ import {
   IStatsPokemonGO,
 } from '../core/models/stats.model';
 import { IPokemonDetail, Stats } from '../core/models/API/info.model';
+import {
+  FORM_ALOLA,
+  FORM_GALARIAN,
+  FORM_GMAX,
+  FORM_HISUIAN,
+  FORM_NORMAL,
+  FORM_PURIFIED,
+  FORM_SHADOW,
+  FORM_STANDARD,
+  MAX_IV,
+} from './constants';
 import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
@@ -826,4 +826,19 @@ export const replaceTempMovePvpName = (name: string) => {
 
 export const convertColumnDataType = <T, S>(columns: T) => {
   return columns as TableColumn<S>[];
+};
+
+export const getAllMoves = (pokemon: IPokemonData | undefined) => {
+  if (!pokemon) {
+    return [];
+  }
+
+  return (pokemon.quickMoves ?? []).concat(
+    pokemon.eliteQuickMove ?? [],
+    pokemon.cinematicMoves ?? [],
+    pokemon.eliteCinematicMove ?? [],
+    pokemon.shadowMoves ?? [],
+    pokemon.purifiedMoves ?? [],
+    pokemon.specialMoves ?? []
+  );
 };

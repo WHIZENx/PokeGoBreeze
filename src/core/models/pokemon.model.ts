@@ -1,6 +1,6 @@
-import { capitalize, replaceTempMoveName } from '../../util/Utils';
+import { capitalize, replaceTempMoveName } from '../../util/utils';
 import { ICombat } from './combat.model';
-import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
+import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, ITempEvo } from './evolution.model';

@@ -118,7 +118,7 @@ export const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
 export const DEFAULT_POKEMON_LEVEL = 40;
 
 export const DEFAULT_ENERGY_PER_HP_LOST = 0.5;
-export const DEFAULT_DAMAGE_MULTIPLY: number = 0.5;
+export const DEFAULT_DAMAGE_MULTIPLY = 0.5;
 export const DEFAULT_DAMAGE_CONST = 1;
 export const DEFAULT_ENEMY_ATK_DELAY = 2;
 

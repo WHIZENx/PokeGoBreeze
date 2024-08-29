@@ -10,12 +10,13 @@ import {
   getStyleSheet,
   replaceTempMovePvpName,
   isNotEmpty,
-} from '../../../util/Utils';
-import { calculateStatsByTag } from '../../../util/Calculate';
+  getAllMoves,
+} from '../../../util/utils';
+import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../../services/API.service';
-import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/Compute';
+import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 
 import update from 'immutability-helper';
@@ -30,7 +31,7 @@ import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
-import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/Constants';
+import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
@@ -38,6 +39,8 @@ import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.mo
 import { Combat } from '../../../core/models/combat.model';
 import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
+import { LocalStorageConfig } from '../../../store/constants/localStorage';
+import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -45,14 +48,8 @@ const RankingPVP = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
   const router = useSelector((state: RouterState) => state.router);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    'timestamp',
-    JSON.stringify({
-      gamemaster: null,
-      pvp: null,
-    })
-  );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
@@ -67,18 +64,10 @@ const RankingPVP = () => {
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
   const LeaveToggle = ({ children, eventKey }: any) => {
-    const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
+    const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
-      <div
-        className="accordion-footer"
-        onClick={() => {
-          if (storeStats && storeStats[parseInt(eventKey)]) {
-            setStoreStats(update(storeStats, { [parseInt(eventKey)]: { $set: false } }));
-          }
-          return decoratedOnClick;
-        }}
-      >
+      <div className="accordion-footer" onClick={decoratedOnClick}>
         {children}
       </div>
     );
@@ -208,8 +197,8 @@ const RankingPVP = () => {
       <Accordion.Item eventKey={key.toString()}>
         <Accordion.Header
           onClick={() => {
-            if (storeStats) {
-              setStoreStats(update(storeStats, { [key]: { $set: !storeStats[key] } }));
+            if (storeStats && !storeStats[key]) {
+              setStoreStats(update(storeStats, { [key]: { $set: true } }));
             }
           }}
         >
@@ -276,6 +265,7 @@ const RankingPVP = () => {
                       shadow={data.pokemon?.shadowMoves?.includes(data.cMovePri?.name ?? '')}
                       purified={data.pokemon?.purifiedMoves?.includes(data.cMovePri?.name ?? '')}
                       special={data.pokemon?.specialMoves?.includes(data.cMovePri?.name ?? '')}
+                      unavailable={!getAllMoves(data.pokemon).includes(data.cMovePri?.name ?? '')}
                     />
                     {data.cMoveSec && (
                       <TypeBadge
@@ -287,7 +277,8 @@ const RankingPVP = () => {
                         elite={data.pokemon?.eliteCinematicMove?.includes(data.cMoveSec.name)}
                         shadow={data.pokemon?.shadowMoves?.includes(data.cMoveSec.name)}
                         purified={data.pokemon?.purifiedMoves?.includes(data.cMoveSec.name)}
-                        special={data.pokemon?.specialMoves?.includes(data.cMoveSec?.name)}
+                        special={data.pokemon?.specialMoves?.includes(data.cMoveSec.name)}
+                        unavailable={!getAllMoves(data.pokemon).includes(data.cMoveSec.name)}
                       />
                     )}
                   </div>

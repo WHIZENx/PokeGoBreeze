@@ -2,15 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { leaguesTeamBattle } from '../../util/Constants';
-import { loadPVP } from '../../store/effects/store.effects';
+import { leaguesTeamBattle } from '../../util/constants';
+import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Link } from 'react-router-dom';
 import { SpinnerState, StoreState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
-import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/Compute';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/compute';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
+import { LocalStorageConfig } from '../../store/constants/localStorage';
+import { LocalTimeStamp } from '../../store/models/local-storage.model';
+import { isNotEmpty } from '../../util/utils';
 
 interface IOptionsHome {
   rank?: PVPInfo | undefined;
@@ -26,15 +29,10 @@ const PVPHome = () => {
   useChangeTitle('PVP - Simulator');
   const dispatch = useDispatch();
   const pvp = useSelector((state: StoreState) => state.store?.data?.pvp);
+  const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    'timestamp',
-    JSON.stringify({
-      gamemaster: null,
-      pvp: null,
-    })
-  );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
@@ -44,10 +42,13 @@ const PVPHome = () => {
     if (!pvp) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
+    if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
+      loadPVPMoves(dispatch);
+    }
     if (spinner.loading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [pvp, spinner, dispatch]);
+  }, [pvp, spinner, combat, dispatch]);
 
   useEffect(() => {
     if (!rank && !team && pvp) {

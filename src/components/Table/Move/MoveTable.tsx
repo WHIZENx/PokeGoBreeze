@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
-import { rankMove } from '../../../util/Calculate';
+import { capitalize, convertPokemonAPIDataName, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
 import { Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
