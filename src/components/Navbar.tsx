@@ -108,7 +108,7 @@ const NavbarComponent = () => {
           {timestamp && (
             <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
               <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
-                Update: {getTime(timestamp, true)}
+                Updated: {getTime(timestamp, true)}
               </span>
               <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
                 <b>{version}</b>

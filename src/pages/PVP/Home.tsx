@@ -13,7 +13,7 @@ import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
 import { LocalStorageConfig } from '../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../store/models/local-storage.model';
-import { isNotEmpty } from '../../util/utils';
+import { getTime, isNotEmpty } from '../../util/utils';
 
 interface IOptionsHome {
   rank?: PVPInfo | undefined;
@@ -23,6 +23,12 @@ interface IOptionsHome {
 class OptionsHome implements IOptionsHome {
   rank?: PVPInfo | undefined;
   team?: PVPInfo | undefined;
+
+  static create(value: IOptionsHome) {
+    const obj = new OptionsHome();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 const PVPHome = () => {
@@ -52,10 +58,12 @@ const PVPHome = () => {
 
   useEffect(() => {
     if (!rank && !team && pvp) {
-      setOptions({
-        rank: pvp.rankings.at(0),
-        team: pvp.trains ? pvp.trains.at(0) : undefined,
-      });
+      setOptions(
+        OptionsHome.create({
+          rank: pvp.rankings.at(0),
+          team: pvp.trains.at(0),
+        })
+      );
     }
   }, [rank, team, pvp]);
 
@@ -81,6 +89,11 @@ const PVPHome = () => {
 
   return (
     <div className="container element-top element-bottom">
+      {stateTimestamp && JSON.parse(stateTimestamp).pvp && (
+        <h4>
+          <b>Updated: {getTime(JSON.parse(stateTimestamp).pvp, true)}</b>
+        </h4>
+      )}
       <p className="text-danger">
         <b>
           * Pokémon data source references from{' '}
@@ -96,10 +109,12 @@ const PVPHome = () => {
           className="w-25 form-control"
           value={rank?.id}
           onChange={(e) =>
-            setOptions({
-              ...options,
-              rank: pvp?.rankings.find((item) => item.id === e.target.value),
-            })
+            setOptions(
+              OptionsHome.create({
+                ...options,
+                rank: pvp?.rankings.find((item) => item.id === e.target.value),
+              })
+            )
           }
         >
           {pvp?.rankings.map((value, index) => (
@@ -143,10 +158,12 @@ const PVPHome = () => {
           className="w-25 form-control"
           value={team?.id}
           onChange={(e) =>
-            setOptions({
-              ...options,
-              team: pvp?.trains.find((item) => item.id === e.target.value),
-            })
+            setOptions(
+              OptionsHome.create({
+                ...options,
+                team: pvp?.trains.find((item) => item.id === e.target.value),
+              })
+            )
           }
         >
           {pvp?.trains.map((value, index) => (

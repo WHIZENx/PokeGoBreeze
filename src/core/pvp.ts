@@ -29,9 +29,9 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
 
     const result = new LeaguePVP();
     result.id = league ?? '';
-    result.name = splitAndCapitalize(item ? item.title : league, '_', ' ');
+    result.name = splitAndCapitalize((item ? item.title : league)?.replaceAll('-', '_'), '_', ' ');
     if (!result.name.toLowerCase().includes(result.id)) {
-      result.name = splitAndCapitalize(league, '_', ' ');
+      result.name = splitAndCapitalize(league?.replaceAll('-', '_'), '_', ' ');
     }
     result.cp = data
       .filter((item) => item.startsWith(league ?? '') && item.includes(`${league}/overall/`))

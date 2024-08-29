@@ -223,17 +223,17 @@ export const loadPVP = (
 ) => {
   APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, options).then((res) => {
     const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();
+    setStateTimestamp(
+      JSON.stringify(
+        LocalTimeStamp.create({
+          ...JSON.parse(stateTimestamp),
+          pvp: pvpDate,
+        })
+      )
+    );
     if (pvpDate !== JSON.parse(stateTimestamp).pvp) {
       const pvpUrl = res.data.at(0)?.commit.tree.url;
       if (pvpUrl) {
-        setStateTimestamp(
-          JSON.stringify(
-            LocalTimeStamp.create({
-              ...JSON.parse(stateTimestamp),
-              pvp: pvpDate,
-            })
-          )
-        );
         APIService.getFetchUrl<APITree>(pvpUrl, options)
           .then((pvpRoot) => {
             const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');
