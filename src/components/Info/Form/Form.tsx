@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/Constants';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/constants';
 import {
   capitalize,
   convertPokemonAPIDataName,
@@ -11,13 +11,13 @@ import {
   getFormFromForms,
   isNotEmpty,
   splitAndCapitalize,
-} from '../../../util/Utils';
+} from '../../../util/utils';
 import APIService from '../../../services/API.service';
 
 import './Form.scss';
 import Gender from '../Gender';
 import Stats from '../Stats/Stats';
-import { calBaseATK, calBaseDEF, calBaseSTA, convertAllStats } from '../../../util/Calculate';
+import { calBaseATK, calBaseDEF, calBaseSTA, convertAllStats } from '../../../util/calculate';
 import Raid from '../../Raid/Raid';
 import Counter from '../../Table/Counter/Counter';
 import TableMove from '../../Table/Move/MoveTable';

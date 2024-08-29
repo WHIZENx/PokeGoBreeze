@@ -10,9 +10,9 @@ import {
   convertPokemonDataName,
   isNotEmpty,
   splitAndCapitalize,
-} from '../../util/Utils';
-import { STAB_MULTIPLY } from '../../util/Constants';
-import { getBarCharge, queryTopMove } from '../../util/Calculate';
+} from '../../util/utils';
+import { STAB_MULTIPLY } from '../../util/constants';
+import { getBarCharge, queryTopMove } from '../../util/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 

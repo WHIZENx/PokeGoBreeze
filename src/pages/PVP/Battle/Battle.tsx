@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
-import { capitalize, convertNameRankingToOri, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
-import { findAssetForm, findStabType } from '../../../util/Compute';
-import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/Calculate';
+import { capitalize, convertNameRankingToOri, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { findAssetForm, findStabType } from '../../../util/compute';
+import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
 import {
   FORM_NORMAL,
   MAX_IV,
@@ -15,7 +15,7 @@ import {
   SHADOW_ATK_BONUS,
   SHADOW_DEF_BONUS,
   STAB_MULTIPLY,
-} from '../../../util/Constants';
+} from '../../../util/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -1678,23 +1678,25 @@ const Battle = () => {
         </div>
         <div className="col-lg-3">{renderPokemonInfo('pokemonObj', pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
       </div>
-      <div className="text-center element-top">
-        <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
-          {pokemonCurr.pokemonData && pokemonObj.pokemonData && isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
-            <Fragment>
-              <RestartAltIcon /> Reset Battle
-            </Fragment>
-          ) : (
-            <Fragment>
-              <span className="position-relative">
-                <img height={36} alt="atk-left" src={ATK_LOGO} />
-                <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
-              </span>{' '}
-              Battle Simulator
-            </Fragment>
-          )}
-        </button>
-      </div>
+      {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
+        <div className="text-center element-top">
+          <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
+            {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
+              <Fragment>
+                <RestartAltIcon /> Reset Battle
+              </Fragment>
+            ) : (
+              <Fragment>
+                <span className="position-relative">
+                  <img height={36} alt="atk-left" src={ATK_LOGO} />
+                  <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
+                </span>{' '}
+                Battle Simulator
+              </Fragment>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

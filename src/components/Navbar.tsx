@@ -7,7 +7,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 import logo from '../assets/pokedex.png';
-import { getTime } from '../util/Utils';
+import { getTime } from '../util/utils';
 
 import './Navbar.scss';
 import { Box, IconButton, LinearProgress, PaletteMode } from '@mui/material';
@@ -129,7 +129,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
           {timestamp && (
             <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
               <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
-                Update: {getTime(timestamp, true)}
+                Updated: {getTime(timestamp, true)}
               </span>
               <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
                 <b>{version}</b>

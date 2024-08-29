@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { computeBgType } from '../../util/Compute';
-import { splitAndCapitalize } from '../../util/Utils';
+import { computeBgType } from '../../util/compute';
+import { splitAndCapitalize } from '../../util/utils';
 import ProgressBar from '../Sprites/ProgressBar/ProgressBar';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';

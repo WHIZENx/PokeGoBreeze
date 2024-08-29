@@ -1,15 +1,15 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { capitalize, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
-import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/Calculate';
+import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
 import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_SHADOW, MAX_IV, maxLevel } from '../../../util/Constants';
+import { FORM_SHADOW, MAX_IV, maxLevel } from '../../../util/constants';
 import { Combat, ICombat } from '../../../core/models/combat.model';
 import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';

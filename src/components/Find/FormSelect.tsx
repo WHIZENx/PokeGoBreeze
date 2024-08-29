@@ -13,7 +13,7 @@ import {
   isNotEmpty,
   splitAndCapitalize,
   TypeRadioGroup,
-} from '../../util/Utils';
+} from '../../util/utils';
 import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { useDispatch } from 'react-redux';
@@ -29,7 +29,7 @@ import {
 } from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
 import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
-import { FORM_GMAX, FORM_NORMAL } from '../../util/Constants';
+import { FORM_GMAX, FORM_NORMAL } from '../../util/constants';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IFormSelectComponent } from '../models/component.model';

@@ -1,6 +1,6 @@
 import APIService from '../../services/API.service';
-import { FORM_NORMAL } from '../../util/Constants';
-import { convertPokemonImageName, splitAndCapitalize } from '../../util/Utils';
+import { FORM_NORMAL } from '../../util/constants';
+import { convertPokemonImageName, splitAndCapitalize } from '../../util/utils';
 import { IImage } from './asset.model';
 import { IPokemonData } from './pokemon.model';
 import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty, convertColumnDataType } from '../../../util/Utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty, convertColumnDataType } from '../../../util/utils';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -15,7 +15,7 @@ import {
   TYPE_LEGENDARY,
   TYPE_MYTHIC,
   TYPE_ULTRA_BEAST,
-} from '../../../util/Constants';
+} from '../../../util/constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -25,7 +25,7 @@ import {
   TimeToKill,
   calculateBattleDPSDefender,
   calculateStatsBattle,
-} from '../../../util/Calculate';
+} from '../../../util/calculate';
 
 import DataTable from 'react-data-table-component';
 import APIService from '../../../services/API.service';
@@ -46,7 +46,7 @@ import { Action } from 'history';
 import { TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { IPokemonData } from '../../../core/models/pokemon.model';
+import { Elite, IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -67,7 +67,7 @@ interface PokemonSheetData {
   purified: boolean;
   special: boolean;
   mShadow: boolean;
-  elite: { fMove: boolean; cMove: boolean };
+  elite: Elite;
   cp: number;
 }
 
@@ -361,8 +361,8 @@ const DpsTdo = () => {
             statsAttacker.def,
             statsAttacker.hp ?? 0,
             statsAttacker.types,
-            options,
-            statsAttacker.shadow
+            statsAttacker.shadow,
+            options
           );
           tdo = calculateTDO(data?.options, statsAttacker.def, statsAttacker.hp ?? 0, dps, statsAttacker.shadow);
         }

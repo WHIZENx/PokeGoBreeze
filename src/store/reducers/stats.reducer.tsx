@@ -1,6 +1,6 @@
 import { IStatsRank } from '../../core/models/stats.model';
-import { sortStatsPokemon } from '../../util/Calculate';
-import { FORM_NORMAL } from '../../util/Constants';
+import { sortStatsPokemon } from '../../util/calculate';
+import { FORM_NORMAL } from '../../util/constants';
 import { ArrayStats } from '../../util/models/util.model';
 import { StatsActions } from '../actions';
 import { StatsActionsUnion } from '../actions/stats.action';

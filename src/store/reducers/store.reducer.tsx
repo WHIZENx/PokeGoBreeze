@@ -1,5 +1,5 @@
 import { convertPVPRankings, convertPVPTrain } from '../../core/pvp';
-import { replaceTempMovePvpName } from '../../util/Utils';
+import { replaceTempMovePvpName } from '../../util/utils';
 import { Store, StoreModel } from '../models/store.model';
 import { StoreActions } from '../../store/actions';
 import { StoreActionsUnion } from '../actions/store.action';

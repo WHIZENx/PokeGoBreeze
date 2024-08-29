@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, isNotEmpty, mappingPokemonName } from '../../util/Utils';
+import { getPokemonById, isNotEmpty, mappingPokemonName } from '../../util/utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 

@@ -24,7 +24,7 @@ import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
 import { TypeMove } from '../enums/type.enum';
 import { IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
-import { findStabType } from './Compute';
+import { findStabType } from './compute';
 import {
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,
@@ -51,8 +51,8 @@ import {
   SHADOW_DEF_BONUS,
   STAB_MULTIPLY,
   typeCostPowerUp,
-} from './Constants';
-import { capitalize, splitAndCapitalize, checkMoveSetAvailable } from './Utils';
+} from './constants';
+import { capitalize, splitAndCapitalize, checkMoveSetAvailable } from './utils';
 import {
   BattleLeagueCalculate,
   PredictCPCalculate,
@@ -82,6 +82,7 @@ import {
   EDPS,
 } from './models/pokemon-top-move.model';
 import { IArrayStats } from './models/util.model';
+import { IBattleState } from '../core/models/damage.model';
 
 const weatherMultiple = (
   globalOptions: IOptions | undefined,
@@ -529,8 +530,8 @@ export const calculateBattleLeague = (
   IVsta: number,
   fromLV: number,
   currCP: number,
-  maxCp: number | null,
-  type: string
+  type: string,
+  maxCp?: number
 ) => {
   let level = maxLevel;
   if (type !== 'buddy') {
@@ -585,12 +586,12 @@ export const findCPforLeague = (
   IVdef: number,
   IVsta: number,
   level: number,
-  maxCPLeague: number | null
+  maxCPLeague?: number
 ) => {
   let CP = 10;
   let l = level;
   for (let i = level; i <= maxLevel; i += 0.5) {
-    if (maxCPLeague !== null && calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i) > maxCPLeague) {
+    if (maxCPLeague !== null && calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i) > (maxCPLeague ?? 0)) {
       break;
     }
     CP = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i);
@@ -613,7 +614,7 @@ export const sortStatsProd = (data: IBattleBaseStats[]) => {
   );
 };
 
-export const calStatsProd = (atk: number, def: number, sta: number, minCP: number | null, maxCP: number | null, pure = false) => {
+export const calStatsProd = (atk: number, def: number, sta: number, minCP?: number, maxCP?: number, pure = false) => {
   const dataList: IBattleBaseStats[] = [];
   if (atk === 0 || def === 0 || sta === 0) {
     return dataList;
@@ -680,16 +681,7 @@ export const calculateDamagePVE = (
   atk: number,
   defObj: number,
   power: number,
-  eff: {
-    stab: boolean;
-    wb: boolean;
-    dodge?: boolean;
-    mega?: boolean;
-    trainer?: boolean;
-    fLevel?: number;
-    cLevel?: number;
-    effective: number;
-  },
+  eff: IBattleState,
   notPure?: boolean,
   stab?: boolean
 ) => {
@@ -740,8 +732,8 @@ export const calculateAvgDPS = (
   def: number,
   hp: number,
   typePoke: string[],
-  options: IOptionOtherDPS | null = null,
-  isShadow = false
+  isShadow = false,
+  options?: IOptionOtherDPS
 ) => {
   const stabMultiply = STAB_MULTIPLY(globalOptions),
     shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
@@ -1137,7 +1129,6 @@ const queryMove = (
         statsDefBattle,
         statsStaBattle,
         data.types,
-        null,
         shadow
       );
       const defensive = calculateAvgDPS(
@@ -1150,8 +1141,8 @@ const queryMove = (
         statsDefBattle,
         statsStaBattle,
         data.types,
-        options,
-        shadow
+        shadow,
+        options
       );
 
       data.dataList.push(new PokemonQueryMove({ fMove: mf, cMove: mc, eDPS: EDPS.create({ offensive, defensive }) }));
@@ -1214,9 +1205,9 @@ export const queryStatesEvoChain = (
   const dataLittle = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, 500);
   const dataGreat = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, 1500);
   const dataUltra = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, 2500);
-  const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level, null);
+  const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, atkIV, defIV, staIV, level);
 
-  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, null, null, true);
+  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta ?? 0, undefined, undefined, true);
   const ultraStatsProd = sortStatsProd(statsProd.filter((item) => (item.CP ?? 0) <= 2500));
   const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => (item.CP ?? 0) <= 1500));
   const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => (item.CP ?? 0) <= 500));
@@ -1361,8 +1352,8 @@ const queryMoveCounter = (
         calculateStatsBattle(data.pokemon.baseStats.def, options.ivDef, options.pokemonLevel, true),
         calculateStatsBattle(data.pokemon.baseStats?.sta ?? 0, options.ivHp, options.pokemonLevel, true),
         data.pokemon.types,
-        options,
-        shadow
+        shadow,
+        options
       );
 
       data.dataList.push(

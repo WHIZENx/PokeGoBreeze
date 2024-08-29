@@ -1,8 +1,8 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { LevelSlider, TypeRadioGroup, capitalize } from '../../../util/Utils';
-import { calculateStatsBattle } from '../../../util/Calculate';
+import { LevelSlider, TypeRadioGroup, capitalize } from '../../../util/utils';
+import { calculateStatsBattle } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
 
@@ -10,7 +10,7 @@ import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import { useSelector } from 'react-redux';
-import { FORM_SHADOW, MAX_IV, maxLevel, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_SHADOW, MAX_IV, maxLevel, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { StoreState } from '../../../store/models/state.model';
 import { IStatsTableComponent } from '../../models/page.model';
 

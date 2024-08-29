@@ -1,9 +1,9 @@
-import { capitalize, replaceTempMoveName } from '../../util/Utils';
+import { capitalize, replaceTempMoveName } from '../../util/utils';
 import { ICombat } from './combat.model';
-import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/Constants';
+import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
-import { IEvoList, ITempEvo } from './evolution.model';
+import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 
 export interface OptionsPokemon {
   prev?: IPokemonName | undefined;
@@ -23,17 +23,23 @@ export interface IPokemonDataStats {
   iv: IStatsBase;
 }
 
+interface ComponentPokemonSettings {
+  pokedexId: string;
+  componentCandyCost: number;
+  formChangeType: string;
+}
+
 interface IPokemonFormChange {
   availableForm: string[];
   candyCost: string;
   stardustCost: string;
   item?: string;
   itemCostCount?: number;
-  componentPokemonSettings?: {
-    pokedexId: string;
-    componentCandyCost: number;
-    formChangeType: string;
-  };
+  componentPokemonSettings?: ComponentPokemonSettings;
+}
+
+interface QuestDisplay {
+  questRequirementTemplateId: string;
 }
 
 interface EvolutionBranch {
@@ -50,9 +56,7 @@ interface EvolutionBranch {
   lureItemRequirement: string;
   evolutionItemRequirement: string;
   onlyUpsideDown: boolean;
-  questDisplay: {
-    questRequirementTemplateId: string;
-  }[];
+  questDisplay: QuestDisplay[];
   temporaryEvolution: string;
   temporaryEvolutionEnergyCost: number;
   temporaryEvolutionEnergyCostSubsequent: number;
@@ -107,6 +111,49 @@ export class Encounter implements IEncounter {
   }
 }
 
+interface IStatsGO {
+  baseStamina: number;
+  baseAttack: number;
+  baseDefense: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class StatsGO implements IStatsGO {
+  baseStamina: number = 0;
+  baseAttack: number = 0;
+  baseDefense: number = 0;
+
+  static create(value: IStatsGO) {
+    const obj = new StatsGO();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface TempEvoOverrides {
+  tempEvoId: string;
+  stats: IStatsGO;
+}
+
+interface Camera {
+  diskRadiusM: number;
+  cylinderRadiusM: number;
+  cylinderHeightM: number;
+  shoulderModeScale: number;
+}
+
+interface IThirdMove {
+  stardustToUnlock: number;
+  candyToUnlock: number;
+}
+
+interface ShadowSetting {
+  purificationStardustNeeded: number;
+  purificationCandyNeeded: number;
+  purifiedChargeMove: string;
+  shadowChargeMove: string;
+}
+
 export interface PokemonModel {
   obSpecialAttackMoves?: string[];
   eliteQuickMove?: string[];
@@ -115,30 +162,14 @@ export interface PokemonModel {
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | undefined;
   formChange?: IPokemonFormChange[];
-  tempEvoOverrides: {
-    tempEvoId: string;
-    stats: {
-      baseStamina: number;
-      baseAttack: number;
-      baseDefense: number;
-    };
-  }[];
+  tempEvoOverrides: TempEvoOverrides[];
   pokemonId: string;
   modelScale: number;
   type: string;
   type2: string;
-  camera: {
-    diskRadiusM: number;
-    cylinderRadiusM: number;
-    cylinderHeightM: number;
-    shoulderModeScale: number;
-  };
+  camera: Camera;
   encounter: IEncounter;
-  stats?: {
-    baseStamina: number;
-    baseAttack: number;
-    baseDefense: number;
-  };
+  stats?: IStatsGO;
   quickMoves: string[];
   cinematicMoves: string[];
   animationTime: number[];
@@ -158,19 +189,11 @@ export interface PokemonModel {
   buddyOffsetMale: number[];
   buddyOffsetFemale: number[];
   buddyScale: number;
-  thirdMove?: {
-    stardustToUnlock: number;
-    candyToUnlock: number;
-  };
+  thirdMove?: IThirdMove;
   isTransferable: boolean;
   isDeployable: boolean;
   isTradable: boolean;
-  shadow?: {
-    purificationStardustNeeded: number;
-    purificationCandyNeeded: number;
-    purifiedChargeMove: string;
-    shadowChargeMove: string;
-  };
+  shadow?: ShadowSetting;
   buddyGroupNumber: number;
   buddyWalkedMegaEnergyAward: number;
   id: number;
@@ -255,20 +278,19 @@ export interface IPokemonData {
   purifiedMoves?: string[];
   evoList?: IEvoList[];
   tempEvo?: ITempEvo[];
-  purified?: {
-    stardust?: number;
-    candy?: number;
-  };
-  thirdMove?: {
-    stardust?: number;
-    candy?: number;
-  };
+  purified?: IPokemonTypeCost;
+  thirdMove?: IPokemonTypeCost;
   encounter?: IEncounter;
 }
 
 export interface IPokemonName {
   id: number;
   name: string;
+}
+
+export interface Elite {
+  fMove: boolean;
+  cMove: boolean;
 }
 
 export interface PokemonMoveData {
@@ -288,7 +310,7 @@ export interface PokemonMoveData {
   shadow?: boolean;
   purified?: boolean;
   mShadow?: boolean;
-  elite?: { fMove: boolean; cMove: boolean };
+  elite?: Elite;
   trainerId?: number;
   atk?: number;
   def?: number;
@@ -335,14 +357,8 @@ export interface IPokemonDataOptional {
   purifiedMoves?: string[];
   evoList?: IEvoList[];
   tempEvo?: ITempEvo[];
-  purified?: {
-    stardust?: number;
-    candy?: number;
-  };
-  thirdMove?: {
-    stardust?: number;
-    candy?: number;
-  };
+  purified?: IPokemonTypeCost;
+  thirdMove?: IPokemonTypeCost;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -361,14 +377,8 @@ export class PokemonDataOptional implements IPokemonDataOptional {
   purifiedMoves?: string[];
   evoList?: IEvoList[];
   tempEvo?: ITempEvo[];
-  purified?: {
-    stardust?: number;
-    candy?: number;
-  };
-  thirdMove?: {
-    stardust?: number;
-    candy?: number;
-  };
+  purified?: IPokemonTypeCost;
+  thirdMove?: IPokemonTypeCost;
 
   constructor({ ...props }: IPokemonDataOptional) {
     Object.assign(this, props);
@@ -419,14 +429,8 @@ export class PokemonData implements IPokemonData {
   purifiedMoves?: string[];
   evoList?: IEvoList[];
   tempEvo?: ITempEvo[];
-  purified?: {
-    stardust?: number;
-    candy?: number;
-  };
-  thirdMove?: {
-    stardust?: number;
-    candy?: number;
-  };
+  purified?: IPokemonTypeCost;
+  thirdMove?: IPokemonTypeCost;
   baseFormeAlias: string = '';
   baseFormeSlug: string = '';
   baseFormeSprite: string = '';

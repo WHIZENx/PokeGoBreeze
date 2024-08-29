@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import TypeInfo from '../Sprites/Type/Type';
 import { ITypeEffectiveComponent } from '../models/component.model';
-import { isNotEmpty } from '../../util/Utils';
+import { isNotEmpty } from '../../util/utils';
 
 const TypeEffective = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => {

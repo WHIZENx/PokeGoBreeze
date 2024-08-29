@@ -1,6 +1,6 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../../util/Utils';
+import { splitAndCapitalize } from '../../../util/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';

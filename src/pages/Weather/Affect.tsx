@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardWeather from '../../components/Card/CardWeather';
 import WeatherEffective from '../../components/Effective/WeatherEffective';
-import { splitAndCapitalize } from '../../util/Utils';
+import { splitAndCapitalize } from '../../util/utils';
 import { IWeatherAffComponent } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 

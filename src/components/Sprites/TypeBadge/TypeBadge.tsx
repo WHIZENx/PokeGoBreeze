@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
+import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
 import { ITypeBadgeComponent } from '../../models/component.model';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {

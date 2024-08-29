@@ -5,9 +5,9 @@ import loadingImg from '../../assets/loading.png';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
-import { queryAssetForm } from '../../util/Compute';
+import { queryAssetForm } from '../../util/compute';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -20,7 +20,7 @@ import {
   TYPE_MYTHIC,
   TYPE_ULTRA_BEAST,
   versionList,
-} from '../../util/Constants';
+} from '../../util/constants';
 import {
   Checkbox,
   FormControl,

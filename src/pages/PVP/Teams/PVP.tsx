@@ -6,12 +6,13 @@ import {
   convertNameRankingToForm,
   convertNameRankingToOri,
   findMoveTeam,
+  getAllMoves,
   getStyleSheet,
   isNotEmpty,
   splitAndCapitalize,
-} from '../../../util/Utils';
-import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/Compute';
-import { calculateStatsByTag } from '../../../util/Calculate';
+} from '../../../util/utils';
+import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
+import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -27,23 +28,18 @@ import { StatsState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
-import { FORM_NORMAL, FORM_SHADOW } from '../../../util/Constants';
-import { IPokemonData } from '../../../core/models/pokemon.model';
+import { FORM_NORMAL, FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
+import { LocalStorageConfig } from '../../../store/constants/localStorage';
+import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const allMoves = useSelector((state: StoreState) => state.store.data?.combat?.map((c) => c.name) ?? []);
   const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    'timestamp',
-    JSON.stringify({
-      gamemaster: null,
-      pvp: null,
-    })
-  );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<TeamsPVP>();
@@ -242,21 +238,6 @@ const TeamPVP = () => {
     return sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy];
   };
 
-  const getAllMoves = (pokemon: IPokemonData | undefined) => {
-    if (!pokemon) {
-      return [];
-    }
-
-    return (pokemon.quickMoves ?? []).concat(
-      pokemon.eliteQuickMove ?? [],
-      pokemon.cinematicMoves ?? [],
-      pokemon.eliteCinematicMove ?? [],
-      pokemon.shadowMoves ?? [],
-      pokemon.purifiedMoves ?? [],
-      pokemon.specialMoves ?? []
-    );
-  };
-
   return (
     <div className="container pvp-container element-bottom">
       {renderLeague()}
@@ -378,7 +359,7 @@ const TeamPVP = () => {
                       shadow={value.pokemonData?.shadowMoves?.includes(value.cMovePri?.name ?? '')}
                       purified={value.pokemonData?.purifiedMoves?.includes(value.cMovePri?.name ?? '')}
                       special={value.pokemonData?.specialMoves?.includes(value.cMovePri?.name ?? '')}
-                      unavailable={!getAllMoves(value.pokemonData).includes(value.cMovePri?.name ?? '')}
+                      unavailable={value.cMovePri && !getAllMoves(value.pokemonData).includes(value.cMovePri?.name ?? '')}
                     />
                     {value.cMoveSec && (
                       <TypeBadge
@@ -391,7 +372,7 @@ const TeamPVP = () => {
                         shadow={value.pokemonData?.shadowMoves?.includes(value.cMoveSec.name)}
                         purified={value.pokemonData?.purifiedMoves?.includes(value.cMoveSec.name)}
                         special={value.pokemonData?.specialMoves?.includes(value.cMoveSec.name)}
-                        unavailable={!getAllMoves(value.pokemonData).includes(value.cMoveSec.name)}
+                        unavailable={value.cMoveSec && !getAllMoves(value.pokemonData).includes(value.cMoveSec.name)}
                       />
                     )}
                   </div>

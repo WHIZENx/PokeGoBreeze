@@ -41,10 +41,12 @@ import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes, ThemeModify } from './util/models/overrides/themes.model';
-import { TRANSITION_TIME } from './util/Constants';
+import { TRANSITION_TIME } from './util/constants';
 import { PaletteMode } from '@mui/material';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
+import { LocalStorageConfig } from './store/constants/localStorage';
+import { LocalTimeStamp } from './store/models/local-storage.model';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -52,21 +54,12 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 function App() {
   const dispatch = useDispatch();
 
-  const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    'timestamp',
-    JSON.stringify({
-      gamemaster: null,
-      pvp: null,
-      images: null,
-      sounds: null,
-    })
-  );
-  const [stateImage, setStateImage] = useLocalStorage('assets', '');
-  const [stateSound, setStateSound] = useLocalStorage('sounds', '');
-
   const theme = useTheme<ThemeModify>();
   const colorMode = useContext(ColorModeContext);
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, 'light');
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.ASSETS, '');
+  const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.SOUNDS, '');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -121,7 +114,7 @@ function App() {
 }
 
 export default function Main() {
-  const [stateMode] = useLocalStorage('theme', 'light');
+  const [stateMode] = useLocalStorage(LocalStorageConfig.THEME, 'light');
   const [mode, setMode] = useState(stateMode ?? 'light');
   const colorMode = useMemo(
     () => ({

@@ -22,9 +22,10 @@ import APIService from '../../services/API.service';
 import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { APIPath, APITreeRoot, APITree } from '../../services/models/api.model';
-import { BASE_CPM, MIN_LEVEL, maxLevel } from '../../util/Constants';
+import { BASE_CPM, MIN_LEVEL, maxLevel } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
+import { LocalTimeStamp } from '../models/local-storage.model';
 
 const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
@@ -78,12 +79,14 @@ export const loadTimestamp = async (
       const imageTimestamp = new Date(imageRoot.data[0].commit.committer.date).getTime();
       const soundTimestamp = new Date(soundsRoot.data[0].commit.committer.date).getTime();
       setStateTimestamp(
-        JSON.stringify({
-          ...JSON.parse(stateTimestamp),
-          gamemaster: parseInt(GMtimestamp.data),
-          images: imageTimestamp,
-          sounds: soundTimestamp,
-        })
+        JSON.stringify(
+          LocalTimeStamp.create({
+            ...JSON.parse(stateTimestamp),
+            gamemaster: parseInt(GMtimestamp.data),
+            images: imageTimestamp,
+            sounds: soundTimestamp,
+          })
+        )
       );
 
       const timestampLoaded = {
@@ -220,15 +223,17 @@ export const loadPVP = (
 ) => {
   APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, options).then((res) => {
     const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();
+    setStateTimestamp(
+      JSON.stringify(
+        LocalTimeStamp.create({
+          ...JSON.parse(stateTimestamp),
+          pvp: pvpDate,
+        })
+      )
+    );
     if (pvpDate !== JSON.parse(stateTimestamp).pvp) {
       const pvpUrl = res.data.at(0)?.commit.tree.url;
       if (pvpUrl) {
-        setStateTimestamp(
-          JSON.stringify({
-            ...JSON.parse(stateTimestamp),
-            pvp: pvpDate,
-          })
-        );
         APIService.getFetchUrl<APITree>(pvpUrl, options)
           .then((pvpRoot) => {
             const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');

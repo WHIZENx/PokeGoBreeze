@@ -1,4 +1,4 @@
-import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
+import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 

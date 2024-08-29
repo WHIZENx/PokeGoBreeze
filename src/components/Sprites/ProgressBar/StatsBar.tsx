@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { FORM_NORMAL } from '../../../util/Constants';
+import { FORM_NORMAL } from '../../../util/constants';
 import { IStatsBarComponent } from '../../models/component.model';
 
 interface Element {

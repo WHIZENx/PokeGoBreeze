@@ -7,10 +7,10 @@ import {
   getPokemonDetails,
   isNotEmpty,
   convertColumnDataType,
-} from '../../../util/Utils';
+} from '../../../util/utils';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
-import { calculateStatsByTag } from '../../../util/Calculate';
+import { calculateStatsByTag } from '../../../util/calculate';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
 
@@ -28,7 +28,7 @@ import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
-import { FORM_MEGA, FORM_NORMAL } from '../../../util/Constants';
+import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
