@@ -8,8 +8,8 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, isNotEmpty } from '../../../util/Utils';
-import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/Compute';
+import { getTime, splitAndCapitalize, capitalize, isNotEmpty } from '../../../util/utils';
+import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -17,7 +17,7 @@ import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
 import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
-import { FORM_NORMAL } from '../../../util/Constants';
+import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 interface LeagueData {
@@ -49,7 +49,7 @@ const Leagues = () => {
   };
 
   const LeaveToggle = ({ eventKey }: any) => {
-    const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
+    const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
       <div className="accordion-footer" onClick={decoratedOnClick}>
@@ -158,7 +158,7 @@ const Leagues = () => {
                     height={140}
                     src={APIService.getAssetPokeGo(dataStore?.leagues?.data.find((item) => item.title === league.league)?.iconUrl ?? '')}
                   />
-                  <span className={'badge-league ' + league.league.toLowerCase().replaceAll('_', '-')}>
+                  <span className={`badge-league ${league.league.toLowerCase().replaceAll('_', '-')}`}>
                     <div className="sub-badge">
                       <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />
                     </div>
@@ -200,7 +200,7 @@ const Leagues = () => {
                 <h6 className="title-leagues">Unique Selected</h6>
                 {league.conditions.uniqueSelected ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
               </li>
-              {league.conditions.uniqueType && (
+              {isNotEmpty(league.conditions.uniqueType) && (
                 <li style={{ fontWeight: 500 }} className="unique-type">
                   <h6 className="title-leagues">Unique Type</h6>
                   <TypeInfo arr={league.conditions.uniqueType ?? []} style={{ marginLeft: 15 }} />
@@ -228,8 +228,9 @@ const Leagues = () => {
                         </span>
                       </div>
                       <span className="caption">
-                        {splitAndCapitalize(item.name?.toLowerCase(), '_', ' ') +
-                          (item.form?.toUpperCase() === FORM_NORMAL ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                        {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
+                          item.form?.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                        }`}
                       </span>
                     </Link>
                   ))}
@@ -257,8 +258,9 @@ const Leagues = () => {
                         </span>
                       </div>
                       <span className="caption">
-                        {splitAndCapitalize(item.name?.toLowerCase(), '_', ' ') +
-                          (item.form?.toUpperCase() === FORM_NORMAL ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                        {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
+                          item.form?.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                        }`}
                       </span>
                     </Link>
                   ))}

@@ -5,9 +5,9 @@ import loadingImg from '../../assets/loading.png';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { isNotEmpty, splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
-import { queryAssetForm } from '../../util/Compute';
+import { queryAssetForm } from '../../util/compute';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -20,7 +20,7 @@ import {
   TYPE_MYTHIC,
   TYPE_ULTRA_BEAST,
   versionList,
-} from '../../util/Constants';
+} from '../../util/constants';
 import {
   Checkbox,
   FormControl,
@@ -252,11 +252,9 @@ const Home = () => {
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
-                className={
-                  'btn-select-type w-100 border-types btn-' +
-                  theme.palette.mode +
-                  (selectTypes.includes(item) ? ' select-type' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '') : '')
-                }
+                className={`btn-select-type w-100 border-types btn-${theme.palette.mode} ${
+                  selectTypes.includes(item) ? `select-type${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}` : ''
+                }`}
                 style={{ padding: 10, transition: TRANSITION_TIME }}
               >
                 <TypeInfo block={true} arr={[item]} />
@@ -270,13 +268,13 @@ const Home = () => {
             <div className="row" style={{ margin: 0 }}>
               <div className="col-xl-4" style={{ padding: 0 }}>
                 <div className="d-flex">
-                  <span className={'input-group-text ' + (theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>
+                  <span className={`input-group-text ${theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : ''}`}>
                     Search name or ID
                   </span>
                   <input
                     type="text"
                     style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
-                    className={'form-control input-search' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
+                    className={`form-control input-search${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}`}
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
                     onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
@@ -332,7 +330,7 @@ const Home = () => {
                       value={gen}
                       onChange={handleChangeGen}
                       input={<OutlinedInput label="Generation(s)" />}
-                      renderValue={(selected) => 'Gen ' + selected.map((item) => (item + 1).toString()).join(', Gen ')}
+                      renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
                         <ListItemText
@@ -380,7 +378,7 @@ const Home = () => {
                   </FormControl>
                 </div>
                 <div className="input-group border-input">
-                  <span className={'input-group-text ' + (theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>
+                  <span className={`input-group-text ${theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : ''}`}>
                     Filter only by
                   </span>
                   <FormControlLabel

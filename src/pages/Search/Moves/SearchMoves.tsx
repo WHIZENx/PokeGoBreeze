@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { capitalize, convertColumnDataType, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertColumnDataType, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -34,14 +34,14 @@ const columns: TableColumnModify<ICombat>[] = [
   },
   {
     name: 'Type',
-    selector: (row) => <div className={'type-icon-small ' + row.type?.toLowerCase()}>{capitalize(row.type)}</div>,
+    selector: (row) => <div className={`type-icon-small ${row.type?.toLowerCase()}`}>{capitalize(row.type)}</div>,
     sortable: true,
     sortFunction: moveSort,
   },
   {
     name: 'Name',
     selector: (row) => (
-      <Link to={'/move/' + row.track + (row.track === 281 && row.type !== 'NORMAL' ? '?type=' + row.type?.toLowerCase() : '')}>
+      <Link to={`/move/${row.track}${row.track === 281 && row.type !== 'NORMAL' ? `?type=${row.type?.toLowerCase()}` : ''}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),

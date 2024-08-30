@@ -2,15 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { leaguesTeamBattle } from '../../util/Constants';
-import { loadPVP } from '../../store/effects/store.effects';
+import { leaguesTeamBattle } from '../../util/constants';
+import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Link } from 'react-router-dom';
 import { SpinnerState, StoreState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
-import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/Compute';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/compute';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
+import { LocalStorageConfig } from '../../store/constants/localStorage';
+import { LocalTimeStamp } from '../../store/models/local-storage.model';
+import { getTime, isNotEmpty } from '../../util/utils';
 
 interface IOptionsHome {
   rank?: PVPInfo | undefined;
@@ -20,21 +23,22 @@ interface IOptionsHome {
 class OptionsHome implements IOptionsHome {
   rank?: PVPInfo | undefined;
   team?: PVPInfo | undefined;
+
+  static create(value: IOptionsHome) {
+    const obj = new OptionsHome();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 const PVPHome = () => {
   useChangeTitle('PVP - Simulator');
   const dispatch = useDispatch();
   const pvp = useSelector((state: StoreState) => state.store?.data?.pvp);
+  const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    'timestamp',
-    JSON.stringify({
-      gamemaster: null,
-      pvp: null,
-    })
-  );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
@@ -44,17 +48,22 @@ const PVPHome = () => {
     if (!pvp) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
+    if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
+      loadPVPMoves(dispatch);
+    }
     if (spinner.loading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [pvp, spinner, dispatch]);
+  }, [pvp, spinner, combat, dispatch]);
 
   useEffect(() => {
     if (!rank && !team && pvp) {
-      setOptions({
-        rank: pvp.rankings.at(0),
-        team: pvp.trains ? pvp.trains.at(0) : undefined,
-      });
+      setOptions(
+        OptionsHome.create({
+          rank: pvp.rankings.at(0),
+          team: pvp.trains.at(0),
+        })
+      );
     }
   }, [rank, team, pvp]);
 
@@ -80,6 +89,11 @@ const PVPHome = () => {
 
   return (
     <div className="container element-top element-bottom">
+      {stateTimestamp && JSON.parse(stateTimestamp).pvp && (
+        <h4>
+          <b>Updated: {getTime(JSON.parse(stateTimestamp).pvp, true)}</b>
+        </h4>
+      )}
       <p className="text-danger">
         <b>
           * Pokémon data source references from{' '}
@@ -95,10 +109,12 @@ const PVPHome = () => {
           className="w-25 form-control"
           value={rank?.id}
           onChange={(e) =>
-            setOptions({
-              ...options,
-              rank: pvp?.rankings.find((item) => item.id === e.target.value),
-            })
+            setOptions(
+              OptionsHome.create({
+                ...options,
+                rank: pvp?.rankings.find((item) => item.id === e.target.value),
+              })
+            )
           }
         >
           {pvp?.rankings.map((value, index) => (
@@ -142,10 +158,12 @@ const PVPHome = () => {
           className="w-25 form-control"
           value={team?.id}
           onChange={(e) =>
-            setOptions({
-              ...options,
-              team: pvp?.trains.find((item) => item.id === e.target.value),
-            })
+            setOptions(
+              OptionsHome.create({
+                ...options,
+                team: pvp?.trains.find((item) => item.id === e.target.value),
+              })
+            )
           }
         >
           {pvp?.trains.map((value, index) => (

@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, convertColumnDataType, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, convertColumnDataType, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
-import { computeBgType } from '../../../util/Compute';
+import { computeBgType } from '../../../util/compute';
 import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { calculateStatsByTag } from '../../../util/Calculate';
+import { calculateStatsByTag } from '../../../util/calculate';
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { DEFAULT_TYPES } from '../../../util/Constants';
+import { DEFAULT_TYPES } from '../../../util/constants';
 import { ICombat } from '../../../core/models/combat.model';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
@@ -102,7 +102,7 @@ const columnMove: TableColumnModify<ICombat>[] = [
   {
     name: 'Move Name',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={'/move/' + row.id} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
+      <Link className="d-flex align-items-center" to={`/move/${row.id}`} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),
@@ -245,7 +245,7 @@ const SearchTypes = () => {
       <div className="row">
         <div className="col-xl-4 element-top">
           <div
-            className={'d-flex flex-column align-items-center type-info-container ' + currentType?.toLowerCase() + '-border'}
+            className={`d-flex flex-column align-items-center type-info-container ${currentType?.toLowerCase()}-border`}
             style={{ background: computeBgType(currentType, false, false, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
@@ -258,7 +258,7 @@ const SearchTypes = () => {
             </div>
             <span
               style={{ width: 'max-content' }}
-              className={currentType?.toLowerCase() + ' type-select-bg d-flex align-items-center filter-shadow element-top'}
+              className={`${currentType?.toLowerCase()} type-select-bg d-flex align-items-center filter-shadow element-top`}
             >
               <div style={{ display: 'contents', width: 16 }}>
                 <img

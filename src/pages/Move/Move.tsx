@@ -10,9 +10,9 @@ import {
   convertPokemonDataName,
   isNotEmpty,
   splitAndCapitalize,
-} from '../../util/Utils';
-import { STAB_MULTIPLY } from '../../util/Constants';
-import { getBarCharge, queryTopMove } from '../../util/Calculate';
+} from '../../util/utils';
+import { STAB_MULTIPLY } from '../../util/constants';
+import { getBarCharge, queryTopMove } from '../../util/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
@@ -126,7 +126,7 @@ const Move = (props: IMovePage) => {
           setMove(move);
           document.title = `#${move?.track} - ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`;
         } else {
-          enqueueSnackbar('Move ID: ' + id + ' Not found!', { variant: 'error' });
+          enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: 'error' });
           if (id) {
             document.title = `#${id} - Not Found`;
           }
@@ -151,7 +151,7 @@ const Move = (props: IMovePage) => {
   }, [move, data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost]);
 
   return (
-    <div className={'element-bottom poke-container' + (props.id ? '' : ' container')}>
+    <div className={`element-bottom poke-container ${props.id ? '' : 'container'}`}>
       {move ? (
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
@@ -194,7 +194,7 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={3}>{'Stats ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ') + ' in Pokémon GO'}</th>
+                <th colSpan={3}>{`Stats ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} in Pokémon GO`}</th>
               </tr>
             </thead>
             <tbody>
@@ -214,7 +214,7 @@ const Move = (props: IMovePage) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div style={{ width: 'fit-content' }} className={'type-icon-small ' + move?.type?.toLowerCase()}>
+                    <div style={{ width: 'fit-content' }} className={`type-icon-small ${move?.type?.toLowerCase()}`}>
                       {capitalize(move?.type)}
                     </div>
                   )}
@@ -335,7 +335,7 @@ const Move = (props: IMovePage) => {
                         {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}
                         <span className="d-inline-block caption">
                           {value.type === TypeAction.ATK ? 'Attack ' : 'Defense '}
-                          <span className={'buff-power ' + (value.power > 0 ? 'text-success' : 'text-danger')}>
+                          <span className={`buff-power ${value.power > 0 ? 'text-success' : 'text-danger'}`}>
                             <b>
                               {value.power > 0 && '+'}
                               {value.power}
@@ -393,7 +393,7 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-damage-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={2}>{'Damage ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ') + ' Simulator'}</th>
+                <th colSpan={2}>{`Damage ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} Simulator`}</th>
               </tr>
             </thead>
             <tbody>
@@ -456,7 +456,7 @@ const Move = (props: IMovePage) => {
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>
                   <div className="input-group align-items-center justify-content-center">
-                    <span>{'Top Pokémon in move ' + splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</span>
+                    <span>{`Top Pokémon in move ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`}</span>
                     <FormControlLabel
                       control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
                       label={

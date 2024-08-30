@@ -6,10 +6,10 @@ import { Tabs, Tab } from 'react-bootstrap';
 import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
-import { findStabType } from '../../../util/Compute';
-import { MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/Constants';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
+import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { findStabType } from '../../../util/compute';
+import { MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 import { useSnackbar } from 'notistack';
 
 import ATK_LOGO from '../../../assets/attack.png';
@@ -21,6 +21,7 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { BattleState } from '../../../core/models/damage.model';
 
 class ColorTone {
   number: number;
@@ -139,11 +140,11 @@ const CalculatePoint = () => {
           calculateStatsBattle(statATK, j, i, true),
           statDefDEF,
           move ? (!isRaid && pvpDmg ? move.pvpPower : move.pvePower) : 0,
-          {
+          BattleState.create({
             effective: getTypeEffective(typeEff, move?.type ?? '', formDef?.form.types ?? []),
             stab: findStabType(form?.form.types ?? [], move?.type ?? ''),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
-          },
+          }),
           false
         );
         dataList[lv].push(result);
@@ -172,11 +173,11 @@ const CalculatePoint = () => {
           statDefATK,
           calculateStatsBattle(statDEF, j, i, true),
           moveDef ? (!isRaid && pvpDmg ? moveDef.pvpPower : moveDef.pvePower) : 0,
-          {
+          BattleState.create({
             effective: getTypeEffective(typeEff, moveDef?.type ?? '', form?.form.types ?? []),
             stab: findStabType(formDef?.form.types ?? [], moveDef?.type ?? ''),
             wb: (!pvpDmg || isRaid) && weatherBoosts,
-          },
+          }),
           false
         );
         dataListDef[lv].push(resultDef);
@@ -229,11 +230,11 @@ const CalculatePoint = () => {
               statDefATK,
               calculateStatsBattle(statDEF, DEFIv, lv, true),
               (!isRaid && pvpDmg ? cMove?.pvpPower : cMove?.pvePower) ?? 0,
-              {
+              BattleState.create({
                 effective: getTypeEffective(typeEff, cMove?.type ?? '', form?.form.types ?? []),
                 stab: findStabType(formDef?.form.types ?? [], cMove?.type ?? ''),
                 wb: (!pvpDmg || isRaid) && weatherBoosts,
-              },
+              }),
               false
             )) /
           calculateDamagePVE(
@@ -241,11 +242,11 @@ const CalculatePoint = () => {
             statDefATK,
             calculateStatsBattle(statDEF, DEFIv, lv, true),
             (!isRaid && pvpDmg ? fMove?.pvpPower : fMove?.pvePower) ?? 0,
-            {
+            BattleState.create({
               effective: getTypeEffective(typeEff, fMove?.type ?? '', form?.form.types ?? []),
               stab: findStabType(formDef?.form.types ?? [], fMove?.type ?? ''),
               wb: (!pvpDmg || isRaid) && weatherBoosts,
-            },
+            }),
             false
           )
       )
@@ -416,7 +417,7 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
+                        - Move Type: <span className={`type-icon-small ${move.type?.toLowerCase()}`}>{capitalize(move.type)}</span>
                       </p>
                       {findStabType(form?.form.types ?? [], move.type ?? '')}
                       <p>
@@ -543,7 +544,7 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(moveDef.typeMove)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={'type-icon-small ' + moveDef.type?.toLowerCase()}>{capitalize(moveDef.type)}</span>
+                        - Move Type: <span className={`type-icon-small ${moveDef.type?.toLowerCase()}`}>{capitalize(moveDef.type)}</span>
                       </p>
                       {findStabType(formDef?.form.types ?? [], moveDef?.type ?? '')}
                       <p>
@@ -698,7 +699,7 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{capitalize(fMove.typeMove)}</b>
                         </p>
                         <p>
-                          - Move Type: <span className={'type-icon-small ' + fMove?.type?.toLowerCase()}>{capitalize(fMove.type)}</span>
+                          - Move Type: <span className={`type-icon-small ${fMove?.type?.toLowerCase()}`}>{capitalize(fMove.type)}</span>
                         </p>
                         {findStabType(formDef?.form.types ?? [], fMove?.type ?? '')}
                         <p>
@@ -731,7 +732,7 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{capitalize(cMove.typeMove)}</b>
                         </p>
                         <p>
-                          - Move Type: <span className={'type-icon-small ' + cMove?.type?.toLowerCase()}>{capitalize(cMove.type)}</span>
+                          - Move Type: <span className={`type-icon-small ${cMove?.type?.toLowerCase()}`}>{capitalize(cMove.type)}</span>
                         </p>
                         {findStabType(formDef?.form.types ?? [], cMove?.type ?? '')}
                         <p>
@@ -860,7 +861,7 @@ const CalculatePoint = () => {
                             {resultBulkPointDef ? (
                               <Fragment>
                                 {resultBulkPointDef.data[i].map((value, index) => (
-                                  <td className={'text-iv-bulk' + (value === 0 ? getBorderSplit(i, index) : '')} key={index}>
+                                  <td className={`text-iv-bulk ${value === 0 ? getBorderSplit(i, index) : ''}`} key={index}>
                                     {value}
                                   </td>
                                 ))}

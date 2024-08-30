@@ -1,6 +1,6 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
 import { Buff, Combat } from './models/combat.model';
-import { EvoList, EvolutionQuest, EvolutionQuestCondition } from './models/evolution.model';
+import { EvoList, EvolutionQuest, EvolutionQuestCondition, PokemonTypeCost } from './models/evolution.model';
 import {
   League,
   LeagueData,
@@ -9,11 +9,13 @@ import {
   IPokemonRewardLeague,
   IRankRewardLeague,
   PokemonRewardLeague,
+  LeagueTimestamp,
+  Season,
 } from './models/league.model';
 import { ISticker, Sticker } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
-import { checkMoveSetAvailable, convertPokemonDataName, isNotEmpty, replacePokemonGoForm, replaceTempMoveName } from '../util/Utils';
+import { checkMoveSetAvailable, convertPokemonDataName, isNotEmpty, replacePokemonGoForm, replaceTempMoveName } from '../util/utils';
 import { ITypeSet, TypeSet } from './models/type.model';
 import { TypeAction, TypeMove } from '../enums/type.enum';
 import {
@@ -24,6 +26,7 @@ import {
   PokemonEncounter,
   PokemonGenderRatio,
   PokemonModel,
+  StatsGO,
 } from './models/pokemon.model';
 import { ITypeEff } from './models/type-eff.model';
 import {
@@ -36,10 +39,10 @@ import {
   FORM_PRIMAL,
   FORM_SHADOW,
   FORM_SPECIAL,
-} from '../util/Constants';
+} from '../util/constants';
 import { APIUrl } from '../services/constants';
 import { BuddyFriendship, PokemonDataGM, IPokemonPermission, TrainerFriendship, Options, PokemonPermission } from './models/options.model';
-import { calculateStatsByTag } from '../util/Calculate';
+import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
 
 export const getOption = <T>(options: any, args: string[]): T => {
@@ -113,7 +116,7 @@ export const optionPokemonTypes = (data: PokemonDataGM[]) => {
 const optionFormNoneSpecial = (data: PokemonDataGM[]) => {
   const result: string[] = [];
   data
-    .filter((item) => /^FORMS_V\d{4}_POKEMON_*/g.test(item.templateId) && item.data?.formSettings?.forms)
+    .filter((item) => /^FORMS_V\d{4}_POKEMON_*/g.test(item.templateId) && isNotEmpty(item.data?.formSettings?.forms))
     .forEach((item) => {
       item.data.formSettings.forms.forEach((f) => {
         if (f.form && !f.isCostume && !f.assetBundleSuffix) {
@@ -183,16 +186,16 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     if (pokemonSettings.shadow) {
       optional.shadowMoves = [pokemonSettings.shadow.shadowChargeMove];
       optional.purifiedMoves = [pokemonSettings.shadow.purifiedChargeMove];
-      optional.purified = {
+      optional.purified = PokemonTypeCost.create({
         stardust: pokemonSettings.shadow.purificationStardustNeeded,
         candy: pokemonSettings.shadow.purificationCandyNeeded,
-      };
+      });
     }
     if (pokemonSettings.thirdMove) {
-      optional.thirdMove = {
+      optional.thirdMove = PokemonTypeCost.create({
         stardust: pokemonSettings.thirdMove.stardustToUnlock,
         candy: pokemonSettings.thirdMove.candyToUnlock,
-      };
+      });
     }
 
     const goForm = replacePokemonGoForm(pokemonSettings.pokemonId);
@@ -455,11 +458,11 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
 
       if (!pokemon.stats?.baseAttack && !pokemon.stats?.baseAttack && !pokemon.stats?.baseAttack) {
         const stats = calculateStatsByTag(undefined, item.baseStats, item.slug);
-        pokemon.stats = {
+        pokemon.stats = StatsGO.create({
           baseAttack: stats.atk,
           baseDefense: stats.def,
           baseStamina: stats.sta ?? 0,
-        };
+        });
       }
 
       optional.genderRatio = PokemonGenderRatio.create(item.genderRatio.M, item.genderRatio.F);
@@ -544,7 +547,7 @@ export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         const sticker = stickers.find((sticker) => sticker.id === id.split('.')[0]);
         if (sticker) {
           sticker.shop = true;
-          sticker.pack.push(parseInt(id.replace(sticker.id + '.', '')));
+          sticker.pack.push(parseInt(id.replace(`${sticker.id}.`, '')));
         }
       } else if (item.data.stickerMetadata) {
         const sticker = new Sticker();
@@ -582,10 +585,10 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       } else {
         form = formList[1].replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
       }
-      if (formSet.includes(formSet[count].replace('.icon', '') + '.s.icon')) {
+      if (formSet.includes(`${formSet[count].replace('.icon', '')}.s.icon`)) {
         shiny = true;
       }
-      if (!formSet[count].includes('.g2.') && formSet.includes(formSet[count].replace('.icon', '') + '.g2.icon')) {
+      if (!formSet[count].includes('.g2.') && formSet.includes(`${formSet[count].replace('.icon', '')}.g2.icon`)) {
         gender = 1;
       } else if (formSet[count].includes('.g2.')) {
         gender = 2;
@@ -764,7 +767,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
                 new Buff({
                   type: TypeAction.ATK,
                   target: 'target',
-                  power: item.data.combatMove.buffs[buff],
+                  power: item.data.combatMove.buffs?.[buff] ?? 0,
                 })
               );
             } else {
@@ -772,7 +775,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
                 new Buff({
                   type: TypeAction.ATK,
                   target: 'attacker',
-                  power: item.data.combatMove.buffs[buff],
+                  power: item.data.combatMove.buffs?.[buff] ?? 0,
                 })
               );
             }
@@ -782,7 +785,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
                 new Buff({
                   type: TypeAction.DEF,
                   target: 'target',
-                  power: item.data.combatMove.buffs[buff],
+                  power: item.data.combatMove.buffs?.[buff] ?? 0,
                 })
               );
             } else {
@@ -790,12 +793,12 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
                 new Buff({
                   type: TypeAction.DEF,
                   target: 'attacker',
-                  power: item.data.combatMove.buffs[buff],
+                  power: item.data.combatMove.buffs?.[buff] ?? 0,
                 })
               );
             }
           }
-          result.buffs[result.buffs.length - 1].buffChance = item.data.combatMove.buffs[buffKey[buffKey.length - 1]];
+          result.buffs[result.buffs.length - 1].buffChance = item.data.combatMove.buffs?.[buffKey[buffKey.length - 1]];
         });
       }
       const move = moves.find((move) => move.movementId.replace(/^V\d{4}_MOVE_/, '') === result.name);
@@ -857,34 +860,35 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       result.enabled = item.data.combatLeague.enabled;
       item.data.combatLeague.pokemonCondition.forEach((con) => {
         if (con.type === 'POKEMON_CAUGHT_TIMESTAMP') {
-          result.conditions.timestamp = {
+          result.conditions.timestamp = LeagueTimestamp.create({
             start: 0,
             end: 0,
-          };
-          result.conditions.timestamp.start = con.pokemonCaughtTimestamp.afterTimestamp;
-          result.conditions.timestamp.end = con.pokemonCaughtTimestamp.beforeTimestamp ?? null;
+          });
+          result.conditions.timestamp.start = con.pokemonCaughtTimestamp?.afterTimestamp;
+          result.conditions.timestamp.end = con.pokemonCaughtTimestamp?.beforeTimestamp;
         }
         if (con.type === 'WITH_UNIQUE_POKEMON') {
           result.conditions.uniqueSelected = true;
         }
         if (con.type === 'WITH_POKEMON_TYPE') {
-          result.conditions.uniqueType = con.withPokemonType.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''));
+          result.conditions.uniqueType = con.withPokemonType?.pokemonType.map((type) => type.replace('POKEMON_TYPE_', '')) ?? [];
         }
         if (con.type === 'POKEMON_LEVEL_RANGE') {
-          result.conditions.maxLevel = con.pokemonLevelRange.maxLevel;
+          result.conditions.maxLevel = con.pokemonLevelRange?.maxLevel;
         }
         if (con.type === 'WITH_POKEMON_CP_LIMIT') {
-          result.conditions.maxCp = con.withPokemonCpLimit.maxCp;
+          result.conditions.maxCp = con.withPokemonCpLimit?.maxCp;
         }
         if (con.type === 'POKEMON_WHITELIST') {
-          result.conditions.whiteList = con.pokemonWhiteList.pokemon.map((poke) => {
-            const item = pokemon.find((item) => item.pokemonId === poke.id?.toString());
-            return {
-              id: item?.num ?? 0,
-              name: item?.pokemonId,
-              form: poke.forms ? poke.forms : FORM_NORMAL,
-            };
-          });
+          result.conditions.whiteList =
+            con.pokemonWhiteList?.pokemon.map((poke) => {
+              const item = pokemon.find((item) => item.pokemonId === poke.id?.toString());
+              return {
+                id: item?.num ?? 0,
+                name: item?.pokemonId,
+                form: poke.forms ? poke.forms : FORM_NORMAL,
+              };
+            }) ?? [];
           const whiteList: IPokemonPermission[] = [];
           result.conditions.whiteList.forEach((value) => {
             if (typeof value.form !== 'string') {
@@ -892,7 +896,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
                   whiteList.push(new PokemonPermission({ ...value, form: FORM_NORMAL }));
                 } else if (form !== 'FORM_UNSET') {
-                  whiteList.push(new PokemonPermission({ ...value, form: form.replace(value.name + '_', '') }));
+                  whiteList.push(new PokemonPermission({ ...value, form: form.replace(`${value.name}_`, '') }));
                 }
               });
             } else {
@@ -902,14 +906,15 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           result.conditions.whiteList = whiteList.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
         }
         if (con.type === 'POKEMON_BANLIST') {
-          result.conditions.banned = con.pokemonBanList.pokemon.map((poke) => {
-            const item = pokemon.find((item) => item.pokemonId === poke.id?.toString());
-            return {
-              id: item?.num ?? 0,
-              name: item?.pokemonId,
-              form: poke.forms ?? FORM_NORMAL,
-            };
-          });
+          result.conditions.banned =
+            con.pokemonBanList?.pokemon.map((poke) => {
+              const item = pokemon.find((item) => item.pokemonId === poke.id?.toString());
+              return {
+                id: item?.num ?? 0,
+                name: item?.pokemonId,
+                form: poke.forms ?? FORM_NORMAL,
+              };
+            }) ?? [];
           const banList: IPokemonPermission[] = [];
           result.conditions.banned.forEach((value) => {
             if (typeof value.form !== 'string') {
@@ -917,7 +922,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
                   banList.push(new PokemonPermission({ ...value, form: FORM_NORMAL }));
                 } else if (form !== 'FORM_UNSET') {
-                  banList.push(new PokemonPermission({ ...value, form: form.replace(value.name + '_', '') }));
+                  banList.push(new PokemonPermission({ ...value, form: form.replace(`${value.name}_`, '') }));
                 }
               });
             } else {
@@ -1016,7 +1021,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         result.id = pokemon.find((item) => item.pokemonId === poke.pokemonId)?.num ?? 0;
         result.name = poke.pokemonId;
         if (poke.pokemonDisplay) {
-          result.form = poke.pokemonDisplay.form.replace(poke.pokemonId + '_', '');
+          result.form = poke.pokemonDisplay.form.replace(`${poke.pokemonId}_`, '');
         } else {
           result.form = FORM_NORMAL;
         }
@@ -1029,17 +1034,17 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     });
 
   if (seasons) {
-    result.season = {
+    result.season = Season.create({
       season: seasons.length - 1,
-      timestamp: {
-        start: seasons[seasons.length - 3],
-        end: seasons[seasons.length - 2],
-      },
+      timestamp: LeagueTimestamp.create({
+        start: parseInt(seasons[seasons.length - 3]),
+        end: parseInt(seasons[seasons.length - 2]),
+      }),
       rewards,
       settings:
         data.find((item) => item.templateId === `COMBAT_RANKING_SETTINGS_S${seasons.length - 1}`)?.data.combatRankingProtoSettings
           .rankLevel ?? [],
-    };
+    });
   }
 
   return result;
@@ -1051,7 +1056,7 @@ export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IA
     const image = form?.image.find((img) => img.form === (item.num === 201 ? `${item.pokemonId}_${item.baseForme}` : item.forme));
 
     if (form && (item.isShadow || (checkMoveSetAvailable(item) && image?.default))) {
-      item.releasedGO = image?.default.includes('Addressable Assets/') ?? false;
+      item.releasedGO = (item.isShadow || image?.default.includes('Addressable Assets/')) ?? false;
     }
   });
 };

@@ -3,9 +3,9 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/Utils';
-import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/Constants';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/Calculate';
+import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
 import './Damage.scss';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -18,13 +18,13 @@ import Find from '../../../components/Find/Find';
 import StatsTable from './StatsDamageTable';
 
 import Move from '../../../components/Table/Move';
-import { findStabType } from '../../../util/Compute';
+import { findStabType } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { ITrainerFriendship, ThrowOption } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { PokemonDmgOption } from '../../../core/models/damage.model';
+import { BattleState, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 
 const labels: { [x: number]: { color: string; style: string } } = {
@@ -146,7 +146,7 @@ const Damage = () => {
     (e: { preventDefault: () => void }) => {
       e.preventDefault();
       if (move) {
-        const eff = {
+        const eff = BattleState.create({
           stab: findStabType(form?.form.types ?? [], move.type ?? ''),
           wb: battleState.weather,
           dodge: battleState.dodge,
@@ -155,7 +155,7 @@ const Damage = () => {
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,
           effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types ?? []),
-        };
+        });
         setResult((r) => ({
           ...r,
           battleState: eff,
@@ -280,7 +280,7 @@ const Damage = () => {
                       - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
                     </p>
                     <p>
-                      - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
+                      - Move Type: <span className={`type-icon-small ${move.type?.toLowerCase()}`}>{capitalize(move.type)}</span>
                     </p>
                     {findStabType(form?.form.types ?? [], move.type ?? '')}
                     <p>

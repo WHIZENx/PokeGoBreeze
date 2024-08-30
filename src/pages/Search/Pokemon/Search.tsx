@@ -6,11 +6,11 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, isNotEmpty, mappingPokemonName } from '../../../util/Utils';
+import { getPokemonById, isNotEmpty, mappingPokemonName } from '../../../util/utils';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
-import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/Constants';
+import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../../enums/type.enum';
@@ -115,11 +115,11 @@ const Search = () => {
         </h1>
         <div className="input-group mb-12 element-top">
           <div className="input-group-prepend">
-            <span className={'input-group-text ' + (theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>Search</span>
+            <span className={`input-group-text ${theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : ''}`}>Search</span>
           </div>
           <input
             type="text"
-            className={'form-control input-search' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
+            className={`form-control input-search ${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}`}
             style={{ backgroundColor: theme.palette.background.input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}
@@ -137,11 +137,9 @@ const Search = () => {
           <Fragment>
             {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
               <div
-                className={
-                  'container card-pokemon' +
-                  (value.id === id ? ' highlight-select-pokemon' : '') +
-                  (value.id === selectId ? ' current-select-pokemon' : '')
-                }
+                className={`container card-pokemon ${value.id === id ? 'highlight-select-pokemon' : ''} ${
+                  value.id === selectId ? 'current-select-pokemon' : ''
+                }`}
                 key={index}
                 onMouseDown={() => getInfoPoke(value)}
                 onMouseOver={() => setSelectId(value.id)}

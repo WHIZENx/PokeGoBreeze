@@ -1,7 +1,5 @@
-import TypeInfo from '../../../components/Sprites/Type/Type';
-
-import '../PVP.scss';
 import React, { useState, useEffect, Fragment, useRef } from 'react';
+import '../PVP.scss';
 
 import {
   convertNameRankingToOri,
@@ -10,13 +8,12 @@ import {
   getStyleSheet,
   replaceTempMovePvpName,
   isNotEmpty,
-} from '../../../util/Utils';
-import { calculateStatsByTag } from '../../../util/Calculate';
+} from '../../../util/utils';
+import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../../services/API.service';
-import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/Compute';
-import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
+import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 
 import update from 'immutability-helper';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -25,12 +22,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { Keys, MoveSet, OverAllStats, TypeEffective } from '../Model';
+import { Body, Header, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
-import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/Constants';
+import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
@@ -38,6 +35,8 @@ import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.mo
 import { Combat } from '../../../core/models/combat.model';
 import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
+import { LocalStorageConfig } from '../../../store/constants/localStorage';
+import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -45,14 +44,8 @@ const RankingPVP = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
   const router = useSelector((state: RouterState) => state.router);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    'timestamp',
-    JSON.stringify({
-      gamemaster: null,
-      pvp: null,
-    })
-  );
-  const [statePVP, setStatePVP] = useLocalStorage('pvp', '');
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
@@ -67,18 +60,10 @@ const RankingPVP = () => {
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
   const LeaveToggle = ({ children, eventKey }: any) => {
-    const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
+    const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
-      <div
-        className="accordion-footer"
-        onClick={() => {
-          if (storeStats && storeStats[parseInt(eventKey)]) {
-            setStoreStats(update(storeStats, { [parseInt(eventKey)]: { $set: false } }));
-          }
-          return decoratedOnClick;
-        }}
-      >
+      <div className="accordion-footer" onClick={decoratedOnClick}>
         {children}
       </div>
     );
@@ -208,8 +193,8 @@ const RankingPVP = () => {
       <Accordion.Item eventKey={key.toString()}>
         <Accordion.Header
           onClick={() => {
-            if (storeStats) {
-              setStoreStats(update(storeStats, { [key]: { $set: !storeStats[key] } }));
+            if (storeStats && !storeStats[key]) {
+              setStoreStats(update(storeStats, { [key]: { $set: true } }));
             }
           }}
         >
@@ -246,53 +231,9 @@ const RankingPVP = () => {
             <Fragment>
               <div className="pokemon-ranking-body ranking-body">
                 <div className="w-100 ranking-info element-top">
-                  <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
-                    <h3 className="text-white text-shadow">
-                      <b>
-                        #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
-                      </b>
-                    </h3>
-                    <TypeInfo shadow={true} block={true} color={'white'} arr={data.pokemon?.types} />
-                  </div>
-                  <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
-                    Recommend Moveset in PVP
-                  </h6>
-                  <div className="d-flex flex-wrap element-top" style={{ columnGap: 10 }}>
-                    <TypeBadge
-                      grow={true}
-                      find={true}
-                      title="Fast Move"
-                      color={'white'}
-                      move={data.fMove}
-                      elite={data.pokemon?.cinematicMoves?.includes(data.fMove?.name ?? '')}
-                    />
-                    <TypeBadge
-                      grow={true}
-                      find={true}
-                      title="Primary Charged Move"
-                      color={'white'}
-                      move={data.cMovePri}
-                      elite={data.pokemon?.eliteCinematicMove?.includes(data.cMovePri?.name ?? '')}
-                      shadow={data.pokemon?.shadowMoves?.includes(data.cMovePri?.name ?? '')}
-                      purified={data.pokemon?.purifiedMoves?.includes(data.cMovePri?.name ?? '')}
-                      special={data.pokemon?.specialMoves?.includes(data.cMovePri?.name ?? '')}
-                    />
-                    {data.cMoveSec && (
-                      <TypeBadge
-                        grow={true}
-                        find={true}
-                        title="Secondary Charged Move"
-                        color={'white'}
-                        move={data.cMoveSec}
-                        elite={data.pokemon?.eliteCinematicMove?.includes(data.cMoveSec.name)}
-                        shadow={data.pokemon?.shadowMoves?.includes(data.cMoveSec.name)}
-                        purified={data.pokemon?.purifiedMoves?.includes(data.cMoveSec.name)}
-                        special={data.pokemon?.specialMoves?.includes(data.cMoveSec?.name)}
-                      />
-                    )}
-                  </div>
+                  {Header(data)}
                   <hr />
-                  {Keys(dataStore?.assets ?? [], dataStore?.pokemon ?? [], data?.data, params.cp, params.type)}
+                  {Body(dataStore?.assets ?? [], dataStore?.pokemon ?? [], data?.data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />
@@ -387,7 +328,7 @@ const RankingPVP = () => {
                   setSorted(sorted ? 0 : 1);
                 }}
               >
-                <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
+                <span className={`ranking-sort ranking-score ${sortedBy.current === 'score' ? 'ranking-selected' : ''}`}>
                   Score
                   {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
                 </span>

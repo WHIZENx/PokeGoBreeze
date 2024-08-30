@@ -27,7 +27,7 @@ import {
   convertPokemonAPIDataName,
   isNotEmpty,
   splitAndCapitalize,
-} from '../../../util/Utils';
+} from '../../../util/utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
@@ -45,7 +45,7 @@ import {
   FORM_PURIFIED,
   FORM_SHADOW,
   FORM_STANDARD,
-} from '../../../util/Constants';
+} from '../../../util/constants';
 import { IForm } from '../../../core/models/API/form.model';
 import { IEvolutionComponent } from '../../models/component.model';
 import { TypeSex } from '../../../enums/type.enum';

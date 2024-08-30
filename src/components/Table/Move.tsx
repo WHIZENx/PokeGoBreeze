@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
-import { retrieveMoves, splitAndCapitalize } from '../../util/Utils';
+import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';

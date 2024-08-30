@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { computeCandyBgColor, computeCandyColor } from '../../../util/Compute';
+import { computeCandyBgColor, computeCandyColor } from '../../../util/compute';
 
 import bgCandy from '../../../assets/bg_Candy.png';
 

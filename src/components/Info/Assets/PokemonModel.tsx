@@ -5,7 +5,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
@@ -47,7 +47,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
   return (
     <div className="element-top">
       <h4 className="title-evo">
-        <b>{'Assets of ' + splitAndCapitalize(props.name, '-', ' ') + ' in Pokémon GO'}</b>
+        <b>{`Assets of ${splitAndCapitalize(props.name, '-', ' ')} in Pokémon GO`}</b>
         <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon)} />
       </h4>
       {!props.isLoadedForms ? (
@@ -111,7 +111,7 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
         </div>
       )}
       <h4 className="title-evo">
-        <b>{'Sound of ' + splitAndCapitalize(props.name, '_', ' ')}</b>
+        <b>{`Sound of ${splitAndCapitalize(props.name, '_', ' ')}`}</b>
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (

@@ -3,10 +3,10 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
 import APIService from '../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../util/Utils';
+import { capitalize, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
+import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
 import { ICardSmallComponent } from '../models/component.model';
 
 const CardMoveSmall = (props: ICardSmallComponent) => {
@@ -20,7 +20,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
         <Fragment>
           {props.value && (
             <div
-              className={'d-flex align-items-center w-100 h-100' + (props.disable ? ' disable-card-move' : '')}
+              className={`d-flex align-items-center w-100 h-100 ${props.disable ? 'disable-card-move' : ''}`}
               style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
             >
               <img

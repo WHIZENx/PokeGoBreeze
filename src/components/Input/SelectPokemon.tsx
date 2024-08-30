@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useState } from 'react';
 
 import './Select.scss';
-import { isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../util/Utils';
+import { isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
@@ -116,7 +116,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   return (
     <div
-      className={'position-relative d-flex align-items-center form-control' + (props.disable ? ' card-select-disabled' : '')}
+      className={`position-relative d-flex align-items-center form-control ${props.disable ? 'card-select-disabled' : ''}`}
       style={{ padding: 0, borderRadius: 0 }}
     >
       <div className="card-pokemon-input">

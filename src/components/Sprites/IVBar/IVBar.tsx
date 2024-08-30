@@ -21,13 +21,13 @@ const IVBar = (props: IIVBarComponent) => {
       </div>
       <div className="iv-bg-group">
         <div className="iv iv-first-child position-relative">
-          <div style={{ width: `${ivWidthFirst}%` }} className={'position-absolute iv-bar' + (props.iv <= 5 ? ' border-right-iv' : '')} />
+          <div style={{ width: `${ivWidthFirst}%` }} className={`position-absolute iv-bar ${props.iv <= 5 ? 'border-right-iv' : ''}`} />
           <div className="iv-bg-bar w-100" />
         </div>
         <div className="iv position-relative">
           <div
             style={{ width: `${ivWidthSec}%` }}
-            className={'position-absolute iv-bar' + (props.iv > 5 && props.iv <= 10 ? ' border-right-iv' : '')}
+            className={`position-absolute iv-bar ${props.iv > 5 && props.iv <= 10 ? 'border-right-iv' : ''}`}
           />
           <div className="iv-bg-bar w-100" />
         </div>

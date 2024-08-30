@@ -103,7 +103,7 @@ export class BetweenLevelCalculate implements IBetweenLevelCalculate {
 
 export interface IBattleLeagueCalculate {
   elidge: boolean;
-  maxCP: number | null;
+  maxCP?: number;
   IV: IStatsBase;
   CP: number;
   level: number;
@@ -416,7 +416,7 @@ export class StatsCalculate implements IStatsCalculate {
 // tslint:disable-next-line:max-classes-per-file
 export class BattleLeagueCalculate implements IBattleLeagueCalculate {
   elidge: boolean = false;
-  maxCP: number | null = 0;
+  maxCP?: number;
   IV: IStatsBase = new StatsBase();
   CP: number = 0;
   level: number = 0;
@@ -424,18 +424,9 @@ export class BattleLeagueCalculate implements IBattleLeagueCalculate {
   rangeValue?: IBetweenLevelCalculate;
   stats?: IStatsBase;
 
-  constructor(
-    elidge: boolean,
-    maxCP?: number | null,
-    atk?: number,
-    def?: number,
-    sta?: number,
-    CP?: number,
-    level?: number,
-    limit?: boolean
-  ) {
+  constructor(elidge: boolean, maxCP?: number, atk?: number, def?: number, sta?: number, CP?: number, level?: number, limit?: boolean) {
     this.elidge = elidge;
-    this.maxCP = maxCP ?? 0;
+    this.maxCP = maxCP;
     this.IV = new StatsPokemonGO();
     this.IV.atk = atk ?? 0;
     this.IV.atk = def ?? 0;

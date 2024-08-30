@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, isNotEmpty, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
-import { calculateCP, predictCPList, predictStat } from '../../../util/Calculate';
+import { HundoRate, isNotEmpty, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
 import DataTable, { TableColumn } from 'react-data-table-component';
 import data from '../../../data/cp_multiplier.json';
@@ -10,7 +10,7 @@ import '../../../components/Find/FormSelect.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
-import { MAX_IV, MIN_IV } from '../../../util/Constants';
+import { MAX_IV, MIN_IV } from '../../../util/constants';
 import {
   IPredictStatsModel,
   IPredictStatsCalculate,
@@ -248,7 +248,7 @@ const FindTable = () => {
           </Fragment>
         )}
         <DataTable
-          title={'Levels/IV for CP: ' + preIvArr?.CP}
+          title={`Levels/IV for CP: ${preIvArr?.CP}`}
           columns={columnsIV}
           data={preIvArr?.result ?? []}
           pagination={true}
@@ -275,7 +275,7 @@ const FindTable = () => {
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <DataTable
-              title={'Levels/CP for IV: ' + preCpArr?.IV.atk + '/' + preCpArr?.IV.def + '/' + preCpArr?.IV.sta}
+              title={`Levels/CP for IV: ${preCpArr?.IV.atk}/${preCpArr?.IV.def}/${preCpArr?.IV.sta}`}
               columns={columnsCP}
               data={preCpArr?.result ?? []}
               pagination={true}

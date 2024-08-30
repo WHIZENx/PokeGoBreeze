@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../util/utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
-import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
+import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
 import { ICardMoveComponent } from '../models/component.model';
 
 const CardMove = (props: ICardMoveComponent) => {

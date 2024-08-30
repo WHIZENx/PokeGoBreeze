@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/Constants';
+import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
 import { ITypeBadgeComponent } from '../../models/component.model';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
@@ -21,12 +21,12 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
   }, [combat, props.move?.name]);
 
   return (
-    <div className={'type-badge-container' + (props.grow ? ' filter-shadow' : '')} style={props.style}>
+    <div className={`type-badge-container ${props.grow ? 'filter-shadow' : ''}`} style={props.style}>
       <span className="caption text-type-border" style={{ color: props.color ?? 'gray' }}>
         {props.title}
       </span>
-      <Link to={'/move/' + move?.id} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
-        <span className={move?.type?.toLowerCase() + ' type-border position-relative'}>
+      <Link to={`/move/${move?.id}`} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
+        <span className={`${move?.type?.toLowerCase()} type-border position-relative`}>
           {(props.elite || props.shadow || props.purified || props.special || props.unavailable) && (
             <span className="type-badge-border">
               {props.elite && (
@@ -58,7 +58,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
           )}
           <span>{splitAndCapitalize(props.move?.name, '_', ' ')}</span>
         </span>
-        <span className={move?.type?.toLowerCase() + ' type-icon-border'}>
+        <span className={`${move?.type?.toLowerCase()} type-icon-border`}>
           <div style={{ width: 35 }}>
             <img
               style={{ padding: 5, backgroundColor: 'black' }}

@@ -2,13 +2,13 @@ import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 
-import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/Utils';
-import { calStatsProd } from '../../../util/Calculate';
+import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { calStatsProd } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
 
 import Find from '../../../components/Find/Find';
-import { MIN_IV, MAX_IV } from '../../../util/Constants';
+import { MIN_IV, MAX_IV } from '../../../util/constants';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
@@ -120,7 +120,7 @@ const StatsTable = () => {
       </h1>
       <div className="d-flex text-center" style={{ marginTop: 15, marginBottom: 15, gap: 10, overflowX: 'auto' }}>
         <button
-          className={'btn btn-form' + (battleLeague === 500 ? ' form-selected' : '')}
+          className={`btn btn-form ${battleLeague === 500 ? 'form-selected' : ''}`}
           style={{ height: 200 }}
           onClick={() => setBattleLeague(500)}
         >
@@ -131,7 +131,7 @@ const StatsTable = () => {
           <span className="text-danger">CP below 500</span>
         </button>
         <button
-          className={'btn btn-form' + (battleLeague === 1500 ? ' form-selected' : '')}
+          className={`btn btn-form ${battleLeague === 1500 ? 'form-selected' : ''}`}
           style={{ height: 200 }}
           onClick={() => setBattleLeague(1500)}
         >
@@ -142,7 +142,7 @@ const StatsTable = () => {
           <span className="text-danger">CP below 1500</span>
         </button>
         <button
-          className={'btn btn-form' + (battleLeague === 2500 ? ' form-selected' : '')}
+          className={`btn btn-form ${battleLeague === 2500 ? 'form-selected' : ''}`}
           style={{ height: 200 }}
           onClick={() => setBattleLeague(2500)}
         >
@@ -153,7 +153,7 @@ const StatsTable = () => {
           <span className="text-danger">CP below 2500</span>
         </button>
         <button
-          className={'btn btn-form' + (battleLeague === 0 ? ' form-selected' : '')}
+          className={`btn btn-form ${battleLeague === 0 ? 'form-selected' : ''}`}
           style={{ height: 200 }}
           onClick={() => setBattleLeague(0)}
         >
@@ -252,7 +252,7 @@ const StatsTable = () => {
         </div>
       </form>
       <DataTable
-        title={'Stat Battle for ' + name}
+        title={`Stat Battle for ${name}`}
         columns={columnsStats}
         data={statsBattle}
         pagination={true}

@@ -79,9 +79,21 @@ export interface ITempEvo {
   requireMove: string | undefined;
 }
 
-export interface PokemonTypeCost {
+export interface IPokemonTypeCost {
   stardust?: number;
   candy?: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonTypeCost implements IPokemonTypeCost {
+  stardust?: number;
+  candy?: number;
+
+  static create(value: IPokemonTypeCost) {
+    const obj = new PokemonTypeCost();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 export interface IEvolution {

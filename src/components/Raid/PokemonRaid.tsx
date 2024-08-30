@@ -47,7 +47,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         {props.controls && (
           <div className="d-flex ic-group-small">
             <span
-              className={'ic-copy-small text-white ' + (dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
+              className={`ic-copy-small text-white ${dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'}`}
               title="Copy"
               onClick={() => {
                 if (dataTargetPokemon) {
@@ -59,7 +59,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               <SettingsIcon sx={{ fontSize: 16 }} />
             </span>
             <span
-              className={'ic-copy-small text-white ' + (dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
+              className={`ic-copy-small text-white ${dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'}`}
               title="Copy"
               onClick={() => {
                 if (dataTargetPokemon) {
@@ -71,10 +71,9 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               <ContentCopyIcon sx={{ fontSize: 16 }} />
             </span>
             <span
-              className={
-                'ic-remove-small text-white ' +
-                (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon) ? 'bg-danger' : 'click-none bg-secondary')
-              }
+              className={`ic-remove-small text-white ${
+                props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon) ? 'bg-danger' : 'click-none bg-secondary'
+              }`}
               title="Remove"
               onClick={() => {
                 if (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon)) {

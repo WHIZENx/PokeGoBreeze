@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize } from '../../util/Utils';
+import { capitalize } from '../../util/utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
@@ -73,7 +73,7 @@ const Attacker = (prop: ITypeEffComponent) => {
               <ul>
                 {types.map((value, index) => (
                   <li
-                    className={'container card-pokemon' + (theme.palette.mode === TypeTheme.DARK ? '-dark' : '')}
+                    className={`container card-pokemon${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}`}
                     style={{ backgroundColor: theme.palette.background.default }}
                     key={index}
                     onMouseDown={() => changeType(value)}

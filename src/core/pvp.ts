@@ -1,5 +1,5 @@
 import { APIPath, APITree } from '../services/models/api.model';
-import { splitAndCapitalize } from '../util/Utils';
+import { splitAndCapitalize } from '../util/utils';
 import { ILeague, LeaguePVP } from './models/league.model';
 
 export const pvpConvertPath = (data: APITree, path: string) => {
@@ -29,15 +29,15 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
 
     const result = new LeaguePVP();
     result.id = league ?? '';
-    result.name = splitAndCapitalize(item ? item.title : league, '_', ' ');
+    result.name = splitAndCapitalize((item ? item.title : league)?.replaceAll('-', '_'), '_', ' ');
     if (!result.name.toLowerCase().includes(result.id)) {
-      result.name = splitAndCapitalize(league, '_', ' ');
+      result.name = splitAndCapitalize(league?.replaceAll('-', '_'), '_', ' ');
     }
     result.cp = data
       .filter((item) => item.startsWith(league ?? '') && item.includes(`${league}/overall/`))
       .map((item) => parseInt(item.replace(`${league}/overall/rankings-`, '')))
       .sort((a, b) => a - b);
-    result.logo = item?.iconUrl ?? null;
+    result.logo = item?.iconUrl;
     return result;
   });
 };
@@ -64,7 +64,7 @@ export const convertPVPTrain = (data: string[], leagues: ILeague[]) => {
       .filter((item) => item.startsWith(league ?? '') && item.includes(`${league}/`))
       .map((item) => parseInt(item.replace(`${league}/`, '')))
       .sort((a, b) => a - b);
-    result.logo = item?.iconUrl ?? null;
+    result.logo = item?.iconUrl;
     return result;
   });
 };

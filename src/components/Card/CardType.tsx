@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
-import { FORM_PURIFIED, FORM_SHADOW } from '../../util/Constants';
-import { capitalize } from '../../util/Utils';
+import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
+import { capitalize } from '../../util/utils';
 import { ICardTypeComponent } from '../models/component.model';
 
 const CardType = (props: ICardTypeComponent) => {

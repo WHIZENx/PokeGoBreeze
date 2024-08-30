@@ -1,6 +1,6 @@
 import React from 'react';
-import { splitAndCapitalize } from '../../../util/Utils';
-import { genRoman } from '../../../util/Constants';
+import { splitAndCapitalize } from '../../../util/utils';
+import { genRoman } from '../../../util/constants';
 import { IPokemonTableComponent } from '../../models/component.model';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
@@ -16,7 +16,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
   };
 
   return (
-    <table className={'table-info table-desc ' + props.className}>
+    <table className={`table-info table-desc ${props.className}`}>
       <thead />
       <tbody>
         <tr>

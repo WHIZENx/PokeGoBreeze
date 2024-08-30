@@ -61,10 +61,7 @@ export interface Teams {
 export interface RankingsPVP {
   counters: PokemonVersus[];
   matchups: PokemonVersus[];
-  moves: {
-    chargedMoves: PokemonRankingMove[];
-    fastMoves: PokemonRankingMove[];
-  };
+  moves: IMovePokemonRanking;
   moveset: string[];
   rating: number;
   score: number;
@@ -103,7 +100,7 @@ export class PokemonRankingStats implements IPokemonRankingStats {
   }
 }
 
-interface IMovePokemonRanking {
+export interface IMovePokemonRanking {
   chargedMoves: PokemonRankingMove[];
   fastMoves: PokemonRankingMove[];
 }

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
-import { capitalize } from '../../util/Utils';
+import { capitalize } from '../../util/utils';
 import { IWeatherEffComponent } from '../models/page.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';

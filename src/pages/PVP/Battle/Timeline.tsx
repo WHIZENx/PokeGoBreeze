@@ -2,7 +2,7 @@ import { Badge } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -15,12 +15,10 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
     }
     return (
       <div className="d-flex flex-wrap align-items-center" style={{ gap: 5 }}>
-        <span
-          className={move.type?.toLowerCase() + (border ? '-border' : '') + ' type-select-bg d-flex align-items-center border-type-init'}
-        >
+        <span className={`${move.type?.toLowerCase()}${border ? '-border' : ''} type-select-bg d-flex align-items-center border-type-init`}>
           <div style={{ display: 'contents', width: 16 }}>
             <img
-              className={'pokemon-sprite-small sprite-type-select' + (!shadow ? '' : ' filter-shadow')}
+              className={`pokemon-sprite-small sprite-type-select ${shadow ? 'filter-shadow' : ''}`}
               alt="img-type-pokemon"
               src={APIService.getTypeHqSprite(capitalize(move.type))}
             />
@@ -41,7 +39,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             {pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === AttackType.Charge && (
               <Fragment>
                 {value.type === AttackType.Block ? (
-                  <div style={{ height: 80 }} className={'d-flex align-items-center turn-battle' + (end ? ' justify-content-end' : '')}>
+                  <div style={{ height: 80 }} className={`d-flex align-items-center turn-battle ${end ? 'justify-content-end' : ''}`}>
                     <div className="block-attack-container">
                       <img className="block-spirit-timeline" alt="img-shield" src={APIService.getPokeOtherLeague('ShieldButton')} />
                     </div>
@@ -51,7 +49,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                     </span>
                   </div>
                 ) : (
-                  <div className={'wait-attack-container turn-battle' + (end ? ' justify-content-end' : '')} />
+                  <div className={`wait-attack-container turn-battle ${end ? 'justify-content-end' : ''}`} />
                 )}
               </Fragment>
             )}
@@ -102,7 +100,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               </Badge>
             )}
             {value.type === AttackType.Prepare && (
-              <div style={{ height: 80 }} className={'d-flex align-items-center turn-battle' + (end ? ' justify-content-end' : '')}>
+              <div style={{ height: 80 }} className={`d-flex align-items-center turn-battle ${end ? 'justify-content-end' : ''}`}>
                 <div className={`swipe-attack-container ${value.color}-border text-center`}>
                   <span style={{ fontSize: 12 }}>
                     <b>Swipe Charge</b>

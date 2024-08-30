@@ -9,15 +9,15 @@ import {
   convertPokemonDataName,
   isNotEmpty,
   splitAndCapitalize,
-} from '../../../util/Utils';
-import { findAssetForm } from '../../../util/Compute';
-import { counterPokemon } from '../../../util/Calculate';
+} from '../../../util/utils';
+import { findAssetForm } from '../../../util/compute';
+import { counterPokemon } from '../../../util/calculate';
 
 import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } from '../../../util/Constants';
+import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
@@ -131,7 +131,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Fast',
       selector: (row) => (
-        <Link to={'../move/' + row.fMove.id} className="d-grid">
+        <Link to={`../move/${row.fMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fMove.type))} />
           </div>
@@ -152,7 +152,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Charged',
       selector: (row) => (
-        <Link to={'../move/' + row.cMove.id} className="d-grid">
+        <Link to={`../move/${row.cMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cMove.type))} />
           </div>

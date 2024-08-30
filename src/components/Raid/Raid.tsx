@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 
-import { raidEgg } from '../../util/Compute';
-import { FORM_MEGA, FORM_PRIMAL, RAID_BOSS_TIER, TYPE_ULTRA_BEAST } from '../../util/Constants';
-import { calculateRaidCP, calculateRaidStat } from '../../util/Calculate';
+import { raidEgg } from '../../util/compute';
+import { FORM_MEGA, FORM_PRIMAL, RAID_BOSS_TIER, TYPE_ULTRA_BEAST } from '../../util/constants';
+import { calculateRaidCP, calculateRaidStat } from '../../util/calculate';
 
 import ATK_LOGO from '../../assets/attack.png';
 import DEF_LOGO from '../../assets/defense.png';
@@ -12,7 +12,7 @@ import STA_LOGO from '../../assets/stamina.png';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
-import { capitalize } from '../../util/Utils';
+import { capitalize } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 
@@ -106,15 +106,14 @@ const Raid = (props: IRaidComponent) => {
               <Fragment>
                 {pokemonClass ? (
                   <optgroup
-                    label={
-                      'Legendary ' +
-                      (props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)) +
-                      ' Tier 6'
-                    }
+                    label={`Legendary ${
+                      props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
+                    } Tier 6'`}
                   >
                     <option value={6}>
-                      {'Tier ' +
-                        (props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA))}
+                      {`Tier ${
+                        props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
+                      }`}
                     </option>
                   </optgroup>
                 ) : (

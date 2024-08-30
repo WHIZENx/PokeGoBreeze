@@ -7,10 +7,10 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
-import { capitalize, splitAndCapitalize } from '../../../util/Utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_SHADOW } from '../../../util/Constants';
+import { FORM_SHADOW } from '../../../util/constants';
 import { IDamageTableComponent } from '../../models/page.model';
 import { ThrowOption } from '../../../core/models/options.model';
 
@@ -165,9 +165,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize(
-                      Object.keys(globalOptions?.throwCharge ?? new ThrowOption()).at(parseInt(props.result.battleState.cLevel.toString()))
-                    )
+                  ? capitalize(Object.keys(globalOptions?.throwCharge ?? new ThrowOption()).at(props.result.battleState.cLevel ?? 0))
                   : '-'}
               </td>
             </tr>
@@ -175,8 +173,8 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Damage Effective</td>
               <td>
                 {props.result.battleState ? (
-                  <span className={'eff-' + eff[parseInt(props.result.battleState.effective.toString())].style}>
-                    {'x' + eff[parseInt(props.result.battleState.effective.toString())].label}
+                  <span className={`eff-${eff[props.result.battleState.effective].style}`}>
+                    {`x${eff[props.result.battleState.effective].label}`}
                   </span>
                 ) : (
                   '-'

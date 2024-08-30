@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { predictCPList } from '../../util/Calculate';
-import { MIN_IV, MAX_IV } from '../../util/Constants';
+import { predictCPList } from '../../util/calculate';
+import { MIN_IV, MAX_IV } from '../../util/constants';
 import { IPredictCPCalculate } from '../../util/models/calculate.model';
 import { IDynamicInputCPComponent } from '../models/component.model';
 

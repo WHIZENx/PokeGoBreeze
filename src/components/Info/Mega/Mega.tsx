@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../../util/Utils';
+import { splitAndCapitalize } from '../../../util/utils';
 
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_MEGA } from '../../../util/Constants';
+import { FORM_MEGA } from '../../../util/constants';
 import { IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
 
