@@ -828,7 +828,7 @@ export const convertColumnDataType = <T, S>(columns: T) => {
   return columns as TableColumn<S>[];
 };
 
-export const getAllMoves = (pokemon: IPokemonData | undefined) => {
+export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
   if (!pokemon) {
     return [];
   }

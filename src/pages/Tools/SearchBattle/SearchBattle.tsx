@@ -284,7 +284,7 @@ const FindBattle = () => {
   };
 
   const LeaveToggle = ({ eventKey }: any) => {
-    const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
+    const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
       <div className="accordion-footer" onClick={decoratedOnClick}>

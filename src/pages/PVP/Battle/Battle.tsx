@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
-import { capitalize, convertNameRankingToOri, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertNameRankingToOri, getAllMoves, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm, findStabType } from '../../../util/compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
 import {
@@ -62,6 +62,7 @@ import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from '
 import { StatsBase } from '../../../core/models/stats.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
+import { loadPVPMoves } from '../../../store/effects/store.effects';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -314,7 +315,7 @@ const Battle = () => {
               type: AttackType.Prepare,
               color: player1.cMoveSec?.type?.toLowerCase() ?? null,
               size: DEFAULT_SIZE,
-              move: player2.cMoveSec,
+              move: player1.cMoveSec,
             });
             preChargePri = true;
             if (tapSec) {
@@ -759,6 +760,12 @@ const Battle = () => {
     };
   }, [fetchPokemonBattle, league, dispatch]);
 
+  useEffect(() => {
+    if (isNotEmpty(dataStore?.combat) && dataStore?.combat.every((combat) => !combat.archetype)) {
+      loadPVPMoves(dispatch);
+    }
+  }, [dataStore?.combat, dispatch]);
+
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
     setPlayTimeline({
@@ -1137,7 +1144,7 @@ const Battle = () => {
     type: string,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
-    isRandom: boolean
+    isRandom: boolean = false
   ) => {
     if (!pokemon.pokemonData?.allStats) {
       return;
@@ -1145,7 +1152,7 @@ const Battle = () => {
 
     let stats: IBattleBaseStats | undefined;
     if (isRandom) {
-      stats = pokemon.pokemonData?.allStats[Math.floor(Math.random() * pokemon.pokemonData?.allStats.length)];
+      stats = pokemon.pokemonData?.allStats[getRandomInt(0, pokemon.pokemonData?.allStats.length - 1)];
     } else {
       stats = pokemon.pokemonData?.bestStats;
     }
@@ -1301,7 +1308,7 @@ const Battle = () => {
               </Button>
             </div>
             <div className="w-100 element-top">
-              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, false)}>
+              <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon)}>
                 Set Best Stats
               </Button>
             </div>
@@ -1321,6 +1328,7 @@ const Battle = () => {
                 shadow={pokemon.pokemonData?.pokemon?.shadowMoves?.includes(pokemon.cMovePri?.name ?? '')}
                 purified={pokemon.pokemonData?.pokemon?.purifiedMoves?.includes(pokemon.cMovePri?.name ?? '')}
                 special={pokemon.pokemonData?.pokemon?.specialMoves?.includes(pokemon.cMovePri?.name ?? '')}
+                unavailable={!getAllMoves(pokemon.pokemonData?.pokemon).includes(pokemon.cMovePri?.name ?? '')}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1330,10 +1338,11 @@ const Battle = () => {
                   find={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={pokemon.pokemonData?.pokemon?.eliteCinematicMove?.includes(pokemon.cMoveSec?.name ?? '')}
-                  shadow={pokemon.pokemonData?.pokemon?.shadowMoves?.includes(pokemon.cMovePri?.name ?? '')}
-                  purified={pokemon.pokemonData?.pokemon?.purifiedMoves?.includes(pokemon.cMovePri?.name ?? '')}
-                  special={pokemon.pokemonData?.pokemon?.specialMoves?.includes(pokemon.cMovePri?.name ?? '')}
+                  elite={pokemon.pokemonData?.pokemon?.eliteCinematicMove?.includes(pokemon.cMoveSec.name)}
+                  shadow={pokemon.pokemonData?.pokemon?.shadowMoves?.includes(pokemon.cMoveSec.name)}
+                  purified={pokemon.pokemonData?.pokemon?.purifiedMoves?.includes(pokemon.cMoveSec.name)}
+                  special={pokemon.pokemonData?.pokemon?.specialMoves?.includes(pokemon.cMoveSec.name)}
+                  unavailable={!getAllMoves(pokemon.pokemonData?.pokemon).includes(pokemon.cMoveSec.name)}
                 />
                 {findBuff(pokemon.cMoveSec)}
               </div>
