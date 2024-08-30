@@ -417,7 +417,7 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
+                        - Move Type: <span className={`type-icon-small ${move.type?.toLowerCase()}`}>{capitalize(move.type)}</span>
                       </p>
                       {findStabType(form?.form.types ?? [], move.type ?? '')}
                       <p>
@@ -544,7 +544,7 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(moveDef.typeMove)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={'type-icon-small ' + moveDef.type?.toLowerCase()}>{capitalize(moveDef.type)}</span>
+                        - Move Type: <span className={`type-icon-small ${moveDef.type?.toLowerCase()}`}>{capitalize(moveDef.type)}</span>
                       </p>
                       {findStabType(formDef?.form.types ?? [], moveDef?.type ?? '')}
                       <p>
@@ -699,7 +699,7 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{capitalize(fMove.typeMove)}</b>
                         </p>
                         <p>
-                          - Move Type: <span className={'type-icon-small ' + fMove?.type?.toLowerCase()}>{capitalize(fMove.type)}</span>
+                          - Move Type: <span className={`type-icon-small ${fMove?.type?.toLowerCase()}`}>{capitalize(fMove.type)}</span>
                         </p>
                         {findStabType(formDef?.form.types ?? [], fMove?.type ?? '')}
                         <p>
@@ -732,7 +732,7 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{capitalize(cMove.typeMove)}</b>
                         </p>
                         <p>
-                          - Move Type: <span className={'type-icon-small ' + cMove?.type?.toLowerCase()}>{capitalize(cMove.type)}</span>
+                          - Move Type: <span className={`type-icon-small ${cMove?.type?.toLowerCase()}`}>{capitalize(cMove.type)}</span>
                         </p>
                         {findStabType(formDef?.form.types ?? [], cMove?.type ?? '')}
                         <p>
@@ -861,7 +861,7 @@ const CalculatePoint = () => {
                             {resultBulkPointDef ? (
                               <Fragment>
                                 {resultBulkPointDef.data[i].map((value, index) => (
-                                  <td className={'text-iv-bulk' + (value === 0 ? getBorderSplit(i, index) : '')} key={index}>
+                                  <td className={`text-iv-bulk ${value === 0 ? getBorderSplit(i, index) : ''}`} key={index}>
                                     {value}
                                   </td>
                                 ))}

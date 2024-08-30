@@ -266,7 +266,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={'ranking-sort ranking-score' + (sortedBy === 'teamScore' ? ' ranking-selected' : '')}>
+              <span className={`ranking-sort ranking-score ${sortedBy === 'teamScore' ? 'ranking-selected' : ''}`}>
                 Team Score
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -281,7 +281,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={'ranking-sort ranking-score' + (sortedBy === 'individualScore' ? ' ranking-selected' : '')}>
+              <span className={`ranking-sort ranking-score ${sortedBy === 'individualScore' ? 'ranking-selected' : ''}`}>
                 Individual Score
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -296,7 +296,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={'ranking-sort ranking-score' + (sortedBy === 'games' ? ' ranking-selected' : '')}>
+              <span className={`ranking-sort ranking-score ${sortedBy === 'games' ? 'ranking-selected' : ''}`}>
                 Usage
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -411,7 +411,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={'ranking-sort ranking-score' + (sortedTeamBy === 'teamScore' ? ' ranking-selected' : '')}>
+              <span className={`ranking-sort ranking-score ${sortedTeamBy === 'teamScore' ? 'ranking-selected' : ''}`}>
                 Team Score
                 {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -426,7 +426,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={'ranking-sort ranking-score' + (sortedTeamBy === 'games' ? ' ranking-selected' : '')}>
+              <span className={`ranking-sort ranking-score ${sortedTeamBy === 'games' ? 'ranking-selected' : ''}`}>
                 Usage
                 {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>

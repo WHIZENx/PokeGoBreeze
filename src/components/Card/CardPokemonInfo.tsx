@@ -62,7 +62,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           onMouseOver={onHoverShiny}
           onMouseLeave={onLeaveShiny}
           ref={shinyRef}
-          className={'shiny-pokemon' + (props.defaultImg ? ' active' : '')}
+          className={`shiny-pokemon ${props.defaultImg ? 'active' : ''}`}
           height={32}
           src={APIService.getShinyIcon()}
         />

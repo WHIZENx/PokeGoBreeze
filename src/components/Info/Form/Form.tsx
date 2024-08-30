@@ -114,13 +114,12 @@ const FormComponent = (props: IFormInfoComponent) => {
                   {value.map((value, index) => (
                     <button
                       key={index}
-                      className={
-                        'btn btn-form ' +
-                        ((props.defaultId === props.form?.form.id && value.form.id === props.form.form.id) ||
+                      className={`btn btn-form ${
+                        (props.defaultId === props.form?.form.id && value.form.id === props.form.form.id) ||
                         (props.defaultId !== props.form?.form.id && value.form.id === props.form?.form.id)
                           ? 'form-selected'
-                          : '')
-                      }
+                          : ''
+                      }`}
                       onClick={() => changeForm(value.form.name, value.form.formName)}
                     >
                       <div className="d-flex w-100 justify-content-center">

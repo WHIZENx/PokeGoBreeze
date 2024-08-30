@@ -183,7 +183,7 @@ const TableMove = (props: ITableMoveComponent) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          <Link to={'../move/' + value.fMove.id} className="d-block">
+          <Link to={`../move/${value.fMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fMove.type))} />
             </div>
@@ -198,7 +198,7 @@ const TableMove = (props: ITableMoveComponent) => {
           </Link>
         </td>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          <Link to={'../move/' + value.cMove.id} className="d-block">
+          <Link to={`../move/${value.cMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cMove.type))} />
             </div>
@@ -240,7 +240,7 @@ const TableMove = (props: ITableMoveComponent) => {
         {data?.map((value, index) => (
           <tr key={index}>
             <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-              <Link to={'../move/' + value?.id} className="d-block">
+              <Link to={`../move/${value?.id}`} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                   <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value?.type))} />
                 </div>

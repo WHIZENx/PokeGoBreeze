@@ -187,7 +187,7 @@ export const convertModelSpritName = (text: string) => {
     .replaceAll('_', '-')
     .replaceAll('%', '')
     .replace('mime-jr', 'mime_jr')
-    .replace('-female', (text.toLowerCase().includes('meowstic') || text.toLowerCase().includes('indeedee') ? '-' : '_') + 'f')
+    .replace('-female', `${text.toLowerCase().includes('meowstic') || text.toLowerCase().includes('indeedee') ? '-' : '_'}f`)
     .replace(
       '-male',
       (text.toLowerCase().includes('meowstic') ? '-' : text.toLowerCase().includes('indeedee') ? '' : '_') +
@@ -240,7 +240,7 @@ export const convertNameRankingToOri = (text: string, form: string) => {
     return text.replaceAll('_', '-');
   }
   if (formOri.includes('(') && formOri.includes(')')) {
-    form = '-' + form.split(' (').at(1)?.replace(')', '').toLowerCase();
+    form = `-${form.split(' (').at(1)?.replace(')', '').toLowerCase()}`;
   }
   text = text
     .toLowerCase()
@@ -723,7 +723,7 @@ export const generatePokemonGoShadowForms = (
     .forEach((p) => {
       let form = '';
       if (!p.isDefault) {
-        form = p.name.replace(`${name}-`, '') + '-';
+        form = `${p.name.replace(`${name}-`, '')}-`;
       }
       index--;
       const pokemonShadowModify = new PokemonFormModifyModel(

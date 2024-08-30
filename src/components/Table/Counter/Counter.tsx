@@ -131,7 +131,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Fast',
       selector: (row) => (
-        <Link to={'../move/' + row.fMove.id} className="d-grid">
+        <Link to={`../move/${row.fMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fMove.type))} />
           </div>
@@ -152,7 +152,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Charged',
       selector: (row) => (
-        <Link to={'../move/' + row.cMove.id} className="d-grid">
+        <Link to={`../move/${row.cMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cMove.type))} />
           </div>

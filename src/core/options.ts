@@ -547,7 +547,7 @@ export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         const sticker = stickers.find((sticker) => sticker.id === id.split('.')[0]);
         if (sticker) {
           sticker.shop = true;
-          sticker.pack.push(parseInt(id.replace(sticker.id + '.', '')));
+          sticker.pack.push(parseInt(id.replace(`${sticker.id}.`, '')));
         }
       } else if (item.data.stickerMetadata) {
         const sticker = new Sticker();
@@ -585,10 +585,10 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       } else {
         form = formList[1].replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
       }
-      if (formSet.includes(formSet[count].replace('.icon', '') + '.s.icon')) {
+      if (formSet.includes(`${formSet[count].replace('.icon', '')}.s.icon`)) {
         shiny = true;
       }
-      if (!formSet[count].includes('.g2.') && formSet.includes(formSet[count].replace('.icon', '') + '.g2.icon')) {
+      if (!formSet[count].includes('.g2.') && formSet.includes(`${formSet[count].replace('.icon', '')}.g2.icon`)) {
         gender = 1;
       } else if (formSet[count].includes('.g2.')) {
         gender = 2;
@@ -896,7 +896,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
                   whiteList.push(new PokemonPermission({ ...value, form: FORM_NORMAL }));
                 } else if (form !== 'FORM_UNSET') {
-                  whiteList.push(new PokemonPermission({ ...value, form: form.replace(value.name + '_', '') }));
+                  whiteList.push(new PokemonPermission({ ...value, form: form.replace(`${value.name}_`, '') }));
                 }
               });
             } else {
@@ -922,7 +922,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
                   banList.push(new PokemonPermission({ ...value, form: FORM_NORMAL }));
                 } else if (form !== 'FORM_UNSET') {
-                  banList.push(new PokemonPermission({ ...value, form: form.replace(value.name + '_', '') }));
+                  banList.push(new PokemonPermission({ ...value, form: form.replace(`${value.name}_`, '') }));
                 }
               });
             } else {
@@ -1021,7 +1021,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         result.id = pokemon.find((item) => item.pokemonId === poke.pokemonId)?.num ?? 0;
         result.name = poke.pokemonId;
         if (poke.pokemonDisplay) {
-          result.form = poke.pokemonDisplay.form.replace(poke.pokemonId + '_', '');
+          result.form = poke.pokemonDisplay.form.replace(`${poke.pokemonId}_`, '');
         } else {
           result.form = FORM_NORMAL;
         }

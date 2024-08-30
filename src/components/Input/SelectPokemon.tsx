@@ -116,7 +116,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   return (
     <div
-      className={'position-relative d-flex align-items-center form-control' + (props.disable ? ' card-select-disabled' : '')}
+      className={`position-relative d-flex align-items-center form-control ${props.disable ? 'card-select-disabled' : ''}`}
       style={{ padding: 0, borderRadius: 0 }}
     >
       <div className="card-pokemon-input">

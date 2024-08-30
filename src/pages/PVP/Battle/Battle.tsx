@@ -1077,15 +1077,15 @@ const Battle = () => {
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
   ) => {
     e.preventDefault();
-    const level = parseInt((document.getElementById('level' + capitalize(type)) as HTMLInputElement).value);
-    const atk = parseInt((document.getElementById('atkIV' + capitalize(type)) as HTMLInputElement).value);
-    const def = parseInt((document.getElementById('defIV' + capitalize(type)) as HTMLInputElement).value);
-    const sta = parseInt((document.getElementById('hpIV' + capitalize(type)) as HTMLInputElement).value);
+    const level = parseInt((document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value);
+    const atk = parseInt((document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value);
+    const def = parseInt((document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value);
+    const sta = parseInt((document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value);
 
     const cp = calculateCP(atk, def, sta, level);
 
     if (cp > parseInt(params?.cp ?? '')) {
-      enqueueSnackbar('This stats Pokémon CP is greater than ' + params.cp + ', which is not permitted by the league.', {
+      enqueueSnackbar(`This stats Pokémon CP is greater than ${params.cp}, which is not permitted by the league.`, {
         variant: 'error',
       });
       return;
@@ -1150,10 +1150,10 @@ const Battle = () => {
       stats = pokemon.pokemonData?.bestStats;
     }
 
-    (document.getElementById('level' + capitalize(type)) as HTMLInputElement).value = stats?.level?.toString() ?? '';
-    (document.getElementById('atkIV' + capitalize(type)) as HTMLInputElement).value = stats?.IV?.atk.toString() ?? '';
-    (document.getElementById('defIV' + capitalize(type)) as HTMLInputElement).value = stats?.IV?.def.toString() ?? '';
-    (document.getElementById('hpIV' + capitalize(type)) as HTMLInputElement).value = stats?.IV?.sta?.toString() ?? '';
+    (document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value = stats?.level?.toString() ?? '';
+    (document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value = stats?.IV?.atk.toString() ?? '';
+    (document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value = stats?.IV?.def.toString() ?? '';
+    (document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value = stats?.IV?.sta?.toString() ?? '';
 
     if (pokemon.pokemonData) {
       setPokemon(
@@ -1246,7 +1246,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.level}
-                  id={'level' + capitalize(type)}
+                  id={`level${capitalize(type)}`}
                   type="number"
                   step={0.5}
                   min={MIN_LEVEL}
@@ -1258,7 +1258,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.atk}
-                  id={'atkIV' + capitalize(type)}
+                  id={`atkIV${capitalize(type)}`}
                   type="number"
                   step={1}
                   min={MIN_IV}
@@ -1270,7 +1270,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.def}
-                  id={'defIV' + capitalize(type)}
+                  id={`defIV${capitalize(type)}`}
                   type="number"
                   step={1}
                   min={MIN_IV}
@@ -1282,7 +1282,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.sta}
-                  id={'hpIV' + capitalize(type)}
+                  id={`hpIV${capitalize(type)}`}
                   type="number"
                   step={1}
                   min={MIN_IV}

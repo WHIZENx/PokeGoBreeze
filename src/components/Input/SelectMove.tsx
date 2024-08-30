@@ -76,10 +76,9 @@ const SelectMove = (props: ISelectMoveComponent) => {
   const smallInput = () => {
     return (
       <div
-        className={
-          'position-relative d-flex align-items-center form-control ' +
-          (!props.disable && props.pokemon ? 'card-select-enabled' : 'card-select-disabled')
-        }
+        className={`position-relative d-flex align-items-center form-control ${
+          !props.disable && props.pokemon ? 'card-select-enabled' : 'card-select-disabled'
+        }`}
         style={{ padding: 0, borderRadius: 0 }}
       >
         {props.pokemon && !isNotEmpty(resultMove) && (

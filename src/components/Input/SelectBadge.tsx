@@ -11,11 +11,11 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
     return (
       <div className="text-center">
         <div
-          className={'position-relative frame-badge' + (props.priority === priorityNumber ? ' frame-badge-select' : '')}
+          className={`position-relative frame-badge ${props.priority === priorityNumber ? 'frame-badge-select' : ''}`}
           onClick={() => props.setPriority(priorityNumber)}
         >
           <span style={{ width: 40 }}>
-            <img alt="frame-type" className={'frame-type-sprit' + (priorityNumber === 4 ? ' filter-platinum' : '')} src={spiritBadge} />
+            <img alt="frame-type" className={`frame-type-sprit ${priorityNumber === 4 ? 'filter-platinum' : ''}`} src={spiritBadge} />
           </span>
           {priorityNumber > 0 && (
             <span className="position-badge" style={{ width: 20 }}>
@@ -31,7 +31,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
   return (
     <div className="w-100 element-top">
       <div className="d-flex justify-content-center align-items-center">
-        <div className={'type-icon-small ' + props.type.toLowerCase()} style={{ width: 'max-content' }}>
+        <div className={`type-icon-small ${props.type.toLowerCase()}`} style={{ width: 'max-content' }}>
           {capitalize(props.type)} Badge
         </div>
       </div>

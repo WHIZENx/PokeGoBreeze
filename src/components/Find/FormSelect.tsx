@@ -333,7 +333,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 {value.map((value, index) => (
                   <button
                     key={index}
-                    className={`btn btn-form ${value.form.id === currentForm.form.id ? ' form-selected' : ''}`}
+                    className={`btn btn-form ${value.form.id === currentForm.form.id ? 'form-selected' : ''}`}
                     onClick={() => changeForm(value.form.name)}
                   >
                     <img

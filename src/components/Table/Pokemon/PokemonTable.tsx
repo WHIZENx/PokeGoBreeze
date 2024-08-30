@@ -16,7 +16,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
   };
 
   return (
-    <table className={'table-info table-desc ' + props.className}>
+    <table className={`table-info table-desc ${props.className}`}>
       <thead />
       <tbody>
         <tr>

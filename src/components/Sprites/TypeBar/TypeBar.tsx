@@ -6,7 +6,7 @@ import { ITypeBarComponent } from '../../models/component.model';
 
 const TypeBar = (props: ITypeBarComponent) => {
   return (
-    <div className={'d-flex align-items-center border-type ' + props.type?.toLowerCase()}>
+    <div className={`d-flex align-items-center border-type ${props.type?.toLowerCase()}`}>
       <span style={{ width: 35 }}>
         <img
           style={{ padding: 5, backgroundColor: 'black' }}

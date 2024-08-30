@@ -193,8 +193,8 @@ export const loadAssets = async (
 
         if (imagePath && soundPath) {
           await Promise.all([
-            APIService.getFetchUrl<APITree>(imagePath.url + '?recursive=1', options),
-            APIService.getFetchUrl<APITree>(soundPath.url + '?recursive=1', options),
+            APIService.getFetchUrl<APITree>(`${imagePath.url}?recursive=1`, options),
+            APIService.getFetchUrl<APITree>(`${soundPath.url}?recursive=1`, options),
           ]).then(([imageData, soundData]) => {
             const assetImgFiles = optionPokeImg(imageData.data);
             setStateImage(JSON.stringify(assetImgFiles));
@@ -237,11 +237,11 @@ export const loadPVP = (
         APIService.getFetchUrl<APITree>(pvpUrl, options)
           .then((pvpRoot) => {
             const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');
-            return APIService.getFetchUrl<APITree>(pvpRootPath?.url + '', options);
+            return APIService.getFetchUrl<APITree>(`${pvpRootPath?.url}`, options);
           })
           .then((pvpFolder) => {
             const pvpFolderPath = pvpFolder.data.tree.find((item) => item.path === 'data');
-            return APIService.getFetchUrl<APITree>(pvpFolderPath?.url + '?recursive=1', options);
+            return APIService.getFetchUrl<APITree>(`${pvpFolderPath?.url}?recursive=1`, options);
           })
           .then((pvp) => {
             const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
