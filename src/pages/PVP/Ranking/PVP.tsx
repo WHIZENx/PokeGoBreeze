@@ -328,7 +328,7 @@ const RankingPVP = () => {
                   setSorted(sorted ? 0 : 1);
                 }}
               >
-                <span className={'ranking-sort ranking-score' + (sortedBy.current === 'score' ? ' ranking-selected' : '')}>
+                <span className={`ranking-sort ranking-score ${sortedBy.current === 'score' ? 'ranking-selected' : ''}`}>
                   Score
                   {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
                 </span>

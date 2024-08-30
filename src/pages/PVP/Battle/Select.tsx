@@ -227,7 +227,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       )}
       <h5>Fast Moves</h5>
       <div
-        className={'position-relative d-flex align-items-center form-control ' + (pokemon ? 'card-select-enabled' : 'card-select-disabled')}
+        className={`position-relative d-flex align-items-center form-control ${pokemon ? 'card-select-enabled' : 'card-select-disabled'}`}
         style={{ padding: 0, borderRadius: 0 }}
       >
         <div className="card-move-input" tabIndex={0} onClick={() => setShowFMove(true)} onBlur={() => setShowFMove(false)}>
@@ -278,13 +278,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           }}
         />
         <div
-          className={
-            'position-relative d-flex align-items-center form-control ' + (pokemon ? 'card-select-enabled' : 'card-select-disabled')
-          }
+          className={`position-relative d-flex align-items-center form-control ${pokemon ? 'card-select-enabled' : 'card-select-disabled'}`}
           style={{ padding: 0, borderRadius: 0 }}
         >
           <div
-            className={'card-move-input ' + (props.pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
+            className={`card-move-input ${props.pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             tabIndex={0}
             onClick={() => {
               if (!props.pokemonBattle.disableCMovePri) {
@@ -315,7 +313,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .filter((value) => value?.name !== cMovePri?.name && value?.name !== cMoveSec?.name)
                     .map((value, index) => (
                       <div
-                        className={'card-move ' + (props.pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
+                        className={`card-move ${props.pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         key={index}
                         onMouseDown={() => {
                           if (!props.pokemonBattle.disableCMovePri) {
@@ -351,13 +349,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           }}
         />
         <div
-          className={
-            'position-relative d-flex align-items-center form-control ' + (pokemon ? 'card-select-enabled' : 'card-select-disabled')
-          }
+          className={`position-relative d-flex align-items-center form-control ${pokemon ? 'card-select-enabled' : 'card-select-disabled'}`}
           style={{ padding: 0, borderRadius: 0 }}
         >
           <div
-            className={'card-move-input ' + (props.pokemonBattle.disableCMoveSec ? 'cursor-not-allowed' : 'cursor-pointer')}
+            className={`card-move-input ${props.pokemonBattle.disableCMoveSec ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             tabIndex={0}
             onClick={() => {
               if (!props.pokemonBattle.disableCMoveSec) {

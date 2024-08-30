@@ -173,8 +173,8 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Damage Effective</td>
               <td>
                 {props.result.battleState ? (
-                  <span className={'eff-' + eff[props.result.battleState.effective].style}>
-                    {'x' + eff[props.result.battleState.effective].label}
+                  <span className={`eff-${eff[props.result.battleState.effective].style}`}>
+                    {`x${eff[props.result.battleState.effective].label}`}
                   </span>
                 ) : (
                   '-'

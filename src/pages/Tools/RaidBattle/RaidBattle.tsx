@@ -709,7 +709,7 @@ const RaidBattle = () => {
         <div className="progress position-relative">
           <div
             className="progress-bar bg-success"
-            style={{ marginTop: 0, width: percent + '%' }}
+            style={{ marginTop: 0, width: `${percent}%` }}
             role="progressbar"
             aria-valuenow={percent}
             aria-valuemin={0}
@@ -717,7 +717,7 @@ const RaidBattle = () => {
           />
           <div
             className="progress-bar bg-danger"
-            style={{ marginTop: 0, width: 100 - percent + '%' }}
+            style={{ marginTop: 0, width: `${100 - percent}%` }}
             role="progressbar"
             aria-valuenow={100 - percent}
             aria-valuemin={0}
@@ -746,7 +746,7 @@ const RaidBattle = () => {
   const resultBattle = (bossHp: number, timer: number) => {
     const status = enableTimeAllow && timer >= timeAllow ? 1 : bossHp === 0 ? 0 : 2;
     return (
-      <td colSpan={3} className={'text-center bg-' + (status === 0 ? 'success' : 'danger')}>
+      <td colSpan={3} className={`text-center bg-${status === 0 ? 'success' : 'danger'}`}>
         <span className="text-white">{status === 0 ? 'WIN' : status === 1 ? 'TIME OUT' : 'LOSS'}</span>
       </td>
     );
@@ -1287,7 +1287,7 @@ const RaidBattle = () => {
                 <Badge
                   color="primary"
                   overlap="circular"
-                  badgeContent={'Trainer ' + (index + 1)}
+                  badgeContent={`Trainer ${index + 1}`}
                   anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'left',
@@ -1322,9 +1322,7 @@ const RaidBattle = () => {
                 </div>
                 <span className="d-flex ic-group">
                   <span
-                    className={
-                      'ic-copy text-white ' + (trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')
-                    }
+                    className={`ic-copy text-white ${trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'}`}
                     title="Copy"
                     style={{ marginRight: 5 }}
                     onClick={() => {
@@ -1341,7 +1339,7 @@ const RaidBattle = () => {
                     <ContentCopyIcon sx={{ fontSize: 14 }} />
                   </span>
                   <span
-                    className={'ic-remove text-white ' + (index > 0 ? 'bg-danger' : 'click-none bg-secondary')}
+                    className={`ic-remove text-white ${index > 0 ? 'bg-danger' : 'click-none bg-secondary'}`}
                     title="Remove"
                     onClick={() => {
                       if (index > 0) {
@@ -1361,7 +1359,7 @@ const RaidBattle = () => {
             </div>
             <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
               <RemoveCircleIcon
-                className={'cursor-pointer link-danger ' + (trainerBattle.length > 1 ? '' : 'click-none')}
+                className={`cursor-pointer link-danger ${trainerBattle.length > 1 ? '' : 'click-none'}`}
                 fontSize="large"
                 onClick={() => {
                   if (trainerBattle.length > 1) {
@@ -1586,7 +1584,7 @@ const RaidBattle = () => {
           </div>
           <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
             <RemoveCircleIcon
-              className={'cursor-pointer link-danger ' + (pokemonBattle.length > 1 ? '' : 'click-none')}
+              className={`cursor-pointer link-danger ${pokemonBattle.length > 1 ? '' : 'click-none'}`}
               fontSize="large"
               onClick={() => {
                 if (pokemonBattle.length > 1) {

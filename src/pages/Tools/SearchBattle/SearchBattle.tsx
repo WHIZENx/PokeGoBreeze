@@ -280,11 +280,11 @@ const FindBattle = () => {
 
   const getTextColorRatio = (value: number) => {
     value = parseFloat(value.toFixed(2));
-    return 'rank-' + (value === 100 ? 'max' : value >= 90 ? 'excellent' : value >= 80 ? 'great' : value >= 70 ? 'nice' : 'normal');
+    return `rank-${value === 100 ? 'max' : value >= 90 ? 'excellent' : value >= 80 ? 'great' : value >= 70 ? 'nice' : 'normal'}`;
   };
 
   const LeaveToggle = ({ eventKey }: any) => {
-    const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
+    const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
       <div className="accordion-footer" onClick={decoratedOnClick}>
@@ -424,7 +424,7 @@ const FindBattle = () => {
                         </b>
                       </span>
                     </div>
-                    <div className={'border-best-poke ' + getTextColorRatio(value.ratio ?? 0)}>
+                    <div className={`border-best-poke ${getTextColorRatio(value.ratio ?? 0)}`}>
                       <div className="best-poke-desc border-best-poke">
                         <img
                           alt="pokemon-model"

@@ -280,7 +280,7 @@ const Damage = () => {
                       - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
                     </p>
                     <p>
-                      - Move Type: <span className={'type-icon-small ' + move.type?.toLowerCase()}>{capitalize(move.type)}</span>
+                      - Move Type: <span className={`type-icon-small ${move.type?.toLowerCase()}`}>{capitalize(move.type)}</span>
                     </p>
                     {findStabType(form?.form.types ?? [], move.type ?? '')}
                     <p>

@@ -106,15 +106,14 @@ const Raid = (props: IRaidComponent) => {
               <Fragment>
                 {pokemonClass ? (
                   <optgroup
-                    label={
-                      'Legendary ' +
-                      (props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)) +
-                      ' Tier 6'
-                    }
+                    label={`Legendary ${
+                      props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
+                    } Tier 6'`}
                   >
                     <option value={6}>
-                      {'Tier ' +
-                        (props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA))}
+                      {`Tier ${
+                        props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
+                      }`}
                     </option>
                   </optgroup>
                 ) : (

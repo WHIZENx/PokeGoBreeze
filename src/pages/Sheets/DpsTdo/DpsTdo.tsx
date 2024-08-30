@@ -142,7 +142,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Fast Move',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={'/move/' + row.fMove?.id} title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}>
+      <Link className="d-flex align-items-center" to={`/move/${row.fMove?.id}`} title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
           width={25}
@@ -167,7 +167,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Charged Move',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={'/move/' + row.cMove?.id} title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}>
+      <Link className="d-flex align-items-center" to={`/move/${row.cMove?.id}`} title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}>
         <img
           style={{ marginRight: 10 }}
           width={25}
@@ -646,7 +646,7 @@ const DpsTdo = () => {
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
-                className={'btn-select-type w-100 border-types' + (selectTypes.includes(item) ? ' select-type' : '')}
+                className={`btn-select-type w-100 border-types ${selectTypes.includes(item) ? 'select-type' : ''}`}
                 style={{ padding: 10 }}
               >
                 <TypeInfo block={true} arr={[item]} />

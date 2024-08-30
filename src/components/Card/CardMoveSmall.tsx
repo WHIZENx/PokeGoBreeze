@@ -20,7 +20,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
         <Fragment>
           {props.value && (
             <div
-              className={'d-flex align-items-center w-100 h-100' + (props.disable ? ' disable-card-move' : '')}
+              className={`d-flex align-items-center w-100 h-100 ${props.disable ? 'disable-card-move' : ''}`}
               style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
             >
               <img

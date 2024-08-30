@@ -248,7 +248,7 @@ const FindTable = () => {
           </Fragment>
         )}
         <DataTable
-          title={'Levels/IV for CP: ' + preIvArr?.CP}
+          title={`Levels/IV for CP: ${preIvArr?.CP}`}
           columns={columnsIV}
           data={preIvArr?.result ?? []}
           pagination={true}
@@ -275,7 +275,7 @@ const FindTable = () => {
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <DataTable
-              title={'Levels/CP for IV: ' + preCpArr?.IV.atk + '/' + preCpArr?.IV.def + '/' + preCpArr?.IV.sta}
+              title={`Levels/CP for IV: ${preCpArr?.IV.atk}/${preCpArr?.IV.def}/${preCpArr?.IV.sta}`}
               columns={columnsCP}
               data={preCpArr?.result ?? []}
               pagination={true}

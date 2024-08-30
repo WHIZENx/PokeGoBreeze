@@ -49,7 +49,7 @@ const Leagues = () => {
   };
 
   const LeaveToggle = ({ eventKey }: any) => {
-    const decoratedOnClick = useAccordionButton(eventKey, () => <></>);
+    const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
       <div className="accordion-footer" onClick={decoratedOnClick}>
@@ -158,7 +158,7 @@ const Leagues = () => {
                     height={140}
                     src={APIService.getAssetPokeGo(dataStore?.leagues?.data.find((item) => item.title === league.league)?.iconUrl ?? '')}
                   />
-                  <span className={'badge-league ' + league.league.toLowerCase().replaceAll('_', '-')}>
+                  <span className={`badge-league ${league.league.toLowerCase().replaceAll('_', '-')}`}>
                     <div className="sub-badge">
                       <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />
                     </div>
@@ -228,8 +228,9 @@ const Leagues = () => {
                         </span>
                       </div>
                       <span className="caption">
-                        {splitAndCapitalize(item.name?.toLowerCase(), '_', ' ') +
-                          (item.form?.toUpperCase() === FORM_NORMAL ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                        {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
+                          item.form?.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                        }`}
                       </span>
                     </Link>
                   ))}
@@ -257,8 +258,9 @@ const Leagues = () => {
                         </span>
                       </div>
                       <span className="caption">
-                        {splitAndCapitalize(item.name?.toLowerCase(), '_', ' ') +
-                          (item.form?.toUpperCase() === FORM_NORMAL ? '' : ' ' + splitAndCapitalize(item.form.toLowerCase(), '_', ' '))}
+                        {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
+                          item.form?.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                        }`}
                       </span>
                     </Link>
                   ))}

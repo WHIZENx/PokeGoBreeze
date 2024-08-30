@@ -102,7 +102,7 @@ const columnMove: TableColumnModify<ICombat>[] = [
   {
     name: 'Move Name',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={'/move/' + row.id} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
+      <Link className="d-flex align-items-center" to={`/move/${row.id}`} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),
@@ -245,7 +245,7 @@ const SearchTypes = () => {
       <div className="row">
         <div className="col-xl-4 element-top">
           <div
-            className={'d-flex flex-column align-items-center type-info-container ' + currentType?.toLowerCase() + '-border'}
+            className={`d-flex flex-column align-items-center type-info-container ${currentType?.toLowerCase()}-border`}
             style={{ background: computeBgType(currentType, false, false, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
@@ -258,7 +258,7 @@ const SearchTypes = () => {
             </div>
             <span
               style={{ width: 'max-content' }}
-              className={currentType?.toLowerCase() + ' type-select-bg d-flex align-items-center filter-shadow element-top'}
+              className={`${currentType?.toLowerCase()} type-select-bg d-flex align-items-center filter-shadow element-top`}
             >
               <div style={{ display: 'contents', width: 16 }}>
                 <img

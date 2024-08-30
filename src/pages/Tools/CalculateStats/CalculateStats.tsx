@@ -520,7 +520,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataLittleLeague && dataLittleLeague.elidge ? (
-                            <span className={statData?.type + '-text'}>{dataLittleLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={`${statData?.type}-text`}>{dataLittleLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -543,7 +543,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataLittleLeague && dataLittleLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
+                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
                                 {dataLittleLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
@@ -562,7 +562,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataLittleLeague && dataLittleLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
+                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
                                 {dataLittleLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
@@ -633,7 +633,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataGreatLeague && dataGreatLeague.elidge ? (
-                            <span className={statData?.type + '-text'}>{dataGreatLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={`${statData?.type}-text`}>{dataGreatLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -656,7 +656,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataGreatLeague && dataGreatLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
+                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
                                 {dataGreatLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
@@ -675,7 +675,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataGreatLeague && dataGreatLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
+                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
                                 {dataGreatLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
@@ -746,7 +746,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataUltraLeague && dataUltraLeague.elidge ? (
-                            <span className={statData?.type + '-text'}>{dataUltraLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={`${statData?.type}-text`}>{dataUltraLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -769,7 +769,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataUltraLeague && dataUltraLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
+                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
                                 {dataUltraLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
@@ -788,7 +788,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataUltraLeague && dataUltraLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
+                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
                                 {dataUltraLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
@@ -856,7 +856,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataMasterLeague ? (
-                            <span className={statData?.type + '-text'}>{dataMasterLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={`${statData?.type}-text`}>{dataMasterLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -879,7 +879,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataMasterLeague ? (
-                              <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
+                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
                                 {dataMasterLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
@@ -898,7 +898,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataMasterLeague ? (
-                              <span className={statData?.type !== 'buddy' ? statData?.type + '-text' : ''}>
+                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
                                 {dataMasterLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (

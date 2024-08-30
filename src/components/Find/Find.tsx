@@ -144,7 +144,7 @@ const Find = (props: IFindComponent) => {
           <Fragment>
             {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
               <div
-                className={'container card-pokemon ' + (value.id === id ? 'selected' : '')}
+                className={`container card-pokemon ${value.id === id ? 'selected' : ''}`}
                 key={index}
                 onMouseDown={() => getInfoPoke(value)}
               >
