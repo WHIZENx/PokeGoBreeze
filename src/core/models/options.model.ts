@@ -237,6 +237,7 @@ interface CombatLeague {
   iconUrl: string;
   badgeType: string;
   bannedPokemon: string[];
+  pokemonCount: number;
 }
 
 interface EvolutionQuestTemplate {

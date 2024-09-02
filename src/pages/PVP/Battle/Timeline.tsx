@@ -4,7 +4,7 @@ import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { capitalize, combineClasses, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
-import { IPokemonBattle } from '../models/battle.model';
+import { IPokemonBattle, TimelineElement } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
 
@@ -181,14 +181,10 @@ export const TimeLine = (
   pokemonObj: IPokemonBattle,
   elem: React.LegacyRef<HTMLDivElement> | undefined,
   // eslint-disable-next-line no-unused-vars
-  scroll: { (e: { currentTarget: { scrollLeft: number } }): void; bind?: any },
+  scroll: (e: React.SyntheticEvent<HTMLDivElement>) => void,
   timeline: React.LegacyRef<HTMLDivElement> | undefined,
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
-  move: {
-    // eslint-disable-next-line no-unused-vars
-    (e: { currentTarget: { getBoundingClientRect: () => { left: number } }; clientX: number; changedTouches: { clientX: number }[] }): void;
-    bind?: any;
-  },
+  move: TimelineElement<HTMLDivElement>,
   showTap: boolean,
   hide = false
 ) => {
@@ -288,7 +284,7 @@ export const TimeLine = (
 
   return (
     <Fragment>
-      {!hide && (
+      {!hide && move.bind && (
         <div className="w-100 battle-bar d-flex justify-content-center">
           <div id="battle-bar-scroll" className="battle-bar-container" ref={elem} onScroll={scroll.bind(this)}>
             <div
@@ -314,15 +310,7 @@ export const TimeLineFit = (
   pokemonObj: IPokemonBattle,
   timeline: React.LegacyRef<HTMLDivElement> | undefined,
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
-  move: {
-    // eslint-disable-next-line no-unused-vars
-    (e: {
-      currentTarget: { getBoundingClientRect: () => any; clientWidth: number };
-      clientX: number;
-      changedTouches: { clientX: number }[];
-    }): void;
-    bind?: any;
-  },
+  move: TimelineElement<HTMLDivElement>,
   showTap: boolean,
   hide = false
 ) => {

@@ -19,6 +19,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { Toggle } from '../../../core/models/pvp.model';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -48,7 +49,7 @@ const Leagues = () => {
     }
   };
 
-  const LeaveToggle = ({ eventKey }: any) => {
+  const LeaveToggle = ({ eventKey }: Toggle) => {
     const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
@@ -177,6 +178,13 @@ const Leagues = () => {
                   <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
                 </h6>
               </li>
+              {league.pokemonCount > 0 && (
+                <li style={{ fontWeight: 500 }}>
+                  <h6>
+                    <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
+                  </h6>
+                </li>
+              )}
               {league.conditions.maxLevel && (
                 <li style={{ fontWeight: 500 }}>
                   <h6>

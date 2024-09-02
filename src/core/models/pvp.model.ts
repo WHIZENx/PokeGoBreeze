@@ -176,3 +176,8 @@ export interface PokemonPVPMove {
   buffTarget?: string;
   buffs?: number[];
 }
+
+export interface Toggle {
+  eventKey: string;
+  children?: JSX.Element;
+}

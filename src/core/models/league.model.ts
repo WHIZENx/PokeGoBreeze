@@ -15,6 +15,7 @@ export interface ILeague {
   conditions: ILeagueCondition;
   iconUrl?: string;
   league: string;
+  pokemonCount: number;
 }
 
 export interface ILeagueTimestamp {
@@ -169,6 +170,7 @@ export class League implements ILeague {
   conditions: ILeagueCondition;
   iconUrl?: string;
   league: string;
+  pokemonCount: number = 0;
 
   constructor() {
     this.title = '';

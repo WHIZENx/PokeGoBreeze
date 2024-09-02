@@ -144,7 +144,7 @@ const Damage = () => {
   };
 
   const onCalculateDamagePoke = useCallback(
-    (e: { preventDefault: () => void }) => {
+    (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (move) {
         const eff = BattleState.create({

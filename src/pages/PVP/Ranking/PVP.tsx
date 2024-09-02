@@ -31,7 +31,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
-import { RankingsPVP } from '../../../core/models/pvp.model';
+import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { Combat } from '../../../core/models/combat.model';
 import { SpinnerActions } from '../../../store/actions';
@@ -61,7 +61,7 @@ const RankingPVP = () => {
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
-  const LeaveToggle = ({ children, eventKey }: any) => {
+  const LeaveToggle = ({ children, eventKey }: Toggle) => {
     const decoratedOnClick = useAccordionButton(eventKey);
 
     return (

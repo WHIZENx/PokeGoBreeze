@@ -632,7 +632,7 @@ const DpsTdo = () => {
     return setSelectTypes((oldArr) => [...oldArr, value]);
   };
 
-  const onCalculateTable = (e: { preventDefault: () => void }) => {
+  const onCalculateTable = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setShowSpinner(true);
     setTimeout(() => {

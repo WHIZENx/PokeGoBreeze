@@ -105,7 +105,7 @@ const StatsTable = () => {
   }, [searchCP, ATKIv, DEFIv, STAIv]);
 
   const onSearchStatsPoke = useCallback(
-    (e: { preventDefault: () => void }) => {
+    (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       searchStatsPoke();
     },

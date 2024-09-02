@@ -28,6 +28,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../../store/actions';
 import { DynamicObj } from '../../../util/models/util.model';
+import { Toggle } from '../../../core/models/pvp.model';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -228,7 +229,7 @@ const FindBattle = () => {
   );
 
   const onSearchStatsPoke = useCallback(
-    (e: { preventDefault: () => void }) => {
+    (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (!searchCP || parseInt(searchCP) < 10 || isNaN(parseInt(searchCP))) {
         return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
@@ -284,7 +285,7 @@ const FindBattle = () => {
     return `rank-${value === 100 ? 'max' : value >= 90 ? 'excellent' : value >= 80 ? 'great' : value >= 70 ? 'nice' : 'normal'}`;
   };
 
-  const LeaveToggle = ({ eventKey }: any) => {
+  const LeaveToggle = ({ eventKey }: Toggle) => {
     const decoratedOnClick = useAccordionButton(eventKey);
 
     return (

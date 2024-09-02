@@ -101,7 +101,7 @@ const Calculate = () => {
   }, [enqueueSnackbar, globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
 
   const onCalculateStatsPoke = useCallback(
-    (e: { preventDefault: () => void }) => {
+    (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       calculateStatsPoke();
     },

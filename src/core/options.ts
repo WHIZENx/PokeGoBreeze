@@ -866,6 +866,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       result.id = item.templateId.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '');
       result.title = item.data.combatLeague.title.replace('combat_', '').replace('_title', '').toUpperCase();
       result.enabled = item.data.combatLeague.enabled;
+      result.pokemonCount = item.data.combatLeague.pokemonCount;
       item.data.combatLeague.pokemonCondition.forEach((con) => {
         if (con.type === 'POKEMON_CAUGHT_TIMESTAMP') {
           result.conditions.timestamp = LeagueTimestamp.create({
