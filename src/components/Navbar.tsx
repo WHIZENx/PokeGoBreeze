@@ -16,13 +16,15 @@ import { loadTheme } from '../store/effects/theme.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { getEdgeItem } from '../services/edge.service';
 import { EdgeKey } from '../services/constants/edgeKey';
+import { TypeTheme } from '../enums/type.enum';
+import { LocalStorageConfig } from '../store/constants/localStorage';
 
 const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void }) => {
   const dispatch = useDispatch();
 
   const timestamp = useSelector((state: StoreState) => state.store.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTheme, setStateTheme] = useLocalStorage('theme', 'light');
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.LIGHT);
 
   const [version, setVersion] = useState('');
 
@@ -35,7 +37,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
   const onChangeTheme = () => {
     if (!isDelay) {
       setIsDelay(true);
-      loadTheme(dispatch, props.mode === 'light' ? 'dark' : 'light', setStateTheme);
+      loadTheme(dispatch, props.mode === TypeTheme.LIGHT ? TypeTheme.DARK : TypeTheme.LIGHT, setStateTheme);
       setTimeout(() => {
         setIsDelay(false);
         props.toggleColorMode();
