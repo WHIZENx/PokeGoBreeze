@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, isNotEmpty, mappingPokemonName } from '../../util/utils';
+import { combineClasses, getPokemonById, isNotEmpty, mappingPokemonName } from '../../util/utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
@@ -144,7 +144,7 @@ const Find = (props: IFindComponent) => {
           <Fragment>
             {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
               <div
-                className={`container card-pokemon ${value.id === id ? 'selected' : ''}`}
+                className={combineClasses('container card-pokemon', value.id === id ? 'selected' : '')}
                 key={index}
                 onMouseDown={() => getInfoPoke(value)}
               >

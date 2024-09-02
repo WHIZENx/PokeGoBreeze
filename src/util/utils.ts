@@ -30,6 +30,7 @@ import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 import { ThemeModify } from './models/overrides/themes.model';
 import { TableColumn } from 'react-data-table-component';
+import { DynamicObj } from './models/util.model';
 
 class Mask {
   value: number;
@@ -428,13 +429,7 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: IS
   return data;
 };
 
-export const calRank = (
-  pokemonStats: {
-    [x: string]: OptionsRank;
-  },
-  type: string,
-  rank: number
-) => {
+export const calRank = (pokemonStats: DynamicObj<string, OptionsRank>, type: string, rank: number) => {
   return ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
 };
 
@@ -540,7 +535,7 @@ const convertNameEffort = (name: string) => {
 };
 
 export const convertStatsEffort = (stats: Stats[] | undefined) => {
-  const result = new StatsPokemon() as unknown as { [x: string]: number };
+  const result = new StatsPokemon() as unknown as DynamicObj<string, number>;
 
   stats?.forEach((stat) => {
     result[convertNameEffort(stat.stat.name)] = stat.base_stat;
@@ -780,7 +775,12 @@ export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) 
   if (isNotEmpty(combat)) {
     const resultFirst = combat.filter((item) => item.num === id);
     form =
-      form?.toLowerCase().replaceAll('-', '_').replaceAll('_standard', '').toUpperCase().replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
+      form
+        ?.toLowerCase()
+        .replaceAll('-', '_')
+        .replaceAll(`_${FORM_STANDARD.toLowerCase()}`, '')
+        .toUpperCase()
+        .replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
     const result = resultFirst?.find((item) => item.fullName === form || item.forme === form);
     return result ?? resultFirst[0] ?? undefined;
   }
@@ -803,7 +803,7 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
 };
 
 export const replaceTempMoveName = (name: string) => {
-  if (name.endsWith('_FAST')) {
+  if (name.endsWith('_FAST') || name.includes('_FAST_')) {
     name = name.replace('_FAST', '');
   } else if (name.endsWith('_PLUS')) {
     name = name.replaceAll('_PLUS', '+');
@@ -841,4 +841,8 @@ export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
     pokemon.purifiedMoves ?? [],
     pokemon.specialMoves ?? []
   );
+};
+
+export const combineClasses = <T>(...classes: T[]) => {
+  return classes.filter((c) => c).join(' ');
 };

@@ -2,7 +2,7 @@ import { Badge } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, combineClasses, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -15,15 +15,20 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
     }
     return (
       <div className="d-flex flex-wrap align-items-center" style={{ gap: 5 }}>
-        <span className={`${move.type?.toLowerCase()}${border ? '-border' : ''} type-select-bg d-flex align-items-center border-type-init`}>
+        <span
+          className={combineClasses(
+            `${move.type?.toLowerCase()}${border ? '-border' : ''}`,
+            'type-select-bg d-flex align-items-center border-type-init'
+          )}
+        >
           <div style={{ display: 'contents', width: 16 }}>
             <img
-              className={`pokemon-sprite-small sprite-type-select ${shadow ? 'filter-shadow' : ''}`}
+              className={combineClasses('pokemon-sprite-small sprite-type-select', shadow ? 'filter-shadow' : '')}
               alt="img-type-pokemon"
               src={APIService.getTypeHqSprite(capitalize(move.type))}
             />
           </div>
-          <span className={`${!shadow ? 'text-black' : 'filter-shadow'}`} style={{ fontSize: 14 }}>
+          <span className={combineClasses(!shadow ? 'text-black' : 'filter-shadow')} style={{ fontSize: 14 }}>
             {splitAndCapitalize(move.name, '_', ' ')}
           </span>
         </span>
@@ -39,7 +44,10 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             {pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === AttackType.Charge && (
               <Fragment>
                 {value.type === AttackType.Block ? (
-                  <div style={{ height: 80 }} className={`d-flex align-items-center turn-battle ${end ? 'justify-content-end' : ''}`}>
+                  <div
+                    style={{ height: 80 }}
+                    className={combineClasses('d-flex align-items-center turn-battle', end ? 'justify-content-end' : '')}
+                  >
                     <div className="block-attack-container">
                       <img className="block-spirit-timeline" alt="img-shield" src={APIService.getPokeOtherLeague('ShieldButton')} />
                     </div>
@@ -49,7 +57,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                     </span>
                   </div>
                 ) : (
-                  <div className={`wait-attack-container turn-battle ${end ? 'justify-content-end' : ''}`} />
+                  <div className={combineClasses('wait-attack-container turn-battle', end ? 'justify-content-end' : '')} />
                 )}
               </Fragment>
             )}
@@ -58,13 +66,13 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                 color="primary"
                 overlap="circular"
                 badgeContent={value.tap ? 'Tap' : null}
-                className={`fast-attack-container text-shadow turn-battle ${end ? 'justify-content-end' : ''}`}
+                className={combineClasses('fast-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: end ? 'right' : 'left',
                 }}
               >
-                <div className={`fast-attack-content text-center ${value.color}`}>
+                <div className={combineClasses('fast-attack-content text-center', value.color)}>
                   <span className="text-warning" style={{ fontSize: 12 }}>
                     <b>Fast Attack!</b>
                   </span>
@@ -77,18 +85,21 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                 color="primary"
                 overlap="circular"
                 badgeContent={value.tap ? 'Tap' : null}
-                className={`${
+                className={combineClasses(
                   pokeCurr.timeline?.at(index - 1) && pokeCurr.timeline?.at(index - 1)?.dmgImmune
                     ? 'fast-attack-container text-shadow'
-                    : 'wait-attack-container'
-                } ${end ? 'justify-content-end' : ''} turn-battle ${value.tap ? `${value.color}-border` : ''}`}
+                    : 'wait-attack-container',
+                  end ? 'justify-content-end' : '',
+                  'turn-battle',
+                  value.tap ? `${value.color}-border` : ''
+                )}
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: end ? 'right' : 'left',
                 }}
               >
                 {pokeCurr.timeline?.at(index - 1) && pokeCurr.timeline?.at(index - 1)?.dmgImmune ? (
-                  <div className={`fast-attack-content text-center ${value.move?.type?.toLowerCase()}`}>
+                  <div className={combineClasses('fast-attack-content text-center', value.move?.type?.toLowerCase())}>
                     <span className="text-warning" style={{ fontSize: 12 }}>
                       <b>Fast Attack!</b>
                     </span>
@@ -100,8 +111,11 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               </Badge>
             )}
             {value.type === AttackType.Prepare && (
-              <div style={{ height: 80 }} className={`d-flex align-items-center turn-battle ${end ? 'justify-content-end' : ''}`}>
-                <div className={`swipe-attack-container ${value.color}-border text-center`}>
+              <div
+                style={{ height: 80 }}
+                className={combineClasses('d-flex align-items-center turn-battle', end ? 'justify-content-end' : '')}
+              >
+                <div className={combineClasses('swipe-attack-container', `${value.color}-border`, 'text-center')}>
                   <span style={{ fontSize: 12 }}>
                     <b>Swipe Charge</b>
                   </span>
@@ -110,8 +124,8 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               </div>
             )}
             {value.type === AttackType.Charge && (
-              <div className={`charged-attack-container text-shadow turn-battle ${end ? 'justify-content-end' : ''}`}>
-                <div className={`charged-attack-content text-center ${value.color}`}>
+              <div className={combineClasses('charged-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}>
+                <div className={combineClasses('charged-attack-content text-center', value.color)}>
                   <span className="text-warning" style={{ fontSize: 16 }}>
                     <b>Charged Attack!</b>
                   </span>
@@ -119,14 +133,20 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               </div>
             )}
             {value.type === AttackType.Dead && pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === AttackType.Dead ? (
-              <div className={`winner-container bg-dark text-white turn-battle ${end ? 'justify-content-end' : ''}`}>TIE!</div>
+              <div className={combineClasses('winner-container bg-dark text-white turn-battle', end ? 'justify-content-end' : '')}>
+                TIE!
+              </div>
             ) : (
               <Fragment>
                 {value.type === AttackType.Win && (
-                  <div className={`winner-container bg-success text-white turn-battle ${end ? 'justify-content-end' : ''}`}>WIN!</div>
+                  <div className={combineClasses('winner-container bg-success text-white turn-battle', end ? 'justify-content-end' : '')}>
+                    WIN!
+                  </div>
                 )}
                 {value.type === AttackType.Dead && (
-                  <div className={`loser-container bg-danger text-white turn-battle ${end ? 'justify-content-end' : ''}`}>LOSE!</div>
+                  <div className={combineClasses('loser-container bg-danger text-white turn-battle', end ? 'justify-content-end' : '')}>
+                    LOSE!
+                  </div>
                 )}
               </Fragment>
             )}
@@ -234,19 +254,19 @@ export const TimeLine = (
             <Fragment key={index}>
               {value.type === AttackType.Block && <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />}
               {value.type === AttackType.Fast && (
-                <div id={index.toString()} className={`fast-attack ${value.color} ${value.color}-border`} />
+                <div id={index.toString()} className={combineClasses('fast-attack', value.color, `${value.color}-border`)} />
               )}
               {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
                 <div
                   id={index.toString()}
-                  className={`charge-attack ${value.color}-border`}
+                  className={combineClasses('charge-attack', `${value.color}-border`)}
                   style={{ width: value.size, height: value.size }}
                 />
               )}
               {value.type === AttackType.Charge && (
                 <div
                   id={index.toString()}
-                  className={`charge-attack ${value.color} ${value.color}-border`}
+                  className={combineClasses('charge-attack', value.color, `${value.color}-border`)}
                   style={{ width: value.size, height: value.size }}
                 />
               )}
@@ -389,14 +409,14 @@ export const TimeLineFit = (
               {value.type === AttackType.Fast && (
                 <div
                   id={index.toString()}
-                  className={`fast-attack ${value.color} black-border`}
+                  className={combineClasses('fast-attack', value.color, 'black-border')}
                   style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index) }}
                 />
               )}
               {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
                 <div
                   id={index.toString()}
-                  className={`charge-attack ${value.color}-border`}
+                  className={combineClasses('charge-attack', `${value.color}-border`)}
                   style={{
                     width: value.size,
                     height: value.size,
@@ -407,7 +427,7 @@ export const TimeLineFit = (
               {value.type === AttackType.Charge && (
                 <div
                   id={index.toString()}
-                  className={`charge-attack ${value.color} ${value.color}-border`}
+                  className={combineClasses('charge-attack', value.color, `${value.color}-border`)}
                   style={{
                     width: value.size,
                     height: value.size,

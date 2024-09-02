@@ -32,6 +32,7 @@ import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -174,8 +175,8 @@ const StatsRanking = () => {
   };
 
   const setSortedPokemonRanking = (primary: IPokemonStatsRanking, secondary: IPokemonStatsRanking, sortBy: string[]) => {
-    const a = primary as unknown as { [x: string]: { [y: string]: number } };
-    const b = secondary as unknown as { [x: string]: { [y: string]: number } };
+    const a = primary as unknown as DynamicObj<string, DynamicObj<string, number>>;
+    const b = secondary as unknown as DynamicObj<string, DynamicObj<string, number>>;
     return b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]];
   };
 
@@ -193,7 +194,7 @@ const StatsRanking = () => {
     return pokemon
       .sort((a, b) => setSortedPokemonRanking(a, b, sortBy))
       .map((data) => {
-        const result = data as unknown as { [x: string]: IPokemonStatsRanking };
+        const result = data as unknown as DynamicObj<string, IPokemonStatsRanking>;
         return new PokemonStatsRanking({
           ...data,
           rank: result[sortBy[0]]?.rank,

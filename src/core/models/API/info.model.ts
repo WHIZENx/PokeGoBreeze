@@ -1,3 +1,4 @@
+import { DynamicObj } from '../../../util/models/util.model';
 import { IPokemonSprit, PokemonSprit } from './form.model';
 
 export interface SpriteInfo {
@@ -180,7 +181,7 @@ export interface SpriteInfo {
 export interface PokemonInfo {
   abilities: Ability[];
   base_experience: number;
-  cries: { [x: string]: string };
+  cries: DynamicObj<string, string>;
   forms: Path[];
   game_indices: Indices[];
   height: number;
@@ -242,7 +243,7 @@ export interface Type {
 }
 
 export interface IPokemonDetail {
-  cries: { [x: string]: string };
+  cries: DynamicObj<string, string>;
   forms: Path[];
   height: number;
   id: number;
@@ -258,7 +259,7 @@ export interface IPokemonDetail {
 }
 
 export class PokemonDetail implements IPokemonDetail {
-  cries!: { [x: string]: string };
+  cries!: DynamicObj<string, string>;
   forms: Path[] = [];
   height: number = 0;
   id: number = 0;

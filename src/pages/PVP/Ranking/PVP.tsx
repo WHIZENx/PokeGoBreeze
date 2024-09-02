@@ -8,6 +8,7 @@ import {
   getStyleSheet,
   replaceTempMovePvpName,
   isNotEmpty,
+  combineClasses,
 } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
@@ -37,6 +38,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -258,8 +260,8 @@ const RankingPVP = () => {
   };
 
   const setSortedPokemonBattle = (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
-    const a = primary as unknown as { [x: string]: number };
-    const b = secondary as unknown as { [x: string]: number };
+    const a = primary as unknown as DynamicObj<string, number>;
+    const b = secondary as unknown as DynamicObj<string, number>;
     return sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current];
   };
 
@@ -328,7 +330,7 @@ const RankingPVP = () => {
                   setSorted(sorted ? 0 : 1);
                 }}
               >
-                <span className={`ranking-sort ranking-score ${sortedBy.current === 'score' ? 'ranking-selected' : ''}`}>
+                <span className={combineClasses('ranking-sort ranking-score', sortedBy.current === 'score' ? 'ranking-selected' : '')}>
                   Score
                   {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
                 </span>

@@ -1,35 +1,43 @@
+/* eslint-disable no-unused-vars */
 import { IStatsPokemon, StatsPokemon } from '../../core/models/stats.model';
+
+interface IBaseStatsPokeGo {
+  attack: number;
+  defense: number;
+  stamina: number;
+}
+
+export class BaseStatsPokeGo implements IBaseStatsPokeGo {
+  attack: number = 0;
+  defense: number = 0;
+  stamina: number = 0;
+
+  constructor({ ...props }: IBaseStatsPokeGo) {
+    Object.assign(this, props);
+  }
+}
 
 export interface IArrayStats {
   id: number;
   name: string;
   form: string;
   baseStats: IStatsPokemon;
-  baseStatsPokeGo:
-    | {
-        attack: number;
-        defense: number;
-        stamina: number;
-      }
-    | undefined;
+  baseStatsPokeGo: IBaseStatsPokeGo | undefined;
   baseStatsProd: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class ArrayStats implements IArrayStats {
   id: number = 0;
   name: string = '';
   form: string = '';
   baseStats: IStatsPokemon = new StatsPokemon();
-  baseStatsPokeGo:
-    | {
-        attack: number;
-        defense: number;
-        stamina: number;
-      }
-    | undefined;
+  baseStatsPokeGo: IBaseStatsPokeGo | undefined;
   baseStatsProd: number = 0;
 
   constructor({ ...props }: IArrayStats) {
     Object.assign(this, props);
   }
 }
+
+export type DynamicObj<T extends string | number, S> = { [x in T]: S };

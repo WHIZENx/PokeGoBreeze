@@ -1,3 +1,4 @@
+import { DynamicObj } from '../../util/models/util.model';
 import { IPokemonPermission } from './options.model';
 
 interface ILeaguePVP {
@@ -110,14 +111,14 @@ export interface LeagueReward {
 }
 
 interface IReward {
-  rank: { [x: number]: IRankRewardLeague };
-  pokemon: { [x: number]: IPokemonRewardLeague };
+  rank: DynamicObj<number, IRankRewardLeague>;
+  pokemon: DynamicObj<number, IPokemonRewardLeague>;
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class Reward implements IReward {
-  rank: { [x: number]: IRankRewardLeague } = [];
-  pokemon: { [x: number]: IPokemonRewardLeague } = [];
+export class Reward implements IReward {
+  rank: DynamicObj<number, IRankRewardLeague> = [];
+  pokemon: DynamicObj<number, IPokemonRewardLeague> = [];
 }
 
 interface ISeason {

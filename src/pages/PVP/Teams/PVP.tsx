@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
 import {
+  combineClasses,
   convertNameRankingToForm,
   convertNameRankingToOri,
   findMoveTeam,
@@ -32,6 +33,7 @@ import { FORM_NORMAL, FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -66,7 +68,6 @@ const TeamPVP = () => {
       styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
     }
 
-    let fMove: ICombat | undefined, cMovePri: ICombat | undefined, cMoveSec: ICombat | undefined;
     let fMoveText: string, cMove: string, cMovePriText: string, cMoveSecText: string;
     if (moveSet.includes('+')) {
       [fMoveText, cMove] = moveSet.split('+');
@@ -85,30 +86,12 @@ const TeamPVP = () => {
       ) ?? [];
 
     const fCombatName = findMoveTeam(fMoveText, fastMoveSet);
-    let cCombatName = findMoveTeam(cMovePriText, chargedMoveSet);
-    let cSecCombatName = findMoveTeam(cMoveSecText, chargedMoveSet);
+    const cCombatName = findMoveTeam(cMovePriText, chargedMoveSet);
+    const cSecCombatName = findMoveTeam(cMoveSecText, chargedMoveSet);
 
-    fMove = dataStore?.combat?.find(
-      (item) => (item.abbreviation && item.abbreviation === fMoveText) || (!item.abbreviation && item.name === fCombatName)
-    );
-    cMovePri = dataStore?.combat?.find(
-      (item) => (item.abbreviation && item.abbreviation === cMovePriText) || (!item.abbreviation && item.name === cCombatName)
-    );
-    if (!cMovePri) {
-      cCombatName = findMoveTeam(cMoveSecText, allMoves);
-      cMovePri = dataStore?.combat?.find(
-        (item) => (item.abbreviation && item.abbreviation === cMoveSecText) || (!item.abbreviation && item.name === cCombatName)
-      );
-    }
-    if (cMoveSecText) {
-      cMoveSec = dataStore?.combat?.find((item) => item.name === cSecCombatName);
-      if (!cMoveSec) {
-        cSecCombatName = findMoveTeam(cMoveSecText, allMoves);
-        cMoveSec = dataStore?.combat?.find(
-          (item) => (item.abbreviation && item.abbreviation === cMoveSecText) || (!item.abbreviation && item.name === cSecCombatName)
-        );
-      }
-    }
+    const fMove = findMoveByTag(fCombatName, fMoveText);
+    const cMovePri = findMoveByTag(cCombatName, cMovePriText);
+    let cMoveSec = findMoveByTag(cSecCombatName, cMoveSecText);
 
     if (cMovePri?.id === cMoveSec?.id) {
       cMoveSec = undefined;
@@ -227,15 +210,32 @@ const TeamPVP = () => {
   };
 
   const setSortedPokemonPerformers = (primary: Performers, secondary: Performers) => {
-    const a = primary as unknown as { [x: string]: number };
-    const b = secondary as unknown as { [x: string]: number };
+    const a = primary as unknown as DynamicObj<string, number>;
+    const b = secondary as unknown as DynamicObj<string, number>;
     return sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy];
   };
 
   const setSortedPokemonTeam = (primary: Teams, secondary: Teams) => {
-    const a = primary as unknown as { [x: string]: number };
-    const b = secondary as unknown as { [x: string]: number };
+    const a = primary as unknown as DynamicObj<string, number>;
+    const b = secondary as unknown as DynamicObj<string, number>;
     return sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy];
+  };
+
+  const findMoveByTag = (name: string | null, tag: string) => {
+    let move: ICombat | undefined;
+    if (!tag) {
+      return move;
+    }
+    move = dataStore?.combat?.find(
+      (item) => (item.abbreviation && item.abbreviation === tag) || (!item.abbreviation && item.name === name)
+    );
+    if (!move) {
+      name = findMoveTeam(tag, allMoves);
+      move = dataStore?.combat?.find(
+        (item) => (item.abbreviation && item.abbreviation === tag) || (!item.abbreviation && item.name === name)
+      );
+    }
+    return move;
   };
 
   return (
@@ -266,7 +266,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={`ranking-sort ranking-score ${sortedBy === 'teamScore' ? 'ranking-selected' : ''}`}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedBy === 'teamScore' ? 'ranking-selected' : '')}>
                 Team Score
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -281,7 +281,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={`ranking-sort ranking-score ${sortedBy === 'individualScore' ? 'ranking-selected' : ''}`}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedBy === 'individualScore' ? 'ranking-selected' : '')}>
                 Individual Score
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -296,7 +296,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={`ranking-sort ranking-score ${sortedBy === 'games' ? 'ranking-selected' : ''}`}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedBy === 'games' ? 'ranking-selected' : '')}>
                 Usage
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -411,7 +411,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={`ranking-sort ranking-score ${sortedTeamBy === 'teamScore' ? 'ranking-selected' : ''}`}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedTeamBy === 'teamScore' ? 'ranking-selected' : '')}>
                 Team Score
                 {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -426,7 +426,7 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={`ranking-sort ranking-score ${sortedTeamBy === 'games' ? 'ranking-selected' : ''}`}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedTeamBy === 'games' ? 'ranking-selected' : '')}>
                 Usage
                 {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>

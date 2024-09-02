@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, isNotEmpty } from '../../../util/utils';
+import { getTime, splitAndCapitalize, capitalize, isNotEmpty, combineClasses } from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -158,7 +158,7 @@ const Leagues = () => {
                     height={140}
                     src={APIService.getAssetPokeGo(dataStore?.leagues?.data.find((item) => item.title === league.league)?.iconUrl ?? '')}
                   />
-                  <span className={`badge-league ${league.league.toLowerCase().replaceAll('_', '-')}`}>
+                  <span className={combineClasses('badge-league', league.league.toLowerCase().replaceAll('_', '-'))}>
                     <div className="sub-badge">
                       <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />
                     </div>

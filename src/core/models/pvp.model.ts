@@ -3,9 +3,14 @@ import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
 import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta } from './stats.model';
 
-export interface PVPDataModel {
+export interface IPVPDataModel {
   rankings: PVPInfo[];
   trains: PVPInfo[];
+}
+
+export class PVPDataModel implements IPVPDataModel {
+  rankings: PVPInfo[] = [];
+  trains: PVPInfo[] = [];
 }
 
 export interface PVPInfo {
@@ -88,6 +93,7 @@ interface IPokemonRankingStats {
   hp?: number;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class PokemonRankingStats implements IPokemonRankingStats {
   product?: number;
   atk: number = 0;

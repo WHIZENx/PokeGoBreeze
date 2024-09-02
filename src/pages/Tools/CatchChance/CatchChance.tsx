@@ -31,6 +31,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
 interface PokemonCatchChance {
   baseCaptureRate?: number;
@@ -46,7 +47,7 @@ interface PokemonCatchChance {
   obShadowFormBaseCaptureRate?: number;
   obShadowFormAttackProbability?: number;
   obShadowFormDodgeProbability?: number;
-  result?: { [x: string]: { [x: string]: number } };
+  result?: DynamicObj<string, DynamicObj<string, number>>;
 }
 
 const CatchChance = () => {
@@ -163,7 +164,7 @@ const CatchChance = () => {
   };
 
   const calculateCatch = () => {
-    const result: { [x: string]: { [x: string]: number } } = {};
+    const result: DynamicObj<string, DynamicObj<string, number>> = {};
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
 

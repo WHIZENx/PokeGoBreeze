@@ -4,7 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, checkPokemonGO, combineClasses, isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import {
   FORM_GMAX,
@@ -58,6 +58,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
+import { DynamicObj } from '../../../util/models/util.model';
 
 interface TrainerBattle {
   pokemons: PokemonRaidModel[];
@@ -198,8 +199,8 @@ const RaidBattle = () => {
   };
 
   const setSortedResult = (primary: PokemonMoveData, secondary: PokemonMoveData, sortIndex: string[]) => {
-    const a = primary as unknown as { [x: string]: number };
-    const b = secondary as unknown as { [x: string]: number };
+    const a = primary as unknown as DynamicObj<string, number>;
+    const b = secondary as unknown as DynamicObj<string, number>;
     return filters.selected.sorted
       ? a[sortIndex[filters.selected.sortBy]] - b[sortIndex[filters.selected.sortBy]]
       : b[sortIndex[filters.selected.sortBy]] - a[sortIndex[filters.selected.sortBy]];
@@ -522,7 +523,7 @@ const RaidBattle = () => {
       };
       setResultBoss(result);
     } else {
-      const group = dataList.reduce((result: { [x: string]: PokemonMoveData[] }, obj) => {
+      const group = dataList.reduce((result: DynamicObj<string, PokemonMoveData[]>, obj) => {
         (result[obj.pokemon?.name ?? ''] = result[obj.pokemon?.name ?? ''] || []).push(obj);
         return result;
       }, {});
@@ -746,7 +747,7 @@ const RaidBattle = () => {
   const resultBattle = (bossHp: number, timer: number) => {
     const status = enableTimeAllow && timer >= timeAllow ? 1 : bossHp === 0 ? 0 : 2;
     return (
-      <td colSpan={3} className={`text-center bg-${status === 0 ? 'success' : 'danger'}`}>
+      <td colSpan={3} className={combineClasses('text-center', `bg-${status === 0 ? 'success' : 'danger'}`)}>
         <span className="text-white">{status === 0 ? 'WIN' : status === 1 ? 'TIME OUT' : 'LOSS'}</span>
       </td>
     );
@@ -1322,7 +1323,10 @@ const RaidBattle = () => {
                 </div>
                 <span className="d-flex ic-group">
                   <span
-                    className={`ic-copy text-white ${trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'}`}
+                    className={combineClasses(
+                      'ic-copy text-white',
+                      trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
+                    )}
                     title="Copy"
                     style={{ marginRight: 5 }}
                     onClick={() => {
@@ -1339,7 +1343,7 @@ const RaidBattle = () => {
                     <ContentCopyIcon sx={{ fontSize: 14 }} />
                   </span>
                   <span
-                    className={`ic-remove text-white ${index > 0 ? 'bg-danger' : 'click-none bg-secondary'}`}
+                    className={combineClasses('ic-remove text-white', index > 0 ? 'bg-danger' : 'click-none bg-secondary')}
                     title="Remove"
                     onClick={() => {
                       if (index > 0) {
@@ -1359,7 +1363,7 @@ const RaidBattle = () => {
             </div>
             <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
               <RemoveCircleIcon
-                className={`cursor-pointer link-danger ${trainerBattle.length > 1 ? '' : 'click-none'}`}
+                className={combineClasses('cursor-pointer link-danger', trainerBattle.length > 1 ? '' : 'click-none')}
                 fontSize="large"
                 onClick={() => {
                   if (trainerBattle.length > 1) {
@@ -1557,7 +1561,7 @@ const RaidBattle = () => {
             {trainerBattleId !== null && (
               <Fragment>
                 {pokemonBattle.map((pokemon, index) => (
-                  <div className={`${index === 0 ? '' : 'element-top'}`} key={index}>
+                  <div className={combineClasses(index === 0 ? '' : 'element-top')} key={index}>
                     <PokemonRaid
                       controls={true}
                       id={index}
@@ -1584,7 +1588,7 @@ const RaidBattle = () => {
           </div>
           <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
             <RemoveCircleIcon
-              className={`cursor-pointer link-danger ${pokemonBattle.length > 1 ? '' : 'click-none'}`}
+              className={combineClasses('cursor-pointer link-danger', pokemonBattle.length > 1 ? '' : 'click-none')}
               fontSize="large"
               onClick={() => {
                 if (pokemonBattle.length > 1) {

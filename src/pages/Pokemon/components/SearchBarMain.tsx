@@ -1,6 +1,6 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../../util/utils';
+import { combineClasses, splitAndCapitalize } from '../../../util/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -11,7 +11,11 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
   return (
     <>
       {props.data?.prev && (
-        <div title="Previous Pokémon" className={`prev-block col${props.data?.next ? '-6' : ''}`} style={{ float: 'left', padding: 0 }}>
+        <div
+          title="Previous Pokémon"
+          className={combineClasses('prev-block', `col${props.data?.next ? '-6' : ''}`)}
+          style={{ float: 'left', padding: 0 }}
+        >
           <Link
             to={`/pokemon/${props.data?.prev?.id}`}
             className="d-flex justify-content-start align-items-center"
@@ -44,7 +48,11 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
         </div>
       )}
       {props.data?.next && (
-        <div title="Next Pokémon" className={`next-block col${props.data?.prev ? '-6' : ''}`} style={{ float: 'right', padding: 0 }}>
+        <div
+          title="Next Pokémon"
+          className={combineClasses('next-block', `col${props.data?.prev ? '-6' : ''}`)}
+          style={{ float: 'right', padding: 0 }}
+        >
           <Link
             to={`/pokemon/${props.data?.next?.id}`}
             className="d-flex justify-content-end align-items-center"

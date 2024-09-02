@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/constants';
 import {
   capitalize,
+  combineClasses,
   convertPokemonAPIDataName,
   convertStatsEffort,
   formIconAssets,
@@ -114,12 +115,13 @@ const FormComponent = (props: IFormInfoComponent) => {
                   {value.map((value, index) => (
                     <button
                       key={index}
-                      className={`btn btn-form ${
+                      className={combineClasses(
+                        'btn btn-form',
                         (props.defaultId === props.form?.form.id && value.form.id === props.form.form.id) ||
-                        (props.defaultId !== props.form?.form.id && value.form.id === props.form?.form.id)
+                          (props.defaultId !== props.form?.form.id && value.form.id === props.form?.form.id)
                           ? 'form-selected'
                           : ''
-                      }`}
+                      )}
                       onClick={() => changeForm(value.form.name, value.form.formName)}
                     >
                       <div className="d-flex w-100 justify-content-center">

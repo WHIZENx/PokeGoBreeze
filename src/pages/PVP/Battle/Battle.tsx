@@ -63,6 +63,7 @@ import { StatsBase } from '../../../core/models/stats.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
+import { DynamicObj } from '../../../util/models/util.model';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -1471,7 +1472,7 @@ const Battle = () => {
                     size={80}
                     maxEnergy={100}
                     moveEnergy={Math.abs(pokemon.cMovePri?.pvpEnergy ?? 0)}
-                    energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
+                    energy={(playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type]?.energy ?? pokemon.energy ?? 0}
                     disable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
@@ -1481,7 +1482,7 @@ const Battle = () => {
                       size={80}
                       maxEnergy={100}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
-                      energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
+                      energy={(playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type]?.energy ?? pokemon.energy ?? 0}
                       disable={pokemon.disableCMoveSec}
                     />
                   )}
@@ -1491,7 +1492,7 @@ const Battle = () => {
                     <HpBar
                       text={'HP'}
                       height={15}
-                      hp={Math.floor((playTimeline as unknown as { [x: string]: IPokemonBattleData })[type].hp)}
+                      hp={Math.floor((playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type].hp)}
                       maxHp={Math.floor(pokemon.pokemonData.currentStats?.stats?.statsSTA ?? 0)}
                     />
                   </Fragment>

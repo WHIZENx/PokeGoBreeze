@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, combineClasses, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -27,6 +27,7 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../../store/actions';
+import { DynamicObj } from '../../../util/models/util.model';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -169,12 +170,12 @@ const FindBattle = () => {
                 form: value.form,
                 maxCP: value.maxCP,
                 league: Object.keys(value.battleLeague).reduce((a, b) =>
-                  !(value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[a]
+                  !(value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[a]
                     ? b
-                    : !(value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[b]
+                    : !(value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[b]
                     ? a
-                    : ((value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[a]?.ratio ?? 0) >
-                      ((value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[b]?.ratio ?? 0)
+                    : ((value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[a]?.ratio ?? 0) >
+                      ((value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[b]?.ratio ?? 0)
                     ? a
                     : b
                 ),
@@ -188,12 +189,12 @@ const FindBattle = () => {
               form: value.form,
               maxCP: value.maxCP,
               league: Object.keys(value.battleLeague).reduce((a, b) =>
-                !(value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[a]
+                !(value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[a]
                   ? b
-                  : !(value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[b]
+                  : !(value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[b]
                   ? a
-                  : ((value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[a]?.ratio ?? 0) >
-                    ((value.battleLeague as unknown as { [x: string]: IBattleBaseStats })[b]?.ratio ?? 0)
+                  : ((value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[a]?.ratio ?? 0) >
+                    ((value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[b]?.ratio ?? 0)
                   ? a
                   : b
               ),
@@ -424,7 +425,7 @@ const FindBattle = () => {
                         </b>
                       </span>
                     </div>
-                    <div className={`border-best-poke ${getTextColorRatio(value.ratio ?? 0)}`}>
+                    <div className={combineClasses('border-best-poke', getTextColorRatio(value.ratio ?? 0))}>
                       <div className="best-poke-desc border-best-poke">
                         <img
                           alt="pokemon-model"

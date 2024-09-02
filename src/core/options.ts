@@ -6,11 +6,10 @@ import {
   LeagueData,
   RankRewardSetLeague,
   PokemonRewardSetLeague,
-  IPokemonRewardLeague,
-  IRankRewardLeague,
   PokemonRewardLeague,
   LeagueTimestamp,
   Season,
+  Reward,
 } from './models/league.model';
 import { ISticker, Sticker } from './models/sticker.model';
 
@@ -41,9 +40,18 @@ import {
   FORM_SPECIAL,
 } from '../util/constants';
 import { APIUrl } from '../services/constants';
-import { BuddyFriendship, PokemonDataGM, IPokemonPermission, TrainerFriendship, Options, PokemonPermission } from './models/options.model';
+import {
+  BuddyFriendship,
+  PokemonDataGM,
+  IPokemonPermission,
+  TrainerFriendship,
+  Options,
+  PokemonPermission,
+  PokemonReward,
+} from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
+import { DynamicObj } from '../util/models/util.model';
 
 export const getOption = <T>(options: any, args: string[]): T => {
   if (!options) {
@@ -100,7 +108,7 @@ export const optionPokeSound = (data: APITree) => {
 };
 
 export const optionPokemonTypes = (data: PokemonDataGM[]) => {
-  const types = new TypeSet() as unknown as { [x: string]: { [y: string]: number } };
+  const types = new TypeSet() as unknown as DynamicObj<string, DynamicObj<string, number>>;
   const typeSet = Object.keys(types);
   data
     .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId) && item.data.typeEffective)
@@ -510,7 +518,7 @@ const cleanPokemonDupForm = (result: IPokemonData[]) => {
 };
 
 export const optionPokemonWeather = (data: PokemonDataGM[]) => {
-  const weather: { [x: string]: string[] } = {};
+  const weather: DynamicObj<string, string[]> = {};
   data
     .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
     .forEach((item) => {
@@ -749,7 +757,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       const result = new Combat();
       result.name = item.data.combatMove.uniqueId.replace(/^V\d{4}_MOVE_/, '');
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-      if (item.templateId.endsWith(TypeMove.FAST)) {
+      if (item.templateId.endsWith(TypeMove.FAST) || item.templateId.includes('_FAST_')) {
         result.typeMove = TypeMove.FAST;
       } else {
         result.typeMove = TypeMove.CHARGE;
@@ -954,13 +962,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
 
   const seasons = data.find((item) => item.templateId === 'COMBAT_COMPETITIVE_SEASON_SETTINGS')?.data.combatCompetitiveSeasonSettings
     .seasonEndTimeTimestamp;
-  const rewards: {
-    rank: { [x: number]: IRankRewardLeague };
-    pokemon: { [x: number]: IPokemonRewardLeague };
-  } = {
-    rank: {},
-    pokemon: {},
-  };
+  const rewards = new Reward();
   data
     .filter((item) => /VS_SEEKER_LOOT_PER_WIN_SETTINGS_RANK_/.test(item.templateId))
     .forEach((item) => {
@@ -1011,7 +1013,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           });
         }
         const result = new PokemonRewardSetLeague();
-        let poke: { pokemonId: string; pokemonDisplay: { form: string } };
+        let poke = new PokemonReward();
         if (value.guaranteedLimitedPokemonReward) {
           result.guaranteedLimited = true;
           poke = value.guaranteedLimitedPokemonReward.pokemon;
