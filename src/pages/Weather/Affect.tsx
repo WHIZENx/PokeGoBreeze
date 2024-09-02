@@ -4,6 +4,7 @@ import WeatherEffective from '../../components/Effective/WeatherEffective';
 import { splitAndCapitalize } from '../../util/utils';
 import { IWeatherAffComponent } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { DynamicObj } from '../../util/models/util.model';
 
 const Affect = (prop: IWeatherAffComponent) => {
   const [weathers, setWeathers] = useState<string[]>([]);
@@ -15,7 +16,7 @@ const Affect = (prop: IWeatherAffComponent) => {
 
   const getWeatherEffective = useCallback(() => {
     setWeatherEffective(
-      Object.values(((prop.weathers ?? new WeatherBoost()) as unknown as { [x: string]: string[] })[currentWeather] ?? new WeatherBoost())
+      Object.values(((prop.weathers ?? new WeatherBoost()) as unknown as DynamicObj<string, string>)[currentWeather] ?? new WeatherBoost())
     );
   }, [currentWeather, prop.weathers]);
 

@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { capitalize, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
+import { capitalize, combineClasses, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -101,7 +101,7 @@ const Calculate = () => {
   }, [enqueueSnackbar, globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
 
   const onCalculateStatsPoke = useCallback(
-    (e: { preventDefault: () => void }) => {
+    (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       calculateStatsPoke();
     },
@@ -520,7 +520,9 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataLittleLeague && dataLittleLeague.elidge ? (
-                            <span className={`${statData?.type}-text`}>{dataLittleLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={combineClasses(`${statData?.type}-text`)}>
+                              {dataLittleLeague.rangeValue?.resultBetweenStadust}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -633,7 +635,9 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataGreatLeague && dataGreatLeague.elidge ? (
-                            <span className={`${statData?.type}-text`}>{dataGreatLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={combineClasses(`${statData?.type}-text`)}>
+                              {dataGreatLeague.rangeValue?.resultBetweenStadust}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -746,7 +750,9 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataUltraLeague && dataUltraLeague.elidge ? (
-                            <span className={`${statData?.type}-text`}>{dataUltraLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={combineClasses(`${statData?.type}-text`)}>
+                              {dataUltraLeague.rangeValue?.resultBetweenStadust}
+                            </span>
                           ) : (
                             '-'
                           )}
@@ -856,7 +862,9 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataMasterLeague ? (
-                            <span className={`${statData?.type}-text`}>{dataMasterLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={combineClasses(`${statData?.type}-text`)}>
+                              {dataMasterLeague.rangeValue?.resultBetweenStadust}
+                            </span>
                           ) : (
                             '-'
                           )}

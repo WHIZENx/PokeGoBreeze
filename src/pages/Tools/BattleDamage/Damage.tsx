@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, combineClasses, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
 import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
@@ -24,26 +24,27 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { ITrainerFriendship, ThrowOption } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { BattleState, PokemonDmgOption } from '../../../core/models/damage.model';
+import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { DynamicObj } from '../../../util/models/util.model';
 
-const labels: { [x: number]: { color: string; style: string } } = {
-  0: {
+const labels: DynamicObj<number, ILabelDamage> = {
+  0: LabelDamage.create({
     color: 'black',
     style: 'text-danger',
-  },
-  1: {
+  }),
+  1: LabelDamage.create({
     color: 'blue',
     style: 'text-warning',
-  },
-  2: {
+  }),
+  2: LabelDamage.create({
     color: 'green',
     style: 'text-warning',
-  },
-  3: {
+  }),
+  3: LabelDamage.create({
     color: 'red',
     style: 'text-success',
-  },
+  }),
 };
 
 const Damage = () => {
@@ -143,7 +144,7 @@ const Damage = () => {
   };
 
   const onCalculateDamagePoke = useCallback(
-    (e: { preventDefault: () => void }) => {
+    (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (move) {
         const eff = BattleState.create({
@@ -280,7 +281,8 @@ const Damage = () => {
                       - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
                     </p>
                     <p>
-                      - Move Type: <span className={`type-icon-small ${move.type?.toLowerCase()}`}>{capitalize(move.type)}</span>
+                      - Move Type:{' '}
+                      <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                     </p>
                     {findStabType(form?.form.types ?? [], move.type ?? '')}
                     <p>
@@ -354,7 +356,7 @@ const Damage = () => {
                         {Object.entries(globalOptions?.throwCharge ?? new ThrowOption()).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
-                            <span className={`caption-small dropdown-caption ${labels[index].style}`}>x{value}</span>
+                            <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>x{value}</span>
                           </MenuItem>
                         ))}
                       </Select>

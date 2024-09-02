@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, isNotEmpty } from '../../../util/utils';
+import { getTime, splitAndCapitalize, capitalize, isNotEmpty, combineClasses } from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -19,6 +19,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { Toggle } from '../../../core/models/pvp.model';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -48,7 +49,7 @@ const Leagues = () => {
     }
   };
 
-  const LeaveToggle = ({ eventKey }: any) => {
+  const LeaveToggle = ({ eventKey }: Toggle) => {
     const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
@@ -158,7 +159,7 @@ const Leagues = () => {
                     height={140}
                     src={APIService.getAssetPokeGo(dataStore?.leagues?.data.find((item) => item.title === league.league)?.iconUrl ?? '')}
                   />
-                  <span className={`badge-league ${league.league.toLowerCase().replaceAll('_', '-')}`}>
+                  <span className={combineClasses('badge-league', league.league.toLowerCase().replaceAll('_', '-'))}>
                     <div className="sub-badge">
                       <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />
                     </div>
@@ -177,6 +178,13 @@ const Leagues = () => {
                   <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
                 </h6>
               </li>
+              {league.pokemonCount > 0 && (
+                <li style={{ fontWeight: 500 }}>
+                  <h6>
+                    <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
+                  </h6>
+                </li>
+              )}
               {league.conditions.maxLevel && (
                 <li style={{ fontWeight: 500 }}>
                   <h6>

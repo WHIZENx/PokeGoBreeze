@@ -8,6 +8,7 @@ import {
   getStyleSheet,
   replaceTempMovePvpName,
   isNotEmpty,
+  combineClasses,
 } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
@@ -30,13 +31,14 @@ import { useLocalStorage } from 'usehooks-ts';
 import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/constants';
 import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
-import { RankingsPVP } from '../../../core/models/pvp.model';
+import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { Combat } from '../../../core/models/combat.model';
 import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -59,7 +61,7 @@ const RankingPVP = () => {
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
-  const LeaveToggle = ({ children, eventKey }: any) => {
+  const LeaveToggle = ({ children, eventKey }: Toggle) => {
     const decoratedOnClick = useAccordionButton(eventKey);
 
     return (
@@ -258,8 +260,8 @@ const RankingPVP = () => {
   };
 
   const setSortedPokemonBattle = (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
-    const a = primary as unknown as { [x: string]: number };
-    const b = secondary as unknown as { [x: string]: number };
+    const a = primary as unknown as DynamicObj<string, number>;
+    const b = secondary as unknown as DynamicObj<string, number>;
     return sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current];
   };
 
@@ -328,7 +330,7 @@ const RankingPVP = () => {
                   setSorted(sorted ? 0 : 1);
                 }}
               >
-                <span className={`ranking-sort ranking-score ${sortedBy.current === 'score' ? 'ranking-selected' : ''}`}>
+                <span className={combineClasses('ranking-sort ranking-score', sortedBy.current === 'score' ? 'ranking-selected' : '')}>
                   Score
                   {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
                 </span>

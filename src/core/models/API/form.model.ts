@@ -1,4 +1,5 @@
 import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
+import { DynamicObj } from '../../../util/models/util.model';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 
@@ -237,13 +238,13 @@ export class Form implements IForm {
 
 export interface IFormSoundCry {
   form: string;
-  cries: { [x: string]: string };
+  cries: DynamicObj<string, string>;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class FormSoundCry implements IFormSoundCry {
   form: string;
-  cries: { [x: string]: string };
+  cries: DynamicObj<string, string>;
 
   constructor(pokemon: IPokemonDetail) {
     const fullName = pokemon.forms[0].name;

@@ -9,6 +9,7 @@ import { ICombat } from '../../core/models/combat.model';
 import { IAsset } from '../../core/models/asset.model';
 import { LeagueData } from '../../core/models/league.model';
 import { PokemonPVPMove } from '../../core/models/pvp.model';
+import { DynamicObj } from '../../util/models/util.model';
 
 export enum StoreActionTypes {
   getStore = 'GET_STORE',
@@ -88,13 +89,9 @@ export class SetTypeEff implements Action {
 export class SetWeatherBoost implements Action {
   readonly type = StoreActionTypes.setWeatherBoost;
 
-  constructor(
-    public payload: {
-      [x: string]: string[];
-    }
-  ) {}
+  constructor(public payload: DynamicObj<string, string[]>) {}
 
-  static create(value: { [x: string]: string[] }) {
+  static create(value: DynamicObj<string, string[]>) {
     const { type, payload } = new SetWeatherBoost(value);
     return {
       type,

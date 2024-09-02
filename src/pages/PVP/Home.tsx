@@ -204,17 +204,19 @@ const PVPHome = () => {
         Battle League Simulator <span className="d-inline-block caption text-danger">(Beta Test)</span>
       </h1>
       <div className="group-selected">
-        {leaguesTeamBattle.map((value, index) => (
-          <Link key={index} to={`/pvp/battle/${value.cp}`}>
-            <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-              <img alt="img-league" width={128} height={128} src={!value.logo ? getPokemonBattleLeagueIcon(value.cp) : value.logo} />
-              <div>
-                <b>{value.name}</b>
-              </div>
-              <span className="text-danger">CP below {value.cp}</span>
-            </Button>
-          </Link>
-        ))}
+        {leaguesTeamBattle
+          .filter((value) => value.cp.length > 0)
+          .map((value, index) => (
+            <Link key={index} to={`/pvp/battle/${value.cp}`}>
+              <Button key={index} className="btn btn-form" style={{ height: 200 }}>
+                <img alt="img-league" width={128} height={128} src={!value.logo ? getPokemonBattleLeagueIcon(value.cp[0]) : value.logo} />
+                <div>
+                  <b>{value.name}</b>
+                </div>
+                <span className="text-danger">CP below {value.cp}</span>
+              </Button>
+            </Link>
+          ))}
       </div>
     </div>
   );

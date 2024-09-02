@@ -45,7 +45,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { StoreState } from '../../../store/models/state.model';
-import { BattlePokemonData, IBattlePokemonData, RankingsPVP } from '../../../core/models/pvp.model';
+import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IBuff, ICombat } from '../../../core/models/combat.model';
 import {
   IPokemonBattleData,
@@ -55,6 +55,7 @@ import {
   TimelineModel,
   IPokemonBattle,
   ChargeType,
+  TimelineEvent,
 } from '../models/battle.model';
 import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
@@ -63,6 +64,7 @@ import { StatsBase } from '../../../core/models/stats.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
+import { DynamicObj } from '../../../util/models/util.model';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -805,11 +807,7 @@ const Battle = () => {
     return elem ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
   };
 
-  const onPlayLineMove = (e: {
-    currentTarget: { getBoundingClientRect: () => { left: number } };
-    clientX: number;
-    changedTouches: { clientX: number }[];
-  }) => {
+  const onPlayLineMove = (e: TimelineEvent<HTMLDivElement>) => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
@@ -830,11 +828,7 @@ const Battle = () => {
     overlappingPos(arrBound.current, x + (xNormal.current ?? 0));
   };
 
-  const onPlayLineFitMove = (e: {
-    currentTarget: { getBoundingClientRect: () => any; clientWidth: number };
-    clientX: number;
-    changedTouches: { clientX: number }[];
-  }) => {
+  const onPlayLineFitMove = (e: TimelineEvent<HTMLDivElement>) => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
@@ -996,7 +990,7 @@ const Battle = () => {
     });
   };
 
-  const onScrollTimeline = (e: { currentTarget: { scrollLeft: number } }) => {
+  const onScrollTimeline = (e: React.SyntheticEvent<HTMLDivElement>) => {
     scrollWidth.current = e.currentTarget.scrollLeft;
   };
 
@@ -1471,7 +1465,7 @@ const Battle = () => {
                     size={80}
                     maxEnergy={100}
                     moveEnergy={Math.abs(pokemon.cMovePri?.pvpEnergy ?? 0)}
-                    energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
+                    energy={(playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type]?.energy ?? pokemon.energy ?? 0}
                     disable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
@@ -1481,7 +1475,7 @@ const Battle = () => {
                       size={80}
                       maxEnergy={100}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
-                      energy={(playTimeline as unknown as { [x: string]: IPokemonBattleData })[type]?.energy ?? pokemon.energy ?? 0}
+                      energy={(playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type]?.energy ?? pokemon.energy ?? 0}
                       disable={pokemon.disableCMoveSec}
                     />
                   )}
@@ -1491,7 +1485,7 @@ const Battle = () => {
                     <HpBar
                       text={'HP'}
                       height={15}
-                      hp={Math.floor((playTimeline as unknown as { [x: string]: IPokemonBattleData })[type].hp)}
+                      hp={Math.floor((playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type].hp)}
                       maxHp={Math.floor(pokemon.pokemonData.currentStats?.stats?.statsSTA ?? 0)}
                     />
                   </Fragment>
@@ -1505,7 +1499,7 @@ const Battle = () => {
     );
   };
 
-  const CustomToggle = ({ eventKey }: any) => {
+  const CustomToggle = ({ eventKey }: Toggle) => {
     const decoratedOnClick = useAccordionButton(eventKey);
 
     return (

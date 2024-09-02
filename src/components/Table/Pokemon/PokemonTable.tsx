@@ -1,5 +1,5 @@
 import React from 'react';
-import { splitAndCapitalize } from '../../../util/utils';
+import { combineClasses, splitAndCapitalize } from '../../../util/utils';
 import { genRoman } from '../../../util/constants';
 import { IPokemonTableComponent } from '../../models/component.model';
 
@@ -16,7 +16,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
   };
 
   return (
-    <table className={`table-info table-desc ${props.className}`}>
+    <table className={combineClasses('table-info table-desc', props.className)}>
       <thead />
       <tbody>
         <tr>

@@ -1,10 +1,12 @@
 import React, { forwardRef, useEffect } from 'react';
-import { Popover } from 'react-bootstrap';
+import { Popover, PopoverProps } from 'react-bootstrap';
 
-const PopoverConfig = forwardRef(({ id, popper, children, ...props }: any, ref) => {
+const PopoverConfig = forwardRef<HTMLDivElement, PopoverProps>(({ id, popper, children, ...props }, ref) => {
   useEffect(() => {
-    popper.scheduleUpdate();
-  }, [children, popper]);
+    if (popper?.scheduleUpdate) {
+      popper.scheduleUpdate();
+    }
+  }, [children, popper?.scheduleUpdate]);
 
   return (
     <Popover id={id} ref={ref} body={true} {...props}>

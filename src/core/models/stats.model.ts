@@ -158,13 +158,29 @@ export interface IStatsPokemon {
   spe?: number;
 }
 
-export interface HexagonStats {
+export interface IHexagonStats {
   lead: number;
   atk: number;
   cons: number;
   closer: number;
   charger: number;
   switching: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class HexagonStats implements IHexagonStats {
+  lead: number = 0;
+  atk: number = 0;
+  cons: number = 0;
+  closer: number = 0;
+  charger: number = 0;
+  switching: number = 0;
+
+  static create(value: IHexagonStats) {
+    const obj = new HexagonStats();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 interface OptionsStats {

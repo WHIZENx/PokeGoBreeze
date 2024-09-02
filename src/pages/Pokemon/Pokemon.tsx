@@ -23,6 +23,7 @@ import { RouterState, StoreState, SpinnerState } from '../../store/models/state.
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
   checkPokemonIncludeShadowForm,
+  combineClasses,
   convertPokemonAPIDataName,
   convertPokemonImageName,
   generatePokemonGoForms,
@@ -416,7 +417,7 @@ const Pokemon = (props: IPokemonPage) => {
           </div>
           <div
             style={{ color: theme.palette.text.primary }}
-            className={`element-bottom position-relative poke-container ${props.isSearch ? '' : 'container'}`}
+            className={combineClasses('element-bottom position-relative poke-container', props.isSearch ? '' : 'container')}
           >
             <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
               <AlertReleased released={released} formName={formName} icon={icon} />

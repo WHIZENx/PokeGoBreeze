@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, convertColumnDataType, getCustomThemeDataTable, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  combineClasses,
+  convertColumnDataType,
+  getCustomThemeDataTable,
+  isNotEmpty,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
@@ -245,7 +252,7 @@ const SearchTypes = () => {
       <div className="row">
         <div className="col-xl-4 element-top">
           <div
-            className={`d-flex flex-column align-items-center type-info-container ${currentType?.toLowerCase()}-border`}
+            className={combineClasses('d-flex flex-column align-items-center type-info-container', `${currentType?.toLowerCase()}-border`)}
             style={{ background: computeBgType(currentType, false, false, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
@@ -258,7 +265,7 @@ const SearchTypes = () => {
             </div>
             <span
               style={{ width: 'max-content' }}
-              className={`${currentType?.toLowerCase()} type-select-bg d-flex align-items-center filter-shadow element-top`}
+              className={combineClasses(currentType?.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow element-top')}
             >
               <div style={{ display: 'contents', width: 16 }}>
                 <img
