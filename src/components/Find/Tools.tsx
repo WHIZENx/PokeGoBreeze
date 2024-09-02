@@ -10,10 +10,20 @@ import DEF_LOGO from '../../assets/defense.png';
 import HP_LOGO from '../../assets/hp.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/utils';
+import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms, isNotEmpty } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { IStatsAtk, IStatsDef, IStatsPokemon, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../core/models/stats.model';
+import {
+  IStatsAtk,
+  IStatsDef,
+  IStatsPokemon,
+  IStatsProd,
+  StatsRankingPokemonGO,
+  IStatsSta,
+  StatsAtk,
+  StatsDef,
+  StatsSta,
+} from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
 
@@ -56,13 +66,17 @@ const Tools = (props: IToolsComponent) => {
 
     setStatsPokemon({
       atk:
-        props.isRaid && props.tier && !props.hide ? { ...formATK, attack: calculateRaidStat(formATK?.attack ?? 0, props.tier) } : formATK,
+        props.isRaid && props.tier && !props.hide
+          ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(formATK?.attack ?? 0, props.tier) })
+          : formATK,
       def:
-        props.isRaid && props.tier && !props.hide ? { ...formDEF, defense: calculateRaidStat(formDEF?.defense ?? 0, props.tier) } : formDEF,
-      sta: props.isRaid && props.tier && !props.hide ? { ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta } : formSTA,
+        props.isRaid && props.tier && !props.hide
+          ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(formDEF?.defense ?? 0, props.tier) })
+          : formDEF,
+      sta: props.isRaid && props.tier && !props.hide ? StatsSta.create({ ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta }) : formSTA,
       prod: props.isRaid && props.tier && !props.hide ? undefined : formProd,
     });
-    if (props.currForm && props.dataPoke) {
+    if (props.currForm && isNotEmpty(props.dataPoke)) {
       setCurrDataPoke(convertStatsEffort(props.dataPoke.find((item) => item.id === props.id)?.stats));
 
       if (props.onSetStats && formATK && formDEF && formSTA) {

@@ -1,6 +1,24 @@
 import { IPokemonFormModify } from './API/form.model';
 import { ICombat } from './combat.model';
 
+export interface ILabelDamage {
+  label?: number;
+  color?: string;
+  style: string;
+}
+
+export class LabelDamage implements ILabelDamage {
+  label?: number;
+  color?: string;
+  style: string = '';
+
+  static create(value: ILabelDamage) {
+    const obj = new LabelDamage();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
 export interface IBattleState {
   stab: boolean;
   wb: boolean;
@@ -12,6 +30,7 @@ export interface IBattleState {
   mega?: boolean;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class BattleState implements IBattleState {
   stab: boolean = false;
   wb: boolean = false;

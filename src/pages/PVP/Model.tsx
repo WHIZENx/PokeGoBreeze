@@ -9,6 +9,7 @@ import APIService from '../../services/API.service';
 import { calculateCP, calStatsProd } from '../../util/calculate';
 import { computeBgType, findAssetForm } from '../../util/compute';
 import {
+  combineClasses,
   convertNameRankingToForm,
   convertNameRankingToOri,
   getAllMoves,
@@ -265,7 +266,7 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           </div>
         </div>
       )}
-      <div className={`${data?.data?.scores ? 'col-lg-8' : ''} container status-ranking`}>
+      <div className={combineClasses(data?.data?.scores ? 'col-lg-8' : '', 'container status-ranking')}>
         <div>
           <h5>
             <b>Overall Stats</b>
@@ -393,7 +394,10 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
     return (
       <Link
         to={`/move/${move?.id}`}
-        className={`${move?.type?.toLowerCase()} filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between`}
+        className={combineClasses(
+          move?.type?.toLowerCase(),
+          'filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
+        )}
       >
         <div className="d-flex" style={{ columnGap: 10 }}>
           <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move?.type ?? '')} />

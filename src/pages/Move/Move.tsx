@@ -6,6 +6,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import {
   capitalize,
   checkPokemonGO,
+  combineClasses,
   convertColumnDataType,
   convertPokemonDataName,
   isNotEmpty,
@@ -151,7 +152,7 @@ const Move = (props: IMovePage) => {
   }, [move, data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost]);
 
   return (
-    <div className={`element-bottom poke-container ${props.id ? '' : 'container'}`}>
+    <div className={combineClasses('element-bottom poke-container', props.id ? '' : 'container')}>
       {move ? (
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
@@ -214,7 +215,7 @@ const Move = (props: IMovePage) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div style={{ width: 'fit-content' }} className={`type-icon-small ${move?.type?.toLowerCase()}`}>
+                    <div style={{ width: 'fit-content' }} className={combineClasses('type-icon-small', move?.type?.toLowerCase())}>
                       {capitalize(move?.type)}
                     </div>
                   )}
@@ -335,7 +336,7 @@ const Move = (props: IMovePage) => {
                         {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}
                         <span className="d-inline-block caption">
                           {value.type === TypeAction.ATK ? 'Attack ' : 'Defense '}
-                          <span className={`buff-power ${value.power > 0 ? 'text-success' : 'text-danger'}`}>
+                          <span className={combineClasses('buff-power', value.power > 0 ? 'text-success' : 'text-danger')}>
                             <b>
                               {value.power > 0 && '+'}
                               {value.power}

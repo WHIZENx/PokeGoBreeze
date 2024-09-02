@@ -1,29 +1,41 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import './Hexagon.scss';
-import { HexagonStats } from '../../../core/models/stats.model';
+import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
+import { DynamicObj } from '../../../util/models/util.model';
+
+interface IPointer {
+  x: number;
+  y: number;
+}
+
+class Pointer implements IPointer {
+  x: number = 0;
+  y: number = 0;
+
+  constructor(x: number = 0, y: number = 0) {
+    this.x = x;
+    this.y = y;
+  }
+}
 
 const Hexagon = (props: IHexagonComponent) => {
   const canvasHex = useRef<HTMLCanvasElement>();
   const [initHex, setInitHex] = useState(false);
   const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
 
-  const getHexConnerCord = (center: { x: number; y: number }, size: number, i: number) => {
+  const getHexConnerCord = (center: IPointer, size: number, i: number) => {
     const angleDeg = 60 * i - 30;
     const angleRad = (Math.PI / 180) * angleDeg;
     const x = center.x + size * Math.cos(angleRad);
     const y = center.y + size * Math.sin(angleRad);
-    return Point(x, y);
-  };
-
-  const Point = (x: number, y: number) => {
-    return { x, y };
+    return new Pointer(x, y);
   };
 
   const drawLineHex = (
     ctx: CanvasRenderingContext2D | null | undefined,
-    center: { x: number; y: number },
+    center: IPointer,
     percentage: number,
     color: string,
     fill: boolean
@@ -48,13 +60,8 @@ const Hexagon = (props: IHexagonComponent) => {
     ctx?.closePath();
   };
 
-  const drawStatsHex = (
-    ctx: CanvasRenderingContext2D | null | undefined,
-    center: { x: number; y: number },
-    stat: HexagonStats,
-    hexSize: number
-  ) => {
-    const stats: { [x: string]: number } = {
+  const drawStatsHex = (ctx: CanvasRenderingContext2D | null | undefined, center: IPointer, stat: IHexagonStats, hexSize: number) => {
+    const stats: DynamicObj<string, number> = {
       '0': ((stat.switching || 0) * hexSize) / 100,
       '1': ((stat.charger || 0) * hexSize) / 100,
       '2': ((stat.closer || 0) * hexSize) / 100,
@@ -92,7 +99,7 @@ const Hexagon = (props: IHexagonComponent) => {
   };
 
   const drawHexagon = useCallback(
-    (stats: HexagonStats) => {
+    (stats: IHexagonStats) => {
       const hexBorderSize = props.size ?? 0;
       const hexSize = hexBorderSize / 2;
 
@@ -151,24 +158,17 @@ const Hexagon = (props: IHexagonComponent) => {
       animateId.current = undefined;
     }
 
-    let initStats: HexagonStats = {
-      lead: 0,
-      atk: 0,
-      cons: 0,
-      closer: 0,
-      charger: 0,
-      switching: 0,
-    };
+    let initStats = new HexagonStats();
 
     animateId.current = requestAnimationFrame(function animate() {
-      initStats = {
+      initStats = HexagonStats.create({
         lead: loop(1, initStats.lead, props.stats.lead),
         charger: loop(1, initStats.charger, props.stats.charger),
         closer: loop(1, initStats.closer, props.stats.closer),
         cons: loop(1, initStats.cons, props.stats.cons),
         atk: loop(1, initStats.atk, props.stats.atk),
         switching: loop(1, initStats.switching, props.stats.switching),
-      };
+      });
 
       drawHexagon(initStats);
 

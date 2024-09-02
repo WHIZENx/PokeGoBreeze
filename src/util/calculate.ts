@@ -81,7 +81,7 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { IArrayStats } from './models/util.model';
+import { DynamicObj, IArrayStats } from './models/util.model';
 import { IBattleState } from '../core/models/damage.model';
 
 const weatherMultiple = (
@@ -90,7 +90,7 @@ const weatherMultiple = (
   weather: string | undefined,
   type: string
 ) => {
-  return ((weatherBoost as unknown as { [x: string]: string[] })[weather?.toUpperCase().replaceAll(' ', '_') ?? '']?.find(
+  return ((weatherBoost as unknown as DynamicObj<string, string[]>)[weather?.toUpperCase().replaceAll(' ', '_') ?? '']?.find(
     (item) => item === type?.toUpperCase().replaceAll(' ', '_')
   )
     ? STAB_MULTIPLY(globalOptions)
@@ -103,7 +103,9 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
     return valueEffective;
   }
   typesObj.forEach((type) => {
-    valueEffective *= (typeEffective as unknown as { [x: string]: { [y: string]: number } })[typeMove?.toUpperCase()][type.toUpperCase()];
+    valueEffective *= (typeEffective as unknown as DynamicObj<string, DynamicObj<string, number>>)[typeMove?.toUpperCase()][
+      type.toUpperCase()
+    ];
   });
   return valueEffective;
 };
@@ -316,7 +318,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) => {
   return Math.floor(
-    Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * ((data as ICPM[]).find((item) => item.level === level)?.multiplier ?? 0) ** 2) / 10)
+    Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * (data.find((item: ICPM) => item.level === level)?.multiplier ?? 0) ** 2) / 10)
   );
 };
 
@@ -342,8 +344,7 @@ export const calculateDuelAbility = (dmgOutput: number, tanki: number) => {
 
 export const calculateCatchChance = (baseCaptureRate: number, level: number, multiplier: number) => {
   return (
-    1 -
-    Math.pow(Math.max(0, 1 - baseCaptureRate / (2 * ((data as ICPM[])?.find((data) => data.level === level)?.multiplier ?? 0))), multiplier)
+    1 - Math.pow(Math.max(0, 1 - baseCaptureRate / (2 * (data?.find((data: ICPM) => data.level === level)?.multiplier ?? 0))), multiplier)
   );
 };
 
@@ -428,7 +429,7 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
 };
 
 export const calculateStatsBattle = (base: number, iv: number, level: number, floor = false, addition = 0) => {
-  let result = (base + iv) * ((data as ICPM[]).find((item) => item.level === level)?.multiplier ?? 0);
+  let result = (base + iv) * (data.find((item: ICPM) => item.level === level)?.multiplier ?? 0);
   if (addition > 0) {
     result *= addition;
   }

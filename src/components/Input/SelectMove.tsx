@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
-import { isNotEmpty, retrieveMoves } from '../../util/utils';
+import { combineClasses, isNotEmpty, retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
 
 const SelectMove = (props: ISelectMoveComponent) => {
@@ -76,9 +76,10 @@ const SelectMove = (props: ISelectMoveComponent) => {
   const smallInput = () => {
     return (
       <div
-        className={`position-relative d-flex align-items-center form-control ${
+        className={combineClasses(
+          'position-relative d-flex align-items-center form-control',
           !props.disable && props.pokemon ? 'card-select-enabled' : 'card-select-disabled'
-        }`}
+        )}
         style={{ padding: 0, borderRadius: 0 }}
       >
         {props.pokemon && !isNotEmpty(resultMove) && (

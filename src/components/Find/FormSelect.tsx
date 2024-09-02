@@ -6,6 +6,7 @@ import Tools from './Tools';
 import loading from '../../assets/loading.png';
 import {
   capitalize,
+  combineClasses,
   convertPokemonImageName,
   formIconAssets,
   generatePokemonGoForms,
@@ -333,7 +334,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 {value.map((value, index) => (
                   <button
                     key={index}
-                    className={`btn btn-form ${value.form.id === currentForm.form.id ? 'form-selected' : ''}`}
+                    className={combineClasses('btn btn-form', value.form.id === currentForm.form.id ? 'form-selected' : '')}
                     onClick={() => changeForm(value.form.name)}
                   >
                     <img

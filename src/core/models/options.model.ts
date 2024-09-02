@@ -1,3 +1,4 @@
+import { DynamicObj } from '../../util/models/util.model';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
 import { IStatsBase, StatsBase } from './stats.model';
@@ -101,7 +102,7 @@ interface CombatMove {
   power: number;
   energyDelta: number;
   vfxName: string;
-  buffs?: { [x: string]: number };
+  buffs?: DynamicObj<string, number>;
 }
 
 interface MoveSetting {
@@ -129,17 +130,27 @@ interface VsSeekerClientSetting {
   allowedVsSeekerLeagueTemplateId: string[];
 }
 
-interface PokemonFromReward {
+interface IPokemonFromReward {
   form: string;
 }
 
-interface PokemonReward {
+class PokemonFromReward implements IPokemonFromReward {
+  form: string = '';
+}
+
+export interface IPokemonReward {
   pokemonId: string;
-  pokemonDisplay: PokemonFromReward;
+  pokemonDisplay: IPokemonFromReward;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonReward implements IPokemonReward {
+  pokemonId: string = '';
+  pokemonDisplay: IPokemonFromReward = new PokemonFromReward();
 }
 
 interface GuaranteedLimitedPokemonReward {
-  pokemon: PokemonReward;
+  pokemon: IPokemonReward;
 }
 
 interface RangeOverride {
@@ -154,7 +165,7 @@ interface IvOverride {
 interface AvailablePokemon {
   unlockedAtRank: number;
   guaranteedLimitedPokemonReward?: GuaranteedLimitedPokemonReward;
-  pokemon: PokemonReward;
+  pokemon: IPokemonReward;
   attackIvOverride: IvOverride;
   defenseIvOverride: IvOverride;
   staminaIvOverride: IvOverride;
@@ -226,6 +237,7 @@ interface CombatLeague {
   iconUrl: string;
   badgeType: string;
   bannedPokemon: string[];
+  pokemonCount: number;
 }
 
 interface EvolutionQuestTemplate {
@@ -287,6 +299,7 @@ export interface IPokemonPermission {
   name: string | undefined;
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class PokemonPermission implements IPokemonPermission {
   id: number | undefined;
   form: string = '';
@@ -393,8 +406,8 @@ export interface IOptions {
   combatOptions: ICombatOption;
   battleOptions: IBattleOption;
   throwCharge: IThrowOption;
-  buddyFriendship: { [x: string]: IBuddyFriendship };
-  trainerFriendship: { [x: string]: ITrainerFriendship };
+  buddyFriendship: DynamicObj<string, IBuddyFriendship>;
+  trainerFriendship: DynamicObj<string, ITrainerFriendship>;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -402,8 +415,8 @@ export class Options implements IOptions {
   combatOptions: ICombatOption;
   battleOptions: IBattleOption;
   throwCharge: IThrowOption;
-  buddyFriendship: { [x: string]: IBuddyFriendship };
-  trainerFriendship: { [x: string]: ITrainerFriendship };
+  buddyFriendship: DynamicObj<string, IBuddyFriendship>;
+  trainerFriendship: DynamicObj<string, ITrainerFriendship>;
 
   constructor() {
     this.combatOptions = new CombatOption();

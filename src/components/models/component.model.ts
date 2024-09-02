@@ -6,7 +6,6 @@ import { ICombat } from '../../core/models/combat.model';
 import { IPokemonData, IPokemonDataStats, IPokemonGenderRatio, PokemonRaidModel } from '../../core/models/pokemon.model';
 import { IToolSearching } from '../../core/models/searching.model';
 import {
-  HexagonStats,
   IStatsPokemon,
   IStatsRank,
   IPokemonStatsRanking,
@@ -15,6 +14,7 @@ import {
   IStatsProd,
   IStatsSta,
   IStatsPokemonGO,
+  IHexagonStats,
 } from '../../core/models/stats.model';
 import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
@@ -322,8 +322,8 @@ export interface ICircleComponent {
 }
 
 export interface IHexagonComponent {
-  defaultStats?: HexagonStats;
-  stats: HexagonStats;
+  defaultStats?: IHexagonStats;
+  stats: IHexagonStats;
   size: number;
   animation: number;
   borderSize: number;

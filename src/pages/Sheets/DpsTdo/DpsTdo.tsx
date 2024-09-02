@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, isNotEmpty, convertColumnDataType } from '../../../util/utils';
+import {
+  LevelRating,
+  splitAndCapitalize,
+  capitalize,
+  checkPokemonGO,
+  isNotEmpty,
+  convertColumnDataType,
+  combineClasses,
+} from '../../../util/utils';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -55,6 +63,7 @@ import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/col
 import { WeatherBoost } from '../../../core/models/weatherBoost.model';
 import { OptionsActions } from '../../../store/actions';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -417,7 +426,7 @@ const DpsTdo = () => {
 
   const filterBestOptions = (result: PokemonSheetData[], best: number) => {
     const bestType = BestOptionType[best] as 'dps' | 'tdo' | 'multiDpsTdo';
-    const group = result.reduce((result: { [x: string]: PokemonSheetData[] }, obj) => {
+    const group = result.reduce((result: DynamicObj<string, PokemonSheetData[]>, obj) => {
       (result[obj.pokemon.name] = result[obj.pokemon.name] || []).push(obj);
       return result;
     }, {});
@@ -623,7 +632,7 @@ const DpsTdo = () => {
     return setSelectTypes((oldArr) => [...oldArr, value]);
   };
 
-  const onCalculateTable = (e: { preventDefault: () => void }) => {
+  const onCalculateTable = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setShowSpinner(true);
     setTimeout(() => {
@@ -646,7 +655,7 @@ const DpsTdo = () => {
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
-                className={`btn-select-type w-100 border-types ${selectTypes.includes(item) ? 'select-type' : ''}`}
+                className={combineClasses('btn-select-type w-100 border-types', selectTypes.includes(item) ? 'select-type' : '')}
                 style={{ padding: 10 }}
               >
                 <TypeInfo block={true} arr={[item]} />

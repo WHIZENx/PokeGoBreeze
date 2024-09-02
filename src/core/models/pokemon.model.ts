@@ -170,10 +170,10 @@ export interface PokemonModel {
   camera: Camera;
   encounter: IEncounter;
   stats?: IStatsGO;
-  quickMoves: string[];
-  cinematicMoves: string[];
+  quickMoves?: string[];
+  cinematicMoves?: string[];
   animationTime: number[];
-  evolutionIds: string[];
+  evolutionIds?: string[];
   evolutionPips: number;
   pokedexHeightM: number;
   pokedexWeightKg: number;

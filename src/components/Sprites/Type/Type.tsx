@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
-import { capitalize, isNotEmpty } from '../../../util/utils';
+import { capitalize, combineClasses, isNotEmpty } from '../../../util/utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
@@ -25,7 +25,7 @@ const TypeInfo = (props: ITypeComponent) => {
       ) : (
         <>
           {isNotEmpty(props.arr) && (
-            <div className={`${props.block ? '' : 'element-top'} ${props.shadow ? 'filter-shadow' : ''}`} style={props.style}>
+            <div className={combineClasses(props.block ? '' : 'element-top', props.shadow ? 'filter-shadow' : '')} style={props.style}>
               {props.text && <p>{props.text}</p>}
               <div className="d-inline-flex flex-wrap type-list align-items-center">
                 {props.arr?.map((value, index) => (
@@ -52,7 +52,10 @@ const TypeInfo = (props: ITypeComponent) => {
                           src={APIService.getTypeSprite(value)}
                         />
                         <span
-                          className={`caption ${props.shadow ? `text-shadow${theme.palette.mode === TypeTheme.DARK ? '-white' : ''}` : ''}`}
+                          className={combineClasses(
+                            'caption',
+                            props.shadow ? `text-shadow${theme.palette.mode === TypeTheme.DARK ? '-white' : ''}` : ''
+                          )}
                           style={{ color: props.color ?? theme.palette.text.primary }}
                         >
                           {capitalize(value)}

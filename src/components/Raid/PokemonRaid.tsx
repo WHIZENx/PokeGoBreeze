@@ -11,6 +11,7 @@ import update from 'immutability-helper';
 import { TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
 import { IPokemonRaidComponent } from '../models/component.model';
+import { combineClasses } from '../../util/utils';
 
 const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
@@ -47,7 +48,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         {props.controls && (
           <div className="d-flex ic-group-small">
             <span
-              className={`ic-copy-small text-white ${dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'}`}
+              className={combineClasses('ic-copy-small text-white', dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
               title="Copy"
               onClick={() => {
                 if (dataTargetPokemon) {
@@ -59,7 +60,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               <SettingsIcon sx={{ fontSize: 16 }} />
             </span>
             <span
-              className={`ic-copy-small text-white ${dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'}`}
+              className={combineClasses('ic-copy-small text-white', dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
               title="Copy"
               onClick={() => {
                 if (dataTargetPokemon) {
@@ -71,9 +72,10 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               <ContentCopyIcon sx={{ fontSize: 16 }} />
             </span>
             <span
-              className={`ic-remove-small text-white ${
+              className={combineClasses(
+                'ic-remove-small text-white',
                 props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon) ? 'bg-danger' : 'click-none bg-secondary'
-              }`}
+              )}
               title="Remove"
               onClick={() => {
                 if (props.id > 0 || (props.data.length > 1 && props.data.at(0)?.dataTargetPokemon)) {

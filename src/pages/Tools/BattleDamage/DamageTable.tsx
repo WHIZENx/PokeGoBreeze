@@ -7,38 +7,40 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
-import { capitalize, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, combineClasses, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW } from '../../../util/constants';
 import { IDamageTableComponent } from '../../models/page.model';
 import { ThrowOption } from '../../../core/models/options.model';
+import { ILabelDamage, LabelDamage } from '../../../core/models/damage.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
-const eff: { [x: number]: { label: number; style: string } } = {
-  0.244140625: {
+const eff: DynamicObj<number, ILabelDamage> = {
+  0.244140625: LabelDamage.create({
     label: 0.244,
     style: 'super-resistance',
-  },
-  0.390625: {
+  }),
+  0.390625: LabelDamage.create({
     label: 0.391,
     style: 'very-resistance',
-  },
-  0.625: {
+  }),
+  0.625: LabelDamage.create({
     label: 0.625,
     style: 'resistance',
-  },
-  1: {
+  }),
+  1: LabelDamage.create({
     label: 1,
     style: 'neutral',
-  },
-  1.6: {
+  }),
+  1.6: LabelDamage.create({
     label: 1.6,
     style: 'weakness',
-  },
-  2.5600000000000005: {
+  }),
+  2.5600000000000005: LabelDamage.create({
     label: 2.56,
     style: 'super-weakness',
-  },
+  }),
 };
 
 const DamageTable = (props: IDamageTableComponent) => {
@@ -173,7 +175,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Damage Effective</td>
               <td>
                 {props.result.battleState ? (
-                  <span className={`eff-${eff[props.result.battleState.effective].style}`}>
+                  <span className={combineClasses(`eff-${eff[props.result.battleState.effective].style}`)}>
                     {`x${eff[props.result.battleState.effective].label}`}
                   </span>
                 ) : (

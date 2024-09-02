@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { FORM_NORMAL } from '../../../util/constants';
 import { IStatsBarComponent } from '../../models/component.model';
+import { combineClasses } from '../../../util/utils';
 
 interface Element {
   isRank?: boolean;
@@ -39,14 +40,14 @@ const StatsBar = (props: IStatsBarComponent) => {
         })
       }
     >
-      <BoxText className={`box-text stats-text`} isRank={false}>
+      <BoxText className="box-text stats-text" isRank={false}>
         <span>
           {props.tag} {props.pokemonStats && (props.optionalStats ?? props.currentStats)}
         </span>
       </BoxText>
-      <Bar className={`progress-bar ${props.class}`} aria-valuenow={props.statsPercent} statsPercent={props.statsPercent} />
+      <Bar className={combineClasses('progress-bar', props.class)} aria-valuenow={props.statsPercent} statsPercent={props.statsPercent} />
       {props.pokemonStats && (
-        <BoxText className={`box-text rank-text`} isRank={true}>
+        <BoxText className="box-text rank-text" isRank={true}>
           <span>
             Rank: {props.rank} / {props.pokemonStats?.attack.maxRank}
           </span>

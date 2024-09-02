@@ -134,7 +134,7 @@ const FindTable = () => {
   }, [enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);
 
   const onFindStats = useCallback(
-    (e: { preventDefault: () => void }) => {
+    (e: React.SyntheticEvent<HTMLFormElement>) => {
       findStatsIv();
       e.preventDefault();
     },
@@ -166,7 +166,7 @@ const FindTable = () => {
   }, [enqueueSnackbar, statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv]);
 
   const onFindCP = useCallback(
-    (e: { preventDefault: () => void }) => {
+    (e: React.SyntheticEvent<HTMLFormElement>) => {
       findStatsCP();
       e.preventDefault();
     },

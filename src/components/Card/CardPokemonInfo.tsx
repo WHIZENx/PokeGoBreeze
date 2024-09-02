@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../util/compute';
-import { splitAndCapitalize } from '../../util/utils';
+import { combineClasses, splitAndCapitalize } from '../../util/utils';
 import ProgressBar from '../Sprites/ProgressBar/ProgressBar';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
@@ -62,7 +62,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           onMouseOver={onHoverShiny}
           onMouseLeave={onLeaveShiny}
           ref={shinyRef}
-          className={`shiny-pokemon ${props.defaultImg ? 'active' : ''}`}
+          className={combineClasses('shiny-pokemon', props.defaultImg ? 'active' : '')}
           height={32}
           src={APIService.getShinyIcon()}
         />

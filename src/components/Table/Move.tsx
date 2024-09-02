@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
-import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
+import { combineClasses, retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
@@ -122,9 +122,10 @@ const Move = (props: IMoveComponent) => {
                             </li>
                           )}
                           <li
-                            className={`container card-pokemon ${
+                            className={combineClasses(
+                              'container card-pokemon',
                               props.highlight && currentMove?.name === value.name ? 'bg-card-highlight' : ''
-                            }`}
+                            )}
                             onMouseDown={() => changeMove(value)}
                           >
                             <CardType

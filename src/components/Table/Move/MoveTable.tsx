@@ -19,6 +19,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { TypeMove } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
 interface PokemonMoves {
   fastMoves: (ICombat | undefined)[];
@@ -278,14 +279,14 @@ const TableMove = (props: ITableMoveComponent) => {
   const arrowSort = (table: string, type: string) => {
     if (table === tableOffensive) {
       if (offensive.sortBy === type) {
-        const prev = (offensive as unknown as { [x: string]: boolean })[type];
-        (offensive as unknown as { [x: string]: boolean })[type] = !prev;
+        const prev = (offensive as unknown as DynamicObj<string, boolean>)[type];
+        (offensive as unknown as DynamicObj<string, boolean>)[type] = !prev;
       }
       offensive.sortBy = type;
     } else if (table === tableDefensive) {
       if (defensive.sortBy === type) {
-        const prev = (defensive as unknown as { [x: string]: boolean })[type];
-        (defensive as unknown as { [x: string]: boolean })[type] = !prev;
+        const prev = (defensive as unknown as DynamicObj<string, boolean>)[type];
+        (defensive as unknown as DynamicObj<string, boolean>)[type] = !prev;
       }
       defensive.sortBy = type;
     }
@@ -384,12 +385,12 @@ const TableMove = (props: ITableMoveComponent) => {
                         a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name <
                         b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
                       ) {
-                        return (stateSorted.offensive as unknown as { [x: string]: boolean })[sortedBy] ? -1 : 1;
+                        return (stateSorted.offensive as unknown as DynamicObj<string, boolean>)[sortedBy] ? -1 : 1;
                       } else if (
                         a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name >
                         b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
                       ) {
-                        return (stateSorted.offensive as unknown as { [x: string]: boolean })[sortedBy] ? 1 : -1;
+                        return (stateSorted.offensive as unknown as DynamicObj<string, boolean>)[sortedBy] ? 1 : -1;
                       }
                       return 0;
                     }
@@ -448,12 +449,12 @@ const TableMove = (props: ITableMoveComponent) => {
                         a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name <
                         b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
                       ) {
-                        return (stateSorted.defensive as unknown as { [x: string]: boolean })[sortedBy] ? -1 : 1;
+                        return (stateSorted.defensive as unknown as DynamicObj<string, boolean>)[sortedBy] ? -1 : 1;
                       } else if (
                         a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name >
                         b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
                       ) {
-                        return (stateSorted.defensive as unknown as { [x: string]: boolean })[sortedBy] ? 1 : -1;
+                        return (stateSorted.defensive as unknown as DynamicObj<string, boolean>)[sortedBy] ? 1 : -1;
                       }
                       return 0;
                     }

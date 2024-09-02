@@ -56,7 +56,7 @@ function App() {
 
   const theme = useTheme<ThemeModify>();
   const colorMode = useContext(ColorModeContext);
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, 'light');
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.LIGHT);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.ASSETS, '');
   const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.SOUNDS, '');
@@ -114,8 +114,8 @@ function App() {
 }
 
 export default function Main() {
-  const [stateMode] = useLocalStorage(LocalStorageConfig.THEME, 'light');
-  const [mode, setMode] = useState(stateMode ?? 'light');
+  const [stateMode] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.LIGHT);
+  const [mode, setMode] = useState(stateMode ?? TypeTheme.LIGHT);
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {

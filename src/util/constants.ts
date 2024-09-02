@@ -1,8 +1,10 @@
 import { IOptions } from '../core/models/options.model';
+import { PVPInfo } from '../core/models/pvp.model';
 import { getOption } from '../core/options';
 import { TypeAction } from '../enums/type.enum';
 import APIService from '../services/API.service';
-import { RaidTier } from './models/constants.model';
+import { CostPowerUp, ITier, Tier } from './models/constants.model';
+import { DynamicObj } from './models/util.model';
 
 // KeyCode
 export const KEY_ENTER = 13;
@@ -15,7 +17,7 @@ export const SYNC_MSG = 'Waiting to sync current data';
 
 export const TRANSITION_TIME = '0.3s';
 
-export const BASE_CPM: { [x: number]: number } = {
+export const BASE_CPM: DynamicObj<number, number> = {
   1: 0.094,
   10: 0.4225,
   20: 0.5974,
@@ -25,45 +27,43 @@ export const BASE_CPM: { [x: number]: number } = {
   60: 0.91736427,
 };
 
-export const RAID_BOSS_TIER: {
-  [x: number]: RaidTier;
-} = {
-  1: {
+export const RAID_BOSS_TIER: DynamicObj<number, ITier> = {
+  1: Tier.create({
     level: 20,
     CPm: 0.61,
     sta: 600,
     timer: 180,
-  },
-  2: {
+  }),
+  2: Tier.create({
     level: 25,
     CPm: 0.6679,
     sta: 1800,
     timer: 180,
-  },
-  3: {
+  }),
+  3: Tier.create({
     level: 30,
     CPm: 0.7317,
     sta: 3600,
     timer: 180,
-  },
-  4: {
+  }),
+  4: Tier.create({
     level: 40,
     CPm: 0.7903,
     sta: 9000,
     timer: 180,
-  },
-  5: {
+  }),
+  5: Tier.create({
     level: 40,
     CPm: 0.79,
     sta: 15000,
     timer: 300,
-  },
-  6: {
+  }),
+  6: Tier.create({
     level: 40,
     CPm: 0.79,
     sta: 22500,
     timer: 300,
-  },
+  }),
 };
 
 export const DEFAULT_TYPES = [
@@ -167,7 +167,7 @@ export const SHADOW_DEF_BONUS = (options: IOptions | undefined) => {
   return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.DEF]) || 1;
 };
 
-export const genList: { [x: number]: number[] } = {
+export const genList: DynamicObj<number, number[]> = {
   1: [1, 151],
   2: [152, 251],
   3: [252, 386],
@@ -179,7 +179,7 @@ export const genList: { [x: number]: number[] } = {
   9: [906, 1008],
 };
 
-export const regionList: { [x: number]: string } = {
+export const regionList: DynamicObj<number, string> = {
   0: 'Unknown',
   1: 'Kanto',
   2: 'Johto',
@@ -218,55 +218,55 @@ export const versionList = [
 export const typeCostPowerUp = (type: string) => {
   switch (type.toUpperCase()) {
     case FORM_SHADOW:
-      return {
+      return CostPowerUp.create({
         stardust: 1.2,
         candy: 1.2,
         type,
-      };
+      });
     case FORM_PURIFIED:
-      return {
+      return CostPowerUp.create({
         stardust: 0.9,
         candy: 0.9,
         type,
-      };
+      });
     case 'LUCKY':
-      return {
+      return CostPowerUp.create({
         stardust: 0.5,
         candy: 1,
         type,
-      };
+      });
     default:
-      return {
+      return CostPowerUp.create({
         stardust: 1,
         candy: 1,
         type,
-      };
+      });
   }
 };
 
-export const leaguesTeamBattle = [
+export const leaguesTeamBattle: PVPInfo[] = [
   {
     id: 'all',
     name: 'Little Cup',
-    cp: 500,
+    cp: [500],
     logo: APIService.getPokeOtherLeague('GBL_littlecup'),
   },
   {
     id: 'all',
     name: 'Great League',
-    cp: 1500,
+    cp: [1500],
     logo: APIService.getPokeLeague('great_league'),
   },
   {
     id: 'all',
     name: 'Ultra League',
-    cp: 2500,
+    cp: [2500],
     logo: APIService.getPokeLeague('ultra_league'),
   },
   {
     id: 'all',
     name: 'Master League',
-    cp: 10000,
+    cp: [10000],
     logo: APIService.getPokeLeague('master_league'),
   },
 ];

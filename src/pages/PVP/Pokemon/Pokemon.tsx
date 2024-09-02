@@ -46,8 +46,8 @@ const PokemonPVP = () => {
   }, [pvp]);
 
   const fetchPokemonInfo = useCallback(async () => {
-    dispatch(SpinnerActions.ShowSpinner.create());
     try {
+      dispatch(SpinnerActions.ShowSpinner.create());
       const cp = parseInt(params.cp ?? '');
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
@@ -126,11 +126,8 @@ const PokemonPVP = () => {
           cMovePri,
           cMoveSec,
           bestStats,
-          shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`) ?? false,
-          purified:
-            (pokemon?.purifiedMoves?.includes(cMovePri?.name ?? '') ||
-              (cMoveDataSec !== null && cMoveDataSec !== undefined && pokemon?.purifiedMoves?.includes(cMoveDataSec))) ??
-            false,
+          shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
+          purified: pokemon?.purifiedMoves?.includes(cMovePri?.name ?? '') || pokemon?.purifiedMoves?.includes(cMoveSec?.name ?? ''),
         })
       );
       dispatch(SpinnerActions.HideSpinner.create());

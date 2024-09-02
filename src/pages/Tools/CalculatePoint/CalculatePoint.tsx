@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, combineClasses, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { findStabType } from '../../../util/compute';
 import { MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
@@ -22,6 +22,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleState } from '../../../core/models/damage.model';
+import { DynamicObj } from '../../../util/models/util.model';
 
 class ColorTone {
   number: number;
@@ -35,14 +36,14 @@ class ColorTone {
 
 interface BreakPointAtk {
   data: number[][];
-  colorTone: { [x: string]: ColorTone };
+  colorTone: DynamicObj<string, ColorTone>;
 }
 
 interface BreakPointDef {
   dataDef: number[][];
   dataSta: number[][];
-  colorToneDef: { [x: string]: ColorTone };
-  colorToneSta: { [x: string]: ColorTone };
+  colorToneDef: DynamicObj<string, ColorTone>;
+  colorToneSta: DynamicObj<string, ColorTone>;
 }
 
 interface BulkPointDef {
@@ -201,7 +202,7 @@ const CalculatePoint = () => {
   };
 
   const computeColorTone = (data: number[]) => {
-    const colorTone: { [x: string]: ColorTone } = {};
+    const colorTone: DynamicObj<string, ColorTone> = {};
     let r = 50,
       g = 255,
       b = 100;
@@ -417,7 +418,8 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={`type-icon-small ${move.type?.toLowerCase()}`}>{capitalize(move.type)}</span>
+                        - Move Type:{' '}
+                        <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                       </p>
                       {findStabType(form?.form.types ?? [], move.type ?? '')}
                       <p>
@@ -544,7 +546,8 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{capitalize(moveDef.typeMove)}</b>
                       </p>
                       <p>
-                        - Move Type: <span className={`type-icon-small ${moveDef.type?.toLowerCase()}`}>{capitalize(moveDef.type)}</span>
+                        - Move Type:{' '}
+                        <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>{capitalize(moveDef.type)}</span>
                       </p>
                       {findStabType(formDef?.form.types ?? [], moveDef?.type ?? '')}
                       <p>
@@ -699,7 +702,8 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{capitalize(fMove.typeMove)}</b>
                         </p>
                         <p>
-                          - Move Type: <span className={`type-icon-small ${fMove?.type?.toLowerCase()}`}>{capitalize(fMove.type)}</span>
+                          - Move Type:{' '}
+                          <span className={combineClasses('type-icon-small', fMove?.type?.toLowerCase())}>{capitalize(fMove.type)}</span>
                         </p>
                         {findStabType(formDef?.form.types ?? [], fMove?.type ?? '')}
                         <p>
@@ -732,7 +736,8 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{capitalize(cMove.typeMove)}</b>
                         </p>
                         <p>
-                          - Move Type: <span className={`type-icon-small ${cMove?.type?.toLowerCase()}`}>{capitalize(cMove.type)}</span>
+                          - Move Type:{' '}
+                          <span className={combineClasses('type-icon-small', cMove?.type?.toLowerCase())}>{capitalize(cMove.type)}</span>
                         </p>
                         {findStabType(formDef?.form.types ?? [], cMove?.type ?? '')}
                         <p>
@@ -861,7 +866,7 @@ const CalculatePoint = () => {
                             {resultBulkPointDef ? (
                               <Fragment>
                                 {resultBulkPointDef.data[i].map((value, index) => (
-                                  <td className={`text-iv-bulk ${value === 0 ? getBorderSplit(i, index) : ''}`} key={index}>
+                                  <td className={combineClasses('text-iv-bulk', value === 0 ? getBorderSplit(i, index) : '')} key={index}>
                                     {value}
                                   </td>
                                 ))}

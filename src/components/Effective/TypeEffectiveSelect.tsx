@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { capitalize, isNotEmpty } from '../../util/utils';
+import { capitalize, combineClasses, isNotEmpty } from '../../util/utils';
 
 import './TypeEffectiveSelect.scss';
 import { StoreState } from '../../store/models/state.model';
@@ -21,7 +21,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
             </h6>
             <div className="d-flex flex-wrap" style={{ gap: 5 }}>
               {data.map((value, index) => (
-                <span key={index} className={`${value.toLowerCase()} type-select-bg d-flex align-items-center filter-shadow`}>
+                <span key={index} className={combineClasses(value.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}>
                   <div style={{ display: 'contents', width: 16 }}>
                     <img
                       className="pokemon-sprite-small sprite-type-select filter-shadow"

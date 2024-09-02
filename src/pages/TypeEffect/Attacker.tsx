@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize } from '../../util/utils';
+import { capitalize, combineClasses } from '../../util/utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
 import { TypeModel, TypeMultiply } from '../../core/models/type.model';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
+import { DynamicObj } from '../../util/models/util.model';
 
 const Attacker = (prop: ITypeEffComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -27,7 +28,7 @@ const Attacker = (prop: ITypeEffComponent) => {
       resist: [],
       neutral: [],
     });
-    Object.entries(((prop.types ?? new TypeEff()) as unknown as { [x: string]: TypeMultiply })[currentType] ?? new TypeModel()).forEach(
+    Object.entries(((prop.types ?? new TypeEff()) as unknown as DynamicObj<string, TypeMultiply>)[currentType] ?? new TypeModel()).forEach(
       ([key, value]) => {
         if (value === 1.6) {
           data.weak?.push(key);
@@ -73,7 +74,7 @@ const Attacker = (prop: ITypeEffComponent) => {
               <ul>
                 {types.map((value, index) => (
                   <li
-                    className={`container card-pokemon${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}`}
+                    className={combineClasses('container', `card-pokemon${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}`)}
                     style={{ backgroundColor: theme.palette.background.default }}
                     key={index}
                     onMouseDown={() => changeType(value)}
