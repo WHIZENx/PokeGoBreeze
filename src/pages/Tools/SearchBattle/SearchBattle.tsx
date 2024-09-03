@@ -171,12 +171,12 @@ const FindBattle = () => {
                 form: value.form,
                 maxCP: value.maxCP,
                 league: Object.keys(value.battleLeague).reduce((a, b) =>
-                  !(value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[a]
+                  !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]
                     ? b
-                    : !(value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[b]
+                    : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
                     ? a
-                    : ((value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[a]?.ratio ?? 0) >
-                      ((value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[b]?.ratio ?? 0)
+                    : ((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio ?? 0) >
+                      ((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio ?? 0)
                     ? a
                     : b
                 ),
@@ -190,12 +190,12 @@ const FindBattle = () => {
               form: value.form,
               maxCP: value.maxCP,
               league: Object.keys(value.battleLeague).reduce((a, b) =>
-                !(value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[a]
+                !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]
                   ? b
-                  : !(value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[b]
+                  : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
                   ? a
-                  : ((value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[a]?.ratio ?? 0) >
-                    ((value.battleLeague as unknown as DynamicObj<string, IBattleBaseStats>)[b]?.ratio ?? 0)
+                  : ((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio ?? 0) >
+                    ((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio ?? 0)
                   ? a
                   : b
               ),

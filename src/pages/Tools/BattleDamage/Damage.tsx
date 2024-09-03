@@ -28,7 +28,7 @@ import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { DynamicObj } from '../../../util/models/util.model';
 
-const labels: DynamicObj<number, ILabelDamage> = {
+const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
     color: 'black',
     style: 'text-danger',

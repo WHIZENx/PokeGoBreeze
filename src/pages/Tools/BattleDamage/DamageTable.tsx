@@ -16,7 +16,7 @@ import { ThrowOption } from '../../../core/models/options.model';
 import { ILabelDamage, LabelDamage } from '../../../core/models/damage.model';
 import { DynamicObj } from '../../../util/models/util.model';
 
-const eff: DynamicObj<number, ILabelDamage> = {
+const eff: DynamicObj<ILabelDamage> = {
   0.244140625: LabelDamage.create({
     label: 0.244,
     style: 'super-resistance',

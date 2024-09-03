@@ -165,7 +165,7 @@ const Search = () => {
               <tr>
                 <td className="data-table">
                   <DataTable
-                    columns={convertColumnDataType<TableColumnModify<ICombat>[], ICombat>(columns)}
+                    columns={convertColumnDataType<ICombat>(columns)}
                     data={resultFMove}
                     defaultSortFieldId={3}
                     fixedHeader={true}
@@ -221,7 +221,7 @@ const Search = () => {
               <tr>
                 <td className="data-table">
                   <DataTable
-                    columns={convertColumnDataType<TableColumnModify<ICombat>[], ICombat>(columns)}
+                    columns={convertColumnDataType<ICombat>(columns)}
                     data={resultCMove}
                     defaultSortFieldId={3}
                     fixedHeader={true}

@@ -61,7 +61,7 @@ const Hexagon = (props: IHexagonComponent) => {
   };
 
   const drawStatsHex = (ctx: CanvasRenderingContext2D | null | undefined, center: IPointer, stat: IHexagonStats, hexSize: number) => {
-    const stats: DynamicObj<string, number> = {
+    const stats: DynamicObj<number> = {
       '0': ((stat.switching || 0) * hexSize) / 100,
       '1': ((stat.charger || 0) * hexSize) / 100,
       '2': ((stat.closer || 0) * hexSize) / 100,

@@ -47,7 +47,7 @@ interface PokemonCatchChance {
   obShadowFormBaseCaptureRate?: number;
   obShadowFormAttackProbability?: number;
   obShadowFormDodgeProbability?: number;
-  result?: DynamicObj<string, DynamicObj<string, number>>;
+  result?: DynamicObj<DynamicObj<number>>;
 }
 
 const CatchChance = () => {
@@ -164,7 +164,7 @@ const CatchChance = () => {
   };
 
   const calculateCatch = () => {
-    const result: DynamicObj<string, DynamicObj<string, number>> = {};
+    const result: DynamicObj<DynamicObj<number>> = {};
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
 

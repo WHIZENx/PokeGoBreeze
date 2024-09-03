@@ -238,13 +238,13 @@ export class Form implements IForm {
 
 export interface IFormSoundCry {
   form: string;
-  cries: DynamicObj<string, string>;
+  cries: DynamicObj<string>;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class FormSoundCry implements IFormSoundCry {
   form: string;
-  cries: DynamicObj<string, string>;
+  cries: DynamicObj<string>;
 
   constructor(pokemon: IPokemonDetail) {
     const fullName = pokemon.forms[0].name;

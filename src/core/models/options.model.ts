@@ -102,7 +102,7 @@ interface CombatMove {
   power: number;
   energyDelta: number;
   vfxName: string;
-  buffs?: DynamicObj<string, number>;
+  buffs?: DynamicObj<number>;
 }
 
 interface MoveSetting {
@@ -406,8 +406,8 @@ export interface IOptions {
   combatOptions: ICombatOption;
   battleOptions: IBattleOption;
   throwCharge: IThrowOption;
-  buddyFriendship: DynamicObj<string, IBuddyFriendship>;
-  trainerFriendship: DynamicObj<string, ITrainerFriendship>;
+  buddyFriendship: DynamicObj<IBuddyFriendship>;
+  trainerFriendship: DynamicObj<ITrainerFriendship>;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -415,8 +415,8 @@ export class Options implements IOptions {
   combatOptions: ICombatOption;
   battleOptions: IBattleOption;
   throwCharge: IThrowOption;
-  buddyFriendship: DynamicObj<string, IBuddyFriendship>;
-  trainerFriendship: DynamicObj<string, ITrainerFriendship>;
+  buddyFriendship: DynamicObj<IBuddyFriendship>;
+  trainerFriendship: DynamicObj<ITrainerFriendship>;
 
   constructor() {
     this.combatOptions = new CombatOption();

@@ -210,14 +210,14 @@ const TeamPVP = () => {
   };
 
   const setSortedPokemonPerformers = (primary: Performers, secondary: Performers) => {
-    const a = primary as unknown as DynamicObj<string, number>;
-    const b = secondary as unknown as DynamicObj<string, number>;
+    const a = primary as unknown as DynamicObj<number>;
+    const b = secondary as unknown as DynamicObj<number>;
     return sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy];
   };
 
   const setSortedPokemonTeam = (primary: Teams, secondary: Teams) => {
-    const a = primary as unknown as DynamicObj<string, number>;
-    const b = secondary as unknown as DynamicObj<string, number>;
+    const a = primary as unknown as DynamicObj<number>;
+    const b = secondary as unknown as DynamicObj<number>;
     return sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy];
   };
 

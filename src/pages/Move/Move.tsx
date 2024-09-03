@@ -480,7 +480,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td className="table-top-of-move" colSpan={2} style={{ padding: 0 }}>
                   <DataTable
-                    columns={convertColumnDataType<TableColumnModify<IPokemonTopMove>[], IPokemonTopMove>(columns)}
+                    columns={convertColumnDataType<IPokemonTopMove>(columns)}
                     data={topList.filter((pokemon) => {
                       if (!releasedGO) {
                         return true;
