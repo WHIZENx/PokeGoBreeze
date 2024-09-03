@@ -40,4 +40,4 @@ export class ArrayStats implements IArrayStats {
   }
 }
 
-export type DynamicObj<T extends string | number, S> = { [x in T]: S };
+export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };

@@ -90,7 +90,7 @@ const weatherMultiple = (
   weather: string | undefined,
   type: string
 ) => {
-  return ((weatherBoost as unknown as DynamicObj<string, string[]>)[weather?.toUpperCase().replaceAll(' ', '_') ?? '']?.find(
+  return ((weatherBoost as unknown as DynamicObj<string[]>)[weather?.toUpperCase().replaceAll(' ', '_') ?? '']?.find(
     (item) => item === type?.toUpperCase().replaceAll(' ', '_')
   )
     ? STAB_MULTIPLY(globalOptions)
@@ -103,9 +103,7 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
     return valueEffective;
   }
   typesObj.forEach((type) => {
-    valueEffective *= (typeEffective as unknown as DynamicObj<string, DynamicObj<string, number>>)[typeMove?.toUpperCase()][
-      type.toUpperCase()
-    ];
+    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[typeMove?.toUpperCase()][type.toUpperCase()];
   });
   return valueEffective;
 };

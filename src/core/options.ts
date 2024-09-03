@@ -10,6 +10,7 @@ import {
   LeagueTimestamp,
   Season,
   Reward,
+  RankRewardLeague,
 } from './models/league.model';
 import { ISticker, Sticker } from './models/sticker.model';
 
@@ -108,7 +109,7 @@ export const optionPokeSound = (data: APITree) => {
 };
 
 export const optionPokemonTypes = (data: PokemonDataGM[]) => {
-  const types = new TypeSet() as unknown as DynamicObj<string, DynamicObj<string, number>>;
+  const types = new TypeSet() as unknown as DynamicObj<DynamicObj<number>>;
   const typeSet = Object.keys(types);
   data
     .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId) && item.data.typeEffective)
@@ -518,7 +519,7 @@ const cleanPokemonDupForm = (result: IPokemonData[]) => {
 };
 
 export const optionPokemonWeather = (data: PokemonDataGM[]) => {
-  const weather: DynamicObj<string, string[]> = {};
+  const weather: DynamicObj<string[]> = {};
   data
     .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
     .forEach((item) => {
@@ -969,11 +970,11 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     .forEach((item) => {
       const data = item.data.vsSeekerLoot;
       if (!rewards.rank[data.rankLevel]) {
-        rewards.rank[data.rankLevel] = {
+        rewards.rank[data.rankLevel] = new RankRewardLeague({
           rank: data.rankLevel,
           free: [],
           premium: [],
-        };
+        });
       }
       data.reward.slice(0, 5).forEach((reward, index) => {
         const result = new RankRewardSetLeague();

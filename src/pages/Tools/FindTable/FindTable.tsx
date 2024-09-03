@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useState } from 'react';
 import { HundoRate, isNotEmpty, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
-import DataTable, { TableColumn } from 'react-data-table-component';
+import DataTable, { ConditionalStyles, TableColumn } from 'react-data-table-component';
 import data from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
@@ -74,27 +74,27 @@ const columnsCP: TableColumn<IPredictCPModel>[] = [
   },
 ];
 
-const conditionalRowStyles = [
+const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
   {
-    when: (row: IPredictStatsModel) => row.percent === 100,
+    when: (row) => row.percent === 100,
     style: {
       backgroundColor: 'rgb(236, 200, 200)',
     },
   },
   {
-    when: (row: IPredictStatsModel) => row.percent > 80 && row.percent < 100,
+    when: (row) => row.percent > 80 && row.percent < 100,
     style: {
       backgroundColor: 'rgb(236, 200, 236)',
     },
   },
   {
-    when: (row: IPredictStatsModel) => row.percent > 64 && row.percent <= 80,
+    when: (row) => row.percent > 64 && row.percent <= 80,
     style: {
       backgroundColor: 'rgb(200, 236, 200)',
     },
   },
   {
-    when: (row: IPredictStatsModel) => row.percent > 51 && row.percent <= 64,
+    when: (row) => row.percent > 51 && row.percent <= 64,
     style: {
       backgroundColor: 'rgb(236, 236, 200)',
     },

@@ -1,7 +1,7 @@
 import { DynamicObj } from '../util/models/util.model';
 import { CPM, ICPM } from './models/cpm.model';
 
-export const calculateCPM = (baseCPM: DynamicObj<number, number>, min: number, max: number) => {
+export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {
   const cpmList: ICPM[] = [];
   for (let i = min; i <= max; i += 1) {
     const result = new CPM();

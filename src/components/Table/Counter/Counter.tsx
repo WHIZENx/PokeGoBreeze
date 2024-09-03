@@ -216,7 +216,7 @@ const Counter = (props: ICounterComponent) => {
       setCounterList([]);
       setFrame(true);
     }
-    if (props.isShadow !== undefined && isNotEmpty(props.types)) {
+    if (isNotEmpty(props.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
@@ -288,7 +288,7 @@ const Counter = (props: ICounterComponent) => {
       </div>
       <DataTable
         className="table-counter-container"
-        columns={convertColumnDataType<TableColumnModify<ICounterModel>[], ICounterModel>(columns)}
+        columns={convertColumnDataType<ICounterModel>(columns)}
         pagination={true}
         customStyles={customStyles}
         fixedHeader={true}

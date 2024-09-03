@@ -16,7 +16,7 @@ const Affect = (prop: IWeatherAffComponent) => {
 
   const getWeatherEffective = useCallback(() => {
     setWeatherEffective(
-      Object.values(((prop.weathers ?? new WeatherBoost()) as unknown as DynamicObj<string, string>)[currentWeather] ?? new WeatherBoost())
+      Object.values(((prop.weathers ?? new WeatherBoost()) as unknown as DynamicObj<string>)[currentWeather] ?? new WeatherBoost())
     );
   }, [currentWeather, prop.weathers]);
 
