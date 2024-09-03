@@ -15,6 +15,10 @@ import {
   IStatsSta,
   IStatsPokemonGO,
   IHexagonStats,
+  IStatsRankAtk,
+  IStatsRankDef,
+  IStatsRankSta,
+  IStatsRankProd,
 } from '../../core/models/stats.model';
 import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
@@ -367,7 +371,7 @@ export interface IStatsBarComponent {
   class: string;
   statsPercent: number;
   rank: number | string;
-  pokemonStats: IStatsRank | null;
+  pokemonStatsRank: IStatsRankAtk | IStatsRankDef | IStatsRankSta | IStatsRankProd | undefined;
   currentStats: number;
   optionalStats?: string;
   id?: number;

@@ -5,7 +5,7 @@ export interface OptionsRank {
   maxStats: number;
 }
 
-interface IStatsRankAtk extends OptionsRank {
+export interface IStatsRankAtk extends OptionsRank {
   ranking: IStatsAtk[];
 }
 
@@ -23,7 +23,7 @@ export class StatsRankAtk implements IStatsRankAtk {
   }
 }
 
-interface IStatsRankDef extends OptionsRank {
+export interface IStatsRankDef extends OptionsRank {
   ranking: IStatsDef[];
 }
 
@@ -42,7 +42,7 @@ export class StatsRankDef implements IStatsRankDef {
   }
 }
 
-interface IStatsRankSta extends OptionsRank {
+export interface IStatsRankSta extends OptionsRank {
   ranking: IStatsSta[];
 }
 
@@ -61,7 +61,7 @@ export class StatsRankSta implements IStatsRankSta {
   }
 }
 
-interface IStatsRankProd extends OptionsRank {
+export interface IStatsRankProd extends OptionsRank {
   ranking: IStatsProd[];
 }
 
