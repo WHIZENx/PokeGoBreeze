@@ -91,7 +91,7 @@ const Stats = (props: IStatsComponent) => {
         class="bg-danger"
         statsPercent={currentStats.atk}
         rank={isAvailable.attackRank ? isAvailable.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'}
-        pokemonStats={props.pokemonStats}
+        pokemonStatsRank={props.pokemonStats?.attack}
         currentStats={currentStats.stats.atk}
         id={props.id}
         form={props.form}
@@ -102,7 +102,7 @@ const Stats = (props: IStatsComponent) => {
         class="bg-success"
         statsPercent={currentStats.def}
         rank={isAvailable.defenseRank ? isAvailable.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'}
-        pokemonStats={props.pokemonStats}
+        pokemonStatsRank={props.pokemonStats?.defense}
         currentStats={currentStats.stats.def}
         id={props.id}
         form={props.form}
@@ -113,7 +113,7 @@ const Stats = (props: IStatsComponent) => {
         class="bg-info"
         statsPercent={currentStats.sta}
         rank={isAvailable.staminaRank ? isAvailable.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'}
-        pokemonStats={props.pokemonStats}
+        pokemonStatsRank={props.pokemonStats?.stamina}
         currentStats={currentStats.stats.sta}
         id={props.id}
         form={props.form}
@@ -124,7 +124,7 @@ const Stats = (props: IStatsComponent) => {
         class="bg-warning"
         statsPercent={currentStats.prod}
         rank={isAvailable.statProdRank ? isAvailable.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'}
-        pokemonStats={props.pokemonStats}
+        pokemonStatsRank={props.pokemonStats?.statProd}
         currentStats={currentStats.stats.prod}
         optionalStats={`${(currentStats.stats.prod / Math.pow(10, 6)).toFixed(2)} MM`}
         id={props.id}

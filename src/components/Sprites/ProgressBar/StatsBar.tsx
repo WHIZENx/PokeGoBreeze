@@ -42,14 +42,14 @@ const StatsBar = (props: IStatsBarComponent) => {
     >
       <BoxText className="box-text stats-text" isRank={false}>
         <span>
-          {props.tag} {props.pokemonStats && (props.optionalStats ?? props.currentStats)}
+          {props.tag} {props.pokemonStatsRank && (props.optionalStats ?? props.currentStats)}
         </span>
       </BoxText>
       <Bar className={combineClasses('progress-bar', props.class)} aria-valuenow={props.statsPercent} statsPercent={props.statsPercent} />
-      {props.pokemonStats && (
+      {props.pokemonStatsRank && (
         <BoxText className="box-text rank-text" isRank={true}>
           <span>
-            Rank: {props.rank} / {props.pokemonStats?.attack.maxRank}
+            Rank: {props.rank} / {props.pokemonStatsRank.maxRank}
           </span>
         </BoxText>
       )}
