@@ -319,7 +319,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
       continue;
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
-      const rule = sheet.cssRules[j] as any;
+      const rule: any = sheet.cssRules[j];
       if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
         return rule.style[style];
       }

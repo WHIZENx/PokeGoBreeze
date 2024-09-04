@@ -163,11 +163,11 @@ const TeamPVP = () => {
         });
         setRankingData(file);
         dispatch(SpinnerActions.HideSpinner.create());
-      } catch (e: any) {
+      } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            message: e.message,
+            message: (e as Error).message,
           })
         );
       }

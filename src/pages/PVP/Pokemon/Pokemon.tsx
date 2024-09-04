@@ -14,7 +14,6 @@ import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
 import { FORM_NORMAL, FORM_SHADOW, MAX_IV, maxLevel, scoreType } from '../../../util/constants';
-import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -46,8 +45,8 @@ const PokemonPVP = () => {
   }, [pvp]);
 
   const fetchPokemonInfo = useCallback(async () => {
+    dispatch(SpinnerActions.ShowSpinner.create());
     try {
-      dispatch(SpinnerActions.ShowSpinner.create());
       const cp = parseInt(params.cp ?? '');
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
@@ -131,12 +130,12 @@ const PokemonPVP = () => {
         })
       );
       dispatch(SpinnerActions.HideSpinner.create());
-    } catch (e: any) {
+    } catch (e) {
       setFound(false);
       dispatch(
         SpinnerActions.ShowSpinnerMsg.create({
           error: true,
-          message: e.message,
+          message: (e as Error).message,
         })
       );
     }
@@ -145,17 +144,13 @@ const PokemonPVP = () => {
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
+      router.action = null as AnyAction[''];
     };
     if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
       if (dataStore?.combat.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
-      } else {
-        if (router.action === Action.Push) {
-          router.action = null as AnyAction[''];
-          setTimeout(() => fetchPokemon(), 100);
-        } else if (!rankingPoke && pvp) {
-          fetchPokemon();
-        }
+      } else if (router.action) {
+        fetchPokemon();
       }
     }
     return () => {

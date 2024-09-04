@@ -5,6 +5,7 @@ import APIService from '../../../services/API.service';
 import {
   capitalize,
   checkPokemonGO,
+  combineClasses,
   convertColumnDataType,
   convertPokemonDataName,
   isNotEmpty,
@@ -103,10 +104,10 @@ const Counter = (props: ICounterComponent) => {
         <Link to={`/pokemon/${row.pokemonId}${row.pokemonForme ? `?form=${row.pokemonForme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
           <div className="d-flex justify-content-center">
             <div
-              className={
-                (theme.palette.mode === TypeTheme.LIGHT ? 'filter-shadow-hover' : 'filter-light-shadow-hover') +
-                ' position-relative group-pokemon-sprite'
-              }
+              className={combineClasses(
+                theme.palette.mode === TypeTheme.LIGHT ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
+                'position-relative group-pokemon-sprite'
+              )}
             >
               {row.cMove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
               {row.cMove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
@@ -216,7 +217,7 @@ const Counter = (props: ICounterComponent) => {
       setCounterList([]);
       setFrame(true);
     }
-    if (isNotEmpty(props.types)) {
+    if (props.isShadow !== undefined && isNotEmpty(props.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);

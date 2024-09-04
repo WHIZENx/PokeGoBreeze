@@ -202,9 +202,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     ...new Set(
       stats
         .sort((a, b) => (a.baseStatsPokeGo?.attack ?? 0) - (b.baseStatsPokeGo?.attack ?? 0))
-        .map((item) => {
-          return item.baseStatsPokeGo?.attack ?? 0;
-        })
+        .map((item) => item.baseStatsPokeGo?.attack ?? 0)
     ),
   ];
 
@@ -223,9 +221,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     ...new Set(
       stats
         .sort((a, b) => (a.baseStatsPokeGo?.defense ?? 0) - (b.baseStatsPokeGo?.defense ?? 0))
-        .map((item) => {
-          return item.baseStatsPokeGo?.defense ?? 0;
-        })
+        .map((item) => item.baseStatsPokeGo?.defense ?? 0)
     ),
   ];
 
@@ -244,9 +240,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     ...new Set(
       stats
         .sort((a, b) => (a.baseStatsPokeGo?.stamina ?? 0) - (b.baseStatsPokeGo?.stamina ?? 0))
-        .map((item) => {
-          return item.baseStatsPokeGo?.stamina ?? 0;
-        })
+        .map((item) => item.baseStatsPokeGo?.stamina ?? 0)
     ),
   ];
 
@@ -261,15 +255,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     });
   });
 
-  const prodRanking = [
-    ...new Set(
-      stats
-        .sort((a, b) => a.baseStatsProd - b.baseStatsProd)
-        .map((item) => {
-          return item.baseStatsProd;
-        })
-    ),
-  ];
+  const prodRanking = [...new Set(stats.sort((a, b) => a.baseStatsProd - b.baseStatsProd).map((item) => item.baseStatsProd))];
 
   const minPROD = Math.min(...prodRanking);
   const maxPROD = Math.max(...prodRanking);
@@ -336,8 +322,8 @@ export const calculateTankiness = (def: number, HP: number) => {
   return def * HP;
 };
 
-export const calculateDuelAbility = (dmgOutput: number, tanki: number) => {
-  return dmgOutput * tanki;
+export const calculateDuelAbility = (dmgOutput: number, tankiness: number) => {
+  return dmgOutput * tankiness;
 };
 
 export const calculateCatchChance = (baseCaptureRate: number, level: number, multiplier: number) => {
@@ -426,11 +412,8 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
   return dataStat;
 };
 
-export const calculateStatsBattle = (base: number, iv: number, level: number, floor = false, addition = 0) => {
-  let result = (base + iv) * (data.find((item: ICPM) => item.level === level)?.multiplier ?? 0);
-  if (addition > 0) {
-    result *= addition;
-  }
+export const calculateStatsBattle = (base: number, iv: number, level: number, floor = false, addition = 1) => {
+  const result = (base + iv) * (data.find((item: ICPM) => item.level === level)?.multiplier ?? 0) * addition;
   if (floor) {
     return Math.floor(result);
   }
@@ -1349,7 +1332,7 @@ const queryMoveCounter = (
         mc,
         calculateStatsBattle(data.pokemon.baseStats.atk, options.ivAtk, options.pokemonLevel, true),
         calculateStatsBattle(data.pokemon.baseStats.def, options.ivDef, options.pokemonLevel, true),
-        calculateStatsBattle(data.pokemon.baseStats?.sta ?? 0, options.ivHp, options.pokemonLevel, true),
+        calculateStatsBattle(data.pokemon.baseStats.sta ?? 0, options.ivHp, options.pokemonLevel, true),
         data.pokemon.types,
         shadow,
         options

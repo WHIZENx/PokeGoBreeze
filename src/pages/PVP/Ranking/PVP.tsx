@@ -154,11 +154,11 @@ const RankingPVP = () => {
         setRankingData(filePVP);
         setStoreStats([...Array(filePVP.length).keys()].map(() => false));
         dispatch(SpinnerActions.HideSpinner.create());
-      } catch (e: any) {
+      } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            message: e.message,
+            message: (e as Error).message,
           })
         );
       }
