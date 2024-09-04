@@ -139,12 +139,12 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
             </Navbar.Text>
           )}
           <IconButton
-            className={stateTheme + '-mode'}
+            className={`${stateTheme}-mode`}
             onClick={onChangeTheme}
             style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
             color="inherit"
           >
-            {props.mode === 'light' ? (
+            {props.mode === TypeTheme.LIGHT ? (
               <LightModeIcon fontSize="large" style={{ color: 'white' }} />
             ) : (
               <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
