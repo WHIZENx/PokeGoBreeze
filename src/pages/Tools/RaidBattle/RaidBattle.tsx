@@ -199,8 +199,8 @@ const RaidBattle = () => {
   };
 
   const setSortedResult = (primary: PokemonMoveData, secondary: PokemonMoveData, sortIndex: string[]) => {
-    const a = primary as unknown as DynamicObj<string, number>;
-    const b = secondary as unknown as DynamicObj<string, number>;
+    const a = primary as unknown as DynamicObj<number>;
+    const b = secondary as unknown as DynamicObj<number>;
     return filters.selected.sorted
       ? a[sortIndex[filters.selected.sortBy]] - b[sortIndex[filters.selected.sortBy]]
       : b[sortIndex[filters.selected.sortBy]] - a[sortIndex[filters.selected.sortBy]];
@@ -523,7 +523,7 @@ const RaidBattle = () => {
       };
       setResultBoss(result);
     } else {
-      const group = dataList.reduce((result: DynamicObj<string, PokemonMoveData[]>, obj) => {
+      const group = dataList.reduce((result: DynamicObj<PokemonMoveData[]>, obj) => {
         (result[obj.pokemon?.name ?? ''] = result[obj.pokemon?.name ?? ''] || []).push(obj);
         return result;
       }, {});

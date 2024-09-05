@@ -28,7 +28,7 @@ const Attacker = (prop: ITypeEffComponent) => {
       resist: [],
       neutral: [],
     });
-    Object.entries(((prop.types ?? new TypeEff()) as unknown as DynamicObj<string, TypeMultiply>)[currentType] ?? new TypeModel()).forEach(
+    Object.entries(((prop.types ?? new TypeEff()) as unknown as DynamicObj<TypeMultiply>)[currentType] ?? new TypeModel()).forEach(
       ([key, value]) => {
         if (value === 1.6) {
           data.weak?.push(key);

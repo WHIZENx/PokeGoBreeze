@@ -738,11 +738,11 @@ const Battle = () => {
             .filter((pokemon) => pokemon)
         );
         dispatch(SpinnerActions.HideSpinner.create());
-      } catch (e: any) {
+      } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            message: e.message,
+            message: (e as Error).message,
           })
         );
       }
@@ -1465,7 +1465,7 @@ const Battle = () => {
                     size={80}
                     maxEnergy={100}
                     moveEnergy={Math.abs(pokemon.cMovePri?.pvpEnergy ?? 0)}
-                    energy={(playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type]?.energy ?? pokemon.energy ?? 0}
+                    energy={(playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type]?.energy ?? pokemon.energy ?? 0}
                     disable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
@@ -1475,7 +1475,7 @@ const Battle = () => {
                       size={80}
                       maxEnergy={100}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
-                      energy={(playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type]?.energy ?? pokemon.energy ?? 0}
+                      energy={(playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type]?.energy ?? pokemon.energy ?? 0}
                       disable={pokemon.disableCMoveSec}
                     />
                   )}
@@ -1485,7 +1485,7 @@ const Battle = () => {
                     <HpBar
                       text={'HP'}
                       height={15}
-                      hp={Math.floor((playTimeline as unknown as DynamicObj<string, IPokemonBattleData>)[type].hp)}
+                      hp={Math.floor((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type].hp)}
                       maxHp={Math.floor(pokemon.pokemonData.currentStats?.stats?.statsSTA ?? 0)}
                     />
                   </Fragment>

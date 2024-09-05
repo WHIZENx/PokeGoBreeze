@@ -29,8 +29,9 @@ import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormD
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 import { ThemeModify } from './models/overrides/themes.model';
-import { TableColumn } from 'react-data-table-component';
+import { TableColumn, TableStyles } from 'react-data-table-component';
 import { DynamicObj } from './models/util.model';
+import { TableColumnModify } from './models/overrides/data-table.model';
 
 class Mask {
   value: number;
@@ -318,7 +319,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
       continue;
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
-      const rule = sheet.cssRules[j] as any;
+      const rule: any = sheet.cssRules[j];
       if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
         return rule.style[style];
       }
@@ -429,7 +430,7 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: IS
   return data;
 };
 
-export const calRank = (pokemonStats: DynamicObj<string, OptionsRank>, type: string, rank: number) => {
+export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, rank: number) => {
   return ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
 };
 
@@ -458,7 +459,7 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   return new PokemonModel(result.num, result.name);
 };
 
-export const getCustomThemeDataTable = (theme: ThemeModify) => {
+export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => {
   return {
     rows: {
       style: {
@@ -535,7 +536,7 @@ const convertNameEffort = (name: string) => {
 };
 
 export const convertStatsEffort = (stats: Stats[] | undefined) => {
-  const result = new StatsPokemon() as unknown as DynamicObj<string, number>;
+  const result = new StatsPokemon() as unknown as DynamicObj<number>;
 
   stats?.forEach((stat) => {
     result[convertNameEffort(stat.stat.name)] = stat.base_stat;
@@ -824,7 +825,7 @@ export const replaceTempMovePvpName = (name: string) => {
   return name;
 };
 
-export const convertColumnDataType = <T, S>(columns: T) => {
+export const convertColumnDataType = <S, T = TableColumnModify<S>[]>(columns: T) => {
   return columns as TableColumn<S>[];
 };
 

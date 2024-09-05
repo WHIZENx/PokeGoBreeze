@@ -426,7 +426,7 @@ const DpsTdo = () => {
 
   const filterBestOptions = (result: PokemonSheetData[], best: number) => {
     const bestType = BestOptionType[best] as 'dps' | 'tdo' | 'multiDpsTdo';
-    const group = result.reduce((result: DynamicObj<string, PokemonSheetData[]>, obj) => {
+    const group = result.reduce((result: DynamicObj<PokemonSheetData[]>, obj) => {
       (result[obj.pokemon.name] = result[obj.pokemon.name] || []).push(obj);
       return result;
     }, {});
@@ -1110,10 +1110,9 @@ const DpsTdo = () => {
                           pokemonFriendLevel: value ?? 0,
                         });
                       }}
-                      defaultValue={0}
                       max={4}
                       size="large"
-                      value={pokemonFriendLevel}
+                      value={pokemonFriendLevel || 0}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
@@ -1140,7 +1139,7 @@ const DpsTdo = () => {
           </span>
         </div>
         <DataTable
-          columns={convertColumnDataType<TableColumnModify<PokemonSheetData>[], PokemonSheetData>(columns)}
+          columns={convertColumnDataType<PokemonSheetData>(columns)}
           data={dataFilter}
           noDataComponent={null}
           pagination={true}

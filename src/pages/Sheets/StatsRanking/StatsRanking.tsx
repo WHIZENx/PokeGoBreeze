@@ -8,7 +8,7 @@ import {
   isNotEmpty,
   convertColumnDataType,
 } from '../../../util/utils';
-import DataTable from 'react-data-table-component';
+import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/calculate';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -123,7 +123,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   },
 ];
 
-const customStyles = {
+const customStyles: TableStyles = {
   rows: {
     style: {
       cursor: 'pointer',
@@ -136,9 +136,9 @@ const StatsRanking = () => {
   useChangeTitle('Stats Ranking');
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const conditionalRowStyles = [
+  const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
-      when: (row: IPokemonStatsRanking) => row.slug === select?.slug,
+      when: (row) => row.slug === select?.slug,
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -175,8 +175,8 @@ const StatsRanking = () => {
   };
 
   const setSortedPokemonRanking = (primary: IPokemonStatsRanking, secondary: IPokemonStatsRanking, sortBy: string[]) => {
-    const a = primary as unknown as DynamicObj<string, DynamicObj<string, number>>;
-    const b = secondary as unknown as DynamicObj<string, DynamicObj<string, number>>;
+    const a = primary as unknown as DynamicObj<DynamicObj<number>>;
+    const b = secondary as unknown as DynamicObj<DynamicObj<number>>;
     return b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]];
   };
 
@@ -194,7 +194,7 @@ const StatsRanking = () => {
     return pokemon
       .sort((a, b) => setSortedPokemonRanking(a, b, sortBy))
       .map((data) => {
-        const result = data as unknown as DynamicObj<string, IPokemonStatsRanking>;
+        const result = data as unknown as DynamicObj<IPokemonStatsRanking>;
         return new PokemonStatsRanking({
           ...data,
           rank: result[sortBy[0]]?.rank,
@@ -396,7 +396,7 @@ const StatsRanking = () => {
         />
       </div>
       <DataTable
-        columns={convertColumnDataType<TableColumnModify<IPokemonStatsRanking>[], IPokemonStatsRanking>(columnPokemon)}
+        columns={convertColumnDataType<IPokemonStatsRanking>(columnPokemon)}
         data={pokemonFilter}
         pagination={true}
         defaultSortFieldId={getSortId()}

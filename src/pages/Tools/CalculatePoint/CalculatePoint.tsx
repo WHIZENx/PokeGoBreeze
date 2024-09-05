@@ -36,14 +36,14 @@ class ColorTone {
 
 interface BreakPointAtk {
   data: number[][];
-  colorTone: DynamicObj<string, ColorTone>;
+  colorTone: DynamicObj<ColorTone>;
 }
 
 interface BreakPointDef {
   dataDef: number[][];
   dataSta: number[][];
-  colorToneDef: DynamicObj<string, ColorTone>;
-  colorToneSta: DynamicObj<string, ColorTone>;
+  colorToneDef: DynamicObj<ColorTone>;
+  colorToneSta: DynamicObj<ColorTone>;
 }
 
 interface BulkPointDef {
@@ -202,7 +202,7 @@ const CalculatePoint = () => {
   };
 
   const computeColorTone = (data: number[]) => {
-    const colorTone: DynamicObj<string, ColorTone> = {};
+    const colorTone: DynamicObj<ColorTone> = {};
     let r = 50,
       g = 255,
       b = 100;

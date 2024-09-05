@@ -152,13 +152,13 @@ const RankingPVP = () => {
           });
         });
         setRankingData(filePVP);
-        setStoreStats(file.map(() => false));
+        setStoreStats([...Array(filePVP.length).keys()].map(() => false));
         dispatch(SpinnerActions.HideSpinner.create());
-      } catch (e: any) {
+      } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            message: e.message,
+            message: (e as Error).message,
           })
         );
       }
@@ -260,8 +260,8 @@ const RankingPVP = () => {
   };
 
   const setSortedPokemonBattle = (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
-    const a = primary as unknown as DynamicObj<string, number>;
-    const b = secondary as unknown as DynamicObj<string, number>;
+    const a = primary as unknown as DynamicObj<number>;
+    const b = secondary as unknown as DynamicObj<number>;
     return sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current];
   };
 

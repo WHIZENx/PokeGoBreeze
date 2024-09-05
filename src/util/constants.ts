@@ -17,7 +17,7 @@ export const SYNC_MSG = 'Waiting to sync current data';
 
 export const TRANSITION_TIME = '0.3s';
 
-export const BASE_CPM: DynamicObj<number, number> = {
+export const BASE_CPM: DynamicObj<number> = {
   1: 0.094,
   10: 0.4225,
   20: 0.5974,
@@ -27,7 +27,7 @@ export const BASE_CPM: DynamicObj<number, number> = {
   60: 0.91736427,
 };
 
-export const RAID_BOSS_TIER: DynamicObj<number, ITier> = {
+export const RAID_BOSS_TIER: DynamicObj<ITier> = {
   1: Tier.create({
     level: 20,
     CPm: 0.61,
@@ -167,7 +167,7 @@ export const SHADOW_DEF_BONUS = (options: IOptions | undefined) => {
   return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.DEF]) || 1;
 };
 
-export const genList: DynamicObj<number, number[]> = {
+export const genList: DynamicObj<number[]> = {
   1: [1, 151],
   2: [152, 251],
   3: [252, 386],
@@ -179,7 +179,7 @@ export const genList: DynamicObj<number, number[]> = {
   9: [906, 1008],
 };
 
-export const regionList: DynamicObj<number, string> = {
+export const regionList: DynamicObj<string> = {
   0: 'Unknown',
   1: 'Kanto',
   2: 'Johto',

@@ -89,9 +89,9 @@ export class SetTypeEff implements Action {
 export class SetWeatherBoost implements Action {
   readonly type = StoreActionTypes.setWeatherBoost;
 
-  constructor(public payload: DynamicObj<string, string[]>) {}
+  constructor(public payload: DynamicObj<string[]>) {}
 
-  static create(value: DynamicObj<string, string[]>) {
+  static create(value: DynamicObj<string[]>) {
     const { type, payload } = new SetWeatherBoost(value);
     return {
       type,

@@ -5,6 +5,7 @@ import APIService from '../../../services/API.service';
 import {
   capitalize,
   checkPokemonGO,
+  combineClasses,
   convertColumnDataType,
   convertPokemonDataName,
   isNotEmpty,
@@ -103,10 +104,10 @@ const Counter = (props: ICounterComponent) => {
         <Link to={`/pokemon/${row.pokemonId}${row.pokemonForme ? `?form=${row.pokemonForme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
           <div className="d-flex justify-content-center">
             <div
-              className={
-                (theme.palette.mode === TypeTheme.LIGHT ? 'filter-shadow-hover' : 'filter-light-shadow-hover') +
-                ' position-relative group-pokemon-sprite'
-              }
+              className={combineClasses(
+                theme.palette.mode === TypeTheme.LIGHT ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
+                'position-relative group-pokemon-sprite'
+              )}
             >
               {row.cMove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
               {row.cMove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
@@ -288,7 +289,7 @@ const Counter = (props: ICounterComponent) => {
       </div>
       <DataTable
         className="table-counter-container"
-        columns={convertColumnDataType<TableColumnModify<ICounterModel>[], ICounterModel>(columns)}
+        columns={convertColumnDataType<ICounterModel>(columns)}
         pagination={true}
         customStyles={customStyles}
         fixedHeader={true}

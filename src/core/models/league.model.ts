@@ -75,6 +75,17 @@ export interface IRankRewardLeague {
   premium?: IRankRewardSetLeague[];
 }
 
+// tslint:disable-next-line:max-classes-per-file
+export class RankRewardLeague implements IRankRewardLeague {
+  rank?: number;
+  free?: IRankRewardSetLeague[];
+  premium?: IRankRewardSetLeague[];
+
+  constructor({ ...props }: IRankRewardLeague) {
+    Object.assign(this, props);
+  }
+}
+
 export interface IPokemonRewardLeague {
   rank?: number;
   free?: IPokemonRewardSetLeague[];
@@ -112,14 +123,14 @@ export interface LeagueReward {
 }
 
 interface IReward {
-  rank: DynamicObj<number, IRankRewardLeague>;
-  pokemon: DynamicObj<number, IPokemonRewardLeague>;
+  rank: DynamicObj<IRankRewardLeague>;
+  pokemon: DynamicObj<IPokemonRewardLeague>;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class Reward implements IReward {
-  rank: DynamicObj<number, IRankRewardLeague> = [];
-  pokemon: DynamicObj<number, IPokemonRewardLeague> = [];
+  rank: DynamicObj<IRankRewardLeague> = {};
+  pokemon: DynamicObj<IPokemonRewardLeague> = {};
 }
 
 interface ISeason {

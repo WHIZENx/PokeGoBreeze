@@ -181,7 +181,7 @@ export interface SpriteInfo {
 export interface PokemonInfo {
   abilities: Ability[];
   base_experience: number;
-  cries: DynamicObj<string, string>;
+  cries: DynamicObj<string>;
   forms: Path[];
   game_indices: Indices[];
   height: number;
@@ -243,7 +243,7 @@ export interface Type {
 }
 
 export interface IPokemonDetail {
-  cries: DynamicObj<string, string>;
+  cries: DynamicObj<string>;
   forms: Path[];
   height: number;
   id: number;
@@ -259,7 +259,7 @@ export interface IPokemonDetail {
 }
 
 export class PokemonDetail implements IPokemonDetail {
-  cries!: DynamicObj<string, string>;
+  cries!: DynamicObj<string>;
   forms: Path[] = [];
   height: number = 0;
   id: number = 0;

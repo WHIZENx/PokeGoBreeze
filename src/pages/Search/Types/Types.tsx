@@ -143,6 +143,43 @@ const columnMove: TableColumnModify<ICombat>[] = [
   },
 ];
 
+interface IPokemonType {
+  pokemonList: IPokemonData[];
+  fastMove: ICombat[];
+  chargedMove: ICombat[];
+}
+
+class PokemonType implements IPokemonType {
+  pokemonList: IPokemonData[] = [];
+  fastMove: ICombat[] = [];
+  chargedMove: ICombat[] = [];
+
+  static create(value: IPokemonType) {
+    const obj = new PokemonType();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IPokemonTypeData {
+  pokemon: number;
+  fastMoves: number | undefined;
+  chargedMoves: number | undefined;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+class PokemonTypeData implements IPokemonTypeData {
+  pokemon: number = 0;
+  fastMoves: number | undefined;
+  chargedMoves: number | undefined;
+
+  static create(value: IPokemonTypeData) {
+    const obj = new PokemonTypeData();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
 const SearchTypes = () => {
   const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
@@ -152,22 +189,18 @@ const SearchTypes = () => {
   const [releasedGO, setReleaseGO] = useState(true);
 
   const [currentType, setCurrentType] = useState('');
-  const [result, setResult] = useState({
-    pokemonList: [] as IPokemonData[],
-    fastMove: [] as ICombat[],
-    chargedMove: [] as ICombat[],
-  });
-  const allData = {
+  const [result, setResult] = useState(new PokemonType());
+  const allData = PokemonTypeData.create({
     pokemon: (data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length ?? 1) - 1,
     fastMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST)?.length,
     chargedMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE)?.length,
-  };
+  });
 
   const [showType, setShowType] = useState(false);
 
   useEffect(() => {
     if (currentType) {
-      document.title = `${capitalize(currentType)} - Type`;
+      document.title = `Type - ${capitalize(currentType)}`;
     }
   }, [currentType]);
 
@@ -183,14 +216,16 @@ const SearchTypes = () => {
 
   useEffect(() => {
     if (isNotEmpty(data?.pokemon) && isNotEmpty(data?.combat)) {
-      setResult({
-        pokemonList:
-          data?.pokemon
-            ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-            .filter((pokemon) => pokemon.types.includes(currentType)) ?? [],
-        fastMove: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType) ?? [],
-        chargedMove: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType) ?? [],
-      });
+      setResult(
+        PokemonType.create({
+          pokemonList:
+            data?.pokemon
+              ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
+              .filter((pokemon) => pokemon.types.includes(currentType)) ?? [],
+          fastMove: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType) ?? [],
+          chargedMove: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType) ?? [],
+        })
+      );
     }
   }, [currentType, releasedGO, data?.pokemon, data?.combat]);
 
@@ -278,40 +313,36 @@ const SearchTypes = () => {
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('pokeball_sprite')} />{' '}
-              <b>{`Pokémon: ${result.pokemonList?.length} (${
-                result.pokemonList && allData.pokemon && Math.round((result.pokemonList?.length * 100) / allData.pokemon)
+              <b>{`Pokémon: ${result.pokemonList.length} (${
+                isNotEmpty(result.pokemonList) && allData.pokemon > 0 && Math.round((result.pokemonList.length * 100) / allData.pokemon)
               }%)`}</b>
               <ul style={{ listStyleType: 'disc' }}>
                 <li>
-                  <b>{`Legacy Type: ${result.pokemonList?.filter((pokemon: IPokemonData) => pokemon.types.length === 1).length} (${
-                    result.pokemonList &&
-                    allData.pokemon &&
-                    Math.round(
-                      (result.pokemonList?.filter((pokemon: IPokemonData) => pokemon.types.length === 1).length * 100) / allData.pokemon
-                    )
+                  <b>{`Legacy Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length} (${
+                    isNotEmpty(result.pokemonList) &&
+                    allData.pokemon > 0 &&
+                    Math.round((result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) / allData.pokemon)
                   }%)`}</b>
                 </li>
                 <li>
-                  <b>{`Include Type: ${result.pokemonList?.filter((pokemon: IPokemonData) => pokemon.types.length > 1).length} (${
-                    result.pokemonList &&
-                    allData.pokemon &&
-                    Math.round(
-                      (result.pokemonList?.filter((pokemon: IPokemonData) => pokemon.types.length > 1).length * 100) / allData.pokemon
-                    )
+                  <b>{`Include Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length} (${
+                    isNotEmpty(result.pokemonList) &&
+                    allData.pokemon > 0 &&
+                    Math.round((result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) / allData.pokemon)
                   }%)`}</b>
                 </li>
               </ul>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
-              <b>{`Fast Moves: ${result.fastMove?.length}/${allData.fastMoves ?? 0} (${Math.round(
-                (result.fastMove?.length * 100) / (allData.fastMoves ?? 1)
+              <b>{`Fast Moves: ${result.fastMove.length}/${allData.fastMoves ?? 0} (${Math.round(
+                (result.fastMove.length * 100) / (allData.fastMoves ?? 1)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charged Moves: ${result.chargedMove?.length}/${allData.chargedMoves ?? 0} (${Math.round(
-                (result.chargedMove?.length * 100) / (allData.chargedMoves ?? 1)
+              <b>{`Charged Moves: ${result.chargedMove.length}/${allData.chargedMoves ?? 0} (${Math.round(
+                (result.chargedMove.length * 100) / (allData.chargedMoves ?? 1)
               )}%)`}</b>
             </span>
           </div>
@@ -320,8 +351,8 @@ const SearchTypes = () => {
           <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
             <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
               <DataTable
-                columns={convertColumnDataType<TableColumnModify<IPokemonData>[], IPokemonData>(columnPokemon)}
-                data={result ? result.pokemonList?.filter((pokemon) => pokemon.types.length === 1) : []}
+                columns={convertColumnDataType<IPokemonData>(columnPokemon)}
+                data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}
@@ -331,8 +362,8 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
               <DataTable
-                columns={convertColumnDataType<TableColumnModify<IPokemonData>[], IPokemonData>(columnPokemon)}
-                data={result ? result.pokemonList?.filter((pokemon) => pokemon.types.length > 1) : []}
+                columns={convertColumnDataType<IPokemonData>(columnPokemon)}
+                data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}
@@ -342,7 +373,7 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
               <DataTable
-                columns={convertColumnDataType<TableColumnModify<ICombat>[], ICombat>(columnMove)}
+                columns={convertColumnDataType<ICombat>(columnMove)}
                 data={result ? result.fastMove : []}
                 pagination={true}
                 defaultSortFieldId={1}
@@ -353,7 +384,7 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
               <DataTable
-                columns={convertColumnDataType<TableColumnModify<ICombat>[], ICombat>(columnMove)}
+                columns={convertColumnDataType<ICombat>(columnMove)}
                 data={result ? result.chargedMove : []}
                 pagination={true}
                 defaultSortFieldId={1}
