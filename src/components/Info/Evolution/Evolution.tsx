@@ -25,6 +25,7 @@ import {
   convertFormGif,
   convertModelSpritName,
   convertPokemonAPIDataName,
+  isEmpty,
   isNotEmpty,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -51,6 +52,7 @@ import { IEvolutionComponent } from '../../models/component.model';
 import { TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 interface IPokemonEvo {
   prev?: string;
@@ -97,18 +99,18 @@ const customTheme = createTheme({
 
 const Evolution = (props: IEvolutionComponent) => {
   const theme = useTheme<ThemeModify>();
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
     return new PokemonEvo(
-      pokemon?.baseSpecies ? pokemon?.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase() ?? '',
-      pokemon?.num ?? 0,
-      pokemon?.forme ?? '',
-      convertModelSpritName(pokemon?.name ?? ''),
+      getValueOrDefault(String, pokemon?.baseSpecies ? pokemon?.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase()),
+      getValueOrDefault(Number, pokemon?.num),
+      getValueOrDefault(String, pokemon?.forme),
+      convertModelSpritName(getValueOrDefault(String, pokemon?.name)),
       undefined,
       false,
-      pokemon?.isBaby ?? false
+      getValueOrDefault(Boolean, pokemon?.isBaby)
     );
   };
 
@@ -119,7 +121,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const modelEvoChain = (pokemon: IEvolution) => {
     const name = pokeSetName(pokemon.form !== FORM_NORMAL ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name);
     let form =
-      pokemon.id === 718 && pokemon.form === '' ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
+      pokemon.id === 718 && isEmpty(pokemon.form) ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
     form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
     let sprite = '';
     if (pokemon.id === 664 || pokemon.id === 665) {
@@ -128,7 +130,16 @@ const Evolution = (props: IEvolutionComponent) => {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
 
-    return new PokemonEvo(name, pokemon.id, form, sprite, pokemon.prev, false, pokemon?.isBaby ?? false, pokemon.canPurified ?? false);
+    return new PokemonEvo(
+      name,
+      pokemon.id,
+      form,
+      sprite,
+      pokemon.prev,
+      false,
+      getValueOrDefault(Boolean, pokemon?.isBaby),
+      getValueOrDefault(Boolean, pokemon.canPurified)
+    );
   };
 
   const getPrevEvoChainJSON = (name: string, arr: IPokemonEvo[][]) => {
@@ -136,7 +147,7 @@ const Evolution = (props: IEvolutionComponent) => {
       const pokemon = pokemonData.find((pokemon) => pokemon.name === name);
       if (pokemon) {
         arr.unshift([formatEvoChain(pokemon)]);
-        getPrevEvoChainJSON(pokemon.prevo ?? '', arr);
+        getPrevEvoChainJSON(getValueOrDefault(String, pokemon.prevo), arr);
       }
     }
   };
@@ -178,7 +189,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainJSON = (id: number, forme: IForm) => {
-    let form = forme.formName === '' || forme.formName?.toUpperCase().includes(FORM_MEGA) ? null : forme.formName;
+    let form = isEmpty(forme.formName) || forme.formName?.toUpperCase().includes(FORM_MEGA) ? null : forme.formName;
     if (forme.formName === '10') {
       form += '%';
     }
@@ -201,7 +212,7 @@ const Evolution = (props: IEvolutionComponent) => {
     if (!pokemon) {
       return;
     }
-    getPrevEvoChainJSON(pokemon?.prevo ?? '', prevEvo);
+    getPrevEvoChainJSON(getValueOrDefault(String, pokemon?.prevo), prevEvo);
     const prev = pokemonData.find((p) => p.name === pokemon?.prevo);
     if (prev) {
       getCurrEvoChainJSON(prev, curr);
@@ -231,9 +242,9 @@ const Evolution = (props: IEvolutionComponent) => {
               name: evo.name.replaceAll('-', '_').toUpperCase(),
               id: evo.num,
               form: evo.forme ?? FORM_NORMAL,
-              evoList: evo.evoList ?? [],
-              tempEvo: evo.tempEvo ?? [],
-              canPurified: evo.isShadow ?? false,
+              evoList: getValueOrDefault(Array, evo.evoList),
+              tempEvo: getValueOrDefault(Array, evo.tempEvo),
+              canPurified: getValueOrDefault(Boolean, evo.isShadow),
             })
           )
         );
@@ -252,17 +263,18 @@ const Evolution = (props: IEvolutionComponent) => {
         modelEvoChain(
           new EvolutionModel({
             ...poke,
-            name: poke.fullName ?? '',
+            name: getValueOrDefault(String, poke.fullName),
             id: poke.num,
             form: poke.forme ?? FORM_NORMAL,
-            evoList: poke.evoList ?? [],
-            tempEvo: poke.tempEvo ?? [],
-            canPurified: poke.isShadow ?? false,
+            evoList: getValueOrDefault(Array, poke.evoList),
+            tempEvo: getValueOrDefault(Array, poke.tempEvo),
+            canPurified: getValueOrDefault(Boolean, poke.isShadow),
           })
         )
       );
     } else {
-      evoList =
+      evoList = getValueOrDefault(
+        Array,
         pokemon.evoList
           ?.map((evo) =>
             modelEvoChain(
@@ -276,7 +288,8 @@ const Evolution = (props: IEvolutionComponent) => {
               })
             )
           )
-          .filter((pokemon) => pokemon.id === poke.num) ?? [];
+          .filter((pokemon) => pokemon.id === poke.num)
+      );
     }
     return result.push(evoList);
   };
@@ -315,9 +328,9 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainStore = (id: number, forme: IForm) => {
-    const formName = forme.formName?.toUpperCase() ?? '';
+    const formName = getValueOrDefault(String, forme.formName?.toUpperCase());
     const form =
-      formName === '' || formName.includes(FORM_MEGA)
+      isEmpty(formName) || formName.includes(FORM_MEGA)
         ? FORM_NORMAL
         : forme.isPurified || forme.isShadow
         ? formName === FORM_SHADOW || formName === FORM_PURIFIED
@@ -404,7 +417,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
-    const form = value.form ?? props.forme?.formName ?? '';
+    const form = getValueOrDefault(String, value.form, props.forme?.formName);
     let offsetY = 35;
     offsetY += value.baby ? 20 : 0;
     offsetY += arrEvoList.length === 1 ? 20 : 0;
@@ -441,7 +454,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {props.purified && data?.candyCost && data?.purificationEvoCandyCost && (
                           <span className="d-block text-end caption text-danger">{`-${
-                            (data?.candyCost ?? 0) - (data?.purificationEvoCandyCost ?? 0)
+                            getValueOrDefault(Number, data?.candyCost) - getValueOrDefault(Number, data?.purificationEvoCandyCost)
                           }`}</span>
                         )}
                       </div>
@@ -504,7 +517,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               <span
                                 className="d-flex align-items-center caption"
                                 style={{ color: theme.palette.customText.caption, width: 'max-content', marginLeft: 2 }}
-                              >{`x${data.itemCost ?? 0}`}</span>
+                              >{`x${getValueOrDefault(Number, data.itemCost)}`}</span>
                             )}
                           </Fragment>
                         )}
@@ -580,9 +593,9 @@ const Evolution = (props: IEvolutionComponent) => {
           )}
           {evoCount > 1 ? (
             <Fragment>
-              {chain.length > 1 || (chain.length === 1 && form !== FORM_NORMAL && form !== '') ? (
+              {chain.length > 1 || (chain.length === 1 && form !== FORM_NORMAL && !isEmpty(form)) ? (
                 <Fragment>
-                  {form !== FORM_NORMAL && form !== '' && !form?.toUpperCase().includes(FORM_MEGA) ? (
+                  {form !== FORM_NORMAL && !isEmpty(form) && !form?.toUpperCase().includes(FORM_MEGA) ? (
                     <ThemeProvider theme={customTheme}>
                       <Badge
                         color="secondary"

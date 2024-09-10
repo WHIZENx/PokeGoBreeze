@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
-import { capitalize } from '../../util/utils';
+import { capitalize, isEmpty } from '../../util/utils';
 import { IWeatherEffComponent } from '../models/page.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
@@ -23,7 +23,7 @@ const Effect = (prop: IWeatherEffComponent) => {
       if (value.includes(currentTypePri) && !data.includes(key)) {
         data.push(key);
       }
-      if (currentTypeSec !== '' && value.includes(currentTypeSec) && !data.includes(key)) {
+      if (!isEmpty(currentTypeSec) && value.includes(currentTypeSec) && !data.includes(key)) {
         data.push(key);
       }
     });
@@ -100,7 +100,7 @@ const Effect = (prop: IWeatherEffComponent) => {
               onClick={() => setShowTypeSec(true)}
               onBlur={() => setShowTypeSec(false)}
             >
-              {currentTypeSec === '' ? (
+              {isEmpty(currentTypeSec) ? (
                 <div className="type-none">
                   <b>None</b>
                 </div>

@@ -2,6 +2,7 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
+import { getValueOrDefault } from './models/util.model';
 import { getStyleRuleValue, isNotEmpty } from './utils';
 
 export const priorityBadge = (priority: number) => {
@@ -84,9 +85,9 @@ export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
       data = candyData?.find((item) => item.familyId === 0);
     }
   }
-  return `rgb(${Math.round(255 * (data?.secondaryColor.r ?? 0)) || 0}, ${Math.round(255 * (data?.secondaryColor.g ?? 0)) || 0}, ${
-    Math.round(255 * (data?.secondaryColor.b ?? 0)) || 0
-  }, ${data?.secondaryColor.a || 1})`;
+  return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.secondaryColor.r))}, ${Math.round(
+    255 * getValueOrDefault(Number, data?.secondaryColor.g)
+  )}, ${Math.round(255 * getValueOrDefault(Number, data?.secondaryColor.b))}, ${data?.secondaryColor.a || 1})`;
 };
 
 export const computeCandyColor = (candyData: ICandy[], id: number) => {
@@ -97,9 +98,9 @@ export const computeCandyColor = (candyData: ICandy[], id: number) => {
       data = candyData?.find((item) => item.familyId === 0);
     }
   }
-  return `rgb(${Math.round(255 * (data?.primaryColor.r ?? 0)) || 0}, ${Math.round(255 * (data?.primaryColor.g ?? 0)) || 0}, ${
-    Math.round(255 * (data?.primaryColor.b ?? 0)) || 0
-  }, ${data?.primaryColor.a || 1})`;
+  return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.primaryColor.r))}, ${Math.round(
+    255 * getValueOrDefault(Number, data?.primaryColor.g)
+  )}, ${Math.round(255 * getValueOrDefault(Number, data?.primaryColor.b))}, ${data?.primaryColor.a || 1})`;
 };
 
 export const computeBgType = (
@@ -117,11 +118,11 @@ export const computeBgType = (
   const colorsPalette: string[] = [];
   if (typeof types === 'string') {
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
-    return (color || defaultBg).split(')').at(0) + `, ${opacity ?? 1})` || defaultBg;
+    return (color || defaultBg).split(')').at(0) + `, ${getValueOrDefault(Number, opacity, 1)})` || defaultBg;
   } else {
     types?.forEach((type) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
-      colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${opacity ?? 1})`);
+      colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${getValueOrDefault(Number, opacity, 1)})`);
     });
   }
   if (shadow) {
@@ -136,7 +137,7 @@ export const computeBgType = (
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {
   const pokemonAssets = assets?.find((asset) => asset.id === id);
   if (!pokemonAssets || name?.toUpperCase() === FORM_GMAX) {
-    return null;
+    return;
   }
   const asset = pokemonAssets?.image.find((img) => img.form === name);
   if (asset) {
@@ -144,12 +145,11 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: s
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {
     const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
-      return pokemonAssets.image.at(0) ?? null;
+      return pokemonAssets.image.at(0);
     }
     return formNormal;
-  } else {
-    return null;
   }
+  return;
 };
 
 export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, name: string | undefined) => {

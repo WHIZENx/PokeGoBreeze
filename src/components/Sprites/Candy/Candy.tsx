@@ -7,6 +7,7 @@ import bgCandy from '../../../assets/bg_Candy.png';
 import candy from '../../../data/pokemon_candy_color_data.json';
 import { ICandy } from '../../../core/models/candy.model';
 import { ICandyComponent } from '../../models/component.model';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const DEFAULT_SIZE = 20;
 
@@ -33,8 +34,8 @@ const Fill = styled.div<Element>`
 
 const Candy = (props: ICandyComponent) => {
   return (
-    <Background style={props.style} candyId={props.id ?? 0} candy={candy as ICandy[]}>
-      <Fill candyId={props.id ?? 0} candy={candy as ICandy[]} size={props.size} />
+    <Background style={props.style} candyId={getValueOrDefault(Number, props.id)} candy={candy as ICandy[]}>
+      <Fill candyId={getValueOrDefault(Number, props.id)} candy={candy as ICandy[]} size={props.size} />
     </Background>
   );
 };

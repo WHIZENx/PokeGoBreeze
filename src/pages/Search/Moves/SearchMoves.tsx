@@ -20,6 +20,7 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -28,8 +29,8 @@ const nameSort = (rowA: ICombat, rowB: ICombat) => {
 };
 
 const moveSort = (rowA: ICombat, rowB: ICombat) => {
-  const a = rowA.type?.toLowerCase() ?? '';
-  const b = rowB.type?.toLowerCase() ?? '';
+  const a = getValueOrDefault(String, rowA.type?.toLowerCase());
+  const b = getValueOrDefault(String, rowB.type?.toLowerCase());
   return a === b ? 0 : a > b ? 1 : -1;
 };
 
@@ -72,7 +73,7 @@ const columns: TableColumnModify<ICombat>[] = [
 const Search = () => {
   useChangeTitle('Moves - Search');
   const theme = useTheme<ThemeModify>();
-  const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
+  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
   const types = useSelector((state: StoreState) => state.store.data?.typeEff);
 
   const [filters, setFilters] = useState({
@@ -165,7 +166,7 @@ const Search = () => {
               <tr>
                 <td className="data-table">
                   <DataTable
-                    columns={convertColumnDataType<ICombat>(columns)}
+                    columns={convertColumnDataType(columns)}
                     data={resultFMove}
                     defaultSortFieldId={3}
                     fixedHeader={true}
@@ -221,7 +222,7 @@ const Search = () => {
               <tr>
                 <td className="data-table">
                   <DataTable
-                    columns={convertColumnDataType<ICombat>(columns)}
+                    columns={convertColumnDataType(columns)}
                     data={resultCMove}
                     defaultSortFieldId={3}
                     fixedHeader={true}

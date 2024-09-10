@@ -1,11 +1,13 @@
+export interface EvoPath {
+  url: string;
+}
+
 export interface Species {
   base_happiness: number;
   capture_rate: number;
   color: Path;
   egg_groups: Path[];
-  evolution_chain: {
-    url: string;
-  };
+  evolution_chain: EvoPath;
   evolves_from_species: string | null;
   flavor_text_entries: FlavorText[];
   form_descriptions: [];

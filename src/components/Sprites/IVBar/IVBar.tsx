@@ -36,7 +36,7 @@ const IVBar = (props: IIVBarComponent) => {
           <div className="iv-bg-bar w-100" />
         </div>
         <div className="iv iv-last-child position-relative">
-          <div style={{ width: `${ivWidthThird}%` }} className={'position-absolute iv-bar'} />
+          <div style={{ width: `${ivWidthThird}%` }} className="position-absolute iv-bar" />
           <div className="iv-bg-bar w-100" />
         </div>
       </div>

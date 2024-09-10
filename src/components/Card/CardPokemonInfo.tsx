@@ -8,6 +8,7 @@ import './CardPokemonInfo.scss';
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
 import { ICardPokemonInfoComponent } from '../models/component.model';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
@@ -53,7 +54,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
     >
       {!props.releasedGO && (
         <div className="no-released-pokemon">
-          <img width={24} height={24} title={'Coming Soon'} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(props.icon)} />
+          <img width={24} height={24} title="Coming Soon" alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(props.icon)} />
         </div>
       )}
       {props.image.shiny && (
@@ -77,7 +78,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               ref={imageRef}
               className="pokemon-sprite-large"
               alt="pokemon-img"
-              src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default ?? ''}
+              src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default}
             />
           </span>
         </div>
@@ -96,9 +97,9 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3 }}
               height={10}
               value={props.pokemonStat.atk}
-              maxValue={props.stats?.attack.maxStats ?? 0}
-              bgColor={'#ececec'}
-              color={'var(--bs-danger)'}
+              maxValue={getValueOrDefault(Number, props.atkMaxStats)}
+              bgColor="#ececec"
+              color="var(--bs-danger)"
             />
           </div>
           <div className="d-flex align-items-center w-100">
@@ -107,9 +108,9 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
               value={props.pokemonStat.def}
-              maxValue={props.stats?.defense.maxStats ?? 0}
-              bgColor={'#ececec'}
-              color={'var(--bs-success)'}
+              maxValue={getValueOrDefault(Number, props.defMaxStats)}
+              bgColor="#ececec"
+              color="var(--bs-success)"
             />
           </div>
           <div className="d-flex align-items-center w-100">
@@ -118,9 +119,9 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
               value={props.pokemonStat.sta}
-              maxValue={props.stats?.stamina.maxStats ?? 0}
-              bgColor={'#ececec'}
-              color={'var(--bs-info)'}
+              maxValue={getValueOrDefault(Number, props.staMaxStats)}
+              bgColor="#ececec"
+              color="var(--bs-info)"
             />
           </div>
         </div>

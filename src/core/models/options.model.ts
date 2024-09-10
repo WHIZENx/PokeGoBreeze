@@ -135,7 +135,7 @@ interface IPokemonFromReward {
 }
 
 class PokemonFromReward implements IPokemonFromReward {
-  form: string = '';
+  form = '';
 }
 
 export interface IPokemonReward {
@@ -145,8 +145,8 @@ export interface IPokemonReward {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonReward implements IPokemonReward {
-  pokemonId: string = '';
-  pokemonDisplay: IPokemonFromReward = new PokemonFromReward();
+  pokemonId = '';
+  pokemonDisplay = new PokemonFromReward();
 }
 
 interface GuaranteedLimitedPokemonReward {
@@ -302,7 +302,7 @@ export interface IPokemonPermission {
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonPermission implements IPokemonPermission {
   id: number | undefined;
-  form: string = '';
+  form = '';
   forms?: string;
   name: string | undefined;
 

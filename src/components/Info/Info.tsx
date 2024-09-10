@@ -9,6 +9,7 @@ import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { isNotEmpty } from '../../util/utils';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const Info = (props: IInfoComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
@@ -67,9 +68,9 @@ const Info = (props: IInfoComponent) => {
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={props.currForm?.form.types ?? []} style={{ marginLeft: 15 }} isShow={true} />
-      <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm?.form.types ?? [])} />
-      <TypeEffective typeEffective={getTypeEffective(props.currForm?.form.types ?? [])} />
+      <TypeInfo arr={getValueOrDefault(Array, props.currForm?.form.types)} style={{ marginLeft: 15 }} isShow={true} />
+      <WeatherTypeEffective weatherEffective={getWeatherEffective(getValueOrDefault(Array, props.currForm?.form.types))} />
+      <TypeEffective typeEffective={getTypeEffective(getValueOrDefault(Array, props.currForm?.form.types))} />
     </div>
   );
 };

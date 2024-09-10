@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios
 import { APIUrl } from './constants';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
+import { isEmpty } from '../util/utils';
 
 class APIService {
   date: Date;
@@ -263,7 +264,7 @@ class APIService {
   }
 
   getItemTroy(item: string) {
-    return item === '' ? `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey.png` : `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
+    return isEmpty(item) ? `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey.png` : `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
   }
 
   getSoundCryPokemon(name: string) {

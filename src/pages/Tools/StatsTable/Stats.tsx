@@ -14,46 +14,47 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
     name: 'Rank',
-    selector: (row) => row.rank ?? 0,
+    selector: (row) => getValueOrDefault(Number, row.rank),
     sortable: true,
   },
   {
     name: 'Level',
-    selector: (row) => row.level ?? 0,
+    selector: (row) => getValueOrDefault(Number, row.level),
     sortable: true,
   },
   {
     name: 'IV ATK',
-    selector: (row) => row.IV?.atk ?? 0,
+    selector: (row) => getValueOrDefault(Number, row.IV?.atk),
     sortable: true,
   },
   {
     name: 'IV DEF',
-    selector: (row) => row.IV?.def ?? 0,
+    selector: (row) => getValueOrDefault(Number, row.IV?.def),
     sortable: true,
   },
   {
     name: 'IV STA',
-    selector: (row) => row.IV?.sta ?? 0,
+    selector: (row) => getValueOrDefault(Number, row.IV?.sta),
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row) => row.CP ?? 0,
+    selector: (row) => getValueOrDefault(Number, row.CP),
     sortable: true,
   },
   {
     name: 'Stat Prod (*1000)',
-    selector: (row) => parseFloat(((row.statsProds ?? 0) / 1000).toFixed(2)),
+    selector: (row) => parseFloat((getValueOrDefault(Number, row.statsProds) / 1000).toFixed(2)),
     sortable: true,
   },
   {
     name: 'Stat Prod (%)',
-    selector: (row) => parseFloat(row.ratio?.toFixed(2) ?? ''),
+    selector: (row) => parseFloat(getValueOrDefault(String, row.ratio?.toFixed(2))),
     sortable: true,
   },
 ];
@@ -177,8 +178,8 @@ const StatsTable = () => {
                 ivSta={STAIv}
                 searchCP={searchCP}
                 setSearchCP={setSearchCP}
-                label={'Input CP'}
-                width={'50%'}
+                label="Input CP"
+                width="50%"
                 minWidth={350}
               />
             </div>

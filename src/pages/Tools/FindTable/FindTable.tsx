@@ -22,6 +22,7 @@ import {
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const columnsIV: TableColumn<IPredictStatsModel>[] = [
   {
@@ -175,8 +176,11 @@ const FindTable = () => {
 
   const showResultTableIV = () => {
     const avgPercent =
-      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.percent, 0) / (preIvArr?.result.length ?? 1);
-    const avgHP = Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) / (preIvArr?.result.length ?? 1);
+      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.percent, 0) /
+      getValueOrDefault(Number, preIvArr?.result.length, 1);
+    const avgHP =
+      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) /
+      getValueOrDefault(Number, preIvArr?.result.length, 1);
     const fourStar = preIvArr?.result.filter((item) => item.percent === 100).length;
     const threeStar = preIvArr?.result.filter((item) => item.percent > 80 && item.percent < 100).length;
     const twoStar = preIvArr?.result.filter((item) => item.percent > 64 && item.percent <= 80).length;
@@ -203,7 +207,7 @@ const FindTable = () => {
                   <b>{fourStar}</b>
                 </div>
               </div>
-              <p>{(((fourStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
+              <p>{((getValueOrDefault(Number, fourStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="three-star">
@@ -213,7 +217,7 @@ const FindTable = () => {
                   <b>{threeStar}</b>
                 </div>
               </div>
-              <p>{(((threeStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
+              <p>{((getValueOrDefault(Number, threeStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="two-star">
@@ -223,7 +227,7 @@ const FindTable = () => {
                   <b>{twoStar}</b>
                 </div>
               </div>
-              <p>{(((twoStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
+              <p>{((getValueOrDefault(Number, twoStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="one-star">
@@ -233,7 +237,7 @@ const FindTable = () => {
                   <b>{oneStar}</b>
                 </div>
               </div>
-              <p>{(((oneStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
+              <p>{((getValueOrDefault(Number, oneStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="zero-star">
@@ -243,14 +247,14 @@ const FindTable = () => {
                   <b>{zeroStar}</b>
                 </div>
               </div>
-              <p>{(((zeroStar ?? 0) * 100) / (preIvArr?.result.length ?? 1)).toFixed(2)}%</p>
+              <p>{((getValueOrDefault(Number, zeroStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
             </div>
           </Fragment>
         )}
         <DataTable
           title={`Levels/IV for CP: ${preIvArr?.CP}`}
           columns={columnsIV}
-          data={preIvArr?.result ?? []}
+          data={getValueOrDefault(Array, preIvArr?.result)}
           pagination={true}
           defaultSortFieldId={6}
           defaultSortAsc={false}
@@ -262,8 +266,12 @@ const FindTable = () => {
   };
 
   const showResultTableCP = () => {
-    const avgCp = Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.CP, 0) / (preCpArr?.result.length ?? 1);
-    const avgHP = Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) / (preCpArr?.result.length ?? 1);
+    const avgCp =
+      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.CP, 0) /
+      getValueOrDefault(Number, preCpArr?.result.length, 1);
+    const avgHP =
+      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) /
+      getValueOrDefault(Number, preCpArr?.result.length, 1);
     return (
       <Fragment>
         {isNotEmpty(preCpArr?.result) && (
@@ -277,7 +285,7 @@ const FindTable = () => {
             <DataTable
               title={`Levels/CP for IV: ${preCpArr?.IV.atk}/${preCpArr?.IV.def}/${preCpArr?.IV.sta}`}
               columns={columnsCP}
-              data={preCpArr?.result ?? []}
+              data={getValueOrDefault(Array, preCpArr?.result)}
               pagination={true}
               defaultSortFieldId={1}
               highlightOnHover={true}

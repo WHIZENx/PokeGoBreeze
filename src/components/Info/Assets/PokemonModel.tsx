@@ -14,6 +14,7 @@ import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const PokemonModel = (props: IAssetPokemonModelComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -34,7 +35,9 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
       genderlessPercent: detail?.genderRatio.M === 0 && detail?.genderRatio.M === 0 ? 1 : 0,
     };
     return model
-      ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
+      ? [...new Set(model.image.map((item) => item.form))].map(
+          (value) => new PokemonModelComponent(getValueOrDefault(String, value), model.image)
+        )
       : [];
   };
 

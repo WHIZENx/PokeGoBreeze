@@ -30,8 +30,9 @@ import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 import { ThemeModify } from './models/overrides/themes.model';
 import { TableColumn, TableStyles } from 'react-data-table-component';
-import { DynamicObj } from './models/util.model';
+import { DynamicObj, getValueOrDefault } from './models/util.model';
 import { TableColumnModify } from './models/overrides/data-table.model';
+import './extensions/string.extension';
 
 class Mask {
   value: number;
@@ -146,7 +147,7 @@ export const HundoRate = styled(Rating)(() => ({
 }));
 
 export const isNotEmpty = <T>(array: T[] | null | undefined = []) => {
-  return (array && array.length > 0) ?? false;
+  return getValueOrDefault(Boolean, array && array.length > 0);
 };
 
 export const capitalize = (str: string | undefined | null) => {
@@ -504,10 +505,16 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | und
     return false;
   }
 
-  const eliteQuickMoves = (pokemon as PokemonModel).eliteQuickMove ?? (pokemon as IPokemonData).eliteQuickMove ?? [];
-  const eliteCinematicMoves = (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as IPokemonData).eliteCinematicMove ?? [];
-  const specialMoves = (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as IPokemonData).specialMoves ?? [];
-  const allMoves = pokemon.quickMoves?.concat(pokemon.cinematicMoves ?? [], eliteQuickMoves, eliteCinematicMoves, specialMoves) ?? [];
+  const eliteQuickMoves = getValueOrDefault(Array, (pokemon as PokemonModel).eliteQuickMove ?? (pokemon as IPokemonData).eliteQuickMove);
+  const eliteCinematicMoves = getValueOrDefault(
+    Array,
+    (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as IPokemonData).eliteCinematicMove
+  );
+  const specialMoves = getValueOrDefault(Array, (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as IPokemonData).specialMoves);
+  const allMoves = getValueOrDefault(
+    Array,
+    pokemon.quickMoves?.concat(getValueOrDefault(Array, pokemon.cinematicMoves), eliteQuickMoves, eliteCinematicMoves, specialMoves)
+  );
   if (allMoves?.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
     return false;
   }
@@ -689,9 +696,9 @@ export const generatePokemonGoForms = (
         const pokemonGOModify = new PokemonFormModifyModel(
           id,
           name,
-          pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase() ?? '',
-          pokemon.forme?.replaceAll('_', '-')?.toLowerCase() ?? '',
-          pokemon.fullName?.replaceAll('_', '-')?.toLowerCase() ?? '',
+          getValueOrDefault(String, pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase()),
+          getValueOrDefault(String, pokemon.forme?.replaceAll('_', '-')?.toLowerCase()),
+          getValueOrDefault(String, pokemon.fullName?.replaceAll('_', '-')?.toLowerCase()),
           'Pokémon-GO',
           pokemon.types,
           new PokemonSprit(),
@@ -729,7 +736,10 @@ export const generatePokemonGoShadowForms = (
         `${form}${FORM_SHADOW.toLowerCase()}`,
         `${p.name}-${FORM_SHADOW.toLowerCase()}`,
         'Pokémon-GO',
-        p.types.map((item) => item.type.name) ?? [],
+        getValueOrDefault(
+          Array,
+          p.types.map((item) => item.type.name)
+        ),
         new PokemonSprit(),
         index,
         FORM_SHADOW,
@@ -743,7 +753,10 @@ export const generatePokemonGoShadowForms = (
         `${form}${FORM_PURIFIED.toLowerCase()}`,
         `${p.name}-${FORM_PURIFIED.toLowerCase()}`,
         'Pokémon-GO',
-        p.types.map((item) => item.type.name) ?? [],
+        getValueOrDefault(
+          Array,
+          p.types.map((item) => item.type.name)
+        ),
         new PokemonSprit(),
         index,
         FORM_PURIFIED,
@@ -783,7 +796,7 @@ export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) 
         .toUpperCase()
         .replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
     const result = resultFirst?.find((item) => item.fullName === form || item.forme === form);
-    return result ?? resultFirst[0] ?? undefined;
+    return result ?? resultFirst[0];
   }
 };
 
@@ -825,8 +838,8 @@ export const replaceTempMovePvpName = (name: string) => {
   return name;
 };
 
-export const convertColumnDataType = <S, T = TableColumnModify<S>[]>(columns: T) => {
-  return columns as TableColumn<S>[];
+export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => {
+  return columns as TableColumn<T>[];
 };
 
 export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
@@ -834,16 +847,32 @@ export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
     return [];
   }
 
-  return (pokemon.quickMoves ?? []).concat(
-    pokemon.eliteQuickMove ?? [],
-    pokemon.cinematicMoves ?? [],
-    pokemon.eliteCinematicMove ?? [],
-    pokemon.shadowMoves ?? [],
-    pokemon.purifiedMoves ?? [],
-    pokemon.specialMoves ?? []
+  return getValueOrDefault(Array, pokemon.quickMoves).concat(
+    getValueOrDefault(Array, pokemon.eliteQuickMove),
+    getValueOrDefault(Array, pokemon.cinematicMoves),
+    getValueOrDefault(Array, pokemon.eliteCinematicMove),
+    getValueOrDefault(Array, pokemon.shadowMoves),
+    getValueOrDefault(Array, pokemon.purifiedMoves),
+    getValueOrDefault(Array, pokemon.specialMoves)
   );
 };
 
 export const combineClasses = <T>(...classes: T[]) => {
   return classes.filter((c) => c).join(' ');
+};
+
+export const isUndefined = <T>(value: T | undefined | null) => {
+  return typeof value === 'undefined' && value === undefined;
+};
+
+export const isNull = <T>(value: T | undefined | null) => {
+  return typeof value !== 'undefined' && value === null;
+};
+
+export const isEmpty = (value: string | undefined | null) => {
+  return getValueOrDefault(Boolean, value?.isEmpty(), false);
+};
+
+export const isNullOrEmpty = (value: string | undefined | null) => {
+  return getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
 };

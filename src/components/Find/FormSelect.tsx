@@ -38,6 +38,7 @@ import { TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
 import { Action } from 'history';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -52,7 +53,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
   const [typePoke, setTypePoke] = useState(props.raid ? TypeRaid.BOSS.toString() : TypeRaid.POKEMON.toString());
-  const [tier, setTier] = useState(props.tier ?? 1);
+  const [tier, setTier] = useState(getValueOrDefault(Number, props.tier, 1));
 
   const [data, setData] = useState<Species>();
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
@@ -93,16 +94,16 @@ const FormSelect = (props: IFormSelectComponent) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                getValueOrDefault(String, data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name),
                 new Form({
                   ...item,
                   formName: item.formName.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.formName,
                 })
               )
             )
-            .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
+            .sort((a, b) => getValueOrDefault(Number, a.form.id) - getValueOrDefault(Number, b.form.id))
         )
-        .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
+        .sort((a, b) => getValueOrDefault(Number, a[0]?.form.id) - getValueOrDefault(Number, b[0]?.form.id));
 
       generatePokemonGoForms(props.data, dataFormList, formListResult, data.id, data.name);
 
@@ -161,7 +162,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [props.setName, props.name, currentForm]);
 
   useEffect(() => {
-    if (props.id && (data?.id ?? 0) !== props.id && isNotEmpty(props.data)) {
+    if (props.id && getValueOrDefault(Number, data?.id) !== props.id && isNotEmpty(props.data)) {
       clearData();
       queryPokemon(props.id.toString());
     }
@@ -173,10 +174,15 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [props.id, props.data, data?.id, queryPokemon]);
 
   useEffect(() => {
-    if (currentForm && (data?.id ?? 0) > 0 && (props.id ?? 0) > 0 && props.router.action === Action.Push) {
+    if (
+      currentForm &&
+      getValueOrDefault(Number, data?.id) > 0 &&
+      getValueOrDefault(Number, props.id) > 0 &&
+      props.router.action === Action.Push
+    ) {
       let obj = props.searching ?? new ToolSearching();
       const result = new SearchingModel({
-        id: props.id ?? 0,
+        id: getValueOrDefault(Number, props.id),
         name: currentForm.defaultName,
         form: currentForm.form.formName,
         fullName: currentForm.form.name,
@@ -202,8 +208,8 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [currentForm, dispatch]);
 
   useEffect(() => {
-    if (isNotEmpty(props.data) && (props.id ?? 0) > 0) {
-      const currentId = getPokemonById(props.data, props.id ?? 0);
+    if (isNotEmpty(props.data) && getValueOrDefault(Number, props.id) > 0) {
+      const currentId = getPokemonById(props.data, getValueOrDefault(Number, props.id));
       if (currentId) {
         setDataStorePokemon({
           prev: getPokemonById(props.data, currentId.id - 1),
@@ -258,7 +264,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.prev?.id ?? 0);
+                    e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.prev?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
                   }
@@ -285,7 +291,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         onError={(e) => {
           e.currentTarget.onerror = null;
           if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
-            e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
+            e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
           } else {
             e.currentTarget.src = APIService.getPokeFullSprite(0);
           }
@@ -302,7 +308,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.next?.id ?? 0);
+                    e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.next?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
                   }
@@ -345,15 +351,15 @@ const FormSelect = (props: IFormSelectComponent) => {
                         e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                       }}
                       alt="img-icon-form"
-                      src={formIconAssets(value, currentForm?.defaultId ?? 0)}
+                      src={formIconAssets(value, getValueOrDefault(Number, currentForm?.defaultId))}
                     />
                     <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
-                    {(value.form.id ?? 0 > 0) && value.form.id === currentForm?.defaultId && (
+                    {getValueOrDefault(Number, value.form.id) > 0 && value.form.id === currentForm?.defaultId && (
                       <b>
                         <small>(Default)</small>
                       </b>
                     )}
-                    {(value.form.id ?? 0) <= 0 && <small className="text-danger">* Only in GO</small>}
+                    {getValueOrDefault(Number, value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
                   </button>
                 ))}
               </Fragment>

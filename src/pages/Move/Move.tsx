@@ -37,6 +37,7 @@ import { IMovePage } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { TableColumnModify } from '../../util/models/overrides/data-table.model';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -62,7 +63,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
           src={APIService.getPokeIconSprite(row.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies ?? '');
+            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
           }}
         />
         {row.name}
@@ -157,18 +158,18 @@ const Move = (props: IMovePage) => {
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
             <h1 className="text-move">
-              <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</b>
+              <b>{splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}</b>
             </h1>
-            <TypeBar type={move?.type} />
+            <TypeBar type={move.type} />
           </div>
-          {move?.track === 281 && (
+          {move.track === 281 && (
             <Form.Select
               style={{ maxWidth: 250 }}
               className="element-top w-50"
               onChange={(e) => {
                 searchParams.set('type', e.target.value.toLowerCase());
                 setSearchParams(searchParams);
-                setMove(data?.combat?.find((item) => item.track === move?.track && item.type === e.target.value?.toUpperCase()));
+                setMove(data?.combat?.find((item) => item.track === move.track && item.type === e.target.value?.toUpperCase()));
               }}
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
@@ -237,9 +238,11 @@ const Move = (props: IMovePage) => {
                         className="img-type-icon"
                         height={25}
                         alt="img-type"
-                        src={APIService.getWeatherIconSprite(getWeatherEffective(move?.type ?? ''))}
+                        src={APIService.getWeatherIconSprite(getWeatherEffective(getValueOrDefault(String, move?.type)))}
                       />
-                      <span className="d-inline-block caption">{splitAndCapitalize(getWeatherEffective(move?.type ?? ''), '_', ' ')}</span>
+                      <span className="d-inline-block caption">
+                        {splitAndCapitalize(getWeatherEffective(getValueOrDefault(String, move?.type)), '_', ' ')}
+                      </span>
                     </>
                   )}
                 </td>
@@ -270,7 +273,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVE Energy</td>
                 <td colSpan={2}>
-                  {(move?.pveEnergy ?? 0) > 0 && '+'}
+                  {getValueOrDefault(Number, move?.pveEnergy) > 0 && '+'}
                   {move?.pveEnergy}
                 </td>
               </tr>
@@ -308,7 +311,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVP Energy</td>
                 <td colSpan={2}>
-                  {(move?.pvpEnergy ?? 0) > 0 && '+'}
+                  {getValueOrDefault(Number, move?.pvpEnergy) > 0 && '+'}
                   {move?.pvpEnergy}
                 </td>
               </tr>
@@ -320,7 +323,7 @@ const Move = (props: IMovePage) => {
                   </td>
                 </tr>
               )}
-              {(move?.buffs ?? []).length > 0 && (
+              {getValueOrDefault(Array, move?.buffs).length > 0 && (
                 <Fragment>
                   <tr className="text-center">
                     <td className="table-sub-header" colSpan={3}>
@@ -344,7 +347,7 @@ const Move = (props: IMovePage) => {
                           </span>
                         </span>
                       </td>
-                      <td>{(value.buffChance ?? 0) * 100}%</td>
+                      <td>{getValueOrDefault(Number, value.buffChance) * 100}%</td>
                     </tr>
                   ))}
                 </Fragment>
@@ -480,7 +483,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td className="table-top-of-move" colSpan={2} style={{ padding: 0 }}>
                   <DataTable
-                    columns={convertColumnDataType<IPokemonTopMove>(columns)}
+                    columns={convertColumnDataType(columns)}
                     data={topList.filter((pokemon) => {
                       if (!releasedGO) {
                         return true;
@@ -488,9 +491,9 @@ const Move = (props: IMovePage) => {
                       const result = checkPokemonGO(
                         pokemon.num,
                         convertPokemonDataName(pokemon.sprite ?? pokemon.name.replaceAll(' ', '_')),
-                        data?.pokemon ?? []
+                        getValueOrDefault(Array, data?.pokemon)
                       );
-                      return pokemon.releasedGO ?? result?.releasedGO ?? false;
+                      return getValueOrDefault(Boolean, pokemon.releasedGO, result?.releasedGO);
                     })}
                     pagination={true}
                     defaultSortFieldId={4}

@@ -6,6 +6,7 @@ import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const Move = (props: IMoveComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
@@ -24,7 +25,7 @@ const Move = (props: IMoveComponent) => {
 
   const findMove = useCallback(
     (id: number, form: string) => {
-      const result = retrieveMoves(data?.pokemon ?? [], id, form);
+      const result = retrieveMoves(getValueOrDefault(Array, data?.pokemon), id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
         if (props.type !== TypeMove.CHARGE) {
@@ -91,7 +92,7 @@ const Move = (props: IMoveComponent) => {
           <div className="card-select">
             {currentMove ? (
               <CardType
-                value={findType(currentMove.name) ?? ''}
+                value={getValueOrDefault(String, findType(currentMove.name))}
                 name={splitAndCapitalize(currentMove?.name, '_', ' ')}
                 elite={currentMove.elite}
                 shadow={currentMove.shadow}
@@ -129,7 +130,7 @@ const Move = (props: IMoveComponent) => {
                             onMouseDown={() => changeMove(value)}
                           >
                             <CardType
-                              value={findType(value.name) ?? ''}
+                              value={getValueOrDefault(String, findType(value.name))}
                               name={splitAndCapitalize(value.name, '_', ' ')}
                               elite={value.elite}
                               shadow={value.shadow}

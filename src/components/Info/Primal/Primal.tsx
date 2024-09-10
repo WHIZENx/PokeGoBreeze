@@ -8,9 +8,10 @@ import { StoreState } from '../../../store/models/state.model';
 import { FORM_PRIMAL } from '../../../util/constants';
 import { IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const Primal = (props: IFormSpecialComponent) => {
-  const evoData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const evoData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
   const [arrEvoList, setArrEvoList] = useState<(IForm | undefined)[]>([]);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const Primal = (props: IFormSpecialComponent) => {
                 id="img-pokemon"
                 height="96"
                 alt="img-pokemon"
-                src={APIService.getPokeGifSprite(value?.name ?? '')}
+                src={APIService.getPokeGifSprite(getValueOrDefault(String, value?.name))}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = `${value?.sprites?.frontDefault}`;
@@ -70,7 +71,7 @@ const Primal = (props: IFormSpecialComponent) => {
                     props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
                   )}
                 />
-                <b>x{getQuestEvo(value?.name ?? '')?.firstTempEvolution}</b>
+                <b>x{getQuestEvo(getValueOrDefault(String, value?.name))?.firstTempEvolution}</b>
               </span>
               <span className="caption">
                 Primal evolution:{' '}
@@ -82,7 +83,7 @@ const Primal = (props: IFormSpecialComponent) => {
                     props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
                   )}
                 />
-                <b>x{getQuestEvo(value?.name ?? '')?.tempEvolution}</b>
+                <b>x{getQuestEvo(getValueOrDefault(String, value?.name))?.tempEvolution}</b>
               </span>
             </li>
           ))}

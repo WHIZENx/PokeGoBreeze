@@ -7,6 +7,7 @@ import './TypeEffectiveSelect.scss';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
@@ -63,8 +64,8 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
 
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
-          {renderEffective('2.56', data.veryWeak ?? [])}
-          {renderEffective('1.6', data.weak ?? [])}
+          {renderEffective('2.56', getValueOrDefault(Array, data.veryWeak))}
+          {renderEffective('1.6', getValueOrDefault(Array, data.weak))}
         </div>
       );
     } else if (effect === 1) {
@@ -79,7 +80,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       });
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
-          {renderEffective('1', data.neutral ?? [])}
+          {renderEffective('1', getValueOrDefault(Array, data.neutral))}
         </div>
       );
     } else if (effect === 2) {
@@ -98,9 +99,9 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       });
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
-          {renderEffective('0.244', data.superResist ?? [])}
-          {renderEffective('0.391', data.veryResist ?? [])}
-          {renderEffective('0.625', data.resist ?? [])}
+          {renderEffective('0.244', getValueOrDefault(Array, data.superResist))}
+          {renderEffective('0.391', getValueOrDefault(Array, data.veryResist))}
+          {renderEffective('0.625', getValueOrDefault(Array, data.resist))}
         </div>
       );
     }

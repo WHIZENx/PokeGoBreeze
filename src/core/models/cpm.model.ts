@@ -1,3 +1,5 @@
+import { getValueOrDefault } from '../../util/models/util.model';
+
 export interface ICPM {
   level: number;
   multiplier: number;
@@ -40,14 +42,14 @@ export interface ICPMDetail {
 
 // tslint:disable-next-line:max-classes-per-file
 export class CPMDetail implements ICPMDetail {
-  level: number = 0;
-  multiplier: number = 1;
-  stardust: number = 0;
-  sumStardust: number = 0;
-  candy: number = 0;
-  sumCandy: number = 0;
-  xlCandy: number = 0;
-  sumXlCandy: number = 0;
+  level = 0;
+  multiplier = 1;
+  stardust = 0;
+  sumStardust = 0;
+  candy = 0;
+  sumCandy = 0;
+  xlCandy = 0;
+  sumXlCandy = 0;
 
   static create() {
     const obj = new CPMDetail();
@@ -65,12 +67,12 @@ export class CPMDetail implements ICPMDetail {
     if (value) {
       obj.level = value.level;
       obj.multiplier = value.multiplier;
-      obj.stardust = value.stadust ?? 0;
-      obj.sumStardust = value.sum_stadust ?? 0;
-      obj.candy = value.candy ?? 0;
-      obj.sumCandy = value.sum_candy ?? 0;
-      obj.xlCandy = value.xl_candy ?? 0;
-      obj.sumXlCandy = value.sum_xl_candy ?? 0;
+      obj.stardust = getValueOrDefault(Number, value.stadust);
+      obj.sumStardust = getValueOrDefault(Number, value.sum_stadust);
+      obj.candy = getValueOrDefault(Number, value.candy);
+      obj.sumCandy = getValueOrDefault(Number, value.sum_candy);
+      obj.xlCandy = getValueOrDefault(Number, value.xl_candy);
+      obj.sumXlCandy = getValueOrDefault(Number, value.sum_xl_candy);
     }
     return obj;
   }

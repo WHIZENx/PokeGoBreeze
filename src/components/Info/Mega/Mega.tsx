@@ -8,9 +8,10 @@ import { StoreState } from '../../../store/models/state.model';
 import { FORM_MEGA } from '../../../util/constants';
 import { IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const Mega = (props: IFormSpecialComponent) => {
-  const evoData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const evoData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
   const [arrEvoList, setArrEvoList] = useState<(IForm | undefined)[]>([]);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ const Mega = (props: IFormSpecialComponent) => {
                 id="img-pokemon"
                 height="96"
                 alt="img-pokemon"
-                src={APIService.getPokeGifSprite(value?.name ?? '')}
+                src={APIService.getPokeGifSprite(getValueOrDefault(String, value?.name))}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = `${value?.sprites?.frontDefault}`;
@@ -63,11 +64,19 @@ const Mega = (props: IFormSpecialComponent) => {
               </div>
               <span className="caption">
                 First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>{getQuestEvo(value?.name ?? '') ? `x${getQuestEvo(value?.name ?? '')?.firstTempEvolution}` : 'Unavailable'}</b>
+                <b>
+                  {getQuestEvo(getValueOrDefault(String, value?.name))
+                    ? `x${getQuestEvo(getValueOrDefault(String, value?.name))?.firstTempEvolution}`
+                    : 'Unavailable'}
+                </b>
               </span>
               <span className="caption">
                 Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>{getQuestEvo(value?.name ?? '') ? `x${getQuestEvo(value?.name ?? '')?.tempEvolution}` : 'Unavailable'}</b>
+                <b>
+                  {getQuestEvo(getValueOrDefault(String, value?.name))
+                    ? `x${getQuestEvo(getValueOrDefault(String, value?.name))?.tempEvolution}`
+                    : 'Unavailable'}
+                </b>
               </span>
             </li>
           ))}

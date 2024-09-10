@@ -6,9 +6,10 @@ import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
 import { ICardMoveComponent } from '../models/component.model';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const CardMove = (props: ICardMoveComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
+  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
 
   const [data, setData] = useState<ICombat>();
 
@@ -28,7 +29,7 @@ const CardMove = (props: ICardMoveComponent) => {
             height={64}
             alt="type-logo"
             style={{ marginRight: 10 }}
-            src={APIService.getTypeSprite(capitalize(data.type ?? ''))}
+            src={APIService.getTypeSprite(capitalize(getValueOrDefault(String, data.type)))}
           />
           <span style={{ marginRight: 5 }}>
             <b>{splitAndCapitalize(data.name, '_', ' ')}</b>

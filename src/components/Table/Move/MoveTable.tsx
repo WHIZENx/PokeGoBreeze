@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertPokemonAPIDataName, isNotEmpty, isUndefined, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -19,7 +20,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { TypeMove } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { DynamicObj } from '../../../util/models/util.model';
+import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
 
 interface PokemonMoves {
   fastMoves: (ICombat | undefined)[];
@@ -59,17 +60,15 @@ interface ITableSort {
 
 // tslint:disable-next-line:max-classes-per-file
 class TableSort implements ITableSort {
-  offensive: ISortModel = new SortModel();
-  defensive: ISortModel = new SortModel();
+  offensive = new SortModel();
+  defensive = new SortModel();
 
   constructor({ ...props }: ITableSort) {
     Object.assign(this, props);
   }
 }
 
-// eslint-disable-next-line no-unused-vars
 enum TypeSorted {
-  // eslint-disable-next-line no-unused-vars
   EFF = 'eff',
 }
 
@@ -108,47 +107,64 @@ const TableMove = (props: ITableMoveComponent) => {
       return setMoveOrigin(undefined);
     }
     return setMoveOrigin({
-      fastMoves: combat.quickMoves?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
-      chargedMoves: combat.cinematicMoves?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
-      eliteFastMoves: combat.eliteQuickMove?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
-      eliteChargedMoves: combat.eliteCinematicMove?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
-      purifiedMoves:
-        (props.form?.isShadow ? [] : combat.purifiedMoves?.map((move) => data?.combat?.find((item) => item.name === move))) ?? [],
-      shadowMoves:
-        (props.form?.isPurified ? [] : combat.shadowMoves?.map((move) => data?.combat?.find((item) => item.name === move))) ?? [],
-      specialMoves: combat.specialMoves?.map((move) => data?.combat?.find((item) => item.name === move)) ?? [],
+      fastMoves: getValueOrDefault(
+        Array,
+        combat.quickMoves?.map((move) => data?.combat?.find((item) => item.name === move))
+      ),
+      chargedMoves: getValueOrDefault(
+        Array,
+        combat.cinematicMoves?.map((move) => data?.combat?.find((item) => item.name === move))
+      ),
+      eliteFastMoves: getValueOrDefault(
+        Array,
+        combat.eliteQuickMove?.map((move) => data?.combat?.find((item) => item.name === move))
+      ),
+      eliteChargedMoves: getValueOrDefault(
+        Array,
+        combat.eliteCinematicMove?.map((move) => data?.combat?.find((item) => item.name === move))
+      ),
+      purifiedMoves: props.form?.isShadow
+        ? []
+        : getValueOrDefault(
+            Array,
+            combat.purifiedMoves?.map((move) => data?.combat?.find((item) => item.name === move))
+          ),
+      shadowMoves: props.form?.isPurified
+        ? []
+        : getValueOrDefault(
+            Array,
+            combat.shadowMoves?.map((move) => data?.combat?.find((item) => item.name === move))
+          ),
+      specialMoves: getValueOrDefault(
+        Array,
+        combat.specialMoves?.map((move) => data?.combat?.find((item) => item.name === move))
+      ),
     });
   };
 
   const findMove = useCallback(() => {
-    const combatPoke = data?.pokemon
-      ?.filter((item) =>
-        props.form?.id || props.form?.isShadow || props.form?.isPurified
-          ? item.num === props.data?.num ?? 0
-          : item.fullName === (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_')
-      )
-      .map((c) => {
-        return {
-          ...c,
-          purifiedMoves: props.form?.isShadow ? [] : c.purifiedMoves,
-          shadowMoves: props.form?.isPurified ? [] : c.shadowMoves,
-        };
-      });
-    if (combatPoke) {
-      if (combatPoke.length === 1 || (typeof props.form === 'string' ? props.form : props.form?.formName)?.toUpperCase() === FORM_GMAX) {
-        filterMoveType(combatPoke.at(0));
-        return setMove(setRankMove(combatPoke.at(0)));
+    const combatPoke = data?.pokemon?.filter((item) =>
+      props.form?.id || props.form?.isShadow || props.form?.isPurified
+        ? item.num === getValueOrDefault(Number, props.data?.num)
+        : item.fullName === (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_')
+    );
+    if (isNotEmpty(combatPoke)) {
+      if (combatPoke?.length === 1 || (typeof props.form === 'string' ? props.form : props.form?.formName)?.toUpperCase() === FORM_GMAX) {
+        filterMoveType(combatPoke?.at(0));
+        return setMove(setRankMove(combatPoke?.at(0)));
       } else if (!isNotEmpty(combatPoke) && props.id) {
-        const combatPoke = data?.pokemon?.filter((item) => (item.num === props.id ?? 0) && item.baseSpecies === item.name);
+        const combatPoke = data?.pokemon?.filter(
+          (item) => item.num === getValueOrDefault(Number, props.id) && item.baseSpecies === item.name
+        );
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       }
 
       const formName = convertPokemonAPIDataName(props.form?.name);
-      const result = combatPoke.find((item) => props.form && item.fullName === formName);
-      if (result === undefined) {
-        filterMoveType(combatPoke.find((item) => item.name === item.baseSpecies));
-        setMove(setRankMove(combatPoke.at(0)));
+      const result = combatPoke?.find((item) => props.form && item.fullName === formName);
+      if (isUndefined(result)) {
+        filterMoveType(combatPoke?.find((item) => item.name === item.baseSpecies));
+        setMove(setRankMove(combatPoke?.at(0)));
       } else {
         filterMoveType(result);
         setMove(setRankMove(result));
@@ -161,12 +177,15 @@ const TableMove = (props: ITableMoveComponent) => {
       data?.options,
       data?.typeEff,
       data?.weatherBoost,
-      data?.combat ?? [],
+      getValueOrDefault(Array, data?.combat),
       result,
       props.statATK * (props.form?.isShadow ? SHADOW_ATK_BONUS(data?.options) : 1),
       props.statDEF * (props.form?.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
       props.statSTA,
-      props.data?.types?.map((type) => capitalize(type)) ?? []
+      getValueOrDefault(
+        Array,
+        props.data?.types?.map((type) => capitalize(type))
+      )
     );
   };
 
@@ -396,7 +415,7 @@ const TableMove = (props: ITableMoveComponent) => {
                     }
                   })
                   .map((value, index) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff ?? 0, tableOffensive)}</Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, getValueOrDefault(Number, move.maxOff), tableOffensive)}</Fragment>
                   ))}
               </tbody>
             </table>
@@ -460,7 +479,7 @@ const TableMove = (props: ITableMoveComponent) => {
                     }
                   })
                   .map((value, index) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef ?? 0, tableDefensive)}</Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, getValueOrDefault(Number, move.maxDef), tableDefensive)}</Fragment>
                   ))}
               </tbody>
             </table>

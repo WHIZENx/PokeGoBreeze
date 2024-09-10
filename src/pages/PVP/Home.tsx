@@ -14,15 +14,16 @@ import { SpinnerActions } from '../../store/actions';
 import { LocalStorageConfig } from '../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../store/models/local-storage.model';
 import { getTime, isNotEmpty } from '../../util/utils';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 interface IOptionsHome {
-  rank?: PVPInfo | undefined;
-  team?: PVPInfo | undefined;
+  rank?: PVPInfo;
+  team?: PVPInfo;
 }
 
 class OptionsHome implements IOptionsHome {
-  rank?: PVPInfo | undefined;
-  team?: PVPInfo | undefined;
+  rank?: PVPInfo;
+  team?: PVPInfo;
 
   static create(value: IOptionsHome) {
     const obj = new OptionsHome();
@@ -35,7 +36,7 @@ const PVPHome = () => {
   useChangeTitle('PVP - Simulator');
   const dispatch = useDispatch();
   const pvp = useSelector((state: StoreState) => state.store?.data?.pvp);
-  const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
+  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
@@ -97,7 +98,7 @@ const PVPHome = () => {
       <p className="text-danger">
         <b>
           * Pokémon data source references from{' '}
-          <a href="https://pvpoke.com/" target={'_'}>
+          <a href="https://pvpoke.com/" target="_">
             Pvpoke
           </a>
         </b>
@@ -129,7 +130,7 @@ const PVPHome = () => {
           {rank.cp.map((value, index) => (
             <Link key={index} to={`/pvp/rankings/${rank.id}/${value}/overall`}>
               <Button className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo ?? '', value)} />
+                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(getValueOrDefault(String, rank.logo), value)} />
                 <div>
                   <b>{renderLeagueName(rank.name, value)}</b>
                 </div>
@@ -178,7 +179,7 @@ const PVPHome = () => {
           {team.cp.map((value, index) => (
             <Link key={index} to={`/pvp/teams/${team.id}/${value}`}>
               <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(team.logo ?? '', value)} />
+                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(getValueOrDefault(String, team.logo), value)} />
                 <div>
                   <b>{renderLeagueName(team.name, value)}</b>
                 </div>

@@ -31,6 +31,7 @@ import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { TypeSex } from '../../../enums/type.enum';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -64,8 +65,8 @@ const FormComponent = (props: IFormInfoComponent) => {
     const originForm = splitAndCapitalize(currentForm?.form.formName, '-', '-');
     props.setOriginForm(originForm);
 
-    let weight = props.pokeData.at(0)?.weight ?? 0,
-      height = props.pokeData.at(0)?.height ?? 0;
+    let weight = getValueOrDefault(Number, props.pokeData.at(0)?.weight),
+      height = getValueOrDefault(Number, props.pokeData.at(0)?.height);
     if (currentData) {
       weight = currentData.weight;
       height = currentData.height;
@@ -144,12 +145,12 @@ const FormComponent = (props: IFormInfoComponent) => {
                         </div>
                       </div>
                       <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
-                      {(value.form.id ?? 0) > 0 && value.form.id === props.defaultId && (
+                      {getValueOrDefault(Number, value.form.id) > 0 && value.form.id === props.defaultId && (
                         <b>
                           <small>(Default)</small>
                         </b>
                       )}
-                      {(value.form.id ?? 0) <= 0 && <small className="text-danger">* Only in GO</small>}
+                      {getValueOrDefault(Number, value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
                     </button>
                   ))}
                 </Fragment>
@@ -235,14 +236,18 @@ const FormComponent = (props: IFormInfoComponent) => {
             data={{
               stats: convertStatsEffort(props.data?.stats),
               num: props.defaultId,
-              types: props.form?.form.types ?? [],
+              types: getValueOrDefault(Array, props.form?.form.types),
             }}
             form={props.form?.form}
             statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
             statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
             statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(convertAllStats(props.data?.stats), true)}
           />
-          <Counter def={statsPokemon?.def?.defense ?? 0} types={props.form?.form.types ?? []} isShadow={props.form?.form.isShadow} />
+          <Counter
+            def={getValueOrDefault(Number, statsPokemon?.def?.defense)}
+            types={getValueOrDefault(Array, props.form?.form.types)}
+            isShadow={props.form?.form.isShadow}
+          />
         </div>
       </div>
       <hr className="w-100" />
@@ -264,12 +269,12 @@ const FormComponent = (props: IFormInfoComponent) => {
           </div>
           {props.formList?.some((item) => item.some((pokemon) => pokemon.form.formName?.toUpperCase().includes(FORM_MEGA))) && (
             <div className="col-xl" style={{ padding: 0 }}>
-              <Mega formList={props.formList ?? []} id={props.defaultId} />
+              <Mega formList={getValueOrDefault(Array, props.formList)} id={props.defaultId} />
             </div>
           )}
           {props.formList?.some((item) => item.some((pokemon) => pokemon.form.formName?.toUpperCase().includes(FORM_PRIMAL))) && (
             <div className="col-xl" style={{ padding: 0 }}>
-              <Primal formList={props.formList ?? []} id={props.defaultId} />
+              <Primal formList={getValueOrDefault(Array, props.formList)} id={props.defaultId} />
             </div>
           )}
         </div>

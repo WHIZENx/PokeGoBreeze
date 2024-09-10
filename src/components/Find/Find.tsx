@@ -10,6 +10,7 @@ import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 import loading from '../../assets/loading.png';
 import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -20,7 +21,7 @@ const Find = (props: IFindComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
 
   const [id, setId] = useState(
     searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
@@ -185,7 +186,7 @@ const Find = (props: IFindComponent) => {
               setForm={props.setForm}
               id={id}
               setName={props.setName}
-              name={pokemonList.find((item) => item.id === id)?.name ?? ''}
+              name={getValueOrDefault(String, pokemonList.find((item) => item.id === id)?.name)}
               data={pokemonData}
               stats={stats}
               onHandleSetStats={handleSetStats}

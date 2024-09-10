@@ -9,9 +9,10 @@ import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { combineClasses, isNotEmpty, retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const SelectMove = (props: ISelectMoveComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
 
@@ -66,7 +67,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   useEffect(() => {
     if (isNotEmpty(combat)) {
       if (props.pokemon?.num) {
-        findMove(props.pokemon.num, props.pokemon?.forme ?? '', props.moveType, props.selected);
+        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon?.forme), props.moveType, props.selected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }

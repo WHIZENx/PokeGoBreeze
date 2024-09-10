@@ -15,9 +15,10 @@ import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
 import { PokemonData } from '../../../core/models/pokemon.model';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
-  const combat = useSelector((state: StoreState) => state.store?.data?.combat ?? []);
+  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -35,9 +36,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
   const selectPokemon = (value: IBattlePokemonData) => {
     props.clearData(false);
-    let [fMove, cMovePri, cMoveSec] = value.moveset ?? [];
+    let [fMove, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
     setSearch(splitAndCapitalize(value.pokemon?.name, '-', ' '));
-    setPokemonIcon(APIService.getPokeIconSprite(value.pokemon?.sprite ?? ''));
+    setPokemonIcon(APIService.getPokeIconSprite(getValueOrDefault(String, value.pokemon?.sprite)));
     setPokemon(value);
 
     if (fMove.includes('HIDDEN_POWER')) {
@@ -46,7 +47,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
     const fMoveCombat = combat.find((item) => item.name === fMove);
     if (fMoveCombat && value.moveset?.at(0)?.includes('HIDDEN_POWER')) {
-      fMoveCombat.type = value.moveset?.at(0)?.split('_').at(2) ?? '';
+      fMoveCombat.type = getValueOrDefault(String, value.moveset?.at(0)?.split('_').at(2));
     }
     setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
@@ -60,7 +61,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
     let minCP = props.league === 500 ? 0 : props.league === 1500 ? 500 : props.league === 2500 ? 1500 : 2500;
-    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, maxLevel);
+    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, maxLevel);
 
     if (maxPokeCP < minCP) {
       if (maxPokeCP <= 500) {
@@ -73,7 +74,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         minCP = 2500;
       }
     }
-    const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, props.league);
+    const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats?.sta), minCP, props.league);
 
     if (allStats && value && value.pokemon) {
       setScore(value.score);
@@ -81,12 +82,12 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         ...props.pokemonBattle,
         pokemonData: PokemonBattleData.create({
           ...value,
-          form: value.form ?? '',
-          shadow: value.shadow ?? false,
-          hp: value.stats.hp ?? 0,
-          fMove: fMoveCombat ?? null,
-          cMove: cMovePriCombat ?? null,
-          cMoveSec: cMoveSecCombat ?? null,
+          form: getValueOrDefault(String, value.form),
+          shadow: getValueOrDefault(Boolean, value.shadow),
+          hp: getValueOrDefault(Number, value.stats.hp),
+          fMove: fMoveCombat,
+          cMove: cMovePriCombat,
+          cMoveSec: cMoveSecCombat,
           energy: 0,
           block: 0,
           turn: 0,
@@ -100,9 +101,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         cMovePri: cMovePriCombat,
         cMoveSec: cMoveSecCombat,
         audio: {
-          fMove: new Audio(APIService.getSoundMove(fMoveCombat?.sound ?? '')),
-          cMovePri: new Audio(APIService.getSoundMove(cMovePriCombat?.sound ?? '')),
-          cMoveSec: new Audio(APIService.getSoundMove(cMoveSecCombat?.sound ?? '')),
+          fMove: new Audio(APIService.getSoundMove(getValueOrDefault(String, fMoveCombat?.sound))),
+          cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMovePriCombat?.sound))),
+          cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMoveSecCombat?.sound))),
         },
         shadow: value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`),
       });
@@ -116,7 +117,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         fMove: value,
-        audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+        audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(getValueOrDefault(String, value?.sound))) },
       })
     );
     setShowFMove(false);
@@ -129,7 +130,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         cMovePri: value,
-        audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+        audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, value?.sound))) },
       })
     );
     setShowCMovePri(false);
@@ -142,7 +143,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         cMoveSec: value,
-        audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value?.sound ?? '')) },
+        audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, value?.sound))) },
       })
     );
     setShowCMoveSec(false);
@@ -247,7 +248,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     }
                     let fMove = combat.find((item) => item.name === move);
                     if (fMove && value.moveId.includes('HIDDEN_POWER')) {
-                      fMove = Combat.create({ ...fMove, type: value.moveId.split('_').at(2) ?? '' });
+                      fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, value.moveId.split('_').at(2)) });
                     }
                     return fMove;
                   })

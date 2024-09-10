@@ -19,7 +19,7 @@ export class ToolSearching implements IToolSearching {
   name?: string;
   form?: string;
   fullName?: string;
-  timestamp: Date = new Date();
+  timestamp = new Date();
   obj?: ISearchingModel;
 
   static create(value: IToolSearching) {

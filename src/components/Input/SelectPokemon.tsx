@@ -12,9 +12,10 @@ import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { ISelectPokemonComponent } from '../models/component.model';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -47,10 +48,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(findMove(value.num, value.forme ?? '', TypeMove.FAST));
+        props.setFMovePokemon(findMove(value.num, getValueOrDefault(String, value.forme), TypeMove.FAST));
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(findMove(value.num, value.forme ?? '', TypeMove.CHARGE));
+        props.setCMovePokemon(findMove(value.num, getValueOrDefault(String, value.forme), TypeMove.CHARGE));
       }
       if (props.clearData) {
         props.clearData();

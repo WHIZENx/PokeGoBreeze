@@ -26,6 +26,7 @@ import { BASE_CPM, MIN_LEVEL, maxLevel } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
@@ -37,15 +38,18 @@ export const loadPokeGOLogo = (dispatch: Dispatch) => {
       .then((res) =>
         APIService.getFetchUrl<{
           files: { filename: string }[];
-        }>(res.data[0]?.url ?? '', options)
+        }>(getValueOrDefault(String, res.data[0]?.url), options)
       )
       .then((file) => {
         dispatch(
           StoreActions.SetLogoPokeGO.create(
-            file.data.files
-              ?.find((item) => item.filename.includes('Images/App Icons/'))
-              ?.filename.replace('Images/App Icons/', '')
-              .replace('.png', '') ?? ''
+            getValueOrDefault(
+              String,
+              file.data.files
+                ?.find((item) => item.filename.includes('Images/App Icons/'))
+                ?.filename.replace('Images/App Icons/', '')
+                .replace('.png', '')
+            )
           )
         );
       });
@@ -177,8 +181,8 @@ export const loadAssets = async (
   setStateSound: SetValue<string>
 ) => {
   await Promise.all([
-    APIService.getFetchUrl<APITree>(imageRoot.at(0)?.commit.tree.url ?? '', options),
-    APIService.getFetchUrl<APITree>(soundsRoot.at(0)?.commit.tree.url ?? '', options),
+    APIService.getFetchUrl<APITree>(getValueOrDefault(String, imageRoot.at(0)?.commit.tree.url), options),
+    APIService.getFetchUrl<APITree>(getValueOrDefault(String, soundsRoot.at(0)?.commit.tree.url), options),
   ]).then(async ([imageFolder, soundFolder]) => {
     const imageFolderPath = imageFolder.data.tree.find((item) => item.path === 'Images');
     const soundFolderPath = soundFolder.data.tree.find((item) => item.path === 'Sounds');
@@ -222,7 +226,7 @@ export const loadPVP = (
   statePVP: string
 ) => {
   APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, options).then((res) => {
-    const pvpDate = new Date(res.data.at(0)?.commit.committer.date ?? '').getTime();
+    const pvpDate = new Date(getValueOrDefault(String, res.data.at(0)?.commit.committer.date)).getTime();
     setStateTimestamp(
       JSON.stringify(
         LocalTimeStamp.create({

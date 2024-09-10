@@ -9,7 +9,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
 
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, hide = false) => {
-  const renderMoveBadgeBorder = (move: ICombat | null, border: boolean, shadow = false) => {
+  const renderMoveBadgeBorder = (move: ICombat | undefined, border: boolean, shadow = false) => {
     if (!move) {
       return;
     }

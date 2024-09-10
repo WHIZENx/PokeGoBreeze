@@ -10,8 +10,8 @@ export class ImageModel implements IImage {
   gender?: number;
   pokemonId?: number;
   form?: string;
-  default: string = '';
-  shiny: string | null = '';
+  default = '';
+  shiny = '';
 
   constructor({ ...props }: IImage) {
     Object.assign(this, props);
@@ -25,8 +25,8 @@ export interface ICryPath {
 
 // tslint:disable-next-line:max-classes-per-file
 export class CryPath implements ICryPath {
-  form: string = '';
-  path: string = '';
+  form = '';
+  path = '';
 
   constructor({ ...props }: ICryPath) {
     Object.assign(this, props);

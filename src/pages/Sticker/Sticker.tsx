@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { getValueOrDefault } from '../../util/models/util.model';
 
 interface PokemonStickerModel {
   id?: number | null | undefined;
@@ -25,7 +26,7 @@ const Sticker = () => {
   const [shopType, setShopType] = useState(0);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);
 
-  const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);
+  const pokeStickerList = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.stickers));
 
   const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 
@@ -41,7 +42,7 @@ const Sticker = () => {
           }
           return prev;
         }, [])
-        .sort((a, b) => (a?.id ?? 0) - (b?.id ?? 0));
+        .sort((a, b) => getValueOrDefault(Number, a?.id) - getValueOrDefault(Number, b?.id));
       setSelectPokemon(result);
     }
   }, [pokeStickerList]);
@@ -82,7 +83,11 @@ const Sticker = () => {
           <option value={0}>All</option>
           <option value={-1}>None</option>
           {selectPokemon.map((value, index) => (
-            <option key={index} value={value.id ?? 0}>{`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}</option>
+            <option key={index} value={getValueOrDefault(Number, value.id)}>{`#${value.id} ${splitAndCapitalize(
+              value.name,
+              '_',
+              ' '
+            )}`}</option>
           ))}
         </Form.Select>
       </div>

@@ -1,5 +1,6 @@
 import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
-import { DynamicObj } from '../../../util/models/util.model';
+import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { isNotEmpty } from '../../../util/utils';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 
@@ -39,13 +40,13 @@ export class PokemonSprit implements IPokemonSprit {
     const obj = new PokemonSprit();
     if (info) {
       obj.backDefault = info.back_default;
-      obj.backFemale = info.back_female ?? '';
-      obj.backShiny = info.back_shiny ?? '';
-      obj.backShinyFemale = info.back_shiny_female ?? '';
+      obj.backFemale = getValueOrDefault(String, info.back_female);
+      obj.backShiny = getValueOrDefault(String, info.back_shiny);
+      obj.backShinyFemale = getValueOrDefault(String, info.back_shiny_female);
       obj.frontDefault = info.front_default;
-      obj.frontFemale = info.front_female ?? '';
-      obj.frontShiny = info.front_shiny ?? '';
-      obj.frontShinyFemale = info.front_shiny_female ?? '';
+      obj.frontFemale = getValueOrDefault(String, info.front_female);
+      obj.frontShiny = getValueOrDefault(String, info.front_shiny);
+      obj.frontShinyFemale = getValueOrDefault(String, info.front_shiny_female);
     }
     return obj;
   }
@@ -76,21 +77,21 @@ export interface IPokemonFormDetail {
   name: string;
   pokemon: Path;
   sprites: IPokemonSprit | undefined;
-  types: SlotType[];
-  versionGroup: Path;
+  types: string[];
+  version: string;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonFormDetail implements IPokemonFormDetail {
-  formName: string = '';
-  id: number = 0;
-  isDefault: boolean = false;
-  isMega: boolean = false;
-  name: string = '';
+  formName = '';
+  id = 0;
+  isDefault = false;
+  isMega = false;
+  name = '';
   pokemon!: Path;
   sprites: IPokemonSprit | undefined;
-  types: SlotType[] = [];
-  versionGroup!: Path;
+  types: string[] = [];
+  version = '';
 
   static setDetails(info: PokemonForm) {
     const obj = new PokemonFormDetail();
@@ -101,8 +102,8 @@ export class PokemonFormDetail implements IPokemonFormDetail {
     obj.name = info.name;
     obj.pokemon = info.pokemon;
     obj.sprites = PokemonSprit.setDetails(info.sprites);
-    obj.types = info.types;
-    obj.versionGroup = info.version_group;
+    obj.types = info.types.map((t) => t.type.name);
+    obj.version = info.version_group.name;
     return obj;
   }
 }
@@ -119,13 +120,13 @@ interface SlotType {
 
 export interface IForm {
   formName: string;
-  id: number | null;
+  id: number | undefined;
   isDefault: boolean;
   isMega: boolean;
   isShadow: boolean;
   isPurified: boolean;
   name: string;
-  versionGroup: { name: string };
+  version: string;
   types: string[];
   sprites?: IPokemonSprit;
 }
@@ -178,7 +179,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
     version: string,
     types: string[],
     sprites: IPokemonSprit | undefined,
-    formId: number | null = null,
+    formId: number,
     specialForm: 'NORMAL' | 'SHADOW' | 'PURIFIED' = FORM_NORMAL,
     isDefault = true,
     isMega = false
@@ -186,7 +187,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
     this.defaultId = id;
     this.defaultName = defaultName;
     this.name = name;
-    this.form = {
+    this.form = Form.create({
       formName,
       id: formId,
       isDefault,
@@ -194,23 +195,23 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
       isShadow: specialForm === FORM_SHADOW,
       isPurified: specialForm === FORM_PURIFIED,
       name: fullFormName,
-      versionGroup: { name: version },
+      version,
       types,
       sprites,
-    };
+    });
   }
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class Form implements IForm {
   formName: string = '';
-  id: number | null = 0;
+  id: number = 0;
   isDefault: boolean = false;
   isMega: boolean = false;
   isShadow: boolean = false;
   isPurified: boolean = false;
   name: string = '';
-  versionGroup: { name: string } = { name: '' };
+  version: string = '';
   types: string[] = [];
   sprites: IPokemonSprit | undefined;
 
@@ -223,8 +224,8 @@ export class Form implements IForm {
       this.isShadow = false;
       this.isPurified = false;
       this.name = data.name;
-      this.versionGroup = data.versionGroup;
-      this.types = data.types.map((t) => t.type.name);
+      this.version = data.version;
+      this.types = data.types;
       this.sprites = data.sprites;
     }
   }
@@ -247,7 +248,7 @@ export class FormSoundCry implements IFormSoundCry {
   cries: DynamicObj<string>;
 
   constructor(pokemon: IPokemonDetail) {
-    const fullName = pokemon.forms[0].name;
+    const fullName = isNotEmpty(pokemon.forms) ? pokemon.forms[0].name : '';
     const speciesName = pokemon.species.name;
     this.form = fullName === speciesName ? FORM_NORMAL : fullName.replace(`${speciesName}-`, '').replaceAll('-', '_').toUpperCase();
     this.cries = pokemon.cries;

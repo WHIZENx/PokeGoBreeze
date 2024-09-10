@@ -9,9 +9,10 @@ import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
 import { ITypeBadgeComponent } from '../../models/component.model';
+import { getValueOrDefault } from '../../../util/models/util.model';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data?.combat ?? []);
+  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {
