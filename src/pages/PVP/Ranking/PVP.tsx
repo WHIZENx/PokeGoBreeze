@@ -1,15 +1,7 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import '../PVP.scss';
 
-import {
-  convertNameRankingToOri,
-  splitAndCapitalize,
-  capitalize,
-  getStyleSheet,
-  replaceTempMovePvpName,
-  isNotEmpty,
-  combineClasses,
-} from '../../../util/utils';
+import { convertNameRankingToOri, splitAndCapitalize, capitalize, getStyleSheet, replaceTempMovePvpName } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
@@ -38,7 +30,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { DynamicObj } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -61,12 +53,12 @@ const RankingPVP = () => {
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
-  const LeaveToggle = ({ children, eventKey }: Toggle) => {
-    const decoratedOnClick = useAccordionButton(eventKey);
+  const LeaveToggle = (props: Toggle) => {
+    const decoratedOnClick = useAccordionButton(props.eventKey);
 
     return (
       <div className="accordion-footer" onClick={decoratedOnClick}>
-        {children}
+        {props.children}
       </div>
     );
   };
@@ -84,9 +76,12 @@ const RankingPVP = () => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
-        const cp = parseInt(params.cp ?? '');
-        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie ?? '', cp, params.type ?? '')))
-          .data;
+        const cp = parseInt(getValueOrDefault(String, params.cp));
+        const file = (
+          await APIService.getFetchUrl<RankingsPVP[]>(
+            APIService.getRankingFile(getValueOrDefault(String, params.serie), cp, getValueOrDefault(String, params.type))
+          )
+        ).data;
         if (!file) {
           return;
         }
@@ -103,7 +98,7 @@ const RankingPVP = () => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
           const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
           const id = pokemon?.num;
-          const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+          const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
           const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -112,8 +107,8 @@ const RankingPVP = () => {
           }
 
           let fMoveData = item.moveset.at(0);
-          const cMoveDataPri = replaceTempMovePvpName(item.moveset.at(1) ?? '');
-          const cMoveDataSec = replaceTempMovePvpName(item.moveset.at(2) ?? '');
+          const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(1)));
+          const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(2)));
           if (fMoveData?.includes('HIDDEN_POWER')) {
             fMoveData = 'HIDDEN_POWER';
           }
@@ -126,7 +121,7 @@ const RankingPVP = () => {
           }
 
           if (fMove && item.moveset.at(0)?.includes('HIDDEN_POWER')) {
-            fMove = Combat.create({ ...fMove, type: item.moveset.at(0)?.split('_').at(2) ?? '' });
+            fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, item.moveset.at(0)?.split('_').at(2)) });
           }
 
           return new PokemonBattleRanking({
@@ -140,25 +135,25 @@ const RankingPVP = () => {
             stats,
             atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
             def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-            sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
-            prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
+            sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats?.sta)),
+            prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats?.sta)),
             fMove,
             cMovePri,
             cMoveSec,
             shadow: item.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
             purified:
-              pokemon?.purifiedMoves?.includes(cMovePri?.name ?? '') ||
+              pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMovePri?.name)) ||
               (cMoveDataSec && pokemon?.purifiedMoves?.includes(cMoveDataSec)) === true,
           });
         });
         setRankingData(filePVP);
         setStoreStats([...Array(filePVP.length).keys()].map(() => false));
         dispatch(SpinnerActions.HideSpinner.create());
-      } catch (e: any) {
+      } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            message: e.message,
+            message: (e as Error).message,
           })
         );
       }
@@ -235,17 +230,23 @@ const RankingPVP = () => {
                 <div className="w-100 ranking-info element-top">
                   {Header(data)}
                   <hr />
-                  {Body(dataStore?.assets ?? [], dataStore?.pokemon ?? [], data?.data, params.cp, params.type)}
+                  {Body(
+                    getValueOrDefault(Array, dataStore?.assets),
+                    getValueOrDefault(Array, dataStore?.pokemon),
+                    data?.data,
+                    params.cp,
+                    params.type
+                  )}
                 </div>
                 <div className="container">
                   <hr />
                 </div>
-                <div className="stats-container">{OverAllStats(data, statsRanking, params.cp ?? '')}</div>
+                <div className="stats-container">{OverAllStats(data, statsRanking, getValueOrDefault(String, params.cp))}</div>
                 <div className="container">
                   <hr />
-                  {TypeEffective(data.pokemon?.types ?? [])}
+                  {TypeEffective(getValueOrDefault(Array, data.pokemon?.types))}
                 </div>
-                <div className="container">{MoveSet(data?.data?.moves, data.pokemon, dataStore?.combat ?? [])}</div>
+                <div className="container">{MoveSet(data?.data?.moves, data.pokemon, getValueOrDefault(Array, dataStore?.combat))}</div>
               </div>
               <LeaveToggle eventKey={key.toString()}>
                 <span className="text-danger">
@@ -266,7 +267,7 @@ const RankingPVP = () => {
   };
 
   const renderLeague = () => {
-    const cp = parseInt(params.cp ?? '');
+    const cp = parseInt(getValueOrDefault(String, params.cp));
     const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>

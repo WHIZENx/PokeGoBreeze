@@ -23,6 +23,7 @@ import {
 import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IPokemonDetail } from '../../core/models/API/info.model';
+import { EvoPath } from '../../core/models/API/species.model';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -47,11 +48,13 @@ export interface ICardPokemonInfoComponent {
   image: IImage;
   id: number;
   name: string;
-  forme: string;
+  forme: string | undefined;
   defaultImg: boolean;
   types: string[];
   pokemonStat: IStatsPokemonGO;
-  stats: IStatsRank | null;
+  atkMaxStats: number | undefined;
+  defMaxStats: number | undefined;
+  staMaxStats: number | undefined;
   icon: string;
   releasedGO: boolean;
 }
@@ -96,12 +99,8 @@ export interface IFindComponent {
   tier?: number;
   setTier?: React.Dispatch<React.SetStateAction<number>>;
   setForm?: (form: IPokemonFormModify | undefined) => void;
-  urlEvo?: { url: string | null };
-  setUrlEvo?: React.Dispatch<
-    React.SetStateAction<{
-      url: string;
-    }>
-  >;
+  urlEvo?: EvoPath;
+  setUrlEvo?: React.Dispatch<React.SetStateAction<EvoPath>>;
   title?: string;
   swap?: boolean;
   objective?: boolean;
@@ -125,11 +124,7 @@ export interface IFormSelectComponent {
   stats: IStatsRank | null;
   onHandleSetStats?: (type: string, value: number) => void;
   data: IPokemonData[];
-  setUrlEvo?: React.Dispatch<
-    React.SetStateAction<{
-      url: string;
-    }>
-  >;
+  setUrlEvo?: React.Dispatch<React.SetStateAction<EvoPath>>;
   objective?: boolean;
   pokemonName: IPokemonData[];
 }
@@ -406,7 +401,7 @@ export interface ITypeBadgeComponent {
 }
 
 export interface ITypeBarComponent {
-  type: string | null;
+  type: string | undefined;
 }
 
 export interface IWeatherComponent {

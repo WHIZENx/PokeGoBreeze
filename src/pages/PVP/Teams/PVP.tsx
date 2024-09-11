@@ -3,13 +3,11 @@ import { Link, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
 import {
-  combineClasses,
   convertNameRankingToForm,
   convertNameRankingToOri,
   findMoveTeam,
   getAllMoves,
   getStyleSheet,
-  isNotEmpty,
   splitAndCapitalize,
 } from '../../../util/utils';
 import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
@@ -33,12 +31,17 @@ import { FORM_NORMAL, FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { DynamicObj } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
-  const allMoves = useSelector((state: StoreState) => state.store.data?.combat?.map((c) => c.name) ?? []);
+  const allMoves = useSelector((state: StoreState) =>
+    getValueOrDefault(
+      Array,
+      state.store.data?.combat?.map((c) => c.name)
+    )
+  );
   const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
@@ -60,7 +63,7 @@ const TeamPVP = () => {
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
     const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
     const id = pokemon?.num;
-    const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+    const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -76,14 +79,16 @@ const TeamPVP = () => {
       [fMoveText, cMovePriText, cMoveSecText] = moveSet.split('/');
     }
 
-    const fastMoveSet = pokemon?.quickMoves?.concat(pokemon?.eliteQuickMove ?? []) ?? [];
-    const chargedMoveSet =
+    const fastMoveSet = getValueOrDefault(Array, pokemon?.quickMoves?.concat(getValueOrDefault(Array, pokemon?.eliteQuickMove)));
+    const chargedMoveSet = getValueOrDefault(
+      Array,
       pokemon?.cinematicMoves?.concat(
-        pokemon?.eliteCinematicMove ?? [],
-        pokemon?.shadowMoves ?? [],
-        pokemon?.purifiedMoves ?? [],
-        pokemon?.specialMoves ?? []
-      ) ?? [];
+        getValueOrDefault(Array, pokemon?.eliteCinematicMove),
+        getValueOrDefault(Array, pokemon?.shadowMoves),
+        getValueOrDefault(Array, pokemon?.purifiedMoves),
+        getValueOrDefault(Array, pokemon?.specialMoves)
+      )
+    );
 
     const fCombatName = findMoveTeam(fMoveText, fastMoveSet);
     const cCombatName = findMoveTeam(cMovePriText, chargedMoveSet);
@@ -106,7 +111,7 @@ const TeamPVP = () => {
       stats,
       atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
       def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats.sta ?? 0)),
+      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
       fMove,
       cMovePri,
       cMoveSec,
@@ -130,8 +135,10 @@ const TeamPVP = () => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
-        const cp = parseInt(params.cp ?? '');
-        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie ?? '', cp))).data;
+        const cp = parseInt(getValueOrDefault(String, params.cp));
+        const file = (
+          await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', getValueOrDefault(String, params.serie), cp))
+        ).data;
         if (params.serie === 'all') {
           document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
         } else {
@@ -163,11 +170,11 @@ const TeamPVP = () => {
         });
         setRankingData(file);
         dispatch(SpinnerActions.HideSpinner.create());
-      } catch (e: any) {
+      } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
             error: true,
-            message: e.message,
+            message: (e as Error).message,
           })
         );
       }
@@ -188,7 +195,7 @@ const TeamPVP = () => {
   }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, statsRanking]);
 
   const renderLeague = () => {
-    const cp = parseInt(params.cp ?? '');
+    const cp = parseInt(getValueOrDefault(String, params.cp));
     const league = pvp?.trains?.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
@@ -337,36 +344,38 @@ const TeamPVP = () => {
                 <div>
                   <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
                     <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
-                    <TypeInfo hideText={true} block={true} shadow={true} height={20} color={'white'} arr={value.pokemonData?.types} />
+                    <TypeInfo hideText={true} block={true} shadow={true} height={20} color="white" arr={value.pokemonData?.types} />
                   </div>
                   <div className="d-flex" style={{ columnGap: 10 }}>
                     <TypeBadge
                       grow={true}
                       find={true}
                       title="Fast Move"
-                      color={'white'}
+                      color="white"
                       move={value.fMove}
-                      elite={value.pokemonData?.eliteQuickMove?.includes(value.fMove?.name ?? '')}
-                      unavailable={!getAllMoves(value.pokemonData).includes(value.fMove?.name ?? '')}
+                      elite={value.pokemonData?.eliteQuickMove?.includes(getValueOrDefault(String, value.fMove?.name))}
+                      unavailable={!getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.fMove?.name))}
                     />
                     <TypeBadge
                       grow={true}
                       find={true}
                       title="Primary Charged Move"
-                      color={'white'}
+                      color="white"
                       move={value.cMovePri}
-                      elite={value.pokemonData?.eliteCinematicMove?.includes(value.cMovePri?.name ?? '')}
-                      shadow={value.pokemonData?.shadowMoves?.includes(value.cMovePri?.name ?? '')}
-                      purified={value.pokemonData?.purifiedMoves?.includes(value.cMovePri?.name ?? '')}
-                      special={value.pokemonData?.specialMoves?.includes(value.cMovePri?.name ?? '')}
-                      unavailable={value.cMovePri && !getAllMoves(value.pokemonData).includes(value.cMovePri?.name ?? '')}
+                      elite={value.pokemonData?.eliteCinematicMove?.includes(getValueOrDefault(String, value.cMovePri?.name))}
+                      shadow={value.pokemonData?.shadowMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
+                      purified={value.pokemonData?.purifiedMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
+                      special={value.pokemonData?.specialMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
+                      unavailable={
+                        value.cMovePri && !getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.cMovePri?.name))
+                      }
                     />
                     {value.cMoveSec && (
                       <TypeBadge
                         grow={true}
                         find={true}
                         title="Secondary Charged Move"
-                        color={'white'}
+                        color="white"
                         move={value.cMoveSec}
                         elite={value.pokemonData?.eliteCinematicMove?.includes(value.cMoveSec.name)}
                         shadow={value.pokemonData?.shadowMoves?.includes(value.cMoveSec.name)}
@@ -512,7 +521,7 @@ const TeamPVP = () => {
                                 block={true}
                                 shadow={true}
                                 height={20}
-                                color={'white'}
+                                color="white"
                                 arr={value.pokemonData?.types}
                               />
                             </div>
@@ -521,29 +530,29 @@ const TeamPVP = () => {
                                 grow={true}
                                 find={true}
                                 title="Fast Move"
-                                color={'white'}
+                                color="white"
                                 move={value.fMove}
-                                elite={value.pokemonData?.eliteQuickMove?.includes(value.fMove?.name ?? '')}
-                                unavailable={!getAllMoves(value.pokemonData).includes(value.fMove?.name ?? '')}
+                                elite={value.pokemonData?.eliteQuickMove?.includes(getValueOrDefault(String, value.fMove?.name))}
+                                unavailable={!getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.fMove?.name))}
                               />
                               <TypeBadge
                                 grow={true}
                                 find={true}
                                 title="Primary Charged Move"
-                                color={'white'}
+                                color="white"
                                 move={value.cMovePri}
-                                elite={value.pokemonData?.eliteCinematicMove?.includes(value.cMovePri?.name ?? '')}
-                                shadow={value.pokemonData?.shadowMoves?.includes(value.cMovePri?.name ?? '')}
-                                purified={value.pokemonData?.purifiedMoves?.includes(value.cMovePri?.name ?? '')}
-                                special={value.pokemonData?.specialMoves?.includes(value.cMovePri?.name ?? '')}
-                                unavailable={!getAllMoves(value.pokemonData).includes(value.cMovePri?.name ?? '')}
+                                elite={value.pokemonData?.eliteCinematicMove?.includes(getValueOrDefault(String, value.cMovePri?.name))}
+                                shadow={value.pokemonData?.shadowMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
+                                purified={value.pokemonData?.purifiedMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
+                                special={value.pokemonData?.specialMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
+                                unavailable={!getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.cMovePri?.name))}
                               />
                               {value.cMoveSec && (
                                 <TypeBadge
                                   grow={true}
                                   find={true}
                                   title="Secondary Charged Move"
-                                  color={'white'}
+                                  color="white"
                                   move={value.cMoveSec}
                                   elite={value.pokemonData?.eliteCinematicMove?.includes(value.cMoveSec.name)}
                                   shadow={value.pokemonData?.shadowMoves?.includes(value.cMoveSec.name)}

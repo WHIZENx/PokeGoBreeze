@@ -5,6 +5,7 @@ import { predictCPList } from '../../util/calculate';
 import { MIN_IV, MAX_IV } from '../../util/constants';
 import { IPredictCPCalculate } from '../../util/models/calculate.model';
 import { IDynamicInputCPComponent } from '../models/component.model';
+import { getValueOrDefault } from '../../util/extension';
 
 const DynamicInputCP = (props: IDynamicInputCPComponent) => {
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
@@ -37,10 +38,10 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
         if (typeof newValue === 'string') {
           props.setSearchCP(newValue);
         } else {
-          props.setSearchCP(newValue?.CP.toString() ?? '');
+          props.setSearchCP(getValueOrDefault(String, newValue?.CP.toString()));
         }
       }}
-      options={preCpArr?.result ?? []}
+      options={getValueOrDefault(Array, preCpArr?.result)}
       getOptionLabel={(option) => {
         if (typeof option === 'string') {
           return option;

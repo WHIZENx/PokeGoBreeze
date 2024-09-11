@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { capitalize, combineClasses, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
+import { capitalize, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -22,10 +22,12 @@ import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from 
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { getValueOrDefault, isNullOrEmpty, isUndefined } from '../../../util/extension';
+import { EvoPath } from '../../../core/models/API/species.model';
 
 const Calculate = () => {
   useChangeTitle('Calculate CP&IV - Tool');
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options ?? undefined);
+  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
@@ -52,7 +54,7 @@ const Calculate = () => {
   const [dataUltraLeague, setDataUltraLeague] = useState<IBattleLeagueCalculate>();
   const [dataMasterLeague, setDataMasterLeague] = useState<IBattleLeagueCalculate>();
 
-  const [urlEvo, setUrlEvo] = useState({ url: '' });
+  const [urlEvo, setUrlEvo] = useState<EvoPath>({ url: '' });
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -145,8 +147,8 @@ const Calculate = () => {
                   ivSta={STAIv}
                   searchCP={searchCP}
                   setSearchCP={setSearchCP}
-                  label={'Input CP'}
-                  width={'50%'}
+                  label="Input CP"
+                  width="50%"
                   minWidth={350}
                 />
               </div>
@@ -215,7 +217,7 @@ const Calculate = () => {
               row={true}
               aria-labelledby="row-types-group-label"
               name="row-types-group"
-              defaultValue={''}
+              defaultValue=""
               onChange={(e) => setTypePoke(e.target.value)}
             >
               <FormControlLabel value="" control={<Radio />} label={<span>None</span>} />
@@ -292,7 +294,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Power Up Count</td>
-                        <td>{statData ? (statData?.powerUpCount != null ? statData?.powerUpCount : 'Unavailable') : '-'}</td>
+                        <td>{statData ? (!isUndefined(statData?.powerUpCount) ? statData?.powerUpCount : 'Unavailable') : '-'}</td>
                       </tr>
                       <tr>
                         <td>CP</td>
@@ -310,19 +312,19 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.resultBetweenStadust != null ? (
+                            statData.resultBetweenStadust > 0 ? (
                               <span>
-                                {statData?.resultBetweenStadust}
-                                {statData?.type !== '' && (statData?.resultBetweenStadustDiff ?? 0) > 0 && (
+                                {statData.resultBetweenStadust}
+                                {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenStadustDiff) > 0 && (
                                   <Fragment>
-                                    {statData?.type?.toUpperCase() === FORM_SHADOW && (
-                                      <span className="shadow-text"> (+{statData?.resultBetweenStadustDiff})</span>
+                                    {statData.type?.toUpperCase() === FORM_SHADOW && (
+                                      <span className="shadow-text"> (+{statData.resultBetweenStadustDiff})</span>
                                     )}
-                                    {statData?.type?.toUpperCase() === FORM_PURIFIED && (
-                                      <span className="purified-text"> (-{statData?.resultBetweenStadustDiff})</span>
+                                    {statData.type?.toUpperCase() === FORM_PURIFIED && (
+                                      <span className="purified-text"> (-{statData.resultBetweenStadustDiff})</span>
                                     )}
-                                    {statData?.type === 'buddy' && (
-                                      <span className="buddy-text"> (-{statData?.resultBetweenStadustDiff})</span>
+                                    {statData.type === 'buddy' && (
+                                      <span className="buddy-text"> (-{statData.resultBetweenStadustDiff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -346,20 +348,18 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.resultBetweenCandy != null ? (
+                            statData.resultBetweenCandy > 0 ? (
                               <span>
-                                {statData?.resultBetweenCandy}
-                                {statData?.type !== '' && (statData?.resultBetweenCandyDiff ?? 0) > 0 && (
+                                {statData.resultBetweenCandy}
+                                {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenCandyDiff) > 0 && (
                                   <Fragment>
-                                    {statData?.type?.toUpperCase() === FORM_SHADOW && (
-                                      <span className="shadow-text"> (+{statData?.resultBetweenCandyDiff})</span>
+                                    {statData.type?.toUpperCase() === FORM_SHADOW && (
+                                      <span className="shadow-text"> (+{statData.resultBetweenCandyDiff})</span>
                                     )}
-                                    {statData?.type?.toUpperCase() === FORM_PURIFIED && (
-                                      <span className="purified-text"> (-{statData?.resultBetweenCandyDiff})</span>
+                                    {statData.type?.toUpperCase() === FORM_PURIFIED && (
+                                      <span className="purified-text"> (-{statData.resultBetweenCandyDiff})</span>
                                     )}
-                                    {statData?.type === 'buddy' && (
-                                      <span className="buddy-text"> (-{statData?.resultBetweenCandyDiff})</span>
-                                    )}
+                                    {statData.type === 'buddy' && <span className="buddy-text"> (-{statData.resultBetweenCandyDiff})</span>}
                                   </Fragment>
                                 )}
                               </span>
@@ -387,19 +387,19 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.resultBetweenXLCandy != null ? (
+                            statData.resultBetweenXLCandy > 0 ? (
                               <span>
-                                {statData?.resultBetweenXLCandy}
-                                {statData?.type !== '' && (statData?.resultBetweenXLCandyDiff ?? 0) > 0 && (
+                                {statData.resultBetweenXLCandy}
+                                {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenXLCandyDiff) > 0 && (
                                   <Fragment>
-                                    {statData?.type?.toUpperCase() === FORM_SHADOW && (
-                                      <span className="shadow-text"> (+{statData?.resultBetweenXLCandyDiff})</span>
+                                    {statData.type?.toUpperCase() === FORM_SHADOW && (
+                                      <span className="shadow-text"> (+{statData.resultBetweenXLCandyDiff})</span>
                                     )}
-                                    {statData?.type?.toUpperCase() === FORM_PURIFIED && (
-                                      <span className="purified-text"> (-{statData?.resultBetweenXLCandyDiff})</span>
+                                    {statData.type?.toUpperCase() === FORM_PURIFIED && (
+                                      <span className="purified-text"> (-{statData.resultBetweenXLCandyDiff})</span>
                                     )}
-                                    {statData?.type === 'buddy' && (
-                                      <span className="buddy-text"> (-{statData?.resultBetweenXLCandyDiff})</span>
+                                    {statData.type === 'buddy' && (
+                                      <span className="buddy-text"> (-{statData.resultBetweenXLCandyDiff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -425,11 +425,11 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData?.type?.toUpperCase() !== FORM_SHADOW ? (
-                              calculateStatsBattle(statATK, pokeStats?.IV.atk ?? 0, statLevel, true)
+                              calculateStatsBattle(statATK, getValueOrDefault(Number, pokeStats?.IV.atk), statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData?.atkStat}
-                                {(statData?.atkStatDiff ?? 0) > 0 && (
+                                {getValueOrDefault(Number, statData?.atkStatDiff) > 0 && (
                                   <span className="text-success" style={{ fontWeight: 500 }}>
                                     {' '}
                                     (+{statData?.atkStatDiff})
@@ -450,11 +450,11 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData?.type?.toUpperCase() !== FORM_SHADOW ? (
-                              calculateStatsBattle(statDEF, pokeStats?.IV.def ?? 0, statLevel, true)
+                              calculateStatsBattle(statDEF, getValueOrDefault(Number, pokeStats?.IV.def), statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData?.defStat}
-                                {(statData?.defStatDiff ?? 0) > 0 && (
+                                {getValueOrDefault(Number, statData?.defStatDiff) > 0 && (
                                   <span className="text-danger" style={{ fontWeight: 500 }}>
                                     {' '}
                                     (-{statData?.defStatDiff})
@@ -472,7 +472,9 @@ const Calculate = () => {
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           HP
                         </td>
-                        <td>{statData ? calculateStatsBattle(statSTA, pokeStats?.IV.sta ?? 0, statLevel, true) : '-'}</td>
+                        <td>
+                          {statData ? calculateStatsBattle(statSTA, getValueOrDefault(Number, pokeStats?.IV.sta), statLevel, true) : '-'}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -520,9 +522,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataLittleLeague && dataLittleLeague.elidge ? (
-                            <span className={combineClasses(`${statData?.type}-text`)}>
-                              {dataLittleLeague.rangeValue?.resultBetweenStadust}
-                            </span>
+                            <span className={`${statData?.type}-text`}>{dataLittleLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -635,9 +635,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataGreatLeague && dataGreatLeague.elidge ? (
-                            <span className={combineClasses(`${statData?.type}-text`)}>
-                              {dataGreatLeague.rangeValue?.resultBetweenStadust}
-                            </span>
+                            <span className={`${statData?.type}-text`}>{dataGreatLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -750,9 +748,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataUltraLeague && dataUltraLeague.elidge ? (
-                            <span className={combineClasses(`${statData?.type}-text`)}>
-                              {dataUltraLeague.rangeValue?.resultBetweenStadust}
-                            </span>
+                            <span className={`${statData?.type}-text`}>{dataUltraLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}
@@ -862,9 +858,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataMasterLeague ? (
-                            <span className={combineClasses(`${statData?.type}-text`)}>
-                              {dataMasterLeague.rangeValue?.resultBetweenStadust}
-                            </span>
+                            <span className={`${statData?.type}-text`}>{dataMasterLeague.rangeValue?.resultBetweenStadust}</span>
                           ) : (
                             '-'
                           )}

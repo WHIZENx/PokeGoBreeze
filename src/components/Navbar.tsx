@@ -29,7 +29,11 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
   const [version, setVersion] = useState('');
 
   useEffect(() => {
-    getEdgeItem(EdgeKey.VERSION).then((res) => setVersion(res?.toString() ?? ''));
+    getEdgeItem(EdgeKey.VERSION).then((res) => {
+      if (res) {
+        setVersion(res as string);
+      }
+    });
   }, []);
 
   const [isDelay, setIsDelay] = useState(false);

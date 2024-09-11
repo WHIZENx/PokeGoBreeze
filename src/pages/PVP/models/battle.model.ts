@@ -24,10 +24,10 @@ export interface IPokemonBattleData {
   stats: IStatsBase | undefined;
   bestStats: IBattleBaseStats | undefined;
   currentStats: IBattleBaseStats | undefined;
-  pokemon: IPokemonData | null;
-  fMove: ICombat | null;
-  cMove: ICombat | null;
-  cMoveSec: ICombat | null;
+  pokemon: IPokemonData | undefined;
+  fMove: ICombat | undefined | null;
+  cMove: ICombat | undefined | null;
+  cMoveSec: ICombat | undefined | null;
   energy: number;
   block: number;
   turn: number;
@@ -40,21 +40,21 @@ export class PokemonBattleData implements IPokemonBattleData {
   name?: string;
   form?: string;
   id?: number;
-  shadow: boolean = false;
+  shadow = false;
   allStats?: IBattleBaseStats[];
-  hp: number = 0;
+  hp = 0;
   stats: IStatsBase | undefined;
   bestStats: IBattleBaseStats | undefined;
   currentStats: IBattleBaseStats | undefined;
-  pokemon: IPokemonData | null = null;
-  fMove: ICombat | null = new Combat();
-  cMove: ICombat | null = new Combat();
-  cMoveSec: ICombat | null = new Combat();
-  energy: number = 0;
-  block: number = 0;
-  turn: number = 0;
-  disableCMoveSec: boolean = false;
-  disableCMovePri: boolean = false;
+  pokemon: IPokemonData | undefined;
+  fMove = new Combat();
+  cMove = new Combat();
+  cMoveSec = new Combat();
+  energy = 0;
+  block = 0;
+  turn = 0;
+  disableCMoveSec = false;
+  disableCMovePri = false;
 
   static create(value: IPokemonBattleData) {
     const obj = new PokemonBattleData();
@@ -87,8 +87,8 @@ export interface IPokemonBattle {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonBattle implements IPokemonBattle {
-  disableCMoveSec: boolean = false;
-  disableCMovePri: boolean = false;
+  disableCMoveSec = false;
+  disableCMovePri = false;
   shadow?: boolean;
   pokemonData?: IPokemonBattleData | null;
   fMove?: ICombat | null;
@@ -116,31 +116,31 @@ export class PokemonBattle implements IPokemonBattle {
 
 export interface ITimeline {
   timer: number;
-  type: string | null;
-  color: string | null;
+  type: string | undefined;
+  color: string | undefined;
   size: number;
   tap: boolean;
   block: number;
   energy: number;
-  move: ICombat | null;
+  move: ICombat | undefined;
   hp: number;
-  buff: IBuff[] | null;
+  buff: IBuff[] | undefined;
   dmgImmune: boolean;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 export class TimelineModel implements ITimeline {
-  timer: number = 0;
-  type: string | null = null;
-  color: string | null = null;
-  size: number = 0;
-  tap: boolean = false;
-  block: number = 0;
-  energy: number = 0;
-  move: ICombat | null = null;
-  hp: number = 0;
-  buff: IBuff[] | null = null;
-  dmgImmune: boolean = false;
+  timer = 0;
+  type: string | undefined;
+  color: string | undefined;
+  size = 0;
+  tap = false;
+  block = 0;
+  energy = 0;
+  move: ICombat | undefined;
+  hp = 0;
+  buff: IBuff[] | undefined;
+  dmgImmune = false;
 
   constructor({ ...props }: ITimeline) {
     Object.assign(this, props);
@@ -152,7 +152,7 @@ export interface IPokemonTeamData {
   name: string | undefined;
   speciesId: string;
   pokemonData: IPokemonData | undefined;
-  form: string | null;
+  form: string | undefined | null;
   stats: IStatsBase;
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
@@ -170,7 +170,7 @@ export class PokemonTeamData implements IPokemonTeamData {
   name: string | undefined;
   speciesId: string = '';
   pokemonData: IPokemonData | undefined;
-  form: string | null = '';
+  form: string | undefined | null = '';
   stats: IStatsBase = new StatsBase();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
@@ -192,7 +192,7 @@ export interface IPokemonBattleRanking {
   name: string | undefined;
   speciesId?: string;
   pokemon: IPokemonData | undefined;
-  form: string | null;
+  form: string | undefined | null;
   stats: IStatsBase;
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
@@ -214,7 +214,7 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   name: string | undefined;
   speciesId?: string;
   pokemon: IPokemonData | undefined;
-  form: string | null = '';
+  form: string | undefined | null = '';
   stats: IStatsBase = new StatsBase();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;

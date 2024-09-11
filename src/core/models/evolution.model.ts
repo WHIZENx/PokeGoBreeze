@@ -86,8 +86,8 @@ export interface IPokemonTypeCost {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonTypeCost implements IPokemonTypeCost {
-  stardust?: number;
-  candy?: number;
+  stardust? = -1;
+  candy? = -1;
 
   static create(value: IPokemonTypeCost) {
     const obj = new PokemonTypeCost();
@@ -114,13 +114,13 @@ export interface IEvolution {
 export class EvolutionModel implements IEvolution {
   pokemonId?: string;
   prev?: string;
-  id: number = 0;
-  name: string = '';
-  evoList: EvoList[] = [];
-  tempEvo: ITempEvo[] = [];
+  id = 0;
+  name = '';
+  evoList = [];
+  tempEvo = [];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
-  form: string = '';
+  form = '';
   canPurified?: boolean;
   isBaby?: boolean;
 

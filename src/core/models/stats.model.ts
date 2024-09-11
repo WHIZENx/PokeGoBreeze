@@ -1,3 +1,5 @@
+import { getValueOrDefault } from '../../util/extension';
+
 export interface OptionsRank {
   minRank: number;
   maxRank: number;
@@ -11,10 +13,10 @@ export interface IStatsRankAtk extends OptionsRank {
 
 export class StatsRankAtk implements IStatsRankAtk {
   ranking: IStatsAtk[] = [];
-  minRank: number = 0;
-  maxRank: number = 0;
-  minStats: number = 0;
-  maxStats: number = 0;
+  minRank = 0;
+  maxRank = 0;
+  minStats = 0;
+  maxStats = 0;
 
   static create(value: IStatsRankAtk) {
     const obj = new StatsRankAtk();
@@ -30,10 +32,10 @@ export interface IStatsRankDef extends OptionsRank {
 // tslint:disable-next-line:max-classes-per-file
 export class StatsRankDef implements IStatsRankDef {
   ranking: IStatsDef[] = [];
-  minRank: number = 0;
-  maxRank: number = 0;
-  minStats: number = 0;
-  maxStats: number = 0;
+  minRank = 0;
+  maxRank = 0;
+  minStats = 0;
+  maxStats = 0;
 
   static create(value: IStatsRankDef) {
     const obj = new StatsRankDef();
@@ -49,10 +51,10 @@ export interface IStatsRankSta extends OptionsRank {
 // tslint:disable-next-line:max-classes-per-file
 export class StatsRankSta implements IStatsRankSta {
   ranking: IStatsSta[] = [];
-  minRank: number = 0;
-  maxRank: number = 0;
-  minStats: number = 0;
-  maxStats: number = 0;
+  minRank = 0;
+  maxRank = 0;
+  minStats = 0;
+  maxStats = 0;
 
   static create(value: IStatsRankSta) {
     const obj = new StatsRankSta();
@@ -68,10 +70,10 @@ export interface IStatsRankProd extends OptionsRank {
 // tslint:disable-next-line:max-classes-per-file
 export class StatsRankProd implements IStatsRankProd {
   ranking: IStatsProd[] = [];
-  minRank: number = 0;
-  maxRank: number = 0;
-  minStats: number = 0;
-  maxStats: number = 0;
+  minRank = 0;
+  maxRank = 0;
+  minStats = 0;
+  maxStats = 0;
 
   static create(value: IStatsRankProd) {
     const obj = new StatsRankProd();
@@ -89,10 +91,10 @@ export interface IStatsRank {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsRank implements IStatsRank {
-  attack: IStatsRankAtk = new StatsRankAtk();
-  defense: IStatsRankDef = new StatsRankDef();
-  stamina: IStatsRankSta = new StatsRankSta();
-  statProd: IStatsRankProd = new StatsRankProd();
+  attack = new StatsRankAtk();
+  defense = new StatsRankDef();
+  stamina = new StatsRankSta();
+  statProd = new StatsRankProd();
 
   constructor({ ...props }: IStatsRank) {
     Object.assign(this, props);
@@ -107,15 +109,15 @@ export interface IStatsBase {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsBase implements IStatsBase {
-  atk: number = 0;
-  def: number = 0;
+  atk = 0;
+  def = 0;
   sta?: number;
 
   static setValue(atk: number, def: number, sta?: number) {
     const obj = new StatsBase();
     obj.atk = atk;
     obj.def = def;
-    obj.sta = sta ?? 0;
+    obj.sta = getValueOrDefault(Number, sta);
     return obj;
   }
 }
@@ -129,10 +131,10 @@ export interface IStatsPokemonGO {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsPokemonGO implements IStatsPokemonGO {
-  atk: number = 0;
-  def: number = 0;
-  sta: number = 0;
-  prod: number = 0;
+  atk = 0;
+  def = 0;
+  sta = 0;
+  prod = 0;
 
   static create(value: IStatsPokemonGO) {
     const obj = new StatsPokemonGO();
@@ -169,12 +171,12 @@ export interface IHexagonStats {
 
 // tslint:disable-next-line:max-classes-per-file
 export class HexagonStats implements IHexagonStats {
-  lead: number = 0;
-  atk: number = 0;
-  cons: number = 0;
-  closer: number = 0;
-  charger: number = 0;
-  switching: number = 0;
+  lead = 0;
+  atk = 0;
+  cons = 0;
+  closer = 0;
+  charger = 0;
+  switching = 0;
 
   static create(value: IHexagonStats) {
     const obj = new HexagonStats();
@@ -195,8 +197,8 @@ export interface IStatsAtk extends OptionsStats {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsAtk implements IStatsAtk {
-  attack: number = 0;
-  rank: number = 0;
+  attack = 0;
+  rank = 0;
   id?: number | undefined;
   form?: string | undefined;
 
@@ -213,8 +215,8 @@ export interface IStatsDef extends OptionsStats {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsDef implements IStatsDef {
-  defense: number = 0;
-  rank: number = 0;
+  defense = 0;
+  rank = 0;
   id?: number | undefined;
   form?: string | undefined;
 
@@ -231,8 +233,8 @@ export interface IStatsSta extends OptionsStats {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsSta implements IStatsSta {
-  stamina: number = 0;
-  rank: number = 0;
+  stamina = 0;
+  rank = 0;
   id?: number | undefined;
   form?: string | undefined;
 
@@ -249,8 +251,8 @@ export interface IStatsProd extends OptionsStats {
 
 // tslint:disable-next-line:max-classes-per-file
 export class StatsProd implements IStatsProd {
-  prod: number = 0;
-  rank: number = 0;
+  prod = 0;
+  rank = 0;
   id?: number | undefined;
   form?: string | undefined;
 
@@ -267,7 +269,7 @@ export interface IPokemonStatsRanking {
   slug: string;
   forme: string | null;
   sprite: string;
-  baseForme: string | null;
+  baseForme: string | undefined | null;
   baseSpecies: string | null;
   rank?: number;
   gen: number;
@@ -286,26 +288,26 @@ export interface IPokemonStatsRanking {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonStatsRanking implements IPokemonStatsRanking {
-  num: number = 0;
-  name: string = '';
-  slug: string = '';
-  forme: string | null = '';
-  sprite: string = '';
-  baseForme: string | null = '';
-  baseSpecies: string | null = '';
+  num = 0;
+  name = '';
+  slug = '';
+  forme = '';
+  sprite = '';
+  baseForme = '';
+  baseSpecies = '';
   rank?: number;
-  gen: number = 0;
-  region: string | null = '';
-  version: string | null = '';
-  weightkg: number = 0;
-  heightm: number = 0;
-  atk: IStatsAtk = new StatsAtk();
-  def: IStatsDef = new StatsDef();
-  sta: IStatsSta = new StatsSta();
-  statProd: IStatsProd = new StatsProd();
+  gen = 0;
+  region = '';
+  version = '';
+  weightkg = 0;
+  heightm = 0;
+  atk = new StatsAtk();
+  def = new StatsDef();
+  sta = new StatsSta();
+  statProd = new StatsProd();
   types: string[] = [];
   url?: string;
-  releasedGO: boolean = false;
+  releasedGO = false;
 
   constructor({ ...props }: IPokemonStatsRanking) {
     Object.assign(this, props);

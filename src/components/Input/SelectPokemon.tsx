@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useState } from 'react';
 
 import './Select.scss';
-import { combineClasses, isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../util/utils';
+import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
@@ -12,9 +12,10 @@ import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { ISelectPokemonComponent } from '../models/component.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -47,10 +48,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         props.setCurrentPokemon(value);
       }
       if (props.selected && props.setFMovePokemon) {
-        props.setFMovePokemon(findMove(value.num, value.forme ?? '', TypeMove.FAST));
+        props.setFMovePokemon(findMove(value.num, getValueOrDefault(String, value.forme), TypeMove.FAST));
       }
       if (props.selected && props.setCMovePokemon) {
-        props.setCMovePokemon(findMove(value.num, value.forme ?? '', TypeMove.CHARGE));
+        props.setCMovePokemon(findMove(value.num, getValueOrDefault(String, value.forme), TypeMove.CHARGE));
       }
       if (props.clearData) {
         props.clearData();

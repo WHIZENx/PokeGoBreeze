@@ -1,7 +1,7 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertNameRankingToOri, isNotEmpty, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertNameRankingToOri, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
@@ -14,7 +14,6 @@ import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
 import { FORM_NORMAL, FORM_SHADOW, MAX_IV, maxLevel, scoreType } from '../../../util/constants';
-import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -24,6 +23,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
+import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -46,13 +46,13 @@ const PokemonPVP = () => {
   }, [pvp]);
 
   const fetchPokemonInfo = useCallback(async () => {
+    dispatch(SpinnerActions.ShowSpinner.create());
     try {
-      dispatch(SpinnerActions.ShowSpinner.create());
-      const cp = parseInt(params.cp ?? '');
+      const cp = parseInt(getValueOrDefault(String, params.cp));
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
-          APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, params.type ?? '')
+          APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, getValueOrDefault(String, params.type))
         )
       ).data.find((pokemon) => pokemon.speciesId === paramName);
 
@@ -64,14 +64,14 @@ const PokemonPVP = () => {
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
       const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
       const id = pokemon?.num;
-      const form = findAssetForm(dataStore?.assets ?? [], pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+      const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
       document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(params.type)})`;
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
       let fMoveData = data.moveset.at(0);
-      const cMoveDataPri = replaceTempMovePvpName(data.moveset.at(1) ?? '');
-      const cMoveDataSec = replaceTempMovePvpName(data.moveset.at(2) ?? '');
+      const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, data.moveset.at(1)));
+      const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, data.moveset.at(2)));
       if (fMoveData?.includes('HIDDEN_POWER')) {
         fMoveData = 'HIDDEN_POWER';
       }
@@ -84,15 +84,15 @@ const PokemonPVP = () => {
       }
 
       if (fMove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
-        fMove = Combat.create({ ...fMove, type: data.moveset.at(0)?.split('_').at(2) ?? '' });
+        fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, data.moveset.at(0)?.split('_').at(2)) });
       }
 
-      const maxCP = parseInt(params.cp ?? '');
+      const maxCP = parseInt(getValueOrDefault(String, params.cp));
 
       let bestStats = new BattleBaseStats();
       if (maxCP < 10000) {
         let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, (stats?.sta ?? 0) + MAX_IV, maxLevel);
+        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, maxLevel);
 
         if (maxPokeCP < minCP) {
           if (maxPokeCP <= 500) {
@@ -105,7 +105,7 @@ const PokemonPVP = () => {
             minCP = 2500;
           }
         }
-        const allStats = calStatsProd(stats.atk, stats.def, stats?.sta ?? 0, minCP, maxCP);
+        const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats?.sta), minCP, maxCP);
         bestStats = allStats[allStats.length - 1];
       }
 
@@ -120,23 +120,25 @@ const PokemonPVP = () => {
           stats,
           atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
           def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === (stats?.sta ?? 0)),
-          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * (stats?.sta ?? 0)),
+          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats?.sta)),
+          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats?.sta)),
           fMove,
           cMovePri,
           cMoveSec,
           bestStats,
           shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
-          purified: pokemon?.purifiedMoves?.includes(cMovePri?.name ?? '') || pokemon?.purifiedMoves?.includes(cMoveSec?.name ?? ''),
+          purified:
+            pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMovePri?.name)) ||
+            pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMoveSec?.name)),
         })
       );
       dispatch(SpinnerActions.HideSpinner.create());
-    } catch (e: any) {
+    } catch (e) {
       setFound(false);
       dispatch(
         SpinnerActions.ShowSpinnerMsg.create({
           error: true,
-          message: e.message,
+          message: (e as Error).message,
         })
       );
     }
@@ -145,17 +147,13 @@ const PokemonPVP = () => {
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
+      router.action = null as AnyAction[''];
     };
     if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
       if (dataStore?.combat.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
-      } else {
-        if (router.action === Action.Push) {
-          router.action = null as AnyAction[''];
-          setTimeout(() => fetchPokemon(), 100);
-        } else if (!rankingPoke && pvp) {
-          fetchPokemon();
-        }
+      } else if (router.action) {
+        fetchPokemon();
       }
     }
     return () => {
@@ -164,7 +162,7 @@ const PokemonPVP = () => {
   }, [fetchPokemonInfo, rankingPoke, pvp, router.action, dispatch]);
 
   const renderLeague = () => {
-    const cp = parseInt(params.cp ?? '');
+    const cp = parseInt(getValueOrDefault(String, params.cp));
     const league = pvp?.rankings.find((item) => item.id === 'all' && item.cp.includes(cp));
     return (
       <Fragment>
@@ -234,17 +232,25 @@ const PokemonPVP = () => {
                 <div>{Header(rankingPoke)}</div>
               </div>
               <hr />
-              {Body(dataStore?.assets ?? [], dataStore?.pokemon ?? [], rankingPoke?.data, params.cp, params.type)}
+              {Body(
+                getValueOrDefault(Array, dataStore?.assets),
+                getValueOrDefault(Array, dataStore?.pokemon),
+                rankingPoke?.data,
+                params.cp,
+                params.type
+              )}
             </div>
             <div className="container">
               <hr />
             </div>
-            <div className="stats-container">{OverAllStats(rankingPoke, statsRanking, params.cp ?? '')}</div>
+            <div className="stats-container">{OverAllStats(rankingPoke, statsRanking, getValueOrDefault(String, params.cp))}</div>
             <div className="container">
               <hr />
-              {TypeEffective(rankingPoke?.pokemon?.types ?? [])}
+              {TypeEffective(getValueOrDefault(Array, rankingPoke?.pokemon?.types))}
             </div>
-            <div className="container">{MoveSet(rankingPoke?.data?.moves, rankingPoke?.pokemon, dataStore?.combat ?? [])}</div>
+            <div className="container">
+              {MoveSet(rankingPoke?.data?.moves, rankingPoke?.pokemon, getValueOrDefault(Array, dataStore?.combat))}
+            </div>
           </div>
         </div>
       )}

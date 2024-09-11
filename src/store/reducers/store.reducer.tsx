@@ -3,6 +3,7 @@ import { replaceTempMovePvpName } from '../../util/utils';
 import { Store, StoreModel } from '../models/store.model';
 import { StoreActions } from '../../store/actions';
 import { StoreActionsUnion } from '../actions/store.action';
+import { getValueOrDefault } from '../../util/extension';
 
 const initialize: StoreModel = new Store();
 
@@ -95,8 +96,8 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
         data: {
           ...state.data,
           pvp: {
-            rankings: convertPVPRankings(action.payload.rankings, state.data?.leagues?.data ?? []),
-            trains: convertPVPTrain(action.payload.trains, state.data?.leagues?.data ?? []),
+            rankings: convertPVPRankings(action.payload.rankings, getValueOrDefault(Array, state.data?.leagues?.data)),
+            trains: convertPVPTrain(action.payload.trains, getValueOrDefault(Array, state.data?.leagues?.data)),
           },
         },
       };
@@ -105,8 +106,8 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
         const movePVP = action.payload.find(
           (data) => data.moveId === (move.name === 'HIDDEN_POWER' ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
         );
-        move.archetype = movePVP?.archetype ?? null;
-        move.abbreviation = movePVP?.abbreviation ?? null;
+        move.archetype = movePVP?.archetype;
+        move.abbreviation = movePVP?.abbreviation;
         return move;
       });
       return {

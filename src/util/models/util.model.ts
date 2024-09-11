@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { IStatsPokemon, StatsPokemon } from '../../core/models/stats.model';
 
 interface IBaseStatsPokeGo {
@@ -39,5 +38,3 @@ export class ArrayStats implements IArrayStats {
     Object.assign(this, props);
   }
 }
-
-export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };

@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
-import { DynamicObj } from '../../../util/models/util.model';
+import { DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 interface IPointer {
   x: number;
@@ -11,8 +11,8 @@ interface IPointer {
 }
 
 class Pointer implements IPointer {
-  x: number = 0;
-  y: number = 0;
+  x = 0;
+  y = 0;
 
   constructor(x: number = 0, y: number = 0) {
     this.x = x;
@@ -62,17 +62,17 @@ const Hexagon = (props: IHexagonComponent) => {
 
   const drawStatsHex = (ctx: CanvasRenderingContext2D | null | undefined, center: IPointer, stat: IHexagonStats, hexSize: number) => {
     const stats: DynamicObj<number> = {
-      '0': ((stat.switching || 0) * hexSize) / 100,
-      '1': ((stat.charger || 0) * hexSize) / 100,
-      '2': ((stat.closer || 0) * hexSize) / 100,
-      '3': ((stat.cons || 0) * hexSize) / 100,
-      '4': ((stat.atk || 0) * hexSize) / 100,
-      '5': ((stat.lead || 0) * hexSize) / 100,
+      '0': (getValueOrDefault(Number, stat.switching) * hexSize) / 100,
+      '1': (getValueOrDefault(Number, stat.charger) * hexSize) / 100,
+      '2': (getValueOrDefault(Number, stat.closer) * hexSize) / 100,
+      '3': (getValueOrDefault(Number, stat.cons) * hexSize) / 100,
+      '4': (getValueOrDefault(Number, stat.atk) * hexSize) / 100,
+      '5': (getValueOrDefault(Number, stat.lead) * hexSize) / 100,
     };
     const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
     ctx?.beginPath();
     ctx?.moveTo(start.x, start.y);
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= Object.keys(stats).length; i++) {
       const end = getHexConnerCord(center, Math.min(stats[i.toString()], 100), i);
       ctx?.lineTo(end.x, end.y);
     }
@@ -100,7 +100,7 @@ const Hexagon = (props: IHexagonComponent) => {
 
   const drawHexagon = useCallback(
     (stats: IHexagonStats) => {
-      const hexBorderSize = props.size ?? 0;
+      const hexBorderSize = getValueOrDefault(Number, props.size);
       const hexSize = hexBorderSize / 2;
 
       const ctx = canvasHex.current?.getContext('2d');
@@ -130,14 +130,16 @@ const Hexagon = (props: IHexagonComponent) => {
     ) {
       if (props.animation) {
         animateId.current = requestAnimationFrame(function animate() {
-          setDefaultStats({
-            lead: loop(props.animation, defaultStats.lead, props.stats.lead),
-            charger: loop(props.animation, defaultStats.charger, props.stats.charger),
-            closer: loop(props.animation, defaultStats.closer, props.stats.closer),
-            cons: loop(props.animation, defaultStats.cons, props.stats.cons),
-            atk: loop(props.animation, defaultStats.atk, props.stats.atk),
-            switching: loop(props.animation, defaultStats.switching, props.stats.switching),
-          });
+          setDefaultStats(
+            HexagonStats.create({
+              lead: loop(props.animation, defaultStats.lead, props.stats.lead),
+              charger: loop(props.animation, defaultStats.charger, props.stats.charger),
+              closer: loop(props.animation, defaultStats.closer, props.stats.closer),
+              cons: loop(props.animation, defaultStats.cons, props.stats.cons),
+              atk: loop(props.animation, defaultStats.atk, props.stats.atk),
+              switching: loop(props.animation, defaultStats.switching, props.stats.switching),
+            })
+          );
           animateId.current = requestAnimationFrame(animate);
         });
       }
@@ -192,32 +194,32 @@ const Hexagon = (props: IHexagonComponent) => {
       {initHex && (
         <Fragment>
           <div className="position-absolute text-center leader-text">
-            {(props.stats.lead || 0).toFixed(1)}
+            {getValueOrDefault(Number, props.stats.lead).toFixed(1)}
             <br />
             <b>Leader</b>
           </div>
           <div className="position-absolute text-center attacker-text">
-            {(props.stats.atk || 0).toFixed(1)}
+            {getValueOrDefault(Number, props.stats.atk).toFixed(1)}
             <br />
             <b>Attacker</b>
           </div>
           <div className="position-absolute text-center consistence-text">
-            {(props.stats.cons || 0).toFixed(1)}
+            {getValueOrDefault(Number, props.stats.cons).toFixed(1)}
             <br />
             <b>Consistence</b>
           </div>
           <div className="position-absolute text-center closer-text">
-            {(props.stats.closer || 0).toFixed(1)}
+            {getValueOrDefault(Number, props.stats.closer).toFixed(1)}
             <br />
             <b>Closer</b>
           </div>
           <div className="position-absolute text-center charger-text">
-            {(props.stats.charger || 0).toFixed(1)}
+            {getValueOrDefault(Number, props.stats.charger).toFixed(1)}
             <br />
             <b>Charger</b>
           </div>
           <div className="position-absolute text-center switch-text">
-            {(props.stats.switching || 0).toFixed(1)}
+            {getValueOrDefault(Number, props.stats.switching).toFixed(1)}
             <br />
             <b>Switch</b>
           </div>
@@ -226,8 +228,8 @@ const Hexagon = (props: IHexagonComponent) => {
       <canvas
         onClick={() => onPlayAnimation()}
         ref={canvasHex as React.LegacyRef<HTMLCanvasElement> | undefined}
-        width={props.size ?? 0}
-        height={(props.size ?? 0) + 4}
+        width={getValueOrDefault(Number, props.size)}
+        height={getValueOrDefault(Number, props.size) + 4}
       />
     </div>
   );

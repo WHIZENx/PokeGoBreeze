@@ -1,7 +1,8 @@
 import React from 'react';
-import { combineClasses, splitAndCapitalize } from '../../../util/utils';
+import { splitAndCapitalize } from '../../../util/utils';
 import { genRoman } from '../../../util/constants';
 import { IPokemonTableComponent } from '../../models/component.model';
+import { combineClasses } from '../../../util/extension';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, color = '#f5f5f5') => {

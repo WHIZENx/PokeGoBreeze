@@ -7,14 +7,14 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
-import { capitalize, combineClasses, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW } from '../../../util/constants';
 import { IDamageTableComponent } from '../../models/page.model';
 import { ThrowOption } from '../../../core/models/options.model';
 import { ILabelDamage, LabelDamage } from '../../../core/models/damage.model';
-import { DynamicObj } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 const eff: DynamicObj<ILabelDamage> = {
   0.244140625: LabelDamage.create({
@@ -167,7 +167,11 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize(Object.keys(globalOptions?.throwCharge ?? new ThrowOption()).at(props.result.battleState.cLevel ?? 0))
+                  ? capitalize(
+                      Object.keys(globalOptions?.throwCharge ?? new ThrowOption()).at(
+                        getValueOrDefault(Number, props.result.battleState.cLevel)
+                      )
+                    )
                   : '-'}
               </td>
             </tr>
@@ -198,11 +202,12 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.damage ? (
                   <Fragment>
-                    {props.result.damage < (props.result.move?.pvePower ?? 0) ? (
+                    {props.result.damage < getValueOrDefault(Number, props.result.move?.pvePower) ? (
                       <b className="text-success">
-                        {((((props.result.move?.pvePower ?? 0) - props.result.damage) * 100) / (props.result.move?.pvePower ?? 0)).toFixed(
-                          2
-                        )}
+                        {(
+                          ((getValueOrDefault(Number, props.result.move?.pvePower) - props.result.damage) * 100) /
+                          getValueOrDefault(Number, props.result.move?.pvePower)
+                        ).toFixed(2)}
                         %
                       </b>
                     ) : (
@@ -222,8 +227,8 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.hp ? (
                   <b>
-                    {Math.floor(props.result.hp - (props.result.damage ?? 0))}
-                    {Math.floor(props.result.hp - (props.result.damage ?? 0)) > 0 ? (
+                    {Math.floor(props.result.hp - getValueOrDefault(Number, props.result.damage))}
+                    {Math.floor(props.result.hp - getValueOrDefault(Number, props.result.damage)) > 0 ? (
                       <span className="caption-small text-success"> (Alive)</span>
                     ) : (
                       <span className="caption-small text-danger"> (Dead)</span>

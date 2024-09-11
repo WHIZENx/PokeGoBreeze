@@ -15,10 +15,11 @@ import { StoreState } from '../../store/models/state.model';
 import { capitalize } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
+import { getValueOrDefault, isNullOrEmpty } from '../../util/extension';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
   const [tier, setTier] = useState(1);
   const [pokemonClass, setPokemonClass] = useState<string | null>();
 
@@ -149,8 +150,8 @@ const Raid = (props: IRaidComponent) => {
             alt="img-raid-egg"
             src={raidEgg(
               tier,
-              !pokemonClass && (props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) ?? false),
-              pokemonClass !== null && pokemonClass !== undefined && props.currForm?.form.formName?.toUpperCase() === FORM_PRIMAL,
+              !pokemonClass && getValueOrDefault(Boolean, props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA)),
+              !isNullOrEmpty(pokemonClass) && props.currForm?.form.formName?.toUpperCase() === FORM_PRIMAL,
               pokemonData.find((pokemon) => pokemon.num === props.id)?.pokemonClass === TYPE_ULTRA_BEAST
             )}
           />

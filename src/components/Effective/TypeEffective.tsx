@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import TypeInfo from '../Sprites/Type/Type';
 import { ITypeEffectiveComponent } from '../models/component.model';
-import { isNotEmpty } from '../../util/utils';
+import { getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const TypeEffective = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => {
@@ -30,25 +30,31 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
                   <b>Weakness</b>
                 </span>
               </h6>
-              <TypeInfo text={'2.56x damage from'} arr={props.typeEffective.veryWeak ?? []} style={{ marginLeft: 15 }} />
-              <TypeInfo text={'1.6x damage from'} arr={props.typeEffective.weak ?? []} style={{ marginLeft: 15 }} />
+              <TypeInfo text="2.56x damage from" arr={getValueOrDefault(Array, props.typeEffective.veryWeak)} style={{ marginLeft: 15 }} />
+              <TypeInfo text="1.6x damage from" arr={getValueOrDefault(Array, props.typeEffective.weak)} style={{ marginLeft: 15 }} />
             </Fragment>
           )}
-          <h6 className="element-top">
-            <span className="type-title resistance-title">
-              <b>Resistance</b>
-            </span>
-          </h6>
-          {isNotEmpty(props.typeEffective.superResist) ||
-          isNotEmpty(props.typeEffective.veryResist) ||
-          isNotEmpty(props.typeEffective.resist) ? (
+          {(isNotEmpty(props.typeEffective.superResist) ||
+            isNotEmpty(props.typeEffective.veryResist) ||
+            isNotEmpty(props.typeEffective.resist)) && (
             <Fragment>
-              <TypeInfo text={'0.244x damage from'} arr={props.typeEffective.superResist ?? []} style={{ marginLeft: 15 }} />
-              <TypeInfo text={'0.391x damage from'} arr={props.typeEffective.veryResist ?? []} style={{ marginLeft: 15 }} />
-              <TypeInfo text={'0.625x damage from'} arr={props.typeEffective.resist ?? []} style={{ marginLeft: 15 }} />
+              <h6 className="element-top">
+                <span className="type-title resistance-title">
+                  <b>Resistance</b>
+                </span>
+              </h6>
+              <TypeInfo
+                text="0.244x damage from"
+                arr={getValueOrDefault(Array, props.typeEffective.superResist)}
+                style={{ marginLeft: 15 }}
+              />
+              <TypeInfo
+                text="0.391x damage from"
+                arr={getValueOrDefault(Array, props.typeEffective.veryResist)}
+                style={{ marginLeft: 15 }}
+              />
+              <TypeInfo text="0.625x damage from" arr={getValueOrDefault(Array, props.typeEffective.resist)} style={{ marginLeft: 15 }} />
             </Fragment>
-          ) : (
-            noneSprit()
           )}
           <h6 className="element-top">
             <span className="type-title neutral-title">
@@ -56,7 +62,7 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
             </span>
           </h6>
           {isNotEmpty(props.typeEffective.neutral) ? (
-            <TypeInfo text={'1x damage from'} arr={props.typeEffective.neutral ?? []} style={{ marginLeft: 15 }} />
+            <TypeInfo text="1x damage from" arr={getValueOrDefault(Array, props.typeEffective.neutral)} style={{ marginLeft: 15 }} />
           ) : (
             noneSprit()
           )}

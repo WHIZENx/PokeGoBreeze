@@ -5,7 +5,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
@@ -14,6 +14,7 @@ import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const PokemonModel = (props: IAssetPokemonModelComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -34,7 +35,9 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
       genderlessPercent: detail?.genderRatio.M === 0 && detail?.genderRatio.M === 0 ? 1 : 0,
     };
     return model
-      ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
+      ? [...new Set(model.image.map((item) => item.form))].map(
+          (value) => new PokemonModelComponent(getValueOrDefault(String, value), model.image)
+        )
       : [];
   };
 

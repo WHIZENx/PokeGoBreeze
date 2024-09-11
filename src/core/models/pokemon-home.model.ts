@@ -1,5 +1,6 @@
 import APIService from '../../services/API.service';
 import { FORM_NORMAL } from '../../util/constants';
+import { getValueOrDefault } from '../../util/extension';
 import { convertPokemonImageName, splitAndCapitalize } from '../../util/utils';
 import { IImage } from './asset.model';
 import { IPokemonData } from './pokemon.model';
@@ -8,7 +9,7 @@ import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './
 export interface IPokemonHomeModel {
   id: number;
   name: string;
-  forme: string | null;
+  forme: string | undefined;
   types: string[];
   color: string;
   sprite: string;
@@ -18,7 +19,7 @@ export interface IPokemonHomeModel {
   region: string | null;
   version: number;
   goStats: IStatsPokemonGO;
-  class: string | null;
+  class: string | undefined | null;
   releasedGO: boolean;
   image: IImage;
 }
@@ -26,28 +27,26 @@ export interface IPokemonHomeModel {
 export class PokemonHomeModel implements IPokemonHomeModel {
   id: number;
   name: string;
-  forme: string | null;
+  forme: string | undefined;
   types: string[];
   color: string;
   sprite: string;
   baseSpecies: string | null;
-  baseStats: IStatsPokemon = new StatsPokemon();
+  baseStats = new StatsPokemon();
   gen: number;
   region: string | null;
   version: number;
-  goStats: IStatsPokemonGO = new StatsPokemonGO();
-  class: string | null;
+  goStats = new StatsPokemonGO();
+  class: string | undefined | null;
   releasedGO: boolean;
   image: IImage;
 
-  constructor(item: IPokemonData, assetForm: IImage | null, versionList: string[]) {
-    this.id = item.num ?? 0;
+  constructor(item: IPokemonData, assetForm: IImage | undefined | null, versionList: string[]) {
+    this.id = getValueOrDefault(Number, item.num);
     this.name = item.name;
     this.forme = assetForm?.default
-      ? item.forme !== FORM_NORMAL
-        ? item.forme
-        : null
-      : item.forme?.toLowerCase().replaceAll('_', '-') ?? '';
+      ? getValueOrDefault(String, item.forme, FORM_NORMAL)
+      : getValueOrDefault(String, item.forme?.toLowerCase().replaceAll('_', '-'));
     this.types = item.types;
     this.color = item.color.toLowerCase();
     this.sprite = item.sprite.toLowerCase();
@@ -59,8 +58,8 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.goStats = StatsPokemonGO.create({
       atk: item.baseStats.atk,
       def: item.baseStats.def,
-      sta: item.baseStats.sta ?? 0,
-      prod: item.baseStats.atk * item.baseStats.def * (item.baseStats.sta ?? 0),
+      sta: getValueOrDefault(Number, item.baseStats.sta),
+      prod: item.baseStats.atk * item.baseStats.def * getValueOrDefault(Number, item.baseStats.sta),
     });
     this.class = item.pokemonClass;
     this.releasedGO = item.releasedGO;
@@ -68,7 +67,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
       default: assetForm?.default
         ? APIService.getPokemonModel(assetForm.default)
         : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.forme, '_', '-'))),
-      shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
+      shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : undefined,
     };
   }
 }

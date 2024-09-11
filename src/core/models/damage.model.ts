@@ -10,7 +10,7 @@ export interface ILabelDamage {
 export class LabelDamage implements ILabelDamage {
   label?: number;
   color?: string;
-  style: string = '';
+  style = '';
 
   static create(value: ILabelDamage) {
     const obj = new LabelDamage();
@@ -32,12 +32,12 @@ export interface IBattleState {
 
 // tslint:disable-next-line:max-classes-per-file
 export class BattleState implements IBattleState {
-  stab: boolean = false;
-  wb: boolean = false;
-  dodge?: boolean = false;
-  trainer?: boolean = false;
-  fLevel?: number = 0;
-  cLevel?: number = 0;
+  stab = false;
+  wb = false;
+  dodge?: boolean;
+  trainer?: boolean;
+  fLevel?: number;
+  cLevel?: number;
   effective: number = 0;
 
   static create(value: IBattleState) {
@@ -65,9 +65,9 @@ export class PokemonDmgOption implements IPokemonDmgOption {
   objPoke?: IPokemonFormModify;
   type?: string;
   currPoke?: IPokemonFormModify;
-  currLevel: number = 0;
+  currLevel = 0;
   typeObj?: string;
-  objLevel: number = 0;
+  objLevel = 0;
   move?: ICombat;
   battleState?: IBattleState;
   damage?: number;

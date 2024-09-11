@@ -31,7 +31,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj } from '../../../util/models/util.model';
+import { DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 interface PokemonCatchChance {
   baseCaptureRate?: number;
@@ -51,7 +51,7 @@ interface PokemonCatchChance {
 }
 
 const CatchChance = () => {
-  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const CIRCLE_DISTANCE = 200;
@@ -182,7 +182,9 @@ const CatchChance = () => {
             (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
             (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
           const prob = calculateCatchChance(
-            data.obShadowFormBaseCaptureRate && options.shadow ? data.obShadowFormBaseCaptureRate : data.baseCaptureRate ?? 0,
+            data.obShadowFormBaseCaptureRate && options.shadow
+              ? data.obShadowFormBaseCaptureRate
+              : getValueOrDefault(Number, data.baseCaptureRate),
             level,
             multiplier
           );
@@ -317,7 +319,7 @@ const CatchChance = () => {
         (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
         (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
         (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
-      const prob = calculateCatchChance(data?.baseCaptureRate ?? 0, level, multiplier);
+      const prob = calculateCatchChance(getValueOrDefault(Number, data?.baseCaptureRate), level, multiplier);
       const result = Math.min(prob * 100, 100);
       return result;
     }
@@ -486,11 +488,12 @@ const CatchChance = () => {
                     <h5>
                       {data &&
                         `${
-                          ((data.obShadowFormAttackProbability && shadow ? data.obShadowFormAttackProbability : data.attackProbability) ??
-                            0) * 100
+                          (data.obShadowFormAttackProbability && shadow
+                            ? data.obShadowFormAttackProbability
+                            : getValueOrDefault(Number, data.attackProbability)) * 100
                         }%`}
                     </h5>
-                    <p>{data && `Time: ${((data.attackTimerS ?? 0) / 10).toFixed(2)} sec`}</p>
+                    <p>{data && `Time: ${(getValueOrDefault(Number, data.attackTimerS) / 10).toFixed(2)} sec`}</p>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
@@ -499,11 +502,12 @@ const CatchChance = () => {
                   <h5>
                     {data &&
                       `${
-                        ((data.obShadowFormDodgeProbability && shadow ? data.obShadowFormDodgeProbability : data.dodgeProbability) ?? 0) *
-                        100
+                        data.obShadowFormDodgeProbability && shadow
+                          ? data.obShadowFormDodgeProbability
+                          : getValueOrDefault(Number, data.dodgeProbability) * 100
                       }%`}
                   </h5>
-                  <p>{data && `Time: ${((data.dodgeDurationS ?? 0) / 10).toFixed(2)} sec`}</p>
+                  <p>{data && `Time: ${(getValueOrDefault(Number, data.dodgeDurationS) / 10).toFixed(2)} sec`}</p>
                 </div>
               </div>
             </div>
@@ -599,7 +603,7 @@ const CatchChance = () => {
                 <div className="col-md-6 d-flex flex-column justify-content-center align-items-center" style={{ padding: 0 }}>
                   <h5 className="text-center">{throwTitle.title}</h5>
                   <div className="d-flex justify-content-center position-relative">
-                    <Circle line={2} color={'lightgray'} size={CIRCLE_DISTANCE} />
+                    <Circle line={2} color="lightgray" size={CIRCLE_DISTANCE} />
                     <div className="position-absolute circle-ring">
                       <Circle line={2} color={colorCircle} size={CIRCLE_DISTANCE - ((100 - radius) * CIRCLE_DISTANCE) / 100} />
                     </div>

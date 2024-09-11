@@ -5,7 +5,7 @@ import loadingImg from '../../assets/loading.png';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { combineClasses, isNotEmpty, splitAndCapitalize } from '../../util/utils';
+import { splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
 import {
@@ -28,6 +28,7 @@ import {
   InputLabel,
   ListItemText,
   MenuItem,
+  MenuProps,
   OutlinedInput,
   Select,
   SelectChangeEvent,
@@ -39,8 +40,9 @@ import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-h
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
+import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../util/extension';
 
-const VersionProps = {
+const versionProps: Partial<MenuProps> = {
   PaperProps: {
     style: {
       maxHeight: 220,
@@ -106,12 +108,15 @@ const Home = () => {
   useEffect(() => {
     if (isNotEmpty(data?.assets) && isNotEmpty(data?.pokemon)) {
       setDataList(
-        data?.pokemon
-          .map((item) => {
-            const assetForm = queryAssetForm(data?.assets ?? [], item.num, item.forme);
-            return new PokemonHomeModel(item, assetForm, versionList);
-          })
-          .sort((a, b) => a.id - b.id) ?? []
+        getValueOrDefault(
+          Array,
+          data?.pokemon
+            .map((item) => {
+              const assetForm = queryAssetForm(data.assets, item.num, item.forme);
+              return new PokemonHomeModel(item, assetForm, versionList);
+            })
+            .sort((a, b) => a.id - b.id)
+        )
       );
     }
   }, [data?.assets, data?.pokemon]);
@@ -126,7 +131,7 @@ const Home = () => {
               !isNotEmpty(selectTypes) ||
               (item.types?.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
             const boolFilterPoke =
-              searchTerm === '' ||
+              isEmpty(searchTerm) ||
               (match
                 ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id?.toString() === searchTerm
                 : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -139,7 +144,7 @@ const Home = () => {
             const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
             const boolUltra = ultraBeast ? item.class === TYPE_ULTRA_BEAST : true;
 
-            const findGen = item.gen === 0 ? true : gen.includes((item.gen ?? 0) - 1);
+            const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
             const findVersion = item.version === -1 ? true : version.includes(item?.version);
             return (
               boolFilterType &&
@@ -359,7 +364,7 @@ const Home = () => {
                       onChange={handleChangeVersion}
                       input={<OutlinedInput label="Version(s)" />}
                       renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
-                      MenuProps={VersionProps}
+                      MenuProps={versionProps}
                     >
                       <MenuItem disableRipple={true} disableTouchRipple={true}>
                         <ListItemText
@@ -503,14 +508,16 @@ const Home = () => {
             <CardPokemonInfo
               key={index}
               name={row.name}
-              forme={row.forme ?? ''}
+              forme={getValueOrDefault(String, row.forme)}
               defaultImg={allShiny}
               image={row.image}
               id={row.id}
               types={row.types}
               pokemonStat={row.goStats}
-              stats={stats}
-              icon={icon ?? ''}
+              atkMaxStats={stats?.attack.maxStats}
+              defMaxStats={stats?.defense.maxStats}
+              staMaxStats={stats?.stamina.maxStats}
+              icon={getValueOrDefault(String, icon)}
               releasedGO={row.releasedGO}
             />
           ))}

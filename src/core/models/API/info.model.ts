@@ -1,4 +1,4 @@
-import { DynamicObj } from '../../../util/models/util.model';
+import { DynamicObj } from '../../../util/extension';
 import { IPokemonSprit, PokemonSprit } from './form.model';
 
 export interface SpriteInfo {
@@ -261,16 +261,16 @@ export interface IPokemonDetail {
 export class PokemonDetail implements IPokemonDetail {
   cries!: DynamicObj<string>;
   forms: Path[] = [];
-  height: number = 0;
-  id: number = 0;
-  isDefault: boolean = false;
+  height = 0;
+  id = 0;
+  isDefault = false;
   moves: Move[] = [];
-  name: string = '';
+  name = '';
   species!: Path;
-  sprites: IPokemonSprit = new PokemonSprit();
+  sprites = new PokemonSprit();
   stats: Stats[] = [];
   types: Type[] = [];
-  weight: number = 0;
+  weight = 0;
   isIncludeShadow?: boolean;
 
   static setDetails(info: PokemonInfo) {
