@@ -52,7 +52,7 @@ import {
   STAB_MULTIPLY,
   typeCostPowerUp,
 } from './constants';
-import { capitalize, splitAndCapitalize, checkMoveSetAvailable, isUndefined, isEmpty } from './utils';
+import { capitalize, splitAndCapitalize, checkMoveSetAvailable } from './utils';
 import {
   BattleLeagueCalculate,
   PredictCPCalculate,
@@ -81,8 +81,9 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, IArrayStats } from './models/util.model';
+import { DynamicObj, getValueOrDefault, isEmpty, isUndefined } from './extension';
 import { IBattleState } from '../core/models/damage.model';
+import { IArrayStats } from './models/util.model';
 
 const weatherMultiple = (
   globalOptions: IOptions | undefined,

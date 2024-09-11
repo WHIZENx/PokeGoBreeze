@@ -12,10 +12,10 @@ import STA_LOGO from '../../assets/stamina.png';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
-import { capitalize, isNullOrEmpty } from '../../util/utils';
+import { capitalize } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault, isNullOrEmpty } from '../../util/extension';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();

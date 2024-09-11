@@ -5,12 +5,10 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/constants';
 import {
   capitalize,
-  combineClasses,
   convertPokemonAPIDataName,
   convertStatsEffort,
   formIconAssets,
   getFormFromForms,
-  isNotEmpty,
   splitAndCapitalize,
 } from '../../../util/utils';
 import APIService from '../../../services/API.service';
@@ -31,7 +29,7 @@ import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { TypeSex } from '../../../enums/type.enum';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);

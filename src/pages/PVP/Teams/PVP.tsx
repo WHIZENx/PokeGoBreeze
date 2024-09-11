@@ -3,13 +3,11 @@ import { Link, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
 import {
-  combineClasses,
   convertNameRankingToForm,
   convertNameRankingToOri,
   findMoveTeam,
   getAllMoves,
   getStyleSheet,
-  isNotEmpty,
   splitAndCapitalize,
 } from '../../../util/utils';
 import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
@@ -33,7 +31,7 @@ import { FORM_NORMAL, FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();

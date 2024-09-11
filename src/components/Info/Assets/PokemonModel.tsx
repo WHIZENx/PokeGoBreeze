@@ -5,7 +5,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
-import { capitalize, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
@@ -14,7 +14,7 @@ import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const PokemonModel = (props: IAssetPokemonModelComponent) => {
   const theme = useTheme<ThemeModify>();

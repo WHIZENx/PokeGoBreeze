@@ -1,15 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import {
-  capitalize,
-  isNullOrEmpty,
-  isUndefined,
-  LevelSlider,
-  marks,
-  PokeGoSlider,
-  splitAndCapitalize,
-  TypeRadioGroup,
-} from '../../../util/utils';
+import { capitalize, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -31,7 +22,7 @@ import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from 
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault, isNullOrEmpty, isUndefined } from '../../../util/extension';
 import { EvoPath } from '../../../core/models/API/species.model';
 
 const Calculate = () => {

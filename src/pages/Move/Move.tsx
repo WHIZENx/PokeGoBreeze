@@ -3,15 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import {
-  capitalize,
-  checkPokemonGO,
-  combineClasses,
-  convertColumnDataType,
-  convertPokemonDataName,
-  isNotEmpty,
-  splitAndCapitalize,
-} from '../../util/utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../util/utils';
 import { STAB_MULTIPLY } from '../../util/constants';
 import { getBarCharge, queryTopMove } from '../../util/calculate';
 
@@ -37,7 +29,7 @@ import { IMovePage } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { TableColumnModify } from '../../util/models/overrides/data-table.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();

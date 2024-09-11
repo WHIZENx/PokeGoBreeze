@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios
 import { APIUrl } from './constants';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
-import { isEmpty } from '../util/utils';
+import { isEmpty } from '../util/extension';
 
 class APIService {
   date: Date;

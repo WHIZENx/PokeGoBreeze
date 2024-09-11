@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, isNotEmpty, isUndefined, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -20,7 +20,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { TypeMove } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { DynamicObj, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
 
 interface PokemonMoves {
   fastMoves: (ICombat | undefined)[];

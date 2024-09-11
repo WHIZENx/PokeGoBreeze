@@ -1,6 +1,5 @@
 import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
-import { isNotEmpty } from '../../../util/utils';
+import { DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 

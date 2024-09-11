@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 
-import { combineClasses, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
@@ -14,7 +14,7 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, getValueOrDefault } from '../../../util/extension';
 
 export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {

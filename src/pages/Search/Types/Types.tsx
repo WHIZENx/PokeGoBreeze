@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import {
-  capitalize,
-  combineClasses,
-  convertColumnDataType,
-  getCustomThemeDataTable,
-  isNotEmpty,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
@@ -25,7 +18,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = rowA?.name.toLowerCase();

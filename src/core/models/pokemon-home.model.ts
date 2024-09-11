@@ -1,6 +1,6 @@
 import APIService from '../../services/API.service';
 import { FORM_NORMAL } from '../../util/constants';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault } from '../../util/extension';
 import { convertPokemonImageName, splitAndCapitalize } from '../../util/utils';
 import { IImage } from './asset.model';
 import { IPokemonData } from './pokemon.model';
@@ -9,7 +9,7 @@ import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './
 export interface IPokemonHomeModel {
   id: number;
   name: string;
-  forme: string | null;
+  forme: string | undefined;
   types: string[];
   color: string;
   sprite: string;
@@ -27,7 +27,7 @@ export interface IPokemonHomeModel {
 export class PokemonHomeModel implements IPokemonHomeModel {
   id: number;
   name: string;
-  forme: string | null;
+  forme: string | undefined;
   types: string[];
   color: string;
   sprite: string;
@@ -45,9 +45,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.id = getValueOrDefault(Number, item.num);
     this.name = item.name;
     this.forme = assetForm?.default
-      ? item.forme !== FORM_NORMAL
-        ? item.forme
-        : null
+      ? getValueOrDefault(String, item.forme, FORM_NORMAL)
       : getValueOrDefault(String, item.forme?.toLowerCase().replaceAll('_', '-'));
     this.types = item.types;
     this.color = item.color.toLowerCase();
@@ -69,7 +67,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
       default: assetForm?.default
         ? APIService.getPokemonModel(assetForm.default)
         : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.forme, '_', '-'))),
-      shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : null,
+      shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : undefined,
     };
   }
 }

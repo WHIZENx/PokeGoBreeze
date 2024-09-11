@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, isNotEmpty, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { HundoRate, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
 import DataTable, { ConditionalStyles, TableColumn } from 'react-data-table-component';
@@ -22,7 +22,7 @@ import {
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const columnsIV: TableColumn<IPredictStatsModel>[] = [
   {

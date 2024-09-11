@@ -10,7 +10,7 @@ import DEF_LOGO from '../../assets/defense.png';
 import HP_LOGO from '../../assets/hp.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms, isNotEmpty } from '../../util/utils';
+import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import {
@@ -26,7 +26,7 @@ import {
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));

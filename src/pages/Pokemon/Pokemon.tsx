@@ -23,15 +23,12 @@ import { RouterState, StoreState, SpinnerState } from '../../store/models/state.
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
   checkPokemonIncludeShadowForm,
-  combineClasses,
   convertPokemonAPIDataName,
   convertPokemonImageName,
   generatePokemonGoForms,
   generatePokemonGoShadowForms,
   getPokemonById,
   getPokemonDetails,
-  isEmpty,
-  isNotEmpty,
   splitAndCapitalize,
 } from '../../util/utils';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
@@ -49,7 +46,7 @@ import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../util/extension';
 
 interface ITypeCost {
   purified: PokemonTypeCost;

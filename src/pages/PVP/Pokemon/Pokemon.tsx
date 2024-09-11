@@ -1,7 +1,7 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertNameRankingToOri, isNotEmpty, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertNameRankingToOri, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
@@ -23,7 +23,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();

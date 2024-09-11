@@ -1,12 +1,12 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
-import { combineClasses, retrieveMoves, splitAndCapitalize } from '../../util/utils';
+import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault } from '../../util/extension';
 
 const Move = (props: IMoveComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);

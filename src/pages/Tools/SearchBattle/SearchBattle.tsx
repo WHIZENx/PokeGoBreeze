@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { capitalize, combineClasses, isNotEmpty, isNullOrEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -27,7 +27,7 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../../store/actions';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 
 const FindBattle = () => {

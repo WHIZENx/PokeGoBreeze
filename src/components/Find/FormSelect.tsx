@@ -6,12 +6,10 @@ import Tools from './Tools';
 import loading from '../../assets/loading.png';
 import {
   capitalize,
-  combineClasses,
   convertPokemonImageName,
   formIconAssets,
   generatePokemonGoForms,
   getPokemonById,
-  isNotEmpty,
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../util/utils';
@@ -38,7 +36,7 @@ import { TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
 import { Action } from 'history';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;

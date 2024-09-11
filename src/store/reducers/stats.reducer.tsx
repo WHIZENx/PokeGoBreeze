@@ -1,7 +1,8 @@
 import { IStatsRank } from '../../core/models/stats.model';
 import { sortStatsPokemon } from '../../util/calculate';
 import { FORM_NORMAL } from '../../util/constants';
-import { ArrayStats, BaseStatsPokeGo, getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault } from '../../util/extension';
+import { ArrayStats, BaseStatsPokeGo } from '../../util/models/util.model';
 import { StatsActions } from '../actions';
 import { StatsActionsUnion } from '../actions/stats.action';
 

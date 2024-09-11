@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { IProgressBarComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault } from '../../../util/extension';
 
 interface Element {
   height: number;

@@ -7,14 +7,14 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
-import { capitalize, combineClasses, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW } from '../../../util/constants';
 import { IDamageTableComponent } from '../../models/page.model';
 import { ThrowOption } from '../../../core/models/options.model';
 import { ILabelDamage, LabelDamage } from '../../../core/models/damage.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 const eff: DynamicObj<ILabelDamage> = {
   0.244140625: LabelDamage.create({

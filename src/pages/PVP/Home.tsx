@@ -13,8 +13,8 @@ import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
 import { LocalStorageConfig } from '../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../store/models/local-storage.model';
-import { getTime, isNotEmpty } from '../../util/utils';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getTime } from '../../util/utils';
+import { getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 interface IOptionsHome {
   rank?: PVPInfo;

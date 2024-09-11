@@ -1,4 +1,4 @@
-import { DynamicObj, getValueOrDefault } from '../util/models/util.model';
+import { DynamicObj, getValueOrDefault } from '../util/extension';
 import { CPM, ICPM } from './models/cpm.model';
 
 export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {

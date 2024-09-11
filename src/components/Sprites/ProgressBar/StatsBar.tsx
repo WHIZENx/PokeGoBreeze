@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { FORM_NORMAL } from '../../../util/constants';
 import { IStatsBarComponent } from '../../models/component.model';
-import { combineClasses } from '../../../util/utils';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, getValueOrDefault } from '../../../util/extension';
 
 interface Element {
   isRank?: boolean;

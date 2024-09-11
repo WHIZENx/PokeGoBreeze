@@ -5,8 +5,8 @@ import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
 import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
+import { getValueOrDefault } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
-import { getValueOrDefault } from './util.model';
 
 export interface IBattleCalculate {
   atk?: number;

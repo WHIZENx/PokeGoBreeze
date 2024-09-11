@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useState } from 'react';
 
 import './Select.scss';
-import { combineClasses, isNotEmpty, retrieveMoves, splitAndCapitalize } from '../../util/utils';
+import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
@@ -12,7 +12,7 @@ import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));

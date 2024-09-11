@@ -1,15 +1,7 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import '../PVP.scss';
 
-import {
-  convertNameRankingToOri,
-  splitAndCapitalize,
-  capitalize,
-  getStyleSheet,
-  replaceTempMovePvpName,
-  isNotEmpty,
-  combineClasses,
-} from '../../../util/utils';
+import { convertNameRankingToOri, splitAndCapitalize, capitalize, getStyleSheet, replaceTempMovePvpName } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
@@ -38,7 +30,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();

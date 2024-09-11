@@ -3,7 +3,7 @@ import { replaceTempMovePvpName } from '../../util/utils';
 import { Store, StoreModel } from '../models/store.model';
 import { StoreActions } from '../../store/actions';
 import { StoreActionsUnion } from '../actions/store.action';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault } from '../../util/extension';
 
 const initialize: StoreModel = new Store();
 

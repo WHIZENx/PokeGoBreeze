@@ -2,8 +2,7 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import TypeInfo from '../Sprites/Type/Type';
 import { ITypeEffectiveComponent } from '../models/component.model';
-import { isNotEmpty } from '../../util/utils';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const TypeEffective = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => {
@@ -35,15 +34,15 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               <TypeInfo text="1.6x damage from" arr={getValueOrDefault(Array, props.typeEffective.weak)} style={{ marginLeft: 15 }} />
             </Fragment>
           )}
-          <h6 className="element-top">
-            <span className="type-title resistance-title">
-              <b>Resistance</b>
-            </span>
-          </h6>
-          {isNotEmpty(props.typeEffective.superResist) ||
-          isNotEmpty(props.typeEffective.veryResist) ||
-          isNotEmpty(props.typeEffective.resist) ? (
+          {(isNotEmpty(props.typeEffective.superResist) ||
+            isNotEmpty(props.typeEffective.veryResist) ||
+            isNotEmpty(props.typeEffective.resist)) && (
             <Fragment>
+              <h6 className="element-top">
+                <span className="type-title resistance-title">
+                  <b>Resistance</b>
+                </span>
+              </h6>
               <TypeInfo
                 text="0.244x damage from"
                 arr={getValueOrDefault(Array, props.typeEffective.superResist)}
@@ -56,8 +55,6 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               />
               <TypeInfo text="0.625x damage from" arr={getValueOrDefault(Array, props.typeEffective.resist)} style={{ marginLeft: 15 }} />
             </Fragment>
-          ) : (
-            noneSprit()
           )}
           <h6 className="element-top">
             <span className="type-title neutral-title">

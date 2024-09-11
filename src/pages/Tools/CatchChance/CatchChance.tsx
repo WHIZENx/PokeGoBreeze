@@ -31,7 +31,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 interface PokemonCatchChance {
   baseCaptureRate?: number;

@@ -3,14 +3,14 @@ import APIService from '../../services/API.service';
 import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
-import { combineClasses, getPokemonById, isNotEmpty, mappingPokemonName } from '../../util/utils';
+import { getPokemonById, mappingPokemonName } from '../../util/utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import loading from '../../assets/loading.png';
 import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);

@@ -1,12 +1,12 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { combineClasses, splitAndCapitalize } from '../../../util/utils';
+import { splitAndCapitalize } from '../../../util/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Link } from 'react-router-dom';
 import { ISearchBarMainComponent } from '../../models/page.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, getValueOrDefault } from '../../../util/extension';
 
 const SearchBarMain = (props: ISearchBarMainComponent) => {
   return (

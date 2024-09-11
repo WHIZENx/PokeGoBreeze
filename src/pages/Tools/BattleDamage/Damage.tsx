@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, combineClasses, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
 import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
@@ -26,7 +26,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({

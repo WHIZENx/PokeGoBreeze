@@ -5,7 +5,7 @@ import { predictCPList } from '../../util/calculate';
 import { MIN_IV, MAX_IV } from '../../util/constants';
 import { IPredictCPCalculate } from '../../util/models/calculate.model';
 import { IDynamicInputCPComponent } from '../models/component.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault } from '../../util/extension';
 
 const DynamicInputCP = (props: IDynamicInputCPComponent) => {
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();

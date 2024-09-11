@@ -2,14 +2,14 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
-import { isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { splitAndCapitalize } from '../../../util/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();

@@ -3,7 +3,7 @@ export interface IImage {
   pokemonId?: number;
   form?: string;
   default: string;
-  shiny: string | null;
+  shiny: string | undefined;
 }
 
 export class ImageModel implements IImage {

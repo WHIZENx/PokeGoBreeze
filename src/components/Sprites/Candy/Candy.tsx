@@ -7,7 +7,7 @@ import bgCandy from '../../../assets/bg_Candy.png';
 import candy from '../../../data/pokemon_candy_color_data.json';
 import { ICandy } from '../../../core/models/candy.model';
 import { ICandyComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault } from '../../../util/extension';
 
 const DEFAULT_SIZE = 20;
 

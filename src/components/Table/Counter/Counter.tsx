@@ -2,16 +2,7 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import {
-  capitalize,
-  checkPokemonGO,
-  combineClasses,
-  convertColumnDataType,
-  convertPokemonDataName,
-  isNotEmpty,
-  isUndefined,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -25,7 +16,7 @@ import { ICounterComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
 
 const customStyles: TableStyles = {
   head: {

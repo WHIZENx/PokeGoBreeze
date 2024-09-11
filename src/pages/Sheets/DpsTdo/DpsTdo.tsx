@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  LevelRating,
-  splitAndCapitalize,
-  capitalize,
-  checkPokemonGO,
-  isNotEmpty,
-  convertColumnDataType,
-  combineClasses,
-  isEmpty,
-} from '../../../util/utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/utils';
 import {
   DEFAULT_TYPES,
   FORM_GMAX,
@@ -64,7 +55,7 @@ import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/col
 import { WeatherBoost } from '../../../core/models/weatherBoost.model';
 import { OptionsActions } from '../../../store/actions';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;

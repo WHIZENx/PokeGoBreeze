@@ -9,7 +9,6 @@ import APIService from '../../services/API.service';
 import { calculateCP, calStatsProd } from '../../util/calculate';
 import { computeBgType, findAssetForm } from '../../util/compute';
 import {
-  combineClasses,
   convertNameRankingToForm,
   convertNameRankingToOri,
   getAllMoves,
@@ -43,7 +42,7 @@ import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/mode
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault } from '../../util/extension';
 
 export const Header = (data: IPokemonBattleRanking | undefined) => {
   return (

@@ -7,9 +7,9 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
-import { combineClasses, isNotEmpty, retrieveMoves } from '../../util/utils';
+import { retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const SelectMove = (props: ISelectMoveComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));

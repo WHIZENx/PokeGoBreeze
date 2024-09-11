@@ -1,4 +1,4 @@
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault } from '../../util/extension';
 
 export interface ICPM {
   level: number;

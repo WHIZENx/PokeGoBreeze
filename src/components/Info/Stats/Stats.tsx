@@ -12,7 +12,7 @@ import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault } from '../../../util/extension';
 
 const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);

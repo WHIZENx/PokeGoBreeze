@@ -11,7 +11,7 @@ import update from 'immutability-helper';
 import { TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
 import { IPokemonRaidComponent } from '../models/component.model';
-import { combineClasses } from '../../util/utils';
+import { combineClasses } from '../../util/extension';
 
 const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);

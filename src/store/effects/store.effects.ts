@@ -26,7 +26,7 @@ import { BASE_CPM, MIN_LEVEL, maxLevel } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault } from '../../util/extension';
 
 const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },

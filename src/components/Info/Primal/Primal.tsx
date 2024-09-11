@@ -8,7 +8,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { FORM_PRIMAL } from '../../../util/constants';
 import { IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault } from '../../../util/extension';
 
 const Primal = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, combineClasses, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
 import { ITypeBadgeComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));

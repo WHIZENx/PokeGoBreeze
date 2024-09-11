@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, isNotEmpty, combineClasses, isEmpty } from '../../../util/utils';
+import { getTime, splitAndCapitalize, capitalize } from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -20,7 +20,7 @@ import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague
 import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];

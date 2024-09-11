@@ -15,7 +15,7 @@ import {
 import { ISticker, Sticker } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
-import { checkMoveSetAvailable, convertPokemonDataName, isNotEmpty, replacePokemonGoForm, replaceTempMoveName } from '../util/utils';
+import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm, replaceTempMoveName } from '../util/utils';
 import { ITypeSet, TypeSet } from './models/type.model';
 import { TypeAction, TypeMove } from '../enums/type.enum';
 import {
@@ -52,7 +52,7 @@ import {
 } from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
-import { DynamicObj, getValueOrDefault } from '../util/models/util.model';
+import { DynamicObj, getValueOrDefault, isNotEmpty } from '../util/extension';
 
 export const getOption = <T>(options: any, args: string[]): T => {
   if (!options) {
@@ -419,7 +419,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       pokemon.form = item.forme ? convertPokemonDataName(item.forme) : FORM_NORMAL;
       pokemon.pokedexHeightM = item.heightm;
       pokemon.pokedexWeightKg = item.weightkg;
-      pokemon.pokemonClass = item.pokemonClass ?? undefined;
+      pokemon.pokemonClass = item.pokemonClass;
 
       const types = item.types.map((type) => type.toUpperCase());
       const optional = new PokemonDataOptional({
@@ -616,7 +616,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
           pokemonId: result.id,
           form: result.id !== 201 ? convertAndReplaceNameGO(form, result.name) : form,
           default: formSet[count],
-          shiny: shiny ? formSet[count + 1] : null,
+          shiny: shiny ? formSet[count + 1] : undefined,
         })
       );
       count += shiny ? 2 : 1;

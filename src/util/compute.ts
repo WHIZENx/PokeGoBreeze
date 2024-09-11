@@ -2,8 +2,8 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
-import { getValueOrDefault } from './models/util.model';
-import { getStyleRuleValue, isNotEmpty } from './utils';
+import { getValueOrDefault, isNotEmpty } from './extension';
+import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
   if (priority === 0) {

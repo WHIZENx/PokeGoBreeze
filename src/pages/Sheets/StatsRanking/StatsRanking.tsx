@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import {
-  splitAndCapitalize,
-  capitalize,
-  convertPokemonImageName,
-  getPokemonDetails,
-  isNotEmpty,
-  convertColumnDataType,
-  isEmpty,
-} from '../../../util/utils';
+import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/calculate';
@@ -33,7 +25,7 @@ import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {

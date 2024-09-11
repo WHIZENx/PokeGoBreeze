@@ -1,4 +1,4 @@
-import { DynamicObj } from '../../util/models/util.model';
+import { DynamicObj } from '../../util/extension';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
 import { IStatsBase, StatsBase } from './stats.model';

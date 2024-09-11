@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 interface IPointer {
   x: number;

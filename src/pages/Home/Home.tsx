@@ -5,7 +5,7 @@ import loadingImg from '../../assets/loading.png';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { combineClasses, isEmpty, isNotEmpty, splitAndCapitalize } from '../../util/utils';
+import { splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
 import {
@@ -40,7 +40,7 @@ import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-h
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../util/extension';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {

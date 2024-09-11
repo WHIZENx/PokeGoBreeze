@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, combineClasses, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { findStabType } from '../../../util/compute';
 import { MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
@@ -22,7 +22,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleState } from '../../../core/models/damage.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 class ColorTone {
   number: number;
@@ -279,7 +279,7 @@ const CalculatePoint = () => {
     return (
       <div className="d-flex">
         <div className="border-type-stat text-center">
-          <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === TypeAction.DEF ? `Tier ${tier}` : null}>
+          <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === TypeAction.DEF ? `Tier ${tier}` : undefined}>
             <span className="position-relative" style={{ width: 96 }}>
               <img className="position-absolute" alt="img-logo" height={36} src={pri === TypeAction.ATK ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
               <img
@@ -299,7 +299,7 @@ const CalculatePoint = () => {
           </span>
         </div>
         <div className="border-type-stat text-center">
-          <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === TypeAction.DEF ? `Tier ${tier}` : null}>
+          <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === TypeAction.DEF ? `Tier ${tier}` : undefined}>
             <span className="position-relative" style={{ width: 96 }}>
               <img className="position-absolute" alt="img-logo" height={36} src={sec === TypeAction.ATK ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
               <img

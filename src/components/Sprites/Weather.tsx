@@ -1,9 +1,10 @@
 import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
-import { isNotEmpty, splitAndCapitalize } from '../../util/utils';
+import { splitAndCapitalize } from '../../util/utils';
 import { IWeatherComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
+import { isNotEmpty } from '../../util/extension';
 
 const Weather = (props: IWeatherComponent) => {
   const theme = useTheme<ThemeModify>();

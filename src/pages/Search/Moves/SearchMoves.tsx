@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import {
-  capitalize,
-  combineClasses,
-  convertColumnDataType,
-  getCustomThemeDataTable,
-  isNotEmpty,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -20,7 +13,7 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();

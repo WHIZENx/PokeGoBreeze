@@ -1,10 +1,10 @@
-import { capitalize, isUndefined, replaceTempMoveName } from '../../util/utils';
+import { capitalize, replaceTempMoveName } from '../../util/utils';
 import { ICombat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault, isUndefined } from '../../util/extension';
 
 export interface OptionsPokemon {
   prev?: IPokemonName | undefined;
@@ -161,7 +161,7 @@ export interface PokemonModel {
   eliteCinematicMove?: string[];
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
-  pokemonClass: string | undefined;
+  pokemonClass: string | null | undefined;
   formChange?: IPokemonFormChange[];
   tempEvoOverrides: TempEvoOverrides[];
   pokemonId: string;

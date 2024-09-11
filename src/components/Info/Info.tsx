@@ -8,8 +8,7 @@ import { StoreState } from '../../store/models/state.model';
 import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { isNotEmpty } from '../../util/utils';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const Info = (props: IInfoComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);

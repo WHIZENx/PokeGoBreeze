@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { IHpBarComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault } from '../../../util/extension';
 
 interface Element {
   hp?: number;

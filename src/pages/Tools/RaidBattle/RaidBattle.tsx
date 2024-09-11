@@ -4,7 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, combineClasses, isNotEmpty, isNull, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, checkPokemonGO, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import {
   FORM_GMAX,
@@ -58,7 +58,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
 
 interface TrainerBattle {
   pokemons: PokemonRaidModel[];
@@ -358,7 +358,7 @@ const RaidBattle = () => {
     purified: boolean,
     fElite: boolean,
     cElite: boolean,
-    specialMove: string[] | null,
+    specialMove: string[] | undefined,
     pokemonTarget: boolean
   ) => {
     movePoke.forEach((vc) => {
@@ -418,8 +418,8 @@ const RaidBattle = () => {
           defendHpRemain: Math.floor(getValueOrDefault(Number, statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
           death: Math.floor(getValueOrDefault(Number, statsDefender.hp) / tdoAtk),
           shadow,
-          purified: purified && !isNull(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker?.cMove?.name)),
-          mShadow: shadow && !isNull(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker?.cMove?.name)),
+          purified: purified && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker?.cMove?.name)),
+          mShadow: shadow && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker?.cMove?.name)),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -447,7 +447,7 @@ const RaidBattle = () => {
         false,
         fElite,
         false,
-        null,
+        undefined,
         pokemonTarget
       );
       if (!pokemon.forme || isShadow) {
@@ -516,7 +516,7 @@ const RaidBattle = () => {
           false,
           fElite,
           true,
-          null,
+          undefined,
           pokemonTarget
         );
       }

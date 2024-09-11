@@ -1,4 +1,4 @@
-import { DynamicObj } from '../../util/models/util.model';
+import { DynamicObj } from '../../util/extension';
 import { IPokemonPermission } from './options.model';
 
 interface ILeaguePVP {

@@ -3,12 +3,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
 import APIService from '../../services/API.service';
-import { capitalize, combineClasses, splitAndCapitalize } from '../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
 import { ICardSmallComponent } from '../models/component.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault } from '../../util/extension';
 
 const CardMoveSmall = (props: ICardSmallComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));

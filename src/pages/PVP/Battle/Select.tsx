@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { capitalize, combineClasses, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
@@ -15,7 +15,7 @@ import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
 import { PokemonData } from '../../../core/models/pokemon.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, getValueOrDefault } from '../../../util/extension';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));

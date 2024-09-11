@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
-import { capitalize, convertNameRankingToOri, getAllMoves, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertNameRankingToOri, getAllMoves, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm, findStabType } from '../../../util/compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
 import {
@@ -64,7 +64,7 @@ import { StatsBase } from '../../../core/models/stats.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault } from '../../../util/models/util.model';
+import { DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -801,7 +801,7 @@ const Battle = () => {
       pokemonObj: new PokemonBattleData(),
     });
     if (removeCMoveSec) {
-      setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, cMoveSec: null, timeline: [] }));
+      setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, cMoveSec: undefined, timeline: [] }));
     } else {
       setPokemonCurr(new PokemonBattle());
     }
@@ -814,7 +814,7 @@ const Battle = () => {
       pokemonObj: new PokemonBattleData(),
     });
     if (removeCMoveSec) {
-      setPokemonObj(PokemonBattle.create({ ...pokemonObj, cMoveSec: null, timeline: [] }));
+      setPokemonObj(PokemonBattle.create({ ...pokemonObj, cMoveSec: undefined, timeline: [] }));
     } else {
       setPokemonObj(new PokemonBattle());
     }

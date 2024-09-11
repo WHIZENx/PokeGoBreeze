@@ -6,7 +6,7 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
-import { combineClasses, getPokemonById, isNotEmpty, mappingPokemonName } from '../../../util/utils';
+import { getPokemonById, mappingPokemonName } from '../../../util/utils';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
@@ -15,7 +15,7 @@ import { IPokemonSearching } from '../../../core/models/pokemon-searching.model'
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../util/compute';
-import { combineClasses, splitAndCapitalize } from '../../util/utils';
+import { splitAndCapitalize } from '../../util/utils';
 import ProgressBar from '../Sprites/ProgressBar/ProgressBar';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
@@ -8,7 +8,7 @@ import './CardPokemonInfo.scss';
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
 import { ICardPokemonInfoComponent } from '../models/component.model';
-import { getValueOrDefault } from '../../util/models/util.model';
+import { combineClasses, getValueOrDefault } from '../../util/extension';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);

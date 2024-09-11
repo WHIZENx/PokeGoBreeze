@@ -1,5 +1,5 @@
 import { APIPath, APITree } from '../services/models/api.model';
-import { getValueOrDefault } from '../util/models/util.model';
+import { getValueOrDefault } from '../util/extension';
 import { splitAndCapitalize } from '../util/utils';
 import { ILeague, LeaguePVP } from './models/league.model';
 

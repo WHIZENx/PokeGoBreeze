@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import APIService from '../../../services/API.service';
 import { ICircleBarComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault } from '../../../util/extension';
 
 interface Element {
   energy?: number;

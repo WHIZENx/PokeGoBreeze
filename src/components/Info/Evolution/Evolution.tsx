@@ -20,15 +20,7 @@ import APIService from '../../../services/API.service';
 import './Evolution.scss';
 import { useTheme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {
-  capitalize,
-  convertFormGif,
-  convertModelSpritName,
-  convertPokemonAPIDataName,
-  isEmpty,
-  isNotEmpty,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, convertFormGif, convertModelSpritName, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
@@ -52,7 +44,7 @@ import { IEvolutionComponent } from '../../models/component.model';
 import { TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../../util/models/util.model';
+import { getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
 
 interface IPokemonEvo {
   prev?: string;
@@ -189,7 +181,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainJSON = (id: number, forme: IForm) => {
-    let form = isEmpty(forme.formName) || forme.formName?.toUpperCase().includes(FORM_MEGA) ? null : forme.formName;
+    let form = isEmpty(forme.formName) || forme.formName?.toUpperCase().includes(FORM_MEGA) ? FORM_NORMAL : forme.formName;
     if (forme.formName === '10') {
       form += '%';
     }
