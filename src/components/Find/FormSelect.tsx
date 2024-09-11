@@ -35,7 +35,6 @@ import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
-import { Action } from 'history';
 import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 interface OptionsPokemon {
@@ -172,12 +171,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [props.id, props.data, data?.id, queryPokemon]);
 
   useEffect(() => {
-    if (
-      currentForm &&
-      getValueOrDefault(Number, data?.id) > 0 &&
-      getValueOrDefault(Number, props.id) > 0 &&
-      props.router.action === Action.Push
-    ) {
+    if (currentForm && getValueOrDefault(Number, data?.id) > 0 && getValueOrDefault(Number, props.id) > 0) {
       let obj = props.searching ?? new ToolSearching();
       const result = new SearchingModel({
         id: getValueOrDefault(Number, props.id),
