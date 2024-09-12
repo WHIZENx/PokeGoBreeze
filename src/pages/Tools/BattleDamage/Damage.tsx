@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, combineClasses, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
 import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
@@ -26,7 +26,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { DynamicObj } from '../../../util/models/util.model';
+import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -148,14 +148,14 @@ const Damage = () => {
       e.preventDefault();
       if (move) {
         const eff = BattleState.create({
-          stab: findStabType(form?.form.types ?? [], move.type ?? ''),
+          stab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)),
           wb: battleState.weather,
           dodge: battleState.dodge,
-          mega: form?.form.formName?.toUpperCase().includes(FORM_MEGA) ?? false,
+          mega: getValueOrDefault(Boolean, form?.form.formName?.toUpperCase().includes(FORM_MEGA)),
           trainer: battleState.trainer,
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,
-          effective: getTypeEffective(typeEff, move.type ?? '', formObj?.form.types ?? []),
+          effective: getTypeEffective(typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, formObj?.form.types)),
         });
         setResult((r) => ({
           ...r,
@@ -284,13 +284,13 @@ const Damage = () => {
                       - Move Type:{' '}
                       <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                     </p>
-                    {findStabType(form?.form.types ?? [], move.type ?? '')}
+                    {findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type))}
                     <p>
                       - Damage:{' '}
                       <b>
                         {move.pvePower}
-                        {findStabType(form?.form.types ?? [], move.type ?? '') && (
-                          <span className={'caption-small text-success'}> (x1.2)</span>
+                        {findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)) && (
+                          <span className="caption-small text-success"> (x1.2)</span>
                         )}
                       </b>
                     </p>
@@ -325,7 +325,7 @@ const Damage = () => {
                       onChange={(_, value) => {
                         setBattleState({
                           ...battleState,
-                          fLevel: value ?? 0,
+                          fLevel: getValueOrDefault(Number, value),
                         });
                       }}
                       defaultValue={0}

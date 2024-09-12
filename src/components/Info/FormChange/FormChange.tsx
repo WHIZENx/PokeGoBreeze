@@ -2,24 +2,27 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
-import { isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { splitAndCapitalize } from '../../../util/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();
-  const assets = useSelector((state: StoreState) => state.store.data?.assets ?? []);
+  const assets = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.assets));
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
 
   const getImageList = (id: number) => {
     const model = assets.find((item) => item.id === id);
     return model
-      ? [...new Set(model.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value ?? '', model.image))
+      ? [...new Set(model.image.map((item) => item.form))].map(
+          (value) => new PokemonModelComponent(getValueOrDefault(String, value), model.image)
+        )
       : [];
   };
 
@@ -43,7 +46,7 @@ const FromChange = (props: IFromChangeComponent) => {
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
                   src={APIService.getPokemonModel(
-                    pokeAssets?.find((pokemon) => pokemon.form === props.details?.forme)?.image?.at(0)?.default ?? ''
+                    getValueOrDefault(String, pokeAssets?.find((pokemon) => pokemon.form === props.details?.forme)?.image?.at(0)?.default)
                   )}
                 />
               </div>
@@ -62,12 +65,15 @@ const FromChange = (props: IFromChangeComponent) => {
                         className="pokemon-sprite-large"
                         alt="pokemon-model"
                         src={APIService.getPokemonModel(
-                          pokeAssets
-                            ?.find(
-                              (pokemon) =>
-                                pokemon.form === name.replace('_COMPLETE_', '_').replace(`${props.defaultName?.toUpperCase()}_`, '')
-                            )
-                            ?.image.at(0)?.default ?? ''
+                          getValueOrDefault(
+                            String,
+                            pokeAssets
+                              ?.find(
+                                (pokemon) =>
+                                  pokemon.form === name.replace('_COMPLETE_', '_').replace(`${props.defaultName?.toUpperCase()}_`, '')
+                              )
+                              ?.image.at(0)?.default
+                          )
                         )}
                       />
                     </div>

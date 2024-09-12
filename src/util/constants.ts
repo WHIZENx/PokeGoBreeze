@@ -4,7 +4,7 @@ import { getOption } from '../core/options';
 import { TypeAction } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
-import { DynamicObj } from './models/util.model';
+import { DynamicObj } from './extension';
 
 // KeyCode
 export const KEY_ENTER = 13;

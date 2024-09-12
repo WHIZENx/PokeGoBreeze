@@ -9,7 +9,7 @@ import { ICombat } from '../../core/models/combat.model';
 import { IAsset } from '../../core/models/asset.model';
 import { LeagueData } from '../../core/models/league.model';
 import { PokemonPVPMove } from '../../core/models/pvp.model';
-import { DynamicObj } from '../../util/models/util.model';
+import { DynamicObj } from '../../util/extension';
 
 export enum StoreActionTypes {
   getStore = 'GET_STORE',

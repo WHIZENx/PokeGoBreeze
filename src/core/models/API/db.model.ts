@@ -18,10 +18,10 @@ interface IField {
 }
 
 export class Database<T> implements IDatabase<T> {
-  command: string = '';
+  command = '';
   fields: IField[];
   rowAsArray?: boolean;
-  rowCount: number = 0;
+  rowCount = 0;
   rows: T[];
   viaNeonFetch?: boolean;
 

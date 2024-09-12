@@ -10,7 +10,7 @@ import DEF_LOGO from '../../assets/defense.png';
 import HP_LOGO from '../../assets/hp.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms, isNotEmpty } from '../../util/utils';
+import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import {
@@ -26,9 +26,10 @@ import {
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
+import { getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 const Tools = (props: IToolsComponent) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
   const [currDataPoke, setCurrDataPoke] = useState<IStatsPokemon>();
   const [currTier, setCurrTier] = useState(props.tier);
 
@@ -67,11 +68,11 @@ const Tools = (props: IToolsComponent) => {
     setStatsPokemon({
       atk:
         props.isRaid && props.tier && !props.hide
-          ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(formATK?.attack ?? 0, props.tier) })
+          ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(getValueOrDefault(Number, formATK?.attack), props.tier) })
           : formATK,
       def:
         props.isRaid && props.tier && !props.hide
-          ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(formDEF?.defense ?? 0, props.tier) })
+          ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(getValueOrDefault(Number, formDEF?.defense), props.tier) })
           : formDEF,
       sta: props.isRaid && props.tier && !props.hide ? StatsSta.create({ ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta }) : formSTA,
       prod: props.isRaid && props.tier && !props.hide ? undefined : formProd,
@@ -161,14 +162,14 @@ const Tools = (props: IToolsComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
-                <td className="text-center">{statsPokemon?.atk?.attack ?? 0}</td>
+                <td className="text-center">{getValueOrDefault(Number, statsPokemon?.atk?.attack)}</td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
-                <td className="text-center">{statsPokemon?.def?.defense ?? 0}</td>
+                <td className="text-center">{getValueOrDefault(Number, statsPokemon?.def?.defense)}</td>
               </tr>
               <tr>
                 <td>

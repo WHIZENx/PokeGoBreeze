@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { IProgressBarComponent } from '../../models/component.model';
+import { getValueOrDefault } from '../../../util/extension';
 
 interface Element {
   height: number;
@@ -25,7 +26,11 @@ const Fill = styled.div<Element>`
 const ProgressBar = (props: IProgressBarComponent) => {
   return (
     <Bar style={props.style} height={props.height} bgColor={props.bgColor}>
-      <Fill style={{ width: `${(Math.max(1, props.value ?? 0) * 100) / props.maxValue}%` }} height={props.height} bgColor={props.color} />
+      <Fill
+        style={{ width: `${(Math.max(1, getValueOrDefault(Number, props.value)) * 100) / props.maxValue}%` }}
+        height={props.height}
+        bgColor={props.color}
+      />
     </Bar>
   );
 };

@@ -88,7 +88,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             row={true}
             aria-labelledby="row-types-group-label"
             name="row-types-group"
-            defaultValue={''}
+            defaultValue=""
             onChange={(e) => onHandleType(e.target.value)}
           >
             <FormControlLabel value="" control={<Radio />} label={<span>None</span>} />

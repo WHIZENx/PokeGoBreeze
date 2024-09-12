@@ -23,14 +23,12 @@ import { RouterState, StoreState, SpinnerState } from '../../store/models/state.
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
   checkPokemonIncludeShadowForm,
-  combineClasses,
   convertPokemonAPIDataName,
   convertPokemonImageName,
   generatePokemonGoForms,
   generatePokemonGoShadowForms,
   getPokemonById,
   getPokemonDetails,
-  isNotEmpty,
   splitAndCapitalize,
 } from '../../util/utils';
 import PokemonModel from '../../components/Info/Assets/PokemonModel';
@@ -48,6 +46,7 @@ import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
+import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../util/extension';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -55,8 +54,8 @@ interface ITypeCost {
 }
 
 class TypeCost implements ITypeCost {
-  purified: PokemonTypeCost = new PokemonTypeCost();
-  thirdMove: PokemonTypeCost = new PokemonTypeCost();
+  purified = new PokemonTypeCost();
+  thirdMove = new PokemonTypeCost();
 
   constructor({ ...props }: ITypeCost) {
     Object.assign(this, props);
@@ -68,7 +67,7 @@ const Pokemon = (props: IPokemonPage) => {
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
 
   const params = useParams();
   const navigate = useNavigate();
@@ -136,12 +135,12 @@ const Pokemon = (props: IPokemonPage) => {
       setCostModifier(
         new TypeCost({
           purified: PokemonTypeCost.create({
-            candy: pokemon?.purified?.candy ?? 0,
-            stardust: pokemon?.purified?.stardust ?? 0,
+            candy: getValueOrDefault(Number, pokemon?.purified?.candy),
+            stardust: getValueOrDefault(Number, pokemon?.purified?.stardust),
           }),
           thirdMove: PokemonTypeCost.create({
-            candy: pokemon?.thirdMove?.candy ?? 0,
-            stardust: pokemon?.thirdMove?.stardust ?? 0,
+            candy: getValueOrDefault(Number, pokemon?.thirdMove?.candy),
+            stardust: getValueOrDefault(Number, pokemon?.thirdMove?.stardust),
           }),
         })
       );
@@ -153,16 +152,16 @@ const Pokemon = (props: IPokemonPage) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name ?? '',
+                getValueOrDefault(String, data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name),
                 new Form({
                   ...item,
                   formName: item.formName.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.formName,
                 })
               )
             )
-            .sort((a, b) => (a.form.id ?? 0) - (b.form.id ?? 0))
+            .sort((a, b) => getValueOrDefault(Number, a.form.id) - getValueOrDefault(Number, b.form.id))
         )
-        .sort((a, b) => (a[0]?.form.id ?? 0) - (b[0]?.form.id ?? 0));
+        .sort((a, b) => getValueOrDefault(Number, a[0]?.form.id) - getValueOrDefault(Number, b[0]?.form.id));
 
       const indexPokemonGO = generatePokemonGoForms(pokemonData, dataFormList, formListResult, data.id, data.name);
 
@@ -205,7 +204,11 @@ const Pokemon = (props: IPokemonPage) => {
       if (!defaultData) {
         defaultData = dataPokeList.find((value) => value.name === currentForm?.name);
       }
-      setWH((prevWH) => ({ ...prevWH, weight: defaultData?.weight ?? 0, height: defaultData?.height ?? 0 }));
+      setWH((prevWH) => ({
+        ...prevWH,
+        weight: getValueOrDefault(Number, defaultData?.weight),
+        height: getValueOrDefault(Number, defaultData?.height),
+      }));
       setCurrentData(defaultData);
       setCurrentForm(currentForm ?? defaultForm.at(0));
       setData(data);
@@ -263,12 +266,12 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = params.id?.toLowerCase() ?? props.id;
-    if (id && (data?.id ?? 0) !== parseInt(id) && isNotEmpty(pokemonData)) {
+    if (id && getValueOrDefault(Number, data?.id) !== parseInt(id) && isNotEmpty(pokemonData)) {
       clearData(true);
       queryPokemon(id);
     }
     return () => {
-      if ((data?.id ?? 0) > 0) {
+      if (getValueOrDefault(Number, data?.id) > 0) {
         APIService.cancel(axiosSource.current);
       }
     };
@@ -332,39 +335,39 @@ const Pokemon = (props: IPokemonPage) => {
 
     const details = getPokemonDetails(pokemonData, id, form, defaultForm.form.isDefault);
     setPokemonDetails(details);
-    return details?.releasedGO ?? false;
+    return getValueOrDefault(Boolean, details?.releasedGO);
   };
 
   useEffect(() => {
-    if (currentForm && (data?.id ?? 0) > 0) {
-      const released = checkReleased(data?.id ?? 0, formName ?? '', currentForm);
+    if (currentForm && getValueOrDefault(Number, data?.id) > 0) {
+      const released = checkReleased(getValueOrDefault(Number, data?.id), getValueOrDefault(String, formName), currentForm);
       setReleased(released);
 
       const formParams = searchParams.get('form');
-      setVersion(currentForm?.form.versionGroup.name);
+      setVersion(currentForm.form.version);
       const gen = data?.generation.url?.split('/').at(6);
-      setGeneration(gen ?? '');
+      setGeneration(getValueOrDefault(String, gen));
       if (!params.id) {
-        setRegion(regionList[parseInt(gen ?? '')]);
+        setRegion(regionList[parseInt(getValueOrDefault(String, gen))]);
       } else {
-        const currentRegion = Object.values(regionList).find((item) => currentForm?.form.formName.includes(item.toLowerCase()));
-        if (currentForm?.form.formName !== '' && currentRegion) {
+        const currentRegion = Object.values(regionList).find((item) => currentForm.form.formName.includes(item.toLowerCase()));
+        if (!isEmpty(currentForm.form.formName) && currentRegion) {
           setRegion(!region || region !== currentRegion ? currentRegion : region);
         } else {
-          setRegion(regionList[parseInt(gen ?? '0')]);
+          setRegion(regionList[parseInt(getValueOrDefault(String, gen))]);
         }
       }
       const nameInfo =
         router.action === Action.Pop && props.searching
           ? props.searching.fullName
-          : currentForm?.form?.isDefault
-          ? currentForm?.form?.name
-          : formParams || (currentForm?.form.id ?? 0) < 0
-          ? currentForm?.form.name
+          : currentForm.form.isDefault
+          ? currentForm.form.name
+          : formParams || getValueOrDefault(Number, currentForm.form.id) < 0
+          ? currentForm.form.name
           : data?.name;
       setFormName(nameInfo?.replace(/-f$/, '-female').replace(/-m$/, '-male'));
       const originForm = splitAndCapitalize(
-        router.action === Action.Pop && props.searching ? props.searching.form : currentForm?.form.formName,
+        router.action === Action.Pop && props.searching ? props.searching.form : currentForm.form.formName,
         '-',
         '-'
       );
@@ -427,7 +430,7 @@ const Pokemon = (props: IPokemonPage) => {
                   style={{ verticalAlign: 'baseline' }}
                   alt="img-full-pokemon"
                   src={APIService.getPokeFullSprite(
-                    dataStorePokemon?.current?.id ?? 0,
+                    getValueOrDefault(Number, dataStorePokemon?.current?.id),
                     convertPokemonImageName(
                       currentForm && originForm && currentForm.defaultId === currentForm.form.id
                         ? ''
@@ -437,7 +440,7 @@ const Pokemon = (props: IPokemonPage) => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                      e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id ?? 0);
+                      e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
                     } else {
                       e.currentTarget.src = APIService.getPokeFullSprite(0);
                     }
@@ -451,8 +454,8 @@ const Pokemon = (props: IPokemonPage) => {
                   formName={formName}
                   region={region}
                   version={version}
-                  weight={WH.weight ?? 0}
-                  height={WH.height ?? 0}
+                  weight={WH.weight}
+                  height={WH.height}
                   isLoadedForms={isLoadedForms}
                 />
               </div>
@@ -551,14 +554,14 @@ const Pokemon = (props: IPokemonPage) => {
               ratio={pokeRatio}
               setId={props.setId}
               pokemonDetail={pokemonDetails}
-              defaultId={dataStorePokemon?.current?.id ?? 0}
+              defaultId={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
               region={region}
               setProgress={setProgress}
               isLoadedForms={isLoadedForms}
             />
             <PokemonModel
-              id={dataStorePokemon?.current?.id ?? 0}
-              name={dataStorePokemon?.current?.name ?? ''}
+              id={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
+              name={getValueOrDefault(String, dataStorePokemon?.current?.name)}
               originSoundCry={originSoundCry}
               isLoadedForms={isLoadedForms}
             />

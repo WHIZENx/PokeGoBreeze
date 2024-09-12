@@ -5,6 +5,7 @@ import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
 import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
+import { getValueOrDefault } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
 export interface IBattleCalculate {
@@ -428,12 +429,12 @@ export class BattleLeagueCalculate implements IBattleLeagueCalculate {
     this.elidge = elidge;
     this.maxCP = maxCP;
     this.IV = new StatsPokemonGO();
-    this.IV.atk = atk ?? 0;
-    this.IV.atk = def ?? 0;
-    this.IV.atk = sta ?? 0;
-    this.CP = CP ?? 0;
-    this.level = level ?? 0;
-    this.limit = limit ?? false;
+    this.IV.atk = getValueOrDefault(Number, atk);
+    this.IV.atk = getValueOrDefault(Number, def);
+    this.IV.atk = getValueOrDefault(Number, sta);
+    this.CP = getValueOrDefault(Number, CP);
+    this.level = getValueOrDefault(Number, level);
+    this.limit = getValueOrDefault(Boolean, limit);
   }
 }
 

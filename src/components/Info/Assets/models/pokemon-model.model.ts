@@ -8,8 +8,8 @@ export interface IPokemonModelComponent {
 
 export class PokemonModelComponent implements IPokemonModelComponent {
   name = '';
-  form: string;
-  image: IImage[];
+  form = '';
+  image: IImage[] = [];
 
   constructor(value: string, images: IImage[]) {
     this.form = value;

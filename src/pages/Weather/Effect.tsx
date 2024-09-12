@@ -5,6 +5,7 @@ import { capitalize } from '../../util/utils';
 import { IWeatherEffComponent } from '../models/page.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { isEmpty } from '../../util/extension';
 
 const Effect = (prop: IWeatherEffComponent) => {
   const [types, setTypes] = useState<string[]>([]);
@@ -23,7 +24,7 @@ const Effect = (prop: IWeatherEffComponent) => {
       if (value.includes(currentTypePri) && !data.includes(key)) {
         data.push(key);
       }
-      if (currentTypeSec !== '' && value.includes(currentTypeSec) && !data.includes(key)) {
+      if (!isEmpty(currentTypeSec) && value.includes(currentTypeSec) && !data.includes(key)) {
         data.push(key);
       }
     });
@@ -100,7 +101,7 @@ const Effect = (prop: IWeatherEffComponent) => {
               onClick={() => setShowTypeSec(true)}
               onBlur={() => setShowTypeSec(false)}
             >
-              {currentTypeSec === '' ? (
+              {isEmpty(currentTypeSec) ? (
                 <div className="type-none">
                   <b>None</b>
                 </div>

@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import {
-  capitalize,
-  combineClasses,
-  convertColumnDataType,
-  getCustomThemeDataTable,
-  isNotEmpty,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
@@ -25,11 +18,12 @@ import { ICombat } from '../../../core/models/combat.model';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = rowA?.name.toLowerCase();
   const b = rowB?.name.toLowerCase();
-  return a === b ? 0 : (a ?? 0) > (b ?? 0) ? 1 : -1;
+  return a === b ? 0 : getValueOrDefault(Number, a) > getValueOrDefault(Number, b) ? 1 : -1;
 };
 
 const columnPokemon: TableColumnModify<IPokemonData>[] = [
@@ -50,10 +44,10 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row?.sprite ?? '', true)}
+          src={APIService.getPokeIconSprite(getValueOrDefault(String, row?.sprite), true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(row?.baseSpecies ?? '');
+            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row?.baseSpecies));
           }}
         />
         {splitAndCapitalize(row?.name, '-', ' ')}
@@ -93,7 +87,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
   },
   {
     name: 'STA',
-    selector: (row) => calculateStatsByTag(row, row?.baseStats, row?.slug).sta ?? 0,
+    selector: (row) => getValueOrDefault(Number, calculateStatsByTag(row, row?.baseStats, row?.slug).sta),
     sortable: true,
     width: '100px',
   },
@@ -191,7 +185,7 @@ const SearchTypes = () => {
   const [currentType, setCurrentType] = useState('');
   const [result, setResult] = useState(new PokemonType());
   const allData = PokemonTypeData.create({
-    pokemon: (data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length ?? 1) - 1,
+    pokemon: getValueOrDefault(Number, data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length, 1) - 1,
     fastMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST)?.length,
     chargedMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE)?.length,
   });
@@ -210,7 +204,7 @@ const SearchTypes = () => {
 
   useEffect(() => {
     if (isNotEmpty(typeList) && !currentType) {
-      setCurrentType(typeList.at(0) ?? '');
+      setCurrentType(getValueOrDefault(String, typeList.at(0)));
     }
   }, [typeList, currentType]);
 
@@ -218,12 +212,20 @@ const SearchTypes = () => {
     if (isNotEmpty(data?.pokemon) && isNotEmpty(data?.combat)) {
       setResult(
         PokemonType.create({
-          pokemonList:
+          pokemonList: getValueOrDefault(
+            Array,
             data?.pokemon
               ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-              .filter((pokemon) => pokemon.types.includes(currentType)) ?? [],
-          fastMove: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType) ?? [],
-          chargedMove: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType) ?? [],
+              .filter((pokemon) => pokemon.types.includes(currentType))
+          ),
+          fastMove: getValueOrDefault(
+            Array,
+            data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType)
+          ),
+          chargedMove: getValueOrDefault(
+            Array,
+            data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType)
+          ),
         })
       );
     }
@@ -335,14 +337,14 @@ const SearchTypes = () => {
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
-              <b>{`Fast Moves: ${result.fastMove.length}/${allData.fastMoves ?? 0} (${Math.round(
-                (result.fastMove.length * 100) / (allData.fastMoves ?? 1)
+              <b>{`Fast Moves: ${result.fastMove.length}/${getValueOrDefault(Number, allData.fastMoves)} (${Math.round(
+                (result.fastMove.length * 100) / getValueOrDefault(Number, allData.fastMoves, 1)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charged Moves: ${result.chargedMove.length}/${allData.chargedMoves ?? 0} (${Math.round(
-                (result.chargedMove.length * 100) / (allData.chargedMoves ?? 1)
+              <b>{`Charged Moves: ${result.chargedMove.length}/${getValueOrDefault(Number, allData.chargedMoves)} (${Math.round(
+                (result.chargedMove.length * 100) / getValueOrDefault(Number, allData.chargedMoves, 1)
               )}%)`}</b>
             </span>
           </div>
@@ -351,7 +353,7 @@ const SearchTypes = () => {
           <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
             <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
               <DataTable
-                columns={convertColumnDataType<IPokemonData>(columnPokemon)}
+                columns={convertColumnDataType(columnPokemon)}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
                 pagination={true}
                 defaultSortFieldId={1}
@@ -362,7 +364,7 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
               <DataTable
-                columns={convertColumnDataType<IPokemonData>(columnPokemon)}
+                columns={convertColumnDataType(columnPokemon)}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
                 pagination={true}
                 defaultSortFieldId={1}
@@ -373,7 +375,7 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
               <DataTable
-                columns={convertColumnDataType<ICombat>(columnMove)}
+                columns={convertColumnDataType(columnMove)}
                 data={result ? result.fastMove : []}
                 pagination={true}
                 defaultSortFieldId={1}
@@ -384,7 +386,7 @@ const SearchTypes = () => {
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
               <DataTable
-                columns={convertColumnDataType<ICombat>(columnMove)}
+                columns={convertColumnDataType(columnMove)}
                 data={result ? result.chargedMove : []}
                 pagination={true}
                 defaultSortFieldId={1}

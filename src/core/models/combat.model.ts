@@ -6,9 +6,9 @@ export interface IBuff {
 }
 
 export class Buff implements IBuff {
-  type: string = '';
-  target: string = '';
-  power: number = 0;
+  type = '';
+  target = '';
+  power = 0;
   buffChance?: number;
 
   constructor({ ...props }: IBuff) {
@@ -18,11 +18,11 @@ export class Buff implements IBuff {
 
 export interface ICombat {
   name: string;
-  type: string | null;
-  typeMove: string | null;
+  type: string | undefined;
+  typeMove: string | undefined;
   pvpPower: number;
   pvpEnergy: number;
-  sound: string | null;
+  sound: string | undefined;
   buffs: IBuff[];
   id: number;
   track: number;
@@ -34,8 +34,8 @@ export interface ICombat {
   accuracyChance: number;
   criticalChance: number;
   staminaLossScalar: number;
-  archetype: string | null;
-  abbreviation: string | null;
+  archetype: string | undefined;
+  abbreviation: string | undefined;
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;
@@ -45,11 +45,11 @@ export interface ICombat {
 // tslint:disable-next-line:max-classes-per-file
 export class Combat implements ICombat {
   name: string;
-  type: string | null = null;
-  typeMove: string | null = null;
+  type: string | undefined;
+  typeMove: string | undefined;
   pvpPower: number;
   pvpEnergy: number;
-  sound: string | null = null;
+  sound: string | undefined;
   buffs: IBuff[];
   id: number;
   track: number;
@@ -61,8 +61,8 @@ export class Combat implements ICombat {
   accuracyChance: number;
   criticalChance: number;
   staminaLossScalar: number;
-  archetype: string | null = null;
-  abbreviation: string | null = null;
+  archetype: string | undefined;
+  abbreviation: string | undefined;
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;

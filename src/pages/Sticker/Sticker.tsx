@@ -1,6 +1,6 @@
 import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 
-import { isNotEmpty, splitAndCapitalize } from '../../util/utils';
+import { splitAndCapitalize } from '../../util/utils';
 
 import './Sticker.scss';
 import APIService from '../../services/API.service';
@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 interface PokemonStickerModel {
   id?: number | null | undefined;
@@ -25,12 +26,12 @@ const Sticker = () => {
   const [shopType, setShopType] = useState(0);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);
 
-  const pokeStickerList = useSelector((state: StoreState) => state.store.data?.stickers ?? []);
+  const pokeStickerList = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.stickers));
 
   const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 
   useEffect(() => {
-    if (isNotEmpty(pokeStickerList)) {
+    if (isNotEmpty(pokeStickerList) && !isNotEmpty(selectPokemon)) {
       const result = pokeStickerList
         .reduce((prev: PokemonStickerModel[], curr) => {
           if (curr.pokemonName && !prev.map((obj) => obj.name).includes(curr.pokemonName)) {
@@ -41,10 +42,10 @@ const Sticker = () => {
           }
           return prev;
         }, [])
-        .sort((a, b) => (a?.id ?? 0) - (b?.id ?? 0));
+        .sort((a, b) => getValueOrDefault(Number, a?.id) - getValueOrDefault(Number, b?.id));
       setSelectPokemon(result);
     }
-  }, [pokeStickerList]);
+  }, [pokeStickerList, selectPokemon]);
 
   useEffect(() => {
     if (isNotEmpty(pokeStickerList)) {
@@ -82,7 +83,11 @@ const Sticker = () => {
           <option value={0}>All</option>
           <option value={-1}>None</option>
           {selectPokemon.map((value, index) => (
-            <option key={index} value={value.id ?? 0}>{`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}</option>
+            <option key={index} value={getValueOrDefault(Number, value.id)}>{`#${value.id} ${splitAndCapitalize(
+              value.name,
+              '_',
+              ' '
+            )}`}</option>
           ))}
         </Form.Select>
       </div>
@@ -117,7 +122,7 @@ const Sticker = () => {
                     <Badge
                       color="primary"
                       overlap="circular"
-                      badgeContent={value.pokemonId ? splitAndCapitalize(value.pokemonName, '_', ' ') : null}
+                      badgeContent={value.pokemonId ? splitAndCapitalize(value.pokemonName, '_', ' ') : undefined}
                     >
                       <img
                         height={64}

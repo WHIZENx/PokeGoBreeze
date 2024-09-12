@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, isNotEmpty, combineClasses } from '../../../util/utils';
+import { getTime, splitAndCapitalize, capitalize } from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -20,6 +20,7 @@ import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague
 import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
+import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -41,7 +42,7 @@ const Leagues = () => {
   const [showData, setShowData] = useState<LeagueData>();
 
   const getAssetPokeGo = (id: number, form: string) => {
-    const asset = queryAssetForm(dataStore?.assets ?? [], id, form);
+    const asset = queryAssetForm(getValueOrDefault(Array, dataStore?.assets), id, form);
     if (asset) {
       return APIService.getPokemonModel(asset.default);
     } else {
@@ -49,8 +50,8 @@ const Leagues = () => {
     }
   };
 
-  const LeaveToggle = ({ eventKey }: Toggle) => {
-    const decoratedOnClick = useAccordionButton(eventKey);
+  const LeaveToggle = (props: Toggle) => {
+    const decoratedOnClick = useAccordionButton(props.eventKey);
 
     return (
       <div className="accordion-footer" onClick={decoratedOnClick}>
@@ -63,9 +64,9 @@ const Leagues = () => {
 
   useEffect(() => {
     if (dataStore?.leagues) {
-      const leagues = dataStore?.leagues?.data ?? [];
+      const leagues = getValueOrDefault(Array, dataStore?.leagues?.data);
       setLeagues(leagues);
-      setOpenedLeague(leagues.filter((league) => dataStore?.leagues?.allowLeagues.includes(league.id ?? '')));
+      setOpenedLeague(leagues.filter((league) => dataStore?.leagues?.allowLeagues.includes(getValueOrDefault(String, league.id))));
       setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === rank + 1));
     }
   }, [dataStore?.leagues]);
@@ -75,19 +76,24 @@ const Leagues = () => {
       const timeOutId = setTimeout(() => {
         setLeagueFilter(
           leagues.filter((value) => {
-            if (dataStore?.leagues?.allowLeagues.includes(value.id ?? '')) {
+            if (dataStore?.leagues?.allowLeagues.includes(getValueOrDefault(String, value.id))) {
               return false;
             }
             let textTitle = '';
-            if ((value.id ?? '').includes('SEEKER') && ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(value.title)) {
-              textTitle = splitAndCapitalize((value.id ?? '').replace('VS_', '').toLowerCase(), '_', ' ');
+            if (
+              getValueOrDefault(String, value.id).includes('SEEKER') &&
+              ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(value.title)
+            ) {
+              textTitle = splitAndCapitalize(getValueOrDefault(String, value.id).replace('VS_', '').toLowerCase(), '_', ' ');
             } else {
               textTitle = splitAndCapitalize(value.title.toLowerCase(), '_', ' ');
             }
-            if ((value.id ?? '').includes('SAFARI_ZONE')) {
-              textTitle += ` ${(value.id ?? '').split('_').at(3)} ${capitalize((value.id ?? '').split('_').at(4))}`;
+            if (getValueOrDefault(String, value.id).includes('SAFARI_ZONE')) {
+              textTitle += ` ${getValueOrDefault(String, value.id).split('_').at(3)} ${capitalize(
+                getValueOrDefault(String, value.id).split('_').at(4)
+              )}`;
             }
-            return search === '' || textTitle.toLowerCase().includes(search.toLowerCase());
+            return isEmpty(search) || textTitle.toLowerCase().includes(search.toLowerCase());
           })
         );
       }, 300);
@@ -137,37 +143,44 @@ const Leagues = () => {
       <Accordion.Item key={index} eventKey={index.toString()}>
         <Accordion.Header className={isOpened ? 'league-opened' : ''}>
           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-            <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />
+            <img alt="img-league" height={50} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
             <b className={league.enabled ? '' : 'text-danger'}>
-              {((league.id ?? '').includes('SEEKER') && ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(league.title)
-                ? splitAndCapitalize((league.id ?? '').replace('VS_', '').toLowerCase(), '_', ' ')
+              {(getValueOrDefault(String, league.id).includes('SEEKER') &&
+              ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(league.title)
+                ? splitAndCapitalize(getValueOrDefault(String, league.id).replace('VS_', '').toLowerCase(), '_', ' ')
                 : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
-                ((league.id ?? '').includes('SAFARI_ZONE')
-                  ? ` ${(league.id ?? '').split('_').at(3)} ${capitalize((league.id ?? '').split('_').at(4))}`
+                (getValueOrDefault(String, league.id).includes('SAFARI_ZONE')
+                  ? ` ${getValueOrDefault(String, league.id).split('_').at(3)} ${capitalize(
+                      getValueOrDefault(String, league.id).split('_').at(4)
+                    )}`
                   : '')}
             </b>
           </div>
         </Accordion.Header>
         <Accordion.Body className="league-body">
           <div className="sub-body">
-            <h4 className="title-leagues">{splitAndCapitalize((league.id ?? '').toLowerCase(), '_', ' ')}</h4>
+            <h4 className="title-leagues">{splitAndCapitalize(getValueOrDefault(String, league.id).toLowerCase(), '_', ' ')}</h4>
             <div className="text-center">
-              {league.league !== league.title && !league.title.includes('REMIX') && !(league.iconUrl ?? '').includes('pogo') ? (
+              {league.league !== league.title &&
+              !league.title.includes('REMIX') &&
+              !getValueOrDefault(String, league.iconUrl).includes('pogo') ? (
                 <div className="league">
                   <img
                     alt="img-league"
                     height={140}
-                    src={APIService.getAssetPokeGo(dataStore?.leagues?.data.find((item) => item.title === league.league)?.iconUrl ?? '')}
+                    src={APIService.getAssetPokeGo(
+                      getValueOrDefault(String, dataStore?.leagues?.data.find((item) => item.title === league.league)?.iconUrl)
+                    )}
                   />
                   <span className={combineClasses('badge-league', league.league.toLowerCase().replaceAll('_', '-'))}>
                     <div className="sub-badge">
-                      <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />
+                      <img alt="img-league" height={50} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
                     </div>
                   </span>
                 </div>
               ) : (
                 <div>
-                  <img alt="img-league" height={140} src={APIService.getAssetPokeGo(league.iconUrl ?? '')} />
+                  <img alt="img-league" height={140} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
                 </div>
               )}
             </div>
@@ -211,7 +224,7 @@ const Leagues = () => {
               {isNotEmpty(league.conditions.uniqueType) && (
                 <li style={{ fontWeight: 500 }} className="unique-type">
                   <h6 className="title-leagues">Unique Type</h6>
-                  <TypeInfo arr={league.conditions.uniqueType ?? []} style={{ marginLeft: 15 }} />
+                  <TypeInfo arr={getValueOrDefault(Array, league.conditions.uniqueType)} style={{ marginLeft: 15 }} />
                 </li>
               )}
               {isNotEmpty(league.conditions.whiteList) && (
@@ -231,7 +244,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id ?? 0, item.form)}
+                            src={getAssetPokeGo(getValueOrDefault(Number, item.id), item.form)}
                           />
                         </span>
                       </div>
@@ -261,7 +274,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id ?? 0, item.form)}
+                            src={getAssetPokeGo(getValueOrDefault(Number, item.id), item.form)}
                           />
                         </span>
                       </div>
@@ -305,7 +318,7 @@ const Leagues = () => {
             }}
             defaultValue={rank}
           >
-            {Object.keys(dataStore?.leagues?.season.rewards.rank ?? []).map((value, index) => (
+            {Object.keys(getValueOrDefault(Array, dataStore?.leagues?.season.rewards.rank)).map((value, index) => (
               <option key={index} value={value}>
                 Rank {value} {parseInt(value) > 20 && `( ${rankName(parseInt(value))} )`}
               </option>
@@ -677,12 +690,12 @@ const Leagues = () => {
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
                 </Link>
               ))}
-            {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank)) && (
+            {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && getValueOrDefault(Number, item.rank) === rank)) && (
               <Fragment>
                 <hr />
                 <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>
                 {showData.data
-                  .filter((item) => item.guaranteedLimited && (item.rank ?? 0) === rank)
+                  .filter((item) => item.guaranteedLimited && getValueOrDefault(Number, item.rank) === rank)
                   .map((item, index) => (
                     <Link
                       className="img-link text-center"

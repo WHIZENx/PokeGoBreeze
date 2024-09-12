@@ -1,4 +1,4 @@
-import { DynamicObj } from '../util/models/util.model';
+import { DynamicObj, getValueOrDefault } from '../util/extension';
 import { CPM, ICPM } from './models/cpm.model';
 
 export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {
@@ -9,8 +9,18 @@ export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: numb
     if (baseCPM[i]) {
       result.multiplier = baseCPM[i];
     } else {
-      const lvLow = parseInt(Object.keys(baseCPM).find((key) => parseInt(key) <= i) ?? '0');
-      const lvHigh = parseInt(Object.keys(baseCPM).find((key) => parseInt(key) >= i) ?? '0');
+      const lvLow = parseInt(
+        getValueOrDefault(
+          String,
+          Object.keys(baseCPM).find((key) => parseInt(key) <= i)
+        )
+      );
+      const lvHigh = parseInt(
+        getValueOrDefault(
+          String,
+          Object.keys(baseCPM).find((key) => parseInt(key) >= i)
+        )
+      );
       result.multiplier = Math.sqrt(
         ((Math.pow(baseCPM[lvHigh], 2) - Math.pow(baseCPM[lvLow], 2)) / (lvHigh - lvLow)) * (i - lvLow) + Math.pow(baseCPM[lvLow], 2)
       );
@@ -23,7 +33,11 @@ export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: numb
     result.level = i;
     const cpmLow = cpmList.find((cp) => cp.level === Math.floor(i))?.multiplier;
     const cpmHigh = cpmList.find((cp) => cp.level === Math.ceil(i))?.multiplier;
-    result.multiplier = Math.sqrt(Math.pow(cpmLow ?? 0, 2) - Math.pow(cpmLow ?? 0, 2) / 2 + Math.pow(cpmHigh ?? 0, 2) / 2);
+    result.multiplier = Math.sqrt(
+      Math.pow(getValueOrDefault(Number, cpmLow), 2) -
+        Math.pow(getValueOrDefault(Number, cpmLow), 2) / 2 +
+        Math.pow(getValueOrDefault(Number, cpmHigh), 2) / 2
+    );
 
     if (i > 0) {
       result.step = result.multiplier - cpmList[i - 0]?.multiplier;
@@ -35,7 +49,7 @@ export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: numb
   for (let i = min; i <= max; i += 0.5) {
     const currLevel = cpmList.find((j) => j.level === i);
     if (currLevel && i > 1) {
-      currLevel.step = currLevel.multiplier - (cpmList.find((j) => j.level === i - 0.5)?.multiplier ?? 0);
+      currLevel.step = currLevel.multiplier - getValueOrDefault(Number, cpmList.find((j) => j.level === i - 0.5)?.multiplier);
     }
   }
   return cpmList.sort((a, b) => a.level - b.level);

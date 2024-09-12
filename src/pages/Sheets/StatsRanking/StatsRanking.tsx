@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import {
-  splitAndCapitalize,
-  capitalize,
-  convertPokemonImageName,
-  getPokemonDetails,
-  isNotEmpty,
-  convertColumnDataType,
-} from '../../../util/utils';
+import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/calculate';
@@ -32,7 +25,7 @@ import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { DynamicObj } from '../../../util/models/util.model';
+import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -49,7 +42,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   },
   {
     name: 'Ranking',
-    selector: (row) => row.rank ?? 0,
+    selector: (row) => getValueOrDefault(Number, row.rank),
     width: '80px',
   },
   {
@@ -73,7 +66,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           src={APIService.getPokeIconSprite(row.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies ?? '');
+            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
           }}
         />
         {splitAndCapitalize(row.name?.replaceAll('_', '-'), '-', ' ')}
@@ -144,31 +137,35 @@ const StatsRanking = () => {
   ];
 
   const stats = useSelector((state: StatsState) => state.stats);
-  const pokemonData = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
+  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
   const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: IPokemonData[]) => {
     return pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
-      const details = getPokemonDetails(pokemon, data.num, data.fullName ?? '', true);
+      const details = getPokemonDetails(pokemon, data.num, getValueOrDefault(String, data.fullName), true);
       return new PokemonStatsRanking({
         ...data,
-        releasedGO: details?.releasedGO ?? false,
+        releasedGO: getValueOrDefault(Boolean, details?.releasedGO),
         atk: {
           attack: statsTag.atk,
-          rank: stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank ?? 0,
+          rank: getValueOrDefault(Number, stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank),
         },
         def: {
           defense: statsTag.def,
-          rank: stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank ?? 0,
+          rank: getValueOrDefault(Number, stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank),
         },
         sta: {
-          stamina: statsTag.sta ?? 0,
-          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank ?? 0,
+          stamina: getValueOrDefault(Number, statsTag.sta),
+          rank: getValueOrDefault(Number, stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
         },
         statProd: {
-          prod: statsTag.atk * statsTag.def * (statsTag?.sta ?? 0),
-          rank: stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * (statsTag?.sta ?? 0))?.rank ?? 0,
+          prod: statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta),
+          rank: getValueOrDefault(
+            Number,
+            stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta))
+              ?.rank
+          ),
         },
       });
     });
@@ -262,7 +259,7 @@ const StatsRanking = () => {
 
   const setFilterParams = (select: IPokemonStatsRanking) => {
     searchParams.set('id', select.num.toString());
-    searchParams.set('form', select.forme?.replace(FORM_NORMAL, '').replaceAll('_', '-').toLowerCase() ?? '');
+    searchParams.set('form', getValueOrDefault(String, select.forme?.replace(FORM_NORMAL, '').replaceAll('_', '-').toLowerCase()));
     setSearchParams(searchParams);
   };
 
@@ -274,7 +271,7 @@ const StatsRanking = () => {
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter(
               (pokemon) =>
-                search === '' ||
+                isEmpty(search) ||
                 (match
                   ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
                   : pokemon.num.toString().includes(search) ||
@@ -288,14 +285,14 @@ const StatsRanking = () => {
 
   const convertToPokemonForm = (pokemon: IPokemonData | IPokemonStatsRanking) => {
     return Form.create({
-      formName: pokemon.forme ?? '',
+      formName: getValueOrDefault(String, pokemon.forme),
       id: pokemon.num,
       isDefault: true,
       isMega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
       name: pokemon.name,
       sprites: undefined,
-      types: pokemon.types ?? [],
-      versionGroup: { name: pokemon.version ?? '' },
+      types: getValueOrDefault(Array, pokemon.types),
+      version: getValueOrDefault(String, pokemon.version),
       isShadow: false,
       isPurified: false,
     });
@@ -311,13 +308,13 @@ const StatsRanking = () => {
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
               src={APIService.getPokeFullSprite(
-                select?.num ?? 0,
+                getValueOrDefault(Number, select?.num),
                 convertPokemonImageName(select && select.baseForme === select.forme ? '' : select?.forme)
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                  e.currentTarget.src = APIService.getPokeFullAsset(select?.num ?? 0);
+                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, select?.num));
                 } else {
                   e.currentTarget.src = APIService.getPokeFullSprite(0);
                 }
@@ -331,11 +328,11 @@ const StatsRanking = () => {
               id={select?.num}
               gen={select?.gen}
               formName={select?.name}
-              region={select?.region ?? ''}
-              version={select?.version ?? ''}
-              weight={select?.weightkg ?? 0}
-              height={select?.heightm ?? 0}
-              className={'table-stats-ranking'}
+              region={getValueOrDefault(String, select?.region)}
+              version={getValueOrDefault(String, select?.version)}
+              weight={getValueOrDefault(Number, select?.weightkg)}
+              height={getValueOrDefault(Number, select?.heightm)}
+              className="table-stats-ranking"
               isLoadedForms={isLoadedForms}
             />
           </div>
@@ -361,7 +358,7 @@ const StatsRanking = () => {
         statProd={select?.statProd}
         pokemonStats={stats}
         id={select?.num}
-        form={select?.forme ?? ''}
+        form={getValueOrDefault(String, select?.forme)}
       />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
@@ -396,7 +393,7 @@ const StatsRanking = () => {
         />
       </div>
       <DataTable
-        columns={convertColumnDataType<IPokemonStatsRanking>(columnPokemon)}
+        columns={convertColumnDataType(columnPokemon)}
         data={pokemonFilter}
         pagination={true}
         defaultSortFieldId={getSortId()}
@@ -409,8 +406,8 @@ const StatsRanking = () => {
         }}
         onSort={(rows) => {
           if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonFilter, parseInt(rows.id?.toString() ?? '0')));
-            setSortId(parseInt(rows.id?.toString() ?? ''));
+            setPokemonFilter(sortRanking(pokemonFilter, parseInt(getValueOrDefault(String, rows.id?.toString()))));
+            setSortId(parseInt(getValueOrDefault(String, rows.id?.toString())));
           }
         }}
         conditionalRowStyles={conditionalRowStyles}

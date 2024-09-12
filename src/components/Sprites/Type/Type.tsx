@@ -1,12 +1,13 @@
 import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
-import { capitalize, combineClasses, isNotEmpty } from '../../../util/utils';
+import { capitalize } from '../../../util/utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { isNotEmpty, combineClasses, getValueOrDefault } from '../../../util/extension';
 
 const TypeInfo = (props: ITypeComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -16,7 +17,12 @@ const TypeInfo = (props: ITypeComponent) => {
       {!isNotEmpty(props.arr) && props.isShow ? (
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
           <div className="text-center" key={0}>
-            <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />
+            <img
+              width={getValueOrDefault(Number, props.height, 36)}
+              height={getValueOrDefault(Number, props.height, 36)}
+              alt="img-pokemon"
+              src={APIService.getPokeSprite(0)}
+            />
             <span className="caption" style={{ color: theme.palette.text.primary }}>
               None
             </span>

@@ -2,14 +2,15 @@ import { Badge } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { capitalize, combineClasses, isNotEmpty, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle, TimelineElement } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
+import { combineClasses, isNotEmpty } from '../../../util/extension';
 
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, hide = false) => {
-  const renderMoveBadgeBorder = (move: ICombat | null, border: boolean, shadow = false) => {
+  const renderMoveBadgeBorder = (move: ICombat | undefined, border: boolean, shadow = false) => {
     if (!move) {
       return;
     }
@@ -65,7 +66,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               <Badge
                 color="primary"
                 overlap="circular"
-                badgeContent={value.tap ? 'Tap' : null}
+                badgeContent={value.tap ? 'Tap' : undefined}
                 className={combineClasses('fast-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}
                 anchorOrigin={{
                   vertical: 'top',
@@ -84,7 +85,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               <Badge
                 color="primary"
                 overlap="circular"
-                badgeContent={value.tap ? 'Tap' : null}
+                badgeContent={value.tap ? 'Tap' : undefined}
                 className={combineClasses(
                   pokeCurr.timeline?.at(index - 1) && pokeCurr.timeline?.at(index - 1)?.dmgImmune
                     ? 'fast-attack-container text-shadow'

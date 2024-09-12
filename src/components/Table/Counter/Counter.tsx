@@ -2,15 +2,7 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import {
-  capitalize,
-  checkPokemonGO,
-  combineClasses,
-  convertColumnDataType,
-  convertPokemonDataName,
-  isNotEmpty,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -24,6 +16,7 @@ import { ICounterComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
 
 const customStyles: TableStyles = {
   head: {
@@ -115,8 +108,10 @@ const Counter = (props: ICounterComponent) => {
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data?.assets ?? [], row.pokemonId, row.pokemonForme ?? '')
-                    ? APIService.getPokemonModel(findAssetForm(data?.assets ?? [], row.pokemonId, row.pokemonForme ?? ''))
+                  findAssetForm(getValueOrDefault(Array, data?.assets), row.pokemonId, getValueOrDefault(String, row.pokemonForme))
+                    ? APIService.getPokemonModel(
+                        findAssetForm(getValueOrDefault(Array, data?.assets), row.pokemonId, getValueOrDefault(String, row.pokemonForme))
+                      )
                     : APIService.getPokeFullSprite(row.pokemonId)
                 }
               />
@@ -217,7 +212,7 @@ const Counter = (props: ICounterComponent) => {
       setCounterList([]);
       setFrame(true);
     }
-    if (props.isShadow !== undefined && isNotEmpty(props.types)) {
+    if (!isUndefined(props.isShadow) && isNotEmpty(props.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
@@ -243,12 +238,12 @@ const Counter = (props: ICounterComponent) => {
         }
         result = counterPokemon(
           data?.options,
-          data?.pokemon ?? [],
+          getValueOrDefault(Array, data?.pokemon),
           data?.typeEff,
           data?.weatherBoost,
           props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
-          props.types ?? [],
-          data?.combat ?? []
+          getValueOrDefault(Array, props.types),
+          getValueOrDefault(Array, data?.combat)
         );
         resolve(result);
       };
@@ -289,7 +284,7 @@ const Counter = (props: ICounterComponent) => {
       </div>
       <DataTable
         className="table-counter-container"
-        columns={convertColumnDataType<ICounterModel>(columns)}
+        columns={convertColumnDataType(columns)}
         pagination={true}
         customStyles={customStyles}
         fixedHeader={true}
@@ -311,8 +306,12 @@ const Counter = (props: ICounterComponent) => {
             if (!releasedGO) {
               return true;
             }
-            const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data?.pokemon ?? []);
-            return pokemon.releasedGO ?? result?.releasedGO ?? false;
+            const result = checkPokemonGO(
+              pokemon.pokemonId,
+              convertPokemonDataName(pokemon.pokemonName),
+              getValueOrDefault(Array, data?.pokemon)
+            );
+            return getValueOrDefault(Boolean, pokemon.releasedGO, result?.releasedGO);
           })}
       />
     </div>

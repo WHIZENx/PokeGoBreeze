@@ -1,11 +1,12 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { combineClasses, splitAndCapitalize } from '../../../util/utils';
+import { splitAndCapitalize } from '../../../util/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Link } from 'react-router-dom';
 import { ISearchBarMainComponent } from '../../models/page.model';
+import { combineClasses, getValueOrDefault } from '../../../util/extension';
 
 const SearchBarMain = (props: ISearchBarMainComponent) => {
   return (
@@ -34,7 +35,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 src={APIService.getPokeFullSprite(props.data?.prev?.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(props.data?.prev?.id ?? 0);
+                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, props.data?.prev?.id));
                 }}
               />
             </div>
@@ -72,7 +73,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 src={APIService.getPokeFullSprite(props.data?.next?.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(props.data?.next?.id ?? 0);
+                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, props.data?.next?.id));
                 }}
               />
             </div>

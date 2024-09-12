@@ -6,7 +6,7 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
-import { combineClasses, getPokemonById, isNotEmpty, mappingPokemonName } from '../../../util/utils';
+import { getPokemonById, mappingPokemonName } from '../../../util/utils';
 import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
@@ -15,13 +15,14 @@ import { IPokemonSearching } from '../../../core/models/pokemon-searching.model'
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { combineClasses, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');
   const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
-  const pokemonName = useSelector((state: StoreState) => state.store?.data?.pokemon ?? []);
+  const pokemonName = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = 20;
@@ -75,14 +76,14 @@ const Search = () => {
   const decId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getPokemonById(pokemonName, currentId.id - 1)?.id ?? 0);
+      setId(getValueOrDefault(Number, getPokemonById(pokemonName, currentId.id - 1)?.id));
     }
   };
 
   const incId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getPokemonById(pokemonName, currentId.id + 1)?.id ?? 0);
+      setId(getValueOrDefault(Number, getPokemonById(pokemonName, currentId.id + 1)?.id));
     }
   };
 

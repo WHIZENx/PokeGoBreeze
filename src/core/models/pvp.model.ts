@@ -31,7 +31,7 @@ export interface Performers {
   name: string | undefined;
   speciesId: string;
   pokemonData: IPokemonData | undefined;
-  form: string | null;
+  form: string | undefined | null;
   stats: IStatsBase;
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
@@ -96,8 +96,8 @@ interface IPokemonRankingStats {
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonRankingStats implements IPokemonRankingStats {
   product?: number;
-  atk: number = 0;
-  def: number = 0;
+  atk = 0;
+  def = 0;
   hp?: number;
 
   constructor() {
@@ -131,7 +131,7 @@ export interface IBattlePokemonData {
   name: string | undefined;
   pokemon: IPokemonData;
   id: number;
-  form: string | null;
+  form: string | undefined | null;
   shadow?: boolean;
   purified?: boolean;
 }
@@ -140,18 +140,18 @@ export interface IBattlePokemonData {
 export class BattlePokemonData implements IBattlePokemonData {
   counters: PokemonVersus[] = [];
   matchups: PokemonVersus[] = [];
-  moves: IMovePokemonRanking = new MovePokemonRanking();
+  moves = new MovePokemonRanking();
   moveset: string[] = [];
-  rating: number = 0;
-  score: number = 0;
+  rating = 0;
+  score = 0;
   scores: number[] = [];
-  speciesId: string = '';
-  speciesName: string = '';
-  stats: IPokemonRankingStats = new PokemonRankingStats();
+  speciesId = '';
+  speciesName = '';
+  stats = new PokemonRankingStats();
   name: string | undefined;
-  pokemon: IPokemonData = new PokemonData();
-  id: number = 0;
-  form: string | null = null;
+  pokemon = new PokemonData();
+  id = 0;
+  form: string | undefined | null;
   shadow?: boolean;
   purified?: boolean;
 
