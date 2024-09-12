@@ -6,10 +6,10 @@ export interface ITier {
 }
 
 export class Tier implements ITier {
-  level: number = 0;
-  CPm: number = 0;
-  sta: number = 0;
-  timer: number = 0;
+  level = 0;
+  CPm = 0;
+  sta = 0;
+  timer = 0;
 
   static create(value: ITier) {
     const obj = new Tier();
@@ -26,9 +26,9 @@ interface ICostPowerUp {
 
 // tslint:disable-next-line:max-classes-per-file
 export class CostPowerUp implements ICostPowerUp {
-  stardust: number = 0;
-  candy: number = 0;
-  type: string = '';
+  stardust = 0;
+  candy = 0;
+  type = '';
 
   static create(value: ICostPowerUp) {
     const obj = new CostPowerUp();

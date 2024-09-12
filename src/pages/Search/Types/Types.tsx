@@ -163,7 +163,7 @@ interface IPokemonTypeData {
 
 // tslint:disable-next-line:max-classes-per-file
 class PokemonTypeData implements IPokemonTypeData {
-  pokemon: number = 0;
+  pokemon = 0;
   fastMoves: number | undefined;
   chargedMoves: number | undefined;
 

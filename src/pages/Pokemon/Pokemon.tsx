@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Location, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import './Pokemon.scss';
 
@@ -47,6 +47,7 @@ import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../util/extension';
+import { LocationState } from '../../core/models/router.model';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -71,7 +72,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const params = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation() as unknown as Location<LocationState>;
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);

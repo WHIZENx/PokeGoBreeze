@@ -168,17 +168,17 @@ export interface IPokemonTeamData {
 export class PokemonTeamData implements IPokemonTeamData {
   id: number | undefined;
   name: string | undefined;
-  speciesId: string = '';
+  speciesId = '';
   pokemonData: IPokemonData | undefined;
-  form: string | undefined | null = '';
-  stats: IStatsBase = new StatsBase();
+  form = '';
+  stats = new StatsBase();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  shadow: boolean = false;
+  shadow = false;
   purified: boolean | undefined;
 
   constructor({ ...props }: IPokemonTeamData) {
@@ -214,8 +214,8 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   name: string | undefined;
   speciesId?: string;
   pokemon: IPokemonData | undefined;
-  form: string | undefined | null = '';
-  stats: IStatsBase = new StatsBase();
+  form = '';
+  stats = new StatsBase();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -224,9 +224,9 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
-  shadow: boolean = false;
-  purified: boolean | undefined = false;
-  score: number = 0;
+  shadow = false;
+  purified = false;
+  score = 0;
 
   constructor({ ...props }: IPokemonBattleRanking) {
     Object.assign(this, props);

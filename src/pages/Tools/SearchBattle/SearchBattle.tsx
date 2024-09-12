@@ -66,7 +66,7 @@ const FindBattle = () => {
   };
 
   const currEvoChain = useCallback(
-    (currId: number[] | undefined, form: string, arr: IEvolution[]) => {
+    (currId: number[], form: string, arr: IEvolution[]) => {
       form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
       if (!isNotEmpty(currId)) {
         return arr;
@@ -89,7 +89,10 @@ const FindBattle = () => {
         });
       }
       currEvoChain(
-        curr?.evoList?.map((i) => i.evoToId),
+        getValueOrDefault(
+          Array,
+          curr?.evoList?.map((i) => i.evoToId)
+        ),
         form,
         arr
       );

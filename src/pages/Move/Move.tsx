@@ -104,21 +104,23 @@ const Move = (props: IMovePage) => {
   };
 
   const queryMoveData = useCallback(
-    (id: string | number | undefined) => {
-      if (id && isNotEmpty(data?.combat)) {
+    (id: number) => {
+      if (isNotEmpty(data?.combat)) {
         let move;
-        if (id && parseInt(id.toString()) === 281) {
+        if (id === 281) {
           move = data?.combat?.find(
-            (item) =>
-              item.track === parseInt(id.toString()) &&
-              item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
+            (item) => item.track === id && item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
           );
         } else {
-          move = data?.combat?.find((item) => item.track === parseInt(id.toString()));
+          move = data?.combat?.find((item) => item.track === id);
         }
         if (move) {
           setMove(move);
-          document.title = `#${move?.track} - ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`;
+          document.title = `#${move?.track} - ${splitAndCapitalize(
+            move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(),
+            '_',
+            ' '
+          )}`;
         } else {
           enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: 'error' });
           if (id) {
@@ -133,7 +135,9 @@ const Move = (props: IMovePage) => {
   useEffect(() => {
     if (!move) {
       const id = params.id ? params.id.toLowerCase() : props.id;
-      queryMoveData(id);
+      if (id) {
+        queryMoveData(parseInt(id.toString()));
+      }
     }
   }, [params.id, props.id, queryMoveData, move]);
 
@@ -150,7 +154,7 @@ const Move = (props: IMovePage) => {
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
             <h1 className="text-move">
-              <b>{splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}</b>
+              <b>{splitAndCapitalize(move.track === 281 ? 'HIDDEN_POWER' : move.name.toLowerCase(), '_', ' ')}</b>
             </h1>
             <TypeBar type={move.type} />
           </div>
@@ -188,7 +192,11 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={3}>{`Stats ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} in Pokémon GO`}</th>
+                <th colSpan={3}>{`Stats ${splitAndCapitalize(
+                  move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(),
+                  '_',
+                  ' '
+                )} in Pokémon GO`}</th>
               </tr>
             </thead>
             <tbody>
@@ -201,7 +209,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Name</td>
                 <td colSpan={2}>
-                  <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</b>
+                  <b>{splitAndCapitalize(move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(), '_', ' ')}</b>
                 </td>
               </tr>
               <tr>
@@ -389,7 +397,11 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-damage-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={2}>{`Damage ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} Simulator`}</th>
+                <th colSpan={2}>{`Damage ${splitAndCapitalize(
+                  move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(),
+                  '_',
+                  ' '
+                )} Simulator`}</th>
               </tr>
             </thead>
             <tbody>
@@ -452,7 +464,11 @@ const Move = (props: IMovePage) => {
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>
                   <div className="input-group align-items-center justify-content-center">
-                    <span>{`Top Pokémon in move ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`}</span>
+                    <span>{`Top Pokémon in move ${splitAndCapitalize(
+                      move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(),
+                      '_',
+                      ' '
+                    )}`}</span>
                     <FormControlLabel
                       control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
                       label={

@@ -26,14 +26,10 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.LIGHT);
 
-  const [version, setVersion] = useState('');
+  const [version, setVersion] = useState<string>();
 
   useEffect(() => {
-    getEdgeItem(EdgeKey.VERSION).then((res) => {
-      if (res) {
-        setVersion(res as string);
-      }
-    });
+    getEdgeItem<string>(EdgeKey.VERSION).then((res) => setVersion(res));
   }, []);
 
   const [isDelay, setIsDelay] = useState(false);

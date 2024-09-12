@@ -40,15 +40,15 @@ interface IDataModel {
 // tslint:disable-next-line:max-classes-per-file
 export class Data implements IDataModel {
   cpm: ICPM[] = [];
-  typeEff: ITypeEff = new TypeEff();
-  weatherBoost: IWeatherBoost = new WeatherBoost();
-  options: IOptions = new Options();
+  typeEff = new TypeEff();
+  weatherBoost = new WeatherBoost();
+  options = new Options();
   pokemon: IPokemonData[] = [];
   stickers: ISticker[] = [];
   assets: IAsset[] = [];
   combat: ICombat[] = [];
-  leagues: ILeagueData = new LeagueData();
-  pvp: IPVPDataModel = new PVPDataModel();
+  leagues = new LeagueData();
+  pvp = new PVPDataModel();
 
   static create(value: IDataModel | undefined) {
     const obj = new Data();
