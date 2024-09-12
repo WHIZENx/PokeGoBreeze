@@ -13,7 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, Location, useLocation, useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
@@ -26,6 +26,7 @@ import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
+import { LocationState } from '../../../core/models/router.model';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -127,7 +128,7 @@ const customStyles: TableStyles = {
 const StatsRanking = () => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   useChangeTitle('Stats Ranking');
-  const location = useLocation();
+  const location = useLocation() as unknown as Location<LocationState>;
   const [searchParams, setSearchParams] = useSearchParams();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {

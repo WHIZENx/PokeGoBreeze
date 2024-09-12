@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Location, useLocation } from 'react-router-dom';
 
 import './Error.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { SpinnerState } from '../../store/models/state.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
+import { LocationState } from '../../core/models/router.model';
 
 const Error = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
+  const location = useLocation() as unknown as Location<LocationState>;
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   useChangeTitle(location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found');
 

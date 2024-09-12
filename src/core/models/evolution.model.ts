@@ -19,7 +19,7 @@ interface IEvolutionQuest {
   lureItemRequirement?: string;
   evolutionItemRequirement?: string;
   onlyUpsideDown?: boolean;
-  condition?: IEvolutionQuestCondition | undefined;
+  condition?: IEvolutionQuestCondition;
   goal?: number;
   type?: string;
   randomEvolution?: boolean;
@@ -35,7 +35,7 @@ export class EvolutionQuest implements IEvolutionQuest {
   lureItemRequirement?: string;
   evolutionItemRequirement?: string;
   onlyUpsideDown?: boolean;
-  condition?: IEvolutionQuestCondition | undefined;
+  condition?: IEvolutionQuestCondition;
   goal?: number;
   type?: string;
   randomEvolution?: boolean;

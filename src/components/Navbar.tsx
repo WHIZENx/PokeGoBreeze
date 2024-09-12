@@ -16,14 +16,10 @@ const NavbarComponent = () => {
   const timestamp = useSelector((state: StoreState) => state.store.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
 
-  const [version, setVersion] = useState('');
+  const [version, setVersion] = useState<string>();
 
   useEffect(() => {
-    getEdgeItem(EdgeKey.VERSION).then((res) => {
-      if (res) {
-        setVersion(res as string);
-      }
-    });
+    getEdgeItem<string>(EdgeKey.VERSION).then((res) => setVersion(res));
   }, []);
 
   return (

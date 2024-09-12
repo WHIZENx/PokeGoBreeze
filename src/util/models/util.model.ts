@@ -7,9 +7,9 @@ interface IBaseStatsPokeGo {
 }
 
 export class BaseStatsPokeGo implements IBaseStatsPokeGo {
-  attack: number = 0;
-  defense: number = 0;
-  stamina: number = 0;
+  attack = 0;
+  defense = 0;
+  stamina = 0;
 
   constructor({ ...props }: IBaseStatsPokeGo) {
     Object.assign(this, props);
@@ -27,12 +27,12 @@ export interface IArrayStats {
 
 // tslint:disable-next-line:max-classes-per-file
 export class ArrayStats implements IArrayStats {
-  id: number = 0;
-  name: string = '';
-  form: string = '';
-  baseStats: IStatsPokemon = new StatsPokemon();
+  id = 0;
+  name = '';
+  form = '';
+  baseStats = new StatsPokemon();
   baseStatsPokeGo: IBaseStatsPokeGo | undefined;
-  baseStatsProd: number = 0;
+  baseStatsProd = 0;
 
   constructor({ ...props }: IArrayStats) {
     Object.assign(this, props);

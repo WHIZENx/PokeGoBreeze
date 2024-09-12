@@ -340,18 +340,18 @@ export const calculateCatchChance = (baseCaptureRate: number, level: number, mul
   );
 };
 
-export const predictStat = (atk: number, def: number, sta: number, cp: number | string) => {
-  cp = parseInt(cp.toString());
+export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
+  const maxCP = parseInt(cp);
   let minLevel = MIN_LEVEL + 1;
   let maxLevel = MIN_LEVEL + 1;
   for (let level = MIN_LEVEL; level <= maxLevel; level += 0.5) {
-    if (cp <= calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level)) {
+    if (maxCP <= calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level)) {
       minLevel = level;
       break;
     }
   }
   for (let level = minLevel; level <= maxLevel; level += 0.5) {
-    if (calculateCP(atk, def, sta, level) >= cp) {
+    if (calculateCP(atk, def, sta, level) >= maxCP) {
       maxLevel = level;
       break;
     }
@@ -362,7 +362,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
     for (let atkIV = MIN_IV; atkIV <= MAX_IV; atkIV++) {
       for (let defIV = MIN_IV; defIV <= MAX_IV; defIV++) {
         for (let staIV = MIN_IV; staIV <= MAX_IV; staIV++) {
-          if (calculateCP(atk + atkIV, def + defIV, sta + staIV, level) === cp) {
+          if (calculateCP(atk + atkIV, def + defIV, sta + staIV, level) === maxCP) {
             predictArr.push(
               PredictStatsModel.create({
                 atk: atkIV,
@@ -378,21 +378,10 @@ export const predictStat = (atk: number, def: number, sta: number, cp: number | 
       }
     }
   }
-  return new PredictStatsCalculate(cp, minLevel, maxLevel, predictArr);
+  return new PredictStatsCalculate(maxCP, minLevel, maxLevel, predictArr);
 };
 
-export const predictCPList = (
-  atk: number,
-  def: number,
-  sta: number,
-  IVatk: number | string,
-  IVdef: number | string,
-  IVsta: number | string
-) => {
-  IVatk = parseInt(IVatk.toString());
-  IVdef = parseInt(IVdef.toString());
-  IVsta = parseInt(IVsta.toString());
-
+export const predictCPList = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number) => {
   const predictArr: IPredictCPModel[] = [];
   for (let level = MIN_LEVEL; level <= maxLevel; level += 0.5) {
     predictArr.push(
@@ -406,13 +395,13 @@ export const predictCPList = (
   return new PredictCPCalculate(IVatk, IVdef, IVsta, predictArr);
 };
 
-export const calculateStats = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, cp: number | string) => {
-  cp = parseInt(cp.toString());
+export const calculateStats = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, cp: string) => {
+  const maxCP = parseInt(cp);
 
-  const dataStat = new StatsCalculate(IVatk, IVdef, IVsta, cp, 0);
+  const dataStat = new StatsCalculate(IVatk, IVdef, IVsta, maxCP, 0);
 
   for (let level = MIN_LEVEL; level <= maxLevel; level += 0.5) {
-    if (cp === calculateCP(atk + IVatk, def + IVdef, sta + IVsta, level)) {
+    if (maxCP === calculateCP(atk + IVatk, def + IVdef, sta + IVsta, level)) {
       dataStat.level = level;
       break;
     }

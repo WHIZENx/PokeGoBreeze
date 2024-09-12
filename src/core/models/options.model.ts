@@ -282,14 +282,18 @@ interface EvolutionGoal {
   target: number;
 }
 
+interface WithPokemonType {
+  pokemonType: string[];
+}
+
+interface WithThrowType {
+  throwType: string;
+}
+
 interface EvolutionCondition {
   type: string;
-  withPokemonType?: {
-    pokemonType: string[];
-  };
-  withThrowType?: {
-    throwType: string;
-  };
+  withPokemonType?: WithPokemonType;
+  withThrowType?: WithThrowType;
 }
 
 export interface IPokemonPermission {

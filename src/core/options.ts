@@ -269,20 +269,20 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
         dataEvo.evoToId = isNotEmpty(regEvoId) ? parseInt(regEvoId[0]) : 0;
       }
 
-      if (evo.candyCost) {
+      if (evo.candyCost > 0) {
         dataEvo.candyCost = evo.candyCost;
       }
       if (evo.evolutionItemRequirementCost) {
         dataEvo.itemCost = evo.evolutionItemRequirementCost;
       }
-      if (evo.candyCostPurified) {
+      if (evo.candyCostPurified > 0) {
         dataEvo.purificationEvoCandyCost = evo.candyCostPurified;
       }
       dataEvo.quest = new EvolutionQuest();
       if (evo.genderRequirement) {
         dataEvo.quest.genderRequirement = evo.genderRequirement;
       }
-      if (evo.kmBuddyDistanceRequirement) {
+      if (evo.kmBuddyDistanceRequirement > 0) {
         dataEvo.quest.kmBuddyDistanceRequirement = evo.kmBuddyDistanceRequirement;
       }
       if (evo.mustBeBuddy) {
@@ -329,31 +329,30 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       if (evo.onlyUpsideDown) {
         dataEvo.quest.onlyUpsideDown = evo.onlyUpsideDown;
       }
-      if (evo.questDisplay) {
+      if (isNotEmpty(evo.questDisplay)) {
         const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
         const template = data.find((template) => template.templateId === questDisplay);
-        try {
-          const condition = template?.data.evolutionQuestTemplate?.goals[0].condition[0];
-          dataEvo.quest.condition = new EvolutionQuestCondition();
-          dataEvo.quest.condition.desc = condition?.type.replace('WITH_', '');
-          if (condition?.withPokemonType) {
-            dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type) =>
-              getValueOrDefault(String, type.split('_').at(2))
-            );
+        const goals = template?.data.evolutionQuestTemplate?.goals;
+        if (isNotEmpty(goals)) {
+          const conditions = goals?.[0].condition;
+          if (isNotEmpty(conditions)) {
+            const condition = conditions?.[0];
+            dataEvo.quest.condition = new EvolutionQuestCondition();
+            dataEvo.quest.condition.desc = condition?.type.replace('WITH_', '');
+            if (condition?.withPokemonType) {
+              dataEvo.quest.condition.pokemonType = condition.withPokemonType.pokemonType.map((type) =>
+                getValueOrDefault(String, type.split('_').at(2))
+              );
+            }
+            if (condition?.withThrowType) {
+              dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_').at(2);
+            }
           }
-          if (condition?.withThrowType) {
-            dataEvo.quest.condition.throwType = condition.withThrowType.throwType.split('_').at(2);
-          }
-          // tslint:disable-next-line: no-empty
-        } catch {} // eslint-disable-line no-empty
-        dataEvo.quest.goal = template?.data.evolutionQuestTemplate?.goals[0].target;
+          dataEvo.quest.goal = goals?.[0].target;
+        }
         dataEvo.quest.type = template?.data.evolutionQuestTemplate?.questType.replace('QUEST_', '');
       } else if (pokemonSettings.evolutionBranch && pokemonSettings.evolutionBranch.length > 1 && !isNotEmpty(Object.keys(dataEvo.quest))) {
-        if (evo.form) {
-          dataEvo.quest.randomEvolution = false;
-        } else {
-          dataEvo.quest.randomEvolution = true;
-        }
+        dataEvo.quest.randomEvolution = evo.form ? false : true;
       }
       if (evo.temporaryEvolution) {
         const tempEvo = {
@@ -362,14 +361,14 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
           tempEvolution: evo.temporaryEvolutionEnergyCostSubsequent,
           requireMove: evo.obEvolutionBranchRequiredMove,
         };
-        if (optional.tempEvo) {
-          optional.tempEvo.push(tempEvo);
+        if (isNotEmpty(optional.tempEvo)) {
+          optional.tempEvo?.push(tempEvo);
         } else {
           optional.tempEvo = [tempEvo];
         }
       } else {
-        if (optional.evoList) {
-          optional.evoList.push(dataEvo);
+        if (isNotEmpty(optional.evoList)) {
+          optional.evoList?.push(dataEvo);
         } else {
           optional.evoList = [dataEvo];
         }
@@ -590,14 +589,13 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     let count = 0,
       mega = false;
     while (formSet.length > count) {
-      let form;
       let shiny = false;
       let gender = 3;
-      const formList = formSet[count].split('.');
-      if (formList[1] === 'icon' || formList[1] === 'g2') {
+      let [, form] = formSet[count].split('.');
+      if (form === 'icon' || form === 'g2') {
         form = FORM_NORMAL;
       } else {
-        form = formList[1].replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
+        form = form.replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
       }
       if (formSet.includes(`${formSet[count].replace('.icon', '')}.s.icon`)) {
         shiny = true;
@@ -607,7 +605,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       } else if (formSet[count].includes('.g2.')) {
         gender = 2;
       }
-      if (form?.toUpperCase().includes(FORM_MEGA)) {
+      if (form.toUpperCase().includes(FORM_MEGA)) {
         mega = true;
       }
       result.image.push(
@@ -622,14 +620,14 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       count += shiny ? 2 : 1;
     }
 
-    formSet = imgs?.filter(
+    formSet = imgs.filter(
       (img) =>
         !img.includes(`Addressable Assets/`) &&
         (img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}_51`) ||
           img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}_52`))
     );
     if (!mega) {
-      for (let index = 0; index < formSet?.length; index += 2) {
+      for (let index = 0; index < formSet.length; index += 2) {
         result.image.push(
           new ImageModel({
             gender: 3,
@@ -646,7 +644,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     formSet = imgs.filter(
       (img) => !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_pm${result.id?.toString().padStart(4, '0')}`)
     );
-    for (let index = 0; index < formSet?.length; index += 2) {
+    for (let index = 0; index < formSet.length; index += 2) {
       const subForm = formSet[index].replace('_shiny', '').split('_');
       const form = subForm[subForm.length - 1].toUpperCase();
       if (!formList.includes(form)) {
@@ -664,7 +662,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     }
 
     if (!isNotEmpty(result.image)) {
-      formSet = imgs?.filter(
+      formSet = imgs.filter(
         (img) => !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}`)
       );
       for (let index = 0; index < formSet.length; index += 2) {
@@ -687,14 +685,13 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     mega = false;
     let soundForm = sounds.filter((sound) => sound.includes(`Addressable Assets/pm${result.id}.`) && sound.includes('cry'));
     result.sound.cry = soundForm.map((sound) => {
-      const forms = sound.split('.');
-      let form;
-      if (forms[1] === 'cry') {
+      let [, form] = sound.split('.');
+      if (form === 'cry') {
         form = FORM_NORMAL;
       } else {
-        form = forms[1].replace(/[a-z]/g, '');
+        form = form.replace(/[a-z]/g, '');
       }
-      if (form?.toUpperCase().includes(FORM_MEGA)) {
+      if (form.toUpperCase().includes(FORM_MEGA)) {
         mega = true;
       }
       return new CryPath({
@@ -703,7 +700,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       });
     });
 
-    soundForm = sounds?.filter(
+    soundForm = sounds.filter(
       (sound) =>
         !sound.includes(`Addressable Assets/`) &&
         (sound.includes(`pv${result.id?.toString().padStart(3, '0')}_51`) ||

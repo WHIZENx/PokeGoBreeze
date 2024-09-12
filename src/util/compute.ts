@@ -125,13 +125,14 @@ export const computeBgType = (
       colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${getValueOrDefault(Number, opacity, 1)})`);
     });
   }
+  const [priColor, secColor] = colorsPalette;
   if (shadow) {
-    return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, rgb(202, 156, 236), ${colorsPalette.at(1) ?? colorsPalette.at(0)})`;
+    return `linear-gradient(to bottom right, ${priColor}, rgb(202, 156, 236), ${secColor ?? priColor})`;
   }
   if (purified) {
-    return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, white, ${colorsPalette.at(1) ?? colorsPalette.at(0)})`;
+    return `linear-gradient(to bottom right, ${priColor}, white, ${secColor ?? priColor})`;
   }
-  return `linear-gradient(to bottom right, ${colorsPalette.at(0)}, ${colorsPalette.at(1) ?? colorsPalette.at(0)})`;
+  return `linear-gradient(to bottom right, ${priColor}, ${secColor ?? priColor})`;
 };
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {

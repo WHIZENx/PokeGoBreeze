@@ -183,9 +183,9 @@ export const Body = (
   );
 };
 
-export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: number | string) => {
+export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: string) => {
   const calculateStatsTopRank = (stats: IStatsBase | undefined, level = maxLevel) => {
-    const maxCP = parseInt(cp.toString());
+    const maxCP = parseInt(cp);
 
     let calcCP = calculateCP(
       getValueOrDefault(Number, stats?.atk) + MAX_IV,
