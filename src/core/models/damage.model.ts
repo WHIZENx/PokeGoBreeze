@@ -38,7 +38,7 @@ export class BattleState implements IBattleState {
   trainer?: boolean;
   fLevel?: number;
   cLevel?: number;
-  effective: number = 0;
+  effective = 0;
 
   static create(value: IBattleState) {
     const obj = new BattleState();

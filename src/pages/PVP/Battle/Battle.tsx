@@ -118,7 +118,7 @@ const Battle = () => {
     energy: number,
     hp: number,
     type: string | undefined = undefined,
-    tap: boolean = false,
+    tap = false,
     color: string | undefined = undefined,
     size: number | undefined = undefined,
     move: ICombat | undefined = undefined,
@@ -1002,9 +1002,9 @@ const Battle = () => {
   };
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const updateTimeline = (index: string | number, sound = false) => {
-    const pokeCurrData = pokemonCurr.timeline.at(parseInt(index.toString()));
-    const pokeObjData = pokemonObj.timeline.at(parseInt(index.toString()));
+  const updateTimeline = (index: number, sound = false) => {
+    const pokeCurrData = pokemonCurr.timeline.at(index);
+    const pokeObjData = pokemonObj.timeline.at(index);
     // if (sound) {
     //   if (pokemonCurr.audio.fMove.paused && pokeCurrData.type === AttackType.Fast) {
     //     pokemonCurr.audio.fMove.currentTime = 0;
@@ -1173,7 +1173,7 @@ const Battle = () => {
     type: string,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
-    isRandom: boolean = false
+    isRandom = false
   ) => {
     if (!pokemon.pokemonData?.allStats) {
       return;

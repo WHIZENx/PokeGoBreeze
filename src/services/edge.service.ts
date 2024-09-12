@@ -4,8 +4,8 @@ const edge = createClient(process.env.REACT_APP_EDGE_CONFIG, {
   cache: 'force-cache',
 });
 
-export const getEdgeItem = async (key: string) => {
-  return await edge.get(key);
+export const getEdgeItem = async <T>(key: string) => {
+  return await edge.get<T>(key);
 };
 
 export const getAllEdgeItem = async () => {

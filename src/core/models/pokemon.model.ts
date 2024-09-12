@@ -7,9 +7,9 @@ import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 import { getValueOrDefault, isUndefined } from '../../util/extension';
 
 export interface OptionsPokemon {
-  prev?: IPokemonName | undefined;
+  prev?: IPokemonName;
   current: IPokemonName | undefined;
-  next?: IPokemonName | undefined;
+  next?: IPokemonName;
 }
 
 export interface PokemonGender {
@@ -159,7 +159,7 @@ export interface PokemonModel {
   obSpecialAttackMoves?: string[];
   eliteQuickMove?: string[];
   eliteCinematicMove?: string[];
-  form?: string | number | null;
+  form?: string | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | null | undefined;
   formChange?: IPokemonFormChange[];
@@ -496,7 +496,7 @@ export class PokemonData implements IPokemonData {
     obj.region = options?.region ?? 'Unknown';
     obj.version = options?.version ?? 'scarlet-violet';
     obj.baseSpecies = capitalize(pokemon.pokemonId);
-    obj.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
+    obj.forme = pokemon.form ? pokemon.form : FORM_NORMAL;
     obj.encounter = pokemon.encounter;
     obj.isShadow = pokemon.shadow ? true : false;
     obj.formChange = getValueOrDefault(Array, pokemon.formChange);

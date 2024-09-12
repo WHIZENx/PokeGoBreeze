@@ -140,10 +140,10 @@ export interface IPokemonFormModify {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonFormModify implements IPokemonFormModify {
-  defaultId: number = 0;
-  defaultName: string = '';
-  name: string = '';
-  form: IForm = new Form();
+  defaultId = 0;
+  defaultName = '';
+  name = '';
+  form = new Form();
 
   static setForm(defaultId: number, defaultName: string, name: string, form: IForm) {
     const obj = new PokemonFormModify();
@@ -167,7 +167,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   defaultName: string;
   name: string;
   form: IForm;
-  sprites: IPokemonSprit = new PokemonSprit();
+  sprites = new PokemonSprit();
 
   constructor(
     id: number,
@@ -203,16 +203,16 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
 
 // tslint:disable-next-line:max-classes-per-file
 export class Form implements IForm {
-  formName: string = '';
-  id: number = 0;
-  isDefault: boolean = false;
-  isMega: boolean = false;
-  isShadow: boolean = false;
-  isPurified: boolean = false;
-  name: string = '';
-  version: string = '';
+  formName = '';
+  id: number | undefined;
+  isDefault = false;
+  isMega = false;
+  isShadow = false;
+  isPurified = false;
+  name = '';
+  version = '';
   types: string[] = [];
-  sprites: IPokemonSprit | undefined;
+  sprites?: IPokemonSprit;
 
   constructor(data?: IPokemonFormDetail) {
     if (data) {

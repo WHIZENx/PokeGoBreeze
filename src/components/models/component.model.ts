@@ -109,10 +109,10 @@ export interface IFindComponent {
 export interface IFormSelectComponent {
   router: ReduxRouterState;
   searching: IToolSearching | null;
-  raid?: boolean | undefined;
+  raid?: boolean;
   tier?: number;
   id?: number;
-  onClearStats?: ((reset?: boolean) => void) | undefined;
+  onClearStats?: (reset?: boolean) => void;
   setTier?: React.Dispatch<React.SetStateAction<number>>;
   onSetPrev?: () => void;
   onSetNext?: () => void;
@@ -220,7 +220,7 @@ export interface IStatsComponent {
 
 export interface IGenderComponent {
   sex: string;
-  ratio?: IPokemonGenderRatio | undefined;
+  ratio?: IPokemonGenderRatio;
   defaultM?: string;
   defaultF?: string;
   shinyM?: string;
@@ -378,10 +378,10 @@ export interface ITypeComponent {
   arr: string[] | undefined;
   block?: boolean;
   shadow?: boolean;
-  style?: React.CSSProperties | undefined;
+  style?: React.CSSProperties;
   text?: string;
   hideText?: boolean;
-  height?: string | number | undefined;
+  height?: string | number;
   color?: string;
   isShow?: boolean;
 }
@@ -390,7 +390,7 @@ export interface ITypeBadgeComponent {
   move: ISelectMoveModel | ICombat | null | undefined;
   find?: boolean;
   grow?: boolean;
-  style?: React.CSSProperties | undefined;
+  style?: React.CSSProperties;
   color?: string;
   title?: string;
   elite?: boolean;

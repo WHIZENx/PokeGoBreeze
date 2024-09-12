@@ -319,7 +319,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
       const rule: any = sheet.cssRules[j];
       if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
-        return rule.style[style];
+        return rule.style[style] as string;
       }
     }
   }
@@ -494,7 +494,11 @@ export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => {
 
 export const getDataWithKey = <T>(data: any, key: string | number) => {
   const result = Object.entries(data ?? new Object()).find((k) => k.at(0) === key.toString());
-  return (result ? result[1] : new Object()) as T;
+  if (result) {
+    const [, data] = result;
+    return data as T;
+  }
+  return new Object() as T;
 };
 
 export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | undefined) => {

@@ -89,7 +89,7 @@ interface RaidResult {
 interface RaidSetting {
   isShow?: boolean;
   id: number;
-  pokemon?: IPokemonData | undefined;
+  pokemon?: IPokemonData;
 }
 
 const RaidBattle = () => {

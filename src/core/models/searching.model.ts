@@ -15,7 +15,7 @@ export interface IToolSearching {
 }
 
 export class ToolSearching implements IToolSearching {
-  id: number = 0;
+  id = 0;
   name?: string;
   form?: string;
   fullName?: string;

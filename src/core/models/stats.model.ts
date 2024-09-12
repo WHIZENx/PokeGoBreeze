@@ -199,8 +199,8 @@ export interface IStatsAtk extends OptionsStats {
 export class StatsAtk implements IStatsAtk {
   attack = 0;
   rank = 0;
-  id?: number | undefined;
-  form?: string | undefined;
+  id?: number;
+  form?: string;
 
   static create(value: IStatsAtk) {
     const obj = new StatsAtk();
@@ -217,8 +217,8 @@ export interface IStatsDef extends OptionsStats {
 export class StatsDef implements IStatsDef {
   defense = 0;
   rank = 0;
-  id?: number | undefined;
-  form?: string | undefined;
+  id?: number;
+  form?: string;
 
   static create(value: IStatsDef) {
     const obj = new StatsDef();
@@ -235,8 +235,8 @@ export interface IStatsSta extends OptionsStats {
 export class StatsSta implements IStatsSta {
   stamina = 0;
   rank = 0;
-  id?: number | undefined;
-  form?: string | undefined;
+  id?: number;
+  form?: string;
 
   static create(value: IStatsSta) {
     const obj = new StatsSta();
@@ -253,8 +253,8 @@ export interface IStatsProd extends OptionsStats {
 export class StatsProd implements IStatsProd {
   prod = 0;
   rank = 0;
-  id?: number | undefined;
-  form?: string | undefined;
+  id?: number;
+  form?: string;
 
   static create(value: IStatsProd) {
     const obj = new StatsProd();

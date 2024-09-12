@@ -7,11 +7,15 @@ export interface APITree {
   tree: APIPath[];
 }
 
+interface Committer {
+  date: Date;
+}
+
+interface Commit {
+  tree: APIPath;
+  committer: Committer;
+}
+
 export interface APITreeRoot {
-  commit: {
-    tree: APIPath;
-    committer: {
-      date: Date;
-    };
-  };
+  commit: Commit;
 }

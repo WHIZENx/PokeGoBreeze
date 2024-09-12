@@ -31,7 +31,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty } from '../../../util/extension';
 
 interface PokemonCatchChance {
   baseCaptureRate?: number;
@@ -211,18 +211,19 @@ const CatchChance = () => {
         typePri: { priority: 0, type: '' },
         typeSec: { priority: 0, type: '' },
       };
+      const [typePri, typeSec] = pokemon.types;
       medalType = {
         ...medalType,
         typePri: {
-          type: pokemon.types[0],
+          type: typePri,
           priority: medal && medal.typePri ? medal.typePri.priority : 0,
         },
       };
-      if (pokemon.types.length > 1) {
+      if (!isNullOrEmpty(typeSec)) {
         medalType = {
           ...medalType,
           typeSec: {
-            type: pokemon.types[1],
+            type: typeSec,
             priority: medal && medal.typeSec ? medal.typeSec.priority : 0,
           },
         };
@@ -310,7 +311,7 @@ const CatchChance = () => {
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
     const pokeball = Object.entries(pokeballType).find((_, index) => index === ballType);
-    if (pokeball) {
+    if (pokeball && isNotEmpty(pokeball)) {
       const multiplier =
         pokeball[1].threshold *
         threshold *

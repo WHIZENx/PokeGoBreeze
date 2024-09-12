@@ -7,11 +7,11 @@ export interface ISearchingModel {
 }
 
 export class SearchingModel implements ISearchingModel {
-  id: number = 0;
+  id = 0;
   name?: string;
   form?: string;
   fullName?: string;
-  timestamp: Date = new Date();
+  timestamp = new Date();
 
   constructor({ ...props }: ISearchingModel) {
     Object.assign(this, props);

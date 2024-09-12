@@ -14,16 +14,16 @@ export interface IPokemonTopMove {
 }
 
 export class PokemonTopMove implements IPokemonTopMove {
-  num: number = 0;
-  forme: string | null = '';
-  name: string = '';
-  baseSpecies: string | null = '';
-  sprite: string = '';
-  releasedGO: boolean = false;
-  isElite: boolean = false;
-  isSpecial: boolean = false;
-  dps: number = 0;
-  tdo: number = 0;
+  num = 0;
+  forme = '';
+  name = '';
+  baseSpecies = '';
+  sprite = '';
+  releasedGO = false;
+  isElite = false;
+  isSpecial = false;
+  dps = 0;
+  tdo = 0;
 
   constructor({ ...props }: IPokemonTopMove) {
     Object.assign(this, props);
@@ -60,9 +60,9 @@ export interface IPokemonQueryMove {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonQueryMove implements IPokemonQueryMove {
-  fMove: ICombat = new Combat();
-  cMove: ICombat = new Combat();
-  eDPS: IeDPS = new EDPS();
+  fMove = new Combat();
+  cMove = new Combat();
+  eDPS = new EDPS();
 
   constructor({ ...props }: IPokemonQueryMove) {
     Object.assign(this, props);
@@ -98,13 +98,13 @@ export interface IPokemonQueryCounter {
 
 // tslint:disable-next-line:max-classes-per-file
 export class PokemonQueryCounter implements IPokemonQueryCounter {
-  pokemonId: number = 0;
-  pokemonName: string = '';
-  pokemonForme: string | null = '';
-  releasedGO: boolean = false;
-  dps: number = 0;
-  fMove: ICombat = new Combat();
-  cMove: ICombat = new Combat();
+  pokemonId = 0;
+  pokemonName = '';
+  pokemonForme = '';
+  releasedGO = false;
+  dps = 0;
+  fMove = new Combat();
+  cMove = new Combat();
 
   constructor({ ...props }: IPokemonQueryCounter) {
     Object.assign(this, props);
