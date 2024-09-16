@@ -329,7 +329,7 @@ export interface PokemonEncounter {
   basefleerate: number;
 }
 
-export interface PokemonRaidModel {
+export interface IPokemonRaidModel {
   dataTargetPokemon?: IPokemonData;
   fMoveTargetPokemon?: ISelectMoveModel;
   cMoveTargetPokemon?: ISelectMoveModel;
@@ -341,6 +341,27 @@ export interface PokemonRaidModel {
   tdoAtk?: number;
   tdoDef?: number;
   attackHpRemain?: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonRaidModel implements IPokemonRaidModel {
+  dataTargetPokemon?: IPokemonData;
+  fMoveTargetPokemon?: ISelectMoveModel;
+  cMoveTargetPokemon?: ISelectMoveModel;
+  trainerId?: number;
+  dpsAtk?: number;
+  hp?: number;
+  ttkDef?: number;
+  dpsDef?: number;
+  tdoAtk?: number;
+  tdoDef?: number;
+  attackHpRemain?: number;
+
+  static create(value: IPokemonRaidModel) {
+    const obj = new PokemonRaidModel();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 export interface IPokemonDataOptional {

@@ -15,7 +15,7 @@ import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
 import { PokemonData } from '../../../core/models/pokemon.model';
-import { combineClasses, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
@@ -78,35 +78,37 @@ const SelectPoke = (props: ISelectPokeComponent) => {
 
     if (allStats && value && value.pokemon) {
       setScore(value.score);
-      props.setPokemonBattle({
-        ...props.pokemonBattle,
-        pokemonData: PokemonBattleData.create({
-          ...value,
-          form: getValueOrDefault(String, value.form),
-          shadow: getValueOrDefault(Boolean, value.shadow),
-          hp: getValueOrDefault(Number, value.stats.hp),
+      props.setPokemonBattle(
+        PokemonBattle.create({
+          ...props.pokemonBattle,
+          pokemonData: PokemonBattleData.create({
+            ...value,
+            form: getValueOrDefault(String, value.form),
+            shadow: getValueOrDefault(Boolean, value.shadow),
+            hp: getValueOrDefault(Number, value.stats.hp),
+            fMove: fMoveCombat,
+            cMove: cMovePriCombat,
+            cMoveSec: cMoveSecCombat,
+            energy: 0,
+            block: 0,
+            turn: 0,
+            allStats,
+            currentStats: allStats[allStats.length - 1],
+            bestStats: allStats[allStats.length - 1],
+            disableCMovePri: false,
+            disableCMoveSec: false,
+          }),
           fMove: fMoveCombat,
-          cMove: cMovePriCombat,
+          cMovePri: cMovePriCombat,
           cMoveSec: cMoveSecCombat,
-          energy: 0,
-          block: 0,
-          turn: 0,
-          allStats,
-          currentStats: allStats[allStats.length - 1],
-          bestStats: allStats[allStats.length - 1],
-          disableCMovePri: false,
-          disableCMoveSec: false,
-        }),
-        fMove: fMoveCombat,
-        cMovePri: cMovePriCombat,
-        cMoveSec: cMoveSecCombat,
-        audio: {
-          fMove: new Audio(APIService.getSoundMove(getValueOrDefault(String, fMoveCombat?.sound))),
-          cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMovePriCombat?.sound))),
-          cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMoveSecCombat?.sound))),
-        },
-        shadow: value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`),
-      });
+          audio: {
+            fMove: new Audio(APIService.getSoundMove(getValueOrDefault(String, fMoveCombat?.sound))),
+            cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMovePriCombat?.sound))),
+            cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMoveSecCombat?.sound))),
+          },
+          shadow: value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`),
+        })
+      );
     }
   };
 
@@ -161,11 +163,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   }, [props.clearData]);
 
   const removeChargeMoveSec = () => {
+    setTimeout(() => setShowCMoveSec(false));
     props.clearData(true);
     setCMoveSec(undefined);
-    setTimeout(() => {
-      setShowCMoveSec(false);
-    }, 0);
   };
 
   useEffect(() => {
@@ -178,19 +178,19 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     <Fragment>
       <h5>Pokémon</h5>
       <div className="border-box-battle position-relative">
-        {(score || pokemonIcon || pokemon) && (
+        {(score > 0 || !isEmpty(pokemonIcon) || pokemon) && (
           <span className="pokemon-select-right">
             {pokemon?.speciesId.includes('_shadow') && (
               <span style={{ marginRight: 5 }} className="type-icon-small ic shadow-ic">
                 {capitalize(FORM_SHADOW)}
               </span>
             )}
-            {score && (
+            {score > 0 && (
               <span style={{ marginRight: 5 }} className="type-icon-small ic elite-ic">
                 {score}
               </span>
             )}
-            {pokemonIcon && (
+            {!isEmpty(pokemonIcon) && (
               <span onClick={() => removePokemon()} className="remove-pokemon-select">
                 <CloseIcon sx={{ color: 'red' }} />
               </span>
@@ -211,7 +211,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           value={search}
         />
       </div>
-      {props.data && (
+      {isNotEmpty(props.data) && (
         <div className="result-pokemon" style={{ display: show ? 'block' : 'none', maxHeight: 274 }}>
           {props.data
             .filter((pokemon) => pokemon && splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
@@ -235,8 +235,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         style={{ padding: 0, borderRadius: 0 }}
       >
         <div className="card-move-input" tabIndex={0} onClick={() => setShowFMove(true)} onBlur={() => setShowFMove(false)}>
-          <CardMoveSmall value={fMove} show={pokemon ? true : false} select={props.data && props.data.length > 1} />
-          {showFMove && props.data && pokemon && (
+          <CardMoveSmall value={fMove} show={pokemon ? true : false} select={isNotEmpty(props.data) && props.data.length > 1} />
+          {showFMove && isNotEmpty(props.data) && pokemon && (
             <div className="result-move-select">
               <div>
                 {props.data
@@ -269,16 +269,18 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           checked={!props.pokemonBattle.disableCMovePri}
           onChange={(_, check) => {
             props.clearData(false);
-            props.setPokemonBattle({
-              ...props.pokemonBattle,
-              disableCMovePri: !check,
-              chargeSlot:
-                check === false
-                  ? props.pokemonBattle.disableCMoveSec
-                    ? ChargeType.None
-                    : ChargeType.Secondary
-                  : props.pokemonBattle.chargeSlot,
-            });
+            props.setPokemonBattle(
+              PokemonBattle.create({
+                ...props.pokemonBattle,
+                disableCMovePri: !check,
+                chargeSlot:
+                  check === false
+                    ? props.pokemonBattle.disableCMoveSec
+                      ? ChargeType.None
+                      : ChargeType.Secondary
+                    : props.pokemonBattle.chargeSlot,
+              })
+            );
           }}
         />
         <div
@@ -289,7 +291,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           style={{ padding: 0, borderRadius: 0 }}
         >
           <div
-            className={combineClasses('card-move-input', props.pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer')}
+            className={combineClasses(
+              'card-move-input',
+              !pokemon ? '' : props.pokemonBattle.disableCMovePri ? 'cursor-not-allowed' : 'cursor-pointer'
+            )}
             tabIndex={0}
             onClick={() => {
               if (!props.pokemonBattle.disableCMovePri) {
@@ -306,9 +311,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               value={cMovePri}
               show={pokemon ? true : false}
               disable={props.pokemonBattle.disableCMovePri}
-              select={props.data && props.data.length > 1}
+              select={isNotEmpty(props.data) && props.data.length > 1}
             />
-            {showCMovePri && props.data && pokemon && (
+            {showCMovePri && isNotEmpty(props.data) && pokemon && (
               <div className="result-move-select">
                 <div>
                   {props.data
@@ -346,16 +351,18 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           checked={!props.pokemonBattle.disableCMoveSec}
           onChange={(_, check) => {
             props.clearData(false);
-            props.setPokemonBattle({
-              ...props.pokemonBattle,
-              disableCMoveSec: !check,
-              chargeSlot:
-                check === false
-                  ? props.pokemonBattle.disableCMovePri
-                    ? ChargeType.None
-                    : ChargeType.Primary
-                  : props.pokemonBattle.chargeSlot,
-            });
+            props.setPokemonBattle(
+              PokemonBattle.create({
+                ...props.pokemonBattle,
+                disableCMoveSec: !check,
+                chargeSlot:
+                  check === false
+                    ? props.pokemonBattle.disableCMovePri
+                      ? ChargeType.None
+                      : ChargeType.Primary
+                    : props.pokemonBattle.chargeSlot,
+              })
+            );
           }}
         />
         <div
@@ -366,7 +373,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           style={{ padding: 0, borderRadius: 0 }}
         >
           <div
-            className={combineClasses('card-move-input', props.pokemonBattle.disableCMoveSec ? 'cursor-not-allowed' : 'cursor-pointer')}
+            className={combineClasses(
+              'card-move-input',
+              !pokemon ? '' : props.pokemonBattle.disableCMoveSec ? 'cursor-not-allowed' : 'cursor-pointer'
+            )}
             tabIndex={0}
             onClick={() => {
               if (!props.pokemonBattle.disableCMoveSec) {
@@ -385,9 +395,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               show={pokemon ? true : false}
               clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
               disable={props.pokemonBattle.disableCMoveSec}
-              select={props.data && props.data.length > 1}
+              select={isNotEmpty(props.data) && props.data.length > 1}
             />
-            {showCMoveSec && props.data && pokemon && (
+            {showCMoveSec && isNotEmpty(props.data) && pokemon && (
               <div className="result-move-select">
                 <div>
                   {props.data

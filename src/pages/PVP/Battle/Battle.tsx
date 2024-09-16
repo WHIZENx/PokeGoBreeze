@@ -73,9 +73,14 @@ interface OptionsBattle {
   league: number;
 }
 
-interface BattleState {
+interface IBattleState {
   pokemonCurr: IPokemonBattleData;
   pokemonObj: IPokemonBattleData;
+}
+
+class BattleState implements IBattleState {
+  pokemonCurr = new PokemonBattleData();
+  pokemonObj = new PokemonBattleData();
 }
 
 const Battle = () => {
@@ -107,10 +112,7 @@ const Battle = () => {
 
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
 
-  const [playTimeline, setPlayTimeline] = useState<BattleState>({
-    pokemonCurr: new PokemonBattleData(),
-    pokemonObj: new PokemonBattleData(),
-  });
+  const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
   const State = (
     timer: number,
@@ -135,7 +137,6 @@ const Battle = () => {
       energy,
       hp: Math.max(0, hp),
       dmgImmune,
-      buff: undefined,
     });
   };
 
@@ -796,10 +797,7 @@ const Battle = () => {
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
-    setPlayTimeline({
-      pokemonCurr: new PokemonBattleData(),
-      pokemonObj: new PokemonBattleData(),
-    });
+    setPlayTimeline(new BattleState());
     if (removeCMoveSec) {
       setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, cMoveSec: undefined, timeline: [] }));
     } else {
@@ -809,10 +807,7 @@ const Battle = () => {
 
   const clearDataPokemonObj = (removeCMoveSec: boolean) => {
     setPokemonCurr(PokemonBattle.create({ ...pokemonCurr, timeline: [] }));
-    setPlayTimeline({
-      pokemonCurr: new PokemonBattleData(),
-      pokemonObj: new PokemonBattleData(),
-    });
+    setPlayTimeline(new BattleState());
     if (removeCMoveSec) {
       setPokemonObj(PokemonBattle.create({ ...pokemonObj, cMoveSec: undefined, timeline: [] }));
     } else {
@@ -841,7 +836,7 @@ const Battle = () => {
     if (elem && x <= getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
-    if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline)) {
+    if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline) && arrBound.current.length < pokemonCurr.timeline.length) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
         arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
       }
@@ -862,7 +857,11 @@ const Battle = () => {
     if (elem && x <= getValueOrDefault(Number, timelineFit.current?.clientWidth)) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
-    if ((xFit.current !== e.currentTarget.clientWidth || !isNotEmpty(arrStore.current)) && isNotEmpty(pokemonCurr.timeline)) {
+    if (
+      (xFit.current !== e.currentTarget.clientWidth || !isNotEmpty(arrStore.current)) &&
+      isNotEmpty(pokemonCurr.timeline) &&
+      arrStore.current.length < pokemonCurr.timeline.length
+    ) {
       xFit.current = e.currentTarget.clientWidth;
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
         arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());

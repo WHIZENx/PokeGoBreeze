@@ -51,7 +51,14 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { IPokemonData, PokemonData, PokemonModel, PokemonMoveData, PokemonRaidModel } from '../../../core/models/pokemon.model';
+import {
+  IPokemonData,
+  IPokemonRaidModel,
+  PokemonData,
+  PokemonModel,
+  PokemonMoveData,
+  PokemonRaidModel,
+} from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { TypeMove } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
@@ -59,38 +66,7 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
 import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
-
-interface TrainerBattle {
-  pokemons: PokemonRaidModel[];
-  trainerId: number | undefined;
-}
-
-interface BattleResult {
-  minDPS: number;
-  maxDPS: number;
-  minTDO: number;
-  maxTDO: number;
-  minHP: number;
-  maxHP: number;
-}
-
-interface RaidResult {
-  pokemon: PokemonMoveData[];
-  summary: {
-    dpsAtk: number;
-    dpsDef: number;
-    tdoAtk: number;
-    tdoDef: number;
-    timer: number;
-    bossHp: number;
-  };
-}
-
-interface RaidSetting {
-  isShow?: boolean;
-  id: number;
-  pokemon?: IPokemonData;
-}
+import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
 
 const RaidBattle = () => {
   useChangeTitle('Raid Battle - Tools');
@@ -163,15 +139,13 @@ const RaidBattle = () => {
   const [timeAllow, setTimeAllow] = useState(0);
 
   const [resultBoss, setResultBoss] = useState<BattleResult>();
-  const [resultRaid, setResultRaid] = useState<RaidResult[]>();
+  const [resultRaid, setResultRaid] = useState<IRaidResult[]>();
   const [result, setResult] = useState<PokemonMoveData[]>([]);
 
   const [show, setShow] = useState(false);
   const [showOption, setShowOption] = useState(false);
 
-  const [showSettingPokemon, setShowSettingPokemon] = useState<RaidSetting>({
-    id: 0,
-  });
+  const [showSettingPokemon, setShowSettingPokemon] = useState(new RaidSetting());
 
   const handleClose = () => {
     setTrainerBattle(update(trainerBattle, { [trainerBattleId]: { pokemons: { $set: tempPokemonBattle } } }));
@@ -183,7 +157,7 @@ const RaidBattle = () => {
     setShow(false);
   };
 
-  const handleShow = (pokemons: PokemonRaidModel[], id: number) => {
+  const handleShow = (pokemons: IPokemonRaidModel[], id: number) => {
     setShow(true);
     setTrainerBattleId(id);
     setPokemonBattle(pokemons);
@@ -233,11 +207,13 @@ const RaidBattle = () => {
   };
 
   const handleCloseSettingPokemon = () => {
-    setShowSettingPokemon({
-      isShow: false,
-      id: 0,
-      pokemon: undefined,
-    });
+    setShowSettingPokemon(
+      RaidSetting.create({
+        isShow: false,
+        id: 0,
+        pokemon: undefined,
+      })
+    );
   };
 
   const handleSaveSettingPokemon = () => {
@@ -257,21 +233,17 @@ const RaidBattle = () => {
     handleCloseSettingPokemon();
   };
 
-  const initDataPoke: PokemonRaidModel = {
-    dataTargetPokemon: undefined,
-    fMoveTargetPokemon: undefined,
-    cMoveTargetPokemon: undefined,
-  };
-  const initTrainer: TrainerBattle = {
+  const initDataPoke = new PokemonRaidModel();
+  const initTrainer = TrainerBattle.create({
     pokemons: [initDataPoke],
     trainerId: 1,
-  };
+  });
 
-  const [trainerBattle, setTrainerBattle] = useState<TrainerBattle[]>([initTrainer]);
+  const [trainerBattle, setTrainerBattle] = useState([initTrainer]);
 
   const [trainerBattleId, setTrainerBattleId] = useState(0);
-  const [pokemonBattle, setPokemonBattle] = useState<PokemonRaidModel[]>([]);
-  const [tempPokemonBattle, setTempPokemonBattle] = useState<PokemonRaidModel[]>([]);
+  const [pokemonBattle, setPokemonBattle] = useState<IPokemonRaidModel[]>([]);
+  const [tempPokemonBattle, setTempPokemonBattle] = useState<IPokemonRaidModel[]>([]);
   const [countTrainer, setCountTrainer] = useState(1);
   const [isLoadedForms, setIsLoadedForms] = useState(false);
 
@@ -304,11 +276,13 @@ const RaidBattle = () => {
   };
 
   const onOptionsPokemon = (index: number, pokemon: IPokemonData) => {
-    setShowSettingPokemon({
-      isShow: true,
-      id: index,
-      pokemon,
-    });
+    setShowSettingPokemon(
+      RaidSetting.create({
+        isShow: true,
+        id: index,
+        pokemon,
+      })
+    );
   };
 
   const findMove = (id: number, form: string) => {
@@ -565,7 +539,7 @@ const RaidBattle = () => {
     calculateTopBattle(false);
   };
 
-  const calculateDPSBattle = (pokemon: PokemonRaidModel, hpRemain: number, timer: number) => {
+  const calculateDPSBattle = (pokemon: IPokemonRaidModel, hpRemain: number, timer: number) => {
     const fMove = data?.combat?.find((item) => item.name === pokemon.fMoveTargetPokemon?.name);
     const cMove = data?.combat?.find((item) => item.name === pokemon.cMoveTargetPokemon?.name);
 
@@ -630,7 +604,7 @@ const RaidBattle = () => {
     }
   };
 
-  const calculateTrainerBattle = (trainerBattle: TrainerBattle[]) => {
+  const calculateTrainerBattle = (trainerBattle: ITrainerBattle[]) => {
     const trainer = trainerBattle.map((trainer) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter((pokemon) => isNotEmpty(pokemon.filter((item) => !item.dataTargetPokemon)));
     if (isNotEmpty(trainerNoPokemon)) {
@@ -639,18 +613,18 @@ const RaidBattle = () => {
     }
     enqueueSnackbar('Simulator battle raid successfully!', { variant: 'success' });
 
-    const turn: PokemonRaidModel[][] = [];
-    trainer.forEach((pokemons, id) => {
+    const turn: IPokemonRaidModel[][] = [];
+    trainer.forEach((pokemons, trainerId) => {
       pokemons.forEach((_, index) => {
         turn[index] = getValueOrDefault(Array, turn[index]);
-        turn[index].push({ ...trainer[id][index], trainerId: getValueOrDefault(Number, id) });
+        turn[index].push(PokemonRaidModel.create({ ...trainer[trainerId][index], trainerId }));
       });
     });
-    const result: RaidResult[] = [];
+    const result: IRaidResult[] = [];
     let timer = 0,
       bossHp = statBossHP;
     turn.forEach((group) => {
-      const dataList: RaidResult = {
+      const dataList = new RaidResult({
         pokemon: [],
         summary: {
           dpsAtk: 0,
@@ -660,7 +634,7 @@ const RaidBattle = () => {
           timer,
           bossHp: Math.max(0, bossHp),
         },
-      };
+      });
       group.forEach((pokemon) => {
         if (pokemon.dataTargetPokemon) {
           const stat = calculateDPSBattle(pokemon, dataList.summary.bossHp, timer);
@@ -676,11 +650,11 @@ const RaidBattle = () => {
 
       dataList.summary.tdoAtk = Math.min(
         dataList.summary.bossHp,
-        dataList.pokemon.reduce((prev, curr) => prev + getValueOrDefault(Number, curr.tdoAtk), 0)
+        dataList.pokemon.reduce((prev, curr) => prev + curr.tdoAtk, 0)
       );
-      dataList.summary.dpsAtk = dataList.pokemon.reduce((prev, curr) => prev + getValueOrDefault(Number, curr.dpsAtk), 0);
-      dataList.summary.tdoDef = dataList.pokemon.reduce((prev, curr) => prev + getValueOrDefault(Number, curr.tdoDef), 0);
-      dataList.summary.dpsDef = dataList.pokemon.reduce((prev, curr) => prev + getValueOrDefault(Number, curr.dpsDef), 0);
+      dataList.summary.dpsAtk = dataList.pokemon.reduce((prev, curr) => prev + curr.dpsAtk, 0);
+      dataList.summary.tdoDef = dataList.pokemon.reduce((prev, curr) => prev + curr.tdoDef, 0);
+      dataList.summary.dpsDef = dataList.pokemon.reduce((prev, curr) => prev + curr.dpsDef, 0);
 
       const sumHp = dataList.pokemon.reduce((prev, curr) => prev + getValueOrDefault(Number, curr.hp), 0);
 
@@ -697,7 +671,7 @@ const RaidBattle = () => {
       dataList.summary.timer = timer;
 
       dataList.pokemon = dataList.pokemon.map((pokemon) => {
-        const tdoAtk = (dataList.summary.tdoAtk / dataList.summary.dpsAtk) * getValueOrDefault(Number, pokemon.dpsAtk);
+        const tdoAtk = (dataList.summary.tdoAtk / dataList.summary.dpsAtk) * pokemon.dpsAtk;
         return {
           ...pokemon,
           tdoAtk,
@@ -706,12 +680,12 @@ const RaidBattle = () => {
               ? Math.max(
                   0,
                   Math.floor(getValueOrDefault(Number, pokemon.hp)) -
-                    Math.min(getValueOrDefault(Number, timeKill, pokemon.ttkDef)) * getValueOrDefault(Number, pokemon.dpsDef)
+                    Math.min(getValueOrDefault(Number, timeKill, pokemon.ttkDef)) * pokemon.dpsDef
                 )
               : Math.max(
                   0,
                   Math.floor(getValueOrDefault(Number, pokemon.hp)) -
-                    Math.max(getValueOrDefault(Number, timeKill, pokemon.ttkDef)) * getValueOrDefault(Number, pokemon.dpsDef)
+                    Math.max(getValueOrDefault(Number, timeKill, pokemon.ttkDef)) * pokemon.dpsDef
                 ),
         };
       });
@@ -956,16 +930,18 @@ const RaidBattle = () => {
                 checked={showSettingPokemon.pokemon?.stats?.isShadow}
                 onChange={(_, check) => {
                   if (showSettingPokemon.pokemon?.stats) {
-                    setShowSettingPokemon({
-                      ...showSettingPokemon,
-                      pokemon: {
-                        ...showSettingPokemon.pokemon,
-                        stats: {
-                          ...showSettingPokemon.pokemon.stats,
-                          isShadow: check,
+                    setShowSettingPokemon(
+                      RaidSetting.create({
+                        ...showSettingPokemon,
+                        pokemon: {
+                          ...showSettingPokemon.pokemon,
+                          stats: {
+                            ...showSettingPokemon.pokemon.stats,
+                            isShadow: check,
+                          },
                         },
-                      },
-                    });
+                      })
+                    );
                   }
                 }}
               />
@@ -995,13 +971,15 @@ const RaidBattle = () => {
               className="form-control"
               onChange={(e) => {
                 if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon({
-                    ...showSettingPokemon,
-                    pokemon: {
-                      ...showSettingPokemon.pokemon,
-                      stats: { ...showSettingPokemon.pokemon.stats, level: parseFloat(e.target.value) },
-                    },
-                  });
+                  setShowSettingPokemon(
+                    RaidSetting.create({
+                      ...showSettingPokemon,
+                      pokemon: {
+                        ...showSettingPokemon.pokemon,
+                        stats: { ...showSettingPokemon.pokemon.stats, level: parseFloat(e.target.value) },
+                      },
+                    })
+                  );
                 }
               }}
             >
@@ -1025,16 +1003,18 @@ const RaidBattle = () => {
               placeholder="IV ATK"
               onInput={(e) => {
                 if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon({
-                    ...showSettingPokemon,
-                    pokemon: {
-                      ...showSettingPokemon.pokemon,
-                      stats: {
-                        ...showSettingPokemon.pokemon.stats,
-                        iv: { ...showSettingPokemon.pokemon.stats.iv, atk: parseInt(e.currentTarget.value) },
+                  setShowSettingPokemon(
+                    RaidSetting.create({
+                      ...showSettingPokemon,
+                      pokemon: {
+                        ...showSettingPokemon.pokemon,
+                        stats: {
+                          ...showSettingPokemon.pokemon.stats,
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, atk: parseInt(e.currentTarget.value) },
+                        },
                       },
-                    },
-                  });
+                    })
+                  );
                 }
               }}
             />
@@ -1049,16 +1029,18 @@ const RaidBattle = () => {
               placeholder="IV DEF"
               onInput={(e) => {
                 if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon({
-                    ...showSettingPokemon,
-                    pokemon: {
-                      ...showSettingPokemon.pokemon,
-                      stats: {
-                        ...showSettingPokemon.pokemon.stats,
-                        iv: { ...showSettingPokemon.pokemon.stats.iv, def: parseInt(e.currentTarget.value) },
+                  setShowSettingPokemon(
+                    RaidSetting.create({
+                      ...showSettingPokemon,
+                      pokemon: {
+                        ...showSettingPokemon.pokemon,
+                        stats: {
+                          ...showSettingPokemon.pokemon.stats,
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, def: parseInt(e.currentTarget.value) },
+                        },
                       },
-                    },
-                  });
+                    })
+                  );
                 }
               }}
             />
@@ -1073,16 +1055,18 @@ const RaidBattle = () => {
               placeholder="IV STA"
               onInput={(e) => {
                 if (showSettingPokemon.pokemon?.stats) {
-                  setShowSettingPokemon({
-                    ...showSettingPokemon,
-                    pokemon: {
-                      ...showSettingPokemon.pokemon,
-                      stats: {
-                        ...showSettingPokemon.pokemon.stats,
-                        iv: { ...showSettingPokemon.pokemon.stats.iv, sta: parseInt(e.currentTarget.value) },
+                  setShowSettingPokemon(
+                    RaidSetting.create({
+                      ...showSettingPokemon,
+                      pokemon: {
+                        ...showSettingPokemon.pokemon,
+                        stats: {
+                          ...showSettingPokemon.pokemon.stats,
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, sta: parseInt(e.currentTarget.value) },
+                        },
                       },
-                    },
-                  });
+                    })
+                  );
                 }
               }}
             />
@@ -1335,12 +1319,7 @@ const RaidBattle = () => {
                     horizontal: 'left',
                   }}
                 >
-                  <img
-                    width={80}
-                    height={80}
-                    alt="img-trainer"
-                    src={APIService.getTrainerModel(getValueOrDefault(Number, trainer.trainerId) % 294)}
-                  />
+                  <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel(trainer.trainerId % 294)} />
                 </Badge>
                 <button className="btn btn-primary" style={{ marginRight: 10 }} onClick={() => handleShow(trainer.pokemons, index)}>
                   <EditIcon fontSize="small" />
@@ -1548,7 +1527,7 @@ const RaidBattle = () => {
                           <tbody className="text-center">
                             {result.pokemon.map((data, index) => (
                               <tr key={index}>
-                                <td>#{getValueOrDefault(Number, data?.trainerId) + 1}</td>
+                                <td>#{getValueOrDefault(Number, data.trainerId) + 1}</td>
                                 <td>
                                   <div className="d-flex align-items-center table-pokemon">
                                     <img
@@ -1621,33 +1600,29 @@ const RaidBattle = () => {
         </Modal.Header>
         <Modal.Body>
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>
-            {trainerBattleId > 0 && (
-              <Fragment>
-                {pokemonBattle.map((pokemon, index) => (
-                  <div className={index === 0 ? '' : 'element-top'} key={index}>
-                    <PokemonRaid
-                      controls={true}
-                      id={index}
-                      pokemon={pokemon}
-                      data={pokemonBattle}
-                      setData={setPokemonBattle}
-                      defaultSetting={{
-                        level: filters.selected.level,
-                        isShadow: false,
-                        iv: {
-                          atk: filters.selected.iv.atk,
-                          def: filters.selected.iv.def,
-                          sta: filters.selected.iv.sta,
-                        },
-                      }}
-                      onCopyPokemon={onCopyPokemon}
-                      onRemovePokemon={onRemovePokemon}
-                      onOptionsPokemon={onOptionsPokemon}
-                    />
-                  </div>
-                ))}
-              </Fragment>
-            )}
+            {pokemonBattle.map((pokemon, index) => (
+              <div className={index === 0 ? '' : 'element-top'} key={index}>
+                <PokemonRaid
+                  controls={true}
+                  id={index}
+                  pokemon={pokemon}
+                  data={pokemonBattle}
+                  setData={setPokemonBattle}
+                  defaultSetting={{
+                    level: filters.selected.level,
+                    isShadow: false,
+                    iv: {
+                      atk: filters.selected.iv.atk,
+                      def: filters.selected.iv.def,
+                      sta: filters.selected.iv.sta,
+                    },
+                  }}
+                  onCopyPokemon={onCopyPokemon}
+                  onRemovePokemon={onRemovePokemon}
+                  onOptionsPokemon={onOptionsPokemon}
+                />
+              </div>
+            ))}
           </div>
           <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
             <RemoveCircleIcon

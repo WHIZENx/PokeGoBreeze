@@ -124,7 +124,7 @@ export interface ITimeline {
   energy: number;
   move: ICombat | undefined;
   hp: number;
-  buff: IBuff[] | undefined;
+  buff?: IBuff[];
   dmgImmune: boolean;
 }
 

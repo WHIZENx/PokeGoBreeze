@@ -194,7 +194,7 @@ export const TimeLine = (
       <Fragment>
         <div className="element-top" style={{ height: 12 }}>
           <div className="d-flex" style={{ columnGap: 10, width: 'max-content' }}>
-            {poke.timeline?.map((value, index) => (
+            {poke.timeline.map((value, index) => (
               <span className="position-relative" key={index} style={{ width: value.size }}>
                 {value.tap && (
                   <div
@@ -324,7 +324,7 @@ export const TimeLineFit = (
       <Fragment>
         <div className="element-top" style={{ height: 12 }}>
           <div className="position-relative timeline-fit-container">
-            {poke.timeline?.map((value, index) => (
+            {poke.timeline.map((value, index) => (
               <Fragment key={index}>
                 {value.tap && (
                   <div
@@ -333,7 +333,7 @@ export const TimeLineFit = (
                       display: !showTap ? 'none' : 'block',
                       opacity: 0.5,
                       width: value.size,
-                      left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index),
+                      left: calculateFitPoint(poke.timeline.length, index),
                       borderColor: value.dmgImmune ? 'red' : 'black',
                     }}
                   />
@@ -343,7 +343,7 @@ export const TimeLineFit = (
                     {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                       <div
                         className="position-absolute icon-buff-timeline"
-                        style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index), top: 10 }}
+                        style={{ left: calculateFitPoint(poke.timeline.length, index), top: 10 }}
                       >
                         {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -359,7 +359,7 @@ export const TimeLineFit = (
                           <div
                             className="position-absolute icon-buff-timeline"
                             style={{
-                              left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index),
+                              left: calculateFitPoint(poke.timeline.length, index),
                               top: 10,
                             }}
                           >
@@ -375,7 +375,7 @@ export const TimeLineFit = (
                             style={{
                               display: !showTap ? 'none' : 'block',
                               width: value.size,
-                              left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index),
+                              left: calculateFitPoint(poke.timeline.length, index),
                             }}
                           />
                         )}
@@ -391,7 +391,7 @@ export const TimeLineFit = (
           {poke.timeline?.map((value, index) => (
             <Fragment key={index}>
               {value.type === AttackType.Block && (
-                <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index) }}>
+                <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>
                   <HexagonIcon sx={{ color: 'purple', fontSize: value.size }} />
                 </div>
               )}
@@ -399,7 +399,7 @@ export const TimeLineFit = (
                 <div
                   id={index.toString()}
                   className={combineClasses('fast-attack', value.color, 'black-border')}
-                  style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index) }}
+                  style={{ left: calculateFitPoint(poke.timeline.length, index) }}
                 />
               )}
               {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
@@ -409,7 +409,7 @@ export const TimeLineFit = (
                   style={{
                     width: value.size,
                     height: value.size,
-                    left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index),
+                    left: calculateFitPoint(poke.timeline.length, index),
                   }}
                 />
               )}
@@ -420,16 +420,12 @@ export const TimeLineFit = (
                   style={{
                     width: value.size,
                     height: value.size,
-                    left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index),
+                    left: calculateFitPoint(poke.timeline.length, index),
                   }}
                 />
               )}
               {(value.type === AttackType.Wait || value.type === AttackType.New) && (
-                <div
-                  id={index.toString()}
-                  className="wait-attack"
-                  style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index) }}
-                />
+                <div id={index.toString()} className="wait-attack" style={{ left: calculateFitPoint(poke.timeline.length, index) }} />
               )}
               {!value.type && (
                 <div
@@ -438,12 +434,12 @@ export const TimeLineFit = (
                   style={{
                     width: value.size,
                     height: value.size,
-                    left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index),
+                    left: calculateFitPoint(poke.timeline.length, index),
                   }}
                 />
               )}
               {value.type === AttackType.Dead && (
-                <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline ? poke.timeline.length : 0, index) }}>
+                <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>
                   <CloseIcon color="error" />
                 </div>
               )}
