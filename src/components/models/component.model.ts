@@ -430,8 +430,8 @@ export interface IPokemonTableComponent {
   id: number | undefined;
   formName: string | undefined;
   gen: number | undefined;
-  region: string | undefined;
-  version: string | undefined;
+  region: string;
+  version: string;
   weight: number;
   height: number;
   className?: string;

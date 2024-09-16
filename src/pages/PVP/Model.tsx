@@ -37,7 +37,7 @@ import { IStatsRank, IStatsBase, HexagonStats } from '../../core/models/stats.mo
 import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { Combat, ICombat } from '../../core/models/combat.model';
-import { FORM_NORMAL, MAX_IV, maxLevel } from '../../util/constants';
+import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/constants';
 import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/models/pvp.model';
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
@@ -184,7 +184,7 @@ export const Body = (
 };
 
 export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: string) => {
-  const calculateStatsTopRank = (stats: IStatsBase | undefined, level = maxLevel) => {
+  const calculateStatsTopRank = (stats: IStatsBase | undefined, level = MAX_LEVEL) => {
     const maxCP = parseInt(cp);
 
     let calcCP = calculateCP(
@@ -235,12 +235,12 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           CP:{' '}
           <b>
             {maxCP === 10000
-              ? `${calculateStatsTopRank(stats, maxLevel - 1)?.CP}-${currStats?.CP}`
+              ? `${calculateStatsTopRank(stats, MAX_LEVEL - 1)?.CP}-${currStats?.CP}`
               : `${getValueOrDefault(Number, currStats?.CP)}`}
           </b>
         </li>
         <li className={getValueOrDefault(Number, currStats?.level) <= 40 ? 'element-top' : ''}>
-          Level: <b>{maxCP === 10000 ? `${maxLevel - 1}-${maxLevel}` : `${getValueOrDefault(Number, currStats?.level)}`} </b>
+          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${getValueOrDefault(Number, currStats?.level)}`} </b>
           {(getValueOrDefault(Number, currStats?.level) > 40 || maxCP === 10000) && (
             <b>
               (
