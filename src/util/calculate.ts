@@ -41,7 +41,7 @@ import {
   FORM_MEGA,
   FORM_SHADOW,
   MAX_IV,
-  maxLevel,
+  MAX_LEVEL,
   MIN_IV,
   MIN_LEVEL,
   MULTIPLY_LEVEL_FRIENDSHIP,
@@ -342,15 +342,15 @@ export const calculateCatchChance = (baseCaptureRate: number, level: number, mul
 
 export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
   const maxCP = parseInt(cp);
-  let minLevel = MIN_LEVEL + 1;
+  let minLevel = MIN_LEVEL;
   let maxLevel = MIN_LEVEL + 1;
-  for (let level = MIN_LEVEL; level <= maxLevel; level += 0.5) {
+  for (let level = minLevel; level <= MAX_LEVEL; level += 0.5) {
     if (maxCP <= calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level)) {
       minLevel = level;
       break;
     }
   }
-  for (let level = minLevel; level <= maxLevel; level += 0.5) {
+  for (let level = minLevel; level <= MAX_LEVEL; level += 0.5) {
     if (calculateCP(atk, def, sta, level) >= maxCP) {
       maxLevel = level;
       break;
@@ -383,7 +383,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: string) =
 
 export const predictCPList = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number) => {
   const predictArr: IPredictCPModel[] = [];
-  for (let level = MIN_LEVEL; level <= maxLevel; level += 0.5) {
+  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
     predictArr.push(
       PredictCPModel.create({
         level,
@@ -400,7 +400,7 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
 
   const dataStat = new StatsCalculate(IVatk, IVdef, IVsta, maxCP, 0);
 
-  for (let level = MIN_LEVEL; level <= maxLevel; level += 0.5) {
+  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
     if (maxCP === calculateCP(atk + IVatk, def + IVdef, sta + IVsta, level)) {
       dataStat.level = level;
       break;
@@ -512,7 +512,7 @@ export const calculateBattleLeague = (
   type: string,
   maxCp?: number
 ) => {
-  let level = maxLevel;
+  let level = MAX_LEVEL;
   if (type !== 'buddy') {
     level -= 1;
   }
@@ -569,7 +569,7 @@ export const findCPforLeague = (
 ) => {
   let CP = 10;
   let l = level;
-  for (let i = level; i <= maxLevel; i += 0.5) {
+  for (let i = level; i <= MAX_LEVEL; i += 0.5) {
     if (!isUndefined(maxCPLeague) && calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i) > getValueOrDefault(Number, maxCPLeague)) {
       break;
     }
@@ -599,7 +599,7 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP?: numb
     return dataList;
   }
   let seqId = 0;
-  for (let level = MIN_LEVEL; level <= maxLevel; level += 0.5) {
+  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
     for (let atkIV = MIN_IV; atkIV <= MAX_IV; ++atkIV) {
       for (let defIV = MIN_IV; defIV <= MAX_IV; ++defIV) {
         for (let staIV = MIN_IV; staIV <= MAX_IV; ++staIV) {

@@ -13,7 +13,7 @@ import {
   FORM_PRIMAL,
   FORM_SHADOW,
   MAX_IV,
-  maxLevel,
+  MAX_LEVEL,
   MIN_IV,
   MIN_LEVEL,
   RAID_BOSS_TIER,
@@ -771,7 +771,7 @@ const RaidBattle = () => {
             className="form-control"
             onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: parseFloat(e.target.value) } })}
           >
-            {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+            {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
               <option key={index} value={value}>
                 {value}
               </option>
@@ -983,7 +983,7 @@ const RaidBattle = () => {
                 }
               }}
             >
-              {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+              {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
                 <option key={index} value={value}>
                   {value}
                 </option>

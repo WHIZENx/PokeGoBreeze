@@ -22,7 +22,7 @@ import APIService from '../../services/API.service';
 import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { APIPath, APITreeRoot, APITree } from '../../services/models/api.model';
-import { BASE_CPM, MIN_LEVEL, maxLevel } from '../../util/constants';
+import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
@@ -59,7 +59,7 @@ export const loadPokeGOLogo = (dispatch: Dispatch) => {
 };
 
 export const loadCPM = (dispatch: Dispatch) => {
-  const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, maxLevel);
+  const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
   return dispatch(StoreActions.SetCPM.create(cpm));
 };
 

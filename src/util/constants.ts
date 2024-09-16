@@ -144,7 +144,7 @@ export const GREAT_THROW_INC_CHANCE = [1.3, 1.7];
 export const EXCELLENT_THROW_INC_CHANCE = [1.7, 2.0];
 
 export const MIN_LEVEL = 1;
-export const maxLevel = 51;
+export const MAX_LEVEL = 51;
 
 export const MIN_IV = 0;
 export const MAX_IV = 15;
