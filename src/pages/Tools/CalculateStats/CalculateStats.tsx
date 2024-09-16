@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, maxLevel, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -270,7 +270,7 @@ const Calculate = () => {
                 valueLabelDisplay="off"
                 step={0.5}
                 min={MIN_LEVEL}
-                max={typePoke === 'buddy' ? maxLevel : maxLevel - 1}
+                max={typePoke === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={pokeStats ? false : true}
                 onChange={(_, value) => onHandleLevel(value as number)}

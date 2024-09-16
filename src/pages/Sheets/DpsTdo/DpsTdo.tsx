@@ -9,7 +9,7 @@ import {
   FORM_PURIFIED,
   FORM_SHADOW,
   MAX_IV,
-  maxLevel,
+  MAX_LEVEL,
   MIN_IV,
   MIN_LEVEL,
   TYPE_LEGENDARY,
@@ -1085,7 +1085,7 @@ const DpsTdo = () => {
                       })
                     }
                   >
-                    {Array.from({ length: (maxLevel - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+                    {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
                       <option key={index} value={value}>
                         {value}
                       </option>

@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { FORM_NORMAL, FORM_SHADOW, MAX_IV, maxLevel, scoreType } from '../../../util/constants';
+import { FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/constants';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -92,7 +92,7 @@ const PokemonPVP = () => {
       let bestStats = new BattleBaseStats();
       if (maxCP < 10000) {
         let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
-        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, maxLevel);
+        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, MAX_LEVEL);
 
         if (maxPokeCP < minCP) {
           if (maxPokeCP <= 500) {

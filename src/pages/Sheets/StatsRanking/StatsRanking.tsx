@@ -291,7 +291,6 @@ const StatsRanking = () => {
       isDefault: true,
       isMega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
       name: pokemon.name,
-      sprites: undefined,
       types: getValueOrDefault(Array, pokemon.types),
       version: getValueOrDefault(String, pokemon.version),
       isShadow: false,
