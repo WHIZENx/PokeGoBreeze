@@ -67,7 +67,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   useEffect(() => {
     if (isNotEmpty(combat)) {
       if (props.pokemon?.num) {
-        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon?.forme), props.moveType, props.selected);
+        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon.forme), props.moveType, props.selected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
@@ -93,7 +93,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
               <div className="result-move-select">
                 <div>
                   {resultMove
-                    .filter((value) => value?.name !== props.move?.name)
+                    .filter((value) => value.name !== props.move?.name)
                     .map((value, index) => (
                       <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
                         <CardMoveSmall value={value} />

@@ -28,6 +28,14 @@ import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
 import { getValueOrDefault } from '../../util/extension';
 
+interface Files {
+  files: FileName[];
+}
+
+interface FileName {
+  filename: string;
+}
+
 const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
 };
@@ -35,18 +43,14 @@ const options = {
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
   try {
     APIService.getFetchUrl<APIPath[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options)
-      .then((res) =>
-        APIService.getFetchUrl<{
-          files: { filename: string }[];
-        }>(getValueOrDefault(String, res.data[0]?.url), options)
-      )
+      .then((res) => APIService.getFetchUrl<Files>(getValueOrDefault(String, res.data[0]?.url), options))
       .then((file) => {
         dispatch(
           StoreActions.SetLogoPokeGO.create(
             getValueOrDefault(
               String,
               file.data.files
-                ?.find((item) => item.filename.includes('Images/App Icons/'))
+                .find((item) => item.filename.includes('Images/App Icons/'))
                 ?.filename.replace('Images/App Icons/', '')
                 .replace('.png', '')
             )

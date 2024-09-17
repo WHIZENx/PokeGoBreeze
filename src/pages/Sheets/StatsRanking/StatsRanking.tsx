@@ -70,7 +70,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
             e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
           }}
         />
-        {splitAndCapitalize(row.name?.replaceAll('_', '-'), '-', ' ')}
+        {splitAndCapitalize(row.name.replaceAll('_', '-'), '-', ' ')}
       </>
     ),
     minWidth: '200px',
@@ -289,7 +289,7 @@ const StatsRanking = () => {
       formName: getValueOrDefault(String, pokemon.forme),
       id: pokemon.num,
       isDefault: true,
-      isMega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
+      isMega: pokemon.slug.toUpperCase().includes(FORM_MEGA),
       name: pokemon.name,
       types: getValueOrDefault(Array, pokemon.types),
       version: getValueOrDefault(String, pokemon.version),
@@ -340,11 +340,11 @@ const StatsRanking = () => {
             <div className="col-xl-7" style={{ padding: 0 }}>
               <TableMove
                 data={select}
-                id={select?.num}
+                id={select.num}
                 form={convertToPokemonForm(select)}
-                statATK={select?.atk.attack}
-                statDEF={select?.def.defense}
-                statSTA={select?.sta.stamina}
+                statATK={select.atk.attack}
+                statDEF={select.def.defense}
+                statSTA={select.sta.stamina}
                 maxHeight={400}
               />
             </div>

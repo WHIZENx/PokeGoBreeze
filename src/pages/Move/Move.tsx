@@ -98,7 +98,7 @@ const Move = (props: IMovePage) => {
 
   const getWeatherEffective = (type: string) => {
     const result = Object.entries(data?.weatherBoost ?? new WeatherBoost())?.find(([, value]) => {
-      return value.includes(type?.toUpperCase());
+      return value.includes(type.toUpperCase());
     });
     return result && result.at(0);
   };
@@ -106,7 +106,7 @@ const Move = (props: IMovePage) => {
   const queryMoveData = useCallback(
     (id: number) => {
       if (isNotEmpty(data?.combat)) {
-        let move;
+        let move: ICombat | undefined;
         if (id === 281) {
           move = data?.combat?.find(
             (item) => item.track === id && item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
@@ -116,8 +116,8 @@ const Move = (props: IMovePage) => {
         }
         if (move) {
           setMove(move);
-          document.title = `#${move?.track} - ${splitAndCapitalize(
-            move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(),
+          document.title = `#${move.track} - ${splitAndCapitalize(
+            move.track === 281 ? 'HIDDEN_POWER' : move.name.toLowerCase(),
             '_',
             ' '
           )}`;
@@ -216,8 +216,8 @@ const Move = (props: IMovePage) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div style={{ width: 'fit-content' }} className={combineClasses('type-icon-small', move?.type?.toLowerCase())}>
-                      {capitalize(move?.type)}
+                    <div style={{ width: 'fit-content' }} className={combineClasses('type-icon-small', move.type?.toLowerCase())}>
+                      {capitalize(move.type)}
                     </div>
                   )}
                 </td>
@@ -238,10 +238,10 @@ const Move = (props: IMovePage) => {
                         className="img-type-icon"
                         height={25}
                         alt="img-type"
-                        src={APIService.getWeatherIconSprite(getWeatherEffective(getValueOrDefault(String, move?.type)))}
+                        src={APIService.getWeatherIconSprite(getWeatherEffective(getValueOrDefault(String, move.type)))}
                       />
                       <span className="d-inline-block caption">
-                        {splitAndCapitalize(getWeatherEffective(getValueOrDefault(String, move?.type)), '_', ' ')}
+                        {splitAndCapitalize(getWeatherEffective(getValueOrDefault(String, move.type)), '_', ' ')}
                       </span>
                     </>
                   )}
@@ -281,7 +281,7 @@ const Move = (props: IMovePage) => {
                 <tr>
                   <td>PVE Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(move?.pveEnergy, true)} color={move?.type?.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(move.pveEnergy, true)} color={move.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
@@ -319,7 +319,7 @@ const Move = (props: IMovePage) => {
                 <tr>
                   <td>PVP Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
-                    <ChargedBar barCount={getBarCharge(move?.pvpEnergy)} color={move?.type?.toLowerCase()} />
+                    <ChargedBar barCount={getBarCharge(move.pvpEnergy)} color={move.type?.toLowerCase()} />
                   </td>
                 </tr>
               )}
@@ -412,37 +412,33 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>DPS</td>
-                <td>{move && `${(move?.pvePower / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${(move.pvePower / (move.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move?.pvePower * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${((move.pvePower * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(2 Effect Bonus)</span>
                 </td>
-                <td>
-                  {move && `${((move?.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move?.durationMs / 1000)).toFixed(2)}`}
-                </td>
+                <td>{move && `${((move.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(STAB+Weather+Shadow Bonus)</span>
                 </td>
-                <td>
-                  {move && `${((move?.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move?.durationMs / 1000)).toFixed(2)}`}
-                </td>
+                <td>{move && `${((move.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               {move?.typeMove === TypeMove.FAST && (
                 <tr>
                   <td>EPS</td>
-                  <td>{move && `${(move?.pveEnergy / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                  <td>{move && `${(move.pveEnergy / (move.durationMs / 1000)).toFixed(2)}`}</td>
                 </tr>
               )}
               <tr className="text-center">
@@ -452,14 +448,14 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>DPS</td>
-                <td>{move && `${(move?.pvpPower / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${(move.pvpPower / (move.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move?.pvpPower * STAB_MULTIPLY(data?.options)) / (move?.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${((move.pvpPower * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000)).toFixed(2)}`}</td>
               </tr>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>

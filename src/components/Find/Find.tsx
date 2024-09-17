@@ -23,9 +23,7 @@ const Find = (props: IFindComponent) => {
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
 
-  const [id, setId] = useState(
-    searching ? (props.objective ? (searching ? (searching.obj ? searching.obj?.id : 1) : 1) : searching.id) : 1
-  );
+  const [id, setId] = useState(searching ? (props.objective ? (searching ? (searching.obj ? searching.obj.id : 1) : 1) : searching.id) : 1);
 
   const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
 

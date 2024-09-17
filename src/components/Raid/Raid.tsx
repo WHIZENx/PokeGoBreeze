@@ -39,7 +39,7 @@ const Raid = (props: IRaidComponent) => {
     } else if (
       tier === 5 &&
       props.currForm &&
-      (props.currForm.form.formName?.toUpperCase().includes(FORM_MEGA) || props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL) &&
+      (props.currForm.form.formName.toUpperCase().includes(FORM_MEGA) || props.currForm.form.formName.toUpperCase() === FORM_PRIMAL) &&
       pokemonClass
     ) {
       setTier(6);
@@ -102,18 +102,18 @@ const Raid = (props: IRaidComponent) => {
             {(!props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) || pokemonClass) && <option value={4}>Tier 4</option>}
           </optgroup>
           {props.currForm &&
-            (props.currForm.form.formName?.toUpperCase().includes(FORM_MEGA) ||
-              props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL) && (
+            (props.currForm.form.formName.toUpperCase().includes(FORM_MEGA) ||
+              props.currForm.form.formName.toUpperCase() === FORM_PRIMAL) && (
               <Fragment>
                 {pokemonClass ? (
                   <optgroup
                     label={`Legendary ${
-                      props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
+                      props.currForm.form.formName.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
                     } Tier 6'`}
                   >
                     <option value={6}>
                       {`Tier ${
-                        props.currForm.form.formName?.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
+                        props.currForm.form.formName.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
                       }`}
                     </option>
                   </optgroup>

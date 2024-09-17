@@ -53,8 +53,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import {
   IPokemonData,
+  IPokemonMoveData,
   IPokemonRaidModel,
   PokemonData,
+  PokemonDPSBattle,
   PokemonModel,
   PokemonMoveData,
   PokemonRaidModel,
@@ -140,7 +142,7 @@ const RaidBattle = () => {
 
   const [resultBoss, setResultBoss] = useState<BattleResult>();
   const [resultRaid, setResultRaid] = useState<IRaidResult[]>();
-  const [result, setResult] = useState<PokemonMoveData[]>([]);
+  const [result, setResult] = useState<IPokemonMoveData[]>([]);
 
   const [show, setShow] = useState(false);
   const [showOption, setShowOption] = useState(false);
@@ -172,7 +174,7 @@ const RaidBattle = () => {
     return !value || value < MIN_IV || value > MAX_IV;
   };
 
-  const setSortedResult = (primary: PokemonMoveData, secondary: PokemonMoveData, sortIndex: string[]) => {
+  const setSortedResult = (primary: IPokemonMoveData, secondary: IPokemonMoveData, sortIndex: string[]) => {
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
     return filters.selected.sorted
@@ -289,28 +291,28 @@ const RaidBattle = () => {
     const result = retrieveMoves(getValueOrDefault(Array, data?.pokemon), id, form);
     if (result) {
       let simpleMove: ISelectMoveModel[] = [];
-      result?.quickMoves?.forEach((value) => {
+      result.quickMoves?.forEach((value) => {
         simpleMove.push(new SelectMoveModel(value, false, false, false, false));
       });
-      result?.eliteQuickMove?.forEach((value) => {
+      result.eliteQuickMove?.forEach((value) => {
         simpleMove.push(new SelectMoveModel(value, true, false, false, false));
       });
       setFMove(simpleMove.at(0));
       setResultFMove(simpleMove);
       simpleMove = [];
-      result?.cinematicMoves?.forEach((value) => {
+      result.cinematicMoves?.forEach((value) => {
         simpleMove.push(new SelectMoveModel(value, false, false, false, false));
       });
-      result?.eliteCinematicMove?.forEach((value) => {
+      result.eliteCinematicMove?.forEach((value) => {
         simpleMove.push(new SelectMoveModel(value, true, false, false, false));
       });
-      result?.shadowMoves?.forEach((value) => {
+      result.shadowMoves?.forEach((value) => {
         simpleMove.push(new SelectMoveModel(value, false, true, false, false));
       });
-      result?.purifiedMoves?.forEach((value) => {
+      result.purifiedMoves?.forEach((value) => {
         simpleMove.push(new SelectMoveModel(value, false, false, true, false));
       });
-      result?.specialMoves?.forEach((value) => {
+      result.specialMoves?.forEach((value) => {
         simpleMove.push(new SelectMoveModel(value, false, false, false, true));
       });
       setCMove(simpleMove.at(0));
@@ -324,7 +326,7 @@ const RaidBattle = () => {
   };
 
   const addCPokeData = (
-    dataList: PokemonMoveData[],
+    dataList: IPokemonMoveData[],
     movePoke: string[],
     value: IPokemonData | undefined,
     vf: string,
@@ -343,7 +345,7 @@ const RaidBattle = () => {
         const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(getValueOrDefault(Number, stats?.sta), used.iv.sta, used.level),
+          hp: calculateStatsBattle(getValueOrDefault(Number, stats.sta), used.iv.sta, used.level),
           fMove,
           cMove,
           types: getValueOrDefault(Array, value?.types),
@@ -392,8 +394,8 @@ const RaidBattle = () => {
           defendHpRemain: Math.floor(getValueOrDefault(Number, statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
           death: Math.floor(getValueOrDefault(Number, statsDefender.hp) / tdoAtk),
           shadow,
-          purified: purified && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker?.cMove?.name)),
-          mShadow: shadow && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker?.cMove?.name)),
+          purified: purified && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
+          mShadow: shadow && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -404,7 +406,7 @@ const RaidBattle = () => {
   };
 
   const addFPokeData = (
-    dataList: PokemonMoveData[],
+    dataList: IPokemonMoveData[],
     pokemon: IPokemonData,
     movePoke: string[],
     fElite: boolean,
@@ -465,7 +467,7 @@ const RaidBattle = () => {
         );
       }
       if (
-        (!pokemon.forme || (!pokemon.forme?.toUpperCase().includes(FORM_MEGA) && !pokemon.forme?.toUpperCase().includes(FORM_PRIMAL))) &&
+        (!pokemon.forme || (!pokemon.forme.toUpperCase().includes(FORM_MEGA) && !pokemon.forme.toUpperCase().includes(FORM_PRIMAL))) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(
@@ -498,7 +500,7 @@ const RaidBattle = () => {
   };
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
-    let dataList: PokemonMoveData[] = [];
+    let dataList: IPokemonMoveData[] = [];
     data?.pokemon?.forEach((pokemon) => {
       if (pokemon && pokemon.forme?.toUpperCase() !== FORM_GMAX) {
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.quickMoves), false, pokemonTarget, pokemon.isShadow);
@@ -519,7 +521,7 @@ const RaidBattle = () => {
       };
       setResultBoss(result);
     } else {
-      const group = dataList.reduce((result: DynamicObj<PokemonMoveData[]>, obj) => {
+      const group = dataList.reduce((result: DynamicObj<IPokemonMoveData[]>, obj) => {
         (result[getValueOrDefault(String, obj.pokemon?.name)] = getValueOrDefault(
           Array,
           result[getValueOrDefault(String, obj.pokemon?.name)]
@@ -585,7 +587,7 @@ const RaidBattle = () => {
       const tdoAtk = dpsAtk * (enableTimeAllow ? timeKill : ttkDef);
       const tdoDef = dpsDef * (enableTimeAllow ? timeKill : ttkAtk);
 
-      return {
+      return PokemonDPSBattle.create({
         pokemon: pokemon.dataTargetPokemon,
         fMove: statsAttacker.fMove,
         cMove: statsAttacker.cMove,
@@ -600,7 +602,7 @@ const RaidBattle = () => {
         ttkDef,
         timer: timeKill,
         defHpRemain: Math.floor(getValueOrDefault(Number, statsDefender.hp)) - tdoAtk,
-      };
+      });
     }
   };
 
@@ -672,7 +674,7 @@ const RaidBattle = () => {
 
       dataList.pokemon = dataList.pokemon.map((pokemon) => {
         const tdoAtk = (dataList.summary.tdoAtk / dataList.summary.dpsAtk) * pokemon.dpsAtk;
-        return {
+        return PokemonMoveData.create({
           ...pokemon,
           tdoAtk,
           atkHpRemain:
@@ -687,7 +689,7 @@ const RaidBattle = () => {
                   Math.floor(getValueOrDefault(Number, pokemon.hp)) -
                     Math.max(getValueOrDefault(Number, timeKill, pokemon.ttkDef)) * pokemon.dpsDef
                 ),
-        };
+        });
       });
       result.push(dataList);
     });
@@ -1439,37 +1441,29 @@ const RaidBattle = () => {
                     <span className="d-block element-top">
                       DPS:{' '}
                       <b>
-                        {resultBoss?.minDPS.toFixed(2)} - {resultBoss?.maxDPS.toFixed(2)}
+                        {resultBoss.minDPS.toFixed(2)} - {resultBoss.maxDPS.toFixed(2)}
                       </b>
                     </span>
                     <span className="d-block">
-                      Average DPS:{' '}
-                      <b>
-                        {((getValueOrDefault(Number, resultBoss?.minDPS) + getValueOrDefault(Number, resultBoss?.maxDPS)) / 2).toFixed(2)}
-                      </b>
+                      Average DPS: <b>{((resultBoss.minDPS + resultBoss.maxDPS) / 2).toFixed(2)}</b>
                     </span>
                     <span className="d-block">
                       Total Damage Output:{' '}
                       <b>
-                        {resultBoss?.minTDO.toFixed(2)} - {resultBoss?.maxTDO.toFixed(2)}
+                        {resultBoss.minTDO.toFixed(2)} - {resultBoss.maxTDO.toFixed(2)}
                       </b>
                     </span>
                     <span className="d-block">
-                      Average Total Damage Output:{' '}
-                      <b>
-                        {((getValueOrDefault(Number, resultBoss?.minTDO) + getValueOrDefault(Number, resultBoss?.maxTDO)) / 2).toFixed(2)}
-                      </b>
+                      Average Total Damage Output: <b>{((resultBoss.minTDO + resultBoss.maxTDO) / 2).toFixed(2)}</b>
                     </span>
                     <span className="d-block">
                       Boss HP Remaining:{' '}
                       <b>
-                        {Math.round(getValueOrDefault(Number, resultBoss?.minHP))} -{' '}
-                        {Math.round(getValueOrDefault(Number, resultBoss?.maxHP))}
+                        {Math.round(resultBoss.minHP)} - {Math.round(resultBoss.maxHP)}
                       </b>
                     </span>
                     <span className="d-block">
-                      Boss Average HP Remaining:{' '}
-                      <b>{Math.round((getValueOrDefault(Number, resultBoss?.minHP) + getValueOrDefault(Number, resultBoss?.maxHP)) / 2)}</b>
+                      Boss Average HP Remaining: <b>{Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)}</b>
                     </span>
                   </div>
                   <div className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center" style={{ marginBottom: 20 }}>
@@ -1479,9 +1473,9 @@ const RaidBattle = () => {
                     <hr className="w-100" />
                     <div className="d-inline-block text-center">
                       <h3 className="d-block" style={{ margin: 0 }}>
-                        {Math.ceil(statBossHP / (statBossHP - Math.round(getValueOrDefault(Number, resultBoss?.minHP))))}
+                        {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP)))}
                       </h3>
-                      {Math.ceil(statBossHP / (statBossHP - Math.round(getValueOrDefault(Number, resultBoss?.minHP)))) === 1 ? (
+                      {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP))) === 1 ? (
                         <span className="caption text-success">Easy</span>
                       ) : (
                         <span className="caption text-danger">Hard</span>
@@ -1490,12 +1484,7 @@ const RaidBattle = () => {
                     <h3 style={{ marginBottom: 15, marginLeft: 10, marginRight: 10 }}> - </h3>
                     <div className="d-inline-block text-center">
                       <h3 className="d-block" style={{ margin: 0 }}>
-                        {Math.ceil(
-                          statBossHP /
-                            (statBossHP -
-                              Math.round((getValueOrDefault(Number, resultBoss?.minHP) + getValueOrDefault(Number, resultBoss?.maxHP)) / 2))
-                        )}
-                        +
+                        {Math.ceil(statBossHP / (statBossHP - Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)))}+
                       </h3>
                       <span className="caption text-success">Easy</span>
                     </div>
@@ -1534,26 +1523,24 @@ const RaidBattle = () => {
                                       className="pokemon-sprite-battle"
                                       height={36}
                                       alt="img-pokemon"
-                                      src={APIService.getPokeIconSprite(getValueOrDefault(String, data?.pokemon?.sprite), true)}
+                                      src={APIService.getPokeIconSprite(getValueOrDefault(String, data.pokemon?.sprite), true)}
                                     />
-                                    <span className="caption">
-                                      {splitAndCapitalize(data?.pokemon?.name.replaceAll('_', '-'), '-', ' ')}
-                                    </span>
+                                    <span className="caption">{splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}</span>
                                   </div>
                                 </td>
-                                <td>{data?.dpsAtk.toFixed(2)}</td>
-                                <td>{Math.floor(data?.tdoAtk) === 0 ? '-' : data?.tdoAtk.toFixed(2)}</td>
-                                <td>{Math.floor(getValueOrDefault(Number, data?.atkHpRemain)) === 0 ? data?.ttkDef.toFixed(2) : '-'}</td>
+                                <td>{data.dpsAtk.toFixed(2)}</td>
+                                <td>{Math.floor(data.tdoAtk) === 0 ? '-' : data.tdoAtk.toFixed(2)}</td>
+                                <td>{Math.floor(getValueOrDefault(Number, data.atkHpRemain)) === 0 ? data.ttkDef.toFixed(2) : '-'}</td>
                                 <td>
                                   <b>
                                     <span
                                       className={
-                                        Math.floor(getValueOrDefault(Number, data?.atkHpRemain)) === 0 ? 'text-danger' : 'text-success'
+                                        Math.floor(getValueOrDefault(Number, data.atkHpRemain)) === 0 ? 'text-danger' : 'text-success'
                                       }
                                     >
-                                      {Math.max(0, Math.floor(getValueOrDefault(Number, data?.atkHpRemain)))}
+                                      {Math.max(0, Math.floor(getValueOrDefault(Number, data.atkHpRemain)))}
                                     </span>{' '}
-                                    / {Math.floor(getValueOrDefault(Number, data?.hp))}
+                                    / {Math.floor(getValueOrDefault(Number, data.hp))}
                                   </b>
                                 </td>
                               </tr>

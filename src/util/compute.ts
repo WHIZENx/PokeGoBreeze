@@ -78,11 +78,11 @@ export const raidEgg = (tier: number, mega: boolean, primal: boolean, ultra?: bo
 };
 
 export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
-  let data = candyData?.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) {
-    data = candyData?.find((item) => item.familyId === id);
+    data = candyData.find((item) => item.familyId === id);
     if (!data) {
-      data = candyData?.find((item) => item.familyId === 0);
+      data = candyData.find((item) => item.familyId === 0);
     }
   }
   return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.secondaryColor.r))}, ${Math.round(
@@ -91,11 +91,11 @@ export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
 };
 
 export const computeCandyColor = (candyData: ICandy[], id: number) => {
-  let data = candyData?.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
   if (!data) {
-    data = candyData?.find((item) => item.familyId === id);
+    data = candyData.find((item) => item.familyId === id);
     if (!data) {
-      data = candyData?.find((item) => item.familyId === 0);
+      data = candyData.find((item) => item.familyId === 0);
     }
   }
   return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.primaryColor.r))}, ${Math.round(
@@ -136,11 +136,11 @@ export const computeBgType = (
 };
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {
-  const pokemonAssets = assets?.find((asset) => asset.id === id);
+  const pokemonAssets = assets.find((asset) => asset.id === id);
   if (!pokemonAssets || name?.toUpperCase() === FORM_GMAX) {
     return;
   }
-  const asset = pokemonAssets?.image.find((img) => img.form === name);
+  const asset = pokemonAssets.image.find((img) => img.form === name);
   if (asset) {
     return asset;
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {

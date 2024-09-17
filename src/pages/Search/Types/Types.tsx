@@ -21,15 +21,15 @@ import { TableColumnModify } from '../../../util/models/overrides/data-table.mod
 import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
-  const a = rowA?.name.toLowerCase();
-  const b = rowB?.name.toLowerCase();
-  return a === b ? 0 : getValueOrDefault(Number, a) > getValueOrDefault(Number, b) ? 1 : -1;
+  const a = getValueOrDefault(String, rowA.name.toLowerCase());
+  const b = getValueOrDefault(String, rowB.name.toLowerCase());
+  return a === b ? 0 : a > b ? 1 : -1;
 };
 
 const columnPokemon: TableColumnModify<IPokemonData>[] = [
   {
     name: 'ID',
-    selector: (row) => row?.num,
+    selector: (row) => row.num,
     sortable: true,
     width: '100px',
   },
@@ -37,20 +37,20 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     name: 'Pokémon Name',
     selector: (row) => (
       <Link
-        to={`/pokemon/${row?.num}${row?.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
-        title={`#${row?.num} ${splitAndCapitalize(row?.name, '-', ' ')}`}
+        to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
+        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
         <img
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(getValueOrDefault(String, row?.sprite), true)}
+          src={APIService.getPokeIconSprite(getValueOrDefault(String, row.sprite), true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row?.baseSpecies));
+            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
           }}
         />
-        {splitAndCapitalize(row?.name, '-', ' ')}
+        {splitAndCapitalize(row.name, '-', ' ')}
       </Link>
     ),
     sortable: true,
@@ -75,19 +75,19 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
   },
   {
     name: 'ATK',
-    selector: (row) => calculateStatsByTag(row, row?.baseStats, row?.slug).atk,
+    selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).atk,
     sortable: true,
     width: '100px',
   },
   {
     name: 'DEF',
-    selector: (row) => calculateStatsByTag(row, row?.baseStats, row?.slug).def,
+    selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).def,
     sortable: true,
     width: '100px',
   },
   {
     name: 'STA',
-    selector: (row) => getValueOrDefault(Number, calculateStatsByTag(row, row?.baseStats, row?.slug).sta),
+    selector: (row) => getValueOrDefault(Number, calculateStatsByTag(row, row.baseStats, row.slug).sta),
     sortable: true,
     width: '100px',
   },
@@ -184,11 +184,7 @@ const SearchTypes = () => {
 
   const [currentType, setCurrentType] = useState('');
   const [result, setResult] = useState(new PokemonType());
-  const allData = PokemonTypeData.create({
-    pokemon: getValueOrDefault(Number, data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))?.length, 1) - 1,
-    fastMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST)?.length,
-    chargedMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE)?.length,
-  });
+  const [allData, setAllData] = useState<IPokemonTypeData>();
 
   const [showType, setShowType] = useState(false);
 
@@ -197,6 +193,18 @@ const SearchTypes = () => {
       document.title = `Type - ${capitalize(currentType)}`;
     }
   }, [currentType]);
+
+  useEffect(() => {
+    if (isNotEmpty(data?.combat) && isNotEmpty(data?.pokemon)) {
+      setAllData(
+        PokemonTypeData.create({
+          pokemon: getValueOrDefault(Number, data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length, 1) - 1,
+          fastMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST).length,
+          chargedMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE).length,
+        })
+      );
+    }
+  }, [releasedGO, data?.combat, data?.pokemon]);
 
   useEffect(() => {
     setTypeList(data?.typeEff ? Object.keys(data?.typeEff) : DEFAULT_TYPES);
@@ -282,14 +290,14 @@ const SearchTypes = () => {
               alt="pokemon-go-icon"
               src={APIService.getPokemonGoIcon(icon)}
             />
-            <b>{`Filter from ${allData.pokemon} Pokémon`}</b>
+            <b>{`Filter from ${allData?.pokemon} Pokémon`}</b>
           </span>
         }
       />
       <div className="row">
         <div className="col-xl-4 element-top">
           <div
-            className={combineClasses('d-flex flex-column align-items-center type-info-container', `${currentType?.toLowerCase()}-border`)}
+            className={combineClasses('d-flex flex-column align-items-center type-info-container', `${currentType.toLowerCase()}-border`)}
             style={{ background: computeBgType(currentType, false, false, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
@@ -302,7 +310,7 @@ const SearchTypes = () => {
             </div>
             <span
               style={{ width: 'max-content' }}
-              className={combineClasses(currentType?.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow element-top')}
+              className={combineClasses(currentType.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow element-top')}
             >
               <div style={{ display: 'contents', width: 16 }}>
                 <img
@@ -316,35 +324,43 @@ const SearchTypes = () => {
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('pokeball_sprite')} />{' '}
               <b>{`Pokémon: ${result.pokemonList.length} (${
-                isNotEmpty(result.pokemonList) && allData.pokemon > 0 && Math.round((result.pokemonList.length * 100) / allData.pokemon)
+                isNotEmpty(result.pokemonList) &&
+                getValueOrDefault(Number, allData?.pokemon) > 0 &&
+                Math.round((result.pokemonList.length * 100) / getValueOrDefault(Number, allData?.pokemon))
               }%)`}</b>
               <ul style={{ listStyleType: 'disc' }}>
                 <li>
                   <b>{`Legacy Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length} (${
                     isNotEmpty(result.pokemonList) &&
-                    allData.pokemon > 0 &&
-                    Math.round((result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) / allData.pokemon)
+                    getValueOrDefault(Number, allData?.pokemon) > 0 &&
+                    Math.round(
+                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) /
+                        getValueOrDefault(Number, allData?.pokemon)
+                    )
                   }%)`}</b>
                 </li>
                 <li>
                   <b>{`Include Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length} (${
                     isNotEmpty(result.pokemonList) &&
-                    allData.pokemon > 0 &&
-                    Math.round((result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) / allData.pokemon)
+                    getValueOrDefault(Number, allData?.pokemon) > 0 &&
+                    Math.round(
+                      (result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) /
+                        getValueOrDefault(Number, allData?.pokemon)
+                    )
                   }%)`}</b>
                 </li>
               </ul>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
-              <b>{`Fast Moves: ${result.fastMove.length}/${getValueOrDefault(Number, allData.fastMoves)} (${Math.round(
-                (result.fastMove.length * 100) / getValueOrDefault(Number, allData.fastMoves, 1)
+              <b>{`Fast Moves: ${result.fastMove.length}/${getValueOrDefault(Number, allData?.fastMoves)} (${Math.round(
+                (result.fastMove.length * 100) / getValueOrDefault(Number, allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charged Moves: ${result.chargedMove.length}/${getValueOrDefault(Number, allData.chargedMoves)} (${Math.round(
-                (result.chargedMove.length * 100) / getValueOrDefault(Number, allData.chargedMoves, 1)
+              <b>{`Charged Moves: ${result.chargedMove.length}/${getValueOrDefault(Number, allData?.chargedMoves)} (${Math.round(
+                (result.chargedMove.length * 100) / getValueOrDefault(Number, allData?.chargedMoves, 1)
               )}%)`}</b>
             </span>
           </div>

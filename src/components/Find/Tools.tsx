@@ -60,19 +60,19 @@ const Tools = (props: IToolsComponent) => {
   }, [props.currForm?.form.formName, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
-    const formATK = filterFormList(props.stats?.attack.ranking) as IStatsAtk;
-    const formDEF = filterFormList(props.stats?.defense.ranking) as IStatsDef;
+    const formATK = filterFormList(props.stats?.attack.ranking) as IStatsAtk | undefined;
+    const formDEF = filterFormList(props.stats?.defense.ranking) as IStatsDef | undefined;
     const formSTA = filterFormList(props.stats?.stamina.ranking) as IStatsSta;
     const formProd = filterFormList(props.stats?.statProd.ranking) as IStatsProd;
 
     setStatsPokemon({
       atk:
-        props.isRaid && props.tier && !props.hide
-          ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(getValueOrDefault(Number, formATK?.attack), props.tier) })
+        props.isRaid && props.tier && !props.hide && formATK
+          ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(formATK.attack, props.tier) })
           : formATK,
       def:
-        props.isRaid && props.tier && !props.hide
-          ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(getValueOrDefault(Number, formDEF?.defense), props.tier) })
+        props.isRaid && props.tier && !props.hide && formDEF
+          ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(formDEF.defense, props.tier) })
           : formDEF,
       sta: props.isRaid && props.tier && !props.hide ? StatsSta.create({ ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta }) : formSTA,
       prod: props.isRaid && props.tier && !props.hide ? undefined : formProd,
@@ -177,7 +177,7 @@ const Tools = (props: IToolsComponent) => {
                   STA
                 </td>
                 <td className="text-center">
-                  {statsPokemon?.sta ? Math.floor(statsPokemon?.sta?.stamina / RAID_BOSS_TIER[props.tier].CPm) : 0}
+                  {statsPokemon?.sta ? Math.floor(statsPokemon.sta.stamina / RAID_BOSS_TIER[props.tier].CPm) : 0}
                 </td>
               </tr>
               <tr>

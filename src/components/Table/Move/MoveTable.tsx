@@ -13,7 +13,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { ICombat } from '../../../core/models/combat.model';
+import { Combat, ICombat } from '../../../core/models/combat.model';
 import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -23,13 +23,13 @@ import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { DynamicObj, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
 
 interface PokemonMoves {
-  fastMoves: (ICombat | undefined)[];
-  chargedMoves: (ICombat | undefined)[];
-  eliteFastMoves: (ICombat | undefined)[];
-  eliteChargedMoves: (ICombat | undefined)[];
-  purifiedMoves: (ICombat | undefined)[];
-  shadowMoves: (ICombat | undefined)[];
-  specialMoves: (ICombat | undefined)[];
+  fastMoves: ICombat[];
+  chargedMoves: ICombat[];
+  eliteFastMoves: ICombat[];
+  eliteChargedMoves: ICombat[];
+  purifiedMoves: ICombat[];
+  shadowMoves: ICombat[];
+  specialMoves: ICombat[];
 }
 
 interface ISortModel {
@@ -83,7 +83,7 @@ const TableMove = (props: ITableMoveComponent) => {
   });
   const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
 
-  const [stateSorted, setStateSorted] = useState<ITableSort>(
+  const [stateSorted, setStateSorted] = useState(
     new TableSort({
       offensive: {
         fast: false,
@@ -102,43 +102,25 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const { offensive, defensive } = stateSorted;
 
+  const filterUnknownMove = (moves: string[] | undefined) => {
+    if (!moves || !isNotEmpty(moves)) {
+      return [];
+    }
+    return moves.map((move) => data?.combat?.find((item) => item.name === move) ?? new Combat()).filter((move) => move.id > 0);
+  };
+
   const filterMoveType = (combat: IPokemonData | undefined) => {
     if (!combat) {
       return setMoveOrigin(undefined);
     }
     return setMoveOrigin({
-      fastMoves: getValueOrDefault(
-        Array,
-        combat.quickMoves?.map((move) => data?.combat?.find((item) => item.name === move))
-      ),
-      chargedMoves: getValueOrDefault(
-        Array,
-        combat.cinematicMoves?.map((move) => data?.combat?.find((item) => item.name === move))
-      ),
-      eliteFastMoves: getValueOrDefault(
-        Array,
-        combat.eliteQuickMove?.map((move) => data?.combat?.find((item) => item.name === move))
-      ),
-      eliteChargedMoves: getValueOrDefault(
-        Array,
-        combat.eliteCinematicMove?.map((move) => data?.combat?.find((item) => item.name === move))
-      ),
-      purifiedMoves: props.form?.isShadow
-        ? []
-        : getValueOrDefault(
-            Array,
-            combat.purifiedMoves?.map((move) => data?.combat?.find((item) => item.name === move))
-          ),
-      shadowMoves: props.form?.isPurified
-        ? []
-        : getValueOrDefault(
-            Array,
-            combat.shadowMoves?.map((move) => data?.combat?.find((item) => item.name === move))
-          ),
-      specialMoves: getValueOrDefault(
-        Array,
-        combat.specialMoves?.map((move) => data?.combat?.find((item) => item.name === move))
-      ),
+      fastMoves: filterUnknownMove(combat.quickMoves),
+      chargedMoves: filterUnknownMove(combat.cinematicMoves),
+      eliteFastMoves: filterUnknownMove(combat.eliteQuickMove),
+      eliteChargedMoves: filterUnknownMove(combat.eliteCinematicMove),
+      purifiedMoves: props.form?.isShadow ? [] : filterUnknownMove(combat.purifiedMoves),
+      shadowMoves: props.form?.isPurified ? [] : filterUnknownMove(combat.shadowMoves),
+      specialMoves: filterUnknownMove(combat.specialMoves),
     });
   };
 
@@ -254,34 +236,34 @@ const TableMove = (props: ITableMoveComponent) => {
     );
   };
 
-  const renderMoveSetTable = (data: (ICombat | undefined)[]) => {
+  const renderMoveSetTable = (data: ICombat[]) => {
     return (
       <Fragment>
-        {data?.map((value, index) => (
+        {data.map((value, index) => (
           <tr key={index}>
             <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-              <Link to={`../move/${value?.id}`} className="d-block">
+              <Link to={`../move/${value.id}`} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value?.type))} />
+                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type))} />
                 </div>
-                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value?.name.toLowerCase(), '_', ' ')}</span>
+                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-                  {value?.elite && (
+                  {value.elite && (
                     <span className="type-icon-small ic elite-ic">
                       <span>Elite</span>
                     </span>
                   )}
-                  {value?.shadow && (
+                  {value.shadow && (
                     <span className="type-icon-small ic shadow-ic">
                       <span>{capitalize(FORM_SHADOW)}</span>
                     </span>
                   )}
-                  {value?.purified && (
+                  {value.purified && (
                     <span className="type-icon-small ic purified-ic">
                       <span>{capitalize(FORM_PURIFIED)}</span>
                     </span>
                   )}
-                  {value?.special && (
+                  {value.special && (
                     <span className="type-icon-small ic special-ic">
                       <span>Special</span>
                     </span>

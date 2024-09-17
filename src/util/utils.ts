@@ -168,7 +168,7 @@ export const reversedCapitalize = (str: string, splitBy: string, joinBy: string)
   if (isNullOrEmpty(str)) {
     return '';
   }
-  return str?.replaceAll(joinBy, splitBy).toLowerCase();
+  return str.replaceAll(joinBy, splitBy).toLowerCase();
 };
 
 export const getTime = (value: string | number | undefined, notFull = false) => {
@@ -262,7 +262,7 @@ export const convertNameRankingToOri = (text: string, form: string) => {
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
     .replace('-shaymin', '');
-  if (text?.toUpperCase().includes(FORM_STANDARD)) {
+  if (text.toUpperCase().includes(FORM_STANDARD)) {
     form = `-${FORM_STANDARD.toLowerCase()}`;
   }
   const invalidForm: string[] = [
@@ -328,7 +328,7 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
 
 export const findMoveTeam = (move: string, moveSet: string[]) => {
   if (!move) {
-    return null;
+    return;
   }
   const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
@@ -367,7 +367,7 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
       }
     }
   }
-  return null;
+  return;
 };
 
 export const checkPokemonGO = (id: number, name: string, details: IPokemonData[]) => {
@@ -516,7 +516,7 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | und
     Array,
     pokemon.quickMoves?.concat(getValueOrDefault(Array, pokemon.cinematicMoves), eliteQuickMoves, eliteCinematicMoves, specialMoves)
   );
-  if (allMoves?.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
+  if (allMoves.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
     return false;
   }
   return true;
@@ -687,7 +687,7 @@ export const generatePokemonGoForms = (
   index = 0
 ) => {
   const formList: string[] = [];
-  dataFormList.forEach((form) => form?.forEach((p) => formList.push(convertPokemonAPIDataName(p.formName || FORM_NORMAL))));
+  dataFormList.forEach((form) => form.forEach((p) => formList.push(convertPokemonAPIDataName(p.formName || FORM_NORMAL))));
   pokemonData
     .filter((pokemon) => pokemon.num === id)
     .forEach((pokemon) => {
@@ -791,12 +791,12 @@ export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) 
     const resultFirst = combat.filter((item) => item.num === id);
     form =
       form
-        ?.toLowerCase()
+        .toLowerCase()
         .replaceAll('-', '_')
         .replaceAll(`_${FORM_STANDARD.toLowerCase()}`, '')
         .toUpperCase()
         .replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
-    const result = resultFirst?.find((item) => item.fullName === form || item.forme === form);
+    const result = resultFirst.find((item) => item.fullName === form || item.forme === form);
     return result ?? resultFirst[0];
   }
 };
@@ -805,7 +805,7 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
   let pokemonForm: IPokemonData | undefined = new PokemonData();
 
   if (form) {
-    const name = convertPokemonAPIDataName(form?.replaceAll(' ', '-'));
+    const name = convertPokemonAPIDataName(form.replaceAll(' ', '-'));
     pokemonForm = pokemonData.find((item) => item.num === id && item.fullName === name);
 
     if (isDefault && !pokemonForm) {

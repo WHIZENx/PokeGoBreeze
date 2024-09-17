@@ -46,7 +46,7 @@ const FromChange = (props: IFromChangeComponent) => {
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
                   src={APIService.getPokemonModel(
-                    getValueOrDefault(String, pokeAssets?.find((pokemon) => pokemon.form === props.details?.forme)?.image?.at(0)?.default)
+                    getValueOrDefault(String, pokeAssets.find((pokemon) => pokemon.form === props.details?.forme)?.image?.at(0)?.default)
                   )}
                 />
               </div>

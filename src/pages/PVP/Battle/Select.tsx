@@ -11,10 +11,9 @@ import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/constants';
 import { Combat, ICombat } from '../../../core/models/combat.model';
-import { BattlePokemonData, IBattlePokemonData } from '../../../core/models/pvp.model';
+import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { PokemonData } from '../../../core/models/pokemon.model';
 import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
@@ -37,8 +36,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const selectPokemon = (value: IBattlePokemonData) => {
     props.clearData(false);
     let [fMove, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
-    setSearch(splitAndCapitalize(value.pokemon?.name, '-', ' '));
-    setPokemonIcon(APIService.getPokeIconSprite(getValueOrDefault(String, value.pokemon?.sprite)));
+    setSearch(splitAndCapitalize(value.pokemon.name, '-', ' '));
+    setPokemonIcon(APIService.getPokeIconSprite(getValueOrDefault(String, value.pokemon.sprite)));
     setPokemon(value);
 
     if (fMove.includes('HIDDEN_POWER')) {
@@ -46,8 +45,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     }
 
     const fMoveCombat = combat.find((item) => item.name === fMove);
-    if (fMoveCombat && value.moveset?.at(0)?.includes('HIDDEN_POWER')) {
-      fMoveCombat.type = getValueOrDefault(String, value.moveset?.at(0)?.split('_').at(2));
+    if (fMoveCombat && value.moveset.at(0)?.includes('HIDDEN_POWER')) {
+      fMoveCombat.type = getValueOrDefault(String, value.moveset.at(0)?.split('_').at(2));
     }
     setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
@@ -59,9 +58,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     const cMoveSecCombat = combat.find((item) => item.name === cMoveSec);
     setCMoveSec(cMoveSecCombat);
 
-    const stats = calculateStatsByTag(value.pokemon, value.pokemon?.baseStats, value.pokemon?.slug);
+    const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
     let minCP = props.league === 500 ? 0 : props.league === 1500 ? 500 : props.league === 2500 ? 1500 : 2500;
-    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, MAX_LEVEL);
+    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats.sta) + MAX_IV, MAX_LEVEL);
 
     if (maxPokeCP < minCP) {
       if (maxPokeCP <= 500) {
@@ -74,7 +73,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         minCP = 2500;
       }
     }
-    const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats?.sta), minCP, props.league);
+    const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats.sta), minCP, props.league);
 
     if (allStats && value && value.pokemon) {
       setScore(value.score);
@@ -216,11 +215,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           {props.data
             .filter((pokemon) => pokemon && splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
             .map((value, index) => (
-              <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value ?? new BattlePokemonData())}>
+              <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
                 <CardPokemon
-                  value={value?.pokemon ?? new PokemonData()}
-                  score={value?.score}
-                  isShadow={value?.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`)}
+                  value={value.pokemon}
+                  score={value.score}
+                  isShadow={value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`)}
                 />
               </div>
             ))}
@@ -240,7 +239,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             <div className="result-move-select">
               <div>
                 {props.data
-                  .find((value) => value?.speciesId === pokemon.speciesId)
+                  .find((value) => value.speciesId === pokemon.speciesId)
                   ?.moves.fastMoves.map((value) => {
                     let move = value.moveId;
                     if (move.includes('HIDDEN_POWER')) {
@@ -252,7 +251,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     }
                     return fMove;
                   })
-                  .filter((value) => value?.name !== fMove?.name)
+                  .filter((value) => value && value.name !== fMove?.name)
                   .map((value, index) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
                       <CardMoveSmall value={value} />
@@ -317,12 +316,12 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div className="result-move-select">
                 <div>
                   {props.data
-                    .find((value) => value?.speciesId === pokemon.speciesId)
+                    .find((value) => value.speciesId === pokemon.speciesId)
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
                       return combat.find((item) => item.name === move);
                     })
-                    .filter((value) => value?.name !== cMovePri?.name && value?.name !== cMoveSec?.name)
+                    .filter((value) => value && value.name !== cMovePri?.name && value.name !== cMoveSec?.name)
                     .map((value, index) => (
                       <div
                         className={combineClasses(
@@ -401,12 +400,12 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div className="result-move-select">
                 <div>
                   {props.data
-                    .find((value) => value?.speciesId === pokemon.speciesId)
+                    .find((value) => value.speciesId === pokemon.speciesId)
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
                       return combat.find((item) => item.name === move);
                     })
-                    .filter((value) => (!cMoveSec || value?.name !== cMoveSec?.name) && value?.name !== cMovePri?.name)
+                    .filter((value) => value && (!cMoveSec || value.name !== cMoveSec.name) && value.name !== cMovePri?.name)
                     .map((value, index) => (
                       <div
                         className="card-move"

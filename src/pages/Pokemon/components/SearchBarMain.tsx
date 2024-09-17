@@ -14,13 +14,13 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
       {props.data?.prev && (
         <div
           title="Previous Pokémon"
-          className={combineClasses('prev-block', `col${props.data?.next ? '-6' : ''}`)}
+          className={combineClasses('prev-block', `col${props.data.next ? '-6' : ''}`)}
           style={{ float: 'left', padding: 0 }}
         >
           <Link
-            to={`/pokemon/${props.data?.prev?.id}`}
+            to={`/pokemon/${props.data.prev.id}`}
             className="d-flex justify-content-start align-items-center"
-            title={`#${props.data?.prev?.id} ${splitAndCapitalize(props.data?.prev?.name, '-', ' ')}`}
+            title={`#${props.data.prev.id} ${splitAndCapitalize(props.data.prev.name, '-', ' ')}`}
           >
             <div style={{ cursor: 'pointer' }}>
               <b>
@@ -32,7 +32,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 style={{ padding: '5px 5px 5px 0' }}
                 className="pokemon-navigate-sprite"
                 alt="img-full-pokemon"
-                src={APIService.getPokeFullSprite(props.data?.prev?.id)}
+                src={APIService.getPokeFullSprite(props.data.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, props.data?.prev?.id));
@@ -41,9 +41,9 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
             </div>
             <div className="w-100" style={{ cursor: 'pointer', textAlign: 'start', overflow: 'hidden' }}>
               <div style={{ textAlign: 'start' }}>
-                <b>#{props.data?.prev?.id}</b>
+                <b>#{props.data.prev.id}</b>
               </div>
-              <div className="text-navigate">{splitAndCapitalize(props.data?.prev?.name, '-', ' ')}</div>
+              <div className="text-navigate">{splitAndCapitalize(props.data.prev.name, '-', ' ')}</div>
             </div>
           </Link>
         </div>
@@ -51,26 +51,26 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
       {props.data?.next && (
         <div
           title="Next Pokémon"
-          className={combineClasses('next-block', `col${props.data?.prev ? '-6' : ''}`)}
+          className={combineClasses('next-block', `col${props.data.prev ? '-6' : ''}`)}
           style={{ float: 'right', padding: 0 }}
         >
           <Link
-            to={`/pokemon/${props.data?.next?.id}`}
+            to={`/pokemon/${props.data.next.id}`}
             className="d-flex justify-content-end align-items-center"
-            title={`#${props.data?.next?.id} ${splitAndCapitalize(props.data?.next?.name, '-', ' ')}`}
+            title={`#${props.data.next.id} ${splitAndCapitalize(props.data.next.name, '-', ' ')}`}
           >
             <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end', overflow: 'hidden' }}>
               <div style={{ textAlign: 'end' }}>
-                <b>#{props.data?.next?.id}</b>
+                <b>#{props.data.next.id}</b>
               </div>
-              <div className="text-navigate">{splitAndCapitalize(props.data?.next?.name, '-', ' ')}</div>
+              <div className="text-navigate">{splitAndCapitalize(props.data.next.name, '-', ' ')}</div>
             </div>
             <div style={{ width: 60, cursor: 'pointer' }}>
               <img
                 style={{ padding: '5px 0 5px 5px' }}
                 className="pokemon-navigate-sprite"
                 alt="img-full-pokemon"
-                src={APIService.getPokeFullSprite(props.data?.next?.id)}
+                src={APIService.getPokeFullSprite(props.data.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, props.data?.next?.id));

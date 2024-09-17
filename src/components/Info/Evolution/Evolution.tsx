@@ -96,7 +96,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
     return new PokemonEvo(
-      getValueOrDefault(String, pokemon?.baseSpecies ? pokemon?.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase()),
+      getValueOrDefault(String, pokemon?.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase()),
       getValueOrDefault(Number, pokemon?.num),
       getValueOrDefault(String, pokemon?.forme),
       convertModelSpritName(getValueOrDefault(String, pokemon?.name)),
@@ -129,7 +129,7 @@ const Evolution = (props: IEvolutionComponent) => {
       sprite,
       pokemon.prev,
       false,
-      getValueOrDefault(Boolean, pokemon?.isBaby),
+      getValueOrDefault(Boolean, pokemon.isBaby),
       getValueOrDefault(Boolean, pokemon.canPurified)
     );
   };
@@ -181,7 +181,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainJSON = (id: number, forme: IForm) => {
-    let form = isEmpty(forme.formName) || forme.formName?.toUpperCase().includes(FORM_MEGA) ? FORM_NORMAL : forme.formName;
+    let form = isEmpty(forme.formName) || forme.formName.toUpperCase().includes(FORM_MEGA) ? FORM_NORMAL : forme.formName;
     if (forme.formName === '10') {
       form += '%';
     }
@@ -204,7 +204,7 @@ const Evolution = (props: IEvolutionComponent) => {
     if (!pokemon) {
       return;
     }
-    getPrevEvoChainJSON(getValueOrDefault(String, pokemon?.prevo), prevEvo);
+    getPrevEvoChainJSON(getValueOrDefault(String, pokemon.prevo), prevEvo);
     const prev = pokemonData.find((p) => p.name === pokemon?.prevo);
     if (prev) {
       getCurrEvoChainJSON(prev, curr);
@@ -303,7 +303,7 @@ const Evolution = (props: IEvolutionComponent) => {
         })
       )
     );
-    if (evoList) {
+    if (evoList && isNotEmpty(evoList)) {
       if (result.length === 3) {
         result.at(2)?.push(...evoList);
       } else {
@@ -320,7 +320,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainStore = (id: number, forme: IForm) => {
-    const formName = getValueOrDefault(String, forme.formName?.toUpperCase());
+    const formName = getValueOrDefault(String, forme.formName.toUpperCase());
     const form =
       isEmpty(formName) || formName.includes(FORM_MEGA)
         ? FORM_NORMAL
@@ -372,7 +372,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   useEffect(() => {
     if (props.id && props.forme) {
-      if (props.forme.formName?.toUpperCase() !== FORM_GMAX) {
+      if (props.forme.formName.toUpperCase() !== FORM_GMAX) {
         getEvoChainStore(props.id, props.forme);
       } else {
         getGmaxChain(props.id, props.forme);
@@ -424,7 +424,7 @@ const Evolution = (props: IEvolutionComponent) => {
             }
           : { x: -8 },
     };
-    const data = getQuestEvo(parseInt(value.id.toString()), form?.toUpperCase());
+    const data = getQuestEvo(parseInt(value.id.toString()), form.toUpperCase());
     return (
       <Fragment>
         <span id={`evo-${evo}-${index}`}>
@@ -441,12 +441,12 @@ const Evolution = (props: IEvolutionComponent) => {
                             style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                           >
                             <Candy id={parseInt(value.id.toString())} />
-                            <span style={{ marginLeft: 2 }}>{`x${props.purified ? data?.purificationEvoCandyCost : data?.candyCost}`}</span>
+                            <span style={{ marginLeft: 2 }}>{`x${props.purified ? data.purificationEvoCandyCost : data.candyCost}`}</span>
                           </span>
                         )}
                         {props.purified && data?.candyCost && data?.purificationEvoCandyCost && (
                           <span className="d-block text-end caption text-danger">{`-${
-                            getValueOrDefault(Number, data?.candyCost) - getValueOrDefault(Number, data?.purificationEvoCandyCost)
+                            data.candyCost - data.purificationEvoCandyCost
                           }`}</span>
                         )}
                       </div>
@@ -468,7 +468,7 @@ const Evolution = (props: IEvolutionComponent) => {
                                   <FemaleIcon fontSize="small" />
                                 ) : (
                                   <Fragment>
-                                    {data?.quest?.genderRequirement === TypeSex.MALE.toUpperCase() ? (
+                                    {data.quest.genderRequirement === TypeSex.MALE.toUpperCase() ? (
                                       <MaleIcon fontSize="small" />
                                     ) : (
                                       <FemaleIcon fontSize="small" />
@@ -481,7 +481,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.kmBuddyDistanceRequirement && (
                           <span className="caption">
-                            {data?.quest.mustBeBuddy ? (
+                            {data.quest.mustBeBuddy ? (
                               <div className="d-flex align-items-end">
                                 <DirectionsWalkIcon fontSize="small" />
                                 <PetsIcon sx={{ fontSize: '1rem' }} />
@@ -489,7 +489,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             ) : (
                               <DirectionsWalkIcon fontSize="small" />
                             )}{' '}
-                            {`${data?.quest.kmBuddyDistanceRequirement}km`}
+                            {`${data.quest.kmBuddyDistanceRequirement}km`}
                           </span>
                         )}
                         {data?.quest?.onlyDaytime && (
@@ -504,8 +504,8 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.evolutionItemRequirement && (
                           <Fragment>
-                            <img alt="img-item-required" height={20} src={APIService.getItemEvo(data?.quest.evolutionItemRequirement)} />
-                            {data?.itemCost && (
+                            <img alt="img-item-required" height={20} src={APIService.getItemEvo(data.quest.evolutionItemRequirement)} />
+                            {data.itemCost && (
                               <span
                                 className="d-flex align-items-center caption"
                                 style={{ color: theme.palette.customText.caption, width: 'max-content', marginLeft: 2 }}
@@ -514,7 +514,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           </Fragment>
                         )}
                         {data?.quest?.lureItemRequirement && (
-                          <img alt="img-troy-required" height={20} src={APIService.getItemTroy(data?.quest.lureItemRequirement)} />
+                          <img alt="img-troy-required" height={20} src={APIService.getItemTroy(data.quest.lureItemRequirement)} />
                         )}
                         {data?.quest?.onlyUpsideDown && (
                           <span className="caption">
@@ -523,15 +523,15 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.condition && (
                           <span className="caption">
-                            {data?.quest.condition.desc === 'THROW_TYPE' && (
+                            {data.quest.condition.desc === 'THROW_TYPE' && (
                               <Fragment>
                                 <CallMadeIcon fontSize="small" />
-                                <span>{`${capitalize(data?.quest.condition.throwType)} x${data?.quest.goal}`}</span>
+                                <span>{`${capitalize(data.quest.condition.throwType)} x${data.quest.goal}`}</span>
                               </Fragment>
                             )}
                             {data?.quest.condition.desc === 'POKEMON_TYPE' && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
-                                {data?.quest?.condition.pokemonType?.map((value, index) => (
+                                {data.quest.condition.pokemonType?.map((value, index) => (
                                   <img
                                     key={index}
                                     alt="img-stardust"
@@ -543,13 +543,13 @@ const Evolution = (props: IEvolutionComponent) => {
                                     }}
                                   />
                                 ))}
-                                <span style={{ marginLeft: 2 }}>{`x${data?.quest.goal}`}</span>
+                                <span style={{ marginLeft: 2 }}>{`x${data.quest.goal}`}</span>
                               </div>
                             )}
-                            {data?.quest.condition.desc === 'WIN_RAID_STATUS' && (
+                            {data.quest.condition.desc === 'WIN_RAID_STATUS' && (
                               <Fragment>
                                 <SportsMartialArtsIcon fontSize="small" />
-                                <span>{`x${data?.quest.goal}`}</span>
+                                <span>{`x${data.quest.goal}`}</span>
                               </Fragment>
                             )}
                           </span>
@@ -558,7 +558,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           <span className="caption">
                             <Fragment>
                               <FavoriteIcon fontSize="small" sx={{ color: 'red' }} />
-                              <span>{`x${data?.quest.goal}`}</span>
+                              <span>{`x${data.quest.goal}`}</span>
                             </Fragment>
                           </span>
                         )}
@@ -566,7 +566,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           <span className="caption">
                             <Fragment>
                               <RestaurantIcon fontSize="small" />
-                              <span>{`x${data?.quest.goal}`}</span>
+                              <span>{`x${data.quest.goal}`}</span>
                             </Fragment>
                           </span>
                         )}
@@ -587,7 +587,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <Fragment>
               {chain.length > 1 || (chain.length === 1 && form !== FORM_NORMAL && !isEmpty(form)) ? (
                 <Fragment>
-                  {form !== FORM_NORMAL && !isEmpty(form) && !form?.toUpperCase().includes(FORM_MEGA) ? (
+                  {form !== FORM_NORMAL && !isEmpty(form) && !form.toUpperCase().includes(FORM_MEGA) ? (
                     <ThemeProvider theme={customTheme}>
                       <Badge
                         color="secondary"
@@ -726,7 +726,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         <div
                           className="select-evo"
                           onClick={() => {
-                            if (props.pokemonRouter?.action === Action.Pop) {
+                            if (props.pokemonRouter.action === Action.Pop) {
                               props.pokemonRouter.action = Action.Replace;
                             }
                             props.setId?.(value.id);

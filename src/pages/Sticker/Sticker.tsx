@@ -16,7 +16,7 @@ import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { getValueOrDefault, isNotEmpty } from '../../util/extension';
 
 interface PokemonStickerModel {
-  id?: number | null | undefined;
+  id?: number | null;
   name: string;
 }
 
@@ -42,7 +42,7 @@ const Sticker = () => {
           }
           return prev;
         }, [])
-        .sort((a, b) => getValueOrDefault(Number, a?.id) - getValueOrDefault(Number, b?.id));
+        .sort((a, b) => getValueOrDefault(Number, a.id) - getValueOrDefault(Number, b.id));
       setSelectPokemon(result);
     }
   }, [pokeStickerList, selectPokemon]);
@@ -51,7 +51,7 @@ const Sticker = () => {
     if (isNotEmpty(pokeStickerList)) {
       setPokemonStickerFilter(
         pokeStickerList
-          ?.filter((item) => {
+          .filter((item) => {
             if (!shopType) {
               return true;
             } else if (shopType === 2) {

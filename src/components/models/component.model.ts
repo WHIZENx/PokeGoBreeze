@@ -209,7 +209,7 @@ export interface IFormSpecialComponent {
 export interface IStatsComponent {
   isShadow?: boolean;
   pokemonStats: IStatsRank | null;
-  stats?: IStatsPokemon | null;
+  stats?: IStatsPokemon;
   statATK?: IStatsAtk;
   statDEF?: IStatsDef;
   statSTA?: IStatsSta;

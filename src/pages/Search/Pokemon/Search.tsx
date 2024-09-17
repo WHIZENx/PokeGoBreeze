@@ -167,7 +167,7 @@ const Search = () => {
           </Fragment>
         </div>
         <Pokemon
-          id={id?.toString()}
+          id={id.toString()}
           setId={setId}
           onIncId={incId}
           onDecId={decId}

@@ -29,10 +29,10 @@ const Move = (props: IMoveComponent) => {
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
         if (props.type !== TypeMove.CHARGE) {
-          result?.quickMoves?.forEach((value) => {
+          result.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
-          result?.eliteQuickMove?.forEach((value) => {
+          result.eliteQuickMove?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
           setCountFM(simpleMove.length);
@@ -40,19 +40,19 @@ const Move = (props: IMoveComponent) => {
         if (props.type === TypeMove.FAST) {
           return setResultMove(simpleMove);
         }
-        result?.cinematicMoves?.forEach((value) => {
+        result.cinematicMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, false, false, false, false));
         });
-        result?.eliteCinematicMove?.forEach((value) => {
+        result.eliteCinematicMove?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, true, false, false, false));
         });
-        result?.shadowMoves?.forEach((value) => {
+        result.shadowMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, false, true, false, false));
         });
-        result?.purifiedMoves?.forEach((value) => {
+        result.purifiedMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, false, false, true, false));
         });
-        result?.specialMoves?.forEach((value) => {
+        result.specialMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, false, false, false, true));
         });
         setResultMove(simpleMove);
@@ -93,7 +93,7 @@ const Move = (props: IMoveComponent) => {
             {currentMove ? (
               <CardType
                 value={getValueOrDefault(String, findType(currentMove.name))}
-                name={splitAndCapitalize(currentMove?.name, '_', ' ')}
+                name={splitAndCapitalize(currentMove.name, '_', ' ')}
                 elite={currentMove.elite}
                 shadow={currentMove.shadow}
                 purified={currentMove.purified}
@@ -109,7 +109,7 @@ const Move = (props: IMoveComponent) => {
                 {resultMove && (
                   <Fragment>
                     {resultMove
-                      .filter((value) => props.selectDefault || (!props.selectDefault && value?.name !== currentMove?.name))
+                      .filter((value) => props.selectDefault || (!props.selectDefault && value.name !== currentMove?.name))
                       .map((value, index) => (
                         <Fragment key={index}>
                           {!props.type && index === 0 && (

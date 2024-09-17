@@ -151,7 +151,7 @@ const FindBattle = () => {
   const searchStatsPoke = useCallback(
     (level: number) => {
       const arr: IQueryStatesEvoChain[][] = [];
-      getEvoChain(id)?.forEach((item) => {
+      getEvoChain(id).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
           const data = queryStatesEvoChain(

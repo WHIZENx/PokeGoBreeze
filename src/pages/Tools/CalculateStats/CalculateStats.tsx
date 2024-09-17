@@ -294,11 +294,11 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Power Up Count</td>
-                        <td>{statData ? (!isUndefined(statData?.powerUpCount) ? statData?.powerUpCount : 'Unavailable') : '-'}</td>
+                        <td>{statData ? (!isUndefined(statData.powerUpCount) ? statData.powerUpCount : 'Unavailable') : '-'}</td>
                       </tr>
                       <tr>
                         <td>CP</td>
-                        <td>{statData ? statData?.CP : '-'}</td>
+                        <td>{statData ? statData.CP : '-'}</td>
                       </tr>
                       <tr>
                         <td>
@@ -424,15 +424,15 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.type?.toUpperCase() !== FORM_SHADOW ? (
+                            statData.type?.toUpperCase() !== FORM_SHADOW ? (
                               calculateStatsBattle(statATK, getValueOrDefault(Number, pokeStats?.IV.atk), statLevel, true)
                             ) : (
                               <Fragment>
-                                {statData?.atkStat}
-                                {getValueOrDefault(Number, statData?.atkStatDiff) > 0 && (
+                                {statData.atkStat}
+                                {getValueOrDefault(Number, statData.atkStatDiff) > 0 && (
                                   <span className="text-success" style={{ fontWeight: 500 }}>
                                     {' '}
-                                    (+{statData?.atkStatDiff})
+                                    (+{statData.atkStatDiff})
                                   </span>
                                 )}
                               </Fragment>
@@ -449,12 +449,12 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.type?.toUpperCase() !== FORM_SHADOW ? (
+                            statData.type?.toUpperCase() !== FORM_SHADOW ? (
                               calculateStatsBattle(statDEF, getValueOrDefault(Number, pokeStats?.IV.def), statLevel, true)
                             ) : (
                               <Fragment>
-                                {statData?.defStat}
-                                {getValueOrDefault(Number, statData?.defStatDiff) > 0 && (
+                                {statData.defStat}
+                                {getValueOrDefault(Number, statData.defStatDiff) > 0 && (
                                   <span className="text-danger" style={{ fontWeight: 500 }}>
                                     {' '}
                                     (-{statData?.defStatDiff})

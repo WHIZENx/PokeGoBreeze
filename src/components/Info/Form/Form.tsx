@@ -265,12 +265,12 @@ const FormComponent = (props: IFormInfoComponent) => {
               isLoadedForms={props.isLoadedForms}
             />
           </div>
-          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.formName?.toUpperCase().includes(FORM_MEGA))) && (
+          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.formName.toUpperCase().includes(FORM_MEGA))) && (
             <div className="col-xl" style={{ padding: 0 }}>
               <Mega formList={getValueOrDefault(Array, props.formList)} id={props.defaultId} />
             </div>
           )}
-          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.formName?.toUpperCase().includes(FORM_PRIMAL))) && (
+          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.formName.toUpperCase().includes(FORM_PRIMAL))) && (
             <div className="col-xl" style={{ padding: 0 }}>
               <Primal formList={getValueOrDefault(Array, props.formList)} id={props.defaultId} />
             </div>
@@ -280,12 +280,12 @@ const FormComponent = (props: IFormInfoComponent) => {
         <Evolution
           setId={props.setId}
           id={props.defaultId}
-          forme={props.form?.form}
-          formDefault={props.defaultId === props.form?.form.id}
+          forme={props.form.form}
+          formDefault={props.defaultId === props.form.form.id}
           region={props.region}
           pokemonRouter={props.pokemonRouter}
-          purified={props.form?.form.isPurified}
-          shadow={props.form?.form.isShadow}
+          purified={props.form.form.isPurified}
+          shadow={props.form.form.isShadow}
           setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
         />

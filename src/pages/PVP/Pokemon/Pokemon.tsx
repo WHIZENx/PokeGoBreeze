@@ -120,8 +120,8 @@ const PokemonPVP = () => {
           stats,
           atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
           def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats?.sta)),
-          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats?.sta)),
+          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
+          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
           fMove,
           cMovePri,
           cMoveSec,
@@ -226,7 +226,7 @@ const PokemonPVP = () => {
                   <img
                     alt="img-league"
                     className="pokemon-sprite-raid"
-                    src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke?.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
+                    src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
                   />
                 </div>
                 <div>{Header(rankingPoke)}</div>

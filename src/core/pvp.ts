@@ -8,11 +8,11 @@ export const pvpConvertPath = (data: APITree, path: string) => {
 };
 
 export const pvpFindFirstPath = (data: APIPath[], path: string) => {
-  return data?.filter((item) => item.path.includes(path)).map((item) => item.path);
+  return data.filter((item) => item.path.includes(path)).map((item) => item.path);
 };
 
 export const pvpFindPath = (data: string[], path: string) => {
-  return data?.filter((item) => item.includes(path)).map((item) => item.replace(path, ''));
+  return data.filter((item) => item.includes(path)).map((item) => item.replace(path, ''));
 };
 
 export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {

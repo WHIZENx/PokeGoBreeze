@@ -166,7 +166,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       const indexPokemonGO = generatePokemonGoForms(pokemonData, dataFormList, formListResult, data.id, data.name);
 
-      if (pokemon?.isShadow && pokemon?.purified?.candy && pokemon?.purified.stardust) {
+      if (pokemon?.isShadow && pokemon.purified?.candy && pokemon.purified.stardust) {
         generatePokemonGoShadowForms(dataPokeList, formListResult, data.id, data.name, indexPokemonGO);
       }
 
@@ -189,14 +189,14 @@ const Pokemon = (props: IPokemonPage) => {
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
         } else {
-          currentForm = defaultForm.find((item) => item?.form.id === data.id);
+          currentForm = defaultForm.find((item) => item.form.id === data.id);
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
       } else if (router.action === Action.Pop && props.searching) {
-        currentForm = defaultForm.find((item) => item?.form.formName === props.searching?.form);
+        currentForm = defaultForm.find((item) => item.form.formName === props.searching?.form);
       } else {
-        currentForm = defaultForm.find((item) => item?.form.id === data.id);
+        currentForm = defaultForm.find((item) => item.form.id === data.id);
       }
       if (!currentForm) {
         currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === data.id);
@@ -328,7 +328,7 @@ const Pokemon = (props: IPokemonPage) => {
   const checkReleased = (id: number, form: string, defaultForm: IPokemonFormModify) => {
     if (!form) {
       if (defaultForm) {
-        form = defaultForm.form?.formName || defaultForm.defaultName;
+        form = defaultForm.form.formName || defaultForm.defaultName;
       } else {
         return false;
       }

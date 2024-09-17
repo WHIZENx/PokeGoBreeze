@@ -163,7 +163,7 @@ export interface PokemonModel {
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | null | undefined;
   formChange?: IPokemonFormChange[];
-  tempEvoOverrides: TempEvoOverrides[];
+  tempEvoOverrides?: TempEvoOverrides[];
   pokemonId: string;
   modelScale: number;
   type: string;
@@ -185,7 +185,7 @@ export interface PokemonModel {
   kmBuddyDistance: number;
   modelHeight: number;
   parentPokemonId?: string;
-  evolutionBranch: EvolutionBranch[];
+  evolutionBranch?: EvolutionBranch[];
   modelScaleV2: number;
   buddyOffsetMale: number[];
   buddyOffsetFemale: number[];
@@ -294,7 +294,7 @@ export interface Elite {
   cMove: boolean;
 }
 
-export interface PokemonMoveData {
+interface IPokemonDPSBattle {
   pokemon: IPokemonData | undefined;
   fMove: ICombat | undefined;
   cMove: ICombat | undefined;
@@ -312,7 +312,6 @@ export interface PokemonMoveData {
   purified?: boolean;
   mShadow?: boolean;
   elite?: Elite;
-  trainerId?: number;
   atk?: number;
   def?: number;
   hp?: number;
@@ -320,6 +319,79 @@ export interface PokemonMoveData {
   defHpRemain?: number;
   atkHpRemain?: number;
   special?: boolean;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonDPSBattle implements IPokemonDPSBattle {
+  pokemon: IPokemonData | undefined;
+  fMove: ICombat | undefined;
+  cMove: ICombat | undefined;
+  dpsDef = 0;
+  dpsAtk = 0;
+  tdoAtk = 0;
+  tdoDef = 0;
+  multiDpsTdo?: number;
+  ttkAtk = 0;
+  ttkDef = 0;
+  attackHpRemain?: number;
+  defendHpRemain?: number;
+  death?: number;
+  shadow?: boolean;
+  purified?: boolean;
+  mShadow?: boolean;
+  elite?: Elite;
+  atk?: number;
+  def?: number;
+  hp?: number;
+  timer?: number;
+  defHpRemain?: number;
+  atkHpRemain?: number;
+  special?: boolean;
+
+  static create(value: IPokemonDPSBattle) {
+    const obj = new PokemonDPSBattle();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+export interface IPokemonMoveData extends IPokemonDPSBattle {
+  trainerId?: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class PokemonMoveData implements IPokemonMoveData {
+  trainerId?: number;
+  pokemon: IPokemonData | undefined;
+  fMove: ICombat | undefined;
+  cMove: ICombat | undefined;
+  dpsDef = 0;
+  dpsAtk = 0;
+  tdoAtk = 0;
+  tdoDef = 0;
+  multiDpsTdo?: number;
+  ttkAtk = 0;
+  ttkDef = 0;
+  attackHpRemain?: number;
+  defendHpRemain?: number;
+  death?: number;
+  shadow?: boolean;
+  purified?: boolean;
+  mShadow?: boolean;
+  elite?: Elite;
+  atk?: number;
+  def?: number;
+  hp?: number;
+  timer?: number;
+  defHpRemain?: number;
+  atkHpRemain?: number;
+  special?: boolean;
+
+  static create(value: IPokemonMoveData) {
+    const obj = new PokemonMoveData();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 export interface PokemonEncounter {
@@ -479,7 +551,11 @@ export class PokemonData implements IPokemonData {
     obj.pokemonId = pokemon.pokemonId;
     obj.num = pokemon.id;
     obj.name = capitalize(pokemon.name.replaceAll('_', '-'));
-    obj.fullName = pokemon.form && pokemon.form !== FORM_NORMAL ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
+    if (pokemon.id !== 201) {
+      obj.fullName = pokemon.form && pokemon.form !== FORM_NORMAL ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
+    } else {
+      obj.fullName = getValueOrDefault(String, pokemon.form);
+    }
     obj.slug =
       options?.slug ??
       pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
@@ -524,31 +600,31 @@ export class PokemonData implements IPokemonData {
 
     obj.quickMoves = getValueOrDefault(
       Array,
-      pokemon.quickMoves?.map((move) => replaceTempMoveName(move?.toString()))
+      pokemon.quickMoves?.map((move) => replaceTempMoveName(move.toString()))
     );
     obj.cinematicMoves = getValueOrDefault(
       Array,
-      pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move?.toString()))
+      pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move.toString()))
     );
     obj.eliteQuickMove = getValueOrDefault(
       Array,
-      pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move?.toString()))
+      pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move.toString()))
     );
     obj.eliteCinematicMove = getValueOrDefault(
       Array,
-      pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move?.toString()))
+      pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move.toString()))
     );
     obj.specialMoves = getValueOrDefault(
       Array,
-      pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move?.toString()))
+      pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move.toString()))
     );
     obj.shadowMoves = getValueOrDefault(
       Array,
-      options?.shadowMoves?.map((move) => replaceTempMoveName(move?.toString()))
+      options?.shadowMoves?.map((move) => replaceTempMoveName(move.toString()))
     );
     obj.purifiedMoves = getValueOrDefault(
       Array,
-      options?.purifiedMoves?.map((move) => replaceTempMoveName(move?.toString()))
+      options?.purifiedMoves?.map((move) => replaceTempMoveName(move.toString()))
     );
 
     obj.evoList = getValueOrDefault(Array, options?.evoList);

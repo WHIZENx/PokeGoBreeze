@@ -123,19 +123,19 @@ const Home = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (dataList) {
+    if (isNotEmpty(dataList)) {
       const timeOutId = setTimeout(
         () => {
-          const result = dataList?.filter((item) => {
+          const result = dataList.filter((item) => {
             const boolFilterType =
               !isNotEmpty(selectTypes) ||
-              (item.types?.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
+              (item.types.every((item) => selectTypes.includes(item.toUpperCase())) && item.types.length === selectTypes.length);
             const boolFilterPoke =
               isEmpty(searchTerm) ||
               (match
-                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id?.toString() === searchTerm
+                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id.toString() === searchTerm
                 : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  item.id?.toString().includes(searchTerm));
+                  item.id.toString().includes(searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
             const boolMega = mega ? item.forme?.toUpperCase().includes(FORM_MEGA) : true;
             const boolGmax = gmax ? item.forme?.toUpperCase().includes(FORM_GMAX) : true;
@@ -145,7 +145,7 @@ const Home = () => {
             const boolUltra = ultraBeast ? item.class === TYPE_ULTRA_BEAST : true;
 
             const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
-            const findVersion = item.version === -1 ? true : version.includes(item?.version);
+            const findVersion = item.version === -1 ? true : version.includes(item.version);
             return (
               boolFilterType &&
               boolFilterPoke &&
@@ -162,7 +162,7 @@ const Home = () => {
           });
           scrollID.current = 0;
           setResult(result);
-          setListOfPokemon(result?.slice(0, subItem));
+          setListOfPokemon(result.slice(0, subItem));
           setLoading(false);
         },
         listOfPokemon > result ? listOfPokemon.length : result.length

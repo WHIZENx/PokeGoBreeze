@@ -79,21 +79,21 @@ const nameSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
 };
 
 const fMoveSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
-  const a = rowA.fMove?.name.toLowerCase();
-  const b = rowB.fMove?.name.toLowerCase();
-  return a === b ? 0 : getValueOrDefault(Number, a) > getValueOrDefault(Number, b) ? 1 : -1;
+  const a = getValueOrDefault(String, rowA.fMove?.name.toLowerCase());
+  const b = getValueOrDefault(String, rowB.fMove?.name.toLowerCase());
+  return a === b ? 0 : a > b ? 1 : -1;
 };
 
 const cMoveSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
-  const a = rowA.cMove?.name.toLowerCase();
-  const b = rowB.cMove?.name.toLowerCase();
-  return a === b ? 0 : getValueOrDefault(Number, a) > getValueOrDefault(Number, b) ? 1 : -1;
+  const a = getValueOrDefault(String, rowA.cMove?.name.toLowerCase());
+  const b = getValueOrDefault(String, rowB.cMove?.name.toLowerCase());
+  return a === b ? 0 : a > b ? 1 : -1;
 };
 
 const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'ID',
-    selector: (row) => row.pokemon?.num,
+    selector: (row) => row.pokemon.num,
     sortable: true,
     minWidth: '60px',
     maxWidth: '120px',
@@ -102,8 +102,8 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Pokémon Name',
     selector: (row) => (
       <Link
-        to={`/pokemon/${row.pokemon?.num}${row.pokemon?.forme ? `?form=${row.pokemon?.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
-        title={`#${row.pokemon?.num} ${splitAndCapitalize(row.pokemon?.name, '-', ' ')}`}
+        to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
+        title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
         {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
         {row.purified && <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />}
@@ -111,13 +111,13 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.pokemon?.sprite, true)}
+          src={APIService.getPokeIconSprite(row.pokemon.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.pokemon?.baseSpecies));
+            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.pokemon.baseSpecies));
           }}
         />
-        {splitAndCapitalize(row.pokemon?.name, '-', ' ')}
+        {splitAndCapitalize(row.pokemon.name, '-', ' ')}
       </Link>
     ),
     sortable: true,
@@ -127,7 +127,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Type(s)',
     selector: (row) =>
-      row.pokemon?.types.map((value, index) => (
+      row.pokemon.types.map((value, index) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -207,25 +207,25 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => (row.dps ? parseFloat(row.dps?.toFixed(3)) : ''),
+    selector: (row) => parseFloat(row.dps.toFixed(3)),
     sortable: true,
     minWidth: '80px',
   },
   {
     name: 'TDO',
-    selector: (row) => (row.tdo ? parseFloat(row.tdo?.toFixed(3)) : ''),
+    selector: (row) => parseFloat(row.tdo.toFixed(3)),
     sortable: true,
     minWidth: '100px',
   },
   {
     name: 'DPS^3*TDO',
-    selector: (row) => (row.multiDpsTdo ? parseFloat(row.multiDpsTdo?.toFixed(3)) : ''),
+    selector: (row) => parseFloat(row.multiDpsTdo.toFixed(3)),
     sortable: true,
     minWidth: '140px',
   },
   {
     name: 'CP',
-    selector: (row) => getValueOrDefault(String, row.cp),
+    selector: (row) => row.cp,
     sortable: true,
     minWidth: '100px',
   },
@@ -312,7 +312,7 @@ const DpsTdo = () => {
     cElite: boolean,
     specialMove: string[] = []
   ) => {
-    movePoke?.forEach((vc: string) => {
+    movePoke.forEach((vc: string) => {
       const fMove = data?.combat?.find((item) => item.name === vf);
       const cMove = data?.combat?.find((item) => item.name === vc);
 
@@ -337,7 +337,7 @@ const DpsTdo = () => {
           const statsDefender = new BattleCalculate({
             atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
             def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
-            hp: calculateStatsBattle(getValueOrDefault(Number, statsDef?.sta), ivHp, pokemonLevel),
+            hp: calculateStatsBattle(getValueOrDefault(Number, statsDef.sta), ivHp, pokemonLevel),
             fMove: data?.combat?.find((item) => item.name === fMoveTargetPokemon.name),
             cMove: data?.combat?.find((item) => item.name === cMoveTargetPokemon.name),
             types: dataTargetPokemon.types,
@@ -382,7 +382,7 @@ const DpsTdo = () => {
             fMove: fElite,
             cMove: cElite,
           },
-          cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, getValueOrDefault(Number, stats?.sta) + ivHp, pokemonLevel),
+          cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, getValueOrDefault(Number, stats.sta) + ivHp, pokemonLevel),
         });
       }
     });
@@ -489,37 +489,36 @@ const DpsTdo = () => {
       const boolFilterPoke =
         isEmpty(searchTerm) ||
         (match
-          ? item.pokemon?.name.replaceAll('-', ' ').toLowerCase() === searchTerm.toLowerCase() ||
-            item.pokemon?.num.toString() === searchTerm
-          : item.pokemon?.name.replaceAll('-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.pokemon?.num.toString().includes(searchTerm));
+          ? item.pokemon.name.replaceAll('-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.pokemon.num.toString() === searchTerm
+          : item.pokemon.name.replaceAll('-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.pokemon.num.toString().includes(searchTerm));
 
       const boolShowShadow = !showShadow && item.shadow;
-      const boolShowElite = !showEliteMove && (item.elite?.fMove || item.elite?.cMove);
-      const boolShowMega = !showMega && item.pokemon?.forme?.toUpperCase().includes(FORM_MEGA);
-      const boolShowGmax = !showGmax && item.pokemon?.forme?.toUpperCase().includes(FORM_GMAX);
-      const boolShowPrimal = !showPrimal && item.pokemon?.forme?.toUpperCase().includes(FORM_PRIMAL);
-      const boolShowLegend = !showLegendary && item.pokemon?.pokemonClass === TYPE_LEGENDARY;
-      const boolShowMythic = !showMythic && item.pokemon?.pokemonClass === TYPE_MYTHIC;
-      const boolShowUltra = !showUltraBeast && item.pokemon?.pokemonClass === TYPE_ULTRA_BEAST;
+      const boolShowElite = !showEliteMove && (item.elite.fMove || item.elite.cMove);
+      const boolShowMega = !showMega && item.pokemon.forme?.toUpperCase().includes(FORM_MEGA);
+      const boolShowGmax = !showGmax && item.pokemon.forme?.toUpperCase().includes(FORM_GMAX);
+      const boolShowPrimal = !showPrimal && item.pokemon.forme?.toUpperCase().includes(FORM_PRIMAL);
+      const boolShowLegend = !showLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
+      const boolShowMythic = !showMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
+      const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
 
       const boolOnlyShadow = enableShadow && item.shadow;
-      const boolOnlyElite = enableElite && (item.elite?.fMove || item.elite?.cMove);
-      const boolOnlyMega = enableMega && item.pokemon?.forme?.toUpperCase().includes(FORM_MEGA);
-      const boolOnlyGmax = enableGmax && item.pokemon?.forme?.toUpperCase().includes(FORM_GMAX);
-      const boolOnlyPrimal = enablePrimal && item.pokemon?.forme?.toUpperCase().includes(FORM_PRIMAL);
-      const boolOnlyLegend = enableLegendary && item.pokemon?.pokemonClass === TYPE_LEGENDARY;
-      const boolOnlyMythic = enableMythic && item.pokemon?.pokemonClass === TYPE_MYTHIC;
-      const boolOnlyUltra = enableUltraBeast && item.pokemon?.pokemonClass === TYPE_ULTRA_BEAST;
+      const boolOnlyElite = enableElite && (item.elite.fMove || item.elite.cMove);
+      const boolOnlyMega = enableMega && item.pokemon.forme?.toUpperCase().includes(FORM_MEGA);
+      const boolOnlyGmax = enableGmax && item.pokemon.forme?.toUpperCase().includes(FORM_GMAX);
+      const boolOnlyPrimal = enablePrimal && item.pokemon.forme?.toUpperCase().includes(FORM_PRIMAL);
+      const boolOnlyLegend = enableLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
+      const boolOnlyMythic = enableMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
+      const boolOnlyUltra = enableUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
 
       let boolReleaseGO = true;
       if (releasedGO) {
         const result = checkPokemonGO(
-          item.pokemon?.num,
+          item.pokemon.num,
           getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
           getValueOrDefault(Array, data?.pokemon)
         );
-        boolReleaseGO = getValueOrDefault(Boolean, item.pokemon?.releasedGO, result?.releasedGO);
+        boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, result?.releasedGO);
       }
       if (enableShadow || enableElite || enableMega || enableGmax || enablePrimal || enableLegendary || enableMythic || enableUltraBeast) {
         return (

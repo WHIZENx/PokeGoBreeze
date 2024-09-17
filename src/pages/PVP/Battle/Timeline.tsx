@@ -40,9 +40,9 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
   const renderTimeline = (pokeCurr: IPokemonBattle, pokeObj: IPokemonBattle, end = false) => {
     return (
       <Fragment>
-        {pokeCurr.timeline?.map((value, index) => (
+        {pokeCurr.timeline.map((value, index) => (
           <Fragment key={index}>
-            {pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === AttackType.Charge && (
+            {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && (
               <Fragment>
                 {value.type === AttackType.Block ? (
                   <div
@@ -87,7 +87,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                 overlap="circular"
                 badgeContent={value.tap ? 'Tap' : undefined}
                 className={combineClasses(
-                  pokeCurr.timeline?.at(index - 1) && pokeCurr.timeline?.at(index - 1)?.dmgImmune
+                  pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.dmgImmune
                     ? 'fast-attack-container text-shadow'
                     : 'wait-attack-container',
                   end ? 'justify-content-end' : '',
@@ -99,7 +99,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                   horizontal: end ? 'right' : 'left',
                 }}
               >
-                {pokeCurr.timeline?.at(index - 1) && pokeCurr.timeline?.at(index - 1)?.dmgImmune ? (
+                {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.dmgImmune ? (
                   <div className={combineClasses('fast-attack-content text-center', value.move?.type?.toLowerCase())}>
                     <span className="text-warning" style={{ fontSize: 12 }}>
                       <b>Fast Attack!</b>
@@ -133,7 +133,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                 </div>
               </div>
             )}
-            {value.type === AttackType.Dead && pokeObj.timeline?.at(index) && pokeObj.timeline?.at(index)?.type === AttackType.Dead ? (
+            {value.type === AttackType.Dead && pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Dead ? (
               <div className={combineClasses('winner-container bg-dark text-white turn-battle', end ? 'justify-content-end' : '')}>
                 TIE!
               </div>
@@ -218,13 +218,11 @@ export const TimeLine = (
                       </div>
                     ) : (
                       <Fragment>
-                        {pokeObj.timeline?.at(index) &&
-                        pokeObj.timeline?.at(index)?.type === AttackType.Charge &&
-                        isNotEmpty(value.buff) ? (
+                        {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                           <div className="position-absolute icon-buff-timeline">
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {b.type?.toUpperCase()} {b.power}
+                                {b.type.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>
@@ -247,7 +245,7 @@ export const TimeLine = (
             borderBottom: border ? '1px solid lightgray' : 'none',
           }}
         >
-          {poke.timeline?.map((value, index) => (
+          {poke.timeline.map((value, index) => (
             <Fragment key={index}>
               {value.type === AttackType.Block && <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />}
               {value.type === AttackType.Fast && (
@@ -347,15 +345,13 @@ export const TimeLineFit = (
                       >
                         {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                            {b.type?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                            {b.type.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
                         ))}
                       </div>
                     ) : (
                       <Fragment>
-                        {pokeObj.timeline?.at(index) &&
-                        pokeObj.timeline?.at(index)?.type === AttackType.Charge &&
-                        isNotEmpty(value.buff) ? (
+                        {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                           <div
                             className="position-absolute icon-buff-timeline"
                             style={{
@@ -365,7 +361,7 @@ export const TimeLineFit = (
                           >
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {b.type?.toUpperCase()} {b.power}
+                                {b.type.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>
@@ -388,7 +384,7 @@ export const TimeLineFit = (
           </div>
         </div>
         <div className="position-relative timeline-fit-container" style={{ height: 30 }}>
-          {poke.timeline?.map((value, index) => (
+          {poke.timeline.map((value, index) => (
             <Fragment key={index}>
               {value.type === AttackType.Block && (
                 <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>

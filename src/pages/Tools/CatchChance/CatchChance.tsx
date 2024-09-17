@@ -50,6 +50,22 @@ interface PokemonCatchChance {
   result?: DynamicObj<DynamicObj<number>>;
 }
 
+interface ITitleThrow {
+  title: string;
+  type: string;
+  threshold: number[];
+}
+
+class TitleThrow implements ITitleThrow {
+  title = '';
+  type = '';
+  threshold: number[] = [];
+
+  constructor({ ...props }: ITitleThrow) {
+    Object.assign(this, props);
+  }
+}
+
 const CatchChance = () => {
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
@@ -290,11 +306,11 @@ const CatchChance = () => {
   };
 
   const titleThrowModel = (title: string, type: string, threshold: number[]) => {
-    return {
+    return new TitleThrow({
       title,
       type,
       threshold,
-    };
+    });
   };
 
   const renderTitleThrow = () => {
@@ -467,7 +483,7 @@ const CatchChance = () => {
                   <div className="w-25 text-center d-inline-block">
                     <h1>FLEE</h1>
                     <hr className="w-100" />
-                    <h5>{Math.round(data?.baseFleeRate * 100)}%</h5>
+                    <h5>{Math.round(data.baseFleeRate * 100)}%</h5>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
@@ -640,7 +656,7 @@ const CatchChance = () => {
                 <tbody>
                   <tr className="text-center">
                     <td>Normal Throw</td>
-                    {Object.entries(data?.result ?? new Object())
+                    {Object.entries(data.result ?? new Object())
                       .reduce((p, c) => [...p, c[1].normal], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -650,7 +666,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Nice Throw</td>
-                    {Object.entries(data?.result ?? new Object())
+                    {Object.entries(data.result ?? new Object())
                       .reduce((p, c) => [...p, c[1].nice], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -660,7 +676,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Great Throw</td>
-                    {Object.entries(data?.result ?? new Object())
+                    {Object.entries(data.result ?? new Object())
                       .reduce((p, c) => [...p, c[1].great], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
@@ -670,7 +686,7 @@ const CatchChance = () => {
                   </tr>
                   <tr className="text-center">
                     <td>Excellent Throw</td>
-                    {Object.entries(data?.result ?? new Object())
+                    {Object.entries(data.result ?? new Object())
                       .reduce((p, c) => [...p, c[1].excellent], [] as number[])
                       .map((value, index) => (
                         <td key={index} style={{ color: checkValueColor(value) }}>
