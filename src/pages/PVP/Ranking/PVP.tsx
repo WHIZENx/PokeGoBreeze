@@ -30,7 +30,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -76,7 +76,7 @@ const RankingPVP = () => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
-        const cp = parseInt(getValueOrDefault(String, params.cp));
+        const cp = toNumber(getValueOrDefault(String, params.cp));
         const file = (
           await APIService.getFetchUrl<RankingsPVP[]>(
             APIService.getRankingFile(getValueOrDefault(String, params.serie), cp, getValueOrDefault(String, params.type))
@@ -135,8 +135,8 @@ const RankingPVP = () => {
             stats,
             atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
             def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-            sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats?.sta)),
-            prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats?.sta)),
+            sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
+            prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
             fMove,
             cMovePri,
             cMoveSec,
@@ -213,7 +213,7 @@ const RankingPVP = () => {
             <div className="ranking-group w-100">
               <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
               <div style={{ marginRight: 15 }}>
-                <span className="ranking-score score-ic">{data?.data?.score}</span>
+                <span className="ranking-score score-ic">{data.data?.score}</span>
               </div>
             </div>
           </div>
@@ -221,7 +221,7 @@ const RankingPVP = () => {
         <Accordion.Body
           style={{
             padding: 0,
-            backgroundImage: computeBgType(data?.pokemon?.types, data?.shadow, data?.purified, 0.8, styleSheet.current),
+            backgroundImage: computeBgType(data.pokemon?.types, data.shadow, data.purified, 0.8, styleSheet.current),
           }}
         >
           {storeStats && storeStats[key] && (
@@ -233,7 +233,7 @@ const RankingPVP = () => {
                   {Body(
                     getValueOrDefault(Array, dataStore?.assets),
                     getValueOrDefault(Array, dataStore?.pokemon),
-                    data?.data,
+                    data.data,
                     params.cp,
                     params.type
                   )}
@@ -246,7 +246,7 @@ const RankingPVP = () => {
                   <hr />
                   {TypeEffective(getValueOrDefault(Array, data.pokemon?.types))}
                 </div>
-                <div className="container">{MoveSet(data?.data?.moves, data.pokemon, getValueOrDefault(Array, dataStore?.combat))}</div>
+                <div className="container">{MoveSet(data.data?.moves, data.pokemon, getValueOrDefault(Array, dataStore?.combat))}</div>
               </div>
               <LeaveToggle eventKey={key.toString()}>
                 <span className="text-danger">
@@ -267,7 +267,7 @@ const RankingPVP = () => {
   };
 
   const renderLeague = () => {
-    const cp = parseInt(getValueOrDefault(String, params.cp));
+    const cp = toNumber(getValueOrDefault(String, params.cp));
     const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
@@ -280,7 +280,7 @@ const RankingPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{league?.name === 'All' ? getPokemonBattleLeagueName(cp) : league?.name}</b>
+              <b>{league.name === 'All' ? getPokemonBattleLeagueName(cp) : league.name}</b>
             </h2>
           </div>
         ) : (

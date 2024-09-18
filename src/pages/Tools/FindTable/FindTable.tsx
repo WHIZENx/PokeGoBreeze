@@ -22,7 +22,23 @@ import {
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
+
+interface IFindCP {
+  level: number;
+  minCP: number;
+  maxCP: number;
+}
+
+class FindCP implements IFindCP {
+  level = 0;
+  minCP = 0;
+  maxCP = 0;
+
+  constructor({ ...props }: IFindCP) {
+    Object.assign(this, props);
+  }
+}
 
 const columnsIV: TableColumn<IPredictStatsModel>[] = [
   {
@@ -123,7 +139,7 @@ const FindTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
-    if (!searchCP || parseInt(searchCP) < 10 || isNaN(parseInt(searchCP))) {
+    if (toNumber(searchCP) < 10) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = predictStat(statATK, statDEF, statSTA, searchCP);
@@ -298,30 +314,30 @@ const FindTable = () => {
   };
 
   const findMinMax = () => {
-    const columns = [
+    const columns: TableColumn<IFindCP>[] = [
       {
         name: 'Level',
-        selector: (row: { level: number }) => row.level,
+        selector: (row) => row.level,
         sortable: true,
       },
       {
         name: 'MIN CP',
-        selector: (row: { minCP: number }) => row.minCP,
+        selector: (row) => row.minCP,
         sortable: true,
       },
       {
         name: 'MAX CP',
-        selector: (row: { maxCP: number }) => row.maxCP,
+        selector: (row) => row.maxCP,
         sortable: true,
       },
     ];
 
     const dataTable = data.map((item) => {
-      return {
+      return new FindCP({
         level: item.level,
         minCP: calculateCP(statATK, statDEF, statSTA, item.level),
         maxCP: calculateCP(statATK + MAX_IV, statDEF + MAX_IV, statSTA + MAX_IV, item.level),
-      };
+      });
     });
 
     return (

@@ -6,7 +6,7 @@ export interface ICounterModel {
   fMove: ICombat;
   pokemonForme: string | null;
   pokemonId: number;
-  pokemonName: string | null;
+  pokemonName: string;
   ratio: number;
   releasedGO: boolean;
 }

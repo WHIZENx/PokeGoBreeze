@@ -23,7 +23,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -48,7 +48,7 @@ const PokemonPVP = () => {
   const fetchPokemonInfo = useCallback(async () => {
     dispatch(SpinnerActions.ShowSpinner.create());
     try {
-      const cp = parseInt(getValueOrDefault(String, params.cp));
+      const cp = toNumber(getValueOrDefault(String, params.cp));
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
@@ -87,7 +87,7 @@ const PokemonPVP = () => {
         fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, data.moveset.at(0)?.split('_').at(2)) });
       }
 
-      const maxCP = parseInt(getValueOrDefault(String, params.cp));
+      const maxCP = toNumber(getValueOrDefault(String, params.cp));
 
       let bestStats = new BattleBaseStats();
       if (maxCP < 10000) {
@@ -120,8 +120,8 @@ const PokemonPVP = () => {
           stats,
           atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
           def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats?.sta)),
-          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats?.sta)),
+          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
+          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
           fMove,
           cMovePri,
           cMoveSec,
@@ -162,7 +162,7 @@ const PokemonPVP = () => {
   }, [fetchPokemonInfo, rankingPoke, pvp, router.action, dispatch]);
 
   const renderLeague = () => {
-    const cp = parseInt(getValueOrDefault(String, params.cp));
+    const cp = toNumber(getValueOrDefault(String, params.cp));
     const league = pvp?.rankings.find((item) => item.id === 'all' && item.cp.includes(cp));
     return (
       <Fragment>
@@ -226,7 +226,7 @@ const PokemonPVP = () => {
                   <img
                     alt="img-league"
                     className="pokemon-sprite-raid"
-                    src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke?.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
+                    src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
                   />
                 </div>
                 <div>{Header(rankingPoke)}</div>

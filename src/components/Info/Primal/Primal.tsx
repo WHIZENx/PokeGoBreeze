@@ -6,18 +6,27 @@ import { splitAndCapitalize } from '../../../util/utils';
 import '../Mega/Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_PRIMAL } from '../../../util/constants';
-import { IForm } from '../../../core/models/API/form.model';
+import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/extension';
+import { getValueOrDefault, isUndefined } from '../../../util/extension';
+import { TempEvo } from '../../../core/models/evolution.model';
 
 const Primal = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
-  const [arrEvoList, setArrEvoList] = useState<(IForm | undefined)[]>([]);
+  const [arrEvoList, setArrEvoList] = useState<IForm[]>([]);
 
   useEffect(() => {
-    setArrEvoList(
-      props.formList.filter((item) => item.at(0)?.form.formName?.toUpperCase().includes(FORM_PRIMAL)).map((item) => item.at(0)?.form)
-    );
+    const result = props.formList
+      .filter((item) => item.at(0)?.form.formName?.toUpperCase().includes(FORM_PRIMAL))
+      .map((item) => {
+        const form = item.at(0);
+        if (!form) {
+          return new Form();
+        }
+        return form.form;
+      })
+      .filter((item) => !isUndefined(item.id));
+    setArrEvoList(result);
   }, [props.formList]);
 
   const getQuestEvo = (name: string) => {
@@ -25,14 +34,14 @@ const Primal = (props: IFormSpecialComponent) => {
       .split('-')
       .map((text) => text.toUpperCase())
       .join('_');
-    const pokemon = evoData?.find((item) => item.tempEvo?.find((value) => value.tempEvolutionName === name));
+    const pokemon = evoData.find((item) => item.tempEvo?.find((value) => value.tempEvolutionName === name));
     if (pokemon) {
       return pokemon.tempEvo?.find((item) => item.tempEvolutionName === name);
     } else {
-      return {
+      return TempEvo.create({
         firstTempEvolution: 'Unavailable',
         tempEvolution: 'Unavailable',
-      };
+      });
     }
   };
 
@@ -49,17 +58,17 @@ const Primal = (props: IFormSpecialComponent) => {
                 id="img-pokemon"
                 height="96"
                 alt="img-pokemon"
-                src={APIService.getPokeGifSprite(getValueOrDefault(String, value?.name))}
+                src={APIService.getPokeGifSprite(value.name)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = `${value?.sprites?.frontDefault}`;
+                  e.currentTarget.src = `${value.sprites?.frontDefault}`;
                 }}
               />
               <div id="id-pokemon" style={{ color: 'black' }}>
                 <b>#{props.id}</b>
               </div>
               <div>
-                <b className="link-title">{splitAndCapitalize(value?.name, '-', ' ')}</b>
+                <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
               </div>
               <span className="caption">
                 First primal evolution:{' '}
@@ -71,7 +80,7 @@ const Primal = (props: IFormSpecialComponent) => {
                     props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
                   )}
                 />
-                <b>x{getQuestEvo(getValueOrDefault(String, value?.name))?.firstTempEvolution}</b>
+                <b>x{getQuestEvo(value.name)?.firstTempEvolution}</b>
               </span>
               <span className="caption">
                 Primal evolution:{' '}
@@ -83,7 +92,7 @@ const Primal = (props: IFormSpecialComponent) => {
                     props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
                   )}
                 />
-                <b>x{getQuestEvo(getValueOrDefault(String, value?.name))?.tempEvolution}</b>
+                <b>x{getQuestEvo(value.name)?.tempEvolution}</b>
               </span>
             </li>
           ))}

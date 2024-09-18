@@ -1,3 +1,5 @@
+import { MoveSetting } from './options.model';
+
 export interface IBuff {
   type: string;
   target: string;
@@ -12,6 +14,48 @@ export class Buff implements IBuff {
   buffChance?: number;
 
   constructor({ ...props }: IBuff) {
+    Object.assign(this, props);
+  }
+}
+
+interface IMove extends MoveSetting {
+  id: number;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class Move implements IMove {
+  id = 0;
+  movementId = '';
+  animationId = 0;
+  pokemonType = '';
+  power = 0;
+  accuracyChance = 0;
+  criticalChance = 0;
+  staminaLossScalar = 0;
+  trainerLevelMin = 0;
+  trainerLevelMax = 0;
+  vfxName = '';
+  durationMs = 0;
+  damageWindowStartMs = 0;
+  damageWindowEndMs = 0;
+  energyDelta = 0;
+
+  constructor({ ...props }: IMove) {
+    Object.assign(this, props);
+  }
+}
+
+interface ISequence {
+  id: string;
+  path: string | undefined;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class Sequence implements ISequence {
+  id = '';
+  path: string | undefined;
+
+  constructor({ ...props }: ISequence) {
     Object.assign(this, props);
   }
 }

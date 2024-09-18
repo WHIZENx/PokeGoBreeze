@@ -34,14 +34,14 @@ const Stats = (props: IStatsComponent) => {
 
   useEffect(() => {
     const atk = setShadowStats(
-      props.stats || props.statATK ? (props.statATK ? props.statATK?.attack : calBaseATK(props.stats, true)) : 0,
+      props.stats || props.statATK ? (props.statATK ? props.statATK.attack : calBaseATK(props.stats, true)) : 0,
       'atk'
     );
     const def = setShadowStats(
-      props.stats || props.statDEF ? (props.statDEF ? props.statDEF?.defense : calBaseDEF(props.stats, true)) : 0,
+      props.stats || props.statDEF ? (props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats, true)) : 0,
       'def'
     );
-    const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA?.stamina : calBaseSTA(props.stats, true)) : 0;
+    const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats, true)) : 0;
     const prod = setShadowStats(
       props.stats || props.statProd
         ? props.statProd

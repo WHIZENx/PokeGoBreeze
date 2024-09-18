@@ -58,7 +58,7 @@ export const createDbPokemonEncounter = async (pokemon: PokemonEncounter, index:
     Basecapturerate,
     Basefleerate
   ) VALUES (
-    ${parseInt(index.toString() + 1)},
+    ${index + 1},
     ${pokemon.name},
     ${parseFloat(pokemon.basecapturerate.toString())},
     ${parseFloat(pokemon.basefleerate.toString())}

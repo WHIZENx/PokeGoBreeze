@@ -73,10 +73,24 @@ export class EvoList implements IEvoList {
 }
 
 export interface ITempEvo {
-  tempEvolutionName: string;
-  firstTempEvolution: number;
-  tempEvolution: number;
-  requireMove: string | undefined;
+  tempEvolutionName?: string;
+  firstTempEvolution: string | number;
+  tempEvolution: string | number;
+  requireMove?: string;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class TempEvo implements ITempEvo {
+  tempEvolutionName?: string;
+  firstTempEvolution = '';
+  tempEvolution = '';
+  requireMove?: string;
+
+  static create(value: ITempEvo) {
+    const obj = new TempEvo();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 export interface IPokemonTypeCost {

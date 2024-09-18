@@ -16,7 +16,7 @@ import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
 
-const PokemonModel = (props: IAssetPokemonModelComponent) => {
+const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -179,4 +179,4 @@ const PokemonModel = (props: IAssetPokemonModelComponent) => {
   );
 };
 
-export default PokemonModel;
+export default PokemonAssetComponent;

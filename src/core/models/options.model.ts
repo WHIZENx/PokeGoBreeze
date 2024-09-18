@@ -105,7 +105,7 @@ interface CombatMove {
   buffs?: DynamicObj<number>;
 }
 
-interface MoveSetting {
+export interface MoveSetting {
   movementId: string;
   animationId: number;
   pokemonType: string;

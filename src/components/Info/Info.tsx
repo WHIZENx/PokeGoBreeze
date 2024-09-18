@@ -17,8 +17,8 @@ const Info = (props: IInfoComponent) => {
   const getWeatherEffective = (types: string[]) => {
     const data: string[] = [];
     Object.entries(weatherEffective ?? new WeatherBoost()).forEach(([key, value]) => {
-      types?.forEach((type) => {
-        if (value.includes(type?.toUpperCase()) && !data.includes(key)) {
+      types.forEach((type) => {
+        if (value.includes(type.toUpperCase()) && !data.includes(key)) {
           data.push(key);
         }
       });
@@ -39,7 +39,7 @@ const Info = (props: IInfoComponent) => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;
         types.forEach((type) => {
-          valueEffective *= value[type?.toUpperCase()];
+          valueEffective *= value[type.toUpperCase()];
         });
         if (valueEffective >= 2.56) {
           data.veryWeak?.push(key);

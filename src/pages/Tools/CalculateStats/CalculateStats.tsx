@@ -22,7 +22,7 @@ import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isNullOrEmpty, isUndefined } from '../../../util/extension';
+import { getValueOrDefault, isNullOrEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { EvoPath } from '../../../core/models/API/species.model';
 
 const Calculate = () => {
@@ -73,7 +73,7 @@ const Calculate = () => {
   };
 
   const calculateStatsPoke = useCallback(() => {
-    if (!searchCP || parseInt(searchCP) < 10 || isNaN(parseInt(searchCP))) {
+    if (toNumber(searchCP) < 10) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
@@ -294,11 +294,11 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Power Up Count</td>
-                        <td>{statData ? (!isUndefined(statData?.powerUpCount) ? statData?.powerUpCount : 'Unavailable') : '-'}</td>
+                        <td>{statData ? (!isUndefined(statData.powerUpCount) ? statData.powerUpCount : 'Unavailable') : '-'}</td>
                       </tr>
                       <tr>
                         <td>CP</td>
-                        <td>{statData ? statData?.CP : '-'}</td>
+                        <td>{statData ? statData.CP : '-'}</td>
                       </tr>
                       <tr>
                         <td>
@@ -424,15 +424,15 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.type?.toUpperCase() !== FORM_SHADOW ? (
+                            statData.type?.toUpperCase() !== FORM_SHADOW ? (
                               calculateStatsBattle(statATK, getValueOrDefault(Number, pokeStats?.IV.atk), statLevel, true)
                             ) : (
                               <Fragment>
-                                {statData?.atkStat}
-                                {getValueOrDefault(Number, statData?.atkStatDiff) > 0 && (
+                                {statData.atkStat}
+                                {getValueOrDefault(Number, statData.atkStatDiff) > 0 && (
                                   <span className="text-success" style={{ fontWeight: 500 }}>
                                     {' '}
-                                    (+{statData?.atkStatDiff})
+                                    (+{statData.atkStatDiff})
                                   </span>
                                 )}
                               </Fragment>
@@ -449,12 +449,12 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData?.type?.toUpperCase() !== FORM_SHADOW ? (
+                            statData.type?.toUpperCase() !== FORM_SHADOW ? (
                               calculateStatsBattle(statDEF, getValueOrDefault(Number, pokeStats?.IV.def), statLevel, true)
                             ) : (
                               <Fragment>
-                                {statData?.defStat}
-                                {getValueOrDefault(Number, statData?.defStatDiff) > 0 && (
+                                {statData.defStat}
+                                {getValueOrDefault(Number, statData.defStatDiff) > 0 && (
                                   <span className="text-danger" style={{ fontWeight: 500 }}>
                                     {' '}
                                     (-{statData?.defStatDiff})

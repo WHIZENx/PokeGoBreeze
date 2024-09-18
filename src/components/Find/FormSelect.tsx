@@ -108,18 +108,18 @@ const FormSelect = (props: IFormSelectComponent) => {
       setFormList(formListResult);
 
       const defaultForm = formListResult.flatMap((value) => value).filter((item) => item.form.isDefault);
-      let currentForm = defaultForm?.find((item) => item?.form.id === data.id);
+      let currentForm = defaultForm.find((item) => item.form.id === data.id);
       if (props.searching) {
         const defaultFormSearch = formListResult
           .flatMap((value) => value)
           .find(
             (item) =>
-              item?.form.formName === (props.objective ? (props.searching?.obj ? props.searching?.obj.form : '') : props.searching?.form)
+              item.form.formName === (props.objective ? (props.searching?.obj ? props.searching.obj.form : '') : props.searching?.form)
           );
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
         } else {
-          currentForm = defaultForm.find((item) => item?.form.id === data.id);
+          currentForm = defaultForm.find((item) => item.form.id === data.id);
         }
       }
       if (!currentForm) {
@@ -252,11 +252,11 @@ const FormSelect = (props: IFormSelectComponent) => {
               <img
                 height={60}
                 alt="img-full-pokemon"
-                src={APIService.getPokeFullSprite(dataStorePokemon?.prev.id)}
+                src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.prev?.id));
+                    e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon.prev?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
                   }
@@ -265,7 +265,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             </div>
             <span>
               <b>
-                <span className="text-navigator">{'<'}</span> <span>#{dataStorePokemon?.prev.id}</span>
+                <span className="text-navigator">{'<'}</span> <span>#{dataStorePokemon.prev.id}</span>
               </b>
             </span>
           </div>
@@ -296,11 +296,11 @@ const FormSelect = (props: IFormSelectComponent) => {
               <img
                 height={60}
                 alt="img-full-pokemon"
-                src={APIService.getPokeFullSprite(dataStorePokemon?.next.id)}
+                src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.next?.id));
+                    e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon.next?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
                   }
@@ -309,7 +309,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             </div>
             <span>
               <b>
-                <span>#{dataStorePokemon?.next.id}</span> <span className="text-navigator">{'>'}</span>
+                <span>#{dataStorePokemon.next.id}</span> <span className="text-navigator">{'>'}</span>
               </b>
             </span>
           </div>
@@ -321,7 +321,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       <h4>
         <b>
           #{dataStorePokemon?.current?.id}{' '}
-          {currentForm ? splitAndCapitalize(currentForm.form.name?.replace('-f', '-female').replace('-m', '-male'), '-', ' ') : props.name}
+          {currentForm ? splitAndCapitalize(currentForm.form.name.replace('-f', '-female').replace('-m', '-male'), '-', ' ') : props.name}
         </b>
       </h4>
       <div className="scroll-card">
@@ -343,10 +343,10 @@ const FormSelect = (props: IFormSelectComponent) => {
                         e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                       }}
                       alt="img-icon-form"
-                      src={formIconAssets(value, getValueOrDefault(Number, currentForm?.defaultId))}
+                      src={formIconAssets(value, getValueOrDefault(Number, currentForm.defaultId))}
                     />
                     <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
-                    {getValueOrDefault(Number, value.form.id) > 0 && value.form.id === currentForm?.defaultId && (
+                    {getValueOrDefault(Number, value.form.id) > 0 && value.form.id === currentForm.defaultId && (
                       <b>
                         <small>(Default)</small>
                       </b>

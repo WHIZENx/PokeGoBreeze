@@ -25,13 +25,13 @@ import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
+import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 import { FORM_NORMAL, FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -79,14 +79,14 @@ const TeamPVP = () => {
       [fMoveText, cMovePriText, cMoveSecText] = moveSet.split('/');
     }
 
-    const fastMoveSet = getValueOrDefault(Array, pokemon?.quickMoves?.concat(getValueOrDefault(Array, pokemon?.eliteQuickMove)));
+    const fastMoveSet = getValueOrDefault(Array, pokemon?.quickMoves?.concat(getValueOrDefault(Array, pokemon.eliteQuickMove)));
     const chargedMoveSet = getValueOrDefault(
       Array,
       pokemon?.cinematicMoves?.concat(
-        getValueOrDefault(Array, pokemon?.eliteCinematicMove),
-        getValueOrDefault(Array, pokemon?.shadowMoves),
-        getValueOrDefault(Array, pokemon?.purifiedMoves),
-        getValueOrDefault(Array, pokemon?.specialMoves)
+        getValueOrDefault(Array, pokemon.eliteCinematicMove),
+        getValueOrDefault(Array, pokemon.shadowMoves),
+        getValueOrDefault(Array, pokemon.purifiedMoves),
+        getValueOrDefault(Array, pokemon.specialMoves)
       )
     );
 
@@ -135,7 +135,7 @@ const TeamPVP = () => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
-        const cp = parseInt(getValueOrDefault(String, params.cp));
+        const cp = toNumber(getValueOrDefault(String, params.cp));
         const file = (
           await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', getValueOrDefault(String, params.serie), cp))
         ).data;
@@ -153,20 +153,20 @@ const TeamPVP = () => {
         const teamsTotalGames = file.teams.reduce((p, c) => p + c.games, 0);
 
         file.performers = file.performers.map((item) => {
-          return {
+          return new Performers({
             ...item,
             ...mappingPokemonData(item.pokemon),
             performersTotalGames,
-          };
+          });
         });
 
         file.teams = file.teams.map((item) => {
           const teamsData = item.team.split('|').map((value) => mappingPokemonData(value));
-          return {
+          return new Teams({
             ...item,
             teamsTotalGames,
             teamsData,
-          };
+          });
         });
         setRankingData(file);
         dispatch(SpinnerActions.HideSpinner.create());
@@ -195,7 +195,7 @@ const TeamPVP = () => {
   }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, statsRanking]);
 
   const renderLeague = () => {
-    const cp = parseInt(getValueOrDefault(String, params.cp));
+    const cp = toNumber(getValueOrDefault(String, params.cp));
     const league = pvp?.trains?.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
@@ -216,19 +216,19 @@ const TeamPVP = () => {
     );
   };
 
-  const setSortedPokemonPerformers = (primary: Performers, secondary: Performers) => {
+  const setSortedPokemonPerformers = (primary: IPerformers, secondary: IPerformers) => {
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
     return sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy];
   };
 
-  const setSortedPokemonTeam = (primary: Teams, secondary: Teams) => {
+  const setSortedPokemonTeam = (primary: ITeams, secondary: ITeams) => {
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
     return sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy];
   };
 
-  const findMoveByTag = (name: string | null, tag: string) => {
+  const findMoveByTag = (name: string | undefined, tag: string) => {
     let move: ICombat | undefined;
     if (!tag) {
       return move;
@@ -323,7 +323,7 @@ const TeamPVP = () => {
               key={index}
               style={{
                 columnGap: '1rem',
-                backgroundImage: computeBgType(value?.pokemonData?.types, value?.shadow, value?.purified, 1, styleSheet.current),
+                backgroundImage: computeBgType(value.pokemonData?.types, value.shadow, value.purified, 1, styleSheet.current),
               }}
             >
               <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
@@ -367,7 +367,7 @@ const TeamPVP = () => {
                       purified={value.pokemonData?.purifiedMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
                       special={value.pokemonData?.specialMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
                       unavailable={
-                        value.cMovePri && !getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.cMovePri?.name))
+                        value.cMovePri && !getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.cMovePri.name))
                       }
                     />
                     {value.cMoveSec && (

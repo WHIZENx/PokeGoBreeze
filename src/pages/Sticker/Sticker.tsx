@@ -13,10 +13,10 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { getValueOrDefault, isNotEmpty, toNumber } from '../../util/extension';
 
 interface PokemonStickerModel {
-  id?: number | null | undefined;
+  id?: number | null;
   name: string;
 }
 
@@ -42,7 +42,7 @@ const Sticker = () => {
           }
           return prev;
         }, [])
-        .sort((a, b) => getValueOrDefault(Number, a?.id) - getValueOrDefault(Number, b?.id));
+        .sort((a, b) => getValueOrDefault(Number, a.id) - getValueOrDefault(Number, b.id));
       setSelectPokemon(result);
     }
   }, [pokeStickerList, selectPokemon]);
@@ -51,7 +51,7 @@ const Sticker = () => {
     if (isNotEmpty(pokeStickerList)) {
       setPokemonStickerFilter(
         pokeStickerList
-          ?.filter((item) => {
+          .filter((item) => {
             if (!shopType) {
               return true;
             } else if (shopType === 2) {
@@ -79,7 +79,7 @@ const Sticker = () => {
       <hr />
       <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find Sticker</span>
-        <Form.Select className="form-control input-search" value={id} onChange={(e) => setId(parseInt(e.target.value))}>
+        <Form.Select className="form-control input-search" value={id} onChange={(e) => setId(toNumber(e.target.value))}>
           <option value={0}>All</option>
           <option value={-1}>None</option>
           {selectPokemon.map((value, index) => (
@@ -93,7 +93,7 @@ const Sticker = () => {
       </div>
       <FormControl className="element-top">
         <FormLabel>Filter sticker shopping</FormLabel>
-        <RadioGroup row={true} value={shopType} onChange={(e) => setShopType(parseInt(e.target.value))}>
+        <RadioGroup row={true} value={shopType} onChange={(e) => setShopType(toNumber(e.target.value))}>
           <FormControlLabel value={0} control={<Radio />} label="All" />
           <FormControlLabel value={1} control={<Radio />} label="Available" />
           <FormControlLabel value={2} control={<Radio />} label="Unavailable" />

@@ -42,7 +42,8 @@ import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/mode
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
-import { combineClasses, getValueOrDefault } from '../../util/extension';
+import { combineClasses, getValueOrDefault, toNumber } from '../../util/extension';
+import { EffectiveType } from './enums/type-eff.enum';
 
 export const Header = (data: IPokemonBattleRanking | undefined) => {
   return (
@@ -79,7 +80,7 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
           shadow={data?.pokemon?.shadowMoves?.includes(getValueOrDefault(String, data.cMovePri?.name))}
           purified={data?.pokemon?.purifiedMoves?.includes(getValueOrDefault(String, data.cMovePri?.name))}
           special={data?.pokemon?.specialMoves?.includes(getValueOrDefault(String, data.cMovePri?.name))}
-          unavailable={data?.cMovePri && !getAllMoves(data?.pokemon).includes(getValueOrDefault(String, data?.cMovePri?.name))}
+          unavailable={data?.cMovePri && !getAllMoves(data.pokemon).includes(getValueOrDefault(String, data.cMovePri.name))}
         />
         {data?.cMoveSec && (
           <TypeBadge
@@ -92,7 +93,7 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
             shadow={data.pokemon?.shadowMoves?.includes(data.cMoveSec.name)}
             purified={data.pokemon?.purifiedMoves?.includes(data.cMoveSec.name)}
             special={data.pokemon?.specialMoves?.includes(data.cMoveSec.name)}
-            unavailable={data?.cMoveSec && !getAllMoves(data.pokemon).includes(data.cMoveSec.name)}
+            unavailable={!getAllMoves(data.pokemon).includes(data.cMoveSec.name)}
           />
         )}
       </div>
@@ -108,21 +109,21 @@ export const Body = (
   type: string | undefined
 ) => {
   const renderItemList = (data: PokemonVersus, bgType: number) => {
-    const name = convertNameRankingToOri(data?.opponent, convertNameRankingToForm(data?.opponent));
+    const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
     const pokemon = pokemonData.find((pokemon) => pokemon.slug === name);
     const id = pokemon?.num;
     const form = findAssetForm(assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
     return (
       <Link
-        to={`/pvp/${cp}/${type}/${data?.opponent.replaceAll('_', '-')}`}
+        to={`/pvp/${cp}/${type}/${data.opponent.replaceAll('_', '-')}`}
         className="list-item-ranking"
-        style={{ backgroundImage: computeBgType(pokemon?.types, data?.opponent.includes('_shadow')) }}
+        style={{ backgroundImage: computeBgType(pokemon?.types, data.opponent.includes('_shadow')) }}
       >
         <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
           <div className="d-flex justify-content-center">
             <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
-              {data?.opponent.includes('_shadow') && (
+              {data.opponent.includes('_shadow') && (
                 <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
               )}
               <img
@@ -144,7 +145,7 @@ export const Body = (
             className="ranking-score score-ic text-white text-shadow filter-shadow"
             style={{ backgroundColor: bgType === 0 ? 'lightgreen' : 'lightcoral' }}
           >
-            {data?.rating}
+            {data.rating}
           </span>
         </div>
       </Link>
@@ -185,7 +186,7 @@ export const Body = (
 
 export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: string) => {
   const calculateStatsTopRank = (stats: IStatsBase | undefined, level = MAX_LEVEL) => {
-    const maxCP = parseInt(cp);
+    const maxCP = toNumber(cp);
 
     let calcCP = calculateCP(
       getValueOrDefault(Number, stats?.atk) + MAX_IV,
@@ -227,7 +228,7 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
   };
 
   const renderTopStats = (stats: IStatsBase | undefined, id: number) => {
-    const maxCP = parseInt(cp.toString());
+    const maxCP = toNumber(cp);
     const currStats = calculateStatsTopRank(stats);
     return (
       <ul className="element-top">
@@ -236,12 +237,12 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           <b>
             {maxCP === 10000
               ? `${calculateStatsTopRank(stats, MAX_LEVEL - 1)?.CP}-${currStats?.CP}`
-              : `${getValueOrDefault(Number, currStats?.CP)}`}
+              : `${getValueOrDefault(Number, currStats.CP)}`}
           </b>
         </li>
-        <li className={getValueOrDefault(Number, currStats?.level) <= 40 ? 'element-top' : ''}>
-          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${getValueOrDefault(Number, currStats?.level)}`} </b>
-          {(getValueOrDefault(Number, currStats?.level) > 40 || maxCP === 10000) && (
+        <li className={getValueOrDefault(Number, currStats.level) <= 40 ? 'element-top' : ''}>
+          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${getValueOrDefault(Number, currStats.level)}`} </b>
+          {(getValueOrDefault(Number, currStats.level) > 40 || maxCP === 10000) && (
             <b>
               (
               <CandyXL id={id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
@@ -250,9 +251,9 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           )}
         </li>
         <li className="element-top">
-          <IVBar title="Attack" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.atk)} style={{ maxWidth: 500 }} />
-          <IVBar title="Defense" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.def)} style={{ maxWidth: 500 }} />
-          <IVBar title="HP" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.sta)} style={{ maxWidth: 500 }} />
+          <IVBar title="Attack" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats.IV?.atk)} style={{ maxWidth: 500 }} />
+          <IVBar title="Defense" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats.IV?.def)} style={{ maxWidth: 500 }} />
+          <IVBar title="HP" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats.IV?.sta)} style={{ maxWidth: 500 }} />
         </li>
       </ul>
     );
@@ -271,12 +272,12 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
               borderSize={320}
               size={180}
               stats={HexagonStats.create({
-                lead: getValueOrDefault(Number, data?.data?.scores.at(0)),
-                atk: getValueOrDefault(Number, data?.data?.scores.at(4)),
-                cons: getValueOrDefault(Number, data?.data?.scores.at(5)),
-                closer: getValueOrDefault(Number, data?.data?.scores.at(1)),
-                charger: getValueOrDefault(Number, data?.data?.scores.at(3)),
-                switching: getValueOrDefault(Number, data?.data?.scores.at(2)),
+                lead: getValueOrDefault(Number, data.data.scores.at(0)),
+                atk: getValueOrDefault(Number, data.data.scores.at(4)),
+                cons: getValueOrDefault(Number, data.data.scores.at(5)),
+                closer: getValueOrDefault(Number, data.data.scores.at(1)),
+                charger: getValueOrDefault(Number, data.data.scores.at(3)),
+                switching: getValueOrDefault(Number, data.data.scores.at(2)),
               })}
             />
           </div>
@@ -317,7 +318,7 @@ export const TypeEffective = (types: string[]) => {
             <b>Weakness</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={0} types={types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.WEAK} types={types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>
@@ -327,7 +328,7 @@ export const TypeEffective = (types: string[]) => {
             <b>Neutral</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={1} types={types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.NEUTRAL} types={types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>
@@ -337,7 +338,7 @@ export const TypeEffective = (types: string[]) => {
             <b>Resistance</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={2} types={types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.RESISTANCE} types={types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>
@@ -428,7 +429,7 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
           </span>
         </div>
         <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-          {move?.archetype && findArchetype(move?.archetype)}
+          {move?.archetype && findArchetype(move.archetype)}
           <span className="ranking-score score-ic filter-shadow">{uses}</span>
         </div>
       </Link>

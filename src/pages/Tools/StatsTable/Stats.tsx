@@ -14,7 +14,7 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, toNumber } from '../../../util/extension';
 
 export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
@@ -100,7 +100,7 @@ const StatsTable = () => {
   const searchStatsPoke = useCallback(() => {
     setStatsBattle(
       [...currStatBattle.current].filter(
-        (item) => item.CP === parseInt(searchCP) && item.IV && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv
+        (item) => item.CP === toNumber(searchCP) && item.IV && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv
       )
     );
   }, [searchCP, ATKIv, DEFIv, STAIv]);

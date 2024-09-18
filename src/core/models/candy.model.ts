@@ -15,7 +15,7 @@ export interface ICandy {
   familyGroup: FamilyGroup[];
   primaryColor: Color;
   secondaryColor: Color;
-  familyName: string | null;
+  familyName: string;
 }
 
 export interface ICandyModel {

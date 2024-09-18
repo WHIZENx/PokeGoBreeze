@@ -112,7 +112,7 @@ class APIService {
     if (type.toLowerCase() === 'unknown') {
       return this.getPokeSprite(0);
     }
-    return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type?.toUpperCase()}.png`;
+    return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
   }
 
   getTypeHqSprite(type: string) {
@@ -220,7 +220,7 @@ class APIService {
 
   getPokeGifSprite(name: string) {
     name = name.replace('mega-x', 'megax').replace('mega-y', 'megay');
-    if (!name?.toUpperCase().includes(FORM_MEGA) && name.includes('-m')) {
+    if (!name.toUpperCase().includes(FORM_MEGA) && name.includes('-m')) {
       name = name.replace('-m', '');
     }
     if (name.includes('gengar')) {

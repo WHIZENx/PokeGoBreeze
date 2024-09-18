@@ -1,4 +1,4 @@
-import { DynamicObj, getValueOrDefault } from '../util/extension';
+import { DynamicObj, getValueOrDefault, toNumber } from '../util/extension';
 import { CPM, ICPM } from './models/cpm.model';
 
 export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {
@@ -9,16 +9,16 @@ export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: numb
     if (baseCPM[i]) {
       result.multiplier = baseCPM[i];
     } else {
-      const lvLow = parseInt(
+      const lvLow = toNumber(
         getValueOrDefault(
           String,
-          Object.keys(baseCPM).find((key) => parseInt(key) <= i)
+          Object.keys(baseCPM).find((key) => toNumber(key) <= i)
         )
       );
-      const lvHigh = parseInt(
+      const lvHigh = toNumber(
         getValueOrDefault(
           String,
-          Object.keys(baseCPM).find((key) => parseInt(key) >= i)
+          Object.keys(baseCPM).find((key) => toNumber(key) >= i)
         )
       );
       result.multiplier = Math.sqrt(

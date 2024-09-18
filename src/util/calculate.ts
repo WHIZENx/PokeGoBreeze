@@ -81,7 +81,7 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isUndefined } from './extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isUndefined, toNumber } from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 
@@ -92,7 +92,7 @@ const weatherMultiple = (
   type: string
 ) => {
   return ((weatherBoost as unknown as DynamicObj<string[]>)[getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))]?.find(
-    (item) => item === type?.toUpperCase().replaceAll(' ', '_')
+    (item) => item === type.toUpperCase().replaceAll(' ', '_')
   )
     ? STAB_MULTIPLY(globalOptions)
     : 1) as unknown as number;
@@ -104,7 +104,7 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
     return valueEffective;
   }
   typesObj.forEach((type) => {
-    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[typeMove?.toUpperCase()][type.toUpperCase()];
+    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[typeMove.toUpperCase()][type.toUpperCase()];
   });
   return valueEffective;
 };
@@ -341,7 +341,7 @@ export const calculateCatchChance = (baseCaptureRate: number, level: number, mul
 };
 
 export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
-  const maxCP = parseInt(cp);
+  const maxCP = toNumber(cp);
   let minLevel = MIN_LEVEL;
   let maxLevel = MIN_LEVEL + 1;
   for (let level = minLevel; level <= MAX_LEVEL; level += 0.5) {
@@ -396,7 +396,7 @@ export const predictCPList = (atk: number, def: number, sta: number, IVatk: numb
 };
 
 export const calculateStats = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, cp: string) => {
-  const maxCP = parseInt(cp);
+  const maxCP = toNumber(cp);
 
   const dataStat = new StatsCalculate(IVatk, IVdef, IVsta, maxCP, 0);
 
@@ -943,11 +943,11 @@ export const calculateBattleDPS = (
   let DPSSec = 0;
   if (attacker.isDoubleCharge) {
     const moveSec = getValueOrDefault(Number, attacker.cMoveSec);
-    const CPowSec = getValueOrDefault(Number, moveSec?.pvePower);
-    const CESec = Math.abs(getValueOrDefault(Number, moveSec?.pveEnergy));
-    const CTypeSec = capitalize(moveSec?.type);
-    const CDurSec = getValueOrDefault(Number, moveSec?.durationMs) / 1000;
-    const CDWSSec = getValueOrDefault(Number, moveSec?.damageWindowStartMs) / 1000;
+    const CPowSec = getValueOrDefault(Number, moveSec.pvePower);
+    const CESec = Math.abs(getValueOrDefault(Number, moveSec.pveEnergy));
+    const CTypeSec = capitalize(moveSec.type);
+    const CDurSec = getValueOrDefault(Number, moveSec.durationMs) / 1000;
+    const CDWSSec = getValueOrDefault(Number, moveSec.damageWindowStartMs) / 1000;
 
     const CMultiSec =
       (attacker.types.includes(CTypeSec.toUpperCase()) ? stabMultiply : 1) * getValueOrDefault(Number, moveSec?.accuracyChance);
@@ -1347,7 +1347,7 @@ export const queryStatesEvoChain = (
   return new QueryStatesEvoChain({
     ...item,
     battleLeague,
-    maxCP: getValueOrDefault(Number, battleLeague.master?.CP),
+    maxCP: getValueOrDefault(Number, battleLeague.master.CP),
     form: getValueOrDefault(String, pokemon?.forme),
   });
 };
@@ -1424,7 +1424,7 @@ export const counterPokemon = (
   });
   return dataList
     .sort((a, b) => b.dps - a.dps)
-    .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / getValueOrDefault(Number, dataList.at(0)?.dps) }));
+    .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / getValueOrDefault(Number, dataList.at(0)?.dps, 1) }));
 };
 
 const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: IPokemonData, isEliteQuick: boolean) => {

@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { StoreState } from '../../../store/models/state.model';
 import { IStatsTableComponent } from '../../models/page.model';
+import { toNumber } from '../../../util/extension';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
@@ -69,7 +70,7 @@ const StatsTable = (props: IStatsTableComponent) => {
   const onHandleType = useCallback(
     (v: string) => {
       if (props.setStatLevel) {
-        props.setStatLevel(parseInt(v));
+        props.setStatLevel(toNumber(v));
       }
       setCurrStatType(v);
       if (props.setStatLevel) {

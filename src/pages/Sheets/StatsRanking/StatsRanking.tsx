@@ -25,7 +25,7 @@ import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
+import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty, toNumber } from '../../../util/extension';
 import { LocationState } from '../../../core/models/router.model';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
@@ -70,7 +70,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
             e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
           }}
         />
-        {splitAndCapitalize(row.name?.replaceAll('_', '-'), '-', ' ')}
+        {splitAndCapitalize(row.name.replaceAll('_', '-'), '-', ' ')}
       </>
     ),
     minWidth: '200px',
@@ -248,7 +248,7 @@ const StatsRanking = () => {
     if (id && isNotEmpty(pokemonFilter)) {
       const form = searchParams.get('form');
       const index = pokemonFilter.findIndex(
-        (row) => row.num === parseInt(id) && row.forme === (form?.replaceAll('-', '_').toUpperCase() || FORM_NORMAL)
+        (row) => row.num === toNumber(id) && row.forme === (form?.replaceAll('-', '_').toUpperCase() || FORM_NORMAL)
       );
       if (index > -1) {
         const result = pokemonFilter[index];
@@ -289,7 +289,7 @@ const StatsRanking = () => {
       formName: getValueOrDefault(String, pokemon.forme),
       id: pokemon.num,
       isDefault: true,
-      isMega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
+      isMega: pokemon.slug.toUpperCase().includes(FORM_MEGA),
       name: pokemon.name,
       types: getValueOrDefault(Array, pokemon.types),
       version: getValueOrDefault(String, pokemon.version),
@@ -340,11 +340,11 @@ const StatsRanking = () => {
             <div className="col-xl-7" style={{ padding: 0 }}>
               <TableMove
                 data={select}
-                id={select?.num}
+                id={select.num}
                 form={convertToPokemonForm(select)}
-                statATK={select?.atk.attack}
-                statDEF={select?.def.defense}
-                statSTA={select?.sta.stamina}
+                statATK={select.atk.attack}
+                statDEF={select.def.defense}
+                statSTA={select.sta.stamina}
                 maxHeight={400}
               />
             </div>
@@ -406,8 +406,8 @@ const StatsRanking = () => {
         }}
         onSort={(rows) => {
           if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonFilter, parseInt(getValueOrDefault(String, rows.id?.toString()))));
-            setSortId(parseInt(getValueOrDefault(String, rows.id?.toString())));
+            setPokemonFilter(sortRanking(pokemonFilter, toNumber(getValueOrDefault(String, rows.id?.toString()))));
+            setSortId(toNumber(getValueOrDefault(String, rows.id?.toString())));
           }
         }}
         conditionalRowStyles={conditionalRowStyles}

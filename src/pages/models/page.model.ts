@@ -40,7 +40,7 @@ export interface IPokemonPage {
 }
 
 export interface ISelectPokeComponent {
-  data: (IBattlePokemonData | undefined)[];
+  data: IBattlePokemonData[];
   league: number;
   pokemonBattle: IPokemonBattle;
   setPokemonBattle: React.Dispatch<React.SetStateAction<IPokemonBattle>>;
