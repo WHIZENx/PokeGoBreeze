@@ -8,6 +8,7 @@ import { StoreState } from '../../store/models/state.model';
 import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
 import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { EffectiveType } from '../../pages/PVP/enums/type-eff.enum';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
@@ -49,7 +50,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       resist: [],
       neutral: [],
     });
-    if (effect === 0) {
+    if (effect === EffectiveType.WEAK) {
       Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
         let valueEffective = 1;
         types.forEach((type) => {
@@ -68,7 +69,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           {renderEffective('1.6', getValueOrDefault(Array, data.weak))}
         </div>
       );
-    } else if (effect === 1) {
+    } else if (effect === EffectiveType.NEUTRAL) {
       Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
         let valueEffective = 1;
         types.forEach((type) => {
@@ -83,7 +84,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           {renderEffective('1', getValueOrDefault(Array, data.neutral))}
         </div>
       );
-    } else if (effect === 2) {
+    } else if (effect === EffectiveType.RESISTANCE) {
       Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
         let valueEffective = 1;
         types.forEach((type) => {

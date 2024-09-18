@@ -81,7 +81,7 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isUndefined } from './extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isUndefined, toNumber } from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 
@@ -341,7 +341,7 @@ export const calculateCatchChance = (baseCaptureRate: number, level: number, mul
 };
 
 export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
-  const maxCP = parseInt(cp);
+  const maxCP = toNumber(cp);
   let minLevel = MIN_LEVEL;
   let maxLevel = MIN_LEVEL + 1;
   for (let level = minLevel; level <= MAX_LEVEL; level += 0.5) {
@@ -396,7 +396,7 @@ export const predictCPList = (atk: number, def: number, sta: number, IVatk: numb
 };
 
 export const calculateStats = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, cp: string) => {
-  const maxCP = parseInt(cp);
+  const maxCP = toNumber(cp);
 
   const dataStat = new StatsCalculate(IVatk, IVdef, IVsta, maxCP, 0);
 

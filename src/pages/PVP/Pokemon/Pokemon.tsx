@@ -23,7 +23,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -48,7 +48,7 @@ const PokemonPVP = () => {
   const fetchPokemonInfo = useCallback(async () => {
     dispatch(SpinnerActions.ShowSpinner.create());
     try {
-      const cp = parseInt(getValueOrDefault(String, params.cp));
+      const cp = toNumber(getValueOrDefault(String, params.cp));
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
@@ -87,7 +87,7 @@ const PokemonPVP = () => {
         fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, data.moveset.at(0)?.split('_').at(2)) });
       }
 
-      const maxCP = parseInt(getValueOrDefault(String, params.cp));
+      const maxCP = toNumber(getValueOrDefault(String, params.cp));
 
       let bestStats = new BattleBaseStats();
       if (maxCP < 10000) {
@@ -162,7 +162,7 @@ const PokemonPVP = () => {
   }, [fetchPokemonInfo, rankingPoke, pvp, router.action, dispatch]);
 
   const renderLeague = () => {
-    const cp = parseInt(getValueOrDefault(String, params.cp));
+    const cp = toNumber(getValueOrDefault(String, params.cp));
     const league = pvp?.rankings.find((item) => item.id === 'all' && item.cp.includes(cp));
     return (
       <Fragment>

@@ -55,7 +55,15 @@ import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/col
 import { WeatherBoost } from '../../../core/models/weatherBoost.model';
 import { OptionsActions } from '../../../store/actions';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
+import {
+  combineClasses,
+  convertColumnDataType,
+  DynamicObj,
+  getValueOrDefault,
+  isEmpty,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -870,7 +878,7 @@ const DpsTdo = () => {
                       className="form-control"
                       value={bestOf}
                       disabled={!enableBest}
-                      onChange={(e) => setFilters({ ...filters, bestOf: parseInt(e.target.value) })}
+                      onChange={(e) => setFilters({ ...filters, bestOf: toNumber(e.target.value) })}
                     >
                       <option value={BestOptionType.dps}>DPS</option>
                       <option value={BestOptionType.tdo}>TDO</option>
@@ -1028,7 +1036,7 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        ivAtk: e.target.value ? parseInt(e.target.value) : 0,
+                        ivAtk: toNumber(e.target.value),
                       })
                     }
                     name="ivAtk"
@@ -1046,7 +1054,7 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        ivDef: e.target.value ? parseInt(e.target.value) : 0,
+                        ivDef: toNumber(e.target.value),
                       })
                     }
                     name="ivDef"
@@ -1064,7 +1072,7 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        ivHp: e.target.value ? parseInt(e.target.value) : 0,
+                        ivHp: toNumber(e.target.value),
                       })
                     }
                     name="ivHp"
@@ -1209,7 +1217,7 @@ const DpsTdo = () => {
           }}
           onSort={(selectedColumn, sortDirection) => {
             setDefaultSorted({
-              selectedColumn: parseInt(getValueOrDefault(String, selectedColumn.id?.toString(), '1')),
+              selectedColumn: toNumber(getValueOrDefault(String, selectedColumn.id?.toString(), '1')),
               sortDirection,
             });
           }}

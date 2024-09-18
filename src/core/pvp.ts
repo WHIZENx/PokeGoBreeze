@@ -1,5 +1,5 @@
 import { APIPath, APITree } from '../services/models/api.model';
-import { getValueOrDefault } from '../util/extension';
+import { getValueOrDefault, toNumber } from '../util/extension';
 import { splitAndCapitalize } from '../util/utils';
 import { ILeague, LeaguePVP } from './models/league.model';
 
@@ -36,7 +36,7 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
     }
     result.cp = data
       .filter((item) => item.startsWith(getValueOrDefault(String, league)) && item.includes(`${league}/overall/`))
-      .map((item) => parseInt(item.replace(`${league}/overall/rankings-`, '')))
+      .map((item) => toNumber(item.replace(`${league}/overall/rankings-`, '')))
       .sort((a, b) => a - b);
     result.logo = item?.iconUrl;
     return result;
@@ -63,7 +63,7 @@ export const convertPVPTrain = (data: string[], leagues: ILeague[]) => {
     }
     result.cp = data
       .filter((item) => item.startsWith(getValueOrDefault(String, league)) && item.includes(`${league}/`))
-      .map((item) => parseInt(item.replace(`${league}/`, '')))
+      .map((item) => toNumber(item.replace(`${league}/`, '')))
       .sort((a, b) => a - b);
     result.logo = item?.iconUrl;
     return result;

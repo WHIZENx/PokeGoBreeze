@@ -67,7 +67,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
 
 const RaidBattle = () => {
@@ -792,7 +792,7 @@ const RaidBattle = () => {
             className="form-control"
             placeholder="IV ATK"
             onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: parseInt(e.currentTarget.value) } } })
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: toNumber(e.currentTarget.value) } } })
             }
           />
           <span className="input-group-text">DEF</span>
@@ -805,7 +805,7 @@ const RaidBattle = () => {
             className="form-control"
             placeholder="IV DEF"
             onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: parseInt(e.currentTarget.value) } } })
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: toNumber(e.currentTarget.value) } } })
             }
           />
           <span className="input-group-text">STA</span>
@@ -818,7 +818,7 @@ const RaidBattle = () => {
             className="form-control"
             placeholder="IV STA"
             onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: parseInt(e.currentTarget.value) } } })
+              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: toNumber(e.currentTarget.value) } } })
             }
           />
         </div>
@@ -877,7 +877,7 @@ const RaidBattle = () => {
             style={{ width: '40%' }}
             value={filters.selected.sortBy}
             className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: parseInt(e.target.value) } })}
+            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
           >
             <option value={0}>Damage Per Second</option>
             <option value={1}>Total Damage Output</option>
@@ -889,7 +889,7 @@ const RaidBattle = () => {
             style={{ width: '15%' }}
             value={filters.selected.sorted}
             className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: parseInt(e.target.value) } })}
+            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
           >
             <option value={0}>Best</option>
             <option value={1}>Worst</option>
@@ -1012,7 +1012,7 @@ const RaidBattle = () => {
                         ...showSettingPokemon.pokemon,
                         stats: {
                           ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, atk: parseInt(e.currentTarget.value) },
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, atk: toNumber(e.currentTarget.value) },
                         },
                       },
                     })
@@ -1038,7 +1038,7 @@ const RaidBattle = () => {
                         ...showSettingPokemon.pokemon,
                         stats: {
                           ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, def: parseInt(e.currentTarget.value) },
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, def: toNumber(e.currentTarget.value) },
                         },
                       },
                     })
@@ -1064,7 +1064,7 @@ const RaidBattle = () => {
                         ...showSettingPokemon.pokemon,
                         stats: {
                           ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, sta: parseInt(e.currentTarget.value) },
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, sta: toNumber(e.currentTarget.value) },
                         },
                       },
                     })
@@ -1177,7 +1177,7 @@ const RaidBattle = () => {
                   aria-label="Battle Time"
                   min={0}
                   disabled={!enableTimeAllow}
-                  onInput={(e) => setTimeAllow(parseInt(e.currentTarget.value))}
+                  onInput={(e) => setTimeAllow(toNumber(e.currentTarget.value))}
                 />
               </div>
             </div>

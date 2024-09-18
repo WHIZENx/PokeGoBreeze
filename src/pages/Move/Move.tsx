@@ -29,7 +29,7 @@ import { IMovePage } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { TableColumnModify } from '../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty, toNumber } from '../../util/extension';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -136,7 +136,7 @@ const Move = (props: IMovePage) => {
     if (!move) {
       const id = params.id ? params.id.toLowerCase() : props.id;
       if (id) {
-        queryMoveData(parseInt(id.toString()));
+        queryMoveData(toNumber(id));
       }
     }
   }, [params.id, props.id, queryMoveData, move]);

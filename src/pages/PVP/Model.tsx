@@ -42,7 +42,8 @@ import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/mode
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
-import { combineClasses, getValueOrDefault } from '../../util/extension';
+import { combineClasses, getValueOrDefault, toNumber } from '../../util/extension';
+import { EffectiveType } from './enums/type-eff.enum';
 
 export const Header = (data: IPokemonBattleRanking | undefined) => {
   return (
@@ -185,7 +186,7 @@ export const Body = (
 
 export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: string) => {
   const calculateStatsTopRank = (stats: IStatsBase | undefined, level = MAX_LEVEL) => {
-    const maxCP = parseInt(cp);
+    const maxCP = toNumber(cp);
 
     let calcCP = calculateCP(
       getValueOrDefault(Number, stats?.atk) + MAX_IV,
@@ -227,7 +228,7 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
   };
 
   const renderTopStats = (stats: IStatsBase | undefined, id: number) => {
-    const maxCP = parseInt(cp.toString());
+    const maxCP = toNumber(cp);
     const currStats = calculateStatsTopRank(stats);
     return (
       <ul className="element-top">
@@ -317,7 +318,7 @@ export const TypeEffective = (types: string[]) => {
             <b>Weakness</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={0} types={types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.WEAK} types={types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>
@@ -327,7 +328,7 @@ export const TypeEffective = (types: string[]) => {
             <b>Neutral</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={1} types={types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.NEUTRAL} types={types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>
@@ -337,7 +338,7 @@ export const TypeEffective = (types: string[]) => {
             <b>Resistance</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={2} types={types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.RESISTANCE} types={types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>

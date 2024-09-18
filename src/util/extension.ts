@@ -59,3 +59,7 @@ export const isEmpty = (value?: string | null) => {
 export const isNullOrEmpty = (value?: string | null) => {
   return getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
 };
+
+export const toNumber = (value: string | number | null | undefined, defaultValue = 0) => {
+  return parseInt((value || defaultValue).toString());
+};

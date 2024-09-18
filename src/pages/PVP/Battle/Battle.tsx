@@ -64,7 +64,7 @@ import { StatsBase } from '../../../core/models/stats.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -96,7 +96,7 @@ const Battle = () => {
     showTap: false,
     timelineType: 1,
     duration: 1,
-    league: params.cp ? parseInt(params.cp) : 500,
+    league: toNumber(params.cp) ?? 500,
   });
   const { showTap, timelineType, duration, league } = options;
 
@@ -114,29 +114,14 @@ const Battle = () => {
 
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
-  const State = (
-    timer: number,
-    block: number,
-    energy: number,
-    hp: number,
-    type: string | undefined = undefined,
-    tap = false,
-    color: string | undefined = undefined,
-    size: number | undefined = undefined,
-    move: ICombat | undefined = undefined,
-    dmgImmune = false
-  ) => {
+  const State = (timer: number, block: number, energy: number, hp: number, type?: string) => {
     return new TimelineModel({
       timer,
       type,
-      move,
-      color,
-      size: size ?? DEFAULT_SIZE,
-      tap,
+      size: DEFAULT_SIZE,
       block,
       energy,
       hp: Math.max(0, hp),
-      dmgImmune,
     });
   };
 
@@ -824,7 +809,7 @@ const Battle = () => {
   const arrStore = useRef<(DOMRect | undefined)[]>([]);
 
   const getTranslation = (elem: HTMLElement) => {
-    return elem ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
+    return elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
   };
 
   const onPlayLineMove = (e: TimelineEvent<HTMLDivElement>) => {
@@ -1037,7 +1022,7 @@ const Battle = () => {
     let xCurrent = 0,
       transform;
     if (elem) {
-      xCurrent = parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''));
+      xCurrent = toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''));
     }
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
@@ -1115,14 +1100,14 @@ const Battle = () => {
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
   ) => {
     e.preventDefault();
-    const level = parseInt((document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value);
-    const atk = parseInt((document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value);
-    const def = parseInt((document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value);
-    const sta = parseInt((document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value);
+    const level = toNumber((document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value);
+    const atk = toNumber((document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value);
+    const def = toNumber((document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value);
+    const sta = toNumber((document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value);
 
     const cp = calculateCP(atk, def, sta, level);
 
-    if (cp > parseInt(getValueOrDefault(String, params?.cp))) {
+    if (cp > toNumber(getValueOrDefault(String, params?.cp))) {
       enqueueSnackbar(`This stats Pokémon CP is greater than ${params.cp}, which is not permitted by the league.`, {
         variant: 'error',
       });
@@ -1409,7 +1394,7 @@ const Battle = () => {
                 min={0}
                 max={100}
                 onInput={(e) => {
-                  const value = parseInt(e.currentTarget.value);
+                  const value = toNumber(e.currentTarget.value);
                   if (isNaN(value)) {
                     return;
                   }
@@ -1452,7 +1437,7 @@ const Battle = () => {
                       energy: 0,
                     }),
                   });
-                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: parseInt(e.target.value) }));
+                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: toNumber(e.target.value) }));
                 }}
               >
                 <option value={0}>0</option>
@@ -1479,7 +1464,7 @@ const Battle = () => {
                         energy: 0,
                       }),
                     });
-                    setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: parseInt(e.target.value) }));
+                    setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: toNumber(e.target.value) }));
                   }}
                 >
                   <option value={ChargeType.Primary} disabled={pokemon.disableCMovePri || !pokemon.cMovePri}>
@@ -1578,8 +1563,8 @@ const Battle = () => {
     <div className="container element-top battle-body-container">
       <Form.Select
         onChange={(e) => {
-          navigate(`/pvp/battle/${parseInt(e.target.value)}`);
-          setOptions({ ...options, league: parseInt(e.target.value) });
+          navigate(`/pvp/battle/${toNumber(e.target.value)}`);
+          setOptions({ ...options, league: toNumber(e.target.value) });
         }}
         defaultValue={league}
       >
@@ -1681,7 +1666,7 @@ const Battle = () => {
                     value={timelineType}
                     onChange={(e) =>
                       onChangeTimeline(
-                        parseInt(e.target.value),
+                        toNumber(e.target.value),
                         getValueOrDefault(Number, timelineType ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth)
                       )
                     }

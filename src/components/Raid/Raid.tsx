@@ -15,7 +15,7 @@ import { StoreState } from '../../store/models/state.model';
 import { capitalize } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getValueOrDefault, isNullOrEmpty } from '../../util/extension';
+import { getValueOrDefault, isNullOrEmpty, toNumber } from '../../util/extension';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -85,7 +85,7 @@ const Raid = (props: IRaidComponent) => {
         <Form.Select
           className="w-50"
           onChange={(e) => {
-            setTier(parseInt(e.target.value));
+            setTier(toNumber(e.target.value));
             if (props.clearData) {
               props.clearData();
             }

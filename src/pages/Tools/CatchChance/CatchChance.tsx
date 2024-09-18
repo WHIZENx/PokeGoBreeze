@@ -31,7 +31,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
 
 interface PokemonCatchChance {
   baseCaptureRate?: number;
@@ -286,7 +286,7 @@ const CatchChance = () => {
   };
 
   const handleChangeBallType = (event: SelectChangeEvent) => {
-    setAdvanceOption({ ...advanceOption, ballType: parseInt(event.target.value) });
+    setAdvanceOption({ ...advanceOption, ballType: toNumber(event.target.value) });
   };
 
   const renderRingColor = () => {

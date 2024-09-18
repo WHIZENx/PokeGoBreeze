@@ -22,7 +22,7 @@ import {
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
 
 interface IFindCP {
   level: number;
@@ -139,7 +139,7 @@ const FindTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
-    if (!searchCP || parseInt(searchCP) < 10 || isNaN(parseInt(searchCP))) {
+    if (toNumber(searchCP) < 10) {
       return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
     }
     const result = predictStat(statATK, statDEF, statSTA, searchCP);

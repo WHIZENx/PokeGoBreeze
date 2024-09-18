@@ -20,7 +20,7 @@ import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague
 import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
-import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty, toNumber } from '../../../util/extension';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -311,16 +311,16 @@ const Leagues = () => {
         <div className="col-md-4 d-flex justify-content-end" style={{ padding: 0 }}>
           <Form.Select
             onChange={(e) => {
-              setRank(parseInt(e.target.value));
-              if (parseInt(e.target.value) < 24) {
-                setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === parseInt(e.target.value) + 1));
+              setRank(toNumber(e.target.value));
+              if (toNumber(e.target.value) < 24) {
+                setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1));
               }
             }}
             defaultValue={rank}
           >
             {Object.keys(getValueOrDefault(Array, dataStore?.leagues?.season.rewards.rank)).map((value, index) => (
               <option key={index} value={value}>
-                Rank {value} {parseInt(value) > 20 && `( ${rankName(parseInt(value))} )`}
+                Rank {value} {toNumber(value) > 20 && `( ${rankName(toNumber(value))} )`}
               </option>
             ))}
           </Form.Select>

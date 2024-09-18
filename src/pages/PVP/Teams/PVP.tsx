@@ -31,7 +31,7 @@ import { FORM_NORMAL, FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -135,7 +135,7 @@ const TeamPVP = () => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
-        const cp = parseInt(getValueOrDefault(String, params.cp));
+        const cp = toNumber(getValueOrDefault(String, params.cp));
         const file = (
           await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', getValueOrDefault(String, params.serie), cp))
         ).data;
@@ -195,7 +195,7 @@ const TeamPVP = () => {
   }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, statsRanking]);
 
   const renderLeague = () => {
-    const cp = parseInt(getValueOrDefault(String, params.cp));
+    const cp = toNumber(getValueOrDefault(String, params.cp));
     const league = pvp?.trains?.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>

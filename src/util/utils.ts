@@ -30,7 +30,7 @@ import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
-import { DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty, isNullOrUndefined } from './extension';
+import { DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty, isNullOrUndefined, toNumber } from './extension';
 
 class Mask {
   value: number;
@@ -177,8 +177,8 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
   }
 
   return notFull
-    ? Moment(new Date(parseInt(getValueOrDefault(String, value?.toString())))).format('D MMMM YYYY')
-    : Moment(new Date(parseInt(getValueOrDefault(String, value?.toString())))).format('HH:mm D MMMM YYYY');
+    ? Moment(new Date(toNumber(getValueOrDefault(String, value?.toString())))).format('D MMMM YYYY')
+    : Moment(new Date(toNumber(getValueOrDefault(String, value?.toString())))).format('HH:mm D MMMM YYYY');
 };
 
 export const convertModelSpritName = (text: string) => {

@@ -4,7 +4,7 @@ import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/co
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault, isUndefined } from '../../util/extension';
+import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -544,7 +544,7 @@ export class PokemonData implements IPokemonData {
     Object.entries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
       if (pokemon.id >= minId && pokemon.id <= maxId) {
-        obj.gen = parseInt(key);
+        obj.gen = toNumber(key);
         return;
       }
     });

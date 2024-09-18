@@ -52,7 +52,7 @@ import {
 } from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
-import { DynamicObj, getValueOrDefault, isNotEmpty } from '../util/extension';
+import { DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../util/extension';
 
 export const getOption = <T>(options: any, args: string[]): T => {
   if (!options) {
@@ -86,7 +86,7 @@ export const optionSettings = (data: PokemonDataGM[]) => {
     } else if (item.templateId.includes('BUDDY_LEVEL_')) {
       const level = item.templateId.replace('BUDDY_LEVEL_', '');
       settings.buddyFriendship[level] = new BuddyFriendship();
-      settings.buddyFriendship[level].level = parseInt(level);
+      settings.buddyFriendship[level].level = toNumber(level);
       settings.buddyFriendship[level].minNonCumulativePointsRequired = getValueOrDefault(
         Number,
         item.data.buddyLevelSettings.minNonCumulativePointsRequired
@@ -95,7 +95,7 @@ export const optionSettings = (data: PokemonDataGM[]) => {
     } else if (item.templateId.includes('FRIENDSHIP_LEVEL_')) {
       const level = item.templateId.replace('FRIENDSHIP_LEVEL_', '');
       settings.trainerFriendship[level] = new TrainerFriendship();
-      settings.trainerFriendship[level].level = parseInt(level);
+      settings.trainerFriendship[level].level = toNumber(level);
       settings.trainerFriendship[level].atkBonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
       settings.trainerFriendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
     }
@@ -159,7 +159,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
     const regId = getValueOrDefault(Array, item.templateId.match(/\d{4}/g)) as string[];
-    const pokemon = new PokemonModel(isNotEmpty(regId) ? parseInt(regId[0]) : 0, undefined, pokemonSettings);
+    const pokemon = new PokemonModel(isNotEmpty(regId) ? toNumber(regId[0]) : 0, undefined, pokemonSettings);
 
     if (!pokemonSettings.form) {
       pokemon.form = FORM_NORMAL;
@@ -272,7 +272,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
 
       if (pokemonGO) {
         const regEvoId = pokemonGO.templateId.match(/\d{4}/g) as string[];
-        dataEvo.evoToId = isNotEmpty(regEvoId) ? parseInt(regEvoId[0]) : 0;
+        dataEvo.evoToId = isNotEmpty(regEvoId) ? toNumber(regEvoId[0]) : 0;
       }
 
       if (evo.candyCost > 0) {
@@ -566,7 +566,7 @@ export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         const sticker = stickers.find((sticker) => sticker.id === id.split('.')[0]);
         if (sticker) {
           sticker.shop = true;
-          sticker.pack.push(parseInt(id.replace(`${sticker.id}.`, '')));
+          sticker.pack.push(toNumber(id.replace(`${sticker.id}.`, '')));
         }
       } else if (item.data.stickerMetadata) {
         const sticker = new Sticker();
@@ -746,7 +746,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       const regId = item.templateId.match(/\d{4}/g) as string[];
       return new Move({
         ...item.data.moveSettings,
-        id: isNotEmpty(regId) ? parseInt(regId[0]) : 0,
+        id: isNotEmpty(regId) ? toNumber(regId[0]) : 0,
       });
     });
   const sequence = data
@@ -847,7 +847,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
           result.push(
             Combat.create({
               ...move,
-              id: parseInt(`${move.id}${index}`),
+              id: toNumber(`${move.id}${index}`),
               name: `${move.name}_${type}`,
               type,
             })
@@ -1058,8 +1058,8 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     result.season = Season.create({
       season: seasons.length - 1,
       timestamp: LeagueTimestamp.create({
-        start: parseInt(seasons[seasons.length - 3]),
-        end: parseInt(seasons[seasons.length - 2]),
+        start: toNumber(seasons[seasons.length - 3]),
+        end: toNumber(seasons[seasons.length - 2]),
       }),
       rewards,
       settings: getValueOrDefault(

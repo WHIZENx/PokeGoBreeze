@@ -424,7 +424,7 @@ const Evolution = (props: IEvolutionComponent) => {
             }
           : { x: -8 },
     };
-    const data = getQuestEvo(parseInt(value.id.toString()), form.toUpperCase());
+    const data = getQuestEvo(value.id, form.toUpperCase());
     return (
       <Fragment>
         <span id={`evo-${evo}-${index}`}>
@@ -440,7 +440,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             className="d-flex align-items-center caption"
                             style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                           >
-                            <Candy id={parseInt(value.id.toString())} />
+                            <Candy id={value.id} />
                             <span style={{ marginLeft: 2 }}>{`x${props.purified ? data.purificationEvoCandyCost : data.candyCost}`}</span>
                           </span>
                         )}

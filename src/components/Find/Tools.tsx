@@ -26,7 +26,7 @@ import {
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { getValueOrDefault, isNotEmpty, toNumber } from '../../util/extension';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
@@ -42,13 +42,13 @@ const Tools = (props: IToolsComponent) => {
   );
 
   useEffect(() => {
-    if (parseInt(props.tier.toString()) > 5 && !props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA)) {
+    if (props.tier > 5 && !props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA)) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
     } else if (
-      parseInt(props.tier.toString()) === 5 &&
+      props.tier === 5 &&
       props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) &&
       pokemonData.find((item) => item.num === props.id)?.pokemonClass
     ) {
@@ -116,9 +116,9 @@ const Tools = (props: IToolsComponent) => {
           <Form.Select
             className="w-100"
             onChange={(e) => {
-              setCurrTier(parseInt(e.target.value));
+              setCurrTier(toNumber(e.target.value));
               if (props.setTier) {
-                props.setTier(parseInt(e.target.value));
+                props.setTier(toNumber(e.target.value));
               }
               if (props.onClearStats) {
                 props.onClearStats(true);

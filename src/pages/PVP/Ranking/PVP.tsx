@@ -30,7 +30,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -76,7 +76,7 @@ const RankingPVP = () => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
-        const cp = parseInt(getValueOrDefault(String, params.cp));
+        const cp = toNumber(getValueOrDefault(String, params.cp));
         const file = (
           await APIService.getFetchUrl<RankingsPVP[]>(
             APIService.getRankingFile(getValueOrDefault(String, params.serie), cp, getValueOrDefault(String, params.type))
@@ -267,7 +267,7 @@ const RankingPVP = () => {
   };
 
   const renderLeague = () => {
-    const cp = parseInt(getValueOrDefault(String, params.cp));
+    const cp = toNumber(getValueOrDefault(String, params.cp));
     const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
     return (
       <Fragment>
