@@ -16,6 +16,7 @@
     "radix": false,
     "no-shadowed-variable": false,
     "one-variable-per-declaration": false,
-    "curly": true
+    "curly": true,
+    "max-classes-per-file": false
   }
 }

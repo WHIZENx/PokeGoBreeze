@@ -69,6 +69,67 @@ import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
 import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
+import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
+
+interface IOption {
+  weatherBoss: boolean;
+  weatherCounter: boolean;
+  released: boolean;
+  enableTimeAllow: boolean;
+}
+
+class Option implements IOption {
+  weatherBoss = false;
+  weatherCounter = false;
+  released = false;
+  enableTimeAllow = false;
+
+  constructor({ ...props }: IOption) {
+    Object.assign(this, props);
+  }
+}
+
+interface IFilterGroup {
+  level: number;
+  isShadow: boolean;
+  iv: IStatsBase;
+  onlyShadow: boolean;
+  onlyMega: boolean;
+  onlyReleasedGO: boolean;
+  sortBy: number;
+  sorted: number;
+}
+
+class FilterGroup implements IFilterGroup {
+  level = 0;
+  isShadow = false;
+  iv = new StatsBase();
+  onlyShadow = false;
+  onlyMega = false;
+  onlyReleasedGO = false;
+  sortBy = 0;
+  sorted = 0;
+
+  static create(value: IFilterGroup) {
+    const obj = new FilterGroup();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IFilter {
+  used: IFilterGroup;
+  selected: IFilterGroup;
+}
+
+class Filter implements IFilter {
+  used = new FilterGroup();
+  selected = new FilterGroup();
+
+  constructor({ ...props }: IFilter) {
+    Object.assign(this, props);
+  }
+}
 
 const RaidBattle = () => {
   useChangeTitle('Raid Battle - Tools');
@@ -96,43 +157,32 @@ const RaidBattle = () => {
   const [resultFMove, setResultFMove] = useState<ISelectMoveModel[]>();
   const [resultCMove, setResultCMove] = useState<ISelectMoveModel[]>();
 
-  const [options, setOptions] = useState({
-    weatherBoss: false,
-    weatherCounter: false,
-    released: true,
-    enableTimeAllow: true,
+  const [options, setOptions] = useState(
+    new Option({
+      weatherBoss: false,
+      weatherCounter: false,
+      released: true,
+      enableTimeAllow: true,
+    })
+  );
+
+  const initFilter = FilterGroup.create({
+    level: 40,
+    isShadow: false,
+    iv: StatsBase.setValue(MAX_IV, MAX_IV, MAX_IV),
+    onlyShadow: false,
+    onlyMega: false,
+    onlyReleasedGO: true,
+    sortBy: 0,
+    sorted: 0,
   });
 
-  const [filters, setFilters] = useState({
-    used: {
-      level: 40,
-      isShadow: false,
-      iv: {
-        atk: MAX_IV,
-        def: MAX_IV,
-        sta: MAX_IV,
-      },
-      onlyShadow: false,
-      onlyMega: false,
-      onlyReleasedGO: true,
-      sortBy: 0,
-      sorted: 0,
-    },
-    selected: {
-      level: 40,
-      isShadow: false,
-      iv: {
-        atk: MAX_IV,
-        def: MAX_IV,
-        sta: MAX_IV,
-      },
-      onlyShadow: false,
-      onlyMega: false,
-      onlyReleasedGO: true,
-      sortBy: 0,
-      sorted: 0,
-    },
-  });
+  const [filters, setFilters] = useState(
+    new Filter({
+      used: initFilter,
+      selected: initFilter,
+    })
+  );
 
   const { used, selected } = filters;
 
@@ -290,33 +340,33 @@ const RaidBattle = () => {
   const findMove = (id: number, form: string) => {
     const result = retrieveMoves(getValueOrDefault(Array, data?.pokemon), id, form);
     if (result) {
-      let simpleMove: ISelectMoveModel[] = [];
+      const simpleFMove: ISelectMoveModel[] = [];
       result.quickMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+        simpleFMove.push(new SelectMoveModel(value, false, false, false, false));
       });
       result.eliteQuickMove?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+        simpleFMove.push(new SelectMoveModel(value, true, false, false, false));
       });
-      setFMove(simpleMove.at(0));
-      setResultFMove(simpleMove);
-      simpleMove = [];
+      setFMove(simpleFMove.at(0));
+      setResultFMove(simpleFMove);
+      const simpleCMove: ISelectMoveModel[] = [];
       result.cinematicMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+        simpleCMove.push(new SelectMoveModel(value, false, false, false, false));
       });
       result.eliteCinematicMove?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+        simpleCMove.push(new SelectMoveModel(value, true, false, false, false));
       });
       result.shadowMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+        simpleCMove.push(new SelectMoveModel(value, false, true, false, false));
       });
       result.purifiedMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+        simpleCMove.push(new SelectMoveModel(value, false, false, true, false));
       });
       result.specialMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+        simpleCMove.push(new SelectMoveModel(value, false, false, false, true));
       });
-      setCMove(simpleMove.at(0));
-      setResultCMove(simpleMove);
+      setCMove(simpleCMove.at(0));
+      setResultCMove(simpleCMove);
     } else {
       setFMove(undefined);
       setResultFMove(undefined);
@@ -345,7 +395,7 @@ const RaidBattle = () => {
         const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(getValueOrDefault(Number, stats.sta), used.iv.sta, used.level),
+          hp: calculateStatsBattle(getValueOrDefault(Number, stats.sta), getValueOrDefault(Number, used.iv.sta), used.level),
           fMove,
           cMove,
           types: getValueOrDefault(Array, value?.types),

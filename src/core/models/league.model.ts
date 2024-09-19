@@ -44,15 +44,14 @@ interface ILeagueCondition {
   banned: IPokemonPermission[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class LeagueCondition implements ILeagueCondition {
   timestamp?: ILeagueTimestamp;
   uniqueSelected = false;
-  uniqueType = [];
+  uniqueType: string[] = [];
   maxLevel?: number;
   maxCp?: number;
-  whiteList = [];
-  banned = [];
+  whiteList: IPokemonPermission[] = [];
+  banned: IPokemonPermission[] = [];
 }
 
 interface IRankRewardSetLeague {
@@ -75,7 +74,6 @@ export interface IRankRewardLeague {
   premium?: IRankRewardSetLeague[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class RankRewardLeague implements IRankRewardLeague {
   rank?: number;
   free?: IRankRewardSetLeague[];
@@ -92,7 +90,6 @@ export interface IPokemonRewardLeague {
   premium?: IPokemonRewardSetLeague[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonRewardLeague implements IPokemonRewardLeague {
   rank?: number;
   free?: IPokemonRewardSetLeague[];
@@ -127,7 +124,6 @@ interface IReward {
   pokemon: DynamicObj<IPokemonRewardLeague>;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Reward implements IReward {
   rank: DynamicObj<IRankRewardLeague> = {};
   pokemon: DynamicObj<IPokemonRewardLeague> = {};
@@ -140,12 +136,11 @@ interface ISeason {
   settings: SettingLeague[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Season implements ISeason {
   season = 0;
   timestamp = new LeagueTimestamp();
   rewards = new Reward();
-  settings = [];
+  settings: SettingLeague[] = [];
 
   static create(value: ISeason) {
     const obj = new Season();
@@ -160,63 +155,33 @@ export interface ILeagueData {
   season: ISeason;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class LeagueData implements ILeagueData {
-  allowLeagues: string[];
-  data: ILeague[];
-  season: ISeason;
-
-  constructor() {
-    this.allowLeagues = [];
-    this.data = [];
-    this.season = new Season();
-  }
+  allowLeagues: string[] = [];
+  data: ILeague[] = [];
+  season = new Season();
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class League implements ILeague {
   id?: string;
-  title: string;
+  title = '';
   enabled = false;
-  conditions: ILeagueCondition;
+  conditions = new LeagueCondition();
   iconUrl?: string;
-  league: string;
-  pokemonCount: number;
-
-  constructor() {
-    this.title = '';
-    this.conditions = new LeagueCondition();
-    this.league = '';
-    this.pokemonCount = 0;
-  }
+  league = '';
+  pokemonCount = 0;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class RankRewardSetLeague implements IRankRewardSetLeague {
-  type: string;
-  count: number;
-  step: number;
-
-  constructor() {
-    this.type = '';
-    this.count = 0;
-    this.step = 0;
-  }
+  type = '';
+  count = 0;
+  step = 0;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonRewardSetLeague implements IPokemonRewardSetLeague {
-  guaranteedLimited: boolean;
-  id: number;
-  name: string;
-  form: string;
-
-  constructor() {
-    this.guaranteedLimited = false;
-    this.id = 0;
-    this.name = '';
-    this.form = '';
-  }
+  guaranteedLimited = false;
+  id = 0;
+  name = '';
+  form = '';
 
   static create(value: IPokemonRewardSetLeague) {
     const obj = new PokemonRewardSetLeague();
@@ -225,16 +190,9 @@ export class PokemonRewardSetLeague implements IPokemonRewardSetLeague {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class LeaguePVP implements ILeaguePVP {
-  id: string;
-  name: string;
-  cp: number[];
+  id = '';
+  name = '';
+  cp: number[] = [];
   logo?: string;
-
-  constructor() {
-    this.id = '';
-    this.name = '';
-    this.cp = [];
-  }
 }

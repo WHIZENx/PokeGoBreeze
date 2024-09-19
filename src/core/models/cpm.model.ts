@@ -18,15 +18,9 @@ export interface CPMData {
 }
 
 export class CPM implements ICPM {
-  level: number;
-  multiplier: number;
-  step: number;
-
-  constructor() {
-    this.level = 0;
-    this.multiplier = 0;
-    this.step = 0;
-  }
+  level = 0;
+  multiplier = 0;
+  step = 0;
 }
 
 export interface ICPMDetail {
@@ -40,7 +34,6 @@ export interface ICPMDetail {
   sumXlCandy: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class CPMDetail implements ICPMDetail {
   level = 0;
   multiplier = 1;
@@ -55,11 +48,6 @@ export class CPMDetail implements ICPMDetail {
     const obj = new CPMDetail();
     Object.assign(this, obj);
     return obj;
-  }
-
-  constructor() {
-    this.level = 0;
-    this.multiplier = 0;
   }
 
   static mapping(value: CPMData) {

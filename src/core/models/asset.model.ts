@@ -23,7 +23,6 @@ export interface ICryPath {
   path: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class CryPath implements ICryPath {
   form = '';
   path = '';
@@ -37,7 +36,6 @@ interface ISound {
   cry: ICryPath[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class Sound implements ISound {
   cry: ICryPath[] = [];
 }
@@ -49,17 +47,9 @@ export interface IAsset {
   sound: ISound;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Asset implements IAsset {
-  id?: number;
-  name: string;
-  image: IImage[];
-  sound: ISound;
-
-  constructor() {
-    this.id = 0;
-    this.name = '';
-    this.image = [];
-    this.sound = new Sound();
-  }
+  id = 0;
+  name = '';
+  image: IImage[] = [];
+  sound = new Sound();
 }

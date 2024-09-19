@@ -25,7 +25,6 @@ interface IEvolutionQuest {
   randomEvolution?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class EvolutionQuest implements IEvolutionQuest {
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
@@ -52,24 +51,15 @@ export interface IEvoList {
   quest?: IEvolutionQuest;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class EvoList implements IEvoList {
-  evoToForm: string;
-  evoToId: number;
-  evoToName: string;
-  candyCost: number;
+  evoToForm = '';
+  evoToId = 0;
+  evoToName = '';
+  candyCost = 0;
   item?: string;
   itemCost?: number;
-  purificationEvoCandyCost: number;
+  purificationEvoCandyCost = 0;
   quest?: IEvolutionQuest;
-
-  constructor() {
-    this.evoToForm = '';
-    this.evoToId = 0;
-    this.evoToName = '';
-    this.candyCost = 0;
-    this.purificationEvoCandyCost = 0;
-  }
 }
 
 export interface ITempEvo {
@@ -79,7 +69,6 @@ export interface ITempEvo {
   requireMove?: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class TempEvo implements ITempEvo {
   tempEvolutionName?: string;
   firstTempEvolution = '';
@@ -94,14 +83,13 @@ export class TempEvo implements ITempEvo {
 }
 
 export interface IPokemonTypeCost {
-  stardust?: number;
-  candy?: number;
+  stardust: number;
+  candy: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonTypeCost implements IPokemonTypeCost {
-  stardust? = -1;
-  candy? = -1;
+  stardust = -1;
+  candy = -1;
 
   static create(value: IPokemonTypeCost) {
     const obj = new PokemonTypeCost();
@@ -124,14 +112,13 @@ export interface IEvolution {
   isBaby?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class EvolutionModel implements IEvolution {
   pokemonId?: string;
   prev?: string;
   id = 0;
   name = '';
-  evoList = [];
-  tempEvo = [];
+  evoList: EvoList[] = [];
+  tempEvo: ITempEvo[] = [];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form = '';

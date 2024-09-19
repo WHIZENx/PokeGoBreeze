@@ -40,17 +40,10 @@ interface ISortModel {
 }
 
 class SortModel implements ISortModel {
-  fast: boolean;
-  charged: boolean;
-  eff: boolean;
-  sortBy: string;
-
-  constructor() {
-    this.fast = false;
-    this.charged = false;
-    this.eff = false;
-    this.sortBy = '';
-  }
+  fast = false;
+  charged = false;
+  eff = false;
+  sortBy = '';
 }
 
 interface ITableSort {
@@ -58,7 +51,6 @@ interface ITableSort {
   defensive: ISortModel;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class TableSort implements ITableSort {
   offensive = new SortModel();
   defensive = new SortModel();

@@ -25,7 +25,7 @@ export interface IBattleCalculate {
 }
 
 export class BattleCalculate implements IBattleCalculate {
-  atk? = 0;
+  atk = 0;
   def = 0;
   hp?: number;
   fMove?: ICombat;
@@ -49,7 +49,6 @@ interface IStatsLeagueCalculate {
   level: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsLeagueCalculate implements IStatsLeagueCalculate {
   CP = 0;
   level = 0;
@@ -81,7 +80,6 @@ export interface IBetweenLevelCalculate {
   defStatDiff?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BetweenLevelCalculate implements IBetweenLevelCalculate {
   CP = 0;
   resultBetweenStadust = 0;
@@ -122,7 +120,6 @@ export interface IPredictStatsModel {
   hp: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PredictStatsModel implements IPredictStatsModel {
   atk = 0;
   def = 0;
@@ -151,7 +148,6 @@ export interface IPredictCPModel {
   hp: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PredictCPModel implements IPredictCPModel {
   level = 0;
   CP = 0;
@@ -175,17 +171,10 @@ interface IStatsBaseCalculate {
   statsSTA: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsBaseCalculate implements IStatsBaseCalculate {
-  statsATK: number;
-  statsDEF: number;
-  statsSTA: number;
-
-  constructor() {
-    this.statsATK = 0;
-    this.statsDEF = 0;
-    this.statsSTA = 0;
-  }
+  statsATK = 0;
+  statsDEF = 0;
+  statsSTA = 0;
 
   static create(value: IStatsBaseCalculate) {
     const obj = new StatsBaseCalculate();
@@ -204,23 +193,14 @@ export interface IStatsProdCalculate {
   rank?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsProdCalculate implements IStatsProdCalculate {
-  IV: IStatsBase;
-  CP: number;
-  level: number;
-  stats: IStatsBaseCalculate;
-  statsProds: number;
+  IV = new StatsPokemonGO();
+  CP = 0;
+  level = 0;
+  stats = new StatsBaseCalculate();
+  statsProds = 0;
   ratio?: number;
   rank?: number;
-
-  constructor() {
-    this.IV = new StatsPokemonGO();
-    this.CP = 0;
-    this.level = 0;
-    this.stats = new StatsBaseCalculate();
-    this.statsProds = 0;
-  }
 }
 
 export interface IQueryStatesEvoChain {
@@ -237,7 +217,6 @@ export interface IQueryStatesEvoChain {
   canPurified?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class QueryStatesEvoChain implements IQueryStatesEvoChain {
   battleLeague = new BattleLeague();
   maxCP = 0;
@@ -279,7 +258,6 @@ export interface IBattleBaseStats {
   type?: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BattleBaseStats implements IBattleBaseStats {
   CP?: number;
   IV?: IStatsBase;
@@ -316,22 +294,13 @@ export interface IBattleLeague {
   master: IBattleBaseStats;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BattleLeague implements IBattleLeague {
-  little: IBattleBaseStats;
-  great: IBattleBaseStats;
-  ultra: IBattleBaseStats;
-  master: IBattleBaseStats;
-
-  constructor() {
-    this.little = new BattleBaseStats();
-    this.great = new BattleBaseStats();
-    this.ultra = new BattleBaseStats();
-    this.master = new BattleBaseStats();
-  }
+  little = new BattleBaseStats();
+  great = new BattleBaseStats();
+  ultra = new BattleBaseStats();
+  master = new BattleBaseStats();
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class QueryMovesCounterPokemon {
   globalOptions: IOptions | undefined;
   typeEff: ITypeEff | undefined;
@@ -363,7 +332,6 @@ export class QueryMovesCounterPokemon {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class QueryMovesPokemon {
   globalOptions: IOptions | undefined;
   typeEff: ITypeEff | undefined;
@@ -399,7 +367,6 @@ export class QueryMovesPokemon {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsCalculate implements IStatsCalculate {
   IV = new StatsBase();
   CP: number;
@@ -414,7 +381,6 @@ export class StatsCalculate implements IStatsCalculate {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BattleLeagueCalculate implements IBattleLeagueCalculate {
   elidge = false;
   maxCP?: number;
@@ -430,15 +396,14 @@ export class BattleLeagueCalculate implements IBattleLeagueCalculate {
     this.maxCP = maxCP;
     this.IV = new StatsPokemonGO();
     this.IV.atk = getValueOrDefault(Number, atk);
-    this.IV.atk = getValueOrDefault(Number, def);
-    this.IV.atk = getValueOrDefault(Number, sta);
+    this.IV.def = getValueOrDefault(Number, def);
+    this.IV.sta = getValueOrDefault(Number, sta);
     this.CP = getValueOrDefault(Number, CP);
     this.level = getValueOrDefault(Number, level);
     this.limit = getValueOrDefault(Boolean, limit);
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PredictStatsCalculate implements IPredictStatsCalculate {
   CP: number;
   minLevel: number;
@@ -453,7 +418,6 @@ export class PredictStatsCalculate implements IPredictStatsCalculate {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PredictCPCalculate implements IPredictCPCalculate {
   IV: IStatsBase;
   result: IPredictCPModel[];
@@ -461,8 +425,8 @@ export class PredictCPCalculate implements IPredictCPCalculate {
   constructor(atk: number, def: number, sta: number, result: IPredictCPModel[]) {
     this.IV = new StatsPokemonGO();
     this.IV.atk = atk;
-    this.IV.atk = def;
-    this.IV.atk = sta;
+    this.IV.def = def;
+    this.IV.sta = sta;
     this.result = result;
   }
 }

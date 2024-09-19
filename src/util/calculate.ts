@@ -23,7 +23,7 @@ import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
 import { TypeMove } from '../enums/type.enum';
-import { IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
+import { Delay, IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
 import { findStabType } from './compute';
 import {
   DEFAULT_DAMAGE_CONST,
@@ -1091,10 +1091,10 @@ const queryMove = (
       mc.special = special;
 
       const options = OptionOtherDPS.create({
-        delay: {
+        delay: Delay.create({
           fTime: DEFAULT_ENEMY_ATK_DELAY,
           cTime: DEFAULT_ENEMY_ATK_DELAY,
-        },
+        }),
         pokemonDefObj: DEFAULT_POKEMON_DEF_OBJ,
         ivAtk: MAX_IV,
         ivDef: MAX_IV,

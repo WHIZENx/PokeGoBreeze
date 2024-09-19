@@ -587,7 +587,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
   const family = optionPokemonFamily(pokemon);
   return family.map((item) => {
     const result = new Asset();
-    result.id = pokemon.find((poke) => poke.pokemonId === item)?.num;
+    result.id = getValueOrDefault(Number, pokemon.find((poke) => poke.pokemonId === item)?.num);
     result.name = item;
 
     let formSet = imgs.filter((img) => img.includes(`Addressable Assets/pm${result.id}.`) && !img.includes('cry'));

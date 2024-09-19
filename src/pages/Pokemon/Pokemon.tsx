@@ -17,7 +17,14 @@ import {
 } from '../../core/models/API/form.model';
 import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
 import { Species } from '../../core/models/API/species.model';
-import { OptionsPokemon, IPokemonGenderRatio, IPokemonData, PokemonModel } from '../../core/models/pokemon.model';
+import {
+  OptionsPokemon,
+  IPokemonGenderRatio,
+  IPokemonData,
+  PokemonModel,
+  WeightHeight,
+  PokemonProgress,
+} from '../../core/models/pokemon.model';
 import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
@@ -86,7 +93,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
   const [generation, setGeneration] = useState('');
-  const [WH, setWH] = useState({ weight: -1, height: -1 });
+  const [WH, setWH] = useState(new WeightHeight());
   const [formName, setFormName] = useState<string>();
   const [originForm, setOriginForm] = useState<string>();
   const [originSoundCry, setOriginSoundCry] = useState<IFormSoundCry[]>([]);
@@ -97,9 +104,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const [costModifier, setCostModifier] = useState<ITypeCost>();
 
-  const [progress, setProgress] = useState({ isLoadedForms: false });
-
-  const { isLoadedForms } = progress;
+  const [progress, setProgress] = useState(new PokemonProgress());
 
   const axiosSource = useRef(APIService.getCancelToken());
   const { enqueueSnackbar } = useSnackbar();
@@ -205,16 +210,18 @@ const Pokemon = (props: IPokemonPage) => {
       if (!defaultData) {
         defaultData = dataPokeList.find((value) => value.name === currentForm?.name);
       }
-      setWH((prevWH) => ({
-        ...prevWH,
-        weight: getValueOrDefault(Number, defaultData?.weight),
-        height: getValueOrDefault(Number, defaultData?.height),
-      }));
+      setWH((prevWH) =>
+        WeightHeight.create({
+          ...prevWH,
+          weight: getValueOrDefault(Number, defaultData?.weight),
+          height: getValueOrDefault(Number, defaultData?.height),
+        })
+      );
       setCurrentData(defaultData);
       setCurrentForm(currentForm ?? defaultForm.at(0));
       setData(data);
 
-      setProgress((p) => ({ ...p, isLoadedForms: true }));
+      setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     },
     [pokemonData, searchParams]
   );
@@ -250,13 +257,13 @@ const Pokemon = (props: IPokemonPage) => {
     setOriginForm(undefined);
     setReleased(true);
     setFormName(undefined);
-    setWH({ weight: -1, height: -1 });
+    setWH(new WeightHeight());
     setVersion('');
     setRegion('');
     setGeneration('');
     setPokeRatio(undefined);
     if (isForceClear) {
-      setProgress((p) => ({ ...p, isLoadedForms: false }));
+      setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: false }));
       setFormList([]);
       setPokeData([]);
       setCurrentForm(undefined);
@@ -388,7 +395,7 @@ const Pokemon = (props: IPokemonPage) => {
   }, [pokemonData, params.id, props.id]);
 
   const reload = (element: JSX.Element, color = '#f5f5f5') => {
-    if (isLoadedForms) {
+    if (progress.isLoadedForms) {
       return element;
     }
     return (
@@ -449,7 +456,7 @@ const Pokemon = (props: IPokemonPage) => {
                   version={version}
                   weight={WH.weight}
                   height={WH.height}
-                  isLoadedForms={isLoadedForms}
+                  isLoadedForms={progress.isLoadedForms}
                 />
               </div>
               <div className="d-inline-block" style={{ padding: 0 }}>
@@ -550,13 +557,13 @@ const Pokemon = (props: IPokemonPage) => {
               defaultId={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
               region={region}
               setProgress={setProgress}
-              isLoadedForms={isLoadedForms}
+              isLoadedForms={progress.isLoadedForms}
             />
             <PokemonAssetComponent
               id={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
               name={getValueOrDefault(String, dataStorePokemon?.current?.name)}
               originSoundCry={originSoundCry}
-              isLoadedForms={isLoadedForms}
+              isLoadedForms={progress.isLoadedForms}
             />
           </div>
         </Fragment>

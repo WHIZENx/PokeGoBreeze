@@ -6,7 +6,6 @@ export interface ISelectMoveModel {
   special: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SelectMoveModel implements ISelectMoveModel {
   name = '';
   elite = false;

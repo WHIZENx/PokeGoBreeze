@@ -21,7 +21,6 @@ export class SetStats implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ResetStats implements Action {
   readonly type = StatsActionTypes.resetStats;
 

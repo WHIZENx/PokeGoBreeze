@@ -30,6 +30,7 @@ import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { TypeSex } from '../../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { WeightHeight } from '../../../core/models/pokemon.model';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -75,7 +76,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         height = oriForm.height;
       }
     }
-    props.setWH((prevWH) => ({ ...prevWH, weight, height }));
+    props.setWH((prevWH) => WeightHeight.create({ ...prevWH, weight, height }));
   };
 
   useEffect(() => {

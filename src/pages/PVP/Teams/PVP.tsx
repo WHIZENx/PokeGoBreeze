@@ -32,6 +32,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
+import { SortType } from '../enums/pvp-team.enum';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -50,10 +51,10 @@ const TeamPVP = () => {
   const [rankingData, setRankingData] = useState<TeamsPVP>();
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
-  const [sortedBy, setSortedBy] = useState('teamScore');
+  const [sortedBy, setSortedBy] = useState(SortType.TeamScore);
   const [sorted, setSorted] = useState(1);
 
-  const [sortedTeamBy, setSortedTeamBy] = useState('teamScore');
+  const [sortedTeamBy, setSortedTeamBy] = useState(SortType.TeamScore);
   const [sortedTeam, setSortedTeam] = useState(1);
 
   const styleSheet = useRef<CSSStyleSheet>();
@@ -267,13 +268,13 @@ const TeamPVP = () => {
               className="text-center"
               style={{ width: 'max-content' }}
               onClick={() => {
-                setSortedBy('teamScore');
-                if (sortedBy === 'teamScore') {
+                setSortedBy(SortType.TeamScore);
+                if (sortedBy === SortType.TeamScore) {
                   setSorted(sorted ? 0 : 1);
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedBy === 'teamScore' ? 'ranking-selected' : '')}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedBy === SortType.TeamScore ? 'ranking-selected' : '')}>
                 Team Score
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -282,13 +283,15 @@ const TeamPVP = () => {
               className="text-center"
               style={{ width: 'max-content' }}
               onClick={() => {
-                setSortedBy('individualScore');
-                if (sortedBy === 'individualScore') {
+                setSortedBy(SortType.IndividualScore);
+                if (sortedBy === SortType.IndividualScore) {
                   setSorted(sorted ? 0 : 1);
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedBy === 'individualScore' ? 'ranking-selected' : '')}>
+              <span
+                className={combineClasses('ranking-sort ranking-score', sortedBy === SortType.IndividualScore ? 'ranking-selected' : '')}
+              >
                 Individual Score
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -297,13 +300,13 @@ const TeamPVP = () => {
               className="text-center"
               style={{ width: 'max-content' }}
               onClick={() => {
-                setSortedBy('games');
-                if (sortedBy === 'games') {
+                setSortedBy(SortType.Games);
+                if (sortedBy === SortType.Games) {
                   setSorted(sorted ? 0 : 1);
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedBy === 'games' ? 'ranking-selected' : '')}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedBy === SortType.Games ? 'ranking-selected' : '')}>
                 Usage
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -414,13 +417,13 @@ const TeamPVP = () => {
               className="text-center"
               style={{ width: 'max-content' }}
               onClick={() => {
-                setSortedTeamBy('teamScore');
-                if (sortedTeamBy === 'teamScore') {
+                setSortedTeamBy(SortType.TeamScore);
+                if (sortedTeamBy === SortType.TeamScore) {
                   setSortedTeam(sortedTeam ? 0 : 1);
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedTeamBy === 'teamScore' ? 'ranking-selected' : '')}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedTeamBy === SortType.TeamScore ? 'ranking-selected' : '')}>
                 Team Score
                 {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -429,13 +432,13 @@ const TeamPVP = () => {
               className="text-center"
               style={{ width: 'max-content' }}
               onClick={() => {
-                setSortedTeamBy('games');
-                if (sortedTeamBy === 'games') {
+                setSortedTeamBy(SortType.Games);
+                if (sortedTeamBy === SortType.Games) {
                   setSortedTeam(sortedTeam ? 0 : 1);
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedTeamBy === 'games' ? 'ranking-selected' : '')}>
+              <span className={combineClasses('ranking-sort ranking-score', sortedTeamBy === SortType.Games ? 'ranking-selected' : '')}>
                 Usage
                 {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>

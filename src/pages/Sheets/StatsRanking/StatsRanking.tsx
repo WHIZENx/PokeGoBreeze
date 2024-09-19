@@ -15,7 +15,7 @@ import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link, Location, useLocation, useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { IPokemonData } from '../../../core/models/pokemon.model';
+import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -125,6 +125,22 @@ const customStyles: TableStyles = {
   },
 };
 
+interface IFilter {
+  match: boolean;
+  releasedGO: boolean;
+}
+
+class Filter implements IFilter {
+  match = false;
+  releasedGO = false;
+
+  static create(value: IFilter) {
+    const obj = new Filter();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
 const StatsRanking = () => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   useChangeTitle('Stats Ranking');
@@ -222,18 +238,17 @@ const StatsRanking = () => {
 
   const [select, setSelect] = useState<IPokemonStatsRanking>();
 
-  const [filters, setFilters] = useState({ match: false, releasedGO: false });
+  const [filters, setFilters] = useState(new Filter());
   const { match, releasedGO } = filters;
 
-  const [progress, setProgress] = useState({ isLoadedForms: false });
-  const { isLoadedForms } = progress;
+  const [progress, setProgress] = useState(new PokemonProgress());
 
   useEffect(() => {
     if (isNotEmpty(pokemonData) && !isNotEmpty(pokemonList)) {
       const pokemon = sortRanking(mappingData(pokemonData.filter((pokemon) => pokemon.num > 0)), sortId);
       setPokemonList(pokemon);
       setPokemonFilter(pokemon);
-      setProgress((p) => ({ ...p, isLoadedForms: true }));
+      setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     }
   }, [pokemonList, pokemonData]);
 
@@ -333,7 +348,7 @@ const StatsRanking = () => {
               weight={getValueOrDefault(Number, select?.weightkg)}
               height={getValueOrDefault(Number, select?.heightm)}
               className="table-stats-ranking"
-              isLoadedForms={isLoadedForms}
+              isLoadedForms={progress.isLoadedForms}
             />
           </div>
           {select && (
@@ -372,11 +387,11 @@ const StatsRanking = () => {
           />
         </div>
         <FormControlLabel
-          control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
+          control={<Checkbox checked={match} onChange={(_, check) => setFilters(Filter.create({ ...filters, match: check }))} />}
           label="Match Pokémon"
         />
         <FormControlLabel
-          control={<Checkbox checked={releasedGO} onChange={(_, check) => setFilters({ ...filters, releasedGO: check })} />}
+          control={<Checkbox checked={releasedGO} onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))} />}
           label={
             <span className="d-flex align-items-center">
               Released in GO

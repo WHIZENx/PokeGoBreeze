@@ -50,6 +50,55 @@ const versionProps: Partial<MenuProps> = {
   },
 };
 
+interface IFilter {
+  match: boolean;
+  releasedGO: boolean;
+  allShiny: boolean;
+  gen: number[];
+  version: number[];
+  mega: boolean;
+  gmax: boolean;
+  primal: boolean;
+  legendary: boolean;
+  mythic: boolean;
+  ultraBeast: boolean;
+}
+
+class Filter implements IFilter {
+  match = false;
+  releasedGO = false;
+  allShiny = false;
+  gen: number[] = [];
+  version: number[] = [];
+  mega = false;
+  gmax = false;
+  primal = false;
+  legendary = false;
+  mythic = false;
+  ultraBeast = false;
+
+  static setFilterGenAndVersion(gen: number[], version: number[]) {
+    const obj = new Filter();
+    obj.gen = gen;
+    obj.version = version;
+    return obj;
+  }
+}
+
+interface IBtnSelect {
+  gen: boolean;
+  version: boolean;
+}
+
+class BtnSelect implements IBtnSelect {
+  gen = false;
+  version = false;
+
+  constructor({ ...props }: IBtnSelect) {
+    Object.assign(this, props);
+  }
+}
+
 const Home = () => {
   useChangeTitle('Home');
   const theme = useTheme<ThemeModify>();
@@ -66,26 +115,21 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const scrollID = useRef(0);
 
-  const [filters, setFilters] = useState({
-    match: false,
-    releasedGO: false,
-    allShiny: false,
-    gen: Object.values(genList).map((_, index) => index),
-    version: versionList.map((_, index) => index),
-    mega: false,
-    gmax: false,
-    primal: false,
-    legendary: false,
-    mythic: false,
-    ultraBeast: false,
-  });
+  const [filters, setFilters] = useState(
+    Filter.setFilterGenAndVersion(
+      Object.values(genList).map((_, index) => index),
+      versionList.map((_, index) => index)
+    )
+  );
 
   const { match, releasedGO, allShiny, gen, version, mega, gmax, primal, legendary, mythic, ultraBeast } = filters;
 
-  const [btnSelected, setBtnSelected] = useState({
-    gen: true,
-    version: true,
-  });
+  const [btnSelected, setBtnSelected] = useState(
+    new BtnSelect({
+      gen: true,
+      version: true,
+    })
+  );
 
   const subItem = 100;
 

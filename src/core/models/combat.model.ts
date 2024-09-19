@@ -22,7 +22,6 @@ interface IMove extends MoveSetting {
   id: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Move implements IMove {
   id = 0;
   movementId = '';
@@ -50,7 +49,6 @@ interface ISequence {
   path: string | undefined;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Sequence implements ISequence {
   id = '';
   path: string | undefined;
@@ -86,48 +84,30 @@ export interface ICombat {
   special?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Combat implements ICombat {
-  name: string;
+  name = '';
   type: string | undefined;
   typeMove: string | undefined;
-  pvpPower: number;
-  pvpEnergy: number;
+  pvpPower = 0;
+  pvpEnergy = 0;
   sound: string | undefined;
-  buffs: IBuff[];
-  id: number;
-  track: number;
-  pvePower: number;
-  pveEnergy: number;
-  durationMs: number;
-  damageWindowStartMs: number;
-  damageWindowEndMs: number;
-  accuracyChance: number;
-  criticalChance: number;
-  staminaLossScalar: number;
+  buffs: IBuff[] = [];
+  id = 0;
+  track = 0;
+  pvePower = 0;
+  pveEnergy = 0;
+  durationMs = 0;
+  damageWindowStartMs = 0;
+  damageWindowEndMs = 0;
+  accuracyChance = 0;
+  criticalChance = 0;
+  staminaLossScalar = 0;
   archetype: string | undefined;
   abbreviation: string | undefined;
   elite?: boolean;
   shadow?: boolean;
   purified?: boolean;
   special?: boolean;
-
-  constructor() {
-    this.name = '';
-    this.pvpPower = 0;
-    this.pvpEnergy = 0;
-    this.buffs = [];
-    this.id = 0;
-    this.track = 0;
-    this.pvePower = 0;
-    this.pveEnergy = 0;
-    this.durationMs = 0;
-    this.damageWindowStartMs = 0;
-    this.damageWindowEndMs = 0;
-    this.accuracyChance = 0;
-    this.criticalChance = 0;
-    this.staminaLossScalar = 0;
-  }
 
   static create(value: ICombat) {
     const obj = new Combat();

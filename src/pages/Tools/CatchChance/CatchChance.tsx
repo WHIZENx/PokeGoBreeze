@@ -32,39 +32,18 @@ import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
-
-interface PokemonCatchChance {
-  baseCaptureRate?: number;
-  baseFleeRate?: number;
-  movementType?: string;
-  movementTimerS?: number;
-  jumpTimeS?: number;
-  attackTimerS?: number;
-  attackProbability?: number;
-  dodgeProbability?: number;
-  dodgeDurationS?: number;
-  dodgeDistance?: number;
-  obShadowFormBaseCaptureRate?: number;
-  obShadowFormAttackProbability?: number;
-  obShadowFormDodgeProbability?: number;
-  result?: DynamicObj<DynamicObj<number>>;
-}
-
-interface ITitleThrow {
-  title: string;
-  type: string;
-  threshold: number[];
-}
-
-class TitleThrow implements ITitleThrow {
-  title = '';
-  type = '';
-  threshold: number[] = [];
-
-  constructor({ ...props }: ITitleThrow) {
-    Object.assign(this, props);
-  }
-}
+import {
+  Medal,
+  MedalType,
+  DataAdvance,
+  PokemonCatchChance,
+  TitleThrow,
+  AdvanceOption,
+  PokeBallThreshold,
+  ThrowThreshold,
+  PokeBallOption,
+} from './models/catch-chance.model';
+import { PokeBallType } from './enums/poke-ball.enum';
 
 const CatchChance = () => {
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
@@ -80,46 +59,31 @@ const CatchChance = () => {
   const [statSTA, setStatSTA] = useState(0);
 
   const [data, setData] = useState<PokemonCatchChance>();
-  const [dataAdv, setDataAdv] = useState({
-    result: 0,
-    ballName: '',
-    throwType: '',
-  });
-  const [medal, setMedal] = useState({
-    typePri: { priority: 0, type: '' },
-    typeSec: { priority: 0, type: '' },
-  });
+  const [dataAdv, setDataAdv] = useState(new DataAdvance());
+  const [medal, setMedal] = useState(new Medal());
   const [level, setLevel] = useState(MIN_LEVEL);
-  const [radius, setRadius] = useState(100);
-  const [throwTitle, setThrowTitle] = useState({
-    title: 'Nice!',
-    type: 'Nice Throw',
-    threshold: NICE_THROW_INC_CHANCE,
-  });
-  const [advanceOption, setAdvanceOption] = useState({
-    ballType: 0,
-    normalThrow: false,
-  });
+  const [radius, setRadius] = useState(CIRCLE_DISTANCE / 2);
+  const [throwTitle, setThrowTitle] = useState(
+    new TitleThrow({
+      title: 'Nice!',
+      type: 'Nice Throw',
+      threshold: NICE_THROW_INC_CHANCE,
+    })
+  );
+  const [advanceOption, setAdvanceOption] = useState(new AdvanceOption());
   const { ballType, normalThrow } = advanceOption;
-  const [colorCircle, setColorCirCle] = useState('rgb(0, 255, 0)');
+  const [colorCircle, setColorCircle] = useState('rgb(0, 255, 0)');
   const [encounter, setEncounter] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [options, setOptions] = useState({
-    advance: false,
-    curveBall: false,
-    razzBerry: false,
-    goldenRazzBerry: false,
-    silverPinaps: false,
-    shadow: false,
-  });
+  const [options, setOptions] = useState(new PokeBallOption());
   const { advance, curveBall, razzBerry, goldenRazzBerry, silverPinaps, shadow } = options;
 
-  const pokeballType = [
+  const pokeBallType: PokeBallThreshold[] = [
     { name: 'Poke Ball', threshold: POKE_BALL_INC_CHANCE },
     { name: 'Great Ball', threshold: GREAT_BALL_INC_CHANCE },
     { name: 'Ultra Ball', threshold: ULTRA_BALL_INC_CHANCE },
   ];
-  const throwType = [
+  const throwType: ThrowThreshold[] = [
     { name: 'Normal Throw', threshold: NORMAL_THROW_INC_CHANCE },
     { name: 'Nice Throw', threshold: NICE_THROW_INC_CHANCE },
     { name: 'Great Throw', threshold: GREAT_THROW_INC_CHANCE },
@@ -185,7 +149,7 @@ const CatchChance = () => {
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
 
     if (data) {
-      pokeballType.forEach((ball) => {
+      pokeBallType.forEach((ball) => {
         result[ball.name.toLowerCase().replace(' ball', '')] = {};
         throwType.forEach((type) => {
           const [minThreshold, maxThreshold] = type.threshold;
@@ -223,26 +187,23 @@ const CatchChance = () => {
     }
     setEncounter(true);
     if (pokemon) {
-      let medalType = {
-        typePri: { priority: 0, type: '' },
-        typeSec: { priority: 0, type: '' },
-      };
+      let medalType = new Medal();
       const [typePri, typeSec] = pokemon.types;
-      medalType = {
+      medalType = Medal.create({
         ...medalType,
-        typePri: {
+        typePri: MedalType.create({
           type: typePri,
           priority: medal && medal.typePri ? medal.typePri.priority : 0,
-        },
-      };
+        }),
+      });
       if (!isNullOrEmpty(typeSec)) {
-        medalType = {
+        medalType = Medal.create({
           ...medalType,
-          typeSec: {
+          typeSec: MedalType.create({
             type: typeSec,
             priority: medal && medal.typeSec ? medal.typeSec.priority : 0,
-          },
-        };
+          }),
+        });
       }
       setMedal(medalType);
       setData(pokemon.encounter);
@@ -254,23 +215,27 @@ const CatchChance = () => {
   };
 
   const onSetPriorityPri = (priority: number) => {
-    setMedal({
-      ...medal,
-      typePri: {
-        ...medal.typePri,
-        priority,
-      },
-    });
+    setMedal(
+      Medal.create({
+        ...medal,
+        typePri: MedalType.create({
+          ...medal.typePri,
+          priority,
+        }),
+      })
+    );
   };
 
   const onSetPrioritySec = (priority: number) => {
-    setMedal({
-      ...medal,
-      typeSec: {
-        ...medal.typeSec,
-        priority,
-      },
-    });
+    setMedal(
+      Medal.create({
+        ...medal,
+        typeSec: MedalType.create({
+          ...medal.typeSec,
+          priority,
+        }),
+      })
+    );
   };
 
   const onHandleLevel = (v: number) => {
@@ -290,7 +255,7 @@ const CatchChance = () => {
   };
 
   const renderRingColor = () => {
-    setColorCirCle(checkValueColor(calculateProb(true)));
+    setColorCircle(checkValueColor(calculateProb(true)));
   };
 
   const checkValueColor = (value: number) => {
@@ -326,10 +291,10 @@ const CatchChance = () => {
   const calculateProb = (disable = false, threshold = 1) => {
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
-    const pokeball = Object.entries(pokeballType).find((_, index) => index === ballType);
-    if (pokeball && isNotEmpty(pokeball)) {
+    const pokeBall = Object.entries(pokeBallType).find((_, index) => index === ballType);
+    if (pokeBall && isNotEmpty(pokeBall)) {
       const multiplier =
-        pokeball[1].threshold *
+        pokeBall[1].threshold *
         threshold *
         medalChance *
         (curveBall && !disable ? CURVE_INC_CHANCE : 1) *
@@ -346,13 +311,15 @@ const CatchChance = () => {
   const calculateAdvance = () => {
     const threshold = normalThrow ? 1 : 1 + (100 - radius) / 100;
     const result = calculateProb(false, threshold);
-    const pokeball = Object.entries(pokeballType).find((_, index) => index === ballType);
-    if (pokeball) {
-      setDataAdv({
-        result,
-        ballName: pokeball[1].name,
-        throwType: normalThrow ? 'Normal Throw' : throwTitle.type,
-      });
+    const pokeBall = Object.entries(pokeBallType).find((_, index) => index === ballType);
+    if (pokeBall) {
+      setDataAdv(
+        DataAdvance.create({
+          result,
+          ballName: pokeBall[1].name,
+          throwType: normalThrow ? 'Normal Throw' : throwTitle.type,
+        })
+      );
     }
   };
 
@@ -393,7 +360,12 @@ const CatchChance = () => {
               )}
               <div className="d-flex flex-wrap justify-content-center w-100 element-top" style={{ gap: 10 }}>
                 <FormControlLabel
-                  control={<Checkbox checked={curveBall} onChange={(_, check) => setOptions({ ...options, curveBall: check })} />}
+                  control={
+                    <Checkbox
+                      checked={curveBall}
+                      onChange={(_, check) => setOptions(PokeBallOption.create({ ...options, curveBall: check }))}
+                    />
+                  }
                   label="Curve Ball"
                 />
                 <FormControlLabel
@@ -401,12 +373,14 @@ const CatchChance = () => {
                     <Checkbox
                       checked={razzBerry}
                       onChange={(_, check) =>
-                        setOptions({
-                          ...options,
-                          razzBerry: check,
-                          silverPinaps: check ? false : check,
-                          goldenRazzBerry: check ? false : check,
-                        })
+                        setOptions(
+                          PokeBallOption.create({
+                            ...options,
+                            razzBerry: check,
+                            silverPinaps: check ? false : check,
+                            goldenRazzBerry: check ? false : check,
+                          })
+                        )
                       }
                     />
                   }
@@ -421,12 +395,14 @@ const CatchChance = () => {
                     <Checkbox
                       checked={goldenRazzBerry}
                       onChange={(_, check) =>
-                        setOptions({
-                          ...options,
-                          goldenRazzBerry: check,
-                          silverPinaps: check ? false : check,
-                          razzBerry: check ? false : check,
-                        })
+                        setOptions(
+                          PokeBallOption.create({
+                            ...options,
+                            goldenRazzBerry: check,
+                            silverPinaps: check ? false : check,
+                            razzBerry: check ? false : check,
+                          })
+                        )
                       }
                     />
                   }
@@ -441,12 +417,14 @@ const CatchChance = () => {
                     <Checkbox
                       checked={silverPinaps}
                       onChange={(_, check) =>
-                        setOptions({
-                          ...options,
-                          silverPinaps: check,
-                          goldenRazzBerry: check ? false : check,
-                          razzBerry: check ? false : check,
-                        })
+                        setOptions(
+                          PokeBallOption.create({
+                            ...options,
+                            silverPinaps: check,
+                            goldenRazzBerry: check ? false : check,
+                            razzBerry: check ? false : check,
+                          })
+                        )
                       }
                     />
                   }
@@ -536,7 +514,7 @@ const CatchChance = () => {
                   <Checkbox
                     checked={shadow}
                     onChange={(_, check) => {
-                      setOptions({ ...options, shadow: check });
+                      setOptions(PokeBallOption.create({ ...options, shadow: check }));
                     }}
                   />
                 }
@@ -554,7 +532,7 @@ const CatchChance = () => {
                 <Checkbox
                   checked={advance}
                   onChange={(_, check) => {
-                    setOptions({ ...options, advance: check });
+                    setOptions(PokeBallOption.create({ ...options, advance: check }));
                     if (check) {
                       calculateAdvance();
                     }
@@ -570,13 +548,13 @@ const CatchChance = () => {
                 <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
                   <InputLabel id="demo-select-small">Ball</InputLabel>
                   <Select value={ballType.toString()} label="Ball" onChange={handleChangeBallType}>
-                    <MenuItem value={0} className="d-flex" style={{ gap: 5 }}>
+                    <MenuItem value={PokeBallType.PokeBall} className="d-flex" style={{ gap: 5 }}>
                       <img height={16} src={APIService.getItemSprite('pokeball_sprite')} /> Poke Ball
                     </MenuItem>
-                    <MenuItem value={1} className="d-flex" style={{ gap: 5 }}>
+                    <MenuItem value={PokeBallType.GreatBall} className="d-flex" style={{ gap: 5 }}>
                       <img height={16} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball
                     </MenuItem>
-                    <MenuItem value={2} className="d-flex" style={{ gap: 5 }}>
+                    <MenuItem value={PokeBallType.UltraBall} className="d-flex" style={{ gap: 5 }}>
                       <img height={16} src={APIService.getItemSprite('ultraball_sprite')} /> Ultra Ball
                     </MenuItem>
                   </Select>

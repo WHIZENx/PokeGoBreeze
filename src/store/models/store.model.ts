@@ -37,7 +37,6 @@ interface IDataModel {
   pvp: IPVPDataModel;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Data implements IDataModel {
   cpm: ICPM[] = [];
   typeEff = new TypeEff();

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/utils';
 import {
+  DEFAULT_SHEET_PAGE,
+  DEFAULT_SHEET_ROW,
   DEFAULT_TYPES,
   FORM_GMAX,
   FORM_MEGA,
@@ -48,10 +50,10 @@ import { OptionsSheetState, RouterState, StoreState } from '../../../store/model
 import { ICombat } from '../../../core/models/combat.model';
 import { Elite, IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
+import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
+import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
 import { WeatherBoost } from '../../../core/models/weatherBoost.model';
 import { OptionsActions } from '../../../store/actions';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
@@ -258,18 +260,13 @@ const DpsTdo = () => {
   const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.cMoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : DEFAULT_SHEET_PAGE
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : 10
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : DEFAULT_SHEET_ROW
   );
   const [defaultSorted, setDefaultSorted] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
-      ? optionStore?.dpsSheet?.defaultSorted
-      : {
-          selectedColumn: ColumnSelectType.Total,
-          sortDirection: SortDirectionType.DESC.toString(),
-        }
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted ? optionStore?.dpsSheet?.defaultSorted : new OptionDPSSort()
   );
 
   const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPS());
@@ -962,20 +959,12 @@ const DpsTdo = () => {
                     <Switch
                       onChange={(_, check) => {
                         setFilters({ ...filters, enableDelay: check });
-                        if (check) {
-                          setOptions({
+                        setOptions(
+                          OptionOtherDPS.create({
                             ...options,
-                            delay: {
-                              fTime: 0,
-                              cTime: 0,
-                            },
-                          });
-                        } else {
-                          setOptions({
-                            ...options,
-                            delay: undefined,
-                          });
-                        }
+                            delay: check ? new Delay() : undefined,
+                          })
+                        );
                       }}
                     />
                   }
@@ -992,13 +981,15 @@ const DpsTdo = () => {
                   disabled={!enableDelay}
                   required={enableDelay}
                   onInput={(e) =>
-                    setOptions({
-                      ...options,
-                      delay: {
-                        fTime: parseFloat(e.currentTarget.value),
-                        cTime: getValueOrDefault(Number, options.delay?.cTime),
-                      },
-                    })
+                    setOptions(
+                      OptionOtherDPS.create({
+                        ...options,
+                        delay: Delay.create({
+                          fTime: parseFloat(e.currentTarget.value),
+                          cTime: getValueOrDefault(Number, options.delay?.cTime),
+                        }),
+                      })
+                    )
                   }
                 />
                 <span className="input-group-text">Charged Move Time</span>
@@ -1012,13 +1003,15 @@ const DpsTdo = () => {
                   disabled={!enableDelay}
                   required={enableDelay}
                   onInput={(e) =>
-                    setOptions({
-                      ...options,
-                      delay: {
-                        fTime: getValueOrDefault(Number, options.delay?.fTime),
-                        cTime: parseFloat(e.currentTarget.value),
-                      },
-                    })
+                    setOptions(
+                      OptionOtherDPS.create({
+                        ...options,
+                        delay: Delay.create({
+                          fTime: getValueOrDefault(Number, options.delay?.fTime),
+                          cTime: parseFloat(e.currentTarget.value),
+                        }),
+                      })
+                    )
                   }
                 />
               </div>
@@ -1110,10 +1103,12 @@ const DpsTdo = () => {
                     disabled={dataTargetPokemon ? true : false}
                     required={true}
                     onInput={(e) =>
-                      setOptions({
-                        ...options,
-                        pokemonDefObj: parseFloat(e.currentTarget.value),
-                      })
+                      setOptions(
+                        OptionOtherDPS.create({
+                          ...options,
+                          pokemonDefObj: parseFloat(e.currentTarget.value),
+                        })
+                      )
                     }
                     name="pokemonDefObj"
                   />
@@ -1125,10 +1120,12 @@ const DpsTdo = () => {
                     className="form-control"
                     defaultValue={String(weatherBoosts)}
                     onChange={(e) =>
-                      setOptions({
-                        ...options,
-                        weatherBoosts: e.target.value,
-                      })
+                      setOptions(
+                        OptionOtherDPS.create({
+                          ...options,
+                          weatherBoosts: e.target.value,
+                        })
+                      )
                     }
                   >
                     <option value="">Extream</option>
@@ -1151,11 +1148,13 @@ const DpsTdo = () => {
                       control={
                         <Switch
                           onChange={(_, check) => {
-                            setOptions({
-                              ...options,
-                              trainerFriend: check,
-                              pokemonFriendLevel: 0,
-                            });
+                            setOptions(
+                              OptionOtherDPS.create({
+                                ...options,
+                                trainerFriend: check,
+                                pokemonFriendLevel: 0,
+                              })
+                            );
                           }}
                         />
                       }
@@ -1164,10 +1163,12 @@ const DpsTdo = () => {
                     <LevelRating
                       disabled={!trainerFriend}
                       onChange={(_, value) => {
-                        setOptions({
-                          ...options,
-                          pokemonFriendLevel: getValueOrDefault(Number, value),
-                        });
+                        setOptions(
+                          OptionOtherDPS.create({
+                            ...options,
+                            pokemonFriendLevel: getValueOrDefault(Number, value),
+                          })
+                        );
                       }}
                       max={4}
                       size="large"
@@ -1216,10 +1217,12 @@ const DpsTdo = () => {
             setDefaultRowPerPage(currentRowsPerPage);
           }}
           onSort={(selectedColumn, sortDirection) => {
-            setDefaultSorted({
-              selectedColumn: toNumber(getValueOrDefault(String, selectedColumn.id?.toString(), '1')),
-              sortDirection,
-            });
+            setDefaultSorted(
+              OptionDPSSort.create({
+                selectedColumn: toNumber(getValueOrDefault(String, selectedColumn.id?.toString(), '1')),
+                sortDirection,
+              })
+            );
           }}
         />
       </div>
