@@ -2,6 +2,7 @@
 import './extensions/string.extension';
 import { TableColumn } from 'react-data-table-component';
 import { TableColumnModify } from './models/overrides/data-table.model';
+import { EqualMode, IncludeMode } from './enums/string.enum';
 
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
 
@@ -62,4 +63,36 @@ export const isNullOrEmpty = (value?: string | null) => {
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) => {
   return parseInt((value || defaultValue).toString());
+};
+
+export const isEqual = (value: string | undefined | null, compareValue: string | undefined | null, mode = EqualMode.CaseSensitive) => {
+  value = getValueOrDefault(String, value?.toString());
+  compareValue = getValueOrDefault(String, compareValue?.toString());
+  switch (mode) {
+    case EqualMode.IgnoreCaseSensitive:
+      return value.toUpperCase() === compareValue.toUpperCase();
+    case EqualMode.CaseSensitive:
+    default: {
+      return value === compareValue;
+    }
+  }
+};
+
+export const isInclude = (value: string | undefined | null, compareValue: string | undefined | null, mode = IncludeMode.Include) => {
+  value = getValueOrDefault(String, value?.toString());
+  compareValue = getValueOrDefault(String, compareValue?.toString());
+  switch (mode) {
+    case IncludeMode.IncludeIgnoreCaseSensitive:
+      return value.toUpperCase().includes(compareValue.toUpperCase());
+    case IncludeMode.IncludeBetween:
+      return value.includes(compareValue) || compareValue.includes(value);
+    case IncludeMode.IncludeBetweenIgnoreCaseSensitive: {
+      value = value.toUpperCase();
+      compareValue = compareValue.toUpperCase();
+      return value.includes(compareValue) || compareValue.includes(value);
+    }
+    case IncludeMode.Include:
+    default:
+      return value.includes(compareValue);
+  }
 };

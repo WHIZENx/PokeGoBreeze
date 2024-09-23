@@ -31,7 +31,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
 import {
   Medal,
   MedalType,
@@ -181,7 +181,7 @@ const CatchChance = () => {
 
   const findCatchCapture = (id: number, form: IPokemonFormModify) => {
     const formName = convertPokemonAPIDataName(form.form.name);
-    const pokemon = pokemonData.find((data) => data.num === id && data.fullName === formName);
+    const pokemon = pokemonData.find((data) => data.num === id && isEqual(data.fullName, formName));
     if (!pokemon || !pokemon.encounter) {
       return setEncounter(false);
     }

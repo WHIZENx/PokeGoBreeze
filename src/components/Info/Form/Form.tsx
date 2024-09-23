@@ -29,7 +29,7 @@ import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { TypeSex } from '../../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 import { WeightHeight } from '../../../core/models/pokemon.model';
 
 const FormComponent = (props: IFormInfoComponent) => {
@@ -57,8 +57,8 @@ const FormComponent = (props: IFormInfoComponent) => {
   }, [filterFormList, stats]);
 
   const findFormData = (name: string) => {
-    const currentData = props.pokeData.find((item) => name === item.name);
-    const currentForm = props.formList?.flatMap((item) => item).find((item) => item.form.name === name);
+    const currentData = props.pokeData.find((item) => isEqual(name, item.name));
+    const currentForm = props.formList?.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
     props.setData(currentData);
     props.setForm(currentForm);
     const originForm = splitAndCapitalize(currentForm?.form.formName, '-', '-');
@@ -83,7 +83,7 @@ const FormComponent = (props: IFormInfoComponent) => {
     if (props.pokemonRouter.action === Action.Pop) {
       const form = searchParams.get('form')?.toUpperCase() || FORM_NORMAL;
       const currentData = props.pokeData.find(
-        (i) => i.name.includes(form.toLowerCase().replaceAll('_', '-')) || (form === FORM_NORMAL && i.isDefault)
+        (i) => i.name.includes(form.toLowerCase().replaceAll('_', '-')) || (isEqual(form, FORM_NORMAL) && i.isDefault)
       );
 
       if (currentData) {

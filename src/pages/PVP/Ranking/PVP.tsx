@@ -30,7 +30,8 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
+import { EqualMode } from '../../../util/enums/string.enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -96,7 +97,7 @@ const RankingPVP = () => {
         }
         const filePVP = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
+          const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
           const id = pokemon?.num;
           const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
@@ -113,11 +114,11 @@ const RankingPVP = () => {
             fMoveData = 'HIDDEN_POWER';
           }
 
-          let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);
-          const cMovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
+          let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
+          const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
           let cMoveSec;
           if (cMoveDataSec) {
-            cMoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
+            cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
           }
 
           if (fMove && item.moveset.at(0)?.includes('HIDDEN_POWER')) {
@@ -268,7 +269,7 @@ const RankingPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
+    const league = pvp?.rankings.find((item) => isEqual(item.id, params.serie) && item.cp.includes(cp));
     return (
       <Fragment>
         {league ? (
@@ -301,7 +302,7 @@ const RankingPVP = () => {
           {scoreType.map((type, index) => (
             <Button
               key={index}
-              className={params.type?.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+              className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
               onClick={() => {
                 setOnLoadData(false);
                 navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`);

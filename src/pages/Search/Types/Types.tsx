@@ -18,7 +18,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -227,11 +227,11 @@ const SearchTypes = () => {
           ),
           fastMove: getValueOrDefault(
             Array,
-            data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType)
+            data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && isEqual(type.type, currentType))
           ),
           chargedMove: getValueOrDefault(
             Array,
-            data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType)
+            data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && isEqual(type.type, currentType))
           ),
         })
       );

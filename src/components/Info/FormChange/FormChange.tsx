@@ -9,7 +9,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -46,7 +46,10 @@ const FromChange = (props: IFromChangeComponent) => {
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
                   src={APIService.getPokemonModel(
-                    getValueOrDefault(String, pokeAssets.find((pokemon) => pokemon.form === props.details?.forme)?.image?.at(0)?.default)
+                    getValueOrDefault(
+                      String,
+                      pokeAssets.find((pokemon) => isEqual(pokemon.form, props.details?.forme))?.image?.at(0)?.default
+                    )
                   )}
                 />
               </div>
@@ -68,9 +71,8 @@ const FromChange = (props: IFromChangeComponent) => {
                           getValueOrDefault(
                             String,
                             pokeAssets
-                              ?.find(
-                                (pokemon) =>
-                                  pokemon.form === name.replace('_COMPLETE_', '_').replace(`${props.defaultName?.toUpperCase()}_`, '')
+                              ?.find((pokemon) =>
+                                isEqual(pokemon.form, name.replace('_COMPLETE_', '_').replace(`${props.defaultName?.toUpperCase()}_`, ''))
                               )
                               ?.image.at(0)?.default
                           )

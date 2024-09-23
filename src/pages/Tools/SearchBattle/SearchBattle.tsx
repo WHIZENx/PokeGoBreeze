@@ -27,7 +27,7 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../../store/actions';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 
 const FindBattle = () => {
@@ -73,7 +73,7 @@ const FindBattle = () => {
       }
       let curr;
       if (form === FORM_NORMAL) {
-        curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && form === item.forme);
+        curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && isEqual(form, item.forme));
       } else {
         curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && item.forme?.includes(form));
       }
@@ -115,7 +115,9 @@ const FindBattle = () => {
       obj.evoList?.forEach((i) => {
         currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => obj.num === i.evoToId && i.evoToForm === defaultForm));
+      const curr = dataStore?.pokemon?.filter((item) =>
+        item.evoList?.find((i) => obj.num === i.evoToId && isEqual(i.evoToForm, defaultForm))
+      );
       if (isNotEmpty(curr)) {
         curr?.forEach((item) => prevEvoChain(item, defaultForm, arr, result));
       } else {
@@ -127,22 +129,22 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const isForm = isNullOrEmpty(form?.form.formName?.toUpperCase())
+      const currentForm = isNullOrEmpty(form?.form.formName?.toUpperCase())
         ? FORM_NORMAL
         : form?.form.formName.replaceAll('-', '_').toUpperCase();
-      let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isForm === i.evoToForm));
+      let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
       if (!isNotEmpty(curr)) {
-        if (isForm === FORM_NORMAL) {
-          curr = dataStore?.pokemon?.filter((item) => id === item.num && isForm === item.forme);
+        if (currentForm === FORM_NORMAL) {
+          curr = dataStore?.pokemon?.filter((item) => id === item.num && isEqual(currentForm, item.forme));
         } else {
-          curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme?.includes(isForm ?? FORM_NORMAL));
+          curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme?.includes(currentForm ?? FORM_NORMAL));
         }
       }
       if (!isNotEmpty(curr)) {
         curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme === FORM_NORMAL);
       }
       const result: IEvolution[][] = [];
-      curr?.forEach((item) => prevEvoChain(item, isForm ?? FORM_NORMAL, [], result));
+      curr?.forEach((item) => prevEvoChain(item, currentForm ?? FORM_NORMAL, [], result));
       return result;
     },
     [prevEvoChain, form, dataStore?.pokemon]

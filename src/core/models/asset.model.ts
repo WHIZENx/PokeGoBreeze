@@ -1,5 +1,7 @@
+import { GenderType } from '../enums/asset.enum';
+
 export interface IImage {
-  gender?: number;
+  gender?: GenderType;
   pokemonId?: number;
   form?: string;
   default: string;
@@ -7,7 +9,7 @@ export interface IImage {
 }
 
 export class ImageModel implements IImage {
-  gender?: number;
+  gender?: GenderType;
   pokemonId?: number;
   form?: string;
   default = '';

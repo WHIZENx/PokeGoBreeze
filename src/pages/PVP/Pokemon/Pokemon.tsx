@@ -23,7 +23,8 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
+import { EqualMode } from '../../../util/enums/string.enum';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -54,7 +55,7 @@ const PokemonPVP = () => {
         await APIService.getFetchUrl<RankingsPVP[]>(
           APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, getValueOrDefault(String, params.type))
         )
-      ).data.find((pokemon) => pokemon.speciesId === paramName);
+      ).data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
 
       if (!data) {
         setFound(false);
@@ -62,7 +63,7 @@ const PokemonPVP = () => {
       }
 
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-      const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
+      const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
       const id = pokemon?.num;
       const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
       document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(params.type)})`;
@@ -76,11 +77,11 @@ const PokemonPVP = () => {
         fMoveData = 'HIDDEN_POWER';
       }
 
-      let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);
-      const cMovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
+      let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
+      const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
       let cMoveSec;
       if (cMoveDataSec) {
-        cMoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
+        cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
       }
 
       if (fMove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
@@ -209,7 +210,7 @@ const PokemonPVP = () => {
               {scoreType.map((type, index) => (
                 <Button
                   key={index}
-                  className={params.type?.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+                  className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
                   onClick={() => navigate(`/pvp/${params.cp}/${type.toLowerCase()}/${params.pokemon}`)}
                 >
                   {type}

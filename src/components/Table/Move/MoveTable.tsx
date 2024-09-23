@@ -18,9 +18,10 @@ import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BON
 import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
-import { TypeMove } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { DynamicObj, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
+import { EqualMode } from '../../../util/enums/string.enum';
+import { TableType, TypeSorted } from './enums/table-type.enum';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -36,14 +37,14 @@ interface ISortModel {
   fast: boolean;
   charged: boolean;
   eff: boolean;
-  sortBy: string;
+  sortBy: TypeSorted;
 }
 
 class SortModel implements ISortModel {
   fast = false;
   charged = false;
   eff = false;
-  sortBy = '';
+  sortBy = TypeSorted.Eff;
 }
 
 interface ITableSort {
@@ -60,13 +61,6 @@ class TableSort implements ITableSort {
   }
 }
 
-enum TypeSorted {
-  EFF = 'eff',
-}
-
-const tableDefensive = 'defensive';
-const tableOffensive = 'offensive';
-
 const TableMove = (props: ITableMoveComponent) => {
   const theme = useTheme<ThemeModify>();
   const data = useSelector((state: StoreState) => state.store.data);
@@ -81,13 +75,13 @@ const TableMove = (props: ITableMoveComponent) => {
         fast: false,
         charged: false,
         eff: true,
-        sortBy: TypeSorted.EFF,
+        sortBy: TypeSorted.Eff,
       },
       defensive: {
         fast: false,
         charged: false,
         eff: true,
-        sortBy: TypeSorted.EFF,
+        sortBy: TypeSorted.Eff,
       },
     })
   );
@@ -98,7 +92,7 @@ const TableMove = (props: ITableMoveComponent) => {
     if (!moves || !isNotEmpty(moves)) {
       return [];
     }
-    return moves.map((move) => data?.combat?.find((item) => item.name === move) ?? new Combat()).filter((move) => move.id > 0);
+    return moves.map((move) => data?.combat?.find((item) => isEqual(item.name, move)) ?? new Combat()).filter((move) => move.id > 0);
   };
 
   const filterMoveType = (combat: IPokemonData | undefined) => {
@@ -120,24 +114,31 @@ const TableMove = (props: ITableMoveComponent) => {
     const combatPoke = data?.pokemon?.filter((item) =>
       props.form?.id || props.form?.isShadow || props.form?.isPurified
         ? item.num === getValueOrDefault(Number, props.data?.num)
-        : item.fullName === (typeof props.form === 'string' ? props.form : props.form?.name)?.toUpperCase().replaceAll('-', '_')
+        : isEqual(
+            item.fullName,
+            (typeof props.form === 'string' ? props.form : props.form?.name)?.replaceAll('-', '_'),
+            EqualMode.IgnoreCaseSensitive
+          )
     );
     if (isNotEmpty(combatPoke)) {
-      if (combatPoke?.length === 1 || (typeof props.form === 'string' ? props.form : props.form?.formName)?.toUpperCase() === FORM_GMAX) {
+      if (
+        combatPoke?.length === 1 ||
+        isEqual(typeof props.form === 'string' ? props.form : props.form?.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
+      ) {
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       } else if (!isNotEmpty(combatPoke) && props.id) {
         const combatPoke = data?.pokemon?.filter(
-          (item) => item.num === getValueOrDefault(Number, props.id) && item.baseSpecies === item.name
+          (item) => item.num === getValueOrDefault(Number, props.id) && isEqual(item.baseSpecies, item.name)
         );
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       }
 
       const formName = convertPokemonAPIDataName(props.form?.name);
-      const result = combatPoke?.find((item) => props.form && item.fullName === formName);
+      const result = combatPoke?.find((item) => props.form && isEqual(item.fullName, formName));
       if (isUndefined(result)) {
-        filterMoveType(combatPoke?.find((item) => item.name === item.baseSpecies));
+        filterMoveType(combatPoke?.find((item) => isEqual(item.name, item.baseSpecies)));
         setMove(setRankMove(combatPoke?.at(0)));
       } else {
         filterMoveType(result);
@@ -173,7 +174,7 @@ const TableMove = (props: ITableMoveComponent) => {
     }
   }, [findMove, props.form]);
 
-  const renderBestMovesetTable = (value: IPokemonQueryMove, max: number, type: string) => {
+  const renderBestMovesetTable = (value: IPokemonQueryMove, max: number, type: TableType) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
@@ -222,7 +223,7 @@ const TableMove = (props: ITableMoveComponent) => {
           </Link>
         </td>
         <td className="text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          {Math.round(((type === tableOffensive ? value.eDPS.offensive : value.eDPS.defensive) * 100) / max)}
+          {Math.round(((type === TableType.Offensive ? value.eDPS.offensive : value.eDPS.defensive) * 100) / max)}
         </td>
       </tr>
     );
@@ -269,14 +270,14 @@ const TableMove = (props: ITableMoveComponent) => {
     );
   };
 
-  const arrowSort = (table: string, type: string) => {
-    if (table === tableOffensive) {
+  const arrowSort = (table: TableType, type: TypeSorted) => {
+    if (table === TableType.Offensive) {
       if (offensive.sortBy === type) {
         const prev = (offensive as unknown as DynamicObj<boolean>)[type];
         (offensive as unknown as DynamicObj<boolean>)[type] = !prev;
       }
       offensive.sortBy = type;
-    } else if (table === tableDefensive) {
+    } else if (table === TableType.Defensive) {
       if (defensive.sortBy === type) {
         const prev = (defensive as unknown as DynamicObj<boolean>)[type];
         (defensive as unknown as DynamicObj<boolean>)[type] = !prev;
@@ -288,6 +289,18 @@ const TableMove = (props: ITableMoveComponent) => {
       offensive,
       defensive,
     });
+  };
+
+  const sortFunc = (rowA: IPokemonQueryMove, rowB: IPokemonQueryMove, type: TableType) => {
+    const sortedBy = stateSorted[type].sortBy;
+    const sortedColumn = sortedBy === TypeSorted.Fast ? 'fMove' : 'cMove';
+    const result = stateSorted[type] as unknown as DynamicObj<boolean | string>;
+    if (sortedBy === TypeSorted.Eff) {
+      return stateSorted[type].eff ? rowB.eDPS[type] - rowA.eDPS[type] : rowA.eDPS[type] - rowB.eDPS[type];
+    }
+    const a = getValueOrDefault(String, rowA[sortedColumn]?.name.toLowerCase());
+    const b = getValueOrDefault(String, rowB[sortedColumn]?.name.toLowerCase());
+    return a === b ? 0 : a > b ? (result[sortedBy] ? 1 : -1) : result[sortedBy] ? -1 : 1;
   };
 
   return (
@@ -343,53 +356,37 @@ const TableMove = (props: ITableMoveComponent) => {
                 <tr className="text-center">
                   <th
                     className="table-column-head main-move cursor-pointer"
-                    onClick={() => arrowSort(tableOffensive, TypeMove.FAST.toLowerCase())}
+                    onClick={() => arrowSort(TableType.Offensive, TypeSorted.Fast)}
                   >
                     Fast
-                    <span style={{ opacity: stateSorted.offensive.sortBy === TypeMove.FAST.toLowerCase() ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.offensive.sortBy === TypeSorted.Fast ? 1 : 0.3 }}>
                       {stateSorted.offensive.fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                   <th
                     className="table-column-head main-move cursor-pointer"
-                    onClick={() => arrowSort(tableOffensive, TypeMove.CHARGE.toLowerCase())}
+                    onClick={() => arrowSort(TableType.Offensive, TypeSorted.Charge)}
                   >
                     Charged
-                    <span style={{ opacity: stateSorted.offensive.sortBy === TypeMove.CHARGE.toLowerCase() ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.offensive.sortBy === TypeSorted.Charge ? 1 : 0.3 }}>
                       {stateSorted.offensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
-                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort(tableOffensive, 'eff')}>
+                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort(TableType.Offensive, TypeSorted.Eff)}>
                     %
-                    <span style={{ opacity: stateSorted.offensive.sortBy === 'eff' ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.offensive.sortBy === TypeSorted.Eff ? 1 : 0.3 }}>
                       {stateSorted.offensive.eff ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {[...move.data]
-                  .sort((a, b) => {
-                    const sortedBy = stateSorted.offensive.sortBy;
-                    if (sortedBy === TypeSorted.EFF) {
-                      return stateSorted.offensive.eff ? b.eDPS.offensive - a.eDPS.offensive : a.eDPS.offensive - b.eDPS.offensive;
-                    } else {
-                      if (
-                        a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name <
-                        b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
-                      ) {
-                        return (stateSorted.offensive as unknown as DynamicObj<boolean>)[sortedBy] ? -1 : 1;
-                      } else if (
-                        a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name >
-                        b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
-                      ) {
-                        return (stateSorted.offensive as unknown as DynamicObj<boolean>)[sortedBy] ? 1 : -1;
-                      }
-                      return 0;
-                    }
-                  })
+                {move.data
+                  .sort((a, b) => sortFunc(a, b, TableType.Offensive))
                   .map((value, index) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, getValueOrDefault(Number, move.maxOff), tableOffensive)}</Fragment>
+                    <Fragment key={index}>
+                      {renderBestMovesetTable(value, getValueOrDefault(Number, move.maxOff), TableType.Offensive)}
+                    </Fragment>
                   ))}
               </tbody>
             </table>
@@ -407,53 +404,37 @@ const TableMove = (props: ITableMoveComponent) => {
                 <tr className="text-center">
                   <th
                     className="table-column-head main-move cursor-pointer"
-                    onClick={() => arrowSort(tableDefensive, TypeMove.FAST.toLowerCase())}
+                    onClick={() => arrowSort(TableType.Defensive, TypeSorted.Fast)}
                   >
                     Fast
-                    <span style={{ opacity: stateSorted.defensive.sortBy === TypeMove.FAST.toLowerCase() ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.defensive.sortBy === TypeSorted.Fast ? 1 : 0.3 }}>
                       {stateSorted.defensive.fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                   <th
                     className="table-column-head main-move cursor-pointer"
-                    onClick={() => arrowSort(tableDefensive, TypeMove.CHARGE.toLowerCase())}
+                    onClick={() => arrowSort(TableType.Defensive, TypeSorted.Charge)}
                   >
                     Charged
-                    <span style={{ opacity: stateSorted.defensive.sortBy === TypeMove.CHARGE.toLowerCase() ? 1 : 0.3 }}>
+                    <span style={{ opacity: stateSorted.defensive.sortBy === TypeSorted.Charge ? 1 : 0.3 }}>
                       {stateSorted.defensive.charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
-                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort(tableDefensive, TypeSorted.EFF)}>
+                  <th className="table-column-head cursor-pointer" onClick={() => arrowSort(TableType.Defensive, TypeSorted.Eff)}>
                     %
-                    <span className="cursor-pointer" style={{ opacity: stateSorted.defensive.sortBy === TypeSorted.EFF ? 1 : 0.3 }}>
+                    <span className="cursor-pointer" style={{ opacity: stateSorted.defensive.sortBy === TypeSorted.Eff ? 1 : 0.3 }}>
                       {stateSorted.defensive.eff ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
                     </span>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {[...move.data]
-                  .sort((a, b) => {
-                    const sortedBy = stateSorted.defensive.sortBy;
-                    if (sortedBy === TypeSorted.EFF) {
-                      return stateSorted.defensive.eff ? b.eDPS.defensive - a.eDPS.defensive : a.eDPS.defensive - b.eDPS.defensive;
-                    } else {
-                      if (
-                        a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name <
-                        b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
-                      ) {
-                        return (stateSorted.defensive as unknown as DynamicObj<boolean>)[sortedBy] ? -1 : 1;
-                      } else if (
-                        a[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name >
-                        b[sortedBy === TypeMove.FAST.toLowerCase() ? 'fMove' : 'cMove'].name
-                      ) {
-                        return (stateSorted.defensive as unknown as DynamicObj<boolean>)[sortedBy] ? 1 : -1;
-                      }
-                      return 0;
-                    }
-                  })
+                {move.data
+                  .sort((a, b) => sortFunc(a, b, TableType.Defensive))
                   .map((value, index) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, getValueOrDefault(Number, move.maxDef), tableDefensive)}</Fragment>
+                    <Fragment key={index}>
+                      {renderBestMovesetTable(value, getValueOrDefault(Number, move.maxDef), TableType.Defensive)}
+                    </Fragment>
                   ))}
               </tbody>
             </table>

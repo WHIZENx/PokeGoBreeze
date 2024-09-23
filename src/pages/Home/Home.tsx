@@ -40,7 +40,7 @@ import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-h
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual, isNotEmpty } from '../../util/extension';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -177,7 +177,7 @@ const Home = () => {
             const boolFilterPoke =
               isEmpty(searchTerm) ||
               (match
-                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id.toString() === searchTerm
+                ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id.toString(), searchTerm)
                 : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
                   item.id.toString().includes(searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
@@ -188,8 +188,8 @@ const Home = () => {
             const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
             const boolUltra = ultraBeast ? item.class === TYPE_ULTRA_BEAST : true;
 
-            const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
-            const findVersion = item.version === -1 ? true : version.includes(item.version);
+            const findGen = item.gen === 0 || gen.includes(item.gen - 1);
+            const findVersion = item.version === -1 || version.includes(item.version);
             return (
               boolFilterType &&
               boolFilterPoke &&

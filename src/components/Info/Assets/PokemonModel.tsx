@@ -15,6 +15,7 @@ import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -62,18 +63,18 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           {pokeAssets.map((assets, index) => (
             <div key={index} className="d-inline-block group-model text-center">
               {assets.image.map((value, index) => (
-                <div key={index} className="d-inline-block" style={{ width: value.gender === 3 ? '100%' : 'auto' }}>
+                <div key={index} className="d-inline-block" style={{ width: value.gender === GenderType.GenderLess ? '100%' : 'auto' }}>
                   <div className="sub-group-model">
                     {gender.current && !gender.current.genderlessPercent && (
                       <div className="gender">
-                        {value.gender === 3 ? (
+                        {value.gender === GenderType.GenderLess ? (
                           <Fragment>
                             {gender.current.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }} />}
                             {gender.current.femalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
                           </Fragment>
                         ) : (
                           <Fragment>
-                            {value.gender === 1 ? <MaleIcon sx={{ color: 'blue' }} /> : <FemaleIcon sx={{ color: 'red' }} />}
+                            {value.gender === GenderType.Male ? <MaleIcon sx={{ color: 'blue' }} /> : <FemaleIcon sx={{ color: 'red' }} />}
                           </Fragment>
                         )}
                       </div>

@@ -5,13 +5,15 @@ import { IPokemonGenderRatio } from '../../core/models/pokemon.model';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
+import { EqualMode } from '../../util/enums/string.enum';
+import { isEqual } from '../../util/extension';
 
 const Gender = (props: IGenderComponent) => {
   const theme = useTheme<ThemeModify>();
   const calculateRatio = (sex: string, ratio: IPokemonGenderRatio) => {
     const maleRatio = ratio.M;
     const femaleRatio = ratio.F;
-    return sex.toLowerCase() === TypeSex.MALE ? maleRatio * 100 : femaleRatio * 100;
+    return isEqual(sex, TypeSex.MALE, EqualMode.IgnoreCaseSensitive) ? maleRatio * 100 : femaleRatio * 100;
   };
 
   return (
@@ -29,7 +31,7 @@ const Gender = (props: IGenderComponent) => {
             height={96}
             alt="img-pokemon"
             src={
-              props.sex.toLowerCase() === TypeSex.MALE
+              isEqual(props.sex, TypeSex.MALE, EqualMode.IgnoreCaseSensitive)
                 ? props.defaultM || props.defaultF || APIService.getPokeSprite(0)
                 : props.defaultF || props.defaultM || APIService.getPokeSprite(0)
             }
@@ -44,7 +46,7 @@ const Gender = (props: IGenderComponent) => {
             height={96}
             alt="img-pokemon"
             src={
-              props.sex.toLowerCase() === TypeSex.MALE
+              isEqual(props.sex, TypeSex.MALE, EqualMode.IgnoreCaseSensitive)
                 ? props.shinyM || props.shinyF || APIService.getPokeSprite(0)
                 : props.shinyF || props.shinyM || APIService.getPokeSprite(0)
             }

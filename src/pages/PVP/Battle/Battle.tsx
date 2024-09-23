@@ -64,7 +64,7 @@ import { StatsBase } from '../../../core/models/stats.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -727,7 +727,7 @@ const Battle = () => {
           .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
+            const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
             if (!pokemon) {
               return new BattlePokemonData();
             }

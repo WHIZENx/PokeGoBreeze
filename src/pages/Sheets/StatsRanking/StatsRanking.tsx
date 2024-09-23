@@ -25,8 +25,9 @@ import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty, toNumber } from '../../../util/extension';
+import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
 import { LocationState } from '../../../core/models/router.model';
+import { EqualMode } from '../../../util/enums/string.enum';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -148,7 +149,7 @@ const StatsRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
-      when: (row) => row.slug === select?.slug,
+      when: (row) => isEqual(row.slug, select?.slug),
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -263,7 +264,7 @@ const StatsRanking = () => {
     if (id && isNotEmpty(pokemonFilter)) {
       const form = searchParams.get('form');
       const index = pokemonFilter.findIndex(
-        (row) => row.num === toNumber(id) && row.forme === (form?.replaceAll('-', '_').toUpperCase() || FORM_NORMAL)
+        (row) => row.num === toNumber(id) && isEqual(row.forme, form?.replaceAll('-', '_') || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
       );
       if (index > -1) {
         const result = pokemonFilter[index];
@@ -289,7 +290,8 @@ const StatsRanking = () => {
               (pokemon) =>
                 isEmpty(search) ||
                 (match
-                  ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
+                  ? isEqual(pokemon.num.toString(), search) ||
+                    isEqual(splitAndCapitalize(pokemon.name, '-', ' '), search, EqualMode.IgnoreCaseSensitive)
                   : pokemon.num.toString().includes(search) ||
                     splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
             )
@@ -324,7 +326,7 @@ const StatsRanking = () => {
               alt="img-full-pokemon"
               src={APIService.getPokeFullSprite(
                 getValueOrDefault(Number, select?.num),
-                convertPokemonImageName(select && select.baseForme === select.forme ? '' : select?.forme)
+                convertPokemonImageName(select && isEqual(select.baseForme, select.forme) ? '' : select?.forme)
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;

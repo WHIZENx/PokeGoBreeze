@@ -63,9 +63,12 @@ import {
   DynamicObj,
   getValueOrDefault,
   isEmpty,
+  isEqual,
   isNotEmpty,
   toNumber,
 } from '../../../util/extension';
+import { InputType } from '../../../components/Input/enums/input-type.enum';
+import { EqualMode } from '../../../util/enums/string.enum';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -318,8 +321,8 @@ const DpsTdo = () => {
     specialMove: string[] = []
   ) => {
     movePoke.forEach((vc: string) => {
-      const fMove = data?.combat?.find((item) => item.name === vf);
-      const cMove = data?.combat?.find((item) => item.name === vc);
+      const fMove = data?.combat?.find((item) => isEqual(item.name, vf));
+      const cMove = data?.combat?.find((item) => isEqual(item.name, vc));
 
       if (fMove && cMove) {
         const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
@@ -343,8 +346,8 @@ const DpsTdo = () => {
             atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
             def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
             hp: calculateStatsBattle(getValueOrDefault(Number, statsDef.sta), ivHp, pokemonLevel),
-            fMove: data?.combat?.find((item) => item.name === fMoveTargetPokemon.name),
-            cMove: data?.combat?.find((item) => item.name === cMoveTargetPokemon.name),
+            fMove: data?.combat?.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
+            cMove: data?.combat?.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
             types: dataTargetPokemon.types,
             weatherBoosts: getValueOrDefault(String, options.weatherBoosts),
           });
@@ -494,7 +497,8 @@ const DpsTdo = () => {
       const boolFilterPoke =
         isEmpty(searchTerm) ||
         (match
-          ? item.pokemon.name.replaceAll('-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.pokemon.num.toString() === searchTerm
+          ? isEqual(item.pokemon.name.replaceAll('-', ' '), searchTerm, EqualMode.IgnoreCaseSensitive) ||
+            isEqual(item.pokemon.num.toString(), searchTerm)
           : item.pokemon.name.replaceAll('-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.pokemon.num.toString().includes(searchTerm));
 
@@ -924,7 +928,7 @@ const DpsTdo = () => {
                   <div className="input-group h-100">
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
-                      inputType="small"
+                      inputType={InputType.Small}
                       pokemon={dataTargetPokemon}
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
@@ -937,7 +941,7 @@ const DpsTdo = () => {
                   <div className="input-group h-100">
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
-                      inputType="small"
+                      inputType={InputType.Small}
                       pokemon={dataTargetPokemon}
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}

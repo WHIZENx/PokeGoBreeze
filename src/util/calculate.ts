@@ -81,9 +81,10 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isUndefined, toNumber } from './extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isUndefined, toNumber } from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
+import { EqualMode } from './enums/string.enum';
 
 const weatherMultiple = (
   globalOptions: IOptions | undefined,
@@ -92,7 +93,7 @@ const weatherMultiple = (
   type: string
 ) => {
   return ((weatherBoost as unknown as DynamicObj<string[]>)[getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))]?.find(
-    (item) => item === type.toUpperCase().replaceAll(' ', '_')
+    (item) => isEqual(item, type.replaceAll(' ', '_'), EqualMode.IgnoreCaseSensitive)
   )
     ? STAB_MULTIPLY(globalOptions)
     : 1) as unknown as number;
@@ -110,7 +111,7 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
 };
 
 const convertStatsArray = (stats: Stats[] | undefined, name: string) => {
-  return getValueOrDefault(Number, stats?.find((item) => item.stat.name === name)?.base_stat);
+  return getValueOrDefault(Number, stats?.find((item) => isEqual(item.stat.name, name))?.base_stat);
 };
 
 export const convertAllStats = (stats: Stats[] | undefined) => {
@@ -1080,8 +1081,8 @@ const queryMove = (
   special: boolean
 ) => {
   cMove.forEach((vc: string) => {
-    const mf = data.combat.find((item) => item.name === vf);
-    const mc = data.combat.find((item) => item.name === vc);
+    const mf = data.combat.find((item) => isEqual(item.name, vf));
+    const mc = data.combat.find((item) => isEqual(item.name, vc));
 
     if (mf && mc) {
       mf.elite = fElite;
@@ -1181,7 +1182,7 @@ export const queryStatesEvoChain = (
 ) => {
   let pokemon: IPokemonData | undefined = new PokemonData();
   if (isEmpty(item.form)) {
-    pokemon = pokemonData.find((value) => value.num === item.id && value.slug === item.name.toLowerCase());
+    pokemon = pokemonData.find((value) => value.num === item.id && isEqual(value.slug, item.name, EqualMode.IgnoreCaseSensitive));
   } else {
     pokemon = pokemonData.find((value) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
   }
@@ -1363,8 +1364,8 @@ const queryMoveCounter = (
   special: boolean
 ) => {
   cMove.forEach((vc) => {
-    const mf = data.combat.find((item) => item.name === vf);
-    const mc = data.combat.find((item) => item.name === vc);
+    const mf = data.combat.find((item) => isEqual(item.name, vf));
+    const mc = data.combat.find((item) => isEqual(item.name, vc));
 
     if (mf && mc) {
       const options = OptionOtherDPS.create({

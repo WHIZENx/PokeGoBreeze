@@ -83,13 +83,13 @@ export class TempEvo implements ITempEvo {
 }
 
 export interface IPokemonTypeCost {
-  stardust: number;
-  candy: number;
+  stardust: number | undefined;
+  candy: number | undefined;
 }
 
 export class PokemonTypeCost implements IPokemonTypeCost {
-  stardust = -1;
-  candy = -1;
+  stardust: number | undefined;
+  candy: number | undefined;
 
   static create(value: IPokemonTypeCost) {
     const obj = new PokemonTypeCost();

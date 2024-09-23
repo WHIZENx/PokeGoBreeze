@@ -30,7 +30,8 @@ import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
-import { DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty, isNullOrUndefined, toNumber } from './extension';
+import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isNullOrEmpty, isNullOrUndefined, toNumber } from './extension';
+import { EqualMode } from './enums/string.enum';
 
 class Mask {
   value: number;
@@ -326,9 +327,10 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
   return;
 };
 
-export const findMoveTeam = (move: string, moveSet: string[]) => {
+export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = false) => {
+  const mSet: string[] = [];
   if (!move) {
-    return;
+    return mSet;
   }
   const result = move.match(/[A-Z]?[a-z]+|([A-Z])/g);
   for (let value of moveSet) {
@@ -342,36 +344,45 @@ export const findMoveTeam = (move: string, moveSet: string[]) => {
         }
       }
       if (count === m.length) {
-        return value;
+        mSet.push(value);
+        if (isSelectFirst) {
+          return mSet;
+        }
       }
     }
   }
-  for (const value of moveSet) {
-    if (
-      move
-        .toLowerCase()
-        .split('')
-        .every((m) => value.toLowerCase().includes(m))
-    ) {
-      const m = value.split('_');
-      if (result && m.length === result.length) {
-        let count = 0;
-        for (let i = 0; i < result.length; i++) {
-          if (m[i].at(0) === result[i].at(0)) {
-            count++;
+  if (!isNotEmpty(mSet)) {
+    for (const value of moveSet) {
+      if (
+        move
+          .toLowerCase()
+          .split('')
+          .every((m) => value.toLowerCase().includes(m))
+      ) {
+        const m = value.split('_');
+        if (result && m.length === result.length) {
+          let count = 0;
+          for (let i = 0; i < result.length; i++) {
+            if (m[i].at(0) === result[i].at(0)) {
+              count++;
+            }
+          }
+          if (count === m.length) {
+            mSet.push(value);
+            if (isSelectFirst) {
+              return mSet;
+            }
           }
         }
-        if (count === m.length) {
-          return value;
-        }
       }
     }
   }
-  return;
+
+  return mSet;
 };
 
 export const checkPokemonGO = (id: number, name: string, details: IPokemonData[]) => {
-  return details.find((pokemon) => pokemon.num === id && pokemon.fullName === name);
+  return details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name));
 };
 
 export const convertFormGif = (name: string | undefined) => {
@@ -439,7 +450,7 @@ export const mappingPokemonName = (pokemonData: IPokemonData[]) => {
         pokemon.num > 0 &&
         (pokemon.forme === FORM_NORMAL ||
           (pokemon.num === 744 && pokemon.forme === 'DUSK') ||
-          (pokemon.baseForme && pokemon.baseForme === pokemon.forme))
+          (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.forme)))
     )
     .map((pokemon) => new PokemonSearching(pokemon))
     .sort((a, b) => a.id - b.id);
@@ -449,7 +460,9 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   const result = pokemonData
     .filter((pokemon) => pokemon.num === id)
     .find(
-      (pokemon) => pokemon.forme?.toUpperCase() === FORM_NORMAL || (pokemon.baseForme && pokemon.baseForme === pokemon.forme?.toUpperCase())
+      (pokemon) =>
+        pokemon.forme?.toUpperCase() === FORM_NORMAL ||
+        (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.forme, EqualMode.IgnoreCaseSensitive))
     );
   if (!result) {
     return;
@@ -523,7 +536,7 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | und
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) => {
-  return pokemon.some((p) => p.isShadow && convertPokemonAPIDataName(form) === (p.fullName ?? p.name));
+  return pokemon.some((p) => p.isShadow && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
 };
 
 const convertNameEffort = (name: string) => {
@@ -776,7 +789,7 @@ export const getFormFromForms = (
 ) => {
   const forms = stats?.filter((i) => i.id === id);
   formName = convertPokemonAPIDataName(formName);
-  let filterForm = forms?.find((item) => item.form === (formName || FORM_NORMAL));
+  let filterForm = forms?.find((item) => isEqual(item.form, formName || FORM_NORMAL));
   if (!filterForm && isNotEmpty(forms)) {
     filterForm = forms?.find((item) => item.form === FORM_NORMAL);
     if (!filterForm) {
@@ -796,7 +809,7 @@ export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) 
         .replaceAll(`_${FORM_STANDARD.toLowerCase()}`, '')
         .toUpperCase()
         .replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
-    const result = resultFirst.find((item) => item.fullName === form || item.forme === form);
+    const result = resultFirst.find((item) => isEqual(item.fullName, form) || isEqual(item.forme, form));
     return result ?? resultFirst[0];
   }
 };
@@ -806,11 +819,11 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
 
   if (form) {
     const name = convertPokemonAPIDataName(form.replaceAll(' ', '-'));
-    pokemonForm = pokemonData.find((item) => item.num === id && item.fullName === name);
+    pokemonForm = pokemonData.find((item) => item.num === id && isEqual(item.fullName, name));
 
     if (isDefault && !pokemonForm) {
       pokemonForm = pokemonData.find(
-        (item) => item.num === id && (item.forme === FORM_NORMAL || (item.baseForme && item.baseForme === item.forme))
+        (item) => item.num === id && (item.forme === FORM_NORMAL || (item.baseForme && isEqual(item.baseForme, item.forme)))
       );
     }
   }
@@ -835,6 +848,13 @@ export const replaceTempMovePvpName = (name: string) => {
     name = name = 'FUTURESIGHT';
   } else if (name === 'ROLLOUT') {
     name = 'ROLL_OUT';
+  }
+  return name;
+};
+
+export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
+  if (name === 'ROLL_OUT') {
+    name = 'ROLLOUT';
   }
   return name;
 };

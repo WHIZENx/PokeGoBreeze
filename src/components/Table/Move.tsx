@@ -6,7 +6,7 @@ import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual } from '../../util/extension';
 
 const Move = (props: IMoveComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
@@ -18,7 +18,7 @@ const Move = (props: IMoveComponent) => {
 
   const findMoveData = useCallback(
     (move: string) => {
-      return data?.combat?.find((item) => item.name === move);
+      return data?.combat?.find((item) => isEqual(item.name, move));
     },
     [data?.combat]
   );
@@ -125,7 +125,7 @@ const Move = (props: IMoveComponent) => {
                           <li
                             className={combineClasses(
                               'container card-pokemon',
-                              props.highlight && currentMove?.name === value.name ? 'bg-card-highlight' : ''
+                              props.highlight && isEqual(currentMove?.name, value.name) ? 'bg-card-highlight' : ''
                             )}
                             onMouseDown={() => changeMove(value)}
                           >

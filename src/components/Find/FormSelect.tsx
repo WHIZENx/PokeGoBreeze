@@ -35,7 +35,8 @@ import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
-import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
+import { EqualMode } from '../../util/enums/string.enum';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -94,7 +95,9 @@ const FormSelect = (props: IFormSelectComponent) => {
                 getValueOrDefault(String, data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name),
                 new Form({
                   ...item,
-                  formName: item.formName.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.formName,
+                  formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
+                    ? item.name.replace(`${data.name}-`, '')
+                    : item.formName,
                 })
               )
             )
@@ -112,9 +115,8 @@ const FormSelect = (props: IFormSelectComponent) => {
       if (props.searching) {
         const defaultFormSearch = formListResult
           .flatMap((value) => value)
-          .find(
-            (item) =>
-              item.form.formName === (props.objective ? (props.searching?.obj ? props.searching.obj.form : '') : props.searching?.form)
+          .find((item) =>
+            isEqual(item.form.formName, props.objective ? (props.searching?.obj ? props.searching.obj.form : '') : props.searching?.form)
           );
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
@@ -226,7 +228,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   const changeForm = (name: string) => {
     setCurrentForm(undefined);
-    const findForm = formList.flatMap((item) => item).find((item) => item.form.name === name);
+    const findForm = formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
     setCurrentForm(findForm);
     if (props.onClearStats) {
       props.onClearStats();
@@ -380,7 +382,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             onChange={(e) => {
               setTypePoke(e.target.value);
               if (props.setRaid) {
-                props.setRaid(e.target.value === TypeRaid.POKEMON ? false : true);
+                props.setRaid(!isEqual(e.target.value, TypeRaid.POKEMON));
               }
               if (props.onClearStats) {
                 props.onClearStats(true);
@@ -414,7 +416,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <Tools
         hide={props.hide}
-        isRaid={typePoke === TypeRaid.POKEMON ? false : true}
+        isRaid={!isEqual(typePoke, TypeRaid.POKEMON)}
         tier={tier}
         setTier={onSetTier}
         setForm={props.setForm}

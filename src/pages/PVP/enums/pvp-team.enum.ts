@@ -4,3 +4,8 @@ export enum SortType {
   IndividualScore = 'individualScore',
   Games = 'games',
 }
+
+export enum Sorted {
+  ASC,
+  DESC,
+}

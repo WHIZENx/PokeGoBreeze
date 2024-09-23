@@ -31,6 +31,7 @@ import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
+import { InputType } from '../Input/enums/input-type.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -251,7 +252,7 @@ export interface ISelectMoveComponent {
   clearData?: () => void;
   pokemon: IPokemonData | undefined;
   moveType: string;
-  inputType?: string;
+  inputType?: InputType;
   selected?: boolean;
   disable?: boolean;
 }

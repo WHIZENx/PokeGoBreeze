@@ -14,7 +14,7 @@ import { Combat, ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual, isNotEmpty } from '../../../util/extension';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
@@ -44,18 +44,18 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       fMove = 'HIDDEN_POWER';
     }
 
-    const fMoveCombat = combat.find((item) => item.name === fMove);
+    const fMoveCombat = combat.find((item) => isEqual(item.name, fMove));
     if (fMoveCombat && value.moveset.at(0)?.includes('HIDDEN_POWER')) {
       fMoveCombat.type = getValueOrDefault(String, value.moveset.at(0)?.split('_').at(2));
     }
     setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
 
-    const cMovePriCombat = combat.find((item) => item.name === cMovePri);
+    const cMovePriCombat = combat.find((item) => isEqual(item.name, cMovePri));
     setCMovePri(cMovePriCombat);
     cMoveSec = replaceTempMovePvpName(cMoveSec);
 
-    const cMoveSecCombat = combat.find((item) => item.name === cMoveSec);
+    const cMoveSecCombat = combat.find((item) => isEqual(item.name, cMoveSec));
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
@@ -239,13 +239,13 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             <div className="result-move-select">
               <div>
                 {props.data
-                  .find((value) => value.speciesId === pokemon.speciesId)
+                  .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                   ?.moves.fastMoves.map((value) => {
                     let move = value.moveId;
                     if (move.includes('HIDDEN_POWER')) {
                       move = 'HIDDEN_POWER';
                     }
-                    let fMove = combat.find((item) => item.name === move);
+                    let fMove = combat.find((item) => isEqual(item.name, move));
                     if (fMove && value.moveId.includes('HIDDEN_POWER')) {
                       fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, value.moveId.split('_').at(2)) });
                     }
@@ -316,10 +316,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div className="result-move-select">
                 <div>
                   {props.data
-                    .find((value) => value.speciesId === pokemon.speciesId)
+                    .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return combat.find((item) => item.name === move);
+                      return combat.find((item) => isEqual(item.name, move));
                     })
                     .filter((value) => value && value.name !== cMovePri?.name && value.name !== cMoveSec?.name)
                     .map((value, index) => (
@@ -400,10 +400,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div className="result-move-select">
                 <div>
                   {props.data
-                    .find((value) => value.speciesId === pokemon.speciesId)
+                    .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return combat.find((item) => item.name === move);
+                      return combat.find((item) => isEqual(item.name, move));
                     })
                     .filter((value) => value && (!cMoveSec || value.name !== cMoveSec.name) && value.name !== cMovePri?.name)
                     .map((value, index) => (

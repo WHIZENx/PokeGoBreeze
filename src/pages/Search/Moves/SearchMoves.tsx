@@ -13,8 +13,9 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 import { SelectType } from './enums/select-type.enum';
+import { EqualMode } from '../../../util/enums/string.enum';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -117,11 +118,11 @@ const Search = () => {
 
   const searchMove = (category: string, type: string, name: string) => {
     return combat
-      .filter((item) => item.typeMove === category)
+      .filter((item) => isEqual(item.typeMove, category))
       .filter(
         (move) =>
           (splitAndCapitalize(move.name, '_', ' ').toLowerCase().includes(name.toLowerCase()) || move.track.toString().includes(name)) &&
-          (type === SelectType.All.toString() || type === capitalize(move.type))
+          (type === SelectType.All.toString() || isEqual(type, move.type, EqualMode.IgnoreCaseSensitive))
       );
   };
 

@@ -108,7 +108,7 @@ export interface SettingLeague {
 }
 
 interface LeagueRewardItem {
-  stardust: number;
+  stardust?: boolean;
   item: string;
   count: number;
 }

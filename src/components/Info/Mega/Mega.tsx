@@ -8,7 +8,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { FORM_MEGA } from '../../../util/constants';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { getValueOrDefault, isUndefined } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isUndefined } from '../../../util/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 
 const Mega = (props: IFormSpecialComponent) => {
@@ -35,9 +35,9 @@ const Mega = (props: IFormSpecialComponent) => {
       .map((text) => text.toUpperCase())
       .join('_');
 
-    const pokemon = evoData.find((item) => item.tempEvo?.find((value) => value.tempEvolutionName === name));
+    const pokemon = evoData.find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)));
     if (pokemon) {
-      return pokemon.tempEvo?.find((item) => item.tempEvolutionName === name);
+      return pokemon.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     } else {
       return TempEvo.create({
         firstTempEvolution: 'Unavailable',

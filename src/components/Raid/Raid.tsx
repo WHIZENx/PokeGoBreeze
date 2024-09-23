@@ -15,7 +15,8 @@ import { StoreState } from '../../store/models/state.model';
 import { capitalize } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getValueOrDefault, isNullOrEmpty, toNumber } from '../../util/extension';
+import { getValueOrDefault, isEqual, isNullOrEmpty, toNumber } from '../../util/extension';
+import { EqualMode } from '../../util/enums/string.enum';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -39,7 +40,8 @@ const Raid = (props: IRaidComponent) => {
     } else if (
       tier === 5 &&
       props.currForm &&
-      (props.currForm.form.formName.toUpperCase().includes(FORM_MEGA) || props.currForm.form.formName.toUpperCase() === FORM_PRIMAL) &&
+      (props.currForm.form.formName.toUpperCase().includes(FORM_MEGA) ||
+        isEqual(props.currForm.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)) &&
       pokemonClass
     ) {
       setTier(6);
@@ -103,17 +105,21 @@ const Raid = (props: IRaidComponent) => {
           </optgroup>
           {props.currForm &&
             (props.currForm.form.formName.toUpperCase().includes(FORM_MEGA) ||
-              props.currForm.form.formName.toUpperCase() === FORM_PRIMAL) && (
+              isEqual(props.currForm.form.formName.toUpperCase(), FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)) && (
               <Fragment>
                 {pokemonClass ? (
                   <optgroup
                     label={`Legendary ${
-                      props.currForm.form.formName.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
+                      isEqual(props.currForm.form.formName.toUpperCase(), FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
+                        ? capitalize(FORM_PRIMAL)
+                        : capitalize(FORM_MEGA)
                     } Tier 6'`}
                   >
                     <option value={6}>
                       {`Tier ${
-                        props.currForm.form.formName.toUpperCase() === FORM_PRIMAL ? capitalize(FORM_PRIMAL) : capitalize(FORM_MEGA)
+                        isEqual(props.currForm.form.formName.toUpperCase(), FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
+                          ? capitalize(FORM_PRIMAL)
+                          : capitalize(FORM_MEGA)
                       }`}
                     </option>
                   </optgroup>
@@ -151,8 +157,12 @@ const Raid = (props: IRaidComponent) => {
             src={raidEgg(
               tier,
               !pokemonClass && getValueOrDefault(Boolean, props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA)),
-              !isNullOrEmpty(pokemonClass) && props.currForm?.form.formName?.toUpperCase() === FORM_PRIMAL,
-              pokemonData.find((pokemon) => pokemon.num === props.id)?.pokemonClass === TYPE_ULTRA_BEAST
+              !isNullOrEmpty(pokemonClass) && isEqual(props.currForm?.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive),
+              isEqual(
+                pokemonData.find((pokemon) => pokemon.num === props.id)?.pokemonClass,
+                TYPE_ULTRA_BEAST,
+                EqualMode.IgnoreCaseSensitive
+              )
             )}
           />
         </div>

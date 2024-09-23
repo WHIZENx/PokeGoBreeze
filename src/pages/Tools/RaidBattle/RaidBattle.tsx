@@ -67,7 +67,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 
@@ -388,8 +388,8 @@ const RaidBattle = () => {
     pokemonTarget: boolean
   ) => {
     movePoke.forEach((vc) => {
-      const fMove = data?.combat?.find((item) => item.name === vf);
-      const cMove = data?.combat?.find((item) => item.name === vc);
+      const fMove = data?.combat?.find((item) => isEqual(item.name, vf));
+      const cMove = data?.combat?.find((item) => isEqual(item.name, vc));
       if (fMove && cMove) {
         const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
         const statsAttackerTemp = new BattleCalculate({
@@ -405,8 +405,8 @@ const RaidBattle = () => {
           atk: statBossATK,
           def: statBossDEF,
           hp: statBossHP,
-          fMove: data?.combat?.find((item) => item.name === fMove?.name),
-          cMove: data?.combat?.find((item) => item.name === cMove?.name),
+          fMove: data?.combat?.find((item) => isEqual(item.name, fMove?.name)),
+          cMove: data?.combat?.find((item) => isEqual(item.name, cMove?.name)),
           types: getValueOrDefault(Array, form?.form.types),
           isStab: weatherBoss,
         });
@@ -592,8 +592,8 @@ const RaidBattle = () => {
   };
 
   const calculateDPSBattle = (pokemon: IPokemonRaidModel, hpRemain: number, timer: number) => {
-    const fMove = data?.combat?.find((item) => item.name === pokemon.fMoveTargetPokemon?.name);
-    const cMove = data?.combat?.find((item) => item.name === pokemon.cMoveTargetPokemon?.name);
+    const fMove = data?.combat?.find((item) => isEqual(item.name, pokemon.fMoveTargetPokemon?.name));
+    const cMove = data?.combat?.find((item) => isEqual(item.name, pokemon.cMoveTargetPokemon?.name));
 
     if (fMove && cMove) {
       const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
@@ -611,8 +611,8 @@ const RaidBattle = () => {
         atk: statBossATK,
         def: statBossDEF,
         hp: Math.floor(hpRemain),
-        fMove: data?.combat?.find((item) => item.name === fMove?.name),
-        cMove: data?.combat?.find((item) => item.name === cMove?.name),
+        fMove: data?.combat?.find((item) => isEqual(item.name, fMove?.name)),
+        cMove: data?.combat?.find((item) => isEqual(item.name, cMove?.name)),
         types: getValueOrDefault(Array, form?.form.types),
         isStab: weatherBoss,
       });
