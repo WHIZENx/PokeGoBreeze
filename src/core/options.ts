@@ -1,5 +1,5 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
-import { Buff, Combat, Move, Sequence } from './models/combat.model';
+import { Buff, Combat, IBuff, Move, Sequence } from './models/combat.model';
 import { EvoList, EvolutionQuest, EvolutionQuestCondition, PokemonTypeCost } from './models/evolution.model';
 import {
   League,
@@ -17,7 +17,7 @@ import { ISticker, Sticker } from './models/sticker.model';
 import pokemonStoreData from '../data/pokemon.json';
 import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm, replaceTempMoveName } from '../util/utils';
 import { ITypeSet, TypeSet } from './models/type.model';
-import { TypeAction, TypeMove } from '../enums/type.enum';
+import { BuffType, TypeAction, TypeMove } from '../enums/type.enum';
 import {
   Encounter,
   IPokemonData,
@@ -787,48 +787,50 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       result.pvpEnergy = getValueOrDefault(Number, item.data.combatMove.energyDelta);
       const seq = sequence.find((seq) => isEqual(seq.id, result.name));
       result.sound = seq?.path;
-      if (item.data.combatMove.buffs) {
-        const buffKey = Object.keys(item.data.combatMove.buffs);
-        buffKey.forEach((buff) => {
-          if (buff.includes('AttackStat')) {
-            if (buff.includes('target')) {
-              result.buffs.push(
-                new Buff({
-                  type: TypeAction.ATK,
-                  target: 'target',
-                  power: getValueOrDefault(Number, item.data.combatMove.buffs?.[buff]),
-                })
-              );
-            } else {
-              result.buffs.push(
-                new Buff({
-                  type: TypeAction.ATK,
-                  target: 'attacker',
-                  power: getValueOrDefault(Number, item.data.combatMove.buffs?.[buff]),
-                })
-              );
-            }
-          } else if (buff.includes('DefenseStat')) {
-            if (buff.includes('target')) {
-              result.buffs.push(
-                new Buff({
-                  type: TypeAction.DEF,
-                  target: 'target',
-                  power: getValueOrDefault(Number, item.data.combatMove.buffs?.[buff]),
-                })
-              );
-            } else {
-              result.buffs.push(
-                new Buff({
-                  type: TypeAction.DEF,
-                  target: 'attacker',
-                  power: getValueOrDefault(Number, item.data.combatMove.buffs?.[buff]),
-                })
-              );
-            }
-          }
-          result.buffs[result.buffs.length - 1].buffChance = item.data.combatMove.buffs?.[buffKey[buffKey.length - 1]];
-        });
+      const buffs = item.data.combatMove.buffs;
+      if (buffs) {
+        const buffsResult: IBuff[] = [];
+        if (buffs.attackerAttackStatStageChange) {
+          buffsResult.push(
+            Buff.create({
+              type: TypeAction.ATK,
+              target: BuffType.Attacker,
+              power: buffs.attackerAttackStatStageChange,
+              buffChance: buffs.buffActivationChance,
+            })
+          );
+        }
+        if (buffs.attackerDefenseStatStageChange) {
+          buffsResult.push(
+            Buff.create({
+              type: TypeAction.DEF,
+              target: BuffType.Attacker,
+              power: buffs.attackerDefenseStatStageChange,
+              buffChance: buffs.buffActivationChance,
+            })
+          );
+        }
+        if (buffs.targetAttackStatStageChange) {
+          buffsResult.push(
+            Buff.create({
+              type: TypeAction.ATK,
+              target: BuffType.Target,
+              power: buffs.targetAttackStatStageChange,
+              buffChance: buffs.buffActivationChance,
+            })
+          );
+        }
+        if (buffs.targetDefenseStatStageChange) {
+          buffsResult.push(
+            Buff.create({
+              type: TypeAction.DEF,
+              target: BuffType.Target,
+              power: buffs.targetDefenseStatStageChange,
+              buffChance: buffs.buffActivationChance,
+            })
+          );
+        }
+        result.buffs = buffsResult;
       }
       const move = moves.find((move) => isEqual(move.movementId.replace(/^V\d{4}_MOVE_/, ''), result.name));
       const name = replaceTempMoveName(result.name.toString());

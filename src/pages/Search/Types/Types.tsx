@@ -264,7 +264,7 @@ const SearchTypes = () => {
               <div className="result-type">
                 <ul>
                   {Object.keys(data?.typeEff ?? new TypeEff())
-                    .filter((value) => value !== currentType)
+                    .filter((value) => !isEqual(value, currentType))
                     .map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                         <CardType value={capitalize(value)} />

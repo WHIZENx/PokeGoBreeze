@@ -1,20 +1,23 @@
+import { BuffType, TypeAction } from '../../enums/type.enum';
 import { MoveSetting } from './options.model';
 
 export interface IBuff {
-  type: string;
-  target: string;
+  type?: TypeAction;
+  target?: BuffType;
   power: number;
   buffChance?: number;
 }
 
 export class Buff implements IBuff {
-  type = '';
-  target = '';
+  type?: TypeAction;
+  target?: BuffType;
   power = 0;
   buffChance?: number;
 
-  constructor({ ...props }: IBuff) {
-    Object.assign(this, props);
+  static create(value: IBuff) {
+    const obj = new Buff();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 

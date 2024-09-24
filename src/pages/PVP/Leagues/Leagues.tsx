@@ -162,7 +162,7 @@ const Leagues = () => {
           <div className="sub-body">
             <h4 className="title-leagues">{splitAndCapitalize(getValueOrDefault(String, league.id).toLowerCase(), '_', ' ')}</h4>
             <div className="text-center">
-              {league.league !== league.title &&
+              {!isEqual(league.league, league.title) &&
               !league.title.includes('REMIX') &&
               !getValueOrDefault(String, league.iconUrl).includes('pogo') ? (
                 <div className="league">

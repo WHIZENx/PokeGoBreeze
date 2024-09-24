@@ -182,7 +182,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         fullName: currentForm.form.name,
         timestamp: new Date(),
       });
-      if (props.objective && (props.searching?.obj?.id !== props.id || props.searching?.obj?.form !== currentForm.form.formName)) {
+      if (props.objective && (props.searching?.obj?.id !== props.id || !isEqual(props.searching?.obj?.form, currentForm.form.formName))) {
         obj = ToolSearching.create({
           ...obj,
           obj: {
@@ -191,7 +191,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         });
         dispatch(SearchingActions.SetPokemonToolSearch.create(obj));
       }
-      if (!props.objective && (props.searching?.id !== props.id || props.searching?.form !== currentForm.form.formName)) {
+      if (!props.objective && (props.searching?.id !== props.id || !isEqual(props.searching?.form, currentForm.form.formName))) {
         obj = ToolSearching.create({
           ...obj,
           ...result,

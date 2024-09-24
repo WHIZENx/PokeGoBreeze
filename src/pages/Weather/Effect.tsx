@@ -5,7 +5,7 @@ import { capitalize } from '../../util/utils';
 import { IWeatherEffComponent } from '../models/page.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { isEmpty } from '../../util/extension';
+import { isEmpty, isEqual } from '../../util/extension';
 
 const Effect = (prop: IWeatherEffComponent) => {
   const [types, setTypes] = useState<string[]>([]);
@@ -32,7 +32,9 @@ const Effect = (prop: IWeatherEffComponent) => {
   }, [currentTypePri, currentTypeSec, prop.weathers]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? new TypeEff()).filter((item) => item !== currentTypePri && item !== currentTypeSec);
+    const results = Object.keys(prop.types ?? new TypeEff()).filter(
+      (item) => !isEqual(item, currentTypePri) && !isEqual(item, currentTypeSec)
+    );
     setTypes(results);
     getWeatherEffective();
   }, [currentTypePri, currentTypeSec, getWeatherEffective, prop.types]);

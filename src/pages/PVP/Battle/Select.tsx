@@ -251,7 +251,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     }
                     return fMove;
                   })
-                  .filter((value) => value && value.name !== fMove?.name)
+                  .filter((value) => value && !isEqual(value.name, fMove?.name))
                   .map((value, index) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
                       <CardMoveSmall value={value} />
@@ -321,7 +321,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                       const move = replaceTempMovePvpName(value.moveId);
                       return combat.find((item) => isEqual(item.name, move));
                     })
-                    .filter((value) => value && value.name !== cMovePri?.name && value.name !== cMoveSec?.name)
+                    .filter((value) => value && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name))
                     .map((value, index) => (
                       <div
                         className={combineClasses(
@@ -405,7 +405,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                       const move = replaceTempMovePvpName(value.moveId);
                       return combat.find((item) => isEqual(item.name, move));
                     })
-                    .filter((value) => value && (!cMoveSec || value.name !== cMoveSec.name) && value.name !== cMovePri?.name)
+                    .filter((value) => value && (!cMoveSec || !isEqual(value.name, cMoveSec.name)) && !isEqual(value.name, cMovePri?.name))
                     .map((value, index) => (
                       <div
                         className="card-move"

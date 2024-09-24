@@ -7,7 +7,7 @@ import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff
 import { ITypeEffComponent } from '../models/page.model';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, isEmpty } from '../../util/extension';
+import { combineClasses, isEmpty, isEqual } from '../../util/extension';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -52,7 +52,9 @@ const Defender = (prop: ITypeEffComponent) => {
   }, [currentTypePri, currentTypeSec, prop.types]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? new TypeEff()).filter((item) => item !== currentTypePri && item !== currentTypeSec);
+    const results = Object.keys(prop.types ?? new TypeEff()).filter(
+      (item) => !isEqual(item, currentTypePri) && !isEqual(item, currentTypeSec)
+    );
     setTypes(results);
     getTypeEffective();
   }, [currentTypePri, currentTypeSec, getTypeEffective, prop.types]);

@@ -174,7 +174,7 @@ const Evolution = (props: IEvolutionComponent) => {
       const pokemon = pokemonData.find((pokemon) => isEqual(pokemon.name, name));
       if (pokemon) {
         getNextEvoChainJSON(
-          pokemon.evos.filter((e) => e !== name),
+          pokemon.evos.filter((e) => !isEqual(e, name)),
           arr
         );
       }

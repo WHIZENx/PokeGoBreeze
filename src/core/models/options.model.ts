@@ -96,13 +96,21 @@ interface StickerMetadata {
   regionId: number;
 }
 
+interface MoveBuff {
+  attackerAttackStatStageChange?: number;
+  attackerDefenseStatStageChange?: number;
+  targetAttackStatStageChange?: number;
+  targetDefenseStatStageChange?: number;
+  buffActivationChance: number;
+}
+
 interface CombatMove {
   uniqueId: string;
   type: string;
   power: number;
   energyDelta: number;
   vfxName: string;
-  buffs?: DynamicObj<number>;
+  buffs?: MoveBuff;
 }
 
 export interface MoveSetting {

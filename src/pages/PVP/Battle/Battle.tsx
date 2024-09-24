@@ -61,7 +61,7 @@ import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { StatsBase } from '../../../core/models/stats.model';
-import { TypeAction } from '../../../enums/type.enum';
+import { BuffType, TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
@@ -528,7 +528,7 @@ const Battle = () => {
             const randInt = parseFloat(Math.random().toFixed(3));
             if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
               moveType.buffs.forEach((value) => {
-                if (value.target === 'target') {
+                if (value.target === BuffType.Target) {
                   player2 = PokemonBattleData.create({
                     ...player2,
                     stats: {
@@ -594,7 +594,7 @@ const Battle = () => {
             const randInt = parseFloat(Math.random().toFixed(3));
             if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
               moveType.buffs.forEach((value) => {
-                if (value.target === 'target') {
+                if (value.target === BuffType.Target) {
                   player1 = PokemonBattleData.create({
                     ...player1,
                     stats: {

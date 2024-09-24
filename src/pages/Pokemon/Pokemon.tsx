@@ -359,7 +359,7 @@ const Pokemon = (props: IPokemonPage) => {
       } else {
         const currentRegion = Object.values(regionList).find((item) => currentForm.form.formName.includes(item.toLowerCase()));
         if (!isEmpty(currentForm.form.formName) && currentRegion) {
-          setRegion(!region || region !== currentRegion ? currentRegion : region);
+          setRegion(!region || !isEqual(region, currentRegion) ? currentRegion : region);
         } else {
           setRegion(regionList[toNumber(getValueOrDefault(String, gen))]);
         }

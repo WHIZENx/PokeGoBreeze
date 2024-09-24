@@ -417,7 +417,7 @@ const StatsRanking = () => {
         defaultSortAsc={false}
         highlightOnHover={true}
         onRowClicked={(row) => {
-          if (select?.name !== row.name) {
+          if (!isEqual(select?.name, row.name)) {
             setFilterParams(row);
           }
         }}

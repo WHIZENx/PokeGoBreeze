@@ -687,7 +687,7 @@ const DpsTdo = () => {
 
   const addTypeArr = (value: string) => {
     if (selectTypes.includes(value)) {
-      return setSelectTypes([...selectTypes].filter((item) => item !== value));
+      return setSelectTypes([...selectTypes].filter((item) => !isEqual(item, value)));
     }
     return setSelectTypes((oldArr) => [...oldArr, value]);
   };

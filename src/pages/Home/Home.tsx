@@ -136,7 +136,7 @@ const Home = () => {
   const addTypeArr = (value: string) => {
     let types = selectTypes;
     if (types.includes(value)) {
-      return setSelectTypes([...types].filter((item) => item !== value));
+      return setSelectTypes([...types].filter((item) => !isEqual(item, value)));
     } else {
       types = types.slice(0, 1);
     }
