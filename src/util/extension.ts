@@ -107,6 +107,9 @@ export const isIncludeList = (
   includesValue: string | number | undefined | null,
   mode: IncludeMode.Include | IncludeMode.IncludeIgnoreCaseSensitive = IncludeMode.Include
 ) => {
+  if (isNullOrUndefined(value)) {
+    return false;
+  }
   const result = getValueOrDefault(
     Array,
     value?.map((i) => i?.toString())
