@@ -26,7 +26,7 @@ import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
-import { getValueOrDefault, toNumber } from '../../util/extension';
+import { getValueOrDefault, isInclude, toNumber } from '../../util/extension';
 
 interface Files {
   files: FileName[];
@@ -50,7 +50,7 @@ export const loadPokeGOLogo = (dispatch: Dispatch) => {
             getValueOrDefault(
               String,
               file.data.files
-                .find((item) => item.filename.includes('Images/App Icons/'))
+                .find((item) => isInclude(item.filename, 'Images/App Icons/'))
                 ?.filename.replace('Images/App Icons/', '')
                 .replace('.png', '')
             )

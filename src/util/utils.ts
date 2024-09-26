@@ -19,6 +19,7 @@ import {
   FORM_GALARIAN,
   FORM_GMAX,
   FORM_HISUIAN,
+  FORM_MEGA,
   FORM_NORMAL,
   FORM_PURIFIED,
   FORM_SHADOW,
@@ -30,8 +31,18 @@ import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
-import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isNullOrEmpty, isNullOrUndefined, toNumber } from './extension';
-import { EqualMode } from './enums/string.enum';
+import {
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isNullOrEmpty,
+  isNullOrUndefined,
+  toNumber,
+} from './extension';
+import { EqualMode, IncludeMode } from './enums/string.enum';
 
 class Mask {
   value: number;
@@ -188,11 +199,22 @@ export const convertModelSpritName = (text: string) => {
     .replaceAll('_', '-')
     .replaceAll('%', '')
     .replace('mime-jr', 'mime_jr')
-    .replace('-female', `${text.toLowerCase().includes('meowstic') || text.toLowerCase().includes('indeedee') ? '-' : '_'}f`)
+    .replace(
+      '-female',
+      `${
+        isInclude(text, 'meowstic', IncludeMode.IncludeIgnoreCaseSensitive) ||
+        isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
+          ? '-'
+          : '_'
+      }f`
+    )
     .replace(
       '-male',
-      (text.toLowerCase().includes('meowstic') ? '-' : text.toLowerCase().includes('indeedee') ? '' : '_') +
-        text.toLowerCase().includes('indeedee')
+      (isInclude(text, 'meowstic', IncludeMode.IncludeIgnoreCaseSensitive)
+        ? '-'
+        : isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
+        ? ''
+        : '_') + isInclude(text, 'indeedee', IncludeMode.IncludeIgnoreCaseSensitive)
         ? ''
         : 'm'
     )
@@ -220,7 +242,7 @@ export const convertModelSpritName = (text: string) => {
 
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
-  if (text.includes('_')) {
+  if (isInclude(text, '_')) {
     form = ` (${capitalize(text.split('_').at(1))})`;
   }
   return text + form;
@@ -234,13 +256,19 @@ export const convertNameRankingToOri = (text: string, form: string) => {
   if (text === 'unown') {
     text = 'unown-a';
   }
-  if (text.includes('pyroar') || text.includes('frillish') || text.includes('jellicent') || text.includes('urshifu')) {
+  if (isInclude(text, 'pyroar') || isInclude(text, 'frillish') || isInclude(text, 'jellicent') || isInclude(text, 'urshifu')) {
     return text.split('_').at(0);
   }
-  if (text.includes('_mega') || text === 'ho_oh' || text.includes('castform') || text.includes('tapu') || text.includes('basculin_blue')) {
+  if (
+    isInclude(text, `_${FORM_MEGA}`.toLowerCase()) ||
+    text === 'ho_oh' ||
+    isInclude(text, 'castform') ||
+    isInclude(text, 'tapu') ||
+    isInclude(text, 'basculin_blue')
+  ) {
     return text.replaceAll('_', '-');
   }
-  if (formOri.includes('(') && formOri.includes(')')) {
+  if (isInclude(formOri, '(') && isInclude(formOri, ')')) {
     form = `-${form.split(' (').at(1)?.replace(')', '').toLowerCase()}`;
   }
   text = text
@@ -263,7 +291,7 @@ export const convertNameRankingToOri = (text: string, form: string) => {
     .replace('-5th-anniversary', '')
     .replace('-10', '-ten-percent')
     .replace('-shaymin', '');
-  if (text.toUpperCase().includes(FORM_STANDARD)) {
+  if (isInclude(text, FORM_STANDARD, IncludeMode.IncludeIgnoreCaseSensitive)) {
     form = `-${FORM_STANDARD.toLowerCase()}`;
   }
   const invalidForm: string[] = [
@@ -290,7 +318,9 @@ export const convertNameRankingToOri = (text: string, form: string) => {
     `-${FORM_GALARIAN.toLowerCase()}`,
     `-${FORM_HISUIAN.toLowerCase()}`,
   ];
-  return formOri.includes('(') && formOri.includes(')') && !invalidForm.includes(form) ? text.replaceAll(form.toLowerCase(), '') : text;
+  return isInclude(formOri, '(') && isInclude(formOri, ')') && !isIncludeList(invalidForm, form)
+    ? text.replaceAll(form.toLowerCase(), '')
+    : text;
 };
 
 export const getStyleSheet = (selector: string) => {
@@ -339,7 +369,7 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
     if (m.length === result?.length) {
       let count = 0;
       for (let i = 0; i < result.length; i++) {
-        if (capitalize(m[i].toLowerCase()).includes(result[i])) {
+        if (isInclude(capitalize(m[i].toLowerCase()), result[i])) {
           count++;
         }
       }
@@ -357,7 +387,7 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
         move
           .toLowerCase()
           .split('')
-          .every((m) => value.toLowerCase().includes(m))
+          .every((m) => isInclude(value.toLowerCase(), m))
       ) {
         const m = value.split('_');
         if (result && m.length === result.length) {
@@ -529,7 +559,7 @@ export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | und
     Array,
     pokemon.quickMoves?.concat(getValueOrDefault(Array, pokemon.cinematicMoves), eliteQuickMoves, eliteCinematicMoves, specialMoves)
   );
-  if (allMoves.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || allMoves.at(0)?.includes('SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
+  if (allMoves.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || isInclude(allMoves.at(0), 'SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
     return false;
   }
   return true;
@@ -571,11 +601,11 @@ export const replacePokemonGoForm = (form: string) => {
 };
 
 export const formIconAssets = (value: IPokemonFormModify, id: number) => {
-  return value.form.name.includes('-totem') ||
-    value.form.name.includes('-hisui') ||
-    value.form.name.includes('power-construct') ||
-    value.form.name.includes('own-tempo') ||
-    value.form.name.includes('-meteor') ||
+  return isInclude(value.form.name, '-totem') ||
+    isInclude(value.form.name, '-hisui') ||
+    isInclude(value.form.name, 'power-construct') ||
+    isInclude(value.form.name, 'own-tempo') ||
+    isInclude(value.form.name, '-meteor') ||
     value.form.name === 'mewtwo-armor' ||
     value.form.name === 'arceus-unknown' ||
     value.form.name === 'dialga-origin' ||
@@ -587,7 +617,7 @@ export const formIconAssets = (value: IPokemonFormModify, id: number) => {
     value.form.name === 'urshifu-rapid-strike' ||
     id >= 899
     ? APIService.getPokeIconSprite('unknown-pokemon')
-    : value.form.name.includes(`-${FORM_SHADOW.toLowerCase()}`) || value.form.name.includes(`-${FORM_PURIFIED.toLowerCase()}`)
+    : isInclude(value.form.name, `-${FORM_SHADOW.toLowerCase()}`) || isInclude(value.form.name, `-${FORM_PURIFIED.toLowerCase()}`)
     ? APIService.getPokeIconSprite(value.name)
     : APIService.getPokeIconSprite(value.form.name);
 };
@@ -704,7 +734,7 @@ export const generatePokemonGoForms = (
   pokemonData
     .filter((pokemon) => pokemon.num === id)
     .forEach((pokemon) => {
-      const isIncludeFormGO = formList.some((form) => pokemon.forme?.includes(form));
+      const isIncludeFormGO = formList.some((form) => isInclude(pokemon.forme, form));
       if (!isIncludeFormGO) {
         index--;
         const pokemonGOModify = new PokemonFormModifyModel(
@@ -831,7 +861,7 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
 };
 
 export const replaceTempMoveName = (name: string) => {
-  if (name.endsWith('_FAST') || name.includes('_FAST_')) {
+  if (name.endsWith('_FAST') || isInclude(name, '_FAST_')) {
     name = name.replace('_FAST', '');
   } else if (name.endsWith('_PLUS')) {
     name = name.replaceAll('_PLUS', '+');
@@ -840,7 +870,7 @@ export const replaceTempMoveName = (name: string) => {
 };
 
 export const replaceTempMovePvpName = (name: string) => {
-  if (name.includes('_BLASTOISE')) {
+  if (isInclude(name, '_BLASTOISE')) {
     name = name.replace('_BLASTOISE', '');
   } else if (name === 'TECHNO_BLAST_WATER') {
     name = name = 'TECHNO_BLAST_DOUSE';

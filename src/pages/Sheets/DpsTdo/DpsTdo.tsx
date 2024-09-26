@@ -64,11 +64,13 @@ import {
   getValueOrDefault,
   isEmpty,
   isEqual,
+  isInclude,
+  isIncludeList,
   isNotEmpty,
   toNumber,
 } from '../../../util/extension';
 import { InputType } from '../../../components/Input/enums/input-type.enum';
-import { EqualMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -383,9 +385,9 @@ const DpsTdo = () => {
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           shadow,
-          purified: purified && isNotEmpty(specialMove) && specialMove.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
+          purified: purified && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           special,
-          mShadow: shadow && isNotEmpty(specialMove) && specialMove.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
+          mShadow: shadow && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -492,30 +494,30 @@ const DpsTdo = () => {
     let result = dpsTable.filter((item) => {
       const boolFilterType =
         !isNotEmpty(selectTypes) ||
-        (selectTypes.includes(getValueOrDefault(String, item.fMove?.type?.toUpperCase())) &&
-          selectTypes.includes(getValueOrDefault(String, item.cMove?.type?.toUpperCase())));
+        (isIncludeList(selectTypes, item.fMove?.type, IncludeMode.IncludeIgnoreCaseSensitive) &&
+          isIncludeList(selectTypes, item.cMove?.type, IncludeMode.IncludeIgnoreCaseSensitive));
       const boolFilterPoke =
         isEmpty(searchTerm) ||
         (match
           ? isEqual(item.pokemon.name.replaceAll('-', ' '), searchTerm, EqualMode.IgnoreCaseSensitive) ||
-            isEqual(item.pokemon.num.toString(), searchTerm)
-          : item.pokemon.name.replaceAll('-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.pokemon.num.toString().includes(searchTerm));
+            isEqual(item.pokemon.num, searchTerm)
+          : isInclude(item.pokemon.name.replaceAll('-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            isInclude(item.pokemon.num, searchTerm));
 
       const boolShowShadow = !showShadow && item.shadow;
       const boolShowElite = !showEliteMove && (item.elite.fMove || item.elite.cMove);
-      const boolShowMega = !showMega && item.pokemon.forme?.toUpperCase().includes(FORM_MEGA);
-      const boolShowGmax = !showGmax && item.pokemon.forme?.toUpperCase().includes(FORM_GMAX);
-      const boolShowPrimal = !showPrimal && item.pokemon.forme?.toUpperCase().includes(FORM_PRIMAL);
+      const boolShowMega = !showMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolShowGmax = !showGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolShowPrimal = !showPrimal && isInclude(item.pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolShowLegend = !showLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
       const boolShowMythic = !showMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
 
       const boolOnlyShadow = enableShadow && item.shadow;
       const boolOnlyElite = enableElite && (item.elite.fMove || item.elite.cMove);
-      const boolOnlyMega = enableMega && item.pokemon.forme?.toUpperCase().includes(FORM_MEGA);
-      const boolOnlyGmax = enableGmax && item.pokemon.forme?.toUpperCase().includes(FORM_GMAX);
-      const boolOnlyPrimal = enablePrimal && item.pokemon.forme?.toUpperCase().includes(FORM_PRIMAL);
+      const boolOnlyMega = enableMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolOnlyGmax = enableGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolOnlyPrimal = enablePrimal && isInclude(item.pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolOnlyLegend = enableLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
       const boolOnlyMythic = enableMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolOnlyUltra = enableUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
@@ -686,7 +688,7 @@ const DpsTdo = () => {
   ]);
 
   const addTypeArr = (value: string) => {
-    if (selectTypes.includes(value)) {
+    if (isIncludeList(selectTypes, value)) {
       return setSelectTypes([...selectTypes].filter((item) => !isEqual(item, value)));
     }
     return setSelectTypes((oldArr) => [...oldArr, value]);
@@ -715,7 +717,7 @@ const DpsTdo = () => {
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
-                className={combineClasses('btn-select-type w-100 border-types', selectTypes.includes(item) ? 'select-type' : '')}
+                className={combineClasses('btn-select-type w-100 border-types', isIncludeList(selectTypes, item) ? 'select-type' : '')}
                 style={{ padding: 10 }}
               >
                 <TypeInfo block={true} arr={[item]} />

@@ -15,8 +15,8 @@ import { StoreState } from '../../store/models/state.model';
 import { capitalize } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getValueOrDefault, isEqual, isNullOrEmpty, toNumber } from '../../util/extension';
-import { EqualMode } from '../../util/enums/string.enum';
+import { getValueOrDefault, isEqual, isInclude, isNullOrEmpty, toNumber } from '../../util/extension';
+import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -33,14 +33,14 @@ const Raid = (props: IRaidComponent) => {
     if (
       tier > 5 &&
       props.currForm &&
-      !props.currForm.form.formName?.toUpperCase().includes(FORM_MEGA) &&
-      props.currForm.form.formName?.toUpperCase() !== FORM_PRIMAL
+      !isInclude(props.currForm.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
+      !isEqual(props.currForm.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
     ) {
       setTier(5);
     } else if (
       tier === 5 &&
       props.currForm &&
-      (props.currForm.form.formName.toUpperCase().includes(FORM_MEGA) ||
+      (isInclude(props.currForm.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) ||
         isEqual(props.currForm.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)) &&
       pokemonClass
     ) {
@@ -97,27 +97,31 @@ const Raid = (props: IRaidComponent) => {
           <optgroup label="Normal Tiers">
             <option value={1}>Tier 1</option>
             <option value={3}>Tier 3</option>
-            {(!props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) || !pokemonClass) && <option value={5}>Tier 5</option>}
+            {(!isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || !pokemonClass) && (
+              <option value={5}>Tier 5</option>
+            )}
           </optgroup>
           <optgroup label="Legacy Tiers">
             <option value={2}>Tier 2</option>
-            {(!props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) || pokemonClass) && <option value={4}>Tier 4</option>}
+            {(!isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || pokemonClass) && (
+              <option value={4}>Tier 4</option>
+            )}
           </optgroup>
           {props.currForm &&
-            (props.currForm.form.formName.toUpperCase().includes(FORM_MEGA) ||
-              isEqual(props.currForm.form.formName.toUpperCase(), FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)) && (
+            (isInclude(props.currForm.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) ||
+              isEqual(props.currForm.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)) && (
               <Fragment>
                 {pokemonClass ? (
                   <optgroup
                     label={`Legendary ${
-                      isEqual(props.currForm.form.formName.toUpperCase(), FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
+                      isEqual(props.currForm.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
                         ? capitalize(FORM_PRIMAL)
                         : capitalize(FORM_MEGA)
                     } Tier 6'`}
                   >
                     <option value={6}>
                       {`Tier ${
-                        isEqual(props.currForm.form.formName.toUpperCase(), FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
+                        isEqual(props.currForm.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
                           ? capitalize(FORM_PRIMAL)
                           : capitalize(FORM_MEGA)
                       }`}
@@ -156,7 +160,8 @@ const Raid = (props: IRaidComponent) => {
             alt="img-raid-egg"
             src={raidEgg(
               tier,
-              !pokemonClass && getValueOrDefault(Boolean, props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA)),
+              !pokemonClass &&
+                getValueOrDefault(Boolean, isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)),
               !isNullOrEmpty(pokemonClass) && isEqual(props.currForm?.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive),
               isEqual(
                 pokemonData.find((pokemon) => pokemon.num === props.id)?.pokemonClass,

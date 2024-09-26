@@ -25,9 +25,18 @@ import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
+import {
+  convertColumnDataType,
+  DynamicObj,
+  getValueOrDefault,
+  isEmpty,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
 import { LocationState } from '../../../core/models/router.model';
-import { EqualMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -290,10 +299,10 @@ const StatsRanking = () => {
               (pokemon) =>
                 isEmpty(search) ||
                 (match
-                  ? isEqual(pokemon.num.toString(), search) ||
+                  ? isEqual(pokemon.num, search) ||
                     isEqual(splitAndCapitalize(pokemon.name, '-', ' '), search, EqualMode.IgnoreCaseSensitive)
-                  : pokemon.num.toString().includes(search) ||
-                    splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
+                  : isInclude(pokemon.num, search) ||
+                    isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive))
             )
         );
       }, 100);
@@ -306,7 +315,7 @@ const StatsRanking = () => {
       formName: getValueOrDefault(String, pokemon.forme),
       id: pokemon.num,
       isDefault: true,
-      isMega: pokemon.slug.toUpperCase().includes(FORM_MEGA),
+      isMega: isInclude(pokemon.slug, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
       name: pokemon.name,
       types: getValueOrDefault(Array, pokemon.types),
       version: getValueOrDefault(String, pokemon.version),
@@ -330,7 +339,7 @@ const StatsRanking = () => {
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                   e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, select?.num));
                 } else {
                   e.currentTarget.src = APIService.getPokeFullSprite(0);

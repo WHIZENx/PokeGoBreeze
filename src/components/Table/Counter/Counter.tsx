@@ -16,7 +16,7 @@ import { ICounterComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty, isUndefined } from '../../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isInclude, isNotEmpty, isUndefined } from '../../../util/extension';
 import { APIUrl } from '../../../services/constants';
 
 const customStyles: TableStyles = {
@@ -117,7 +117,7 @@ const Counter = (props: ICounterComponent) => {
                 }
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                     e.currentTarget.src = APIService.getPokeFullAsset(row.pokemonId);
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
@@ -309,7 +309,7 @@ const Counter = (props: ICounterComponent) => {
             if (showMega) {
               return true;
             }
-            return !pokemon.pokemonForme?.includes(FORM_MEGA) && !pokemon.pokemonForme?.includes(FORM_PRIMAL);
+            return !isInclude(pokemon.pokemonForme, FORM_MEGA) && !isInclude(pokemon.pokemonForme, FORM_PRIMAL);
           })
           .filter((pokemon) => {
             if (!releasedGO) {

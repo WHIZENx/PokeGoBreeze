@@ -1,8 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_STANDARD } from '../util/constants';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
-import { isEmpty } from '../util/extension';
+import { isEmpty, isInclude } from '../util/extension';
+import { IncludeMode } from '../util/enums/string.enum';
 
 class APIService {
   date: Date;
@@ -59,9 +60,9 @@ class APIService {
     if (!item) {
       return this.getPokeSprite(0);
     }
-    if (item.includes('necrozma-dawn')) {
+    if (isInclude(item, 'necrozma-dawn')) {
       item += '-wings';
-    } else if (item.includes('necrozma-dusk')) {
+    } else if (isInclude(item, 'necrozma-dusk')) {
       item += '-mane';
     }
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon/${item}.png`;
@@ -167,17 +168,17 @@ class APIService {
 
   getPokeIconSprite(name: string, noFix = false) {
     if (!noFix) {
-      if (name.includes('necrozma-dawn')) {
+      if (isInclude(name, 'necrozma-dawn')) {
         name += '-wings';
-      } else if (name.includes('necrozma-dusk')) {
+      } else if (isInclude(name, 'necrozma-dusk')) {
         name += '-mane';
-      } else if (name.includes('alcremie') && !name.includes(FORM_GMAX.toLowerCase())) {
-        if (name.includes('-vanilla-cream')) {
+      } else if (isInclude(name, 'alcremie') && !isInclude(name, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive)) {
+        if (isInclude(name, '-vanilla-cream')) {
           name = 'alcremie';
         } else {
           name = 'unknown-pokemon';
         }
-      } else if (name.includes('-antique')) {
+      } else if (isInclude(name, '-antique')) {
         name = 'unknown-pokemon';
       }
       name = name
@@ -219,14 +220,16 @@ class APIService {
   }
 
   getPokeGifSprite(name: string) {
-    name = name.replace('mega-x', 'megax').replace('mega-y', 'megay');
-    if (!name.toUpperCase().includes(FORM_MEGA) && name.includes('-m')) {
+    name = name
+      .replace(`${FORM_MEGA}-X`.toLowerCase(), `${FORM_MEGA}X`.toLowerCase())
+      .replace(`${FORM_MEGA}-Y`.toLowerCase(), `${FORM_MEGA}Y`.toLowerCase());
+    if (!isInclude(name, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) && isInclude(name, '-m')) {
       name = name.replace('-m', '');
     }
-    if (name.includes('gengar')) {
+    if (isInclude(name, 'gengar')) {
       name += '_2';
     }
-    if (!name.includes('-mega') && !name.includes('-primal')) {
+    if (!isInclude(name, `-${FORM_MEGA}`.toLowerCase()) && !isInclude(name, `-${FORM_PRIMAL}`.toLowerCase())) {
       name = name.replaceAll('-', '');
     }
     return `${APIUrl.POKE_GIF_SPRITES_API_URL}${name}.gif`;
@@ -281,7 +284,7 @@ class APIService {
   }
 
   getAssetPokeGo(image: string) {
-    return image.includes('gofestCatch2022')
+    return isInclude(image, 'gofestCatch2022')
       ? `${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/${image}`
       : `${APIUrl.POGO_PROD_ASSET_URL}${image}`;
   }

@@ -42,7 +42,7 @@ import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/mode
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
-import { combineClasses, getValueOrDefault, isEqual, toNumber } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isIncludeList, toNumber } from '../../util/extension';
 import { EffectiveType } from './enums/type-eff.enum';
 import { ArcheType } from './enums/arche-type.enum';
 
@@ -69,7 +69,8 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
           title="Fast Move"
           color="white"
           move={data?.fMove}
-          elite={data?.pokemon?.cinematicMoves?.includes(getValueOrDefault(String, data.fMove?.name))}
+          elite={isIncludeList(data?.pokemon?.cinematicMoves, data?.fMove?.name)}
+          unavailable={data?.fMove && !isIncludeList(getAllMoves(data.pokemon), data.fMove.name)}
         />
         <TypeBadge
           grow={true}
@@ -77,11 +78,11 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
           title="Primary Charged Move"
           color="white"
           move={data?.cMovePri}
-          elite={data?.pokemon?.eliteCinematicMove?.includes(getValueOrDefault(String, data.cMovePri?.name))}
-          shadow={data?.pokemon?.shadowMoves?.includes(getValueOrDefault(String, data.cMovePri?.name))}
-          purified={data?.pokemon?.purifiedMoves?.includes(getValueOrDefault(String, data.cMovePri?.name))}
-          special={data?.pokemon?.specialMoves?.includes(getValueOrDefault(String, data.cMovePri?.name))}
-          unavailable={data?.cMovePri && !getAllMoves(data.pokemon).includes(getValueOrDefault(String, data.cMovePri.name))}
+          elite={isIncludeList(data?.pokemon?.eliteCinematicMove, data?.cMovePri?.name)}
+          shadow={isIncludeList(data?.pokemon?.shadowMoves, data?.cMovePri?.name)}
+          purified={isIncludeList(data?.pokemon?.purifiedMoves, data?.cMovePri?.name)}
+          special={isIncludeList(data?.pokemon?.specialMoves, data?.cMovePri?.name)}
+          unavailable={data?.cMovePri && !isIncludeList(getAllMoves(data.pokemon), data.cMovePri.name)}
         />
         {data?.cMoveSec && (
           <TypeBadge
@@ -90,11 +91,11 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
             title="Secondary Charged Move"
             color="white"
             move={data.cMoveSec}
-            elite={data.pokemon?.eliteCinematicMove?.includes(data.cMoveSec.name)}
-            shadow={data.pokemon?.shadowMoves?.includes(data.cMoveSec.name)}
-            purified={data.pokemon?.purifiedMoves?.includes(data.cMoveSec.name)}
-            special={data.pokemon?.specialMoves?.includes(data.cMoveSec.name)}
-            unavailable={!getAllMoves(data.pokemon).includes(data.cMoveSec.name)}
+            elite={isIncludeList(data.pokemon?.eliteCinematicMove, data.cMoveSec.name)}
+            shadow={isIncludeList(data.pokemon?.shadowMoves, data.cMoveSec.name)}
+            purified={isIncludeList(data.pokemon?.purifiedMoves, data.cMoveSec.name)}
+            special={isIncludeList(data.pokemon?.specialMoves, data.cMoveSec.name)}
+            unavailable={!isIncludeList(getAllMoves(data.pokemon), data.cMoveSec.name)}
           />
         )}
       </div>
@@ -119,12 +120,12 @@ export const Body = (
       <Link
         to={`/pvp/${cp}/${type}/${data.opponent.replaceAll('_', '-')}`}
         className="list-item-ranking"
-        style={{ backgroundImage: computeBgType(pokemon?.types, data.opponent.includes('_shadow')) }}
+        style={{ backgroundImage: computeBgType(pokemon?.types, isInclude(data.opponent, '_shadow')) }}
       >
         <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
           <div className="d-flex justify-content-center">
             <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
-              {data.opponent.includes('_shadow') && (
+              {isInclude(data.opponent, '_shadow') && (
                 <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
               )}
               <img
@@ -351,7 +352,7 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
   const findArchetype = (archetype: string) => {
     return Object.values(ArcheType).map((value, index) => (
       <Fragment key={index}>
-        {archetype.includes(value) && !(archetype.includes(ArcheType.SelfDebuff) && value === ArcheType.Debuff) && (
+        {isInclude(archetype, value) && !(isInclude(archetype, ArcheType.SelfDebuff) && value === ArcheType.Debuff) && (
           <div className="filter-shadow" title={value} key={index}>
             {value === ArcheType.General && <CircleIcon />}
             {value === ArcheType.Nuke && <RocketLaunchIcon sx={{ color: 'gray' }} />}
@@ -377,23 +378,23 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
 
   const findMove = (name: string, uses: number) => {
     const oldName = name;
-    if (name.includes('HIDDEN_POWER')) {
+    if (isInclude(name, 'HIDDEN_POWER')) {
       name = 'HIDDEN_POWER';
     }
     let move = combatData.find((move) => isEqual(move.name, name));
-    if (move && oldName.includes('HIDDEN_POWER')) {
+    if (move && isInclude(oldName, 'HIDDEN_POWER')) {
       move = Combat.create({ ...move, type: getValueOrDefault(String, oldName.split('_').at(2)) });
     }
 
     let elite = false;
     let special = false;
-    if (combatList?.eliteQuickMove?.includes(name)) {
+    if (isIncludeList(combatList?.eliteQuickMove, name)) {
       elite = true;
     }
-    if (combatList?.eliteCinematicMove?.includes(name)) {
+    if (isIncludeList(combatList?.eliteCinematicMove, name)) {
       elite = true;
     }
-    if (combatList?.specialMoves?.includes(name)) {
+    if (isIncludeList(combatList?.specialMoves, name)) {
       special = true;
     }
 

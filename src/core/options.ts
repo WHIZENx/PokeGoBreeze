@@ -52,9 +52,9 @@ import {
 } from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
-import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../util/extension';
 import { GenderType } from './enums/asset.enum';
-import { EqualMode } from '../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
 
 export const getOption = <T>(options: any, args: string[]): T => {
@@ -86,7 +86,7 @@ export const optionSettings = (data: PokemonDataGM[]) => {
       settings.battleOptions.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
       settings.battleOptions.shadowBonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
       settings.battleOptions.shadowBonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
-    } else if (item.templateId.includes('BUDDY_LEVEL_')) {
+    } else if (isInclude(item.templateId, 'BUDDY_LEVEL_')) {
       const level = item.templateId.replace('BUDDY_LEVEL_', '');
       settings.buddyFriendship[level] = new BuddyFriendship();
       settings.buddyFriendship[level].level = toNumber(level);
@@ -95,7 +95,7 @@ export const optionSettings = (data: PokemonDataGM[]) => {
         item.data.buddyLevelSettings.minNonCumulativePointsRequired
       );
       settings.buddyFriendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
-    } else if (item.templateId.includes('FRIENDSHIP_LEVEL_')) {
+    } else if (isInclude(item.templateId, 'FRIENDSHIP_LEVEL_')) {
       const level = item.templateId.replace('FRIENDSHIP_LEVEL_', '');
       settings.trainerFriendship[level] = new TrainerFriendship();
       settings.trainerFriendship[level].level = toNumber(level);
@@ -118,7 +118,7 @@ export const optionPokemonTypes = (data: PokemonDataGM[]) => {
   const types = new TypeSet() as unknown as DynamicObj<DynamicObj<number>>;
   const typeSet = Object.keys(types);
   data
-    .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId) && item.data.typeEffective)
+    .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId))
     .forEach((item) => {
       const rootType = item.templateId.replace('POKEMON_TYPE_', '');
       typeSet.forEach((type, index) => {
@@ -392,13 +392,13 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       if (pokemonOrigin) {
         optional.shadowMoves?.forEach((move) => {
           move = replaceTempMoveName(move);
-          if (!pokemonOrigin.shadowMoves?.includes(move)) {
+          if (!isIncludeList(pokemonOrigin.shadowMoves, move)) {
             pokemonOrigin.shadowMoves?.push(move);
           }
         });
         optional.purifiedMoves?.forEach((move) => {
           move = replaceTempMoveName(move);
-          if (!pokemonOrigin.purifiedMoves?.includes(move)) {
+          if (!isIncludeList(pokemonOrigin.purifiedMoves, move)) {
             pokemonOrigin.purifiedMoves?.push(move);
           }
         });
@@ -438,7 +438,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       });
 
       const goTemplate = `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
-        pokemon.form.toString().includes(FORM_MEGA) || isEqual(pokemon.form, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
+        isInclude(pokemon.form, FORM_MEGA) || isEqual(pokemon.form, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
           ? pokemon.pokemonId
           : convertPokemonDataName(item.baseFormeSlug ?? item.slug)
       )}`;
@@ -464,11 +464,11 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
           pokemon.obSpecialAttackMoves = getValueOrDefault(Array, pokemonSettings.obSpecialAttackMoves);
         }
 
-        const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && evo.tempEvoId.includes(pokemon.form.toString()));
+        const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
         if (tempEvo) {
           pokemon.stats = tempEvo.stats;
         } else {
-          if (pokemon.form.toString().includes(FORM_MEGA)) {
+          if (isInclude(pokemon.form, FORM_MEGA)) {
             const stats = calculateStatsByTag(undefined, item.baseStats, item.slug);
             pokemon.stats = {
               baseAttack: stats.atk,
@@ -522,7 +522,7 @@ const cleanPokemonDupForm = (result: IPokemonData[]) => {
   });
   const idConcat = [744];
 
-  result = filterPokemon.filter((p) => !idConcat.includes(p.num));
+  result = filterPokemon.filter((p) => !isIncludeList(idConcat, p.num));
   idConcat.forEach((id) => {
     const concatPokemon = filterPokemon.filter((p) => p.num === id);
     if (concatPokemon.length > 1) {
@@ -559,7 +559,7 @@ const pokemonDefaultForm = (data: PokemonDataGM[]) => {
       item.data.pokemonSettings &&
       (!item.data.pokemonSettings.form ||
         isEqual(item.data.pokemonSettings.form, 'MEWTWO_A') ||
-        forms.includes(getValueOrDefault(String, item.data.pokemonSettings.form))) &&
+        isIncludeList(forms, item.data.pokemonSettings.form)) &&
       !item.data.pokemonSettings.form?.toString().endsWith(FORM_NORMAL)
   );
 };
@@ -602,7 +602,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     result.id = getValueOrDefault(Number, pokemon.find((poke) => isEqual(poke.pokemonId, item))?.num);
     result.name = item;
 
-    let formSet = imgs.filter((img) => img.includes(`Addressable Assets/pm${result.id}.`) && !img.includes('cry'));
+    let formSet = imgs.filter((img) => isInclude(img, `Addressable Assets/pm${result.id}.`) && !isInclude(img, 'cry'));
 
     let count = 0,
       mega = false;
@@ -615,15 +615,15 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       } else {
         form = form.replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
       }
-      if (formSet.includes(`${formSet[count].replace('.icon', '')}.s.icon`)) {
+      if (isIncludeList(formSet, `${formSet[count].replace('.icon', '')}.s.icon`)) {
         shiny = true;
       }
-      if (!formSet[count].includes('.g2.') && formSet.includes(`${formSet[count].replace('.icon', '')}.g2.icon`)) {
+      if (!isInclude(formSet[count], '.g2.') && isIncludeList(formSet, `${formSet[count].replace('.icon', '')}.g2.icon`)) {
         gender = GenderType.Male;
-      } else if (formSet[count].includes('.g2.')) {
+      } else if (isInclude(formSet[count], '.g2.')) {
         gender = GenderType.Female;
       }
-      if (form.toUpperCase().includes(FORM_MEGA)) {
+      if (isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
         mega = true;
       }
       result.image.push(
@@ -640,9 +640,9 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
 
     formSet = imgs.filter(
       (img) =>
-        !img.includes(`Addressable Assets/`) &&
-        (img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}_51`) ||
-          img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}_52`))
+        !isInclude(img, `Addressable Assets/`) &&
+        (isInclude(img, `pokemon_icon_${result.id?.toString().padStart(3, '0')}_51`) ||
+          isInclude(img, `pokemon_icon_${result.id?.toString().padStart(3, '0')}_52`))
     );
     if (!mega) {
       for (let index = 0; index < formSet.length; index += 2) {
@@ -650,7 +650,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
           new ImageModel({
             gender: GenderType.GenderLess,
             pokemonId: result.id,
-            form: formSet.length === 2 ? FORM_MEGA : formSet[index].includes('_51') ? FORM_MEGA_X : FORM_MEGA_Y,
+            form: formSet.length === 2 ? FORM_MEGA : isInclude(formSet[index], '_51') ? FORM_MEGA_X : FORM_MEGA_Y,
             default: formSet[index],
             shiny: formSet[index + 1],
           })
@@ -660,12 +660,12 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
 
     const formList = result.image.map((img) => img.form?.replaceAll('_', ''));
     formSet = imgs.filter(
-      (img) => !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_pm${result.id?.toString().padStart(4, '0')}`)
+      (img) => !isInclude(img, `Addressable Assets/`) && isInclude(img, `pokemon_icon_pm${result.id?.toString().padStart(4, '0')}`)
     );
     for (let index = 0; index < formSet.length; index += 2) {
       const subForm = formSet[index].replace('_shiny', '').split('_');
       const form = subForm[subForm.length - 1].toUpperCase();
-      if (!formList.includes(form)) {
+      if (!isIncludeList(formList, form)) {
         formList.push(form);
         result.image.push(
           new ImageModel({
@@ -681,11 +681,11 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
 
     if (!isNotEmpty(result.image)) {
       formSet = imgs.filter(
-        (img) => !img.includes(`Addressable Assets/`) && img.includes(`pokemon_icon_${result.id?.toString().padStart(3, '0')}`)
+        (img) => !isInclude(img, `Addressable Assets/`) && isInclude(img, `pokemon_icon_${result.id?.toString().padStart(3, '0')}`)
       );
       for (let index = 0; index < formSet.length; index += 2) {
         const form = FORM_NORMAL;
-        if (!formList.includes(form)) {
+        if (!isIncludeList(formList, form)) {
           formList.push(form);
           result.image.push(
             new ImageModel({
@@ -701,7 +701,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     }
 
     mega = false;
-    let soundForm = sounds.filter((sound) => sound.includes(`Addressable Assets/pm${result.id}.`) && sound.includes('cry'));
+    let soundForm = sounds.filter((sound) => isInclude(sound, `Addressable Assets/pm${result.id}.`) && isInclude(sound, 'cry'));
     result.sound.cry = soundForm.map((sound) => {
       let [, form] = sound.split('.');
       if (form === 'cry') {
@@ -709,7 +709,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       } else {
         form = form.replace(/[a-z]/g, '');
       }
-      if (form.toUpperCase().includes(FORM_MEGA)) {
+      if (isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
         mega = true;
       }
       return new CryPath({
@@ -720,28 +720,28 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
 
     soundForm = sounds.filter(
       (sound) =>
-        !sound.includes(`Addressable Assets/`) &&
-        (sound.includes(`pv${result.id?.toString().padStart(3, '0')}_51`) ||
-          sound.includes(`pv${result.id?.toString().padStart(3, '0')}_52`))
+        !isInclude(sound, `Addressable Assets/`) &&
+        (isInclude(sound, `pv${result.id?.toString().padStart(3, '0')}_51`) ||
+          isInclude(sound, `pv${result.id?.toString().padStart(3, '0')}_52`))
     );
     if (!mega) {
       soundForm.forEach((sound) => {
         result.sound.cry.push(
           new CryPath({
-            form: soundForm.length !== 2 ? FORM_MEGA : sound.includes('_51') ? FORM_MEGA_X : FORM_MEGA_Y,
+            form: soundForm.length !== 2 ? FORM_MEGA : isInclude(sound, '_51') ? FORM_MEGA_X : FORM_MEGA_Y,
             path: sound,
           })
         );
       });
     }
     soundForm = sounds.filter(
-      (sound) => !sound.includes(`Addressable Assets/`) && sound.includes(`pv${result.id?.toString().padStart(3, '0')}`)
+      (sound) => !isInclude(sound, `Addressable Assets/`) && isInclude(sound, `pv${result.id?.toString().padStart(3, '0')}`)
     );
     if (!isNotEmpty(result.sound.cry)) {
       soundForm.forEach((sound) => {
         result.sound.cry.push(
           new CryPath({
-            form: sound.includes('_31') ? FORM_SPECIAL : FORM_NORMAL,
+            form: isInclude(sound, '_31') ? FORM_SPECIAL : FORM_NORMAL,
             path: sound,
           })
         );
@@ -763,12 +763,13 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
     });
   const sequence = data
     .filter(
-      (item) => item.templateId.includes('sequence_') && item.data.moveSequenceSettings.sequence.find((seq) => seq.includes('sfx attacker'))
+      (item) =>
+        isInclude(item.templateId, 'sequence_') && item.data.moveSequenceSettings.sequence.find((seq) => isInclude(seq, 'sfx attacker'))
     )
     .map((item) => {
       return new Sequence({
         id: item.templateId.replace('sequence_', '').toUpperCase(),
-        path: item.data.moveSequenceSettings.sequence.find((seq) => seq.includes('sfx attacker'))?.replace('sfx attacker ', ''),
+        path: item.data.moveSequenceSettings.sequence.find((seq) => isInclude(seq, 'sfx attacker'))?.replace('sfx attacker ', ''),
       });
     });
 
@@ -778,7 +779,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       const result = new Combat();
       result.name = item.data.combatMove.uniqueId.replace(/^V\d{4}_MOVE_/, '');
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-      if (item.templateId.endsWith(TypeMove.FAST) || item.templateId.includes('_FAST_')) {
+      if (item.templateId.endsWith(TypeMove.FAST) || isInclude(item.templateId, '_FAST_')) {
         result.typeMove = TypeMove.FAST;
       } else {
         result.typeMove = TypeMove.CHARGE;
@@ -885,7 +886,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
   );
 
   result.data = data
-    .filter((item) => item.templateId.includes('COMBAT_LEAGUE_') && !item.templateId.includes('SETTINGS'))
+    .filter((item) => isInclude(item.templateId, 'COMBAT_LEAGUE_') && !isInclude(item.templateId, 'SETTINGS'))
     .map((item) => {
       const result = new League();
       result.id = item.templateId.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '');
@@ -920,7 +921,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           result.conditions.whiteList = getValueOrDefault(
             Array,
             con.pokemonWhiteList?.pokemon.map((poke) => {
-              const item = pokemon.find((item) => isEqual(item.pokemonId, poke.id?.toString()));
+              const item = pokemon.find((item) => isEqual(item.pokemonId, poke.id));
               return new PokemonPermission({
                 id: getValueOrDefault(Number, item?.num),
                 name: item?.pokemonId,
@@ -948,7 +949,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           result.conditions.banned = getValueOrDefault(
             Array,
             con.pokemonBanList?.pokemon.map((poke) => {
-              const item = pokemon.find((item) => isEqual(item.pokemonId, poke.id?.toString()));
+              const item = pokemon.find((item) => isEqual(item.pokemonId, poke.id));
               return new PokemonPermission({
                 id: getValueOrDefault(Number, item?.num),
                 name: item?.pokemonId,
@@ -1036,7 +1037,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     .filter((item) => /VS_SEEKER_POKEMON_REWARDS_/.test(item.templateId))
     .forEach((item) => {
       const data = item.data.vsSeekerPokemonRewards;
-      const track = item.templateId.includes(LeagueRewardType.Free) ? LeagueRewardType.Free : LeagueRewardType.Premium;
+      const track = isInclude(item.templateId, LeagueRewardType.Free) ? LeagueRewardType.Free : LeagueRewardType.Premium;
       data.availablePokemon.forEach((value) => {
         if (!rewards.pokemon[value.unlockedAtRank]) {
           rewards.pokemon[value.unlockedAtRank] = new PokemonRewardLeague({
@@ -1092,7 +1093,7 @@ export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IA
     const image = form?.image.find((img) => isEqual(img.form, item.num === 201 ? `${item.pokemonId}_${item.baseForme}` : item.forme));
 
     if (form && (item.isShadow || (checkMoveSetAvailable(item) && image?.default))) {
-      item.releasedGO = getValueOrDefault(Boolean, item.isShadow || image?.default.includes('Addressable Assets/'));
+      item.releasedGO = getValueOrDefault(Boolean, item.isShadow || isInclude(image?.default, 'Addressable Assets/'));
     }
   });
 };

@@ -81,10 +81,10 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isUndefined, toNumber } from './extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isUndefined, toNumber } from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
-import { EqualMode } from './enums/string.enum';
+import { EqualMode, IncludeMode } from './enums/string.enum';
 
 const weatherMultiple = (
   globalOptions: IOptions | undefined,
@@ -647,7 +647,7 @@ export const calculateStatsByTag = (
       return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, getValueOrDefault(Number, pokemon.baseStats.sta));
     }
     const from = tag?.toLowerCase();
-    const checkNerf = !from?.toUpperCase().includes(FORM_MEGA);
+    const checkNerf = !isInclude(from, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
 
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
@@ -951,7 +951,8 @@ export const calculateBattleDPS = (
     const CDWSSec = getValueOrDefault(Number, moveSec.damageWindowStartMs) / 1000;
 
     const CMultiSec =
-      (attacker.types.includes(CTypeSec.toUpperCase()) ? stabMultiply : 1) * getValueOrDefault(Number, moveSec?.accuracyChance);
+      (isIncludeList(attacker.types, CTypeSec, IncludeMode.IncludeIgnoreCaseSensitive) ? stabMultiply : 1) *
+      getValueOrDefault(Number, moveSec?.accuracyChance);
 
     const CDmgBaseSec =
       DEFAULT_DAMAGE_MULTIPLY *
@@ -1011,25 +1012,25 @@ export const queryTopMove = (
       let isElite = false;
       let isSpecial = false;
       if (move?.typeMove === TypeMove.FAST) {
-        isInclude = getValueOrDefault(Boolean, value.quickMoves?.includes(move.name));
+        isInclude = isIncludeList(value.quickMoves, move.name);
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.eliteQuickMove?.includes(move.name));
+          isInclude = isIncludeList(value.eliteQuickMove, move.name);
           isElite = isInclude;
         }
       } else if (move?.typeMove === TypeMove.CHARGE) {
-        isInclude = getValueOrDefault(Boolean, value.cinematicMoves?.includes(move.name));
+        isInclude = isIncludeList(value.cinematicMoves, move.name);
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.shadowMoves?.includes(move.name));
+          isInclude = isIncludeList(value.shadowMoves, move.name);
         }
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.purifiedMoves?.includes(move.name));
+          isInclude = isIncludeList(value.purifiedMoves, move.name);
         }
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.eliteCinematicMove?.includes(move.name));
+          isInclude = isIncludeList(value.eliteCinematicMove, move.name);
           isElite = isInclude;
         }
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.specialMoves?.includes(move.name));
+          isInclude = isIncludeList(value.specialMoves, move.name);
           isSpecial = isInclude;
         }
       }
@@ -1184,7 +1185,9 @@ export const queryStatesEvoChain = (
   if (isEmpty(item.form)) {
     pokemon = pokemonData.find((value) => value.num === item.id && isEqual(value.slug, item.name, EqualMode.IgnoreCaseSensitive));
   } else {
-    pokemon = pokemonData.find((value) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
+    pokemon = pokemonData.find(
+      (value) => value.num === item.id && isInclude(value.slug, item.form, IncludeMode.IncludeIgnoreCaseSensitive)
+    );
   }
   if (!pokemon) {
     pokemon = pokemonData.find((value) => value.num === item.id);
@@ -1417,7 +1420,7 @@ export const counterPokemon = (
 ) => {
   const dataList: IPokemonQueryCounter[] = [];
   pokemonList.forEach((pokemon) => {
-    if (pokemon && checkMoveSetAvailable(pokemon) && !pokemon.fullName?.includes('_FEMALE')) {
+    if (pokemon && checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE')) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
       pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, false));
       pokemon.eliteQuickMove?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, true));

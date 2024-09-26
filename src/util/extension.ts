@@ -65,7 +65,11 @@ export const toNumber = (value: string | number | null | undefined, defaultValue
   return parseInt((value || defaultValue).toString());
 };
 
-export const isEqual = (value: string | undefined | null, compareValue: string | undefined | null, mode = EqualMode.CaseSensitive) => {
+export const isEqual = (
+  value: string | number | undefined | null,
+  compareValue: string | number | undefined | null,
+  mode = EqualMode.CaseSensitive
+) => {
   value = getValueOrDefault(String, value?.toString());
   compareValue = getValueOrDefault(String, compareValue?.toString());
   switch (mode) {
@@ -78,21 +82,41 @@ export const isEqual = (value: string | undefined | null, compareValue: string |
   }
 };
 
-export const isInclude = (value: string | undefined | null, compareValue: string | undefined | null, mode = IncludeMode.Include) => {
-  value = getValueOrDefault(String, value?.toString());
-  compareValue = getValueOrDefault(String, compareValue?.toString());
+export const isInclude = (
+  value: string | number | undefined | null,
+  includesValue: string | number | undefined | null,
+  mode = IncludeMode.Include
+) => {
+  const result = getValueOrDefault(String, value?.toString());
+  const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
   switch (mode) {
     case IncludeMode.IncludeIgnoreCaseSensitive:
-      return value.toUpperCase().includes(compareValue.toUpperCase());
+      return result.includesWithIgnoreCase(resultIncludesValue);
+    case IncludeMode.IncludeBetweenIgnoreCaseSensitive:
+      return result.includesWithIgnoreCase(resultIncludesValue) || resultIncludesValue.includesWithIgnoreCase(result);
     case IncludeMode.IncludeBetween:
-      return value.includes(compareValue) || compareValue.includes(value);
-    case IncludeMode.IncludeBetweenIgnoreCaseSensitive: {
-      value = value.toUpperCase();
-      compareValue = compareValue.toUpperCase();
-      return value.includes(compareValue) || compareValue.includes(value);
-    }
+      return result.includesWithIgnoreCase(resultIncludesValue) || resultIncludesValue.includes(result);
     case IncludeMode.Include:
     default:
-      return value.includes(compareValue);
+      return result.includes(resultIncludesValue);
+  }
+};
+
+export const isIncludeList = (
+  value: (string | number | undefined | null)[] | undefined | null,
+  includesValue: string | number | undefined | null,
+  mode: IncludeMode.Include | IncludeMode.IncludeIgnoreCaseSensitive = IncludeMode.Include
+) => {
+  const result = getValueOrDefault(
+    Array,
+    value?.map((i) => i?.toString())
+  );
+  const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
+  switch (mode) {
+    case IncludeMode.IncludeIgnoreCaseSensitive:
+      return result.map((i) => i?.toUpperCase()).includes(resultIncludesValue.toUpperCase());
+    case IncludeMode.Include:
+    default:
+      return result.includes(resultIncludesValue);
   }
 };

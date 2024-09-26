@@ -35,7 +35,7 @@ import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 
 interface OptionsPokemon {
@@ -92,7 +92,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                getValueOrDefault(String, data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name),
+                getValueOrDefault(String, data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name),
                 new Form({
                   ...item,
                   formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
@@ -257,7 +257,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                     e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon.prev?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
@@ -284,7 +284,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         }
         onError={(e) => {
           e.currentTarget.onerror = null;
-          if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+          if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
             e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
           } else {
             e.currentTarget.src = APIService.getPokeFullSprite(0);
@@ -301,7 +301,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                     e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon.next?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);

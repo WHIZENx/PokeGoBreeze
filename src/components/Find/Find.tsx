@@ -10,7 +10,8 @@ import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 import loading from '../../assets/loading.png';
 import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isInclude, isNotEmpty } from '../../util/extension';
+import { IncludeMode } from '../../util/enums/string.enum';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -41,7 +42,7 @@ const Find = (props: IFindComponent) => {
     if (isNotEmpty(pokemonList)) {
       const timeOutId = setTimeout(() => {
         const results = pokemonList.filter(
-          (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+          (item) => isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
         );
         setPokemonListFilter(results);
       });

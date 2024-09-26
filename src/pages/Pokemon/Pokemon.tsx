@@ -53,9 +53,9 @@ import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 import { LocationState } from '../../core/models/router.model';
-import { EqualMode } from '../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -159,7 +159,7 @@ const Pokemon = (props: IPokemonPage) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                getValueOrDefault(String, data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name),
+                getValueOrDefault(String, data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name),
                 new Form({
                   ...item,
                   formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
@@ -357,7 +357,9 @@ const Pokemon = (props: IPokemonPage) => {
       if (!params.id) {
         setRegion(regionList[toNumber(getValueOrDefault(String, gen))]);
       } else {
-        const currentRegion = Object.values(regionList).find((item) => currentForm.form.formName.includes(item.toLowerCase()));
+        const currentRegion = Object.values(regionList).find((item) =>
+          isInclude(currentForm.form.formName, item, IncludeMode.IncludeIgnoreCaseSensitive)
+        );
         if (!isEmpty(currentForm.form.formName) && currentRegion) {
           setRegion(!region || !isEqual(region, currentRegion) ? currentRegion : region);
         } else {
@@ -446,7 +448,7 @@ const Pokemon = (props: IPokemonPage) => {
                   )}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                    if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                       e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
                     } else {
                       e.currentTarget.src = APIService.getPokeFullSprite(0);

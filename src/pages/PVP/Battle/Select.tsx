@@ -14,7 +14,8 @@ import { Combat, ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
@@ -40,12 +41,12 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setPokemonIcon(APIService.getPokeIconSprite(getValueOrDefault(String, value.pokemon.sprite)));
     setPokemon(value);
 
-    if (fMove.includes('HIDDEN_POWER')) {
+    if (isInclude(fMove, 'HIDDEN_POWER')) {
       fMove = 'HIDDEN_POWER';
     }
 
     const fMoveCombat = combat.find((item) => isEqual(item.name, fMove));
-    if (fMoveCombat && value.moveset.at(0)?.includes('HIDDEN_POWER')) {
+    if (fMoveCombat && isInclude(value.moveset.at(0), 'HIDDEN_POWER')) {
       fMoveCombat.type = getValueOrDefault(String, value.moveset.at(0)?.split('_').at(2));
     }
     setFMove(fMoveCombat);
@@ -105,7 +106,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMovePriCombat?.sound))),
             cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMoveSecCombat?.sound))),
           },
-          shadow: value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`),
+          shadow: isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive),
         })
       );
     }
@@ -179,7 +180,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       <div className="border-box-battle position-relative">
         {(score > 0 || !isEmpty(pokemonIcon) || pokemon) && (
           <span className="pokemon-select-right">
-            {pokemon?.speciesId.includes('_shadow') && (
+            {isInclude(pokemon?.speciesId, '_shadow') && (
               <span style={{ marginRight: 5 }} className="type-icon-small ic shadow-ic">
                 {capitalize(FORM_SHADOW)}
               </span>
@@ -213,13 +214,16 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       {isNotEmpty(props.data) && (
         <div className="result-pokemon" style={{ display: show ? 'block' : 'none', maxHeight: 274 }}>
           {props.data
-            .filter((pokemon) => pokemon && splitAndCapitalize(pokemon.pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
+            .filter(
+              (pokemon) =>
+                pokemon && isInclude(splitAndCapitalize(pokemon.pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive)
+            )
             .map((value, index) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
                 <CardPokemon
                   value={value.pokemon}
                   score={value.score}
-                  isShadow={value.speciesId.toUpperCase().includes(`_${FORM_SHADOW}`)}
+                  isShadow={isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)}
                 />
               </div>
             ))}
@@ -242,11 +246,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                   .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                   ?.moves.fastMoves.map((value) => {
                     let move = value.moveId;
-                    if (move.includes('HIDDEN_POWER')) {
+                    if (isInclude(move, 'HIDDEN_POWER')) {
                       move = 'HIDDEN_POWER';
                     }
                     let fMove = combat.find((item) => isEqual(item.name, move));
-                    if (fMove && value.moveId.includes('HIDDEN_POWER')) {
+                    if (fMove && isInclude(value.moveId, 'HIDDEN_POWER')) {
                       fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, value.moveId.split('_').at(2)) });
                     }
                     return fMove;

@@ -44,8 +44,8 @@ import { IEvolutionComponent } from '../../models/component.model';
 import { TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault, isEmpty, isEqual, isNotEmpty } from '../../../util/extension';
-import { EqualMode } from '../../../util/enums/string.enum';
+import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../../util/extension';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 interface IPokemonEvo {
   prev?: string;
@@ -160,7 +160,7 @@ const Evolution = (props: IEvolutionComponent) => {
     if (!isNotEmpty(evos)) {
       return;
     }
-    if (arr.flatMap((form) => form).some((p) => !evos.includes(p.form))) {
+    if (arr.flatMap((form) => form).some((p) => !isIncludeList(evos, p.form))) {
       arr.push(
         evos
           .filter((name) => pokemonData.find((pokemon) => isEqual(pokemon.name, name)))
@@ -182,7 +182,10 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainJSON = (id: number, forme: IForm) => {
-    let form = isEmpty(forme.formName) || forme.formName.toUpperCase().includes(FORM_MEGA) ? FORM_NORMAL : forme.formName;
+    let form =
+      isEmpty(forme.formName) || isInclude(forme.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
+        ? FORM_NORMAL
+        : forme.formName;
     if (forme.formName === '10') {
       form += '%';
     }
@@ -323,7 +326,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const getEvoChainStore = (id: number, forme: IForm) => {
     const formName = getValueOrDefault(String, forme.formName.toUpperCase());
     const form =
-      isEmpty(formName) || formName.includes(FORM_MEGA)
+      isEmpty(formName) || isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
         ? FORM_NORMAL
         : forme.isPurified || forme.isShadow
         ? isEqual(formName, FORM_SHADOW) || isEqual(formName, FORM_PURIFIED)
@@ -382,9 +385,9 @@ const Evolution = (props: IEvolutionComponent) => {
   }, [props.forme, props.id]);
 
   const getQuestEvo = (prevId: number, form: string) => {
-    const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToForm.includes(form) && value.evoToId === prevId));
+    const pokemon = pokemonData.find((item) => item.evoList?.find((value) => isInclude(value.evoToForm, form) && value.evoToId === prevId));
     if (pokemon) {
-      return pokemon.evoList?.find((item) => item.evoToForm.includes(form) && item.evoToId === prevId);
+      return pokemon.evoList?.find((item) => isInclude(item.evoToForm, form) && item.evoToId === prevId);
     } else {
       return new EvoList();
     }
@@ -588,7 +591,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <Fragment>
               {chain.length > 1 || (chain.length === 1 && !isEqual(form, FORM_NORMAL) && !isEmpty(form)) ? (
                 <Fragment>
-                  {form !== FORM_NORMAL && !isEmpty(form) && !form.toUpperCase().includes(FORM_MEGA) ? (
+                  {form !== FORM_NORMAL && !isEmpty(form) && !isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) ? (
                     <ThemeProvider theme={customTheme}>
                       <Badge
                         color="secondary"

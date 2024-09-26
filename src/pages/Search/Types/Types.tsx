@@ -18,7 +18,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from '../../../util/extension';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -223,7 +223,7 @@ const SearchTypes = () => {
             Array,
             data?.pokemon
               ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-              .filter((pokemon) => pokemon.types.includes(currentType))
+              .filter((pokemon) => isIncludeList(pokemon.types, currentType))
           ),
           fastMove: getValueOrDefault(
             Array,

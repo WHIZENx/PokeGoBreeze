@@ -67,9 +67,20 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
-import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isUndefined,
+  toNumber,
+} from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 interface IOption {
   weatherBoss: boolean;
@@ -444,8 +455,8 @@ const RaidBattle = () => {
           defendHpRemain: Math.floor(getValueOrDefault(Number, statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
           death: Math.floor(getValueOrDefault(Number, statsDefender.hp) / tdoAtk),
           shadow,
-          purified: purified && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
-          mShadow: shadow && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
+          purified: purified && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          mShadow: shadow && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -517,7 +528,9 @@ const RaidBattle = () => {
         );
       }
       if (
-        (!pokemon.forme || (!pokemon.forme.toUpperCase().includes(FORM_MEGA) && !pokemon.forme.toUpperCase().includes(FORM_PRIMAL))) &&
+        (!pokemon.forme ||
+          (!isInclude(pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
+            !isInclude(pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(
@@ -1286,7 +1299,7 @@ const RaidBattle = () => {
                 if (!used.onlyMega) {
                   return true;
                 }
-                return splitAndCapitalize(obj.pokemon?.name, '-', ' ').includes(' Mega');
+                return isInclude(splitAndCapitalize(obj.pokemon?.name, '-', ' '), ` ${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive);
               })
               .filter((obj) => {
                 if (!used.onlyShadow) {

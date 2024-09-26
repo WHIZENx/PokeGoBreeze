@@ -29,8 +29,16 @@ import { IMovePage } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { TableColumnModify } from '../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../util/extension';
-import { EqualMode } from '../../util/enums/string.enum';
+import {
+  combineClasses,
+  convertColumnDataType,
+  getValueOrDefault,
+  isEqual,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../util/extension';
+import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -98,8 +106,8 @@ const Move = (props: IMovePage) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getWeatherEffective = (type: string) => {
-    const result = Object.entries(data?.weatherBoost ?? new WeatherBoost())?.find(([, value]) => {
-      return value.includes(type.toUpperCase());
+    const result = Object.entries(data?.weatherBoost ?? new WeatherBoost())?.find(([, value]: [string, string[]]) => {
+      return isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive);
     });
     return result && result.at(0);
   };

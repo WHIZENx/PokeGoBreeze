@@ -26,8 +26,9 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isInclude } from '../../../util/extension';
 import { ChargeAbility } from './enums/damage.enum';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -162,7 +163,7 @@ const Damage = () => {
           stab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)),
           wb: battleState.weather,
           dodge: battleState.dodge,
-          mega: getValueOrDefault(Boolean, form?.form.formName?.toUpperCase().includes(FORM_MEGA)),
+          mega: isInclude(form?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
           trainer: battleState.trainer,
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,

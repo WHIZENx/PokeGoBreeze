@@ -31,7 +31,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isIncludeList, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
 import {
   Medal,
   MedalType,
@@ -613,7 +613,7 @@ const CatchChance = () => {
       <hr />
       <div className="position-relative">
         {loading && <div className="position-absolute w-100 h-100 impossible-encounter" />}
-        {!advance && encounter && data && Object.keys(data).includes('result') && (
+        {!advance && encounter && data && isIncludeList(Object.keys(data), 'result') && (
           <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
             <div className="container table-container">
               <table className="table-catch-chance w-100">

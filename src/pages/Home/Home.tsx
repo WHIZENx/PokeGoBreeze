@@ -40,7 +40,8 @@ import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-h
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
+import { IncludeMode } from '../../util/enums/string.enum';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -135,7 +136,7 @@ const Home = () => {
 
   const addTypeArr = (value: string) => {
     let types = selectTypes;
-    if (types.includes(value)) {
+    if (isIncludeList(types, value)) {
       return setSelectTypes([...types].filter((item) => !isEqual(item, value)));
     } else {
       types = types.slice(0, 1);
@@ -173,23 +174,24 @@ const Home = () => {
           const result = dataList.filter((item) => {
             const boolFilterType =
               !isNotEmpty(selectTypes) ||
-              (item.types.every((item) => selectTypes.includes(item.toUpperCase())) && item.types.length === selectTypes.length);
+              (item.types.every((item) => isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)) &&
+                item.types.length === selectTypes.length);
             const boolFilterPoke =
               isEmpty(searchTerm) ||
               (match
-                ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id.toString(), searchTerm)
-                : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  item.id.toString().includes(searchTerm));
+                ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
+                : isInclude(splitAndCapitalize(item.name, '-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
+                  isInclude(item.id, searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = mega ? item.forme?.toUpperCase().includes(FORM_MEGA) : true;
-            const boolGmax = gmax ? item.forme?.toUpperCase().includes(FORM_GMAX) : true;
-            const boolPrimal = primal ? item.forme?.toUpperCase().includes(FORM_PRIMAL) : true;
+            const boolMega = mega ? isInclude(item.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) : true;
+            const boolGmax = gmax ? isInclude(item.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive) : true;
+            const boolPrimal = primal ? isInclude(item.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive) : true;
             const boolLegend = legendary ? item.class === TYPE_LEGENDARY : true;
             const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
             const boolUltra = ultraBeast ? item.class === TYPE_ULTRA_BEAST : true;
 
-            const findGen = item.gen === 0 || gen.includes(item.gen - 1);
-            const findVersion = item.version === -1 || version.includes(item.version);
+            const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
+            const findVersion = item.version === -1 || isIncludeList(version, item.version);
             return (
               boolFilterType &&
               boolFilterPoke &&
@@ -303,7 +305,7 @@ const Home = () => {
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
                   `btn-select-type w-100 border-types btn-${theme.palette.mode}`,
-                  selectTypes.includes(item) ? `select-type${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}` : ''
+                  isIncludeList(selectTypes, item) ? `select-type${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}` : ''
                 )}
                 style={{ padding: 10, transition: TRANSITION_TIME }}
               >
@@ -394,7 +396,7 @@ const Home = () => {
                       </MenuItem>
                       {Object.values(genList).map((_, index) => (
                         <MenuItem key={index} value={index}>
-                          <Checkbox checked={gen.includes(index)} />
+                          <Checkbox checked={isIncludeList(gen, index)} />
                           <ListItemText primary={`Generation ${index + 1} (${regionList[index + 1]})`} />
                         </MenuItem>
                       ))}
@@ -422,7 +424,7 @@ const Home = () => {
                       </MenuItem>
                       {versionList.map((value, index) => (
                         <MenuItem key={index} value={index}>
-                          <Checkbox checked={version.includes(index)} />
+                          <Checkbox checked={isIncludeList(version, index)} />
                           <ListItemText primary={value} />
                         </MenuItem>
                       ))}

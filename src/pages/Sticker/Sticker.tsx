@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isNotEmpty, toNumber } from '../../util/extension';
+import { getValueOrDefault, isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
 
 interface PokemonStickerModel {
   id?: number | null;
@@ -34,7 +34,13 @@ const Sticker = () => {
     if (isNotEmpty(pokeStickerList) && !isNotEmpty(selectPokemon)) {
       const result = pokeStickerList
         .reduce((prev: PokemonStickerModel[], curr) => {
-          if (curr.pokemonName && !prev.map((obj) => obj.name).includes(curr.pokemonName)) {
+          if (
+            curr.pokemonName &&
+            !isIncludeList(
+              prev.map((obj) => obj.name),
+              curr.pokemonName
+            )
+          ) {
             prev.push({
               id: curr.pokemonId,
               name: curr.pokemonName,

@@ -64,7 +64,7 @@ import { StatsBase } from '../../../core/models/stats.model';
 import { BuffType, TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -724,7 +724,7 @@ const Battle = () => {
         }`;
 
         const result = file
-          .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
+          .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
             const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
@@ -1337,18 +1337,18 @@ const Battle = () => {
               find={true}
               title="Fast Move"
               move={pokemon.fMove}
-              elite={pokemon.pokemonData?.pokemon?.eliteQuickMove?.includes(getValueOrDefault(String, pokemon.fMove?.name))}
+              elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteQuickMove, pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
                 find={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                elite={pokemon.pokemonData?.pokemon?.eliteCinematicMove?.includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
-                shadow={pokemon.pokemonData?.pokemon?.shadowMoves?.includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
-                purified={pokemon.pokemonData?.pokemon?.purifiedMoves?.includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
-                special={pokemon.pokemonData?.pokemon?.specialMoves?.includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
-                unavailable={!getAllMoves(pokemon.pokemonData?.pokemon).includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
+                elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMove, pokemon.cMovePri?.name)}
+                shadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMovePri?.name)}
+                purified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMovePri?.name)}
+                special={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMovePri?.name)}
+                unavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMovePri?.name)}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1358,11 +1358,11 @@ const Battle = () => {
                   find={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={pokemon.pokemonData?.pokemon?.eliteCinematicMove?.includes(pokemon.cMoveSec.name)}
-                  shadow={pokemon.pokemonData?.pokemon?.shadowMoves?.includes(pokemon.cMoveSec.name)}
-                  purified={pokemon.pokemonData?.pokemon?.purifiedMoves?.includes(pokemon.cMoveSec.name)}
-                  special={pokemon.pokemonData?.pokemon?.specialMoves?.includes(pokemon.cMoveSec.name)}
-                  unavailable={!getAllMoves(pokemon.pokemonData?.pokemon).includes(pokemon.cMoveSec.name)}
+                  elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMove, pokemon.cMoveSec.name)}
+                  shadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMoveSec.name)}
+                  purified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMoveSec.name)}
+                  special={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMoveSec.name)}
+                  unavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMoveSec.name)}
                 />
                 {findBuff(pokemon.cMoveSec)}
               </div>

@@ -27,7 +27,17 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../../store/actions';
-import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isNullOrEmpty,
+  toNumber,
+} from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 
 const FindBattle = () => {
@@ -73,11 +83,16 @@ const FindBattle = () => {
       }
       let curr;
       if (form === FORM_NORMAL) {
-        curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && isEqual(form, item.forme));
+        curr = dataStore?.pokemon?.find((item) => isIncludeList(currId, item.num) && isEqual(form, item.forme));
       } else {
-        curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && item.forme?.includes(form));
+        curr = dataStore?.pokemon?.find((item) => isIncludeList(currId, item.num) && isInclude(item.forme, form));
       }
-      if (!arr.map((i) => i.id).includes(getValueOrDefault(Number, curr?.num))) {
+      if (
+        !isIncludeList(
+          arr.map((i) => i.id),
+          curr?.num
+        )
+      ) {
         arr.push({
           ...curr,
           form,
@@ -102,7 +117,12 @@ const FindBattle = () => {
 
   const prevEvoChain = useCallback(
     (obj: IPokemonData, defaultForm: string, arr: IEvolution[], result: IEvolution[][]) => {
-      if (!arr.map((i) => i.id).includes(obj.num)) {
+      if (
+        !isIncludeList(
+          arr.map((i) => i.id),
+          obj.num
+        )
+      ) {
         arr.push({
           ...obj,
           name: getValueOrDefault(String, obj.pokemonId),
@@ -137,7 +157,7 @@ const FindBattle = () => {
         if (currentForm === FORM_NORMAL) {
           curr = dataStore?.pokemon?.filter((item) => id === item.num && isEqual(currentForm, item.forme));
         } else {
-          curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme?.includes(currentForm ?? FORM_NORMAL));
+          curr = dataStore?.pokemon?.filter((item) => id === item.num && isInclude(item.forme, currentForm ?? FORM_NORMAL));
         }
       }
       if (!isNotEmpty(curr)) {
@@ -280,7 +300,7 @@ const FindBattle = () => {
 
   const getImageList = (id: number) => {
     const isForm = isNullOrEmpty(form?.form.formName?.toUpperCase()) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
-    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form?.includes(isForm ?? FORM_NORMAL));
+    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => isInclude(item.form, isForm ?? FORM_NORMAL));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
     }

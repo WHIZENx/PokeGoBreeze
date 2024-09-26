@@ -3,7 +3,7 @@ import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
 import { EqualMode } from './enums/string.enum';
-import { getValueOrDefault, isEqual, isNotEmpty } from './extension';
+import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from './extension';
 import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
@@ -79,7 +79,12 @@ export const raidEgg = (tier: number, mega: boolean, primal: boolean, ultra?: bo
 };
 
 export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
-  let data = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData.find((item) =>
+    isIncludeList(
+      item.familyGroup.map((value) => value.id),
+      id
+    )
+  );
   if (!data) {
     data = candyData.find((item) => item.familyId === id);
     if (!data) {
@@ -92,7 +97,12 @@ export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
 };
 
 export const computeCandyColor = (candyData: ICandy[], id: number) => {
-  let data = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData.find((item) =>
+    isIncludeList(
+      item.familyGroup.map((value) => value.id),
+      id
+    )
+  );
   if (!data) {
     data = candyData.find((item) => item.familyId === id);
     if (!data) {

@@ -20,8 +20,18 @@ import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague
 import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
+import {
+  combineClasses,
+  getValueOrDefault,
+  isEmpty,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
 import { LeagueRewardType, RewardType } from '../../../core/enums/league.enum';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -67,7 +77,7 @@ const Leagues = () => {
     if (dataStore?.leagues) {
       const leagues = getValueOrDefault(Array, dataStore?.leagues?.data);
       setLeagues(leagues);
-      setOpenedLeague(leagues.filter((league) => dataStore.leagues.allowLeagues.includes(getValueOrDefault(String, league.id))));
+      setOpenedLeague(leagues.filter((league) => isIncludeList(dataStore.leagues.allowLeagues, league.id)));
       setSetting(dataStore.leagues.season.settings.find((data) => data.rankLevel === rank + 1));
     }
   }, [dataStore?.leagues]);
@@ -77,24 +87,21 @@ const Leagues = () => {
       const timeOutId = setTimeout(() => {
         setLeagueFilter(
           leagues.filter((value) => {
-            if (dataStore?.leagues?.allowLeagues.includes(getValueOrDefault(String, value.id))) {
+            if (isIncludeList(dataStore?.leagues?.allowLeagues, value.id)) {
               return false;
             }
             let textTitle = '';
-            if (
-              getValueOrDefault(String, value.id).includes('SEEKER') &&
-              ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(value.title)
-            ) {
+            if (isInclude(value.id, 'SEEKER') && isIncludeList(['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'], value.title)) {
               textTitle = splitAndCapitalize(getValueOrDefault(String, value.id).replace('VS_', '').toLowerCase(), '_', ' ');
             } else {
               textTitle = splitAndCapitalize(value.title.toLowerCase(), '_', ' ');
             }
-            if (getValueOrDefault(String, value.id).includes('SAFARI_ZONE')) {
+            if (isInclude(value.id, 'SAFARI_ZONE')) {
               textTitle += ` ${getValueOrDefault(String, value.id).split('_').at(3)} ${capitalize(
                 getValueOrDefault(String, value.id).split('_').at(4)
               )}`;
             }
-            return isEmpty(search) || textTitle.toLowerCase().includes(search.toLowerCase());
+            return isEmpty(search) || isInclude(textTitle, search, IncludeMode.IncludeIgnoreCaseSensitive);
           })
         );
       }, 300);
@@ -146,11 +153,10 @@ const Leagues = () => {
           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
             <img alt="img-league" height={50} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
             <b className={league.enabled ? '' : 'text-danger'}>
-              {(getValueOrDefault(String, league.id).includes('SEEKER') &&
-              ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(league.title)
+              {(isInclude(league.id, 'SEEKER') && isIncludeList(['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'], league.title)
                 ? splitAndCapitalize(getValueOrDefault(String, league.id).replace('VS_', '').toLowerCase(), '_', ' ')
                 : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
-                (getValueOrDefault(String, league.id).includes('SAFARI_ZONE')
+                (isInclude(league.id, 'SAFARI_ZONE')
                   ? ` ${getValueOrDefault(String, league.id).split('_').at(3)} ${capitalize(
                       getValueOrDefault(String, league.id).split('_').at(4)
                     )}`
@@ -162,9 +168,7 @@ const Leagues = () => {
           <div className="sub-body">
             <h4 className="title-leagues">{splitAndCapitalize(getValueOrDefault(String, league.id).toLowerCase(), '_', ' ')}</h4>
             <div className="text-center">
-              {!isEqual(league.league, league.title) &&
-              !league.title.includes('REMIX') &&
-              !getValueOrDefault(String, league.iconUrl).includes('pogo') ? (
+              {!isEqual(league.league, league.title) && !isInclude(league.title, 'REMIX') && !isInclude(league.iconUrl, 'pogo') ? (
                 <div className="league">
                   <img
                     alt="img-league"

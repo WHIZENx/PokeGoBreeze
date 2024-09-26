@@ -30,8 +30,17 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, toNumber } from '../../../util/extension';
-import { EqualMode } from '../../../util/enums/string.enum';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -110,7 +119,7 @@ const RankingPVP = () => {
           let fMoveData = item.moveset.at(0);
           const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(1)));
           const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(2)));
-          if (fMoveData?.includes('HIDDEN_POWER')) {
+          if (isInclude(fMoveData, 'HIDDEN_POWER')) {
             fMoveData = 'HIDDEN_POWER';
           }
 
@@ -121,7 +130,7 @@ const RankingPVP = () => {
             cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
           }
 
-          if (fMove && item.moveset.at(0)?.includes('HIDDEN_POWER')) {
+          if (fMove && isInclude(item.moveset.at(0), 'HIDDEN_POWER')) {
             fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, item.moveset.at(0)?.split('_').at(2)) });
           }
 
@@ -141,10 +150,8 @@ const RankingPVP = () => {
             fMove,
             cMovePri,
             cMoveSec,
-            shadow: item.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
-            purified:
-              pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMovePri?.name)) ||
-              (cMoveDataSec && pokemon?.purifiedMoves?.includes(cMoveDataSec)) === true,
+            shadow: isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
+            purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec),
           });
         });
         setRankingData(filePVP);
@@ -269,7 +276,7 @@ const RankingPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => isEqual(item.id, params.serie) && item.cp.includes(cp));
+    const league = pvp?.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league ? (
@@ -343,8 +350,9 @@ const RankingPVP = () => {
             {rankingData
               .filter(
                 (pokemon) =>
-                  splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
-                  pokemon.id?.toString().includes(search)
+                  pokemon.id &&
+                  (isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+                    isInclude(pokemon.id, search))
               )
               .sort((a, b) => setSortedPokemonBattle(a, b))
               .map((value, index) => (

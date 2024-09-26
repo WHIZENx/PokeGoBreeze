@@ -29,8 +29,9 @@ import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { TypeSex } from '../../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
 import { WeightHeight } from '../../../core/models/pokemon.model';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -83,7 +84,9 @@ const FormComponent = (props: IFormInfoComponent) => {
     if (props.pokemonRouter.action === Action.Pop) {
       const form = searchParams.get('form')?.toUpperCase() || FORM_NORMAL;
       const currentData = props.pokeData.find(
-        (i) => i.name.includes(form.toLowerCase().replaceAll('_', '-')) || (isEqual(form, FORM_NORMAL) && i.isDefault)
+        (i) =>
+          isInclude(i.name, form.replaceAll('_', '-'), IncludeMode.IncludeIgnoreCaseSensitive) ||
+          (isEqual(form, FORM_NORMAL) && i.isDefault)
       );
 
       if (currentData) {
@@ -250,7 +253,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       </div>
       <hr className="w-100" />
-      {!props.form?.form.formName?.toUpperCase().includes(FORM_GMAX) ? (
+      {!isInclude(props.form?.form.formName, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive) ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
@@ -266,12 +269,16 @@ const FormComponent = (props: IFormInfoComponent) => {
               isLoadedForms={props.isLoadedForms}
             />
           </div>
-          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.formName.toUpperCase().includes(FORM_MEGA))) && (
+          {props.formList?.some((item) =>
+            item.some((pokemon) => isInclude(pokemon.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive))
+          ) && (
             <div className="col-xl" style={{ padding: 0 }}>
               <Mega formList={getValueOrDefault(Array, props.formList)} id={props.defaultId} />
             </div>
           )}
-          {props.formList?.some((item) => item.some((pokemon) => pokemon.form.formName.toUpperCase().includes(FORM_PRIMAL))) && (
+          {props.formList?.some((item) =>
+            item.some((pokemon) => isInclude(pokemon.form.formName, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))
+          ) && (
             <div className="col-xl" style={{ padding: 0 }}>
               <Primal formList={getValueOrDefault(Array, props.formList)} id={props.defaultId} />
             </div>
@@ -281,12 +288,12 @@ const FormComponent = (props: IFormInfoComponent) => {
         <Evolution
           setId={props.setId}
           id={props.defaultId}
-          forme={props.form.form}
-          formDefault={props.defaultId === props.form.form.id}
+          forme={props.form?.form}
+          formDefault={props.defaultId === props.form?.form.id}
           region={props.region}
           pokemonRouter={props.pokemonRouter}
-          purified={props.form.form.isPurified}
-          shadow={props.form.form.isShadow}
+          purified={props.form?.form.isPurified}
+          shadow={props.form?.form.isShadow}
           setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
         />

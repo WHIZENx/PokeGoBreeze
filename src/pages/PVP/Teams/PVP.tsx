@@ -32,8 +32,19 @@ import { FORM_NORMAL, FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isNullOrUndefined, toNumber } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isNullOrUndefined,
+  toNumber,
+} from '../../../util/extension';
 import { Sorted, SortType } from '../enums/pvp-team.enum';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -74,7 +85,7 @@ const TeamPVP = () => {
     }
 
     let fMoveText: string, cMove: string, cMovePriText: string, cMoveSecText: string;
-    if (moveSet.includes('+')) {
+    if (isInclude(moveSet, '+')) {
       [fMoveText, cMove] = moveSet.split('+');
       [cMovePriText, cMoveSecText] = cMove.split('/');
     } else {
@@ -117,9 +128,8 @@ const TeamPVP = () => {
       fMove,
       cMovePri,
       cMoveSec,
-      shadow: speciesId.toUpperCase().includes(FORM_SHADOW),
-      purified:
-        (cMovePri && pokemon?.purifiedMoves?.includes(cMovePri.name)) || (cMoveSec && pokemon?.purifiedMoves?.includes(cMoveSec.name)),
+      shadow: isInclude(speciesId, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive),
+      purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
     });
     return result;
   };
@@ -198,7 +208,7 @@ const TeamPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.trains?.find((item) => isEqual(item.id, params.serie) && item.cp.includes(cp));
+    const league = pvp?.trains?.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -232,10 +242,11 @@ const TeamPVP = () => {
 
   const findMoveByTag = (nameSet: string[], tag: string) => {
     let move: ICombat | undefined;
-    if (!isNotEmpty(nameSet) || !tag) {
+    if (!tag) {
       return move;
     }
-    nameSet.forEach((name) => {
+
+    for (const name of nameSet) {
       move = dataStore?.combat?.find(
         (item) =>
           (item.abbreviation && isEqual(item.abbreviation, tag)) ||
@@ -244,19 +255,14 @@ const TeamPVP = () => {
       if (!isNullOrUndefined(move)) {
         return move;
       }
-    });
-
-    if (isNullOrUndefined(move)) {
-      nameSet = findMoveTeam(tag, allMoves, true);
-      if (isNotEmpty(nameSet)) {
-        const name = nameSet[0];
-        move = dataStore?.combat?.find(
-          (item) =>
-            (item.abbreviation && isEqual(item.abbreviation, tag)) ||
-            (!item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(name)))
-        );
-      }
     }
+
+    nameSet = findMoveTeam(tag, allMoves, true);
+    move = dataStore?.combat?.find(
+      (item) =>
+        (item.abbreviation && isEqual(item.abbreviation, tag)) ||
+        (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))
+    );
 
     return move;
   };
@@ -331,8 +337,8 @@ const TeamPVP = () => {
         {rankingData?.performers
           .filter(
             (pokemon) =>
-              splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
-              pokemon.id?.toString().includes(search)
+              isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+              isInclude(pokemon.id, search)
           )
           .sort((a, b) => setSortedPokemonPerformers(a, b))
           .map((value, index) => (
@@ -371,8 +377,8 @@ const TeamPVP = () => {
                       title="Fast Move"
                       color="white"
                       move={value.fMove}
-                      elite={value.pokemonData?.eliteQuickMove?.includes(getValueOrDefault(String, value.fMove?.name))}
-                      unavailable={!getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.fMove?.name))}
+                      elite={isIncludeList(value.pokemonData?.eliteQuickMove, value.fMove?.name)}
+                      unavailable={!isIncludeList(getAllMoves(value.pokemonData), value.fMove?.name)}
                     />
                     <TypeBadge
                       grow={true}
@@ -380,13 +386,11 @@ const TeamPVP = () => {
                       title="Primary Charged Move"
                       color="white"
                       move={value.cMovePri}
-                      elite={value.pokemonData?.eliteCinematicMove?.includes(getValueOrDefault(String, value.cMovePri?.name))}
-                      shadow={value.pokemonData?.shadowMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
-                      purified={value.pokemonData?.purifiedMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
-                      special={value.pokemonData?.specialMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
-                      unavailable={
-                        value.cMovePri && !getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.cMovePri.name))
-                      }
+                      elite={isIncludeList(value.pokemonData?.eliteCinematicMove, value.cMovePri?.name)}
+                      shadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMovePri?.name)}
+                      purified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMovePri?.name)}
+                      special={isIncludeList(value.pokemonData?.specialMoves, value.cMovePri?.name)}
+                      unavailable={value.cMovePri && !isIncludeList(getAllMoves(value.pokemonData), value.cMovePri.name)}
                     />
                     {value.cMoveSec && (
                       <TypeBadge
@@ -395,11 +399,11 @@ const TeamPVP = () => {
                         title="Secondary Charged Move"
                         color="white"
                         move={value.cMoveSec}
-                        elite={value.pokemonData?.eliteCinematicMove?.includes(value.cMoveSec.name)}
-                        shadow={value.pokemonData?.shadowMoves?.includes(value.cMoveSec.name)}
-                        purified={value.pokemonData?.purifiedMoves?.includes(value.cMoveSec.name)}
-                        special={value.pokemonData?.specialMoves?.includes(value.cMoveSec.name)}
-                        unavailable={value.cMoveSec && !getAllMoves(value.pokemonData).includes(value.cMoveSec.name)}
+                        elite={isIncludeList(value.pokemonData?.eliteCinematicMove, value.cMoveSec.name)}
+                        shadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMoveSec.name)}
+                        purified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMoveSec.name)}
+                        special={isIncludeList(value.pokemonData?.specialMoves, value.cMoveSec.name)}
+                        unavailable={value.cMoveSec && !isIncludeList(getAllMoves(value.pokemonData), value.cMoveSec.name)}
                       />
                     )}
                   </div>
@@ -550,8 +554,8 @@ const TeamPVP = () => {
                                 title="Fast Move"
                                 color="white"
                                 move={value.fMove}
-                                elite={value.pokemonData?.eliteQuickMove?.includes(getValueOrDefault(String, value.fMove?.name))}
-                                unavailable={!getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.fMove?.name))}
+                                elite={isIncludeList(value.pokemonData?.eliteQuickMove, value.fMove?.name)}
+                                unavailable={!isIncludeList(getAllMoves(value.pokemonData), value.fMove?.name)}
                               />
                               <TypeBadge
                                 grow={true}
@@ -559,11 +563,11 @@ const TeamPVP = () => {
                                 title="Primary Charged Move"
                                 color="white"
                                 move={value.cMovePri}
-                                elite={value.pokemonData?.eliteCinematicMove?.includes(getValueOrDefault(String, value.cMovePri?.name))}
-                                shadow={value.pokemonData?.shadowMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
-                                purified={value.pokemonData?.purifiedMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
-                                special={value.pokemonData?.specialMoves?.includes(getValueOrDefault(String, value.cMovePri?.name))}
-                                unavailable={!getAllMoves(value.pokemonData).includes(getValueOrDefault(String, value.cMovePri?.name))}
+                                elite={isIncludeList(value.pokemonData?.eliteCinematicMove, value.cMovePri?.name)}
+                                shadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMovePri?.name)}
+                                purified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMovePri?.name)}
+                                special={isIncludeList(value.pokemonData?.specialMoves, value.cMovePri?.name)}
+                                unavailable={!isIncludeList(getAllMoves(value.pokemonData), value.cMovePri?.name)}
                               />
                               {value.cMoveSec && (
                                 <TypeBadge
@@ -572,11 +576,11 @@ const TeamPVP = () => {
                                   title="Secondary Charged Move"
                                   color="white"
                                   move={value.cMoveSec}
-                                  elite={value.pokemonData?.eliteCinematicMove?.includes(value.cMoveSec.name)}
-                                  shadow={value.pokemonData?.shadowMoves?.includes(value.cMoveSec.name)}
-                                  purified={value.pokemonData?.purifiedMoves?.includes(value.cMoveSec.name)}
-                                  special={value.pokemonData?.specialMoves?.includes(value.cMoveSec.name)}
-                                  unavailable={!getAllMoves(value.pokemonData).includes(value.cMoveSec.name)}
+                                  elite={isIncludeList(value.pokemonData?.eliteCinematicMove, value.cMoveSec.name)}
+                                  shadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMoveSec.name)}
+                                  purified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMoveSec.name)}
+                                  special={isIncludeList(value.pokemonData?.specialMoves, value.cMoveSec.name)}
+                                  unavailable={!isIncludeList(getAllMoves(value.pokemonData), value.cMoveSec.name)}
                                 />
                               )}
                             </div>
