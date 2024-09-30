@@ -3,7 +3,7 @@ import { replaceTempMovePvpName } from '../../util/utils';
 import { Store, StoreModel } from '../models/store.model';
 import { StoreActions } from '../../store/actions';
 import { StoreActionsUnion } from '../actions/store.action';
-import { getValueOrDefault } from '../../util/extension';
+import { getValueOrDefault, isEqual } from '../../util/extension';
 
 const initialize: StoreModel = new Store();
 
@@ -103,8 +103,8 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
       };
     case StoreActions.StoreActionTypes.setPVPMoves: {
       const result = state.data?.combat?.map((move) => {
-        const movePVP = action.payload.find(
-          (data) => data.moveId === (move.name === 'HIDDEN_POWER' ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
+        const movePVP = action.payload.find((data) =>
+          isEqual(data.moveId, move.name === 'HIDDEN_POWER' ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
         );
         move.archetype = movePVP?.archetype;
         move.abbreviation = movePVP?.abbreviation;

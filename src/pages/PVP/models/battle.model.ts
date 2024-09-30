@@ -85,7 +85,6 @@ export interface IPokemonBattle {
   audio?: any;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonBattle implements IPokemonBattle {
   disableCMoveSec = false;
   disableCMovePri = false;
@@ -94,18 +93,11 @@ export class PokemonBattle implements IPokemonBattle {
   fMove?: ICombat;
   cMovePri?: ICombat;
   cMoveSec?: ICombat;
-  timeline: ITimeline[];
-  energy: number;
-  block: number;
-  chargeSlot: number;
+  timeline: ITimeline[] = [];
+  energy = 0;
+  block = DEFAULT_BLOCK;
+  chargeSlot = ChargeType.Primary;
   audio?: any;
-
-  constructor() {
-    this.timeline = [];
-    this.energy = 0;
-    this.block = DEFAULT_BLOCK;
-    this.chargeSlot = ChargeType.Primary;
-  }
 
   static create(value: IPokemonBattle) {
     const obj = new PokemonBattle();
@@ -128,7 +120,6 @@ export interface ITimeline {
   dmgImmune?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class TimelineModel implements ITimeline {
   timer = 0;
   type?: string;
@@ -164,7 +155,6 @@ export interface IPokemonTeamData {
   purified: boolean | undefined;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonTeamData implements IPokemonTeamData {
   id: number | undefined;
   name: string | undefined;
@@ -207,7 +197,6 @@ export interface IPokemonBattleRanking {
   score: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonBattleRanking implements IPokemonBattleRanking {
   data: RankingsPVP | undefined;
   id: number | undefined;

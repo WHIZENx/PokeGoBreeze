@@ -25,3 +25,8 @@ export enum TypeAction {
   DEF = 'def',
   STA = 'sta',
 }
+
+export enum BuffType {
+  Target = 'target',
+  Attacker = 'attacker',
+}

@@ -35,7 +35,8 @@ import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
-import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
+import { EqualMode } from '../../util/enums/string.enum';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -91,10 +92,12 @@ const FormSelect = (props: IFormSelectComponent) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                getValueOrDefault(String, data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name),
+                getValueOrDefault(String, data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name),
                 new Form({
                   ...item,
-                  formName: item.formName.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.formName,
+                  formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
+                    ? item.name.replace(`${data.name}-`, '')
+                    : item.formName,
                 })
               )
             )
@@ -112,9 +115,8 @@ const FormSelect = (props: IFormSelectComponent) => {
       if (props.searching) {
         const defaultFormSearch = formListResult
           .flatMap((value) => value)
-          .find(
-            (item) =>
-              item.form.formName === (props.objective ? (props.searching?.obj ? props.searching.obj.form : '') : props.searching?.form)
+          .find((item) =>
+            isEqual(item.form.formName, props.objective ? (props.searching?.obj ? props.searching.obj.form : '') : props.searching?.form)
           );
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
@@ -180,7 +182,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         fullName: currentForm.form.name,
         timestamp: new Date(),
       });
-      if (props.objective && (props.searching?.obj?.id !== props.id || props.searching?.obj?.form !== currentForm.form.formName)) {
+      if (props.objective && (props.searching?.obj?.id !== props.id || !isEqual(props.searching?.obj?.form, currentForm.form.formName))) {
         obj = ToolSearching.create({
           ...obj,
           obj: {
@@ -189,7 +191,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         });
         dispatch(SearchingActions.SetPokemonToolSearch.create(obj));
       }
-      if (!props.objective && (props.searching?.id !== props.id || props.searching?.form !== currentForm.form.formName)) {
+      if (!props.objective && (props.searching?.id !== props.id || !isEqual(props.searching?.form, currentForm.form.formName))) {
         obj = ToolSearching.create({
           ...obj,
           ...result,
@@ -226,7 +228,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   const changeForm = (name: string) => {
     setCurrentForm(undefined);
-    const findForm = formList.flatMap((item) => item).find((item) => item.form.name === name);
+    const findForm = formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
     setCurrentForm(findForm);
     if (props.onClearStats) {
       props.onClearStats();
@@ -255,7 +257,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                     e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon.prev?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
@@ -282,7 +284,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         }
         onError={(e) => {
           e.currentTarget.onerror = null;
-          if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+          if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
             e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
           } else {
             e.currentTarget.src = APIService.getPokeFullSprite(0);
@@ -299,7 +301,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                     e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon.next?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
@@ -380,7 +382,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             onChange={(e) => {
               setTypePoke(e.target.value);
               if (props.setRaid) {
-                props.setRaid(e.target.value === TypeRaid.POKEMON ? false : true);
+                props.setRaid(!isEqual(e.target.value, TypeRaid.POKEMON));
               }
               if (props.onClearStats) {
                 props.onClearStats(true);
@@ -414,7 +416,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <Tools
         hide={props.hide}
-        isRaid={typePoke === TypeRaid.POKEMON ? false : true}
+        isRaid={!isEqual(typePoke, TypeRaid.POKEMON)}
         tier={tier}
         setTier={onSetTier}
         setForm={props.setForm}

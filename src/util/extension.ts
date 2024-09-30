@@ -2,6 +2,7 @@
 import './extensions/string.extension';
 import { TableColumn } from 'react-data-table-component';
 import { TableColumnModify } from './models/overrides/data-table.model';
+import { EqualMode, IncludeMode } from './enums/string.enum';
 
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
 
@@ -62,4 +63,63 @@ export const isNullOrEmpty = (value?: string | null) => {
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) => {
   return parseInt((value || defaultValue).toString());
+};
+
+export const isEqual = (
+  value: string | number | undefined | null,
+  compareValue: string | number | undefined | null,
+  mode = EqualMode.CaseSensitive
+) => {
+  value = getValueOrDefault(String, value?.toString());
+  compareValue = getValueOrDefault(String, compareValue?.toString());
+  switch (mode) {
+    case EqualMode.IgnoreCaseSensitive:
+      return value.toUpperCase() === compareValue.toUpperCase();
+    case EqualMode.CaseSensitive:
+    default: {
+      return value === compareValue;
+    }
+  }
+};
+
+export const isInclude = (
+  value: string | number | undefined | null,
+  includesValue: string | number | undefined | null,
+  mode = IncludeMode.Include
+) => {
+  const result = getValueOrDefault(String, value?.toString());
+  const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
+  switch (mode) {
+    case IncludeMode.IncludeIgnoreCaseSensitive:
+      return result.includesWithIgnoreCase(resultIncludesValue);
+    case IncludeMode.IncludeBetweenIgnoreCaseSensitive:
+      return result.includesWithIgnoreCase(resultIncludesValue) || resultIncludesValue.includesWithIgnoreCase(result);
+    case IncludeMode.IncludeBetween:
+      return result.includesWithIgnoreCase(resultIncludesValue) || resultIncludesValue.includes(result);
+    case IncludeMode.Include:
+    default:
+      return result.includes(resultIncludesValue);
+  }
+};
+
+export const isIncludeList = (
+  value: (string | number | undefined | null)[] | undefined | null,
+  includesValue: string | number | undefined | null,
+  mode: IncludeMode.Include | IncludeMode.IncludeIgnoreCaseSensitive = IncludeMode.Include
+) => {
+  if (isNullOrUndefined(value)) {
+    return false;
+  }
+  const result = getValueOrDefault(
+    Array,
+    value?.map((i) => i?.toString())
+  );
+  const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
+  switch (mode) {
+    case IncludeMode.IncludeIgnoreCaseSensitive:
+      return result.map((i) => i?.toUpperCase()).includes(resultIncludesValue.toUpperCase());
+    case IncludeMode.Include:
+    default:
+      return result.includes(resultIncludesValue);
+  }
 };

@@ -67,8 +67,80 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isUndefined,
+  toNumber,
+} from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
+import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
+import { IncludeMode } from '../../../util/enums/string.enum';
+
+interface IOption {
+  weatherBoss: boolean;
+  weatherCounter: boolean;
+  released: boolean;
+  enableTimeAllow: boolean;
+}
+
+class Option implements IOption {
+  weatherBoss = false;
+  weatherCounter = false;
+  released = false;
+  enableTimeAllow = false;
+
+  constructor({ ...props }: IOption) {
+    Object.assign(this, props);
+  }
+}
+
+interface IFilterGroup {
+  level: number;
+  isShadow: boolean;
+  iv: IStatsBase;
+  onlyShadow: boolean;
+  onlyMega: boolean;
+  onlyReleasedGO: boolean;
+  sortBy: number;
+  sorted: number;
+}
+
+class FilterGroup implements IFilterGroup {
+  level = 0;
+  isShadow = false;
+  iv = new StatsBase();
+  onlyShadow = false;
+  onlyMega = false;
+  onlyReleasedGO = false;
+  sortBy = 0;
+  sorted = 0;
+
+  static create(value: IFilterGroup) {
+    const obj = new FilterGroup();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IFilter {
+  used: IFilterGroup;
+  selected: IFilterGroup;
+}
+
+class Filter implements IFilter {
+  used = new FilterGroup();
+  selected = new FilterGroup();
+
+  constructor({ ...props }: IFilter) {
+    Object.assign(this, props);
+  }
+}
 
 const RaidBattle = () => {
   useChangeTitle('Raid Battle - Tools');
@@ -96,43 +168,32 @@ const RaidBattle = () => {
   const [resultFMove, setResultFMove] = useState<ISelectMoveModel[]>();
   const [resultCMove, setResultCMove] = useState<ISelectMoveModel[]>();
 
-  const [options, setOptions] = useState({
-    weatherBoss: false,
-    weatherCounter: false,
-    released: true,
-    enableTimeAllow: true,
+  const [options, setOptions] = useState(
+    new Option({
+      weatherBoss: false,
+      weatherCounter: false,
+      released: true,
+      enableTimeAllow: true,
+    })
+  );
+
+  const initFilter = FilterGroup.create({
+    level: 40,
+    isShadow: false,
+    iv: StatsBase.setValue(MAX_IV, MAX_IV, MAX_IV),
+    onlyShadow: false,
+    onlyMega: false,
+    onlyReleasedGO: true,
+    sortBy: 0,
+    sorted: 0,
   });
 
-  const [filters, setFilters] = useState({
-    used: {
-      level: 40,
-      isShadow: false,
-      iv: {
-        atk: MAX_IV,
-        def: MAX_IV,
-        sta: MAX_IV,
-      },
-      onlyShadow: false,
-      onlyMega: false,
-      onlyReleasedGO: true,
-      sortBy: 0,
-      sorted: 0,
-    },
-    selected: {
-      level: 40,
-      isShadow: false,
-      iv: {
-        atk: MAX_IV,
-        def: MAX_IV,
-        sta: MAX_IV,
-      },
-      onlyShadow: false,
-      onlyMega: false,
-      onlyReleasedGO: true,
-      sortBy: 0,
-      sorted: 0,
-    },
-  });
+  const [filters, setFilters] = useState(
+    new Filter({
+      used: initFilter,
+      selected: initFilter,
+    })
+  );
 
   const { used, selected } = filters;
 
@@ -290,33 +351,33 @@ const RaidBattle = () => {
   const findMove = (id: number, form: string) => {
     const result = retrieveMoves(getValueOrDefault(Array, data?.pokemon), id, form);
     if (result) {
-      let simpleMove: ISelectMoveModel[] = [];
+      const simpleFMove: ISelectMoveModel[] = [];
       result.quickMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+        simpleFMove.push(new SelectMoveModel(value, false, false, false, false));
       });
       result.eliteQuickMove?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+        simpleFMove.push(new SelectMoveModel(value, true, false, false, false));
       });
-      setFMove(simpleMove.at(0));
-      setResultFMove(simpleMove);
-      simpleMove = [];
+      setFMove(simpleFMove.at(0));
+      setResultFMove(simpleFMove);
+      const simpleCMove: ISelectMoveModel[] = [];
       result.cinematicMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+        simpleCMove.push(new SelectMoveModel(value, false, false, false, false));
       });
       result.eliteCinematicMove?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+        simpleCMove.push(new SelectMoveModel(value, true, false, false, false));
       });
       result.shadowMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+        simpleCMove.push(new SelectMoveModel(value, false, true, false, false));
       });
       result.purifiedMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+        simpleCMove.push(new SelectMoveModel(value, false, false, true, false));
       });
       result.specialMoves?.forEach((value) => {
-        simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+        simpleCMove.push(new SelectMoveModel(value, false, false, false, true));
       });
-      setCMove(simpleMove.at(0));
-      setResultCMove(simpleMove);
+      setCMove(simpleCMove.at(0));
+      setResultCMove(simpleCMove);
     } else {
       setFMove(undefined);
       setResultFMove(undefined);
@@ -338,14 +399,14 @@ const RaidBattle = () => {
     pokemonTarget: boolean
   ) => {
     movePoke.forEach((vc) => {
-      const fMove = data?.combat?.find((item) => item.name === vf);
-      const cMove = data?.combat?.find((item) => item.name === vc);
+      const fMove = data?.combat?.find((item) => isEqual(item.name, vf));
+      const cMove = data?.combat?.find((item) => isEqual(item.name, vc));
       if (fMove && cMove) {
         const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
         const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(getValueOrDefault(Number, stats.sta), used.iv.sta, used.level),
+          hp: calculateStatsBattle(getValueOrDefault(Number, stats.sta), getValueOrDefault(Number, used.iv.sta), used.level),
           fMove,
           cMove,
           types: getValueOrDefault(Array, value?.types),
@@ -355,8 +416,8 @@ const RaidBattle = () => {
           atk: statBossATK,
           def: statBossDEF,
           hp: statBossHP,
-          fMove: data?.combat?.find((item) => item.name === fMove?.name),
-          cMove: data?.combat?.find((item) => item.name === cMove?.name),
+          fMove: data?.combat?.find((item) => isEqual(item.name, fMove?.name)),
+          cMove: data?.combat?.find((item) => isEqual(item.name, cMove?.name)),
           types: getValueOrDefault(Array, form?.form.types),
           isStab: weatherBoss,
         });
@@ -394,8 +455,8 @@ const RaidBattle = () => {
           defendHpRemain: Math.floor(getValueOrDefault(Number, statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
           death: Math.floor(getValueOrDefault(Number, statsDefender.hp) / tdoAtk),
           shadow,
-          purified: purified && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
-          mShadow: shadow && !isUndefined(specialMove) && specialMove?.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
+          purified: purified && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          mShadow: shadow && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -467,7 +528,9 @@ const RaidBattle = () => {
         );
       }
       if (
-        (!pokemon.forme || (!pokemon.forme.toUpperCase().includes(FORM_MEGA) && !pokemon.forme.toUpperCase().includes(FORM_PRIMAL))) &&
+        (!pokemon.forme ||
+          (!isInclude(pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
+            !isInclude(pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(
@@ -542,8 +605,8 @@ const RaidBattle = () => {
   };
 
   const calculateDPSBattle = (pokemon: IPokemonRaidModel, hpRemain: number, timer: number) => {
-    const fMove = data?.combat?.find((item) => item.name === pokemon.fMoveTargetPokemon?.name);
-    const cMove = data?.combat?.find((item) => item.name === pokemon.cMoveTargetPokemon?.name);
+    const fMove = data?.combat?.find((item) => isEqual(item.name, pokemon.fMoveTargetPokemon?.name));
+    const cMove = data?.combat?.find((item) => isEqual(item.name, pokemon.cMoveTargetPokemon?.name));
 
     if (fMove && cMove) {
       const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
@@ -561,8 +624,8 @@ const RaidBattle = () => {
         atk: statBossATK,
         def: statBossDEF,
         hp: Math.floor(hpRemain),
-        fMove: data?.combat?.find((item) => item.name === fMove?.name),
-        cMove: data?.combat?.find((item) => item.name === cMove?.name),
+        fMove: data?.combat?.find((item) => isEqual(item.name, fMove?.name)),
+        cMove: data?.combat?.find((item) => isEqual(item.name, cMove?.name)),
         types: getValueOrDefault(Array, form?.form.types),
         isStab: weatherBoss,
       });
@@ -1236,7 +1299,7 @@ const RaidBattle = () => {
                 if (!used.onlyMega) {
                   return true;
                 }
-                return splitAndCapitalize(obj.pokemon?.name, '-', ' ').includes(' Mega');
+                return isInclude(splitAndCapitalize(obj.pokemon?.name, '-', ' '), ` ${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive);
               })
               .filter((obj) => {
                 if (!used.onlyShadow) {

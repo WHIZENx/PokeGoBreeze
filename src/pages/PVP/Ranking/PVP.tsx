@@ -30,7 +30,17 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -96,7 +106,7 @@ const RankingPVP = () => {
         }
         const filePVP = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
+          const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
           const id = pokemon?.num;
           const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
@@ -109,18 +119,18 @@ const RankingPVP = () => {
           let fMoveData = item.moveset.at(0);
           const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(1)));
           const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(2)));
-          if (fMoveData?.includes('HIDDEN_POWER')) {
+          if (isInclude(fMoveData, 'HIDDEN_POWER')) {
             fMoveData = 'HIDDEN_POWER';
           }
 
-          let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);
-          const cMovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
+          let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
+          const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
           let cMoveSec;
           if (cMoveDataSec) {
-            cMoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
+            cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
           }
 
-          if (fMove && item.moveset.at(0)?.includes('HIDDEN_POWER')) {
+          if (fMove && isInclude(item.moveset.at(0), 'HIDDEN_POWER')) {
             fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, item.moveset.at(0)?.split('_').at(2)) });
           }
 
@@ -140,10 +150,8 @@ const RankingPVP = () => {
             fMove,
             cMovePri,
             cMoveSec,
-            shadow: item.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
-            purified:
-              pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMovePri?.name)) ||
-              (cMoveDataSec && pokemon?.purifiedMoves?.includes(cMoveDataSec)) === true,
+            shadow: isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
+            purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec),
           });
         });
         setRankingData(filePVP);
@@ -268,7 +276,7 @@ const RankingPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
+    const league = pvp?.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league ? (
@@ -301,7 +309,7 @@ const RankingPVP = () => {
           {scoreType.map((type, index) => (
             <Button
               key={index}
-              className={params.type?.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+              className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
               onClick={() => {
                 setOnLoadData(false);
                 navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`);
@@ -342,8 +350,9 @@ const RankingPVP = () => {
             {rankingData
               .filter(
                 (pokemon) =>
-                  splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
-                  pokemon.id?.toString().includes(search)
+                  pokemon.id &&
+                  (isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+                    isInclude(pokemon.id, search))
               )
               .sort((a, b) => setSortedPokemonBattle(a, b))
               .map((value, index) => (

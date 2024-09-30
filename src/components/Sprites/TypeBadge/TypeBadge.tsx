@@ -9,7 +9,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
 import { ITypeBadgeComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
@@ -17,7 +17,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {
     if (props.move?.name && isNotEmpty(combat)) {
-      setMove(combat.find((item) => item.name === props.move?.name));
+      setMove(combat.find((item) => isEqual(item.name, props.move?.name)));
     }
   }, [combat, props.move?.name]);
 

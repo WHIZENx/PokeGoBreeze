@@ -28,7 +28,6 @@ export class ShowSpinner implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ShowSpinnerMsg implements Action {
   readonly type = SpinnerActionTypes.showSpinnerMsg;
 
@@ -43,7 +42,6 @@ export class ShowSpinnerMsg implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class HideSpinner implements Action {
   readonly type = SpinnerActionTypes.hideSpinner;
 
@@ -55,7 +53,6 @@ export class HideSpinner implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetBar implements Action {
   readonly type = SpinnerActionTypes.setBar;
 
@@ -70,7 +67,6 @@ export class SetBar implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetPercent implements Action {
   readonly type = SpinnerActionTypes.setPercent;
 

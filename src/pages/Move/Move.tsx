@@ -29,7 +29,16 @@ import { IMovePage } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { TableColumnModify } from '../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty, toNumber } from '../../util/extension';
+import {
+  combineClasses,
+  convertColumnDataType,
+  getValueOrDefault,
+  isEqual,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../util/extension';
+import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -97,8 +106,8 @@ const Move = (props: IMovePage) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getWeatherEffective = (type: string) => {
-    const result = Object.entries(data?.weatherBoost ?? new WeatherBoost())?.find(([, value]) => {
-      return value.includes(type.toUpperCase());
+    const result = Object.entries(data?.weatherBoost ?? new WeatherBoost())?.find(([, value]: [string, string[]]) => {
+      return isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive);
     });
     return result && result.at(0);
   };
@@ -109,7 +118,9 @@ const Move = (props: IMovePage) => {
         let move: ICombat | undefined;
         if (id === 281) {
           move = data?.combat?.find(
-            (item) => item.track === id && item.type === (searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL')
+            (item) =>
+              item.track === id &&
+              isEqual(item.type, getValueOrDefault(String, searchParams.get('type'), 'NORMAL'), EqualMode.IgnoreCaseSensitive)
           );
         } else {
           move = data?.combat?.find((item) => item.track === id);
@@ -165,7 +176,11 @@ const Move = (props: IMovePage) => {
               onChange={(e) => {
                 searchParams.set('type', e.target.value.toLowerCase());
                 setSearchParams(searchParams);
-                setMove(data?.combat?.find((item) => item.track === move.track && item.type === e.target.value?.toUpperCase()));
+                setMove(
+                  data?.combat?.find(
+                    (item) => item.track === move.track && isEqual(item.type, e.target.value, EqualMode.IgnoreCaseSensitive)
+                  )
+                );
               }}
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >

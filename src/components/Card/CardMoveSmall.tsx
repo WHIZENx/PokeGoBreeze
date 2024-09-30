@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
 import { ICardSmallComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual } from '../../util/extension';
 
 const CardMoveSmall = (props: ICardSmallComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
@@ -29,7 +29,9 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                 height={18}
                 alt="type-logo"
                 style={{ marginRight: 10 }}
-                src={APIService.getTypeSprite(props.value ? capitalize(combat.find((item) => item.name === props.value?.name)?.type) : '')}
+                src={APIService.getTypeSprite(
+                  props.value ? capitalize(combat.find((item) => isEqual(item.name, props.value?.name))?.type) : ''
+                )}
               />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name, '_', ' ')}</span>
               <span className="d-flex">

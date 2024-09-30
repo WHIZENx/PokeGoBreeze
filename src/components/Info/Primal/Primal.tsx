@@ -8,8 +8,9 @@ import { StoreState } from '../../../store/models/state.model';
 import { FORM_PRIMAL } from '../../../util/constants';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { getValueOrDefault, isUndefined } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isInclude, isUndefined } from '../../../util/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const Primal = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
@@ -17,7 +18,7 @@ const Primal = (props: IFormSpecialComponent) => {
 
   useEffect(() => {
     const result = props.formList
-      .filter((item) => item.at(0)?.form.formName?.toUpperCase().includes(FORM_PRIMAL))
+      .filter((item) => isInclude(item.at(0)?.form.formName, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))
       .map((item) => {
         const form = item.at(0);
         if (!form) {
@@ -34,9 +35,9 @@ const Primal = (props: IFormSpecialComponent) => {
       .split('-')
       .map((text) => text.toUpperCase())
       .join('_');
-    const pokemon = evoData.find((item) => item.tempEvo?.find((value) => value.tempEvolutionName === name));
+    const pokemon = evoData.find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)));
     if (pokemon) {
-      return pokemon.tempEvo?.find((item) => item.tempEvolutionName === name);
+      return pokemon.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     } else {
       return TempEvo.create({
         firstTempEvolution: 'Unavailable',

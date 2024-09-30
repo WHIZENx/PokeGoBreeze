@@ -23,7 +23,7 @@ import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
 import { TypeMove } from '../enums/type.enum';
-import { IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
+import { Delay, IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
 import { findStabType } from './compute';
 import {
   DEFAULT_DAMAGE_CONST,
@@ -81,9 +81,10 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isUndefined, toNumber } from './extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isUndefined, toNumber } from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
+import { EqualMode, IncludeMode } from './enums/string.enum';
 
 const weatherMultiple = (
   globalOptions: IOptions | undefined,
@@ -92,7 +93,7 @@ const weatherMultiple = (
   type: string
 ) => {
   return ((weatherBoost as unknown as DynamicObj<string[]>)[getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))]?.find(
-    (item) => item === type.toUpperCase().replaceAll(' ', '_')
+    (item) => isEqual(item, type.replaceAll(' ', '_'), EqualMode.IgnoreCaseSensitive)
   )
     ? STAB_MULTIPLY(globalOptions)
     : 1) as unknown as number;
@@ -110,7 +111,7 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
 };
 
 const convertStatsArray = (stats: Stats[] | undefined, name: string) => {
-  return getValueOrDefault(Number, stats?.find((item) => item.stat.name === name)?.base_stat);
+  return getValueOrDefault(Number, stats?.find((item) => isEqual(item.stat.name, name))?.base_stat);
 };
 
 export const convertAllStats = (stats: Stats[] | undefined) => {
@@ -646,7 +647,7 @@ export const calculateStatsByTag = (
       return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, getValueOrDefault(Number, pokemon.baseStats.sta));
     }
     const from = tag?.toLowerCase();
-    const checkNerf = !from?.toUpperCase().includes(FORM_MEGA);
+    const checkNerf = !isInclude(from, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
 
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
@@ -950,7 +951,8 @@ export const calculateBattleDPS = (
     const CDWSSec = getValueOrDefault(Number, moveSec.damageWindowStartMs) / 1000;
 
     const CMultiSec =
-      (attacker.types.includes(CTypeSec.toUpperCase()) ? stabMultiply : 1) * getValueOrDefault(Number, moveSec?.accuracyChance);
+      (isIncludeList(attacker.types, CTypeSec, IncludeMode.IncludeIgnoreCaseSensitive) ? stabMultiply : 1) *
+      getValueOrDefault(Number, moveSec?.accuracyChance);
 
     const CDmgBaseSec =
       DEFAULT_DAMAGE_MULTIPLY *
@@ -1010,25 +1012,25 @@ export const queryTopMove = (
       let isElite = false;
       let isSpecial = false;
       if (move?.typeMove === TypeMove.FAST) {
-        isInclude = getValueOrDefault(Boolean, value.quickMoves?.includes(move.name));
+        isInclude = isIncludeList(value.quickMoves, move.name);
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.eliteQuickMove?.includes(move.name));
+          isInclude = isIncludeList(value.eliteQuickMove, move.name);
           isElite = isInclude;
         }
       } else if (move?.typeMove === TypeMove.CHARGE) {
-        isInclude = getValueOrDefault(Boolean, value.cinematicMoves?.includes(move.name));
+        isInclude = isIncludeList(value.cinematicMoves, move.name);
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.shadowMoves?.includes(move.name));
+          isInclude = isIncludeList(value.shadowMoves, move.name);
         }
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.purifiedMoves?.includes(move.name));
+          isInclude = isIncludeList(value.purifiedMoves, move.name);
         }
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.eliteCinematicMove?.includes(move.name));
+          isInclude = isIncludeList(value.eliteCinematicMove, move.name);
           isElite = isInclude;
         }
         if (!isInclude) {
-          isInclude = getValueOrDefault(Boolean, value.specialMoves?.includes(move.name));
+          isInclude = isIncludeList(value.specialMoves, move.name);
           isSpecial = isInclude;
         }
       }
@@ -1080,8 +1082,8 @@ const queryMove = (
   special: boolean
 ) => {
   cMove.forEach((vc: string) => {
-    const mf = data.combat.find((item) => item.name === vf);
-    const mc = data.combat.find((item) => item.name === vc);
+    const mf = data.combat.find((item) => isEqual(item.name, vf));
+    const mc = data.combat.find((item) => isEqual(item.name, vc));
 
     if (mf && mc) {
       mf.elite = fElite;
@@ -1091,10 +1093,10 @@ const queryMove = (
       mc.special = special;
 
       const options = OptionOtherDPS.create({
-        delay: {
+        delay: Delay.create({
           fTime: DEFAULT_ENEMY_ATK_DELAY,
           cTime: DEFAULT_ENEMY_ATK_DELAY,
-        },
+        }),
         pokemonDefObj: DEFAULT_POKEMON_DEF_OBJ,
         ivAtk: MAX_IV,
         ivDef: MAX_IV,
@@ -1181,9 +1183,11 @@ export const queryStatesEvoChain = (
 ) => {
   let pokemon: IPokemonData | undefined = new PokemonData();
   if (isEmpty(item.form)) {
-    pokemon = pokemonData.find((value) => value.num === item.id && value.slug === item.name.toLowerCase());
+    pokemon = pokemonData.find((value) => value.num === item.id && isEqual(value.slug, item.name, EqualMode.IgnoreCaseSensitive));
   } else {
-    pokemon = pokemonData.find((value) => value.num === item.id && value.slug.includes(item.form.toLowerCase()));
+    pokemon = pokemonData.find(
+      (value) => value.num === item.id && isInclude(value.slug, item.form, IncludeMode.IncludeIgnoreCaseSensitive)
+    );
   }
   if (!pokemon) {
     pokemon = pokemonData.find((value) => value.num === item.id);
@@ -1363,8 +1367,8 @@ const queryMoveCounter = (
   special: boolean
 ) => {
   cMove.forEach((vc) => {
-    const mf = data.combat.find((item) => item.name === vf);
-    const mc = data.combat.find((item) => item.name === vc);
+    const mf = data.combat.find((item) => isEqual(item.name, vf));
+    const mc = data.combat.find((item) => isEqual(item.name, vc));
 
     if (mf && mc) {
       const options = OptionOtherDPS.create({
@@ -1416,7 +1420,7 @@ export const counterPokemon = (
 ) => {
   const dataList: IPokemonQueryCounter[] = [];
   pokemonList.forEach((pokemon) => {
-    if (pokemon && checkMoveSetAvailable(pokemon) && !pokemon.fullName?.includes('_FEMALE')) {
+    if (pokemon && checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE')) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
       pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, false));
       pokemon.eliteQuickMove?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, true));

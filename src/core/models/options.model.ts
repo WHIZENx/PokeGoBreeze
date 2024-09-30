@@ -96,13 +96,21 @@ interface StickerMetadata {
   regionId: number;
 }
 
+interface MoveBuff {
+  attackerAttackStatStageChange?: number;
+  attackerDefenseStatStageChange?: number;
+  targetAttackStatStageChange?: number;
+  targetDefenseStatStageChange?: number;
+  buffActivationChance: number;
+}
+
 interface CombatMove {
   uniqueId: string;
   type: string;
   power: number;
   energyDelta: number;
   vfxName: string;
-  buffs?: DynamicObj<number>;
+  buffs?: MoveBuff;
 }
 
 export interface MoveSetting {
@@ -143,7 +151,6 @@ export interface IPokemonReward {
   pokemonDisplay: IPokemonFromReward;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonReward implements IPokemonReward {
   pokemonId = '';
   pokemonDisplay = new PokemonFromReward();
@@ -303,7 +310,6 @@ export interface IPokemonPermission {
   name: string | undefined;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonPermission implements IPokemonPermission {
   id: number | undefined;
   form = '';
@@ -320,15 +326,9 @@ interface ICombatOption {
   shadowBonus: IStatsBase;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class CombatOption implements ICombatOption {
-  stab: number;
-  shadowBonus: IStatsBase;
-
-  constructor() {
-    this.stab = 0;
-    this.shadowBonus = new StatsBase();
-  }
+  stab = 0;
+  shadowBonus = new StatsBase();
 }
 
 interface IBattleOption {
@@ -337,17 +337,10 @@ interface IBattleOption {
   shadowBonus: IStatsBase;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class BattleOption implements IBattleOption {
-  enemyAttackInterval: number;
-  stab: number;
-  shadowBonus: IStatsBase;
-
-  constructor() {
-    this.enemyAttackInterval = 0;
-    this.stab = 0;
-    this.shadowBonus = new StatsBase();
-  }
+  enemyAttackInterval = 0;
+  stab = 0;
+  shadowBonus = new StatsBase();
 }
 
 interface IThrowOption {
@@ -357,19 +350,11 @@ interface IThrowOption {
   excellent: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ThrowOption implements IThrowOption {
-  normal: number;
-  nice: number;
-  great: number;
-  excellent: number;
-
-  constructor() {
-    this.normal = 0;
-    this.nice = 0;
-    this.great = 0;
-    this.excellent = 0;
-  }
+  normal = 0;
+  nice = 0;
+  great = 0;
+  excellent = 0;
 }
 
 export interface IBuddyFriendship {
@@ -378,15 +363,9 @@ export interface IBuddyFriendship {
   unlockedTrading?: string[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BuddyFriendship implements IBuddyFriendship {
-  level: number;
-  minNonCumulativePointsRequired: number;
-
-  constructor() {
-    this.level = 0;
-    this.minNonCumulativePointsRequired = 0;
-  }
+  level = 0;
+  minNonCumulativePointsRequired = 0;
 }
 
 export interface ITrainerFriendship {
@@ -395,15 +374,9 @@ export interface ITrainerFriendship {
   unlockedTrading?: string[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class TrainerFriendship implements ITrainerFriendship {
-  level: number;
-  atkBonus: number;
-
-  constructor() {
-    this.level = 0;
-    this.atkBonus = 0;
-  }
+  level = 0;
+  atkBonus = 0;
 }
 
 export interface IOptions {
@@ -414,19 +387,10 @@ export interface IOptions {
   trainerFriendship: DynamicObj<ITrainerFriendship>;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Options implements IOptions {
-  combatOptions: ICombatOption;
-  battleOptions: IBattleOption;
-  throwCharge: IThrowOption;
-  buddyFriendship: DynamicObj<IBuddyFriendship>;
-  trainerFriendship: DynamicObj<ITrainerFriendship>;
-
-  constructor() {
-    this.combatOptions = new CombatOption();
-    this.battleOptions = new BattleOption();
-    this.throwCharge = new ThrowOption();
-    this.buddyFriendship = {};
-    this.trainerFriendship = {};
-  }
+  combatOptions = new CombatOption();
+  battleOptions = new BattleOption();
+  throwCharge = new ThrowOption();
+  buddyFriendship: DynamicObj<IBuddyFriendship> = {};
+  trainerFriendship: DynamicObj<ITrainerFriendship> = {};
 }

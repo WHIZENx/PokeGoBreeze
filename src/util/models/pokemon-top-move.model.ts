@@ -35,15 +35,9 @@ interface IeDPS {
   defensive: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class EDPS implements IeDPS {
-  offensive: number;
-  defensive: number;
-
-  constructor() {
-    this.offensive = 0;
-    this.defensive = 0;
-  }
+  offensive = 0;
+  defensive = 0;
 
   static create(value: IeDPS) {
     const obj = new EDPS();
@@ -58,7 +52,6 @@ export interface IPokemonQueryMove {
   eDPS: IeDPS;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonQueryMove implements IPokemonQueryMove {
   fMove = new Combat();
   cMove = new Combat();
@@ -75,7 +68,6 @@ export interface IPokemonQueryRankMove {
   maxDef?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonQueryRankMove implements IPokemonQueryRankMove {
   data: IPokemonQueryMove[] = [];
   maxOff?: number;
@@ -96,7 +88,6 @@ export interface IPokemonQueryCounter {
   cMove: ICombat;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonQueryCounter implements IPokemonQueryCounter {
   pokemonId = 0;
   pokemonName = '';

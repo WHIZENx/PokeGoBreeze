@@ -118,7 +118,6 @@ interface IStatsGO {
   baseDefense: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsGO implements IStatsGO {
   baseStamina = 0;
   baseAttack = 0;
@@ -206,15 +205,9 @@ export interface IPokemonGenderRatio {
   F: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonGenderRatio implements IPokemonGenderRatio {
-  M: number;
-  F: number;
-
-  constructor() {
-    this.M = 0;
-    this.F = 0;
-  }
+  M = 0;
+  F = 0;
 
   static create(male: number, female: number) {
     const obj = new PokemonGenderRatio();
@@ -321,7 +314,6 @@ interface IPokemonDPSBattle {
   special?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonDPSBattle implements IPokemonDPSBattle {
   pokemon: IPokemonData | undefined;
   fMove: ICombat | undefined;
@@ -359,7 +351,6 @@ export interface IPokemonMoveData extends IPokemonDPSBattle {
   trainerId?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonMoveData implements IPokemonMoveData {
   trainerId?: number;
   pokemon: IPokemonData | undefined;
@@ -415,7 +406,6 @@ export interface IPokemonRaidModel {
   attackHpRemain?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonRaidModel implements IPokemonRaidModel {
   dataTargetPokemon?: IPokemonData;
   fMoveTargetPokemon?: ISelectMoveModel;
@@ -455,7 +445,6 @@ export interface IPokemonDataOptional {
   thirdMove?: IPokemonTypeCost;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonDataOptional implements IPokemonDataOptional {
   slug?: string;
   sprite?: string;
@@ -479,7 +468,6 @@ export class PokemonDataOptional implements IPokemonDataOptional {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonData implements IPokemonData {
   pokemonId?: string;
   num = 0;
@@ -490,7 +478,7 @@ export class PokemonData implements IPokemonData {
   types: string[] = [];
   genderRatio = new PokemonGenderRatio();
   baseStats = new StatsPokemon();
-  statsGO? = new StatsPokemonGO();
+  statsGO = new StatsPokemonGO();
   heightm = 0;
   weightkg = 0;
   color = '';
@@ -636,7 +624,6 @@ export class PokemonData implements IPokemonData {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonModel implements IPokemonName {
   id: number;
   name: string;
@@ -647,5 +634,35 @@ export class PokemonModel implements IPokemonName {
     if (settings) {
       Object.assign(this, { ...settings });
     }
+  }
+}
+
+export interface IWeightHeight {
+  weight: number;
+  height: number;
+}
+
+export class WeightHeight implements IWeightHeight {
+  weight = -1;
+  height = -1;
+
+  static create(value: IWeightHeight) {
+    const obj = new WeightHeight();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+export interface IPokemonProgress {
+  isLoadedForms: boolean;
+}
+
+export class PokemonProgress implements IPokemonProgress {
+  isLoadedForms = false;
+
+  static create(value: IPokemonProgress) {
+    const obj = new PokemonProgress();
+    Object.assign(obj, value);
+    return obj;
   }
 }

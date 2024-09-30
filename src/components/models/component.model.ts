@@ -3,7 +3,14 @@ import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { IForm, IFormSoundCry, IPokemonFormModify, PokemonDataForm } from '../../core/models/API/form.model';
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
-import { IPokemonData, IPokemonDataStats, IPokemonGenderRatio, PokemonRaidModel } from '../../core/models/pokemon.model';
+import {
+  IPokemonData,
+  IPokemonDataStats,
+  IPokemonGenderRatio,
+  IPokemonProgress,
+  IWeightHeight,
+  PokemonRaidModel,
+} from '../../core/models/pokemon.model';
 import { IToolSearching } from '../../core/models/searching.model';
 import {
   IStatsPokemon,
@@ -24,6 +31,7 @@ import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
+import { InputType } from '../Input/enums/input-type.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -160,11 +168,7 @@ export interface IEvolutionComponent {
   pokemonRouter: ReduxRouterState;
   purified: boolean | undefined;
   shadow: boolean | undefined;
-  setProgress: React.Dispatch<
-    React.SetStateAction<{
-      isLoadedForms: boolean;
-    }>
-  >;
+  setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
   isLoadedForms: boolean;
 }
 
@@ -175,12 +179,7 @@ export interface IFormInfoComponent {
   setOriginForm: React.Dispatch<React.SetStateAction<string | undefined>>;
   data: IPokemonDetail | undefined;
   setData: React.Dispatch<React.SetStateAction<IPokemonDetail | undefined>>;
-  setWH: React.Dispatch<
-    React.SetStateAction<{
-      weight: number;
-      height: number;
-    }>
-  >;
+  setWH: React.Dispatch<React.SetStateAction<IWeightHeight>>;
   pokeData: IPokemonDetail[];
   formList: IPokemonFormModify[][] | undefined;
   ratio: IPokemonGenderRatio | undefined;
@@ -188,11 +187,7 @@ export interface IFormInfoComponent {
   pokemonDetail: IPokemonData | undefined;
   defaultId: number;
   region: string;
-  setProgress: React.Dispatch<
-    React.SetStateAction<{
-      isLoadedForms: boolean;
-    }>
-  >;
+  setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
   isLoadedForms: boolean;
 }
 
@@ -257,7 +252,7 @@ export interface ISelectMoveComponent {
   clearData?: () => void;
   pokemon: IPokemonData | undefined;
   moveType: string;
-  inputType?: string;
+  inputType?: InputType;
   selected?: boolean;
   disable?: boolean;
 }

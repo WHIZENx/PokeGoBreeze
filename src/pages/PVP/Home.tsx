@@ -14,7 +14,7 @@ import { SpinnerActions } from '../../store/actions';
 import { LocalStorageConfig } from '../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../store/models/local-storage.model';
 import { getTime } from '../../util/utils';
-import { getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -71,10 +71,10 @@ const PVPHome = () => {
   const renderLeagueLogo = (logo: string, cp: number) => {
     if (
       !logo ||
-      (logo && logo.includes('GBL_littlecup')) ||
-      logo.includes('great_league') ||
-      logo.includes('ultra_league') ||
-      logo.includes('master_league')
+      (logo && isInclude(logo, 'GBL_littlecup')) ||
+      isInclude(logo, 'great_league') ||
+      isInclude(logo, 'ultra_league') ||
+      isInclude(logo, 'master_league')
     ) {
       return getPokemonBattleLeagueIcon(cp);
     }
@@ -113,7 +113,7 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: pvp?.rankings.find((item) => item.id === e.target.value),
+                rank: pvp?.rankings.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
@@ -162,7 +162,7 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: pvp?.trains.find((item) => item.id === e.target.value),
+                team: pvp?.trains.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }

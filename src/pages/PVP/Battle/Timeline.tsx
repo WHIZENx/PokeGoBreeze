@@ -222,7 +222,7 @@ export const TimeLine = (
                           <div className="position-absolute icon-buff-timeline">
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {b.type.toUpperCase()} {b.power}
+                                {b.type?.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>
@@ -345,7 +345,7 @@ export const TimeLineFit = (
                       >
                         {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                            {b.type.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                            {b.type?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
                         ))}
                       </div>
@@ -361,7 +361,7 @@ export const TimeLineFit = (
                           >
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {b.type.toUpperCase()} {b.power}
+                                {b.type?.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>

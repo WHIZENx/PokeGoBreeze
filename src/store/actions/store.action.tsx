@@ -40,7 +40,6 @@ export class LoadStore implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetTimestamp implements Action {
   readonly type = StoreActionTypes.setTimestamp;
 
@@ -55,7 +54,6 @@ export class SetTimestamp implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetOptions implements Action {
   readonly type = StoreActionTypes.setOptions;
 
@@ -70,7 +68,6 @@ export class SetOptions implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetTypeEff implements Action {
   readonly type = StoreActionTypes.setTypeEff;
 
@@ -85,7 +82,6 @@ export class SetTypeEff implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetWeatherBoost implements Action {
   readonly type = StoreActionTypes.setWeatherBoost;
 
@@ -100,7 +96,6 @@ export class SetWeatherBoost implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetPokemon implements Action {
   readonly type = StoreActionTypes.setPokemon;
 
@@ -115,7 +110,6 @@ export class SetPokemon implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetSticker implements Action {
   readonly type = StoreActionTypes.setSticker;
 
@@ -130,7 +124,6 @@ export class SetSticker implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetCombat implements Action {
   readonly type = StoreActionTypes.setCombat;
 
@@ -145,7 +138,6 @@ export class SetCombat implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetAssets implements Action {
   readonly type = StoreActionTypes.setAssets;
 
@@ -160,7 +152,6 @@ export class SetAssets implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetLeagues implements Action {
   readonly type = StoreActionTypes.setLeagues;
 
@@ -175,7 +166,6 @@ export class SetLeagues implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetLogoPokeGO implements Action {
   readonly type = StoreActionTypes.setLogoPokeGO;
 
@@ -190,7 +180,6 @@ export class SetLogoPokeGO implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetCPM implements Action {
   readonly type = StoreActionTypes.setCPM;
 
@@ -205,7 +194,6 @@ export class SetCPM implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetPVP implements Action {
   readonly type = StoreActionTypes.setPVP;
 
@@ -220,7 +208,6 @@ export class SetPVP implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetPVPMoves implements Action {
   readonly type = StoreActionTypes.setPVPMoves;
 
@@ -235,7 +222,6 @@ export class SetPVPMoves implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ResetStore implements Action {
   readonly type = StoreActionTypes.resetStore;
 

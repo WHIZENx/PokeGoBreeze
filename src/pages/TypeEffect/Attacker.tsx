@@ -8,7 +8,7 @@ import { ITypeEffComponent } from '../models/page.model';
 import { TypeModel, TypeMultiply } from '../../core/models/type.model';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, DynamicObj } from '../../util/extension';
+import { combineClasses, DynamicObj, isEqual } from '../../util/extension';
 
 const Attacker = (prop: ITypeEffComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -45,7 +45,7 @@ const Attacker = (prop: ITypeEffComponent) => {
   }, [currentType, prop.types]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? new TypeEff()).filter((item) => item !== currentType);
+    const results = Object.keys(prop.types ?? new TypeEff()).filter((item) => !isEqual(item, currentType));
     setTypes(results);
     getTypeEffective();
   }, [currentType, getTypeEffective, prop.types]);

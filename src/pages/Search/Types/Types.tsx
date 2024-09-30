@@ -18,7 +18,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from '../../../util/extension';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -161,7 +161,6 @@ interface IPokemonTypeData {
   chargedMoves: number | undefined;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class PokemonTypeData implements IPokemonTypeData {
   pokemon = 0;
   fastMoves: number | undefined;
@@ -224,15 +223,15 @@ const SearchTypes = () => {
             Array,
             data?.pokemon
               ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-              .filter((pokemon) => pokemon.types.includes(currentType))
+              .filter((pokemon) => isIncludeList(pokemon.types, currentType))
           ),
           fastMove: getValueOrDefault(
             Array,
-            data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && type.type === currentType)
+            data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && isEqual(type.type, currentType))
           ),
           chargedMove: getValueOrDefault(
             Array,
-            data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && type.type === currentType)
+            data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && isEqual(type.type, currentType))
           ),
         })
       );
@@ -265,7 +264,7 @@ const SearchTypes = () => {
               <div className="result-type">
                 <ul>
                   {Object.keys(data?.typeEff ?? new TypeEff())
-                    .filter((value) => value !== currentType)
+                    .filter((value) => !isEqual(value, currentType))
                     .map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                         <CardType value={capitalize(value)} />

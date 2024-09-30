@@ -4,7 +4,7 @@ import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/calculate';
 import { checkRankAllAvailable } from '../../../util/utils';
 
 import './Stats.scss';
-import { StatsRankPokemonGO } from '../../../core/models/stats.model';
+import { IStatsPokemonGO, StatsPokemonGO, StatsRankPokemonGO } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
@@ -14,23 +14,34 @@ import { TypeAction } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault } from '../../../util/extension';
 
+interface ICurrentStats {
+  stats: IStatsPokemonGO;
+  atk: number;
+  def: number;
+  sta: number;
+  prod: number;
+}
+
+class CurrentStats implements ICurrentStats {
+  stats = new StatsPokemonGO();
+  atk = 0;
+  def = 0;
+  sta = 0;
+  prod = 0;
+
+  static create(value: ICurrentStats) {
+    const obj = new CurrentStats();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
 const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
   const theme: ThemeModify = useTheme();
   const [isAvailable, setIsAvailable] = useState(new StatsRankPokemonGO());
 
-  const [currentStats, setCurrentStats] = useState({
-    stats: {
-      atk: 0,
-      def: 0,
-      sta: 0,
-      prod: 0,
-    },
-    atk: 0,
-    def: 0,
-    sta: 0,
-    prod: 0,
-  });
+  const [currentStats, setCurrentStats] = useState(new CurrentStats());
 
   useEffect(() => {
     const atk = setShadowStats(

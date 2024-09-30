@@ -15,7 +15,8 @@ import { IPokemonSearching } from '../../../core/models/pokemon-searching.model'
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');
@@ -48,7 +49,7 @@ const Search = () => {
     const timeOutId = setTimeout(() => {
       if (isNotEmpty(pokemonList)) {
         const results = pokemonList.filter(
-          (item) => item.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || item.id.toString().includes(searchTerm)
+          (item) => isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
         );
         setPokemonListFilter(results);
       }
@@ -128,7 +129,7 @@ const Search = () => {
             defaultValue={searchTerm}
             onFocus={(e) => {
               setShowResult(true);
-              if (e.currentTarget.value !== searchTerm) {
+              if (!isEqual(e.currentTarget.value, searchTerm)) {
                 setSearchTerm(e.currentTarget.value);
               }
             }}

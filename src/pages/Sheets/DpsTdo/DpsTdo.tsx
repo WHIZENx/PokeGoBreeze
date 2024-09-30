@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/utils';
 import {
+  DEFAULT_SHEET_PAGE,
+  DEFAULT_SHEET_ROW,
   DEFAULT_TYPES,
   FORM_GMAX,
   FORM_MEGA,
@@ -48,10 +50,10 @@ import { OptionsSheetState, RouterState, StoreState } from '../../../store/model
 import { ICombat } from '../../../core/models/combat.model';
 import { Elite, IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
+import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { BestOptionType, ColumnSelectType, SortDirectionType } from './enums/column-select-type.enum';
+import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
 import { WeatherBoost } from '../../../core/models/weatherBoost.model';
 import { OptionsActions } from '../../../store/actions';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
@@ -61,9 +63,14 @@ import {
   DynamicObj,
   getValueOrDefault,
   isEmpty,
+  isEqual,
+  isInclude,
+  isIncludeList,
   isNotEmpty,
   toNumber,
 } from '../../../util/extension';
+import { InputType } from '../../../components/Input/enums/input-type.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -258,18 +265,13 @@ const DpsTdo = () => {
   const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.cMoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : 1
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : DEFAULT_SHEET_PAGE
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : 10
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : DEFAULT_SHEET_ROW
   );
   const [defaultSorted, setDefaultSorted] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
-      ? optionStore?.dpsSheet?.defaultSorted
-      : {
-          selectedColumn: ColumnSelectType.Total,
-          sortDirection: SortDirectionType.DESC.toString(),
-        }
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted ? optionStore?.dpsSheet?.defaultSorted : new OptionDPSSort()
   );
 
   const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPS());
@@ -321,8 +323,8 @@ const DpsTdo = () => {
     specialMove: string[] = []
   ) => {
     movePoke.forEach((vc: string) => {
-      const fMove = data?.combat?.find((item) => item.name === vf);
-      const cMove = data?.combat?.find((item) => item.name === vc);
+      const fMove = data?.combat?.find((item) => isEqual(item.name, vf));
+      const cMove = data?.combat?.find((item) => isEqual(item.name, vc));
 
       if (fMove && cMove) {
         const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
@@ -346,8 +348,8 @@ const DpsTdo = () => {
             atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
             def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
             hp: calculateStatsBattle(getValueOrDefault(Number, statsDef.sta), ivHp, pokemonLevel),
-            fMove: data?.combat?.find((item) => item.name === fMoveTargetPokemon.name),
-            cMove: data?.combat?.find((item) => item.name === cMoveTargetPokemon.name),
+            fMove: data?.combat?.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
+            cMove: data?.combat?.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
             types: dataTargetPokemon.types,
             weatherBoosts: getValueOrDefault(String, options.weatherBoosts),
           });
@@ -383,9 +385,9 @@ const DpsTdo = () => {
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           shadow,
-          purified: purified && isNotEmpty(specialMove) && specialMove.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
+          purified: purified && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           special,
-          mShadow: shadow && isNotEmpty(specialMove) && specialMove.includes(getValueOrDefault(String, statsAttacker.cMove?.name)),
+          mShadow: shadow && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -492,29 +494,30 @@ const DpsTdo = () => {
     let result = dpsTable.filter((item) => {
       const boolFilterType =
         !isNotEmpty(selectTypes) ||
-        (selectTypes.includes(getValueOrDefault(String, item.fMove?.type?.toUpperCase())) &&
-          selectTypes.includes(getValueOrDefault(String, item.cMove?.type?.toUpperCase())));
+        (isIncludeList(selectTypes, item.fMove?.type, IncludeMode.IncludeIgnoreCaseSensitive) &&
+          isIncludeList(selectTypes, item.cMove?.type, IncludeMode.IncludeIgnoreCaseSensitive));
       const boolFilterPoke =
         isEmpty(searchTerm) ||
         (match
-          ? item.pokemon.name.replaceAll('-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.pokemon.num.toString() === searchTerm
-          : item.pokemon.name.replaceAll('-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.pokemon.num.toString().includes(searchTerm));
+          ? isEqual(item.pokemon.name.replaceAll('-', ' '), searchTerm, EqualMode.IgnoreCaseSensitive) ||
+            isEqual(item.pokemon.num, searchTerm)
+          : isInclude(item.pokemon.name.replaceAll('-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            isInclude(item.pokemon.num, searchTerm));
 
       const boolShowShadow = !showShadow && item.shadow;
       const boolShowElite = !showEliteMove && (item.elite.fMove || item.elite.cMove);
-      const boolShowMega = !showMega && item.pokemon.forme?.toUpperCase().includes(FORM_MEGA);
-      const boolShowGmax = !showGmax && item.pokemon.forme?.toUpperCase().includes(FORM_GMAX);
-      const boolShowPrimal = !showPrimal && item.pokemon.forme?.toUpperCase().includes(FORM_PRIMAL);
+      const boolShowMega = !showMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolShowGmax = !showGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolShowPrimal = !showPrimal && isInclude(item.pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolShowLegend = !showLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
       const boolShowMythic = !showMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
 
       const boolOnlyShadow = enableShadow && item.shadow;
       const boolOnlyElite = enableElite && (item.elite.fMove || item.elite.cMove);
-      const boolOnlyMega = enableMega && item.pokemon.forme?.toUpperCase().includes(FORM_MEGA);
-      const boolOnlyGmax = enableGmax && item.pokemon.forme?.toUpperCase().includes(FORM_GMAX);
-      const boolOnlyPrimal = enablePrimal && item.pokemon.forme?.toUpperCase().includes(FORM_PRIMAL);
+      const boolOnlyMega = enableMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolOnlyGmax = enableGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolOnlyPrimal = enablePrimal && isInclude(item.pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolOnlyLegend = enableLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
       const boolOnlyMythic = enableMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolOnlyUltra = enableUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
@@ -685,8 +688,8 @@ const DpsTdo = () => {
   ]);
 
   const addTypeArr = (value: string) => {
-    if (selectTypes.includes(value)) {
-      return setSelectTypes([...selectTypes].filter((item) => item !== value));
+    if (isIncludeList(selectTypes, value)) {
+      return setSelectTypes([...selectTypes].filter((item) => !isEqual(item, value)));
     }
     return setSelectTypes((oldArr) => [...oldArr, value]);
   };
@@ -714,7 +717,7 @@ const DpsTdo = () => {
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
-                className={combineClasses('btn-select-type w-100 border-types', selectTypes.includes(item) ? 'select-type' : '')}
+                className={combineClasses('btn-select-type w-100 border-types', isIncludeList(selectTypes, item) ? 'select-type' : '')}
                 style={{ padding: 10 }}
               >
                 <TypeInfo block={true} arr={[item]} />
@@ -927,7 +930,7 @@ const DpsTdo = () => {
                   <div className="input-group h-100">
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
-                      inputType="small"
+                      inputType={InputType.Small}
                       pokemon={dataTargetPokemon}
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
@@ -940,7 +943,7 @@ const DpsTdo = () => {
                   <div className="input-group h-100">
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
-                      inputType="small"
+                      inputType={InputType.Small}
                       pokemon={dataTargetPokemon}
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}
@@ -962,20 +965,12 @@ const DpsTdo = () => {
                     <Switch
                       onChange={(_, check) => {
                         setFilters({ ...filters, enableDelay: check });
-                        if (check) {
-                          setOptions({
+                        setOptions(
+                          OptionOtherDPS.create({
                             ...options,
-                            delay: {
-                              fTime: 0,
-                              cTime: 0,
-                            },
-                          });
-                        } else {
-                          setOptions({
-                            ...options,
-                            delay: undefined,
-                          });
-                        }
+                            delay: check ? new Delay() : undefined,
+                          })
+                        );
                       }}
                     />
                   }
@@ -992,13 +987,15 @@ const DpsTdo = () => {
                   disabled={!enableDelay}
                   required={enableDelay}
                   onInput={(e) =>
-                    setOptions({
-                      ...options,
-                      delay: {
-                        fTime: parseFloat(e.currentTarget.value),
-                        cTime: getValueOrDefault(Number, options.delay?.cTime),
-                      },
-                    })
+                    setOptions(
+                      OptionOtherDPS.create({
+                        ...options,
+                        delay: Delay.create({
+                          fTime: parseFloat(e.currentTarget.value),
+                          cTime: getValueOrDefault(Number, options.delay?.cTime),
+                        }),
+                      })
+                    )
                   }
                 />
                 <span className="input-group-text">Charged Move Time</span>
@@ -1012,13 +1009,15 @@ const DpsTdo = () => {
                   disabled={!enableDelay}
                   required={enableDelay}
                   onInput={(e) =>
-                    setOptions({
-                      ...options,
-                      delay: {
-                        fTime: getValueOrDefault(Number, options.delay?.fTime),
-                        cTime: parseFloat(e.currentTarget.value),
-                      },
-                    })
+                    setOptions(
+                      OptionOtherDPS.create({
+                        ...options,
+                        delay: Delay.create({
+                          fTime: getValueOrDefault(Number, options.delay?.fTime),
+                          cTime: parseFloat(e.currentTarget.value),
+                        }),
+                      })
+                    )
                   }
                 />
               </div>
@@ -1110,10 +1109,12 @@ const DpsTdo = () => {
                     disabled={dataTargetPokemon ? true : false}
                     required={true}
                     onInput={(e) =>
-                      setOptions({
-                        ...options,
-                        pokemonDefObj: parseFloat(e.currentTarget.value),
-                      })
+                      setOptions(
+                        OptionOtherDPS.create({
+                          ...options,
+                          pokemonDefObj: parseFloat(e.currentTarget.value),
+                        })
+                      )
                     }
                     name="pokemonDefObj"
                   />
@@ -1125,10 +1126,12 @@ const DpsTdo = () => {
                     className="form-control"
                     defaultValue={String(weatherBoosts)}
                     onChange={(e) =>
-                      setOptions({
-                        ...options,
-                        weatherBoosts: e.target.value,
-                      })
+                      setOptions(
+                        OptionOtherDPS.create({
+                          ...options,
+                          weatherBoosts: e.target.value,
+                        })
+                      )
                     }
                   >
                     <option value="">Extream</option>
@@ -1151,11 +1154,13 @@ const DpsTdo = () => {
                       control={
                         <Switch
                           onChange={(_, check) => {
-                            setOptions({
-                              ...options,
-                              trainerFriend: check,
-                              pokemonFriendLevel: 0,
-                            });
+                            setOptions(
+                              OptionOtherDPS.create({
+                                ...options,
+                                trainerFriend: check,
+                                pokemonFriendLevel: 0,
+                              })
+                            );
                           }}
                         />
                       }
@@ -1164,10 +1169,12 @@ const DpsTdo = () => {
                     <LevelRating
                       disabled={!trainerFriend}
                       onChange={(_, value) => {
-                        setOptions({
-                          ...options,
-                          pokemonFriendLevel: getValueOrDefault(Number, value),
-                        });
+                        setOptions(
+                          OptionOtherDPS.create({
+                            ...options,
+                            pokemonFriendLevel: getValueOrDefault(Number, value),
+                          })
+                        );
                       }}
                       max={4}
                       size="large"
@@ -1216,10 +1223,12 @@ const DpsTdo = () => {
             setDefaultRowPerPage(currentRowsPerPage);
           }}
           onSort={(selectedColumn, sortDirection) => {
-            setDefaultSorted({
-              selectedColumn: toNumber(getValueOrDefault(String, selectedColumn.id?.toString(), '1')),
-              sortDirection,
-            });
+            setDefaultSorted(
+              OptionDPSSort.create({
+                selectedColumn: toNumber(getValueOrDefault(String, selectedColumn.id?.toString(), '1')),
+                sortDirection,
+              })
+            );
           }}
         />
       </div>

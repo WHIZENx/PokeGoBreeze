@@ -13,7 +13,9 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { SelectType } from './enums/select-type.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -63,18 +65,33 @@ const columns: TableColumnModify<ICombat>[] = [
   },
 ];
 
+interface IFilter {
+  fMoveType: string;
+  fMoveName: string;
+  cMoveType: string;
+  cMoveName: string;
+}
+
+class Filter implements IFilter {
+  fMoveType = SelectType.All.toString();
+  fMoveName = '';
+  cMoveType = SelectType.All.toString();
+  cMoveName = '';
+
+  static create(value: IFilter) {
+    const obj = new Filter();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
 const Search = () => {
   useChangeTitle('Moves - Search');
   const theme = useTheme<ThemeModify>();
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
   const types = useSelector((state: StoreState) => state.store.data?.typeEff);
 
-  const [filters, setFilters] = useState({
-    fMoveType: 'all',
-    fMoveName: '',
-    cMoveType: 'all',
-    cMoveName: '',
-  });
+  const [filters, setFilters] = useState(new Filter());
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
@@ -101,11 +118,12 @@ const Search = () => {
 
   const searchMove = (category: string, type: string, name: string) => {
     return combat
-      .filter((item) => item.typeMove === category)
+      .filter((item) => isEqual(item.typeMove, category))
       .filter(
         (move) =>
-          (splitAndCapitalize(move.name, '_', ' ').toLowerCase().includes(name.toLowerCase()) || move.track.toString().includes(name)) &&
-          (type === 'all' || type === capitalize(move.type))
+          (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            isInclude(move.track, name)) &&
+          (type === SelectType.All.toString() || isEqual(type, move.type, EqualMode.IgnoreCaseSensitive))
       );
   };
 
@@ -130,10 +148,10 @@ const Search = () => {
                           className="text-black"
                           value={fMoveType}
                           label="Type"
-                          onChange={(e) => setFilters({ ...filters, fMoveType: e.target.value })}
+                          onChange={(e) => setFilters(Filter.create({ ...filters, fMoveType: e.target.value }))}
                         >
-                          <MenuItem value="all" defaultChecked={true}>
-                            All
+                          <MenuItem value={SelectType.All} defaultChecked={true}>
+                            {SelectType.All}
                           </MenuItem>
                           {Object.keys(types ?? new TypeEff()).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
@@ -149,7 +167,7 @@ const Search = () => {
                         variant="outlined"
                         placeholder="Enter Name or ID"
                         defaultValue={fMoveName}
-                        onChange={(e) => setFilters({ ...filters, fMoveName: e.target.value })}
+                        onChange={(e) => setFilters(Filter.create({ ...filters, fMoveName: e.target.value }))}
                         size="small"
                       />
                     </div>
@@ -188,9 +206,9 @@ const Search = () => {
                           className="text-black"
                           value={cMoveType}
                           label="Type"
-                          onChange={(e) => setFilters({ ...filters, cMoveType: e.target.value })}
+                          onChange={(e) => setFilters(Filter.create({ ...filters, cMoveType: e.target.value }))}
                         >
-                          <MenuItem value="all">All</MenuItem>
+                          <MenuItem value={SelectType.All}>{SelectType.All}</MenuItem>
                           {Object.keys(types ?? new TypeEff()).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
                               {capitalize(value)}
@@ -205,7 +223,7 @@ const Search = () => {
                         variant="outlined"
                         placeholder="Enter Name or ID"
                         defaultValue={cMoveName}
-                        onChange={(e) => setFilters({ ...filters, cMoveName: e.target.value })}
+                        onChange={(e) => setFilters(Filter.create({ ...filters, cMoveName: e.target.value }))}
                         size="small"
                       />
                     </div>

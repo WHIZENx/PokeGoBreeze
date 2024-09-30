@@ -131,7 +131,7 @@ const CalculatePoint = () => {
   const calculateBreakpointAtk = () => {
     setResultBreakPointAtk(undefined);
     const dataList: number[][] = [];
-    const group = [];
+    const group: number[] = [];
     let lv = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
       dataList[lv] = getValueOrDefault(Array, dataList[lv]);

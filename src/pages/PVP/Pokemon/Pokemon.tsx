@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/constants';
+import { FORM_MEGA, FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/constants';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -23,7 +23,8 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -52,9 +53,13 @@ const PokemonPVP = () => {
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
-          APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, getValueOrDefault(String, params.type))
+          APIService.getRankingFile(
+            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? FORM_MEGA.toLowerCase() : 'all',
+            cp,
+            getValueOrDefault(String, params.type)
+          )
         )
-      ).data.find((pokemon) => pokemon.speciesId === paramName);
+      ).data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
 
       if (!data) {
         setFound(false);
@@ -62,7 +67,7 @@ const PokemonPVP = () => {
       }
 
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-      const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
+      const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
       const id = pokemon?.num;
       const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
       document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(params.type)})`;
@@ -72,18 +77,18 @@ const PokemonPVP = () => {
       let fMoveData = data.moveset.at(0);
       const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, data.moveset.at(1)));
       const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, data.moveset.at(2)));
-      if (fMoveData?.includes('HIDDEN_POWER')) {
+      if (isInclude(fMoveData, 'HIDDEN_POWER')) {
         fMoveData = 'HIDDEN_POWER';
       }
 
-      let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);
-      const cMovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
+      let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
+      const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
       let cMoveSec;
       if (cMoveDataSec) {
-        cMoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
+        cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
       }
 
-      if (fMove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
+      if (fMove && isInclude(data.moveset.at(0), 'HIDDEN_POWER')) {
         fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, data.moveset.at(0)?.split('_').at(2)) });
       }
 
@@ -126,10 +131,8 @@ const PokemonPVP = () => {
           cMovePri,
           cMoveSec,
           bestStats,
-          shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
-          purified:
-            pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMovePri?.name)) ||
-            pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMoveSec?.name)),
+          shadow: isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
+          purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
         })
       );
       dispatch(SpinnerActions.HideSpinner.create());
@@ -163,7 +166,7 @@ const PokemonPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => item.id === 'all' && item.cp.includes(cp));
+    const league = pvp?.rankings.find((item) => item.id === 'all' && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -209,7 +212,7 @@ const PokemonPVP = () => {
               {scoreType.map((type, index) => (
                 <Button
                   key={index}
-                  className={params.type?.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+                  className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
                   onClick={() => navigate(`/pvp/${params.cp}/${type.toLowerCase()}/${params.pokemon}`)}
                 >
                   {type}

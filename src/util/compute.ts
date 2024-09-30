@@ -2,7 +2,8 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
-import { getValueOrDefault, isNotEmpty } from './extension';
+import { EqualMode } from './enums/string.enum';
+import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from './extension';
 import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
@@ -78,7 +79,12 @@ export const raidEgg = (tier: number, mega: boolean, primal: boolean, ultra?: bo
 };
 
 export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
-  let data = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData.find((item) =>
+    isIncludeList(
+      item.familyGroup.map((value) => value.id),
+      id
+    )
+  );
   if (!data) {
     data = candyData.find((item) => item.familyId === id);
     if (!data) {
@@ -91,7 +97,12 @@ export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
 };
 
 export const computeCandyColor = (candyData: ICandy[], id: number) => {
-  let data = candyData.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData.find((item) =>
+    isIncludeList(
+      item.familyGroup.map((value) => value.id),
+      id
+    )
+  );
   if (!data) {
     data = candyData.find((item) => item.familyId === id);
     if (!data) {
@@ -140,7 +151,7 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: s
   if (!pokemonAssets || name?.toUpperCase() === FORM_GMAX) {
     return;
   }
-  const asset = pokemonAssets.image.find((img) => img.form === name);
+  const asset = pokemonAssets.image.find((img) => isEqual(img.form, name));
   if (asset) {
     return asset;
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {
@@ -170,7 +181,7 @@ export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: st
 };
 
 export const findStabType = (types: string[], findType: string) => {
-  return types.some((type) => type.toUpperCase() === findType.toUpperCase());
+  return types.some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
 };
 
 export const getPokemonBattleLeagueName = (cp: number) => {

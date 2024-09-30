@@ -1,41 +1,42 @@
 import { APIPath, APITree } from '../services/models/api.model';
-import { getValueOrDefault, toNumber } from '../util/extension';
+import { IncludeMode } from '../util/enums/string.enum';
+import { getValueOrDefault, isInclude, toNumber } from '../util/extension';
 import { splitAndCapitalize } from '../util/utils';
 import { ILeague, LeaguePVP } from './models/league.model';
 
 export const pvpConvertPath = (data: APITree, path: string) => {
-  return data.tree.filter((item) => item.path.includes(path)).map((item) => item.path.replace(path, ''));
+  return data.tree.filter((item) => isInclude(item.path, path)).map((item) => item.path.replace(path, ''));
 };
 
 export const pvpFindFirstPath = (data: APIPath[], path: string) => {
-  return data.filter((item) => item.path.includes(path)).map((item) => item.path);
+  return data.filter((item) => isInclude(item.path, path)).map((item) => item.path);
 };
 
 export const pvpFindPath = (data: string[], path: string) => {
-  return data.filter((item) => item.includes(path)).map((item) => item.replace(path, ''));
+  return data.filter((item) => isInclude(item, path)).map((item) => item.replace(path, ''));
 };
 
 export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
   return [...new Set(data.map((league) => league.split('/').at(0)))].map((league) => {
     let item;
     if (league !== 'all') {
-      item = leagues.find((item) => item.iconUrl?.includes(getValueOrDefault(String, league)));
+      item = leagues.find((item) => isInclude(item.iconUrl, league));
       if (!item) {
-        item = leagues.find((item) => item.title.replaceAll('_', '').includes(getValueOrDefault(String, league?.toUpperCase())));
+        item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));
       }
       if (!item) {
-        item = leagues.find((item) => item.id?.includes(getValueOrDefault(String, league?.toUpperCase())));
+        item = leagues.find((item) => isInclude(item.id, league, IncludeMode.IncludeIgnoreCaseSensitive));
       }
     }
 
     const result = new LeaguePVP();
     result.id = getValueOrDefault(String, league);
     result.name = splitAndCapitalize((item ? item.title : league)?.replaceAll('-', '_'), '_', ' ');
-    if (!result.name.toLowerCase().includes(result.id)) {
+    if (!isInclude(result.name, result.id, IncludeMode.IncludeIgnoreCaseSensitive)) {
       result.name = splitAndCapitalize(league?.replaceAll('-', '_'), '_', ' ');
     }
     result.cp = data
-      .filter((item) => item.startsWith(getValueOrDefault(String, league)) && item.includes(`${league}/overall/`))
+      .filter((item) => item.startsWith(getValueOrDefault(String, league)) && isInclude(item, `${league}/overall/`))
       .map((item) => toNumber(item.replace(`${league}/overall/rankings-`, '')))
       .sort((a, b) => a - b);
     result.logo = item?.iconUrl;
@@ -47,22 +48,22 @@ export const convertPVPTrain = (data: string[], leagues: ILeague[]) => {
   return [...new Set(data.map((league) => league.split('/').at(0)))].map((league) => {
     let item;
     if (league !== 'all') {
-      item = leagues.find((item) => item.iconUrl?.includes(getValueOrDefault(String, league)));
+      item = leagues.find((item) => isInclude(item.iconUrl, league, IncludeMode.IncludeIgnoreCaseSensitive));
       if (!item) {
-        item = leagues.find((item) => item.title.replaceAll('_', '').includes(getValueOrDefault(String, league?.toUpperCase())));
+        item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));
       }
       if (!item) {
-        item = leagues.find((item) => item.id?.includes(getValueOrDefault(String, league?.toUpperCase())));
+        item = leagues.find((item) => isInclude(item.id, league, IncludeMode.IncludeIgnoreCaseSensitive));
       }
     }
     const result = new LeaguePVP();
     result.id = getValueOrDefault(String, league);
     result.name = splitAndCapitalize(item ? item.title : league, '_', ' ');
-    if (!result.name.toLowerCase().includes(result.id)) {
+    if (!isInclude(result.name, result.id, IncludeMode.IncludeIgnoreCaseSensitive)) {
       result.name = splitAndCapitalize(league, '_', ' ');
     }
     result.cp = data
-      .filter((item) => item.startsWith(getValueOrDefault(String, league)) && item.includes(`${league}/`))
+      .filter((item) => item.startsWith(getValueOrDefault(String, league)) && isInclude(item, `${league}/`))
       .map((item) => toNumber(item.replace(`${league}/`, '')))
       .sort((a, b) => a - b);
     result.logo = item?.iconUrl;

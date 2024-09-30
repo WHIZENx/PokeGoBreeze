@@ -1,6 +1,23 @@
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
+import { ColumnSelectType, SortDirectionType } from '../../pages/Sheets/DpsTdo/enums/column-select-type.enum';
 import { DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_LEVEL, MAX_IV } from '../../util/constants';
+
+interface IOptionDPSSort {
+  selectedColumn: number;
+  sortDirection: string;
+}
+
+export class OptionDPSSort implements IOptionDPSSort {
+  selectedColumn = ColumnSelectType.Total;
+  sortDirection = SortDirectionType.DESC.toString();
+
+  static create(value: IOptionDPSSort) {
+    const obj = new OptionDPSSort();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
 
 export interface OptionDPSModel {
   filters: OptionFiltersDPS;
@@ -12,10 +29,7 @@ export interface OptionDPSModel {
   searchTerm: string;
   defaultPage: number;
   defaultRowPerPage: number;
-  defaultSorted: {
-    selectedColumn: number;
-    sortDirection: string;
-  };
+  defaultSorted: OptionDPSSort;
 }
 
 interface IOptionFiltersDPS {
@@ -47,64 +61,57 @@ interface IOptionFiltersDPS {
 }
 
 export class OptionFiltersDPS implements IOptionFiltersDPS {
-  match: boolean;
-  showEliteMove: boolean;
-  showShadow: boolean;
-  showMega: boolean;
-  showGmax: boolean;
-  showPrimal: boolean;
-  showLegendary: boolean;
-  showMythic: boolean;
-  showUltraBeast: boolean;
-  enableShadow: boolean;
-  enableElite: boolean;
-  enableMega: boolean;
-  enableGmax: boolean;
-  enablePrimal: boolean;
-  enableLegendary: boolean;
-  enableMythic: boolean;
-  enableUltraBeast: boolean;
-  enableBest: boolean;
-  enableDelay: boolean;
-  releasedGO: boolean;
-  bestOf: number;
-  ivAtk: number;
-  ivDef: number;
-  ivHp: number;
-  pokemonLevel: number;
+  match = false;
+  showEliteMove = true;
+  showShadow = true;
+  showMega = true;
+  showGmax = true;
+  showPrimal = true;
+  showLegendary = true;
+  showMythic = true;
+  showUltraBeast = true;
+  enableShadow = false;
+  enableElite = false;
+  enableMega = false;
+  enableGmax = false;
+  enablePrimal = false;
+  enableLegendary = false;
+  enableMythic = false;
+  enableUltraBeast = false;
+  enableBest = false;
+  enableDelay = false;
+  releasedGO = true;
+  bestOf = 3;
+  ivAtk = MAX_IV;
+  ivDef = MAX_IV;
+  ivHp = MAX_IV;
+  pokemonLevel = 40;
+}
 
-  constructor() {
-    this.match = false;
-    this.showEliteMove = true;
-    this.showShadow = true;
-    this.showMega = true;
-    this.showGmax = true;
-    this.showPrimal = true;
-    this.showLegendary = true;
-    this.showMythic = true;
-    this.showUltraBeast = true;
-    this.enableShadow = false;
-    this.enableElite = false;
-    this.enableMega = false;
-    this.enableGmax = false;
-    this.enablePrimal = false;
-    this.enableLegendary = false;
-    this.enableMythic = false;
-    this.enableUltraBeast = false;
-    this.enableBest = false;
-    this.enableDelay = false;
-    this.releasedGO = true;
-    this.bestOf = 3;
-    this.ivAtk = MAX_IV;
-    this.ivDef = MAX_IV;
-    this.ivHp = MAX_IV;
-    this.pokemonLevel = 40;
+interface IDelay {
+  fTime: number;
+  cTime: number;
+}
+
+export class Delay implements IDelay {
+  fTime = 0;
+  cTime = 0;
+
+  static create(value: IDelay) {
+    const obj = new Delay();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 
+interface Specific {
+  FDmgEnemy: number;
+  CDmgEnemy: number;
+}
+
 export interface IOptionOtherDPS {
-  delay?: { fTime: number; cTime: number };
-  specific?: { FDmgEnemy: number; CDmgEnemy: number };
+  delay?: IDelay;
+  specific?: Specific;
   weatherBoosts?: string;
   trainerFriend?: boolean;
   pokemonFriendLevel?: number;
@@ -116,18 +123,17 @@ export interface IOptionOtherDPS {
   objTypes?: string[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class OptionOtherDPS implements IOptionOtherDPS {
-  delay?: { fTime: number; cTime: number };
-  specific?: { FDmgEnemy: number; CDmgEnemy: number };
+  delay?: IDelay;
+  specific?: Specific;
   weatherBoosts?: string;
   trainerFriend?: boolean;
   pokemonFriendLevel?: number;
-  pokemonDefObj: number = DEFAULT_POKEMON_DEF_OBJ;
-  ivAtk: number = MAX_IV;
-  ivDef: number = MAX_IV;
-  ivHp: number = MAX_IV;
-  pokemonLevel: number = DEFAULT_POKEMON_LEVEL;
+  pokemonDefObj = DEFAULT_POKEMON_DEF_OBJ;
+  ivAtk = MAX_IV;
+  ivDef = MAX_IV;
+  ivHp = MAX_IV;
+  pokemonLevel = DEFAULT_POKEMON_LEVEL;
   objTypes?: string[];
 
   static create(value: IOptionOtherDPS) {

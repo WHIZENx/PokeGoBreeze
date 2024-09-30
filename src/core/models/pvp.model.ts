@@ -49,7 +49,6 @@ export interface IPerformers {
   usageTrend: string[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Performers implements IPerformers {
   id: number | undefined;
   name: string | undefined;
@@ -91,7 +90,6 @@ export interface ITeams {
   teamsTotalGames: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Teams implements ITeams {
   games = 0;
   team = '';
@@ -134,17 +132,11 @@ interface IPokemonRankingStats {
   hp?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonRankingStats implements IPokemonRankingStats {
   product?: number;
   atk = 0;
   def = 0;
   hp?: number;
-
-  constructor() {
-    this.atk = 0;
-    this.def = 0;
-  }
 }
 
 export interface IMovePokemonRanking {
@@ -152,7 +144,6 @@ export interface IMovePokemonRanking {
   fastMoves: PokemonRankingMove[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class MovePokemonRanking implements IMovePokemonRanking {
   chargedMoves: PokemonRankingMove[] = [];
   fastMoves: PokemonRankingMove[] = [];
@@ -177,7 +168,6 @@ export interface IBattlePokemonData {
   purified?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BattlePokemonData implements IBattlePokemonData {
   counters: PokemonVersus[] = [];
   matchups: PokemonVersus[] = [];

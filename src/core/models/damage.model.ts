@@ -1,3 +1,4 @@
+import { MIN_LEVEL } from '../../util/constants';
 import { IPokemonFormModify } from './API/form.model';
 import { ICombat } from './combat.model';
 
@@ -30,7 +31,6 @@ export interface IBattleState {
   mega?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BattleState implements IBattleState {
   stab = false;
   wb = false;
@@ -60,21 +60,21 @@ export interface IPokemonDmgOption {
   hp?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonDmgOption implements IPokemonDmgOption {
   objPoke?: IPokemonFormModify;
   type?: string;
   currPoke?: IPokemonFormModify;
-  currLevel = 0;
+  currLevel = MIN_LEVEL;
   typeObj?: string;
-  objLevel = 0;
+  objLevel = MIN_LEVEL;
   move?: ICombat;
   battleState?: IBattleState;
   damage?: number;
   hp?: number;
 
-  constructor() {
-    this.currLevel = 0;
-    this.objLevel = 1;
+  static create(value: IPokemonDmgOption) {
+    const obj = new PokemonDmgOption();
+    Object.assign(obj, value);
+    return obj;
   }
 }

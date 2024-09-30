@@ -29,7 +29,6 @@ export interface IStatsRankDef extends OptionsRank {
   ranking: IStatsDef[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsRankDef implements IStatsRankDef {
   ranking: IStatsDef[] = [];
   minRank = 0;
@@ -48,7 +47,6 @@ export interface IStatsRankSta extends OptionsRank {
   ranking: IStatsSta[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsRankSta implements IStatsRankSta {
   ranking: IStatsSta[] = [];
   minRank = 0;
@@ -67,7 +65,6 @@ export interface IStatsRankProd extends OptionsRank {
   ranking: IStatsProd[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsRankProd implements IStatsRankProd {
   ranking: IStatsProd[] = [];
   minRank = 0;
@@ -89,7 +86,6 @@ export interface IStatsRank {
   statProd: IStatsRankProd;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsRank implements IStatsRank {
   attack = new StatsRankAtk();
   defense = new StatsRankDef();
@@ -107,7 +103,6 @@ export interface IStatsBase {
   sta?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsBase implements IStatsBase {
   atk = 0;
   def = 0;
@@ -129,7 +124,6 @@ export interface IStatsPokemonGO {
   prod: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsPokemonGO implements IStatsPokemonGO {
   atk = 0;
   def = 0;
@@ -169,7 +163,6 @@ export interface IHexagonStats {
   switching: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class HexagonStats implements IHexagonStats {
   lead = 0;
   atk = 0;
@@ -195,7 +188,6 @@ export interface IStatsAtk extends OptionsStats {
   attack: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsAtk implements IStatsAtk {
   attack = 0;
   rank = 0;
@@ -213,7 +205,6 @@ export interface IStatsDef extends OptionsStats {
   defense: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsDef implements IStatsDef {
   defense = 0;
   rank = 0;
@@ -231,7 +222,6 @@ export interface IStatsSta extends OptionsStats {
   stamina: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsSta implements IStatsSta {
   stamina = 0;
   rank = 0;
@@ -249,7 +239,6 @@ export interface IStatsProd extends OptionsStats {
   prod: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsProd implements IStatsProd {
   prod = 0;
   rank = 0;
@@ -286,7 +275,6 @@ export interface IPokemonStatsRanking {
   releasedGO: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonStatsRanking implements IPokemonStatsRanking {
   num = 0;
   name = '';
@@ -314,24 +302,14 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsPokemon implements IStatsPokemon {
   hp?: number;
-  atk: number;
-  def: number;
+  atk = 0;
+  def = 0;
   sta?: number;
   spa?: number;
   spd?: number;
   spe?: number;
-
-  constructor() {
-    this.atk = 0;
-    this.def = 0;
-    this.hp = 0;
-    this.spa = 0;
-    this.spd = 0;
-    this.spe = 0;
-  }
 
   static create(value: IStatsPokemon) {
     const obj = new StatsPokemon();
@@ -347,17 +325,9 @@ export interface IStatsRankPokemonGO {
   statProdRank: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class StatsRankPokemonGO implements IStatsRankPokemonGO {
-  attackRank: number;
-  defenseRank: number;
-  staminaRank: number;
-  statProdRank: number;
-
-  constructor() {
-    this.attackRank = 0;
-    this.defenseRank = 0;
-    this.staminaRank = 0;
-    this.statProdRank = 0;
-  }
+  attackRank = 0;
+  defenseRank = 0;
+  staminaRank = 0;
+  statProdRank = 0;
 }

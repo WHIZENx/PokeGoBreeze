@@ -26,7 +26,9 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isInclude } from '../../../util/extension';
+import { ChargeAbility } from './enums/damage.enum';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -46,6 +48,28 @@ const labels: DynamicObj<ILabelDamage> = {
     style: 'text-success',
   }),
 };
+
+interface IFilter {
+  weather: boolean;
+  dodge: boolean;
+  trainer: boolean;
+  fLevel: number;
+  cLevel: number;
+}
+
+class Filter implements IFilter {
+  weather = false;
+  dodge = false;
+  trainer = false;
+  fLevel = 0;
+  cLevel = ChargeAbility.EXCELLENT;
+
+  static create(value: IFilter) {
+    const obj = new Filter();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
 
 const Damage = () => {
   useChangeTitle('Damage Simulator - Battle Simulator');
@@ -80,13 +104,7 @@ const Damage = () => {
   const [statTypeObj, setStatTypeObj] = useState('');
 
   const [enableFriend, setEnableFriend] = useState(false);
-  const [battleState, setBattleState] = useState({
-    weather: false,
-    dodge: false,
-    trainer: false,
-    fLevel: 0,
-    cLevel: 3,
-  });
+  const [battleState, setBattleState] = useState(new Filter());
   const { weather, dodge, trainer } = battleState;
   const [result, setResult] = useState(new PokemonDmgOption());
 
@@ -121,18 +139,12 @@ const Damage = () => {
   }, [globalOptions, statATK, statLevel, statType, statATKObj, statDEF, statDEFObj, statLevelObj, statSTA, statSTAObj, statTypeObj]);
 
   const clearData = () => {
-    setResult({
-      currLevel: 1,
-      objLevel: 1,
-    });
+    setResult(new PokemonDmgOption());
   };
 
   const clearMove = () => {
     setMove(undefined);
-    setResult({
-      currLevel: 1,
-      objLevel: 1,
-    });
+    clearData();
   };
 
   const onSetForm = (form: IPokemonFormModify | undefined) => {
@@ -151,25 +163,27 @@ const Damage = () => {
           stab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)),
           wb: battleState.weather,
           dodge: battleState.dodge,
-          mega: getValueOrDefault(Boolean, form?.form.formName?.toUpperCase().includes(FORM_MEGA)),
+          mega: isInclude(form?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
           trainer: battleState.trainer,
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,
           effective: getTypeEffective(typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, formObj?.form.types)),
         });
-        setResult((r) => ({
-          ...r,
-          battleState: eff,
-          move,
-          damage: calculateDamagePVE(globalOptions, statLvATK, statLvDEFObj, move.pvePower, eff),
-          hp: statLvSTAObj,
-          currPoke: form,
-          objPoke: formObj,
-          type: statType,
-          typeObj: statTypeObj,
-          currLevel: statLevel,
-          objLevel: statLevelObj,
-        }));
+        setResult((r) =>
+          PokemonDmgOption.create({
+            ...r,
+            battleState: eff,
+            move,
+            damage: calculateDamagePVE(globalOptions, statLvATK, statLvDEFObj, move.pvePower, eff),
+            hp: statLvSTAObj,
+            currPoke: form,
+            objPoke: formObj,
+            type: statType,
+            typeObj: statTypeObj,
+            currLevel: statLevel,
+            objLevel: statLevelObj,
+          })
+        );
       } else {
         enqueueSnackbar('Please select move for pokémon!', { variant: 'error' });
       }
@@ -311,10 +325,12 @@ const Damage = () => {
                         <Switch
                           onChange={(_, check) => {
                             setEnableFriend(check);
-                            setBattleState({
-                              ...battleState,
-                              fLevel: 0,
-                            });
+                            setBattleState(
+                              Filter.create({
+                                ...battleState,
+                                fLevel: 0,
+                              })
+                            );
                           }}
                         />
                       }
@@ -323,10 +339,12 @@ const Damage = () => {
                     <LevelRating
                       disabled={!enableFriend}
                       onChange={(_, value) => {
-                        setBattleState({
-                          ...battleState,
-                          fLevel: getValueOrDefault(Number, value),
-                        });
+                        setBattleState(
+                          Filter.create({
+                            ...battleState,
+                            fLevel: getValueOrDefault(Number, value),
+                          })
+                        );
                       }}
                       defaultValue={0}
                       max={4}
@@ -347,10 +365,12 @@ const Damage = () => {
                         value={battleState.cLevel}
                         label="Charge ability"
                         onChange={(event) => {
-                          setBattleState({
-                            ...battleState,
-                            [event.target.name]: event.target.value,
-                          });
+                          setBattleState(
+                            Filter.create({
+                              ...battleState,
+                              [event.target.name]: event.target.value,
+                            })
+                          );
                         }}
                       >
                         {Object.entries(globalOptions?.throwCharge ?? new ThrowOption()).map(([type, value], index) => (

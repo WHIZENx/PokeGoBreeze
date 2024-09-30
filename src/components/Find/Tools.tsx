@@ -26,7 +26,8 @@ import {
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { getValueOrDefault, isNotEmpty, toNumber } from '../../util/extension';
+import { getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { IncludeMode } from '../../util/enums/string.enum';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
@@ -42,14 +43,14 @@ const Tools = (props: IToolsComponent) => {
   );
 
   useEffect(() => {
-    if (props.tier > 5 && !props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA)) {
+    if (props.tier > 5 && !isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
     } else if (
       props.tier === 5 &&
-      props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) &&
+      isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
       pokemonData.find((item) => item.num === props.id)?.pokemonClass
     ) {
       setCurrTier(6);
@@ -129,13 +130,15 @@ const Tools = (props: IToolsComponent) => {
             <optgroup label="Normal Tiers">
               <option value={1}>Tier 1</option>
               <option value={3}>Tier 3</option>
-              {!props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) && <option value={5}>Tier 5</option>}
+              {!isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) && (
+                <option value={5}>Tier 5</option>
+              )}
             </optgroup>
             <optgroup label="Legacy Tiers">
               <option value={2}>Tier 2</option>
               <option value={4}>Tier 4</option>
             </optgroup>
-            {props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) && (
+            {isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) && (
               <Fragment>
                 {pokemonData.find((item) => item.num === props.id)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">

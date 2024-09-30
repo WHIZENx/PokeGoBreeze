@@ -24,7 +24,6 @@ interface ICostPowerUp {
   type: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class CostPowerUp implements ICostPowerUp {
   stardust = 0;
   candy = 0;

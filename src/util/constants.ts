@@ -110,6 +110,9 @@ export const TYPE_LEGENDARY = 'LEGENDARY';
 export const TYPE_MYTHIC = 'MYTHIC';
 export const TYPE_ULTRA_BEAST = 'ULTRA_BEAST';
 
+export const DEFAULT_SHEET_PAGE = 1;
+export const DEFAULT_SHEET_ROW = 10;
+
 export const DEFAULT_POKEMON_DEF_OBJ = 160;
 export const DEFAULT_POKEMON_SHADOW = false;
 export const DEFAULT_TRAINER_FRIEND = false;
