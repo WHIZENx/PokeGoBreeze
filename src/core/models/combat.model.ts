@@ -27,7 +27,7 @@ interface IMove extends MoveSetting {
 
 export class Move implements IMove {
   id = 0;
-  movementId = '';
+  movementId: string | number = '';
   animationId = 0;
   pokemonType = '';
   power = 0;
