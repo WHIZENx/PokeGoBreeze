@@ -105,7 +105,7 @@ interface MoveBuff {
 }
 
 interface CombatMove {
-  uniqueId: string;
+  uniqueId: string | number;
   type: string;
   power: number;
   energyDelta: number;
@@ -114,7 +114,7 @@ interface CombatMove {
 }
 
 export interface MoveSetting {
-  movementId: string;
+  movementId: string | number;
   animationId: number;
   pokemonType: string;
   power: number;
