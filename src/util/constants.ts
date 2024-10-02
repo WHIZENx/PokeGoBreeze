@@ -5,6 +5,8 @@ import { TypeAction } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
 import { DynamicObj } from './extension';
+import { LeagueType } from '../core/enums/league.enum';
+import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
 
 // KeyCode
 export const KEY_ENTER = 13;
@@ -218,21 +220,21 @@ export const versionList = [
   'Scarlet Violet',
 ];
 
-export const typeCostPowerUp = (type: string) => {
-  switch (type.toUpperCase()) {
-    case FORM_SHADOW:
+export const typeCostPowerUp = (type: PokemonType | undefined) => {
+  switch (type) {
+    case PokemonType.Shadow:
       return CostPowerUp.create({
         stardust: 1.2,
         candy: 1.2,
         type,
       });
-    case FORM_PURIFIED:
+    case PokemonType.Purified:
       return CostPowerUp.create({
         stardust: 0.9,
         candy: 0.9,
         type,
       });
-    case 'LUCKY':
+    case PokemonType.Lucky:
       return CostPowerUp.create({
         stardust: 0.5,
         candy: 1,
@@ -249,25 +251,25 @@ export const typeCostPowerUp = (type: string) => {
 
 export const leaguesTeamBattle: PVPInfo[] = [
   {
-    id: 'all',
+    id: LeagueType.All,
     name: 'Little Cup',
     cp: [500],
     logo: APIService.getPokeOtherLeague('GBL_littlecup'),
   },
   {
-    id: 'all',
+    id: LeagueType.All,
     name: 'Great League',
     cp: [1500],
     logo: APIService.getPokeLeague('great_league'),
   },
   {
-    id: 'all',
+    id: LeagueType.All,
     name: 'Ultra League',
     cp: [2500],
     logo: APIService.getPokeLeague('ultra_league'),
   },
   {
-    id: 'all',
+    id: LeagueType.All,
     name: 'Master League',
     cp: [10000],
     logo: APIService.getPokeLeague('master_league'),

@@ -5,6 +5,7 @@ import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
 import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
+import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
 import { getValueOrDefault } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
@@ -73,7 +74,7 @@ export interface IBetweenLevelCalculate {
   resultBetweenXLCandy: number;
   resultBetweenXLCandyDiff?: number;
   powerUpCount?: number;
-  type?: string;
+  type?: PokemonType;
   atkStat?: number;
   defStat?: number;
   atkStatDiff?: number;
@@ -89,7 +90,7 @@ export class BetweenLevelCalculate implements IBetweenLevelCalculate {
   resultBetweenXLCandy = 0;
   resultBetweenXLCandyDiff?: number;
   powerUpCount?: number;
-  type?: string;
+  type?: PokemonType;
   atkStat?: number;
   defStat?: number;
   atkStatDiff?: number;

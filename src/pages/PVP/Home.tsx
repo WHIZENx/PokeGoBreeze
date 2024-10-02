@@ -15,6 +15,8 @@ import { LocalStorageConfig } from '../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../store/models/local-storage.model';
 import { getTime } from '../../util/utils';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
+import { EqualMode } from '../../util/enums/string.enum';
+import { LeagueType } from '../../core/enums/league.enum';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -82,7 +84,7 @@ const PVPHome = () => {
   };
 
   const renderLeagueName = (name: string, cp: number) => {
-    if (name === 'All') {
+    if (isEqual(name, LeagueType.All, EqualMode.IgnoreCaseSensitive)) {
       return getPokemonBattleLeagueName(cp);
     }
     return name;

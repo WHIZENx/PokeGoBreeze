@@ -123,7 +123,7 @@ const Search = () => {
         (move) =>
           (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
             isInclude(move.track, name)) &&
-          (type === SelectType.All.toString() || isEqual(type, move.type, EqualMode.IgnoreCaseSensitive))
+          (type === SelectType.All || isEqual(type, move.type, EqualMode.IgnoreCaseSensitive))
       );
   };
 

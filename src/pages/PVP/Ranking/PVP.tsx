@@ -41,6 +41,9 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { LeagueType } from '../../../core/enums/league.enum';
+import { Sorted } from '../enums/pvp-team.enum';
+import { SortType } from '../enums/pvp-ranking-enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -55,8 +58,8 @@ const RankingPVP = () => {
   const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
   const [storeStats, setStoreStats] = useState<boolean[]>();
   const [onLoadData, setOnLoadData] = useState(false);
-  const sortedBy = useRef('score');
-  const [sorted, setSorted] = useState(1);
+  const sortedBy = useRef(SortType.Score);
+  const [sorted, setSorted] = useState(Sorted.DESC);
 
   const styleSheet = useRef<CSSStyleSheet>();
 
@@ -95,10 +98,10 @@ const RankingPVP = () => {
         if (!file) {
           return;
         }
-        if (params.serie === 'all') {
+        if (params.serie === LeagueType.All) {
           document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
         } else {
-          document.title = `PVP Ranking - ${params.serie === 'remix' ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
+          document.title = `PVP Ranking - ${params.serie === LeagueType.Remix ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
             params.serie,
             '-',
             ' '
@@ -288,7 +291,7 @@ const RankingPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{league.name === 'All' ? getPokemonBattleLeagueName(cp) : league.name}</b>
+              <b>{isEqual(league.name, LeagueType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}</b>
             </h2>
           </div>
         ) : (
@@ -336,10 +339,12 @@ const RankingPVP = () => {
                 className="text-center"
                 style={{ width: 'max-content' }}
                 onClick={() => {
-                  setSorted(sorted ? 0 : 1);
+                  setSorted(sorted ? Sorted.ASC : Sorted.DESC);
                 }}
               >
-                <span className={combineClasses('ranking-sort ranking-score', sortedBy.current === 'score' ? 'ranking-selected' : '')}>
+                <span
+                  className={combineClasses('ranking-sort ranking-score', sortedBy.current === SortType.Score ? 'ranking-selected' : '')}
+                >
                   Score
                   {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
                 </span>

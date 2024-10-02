@@ -39,6 +39,7 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
+import { LeagueType } from '../../../core/enums/league.enum';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -248,9 +249,9 @@ const FindBattle = () => {
         );
         bestLeague = bestLeague.filter(
           (item) =>
-            (item.league === 'master' && getValueOrDefault(Number, item.CP) > 2500) ||
-            (item.league === 'ultra' && getValueOrDefault(Number, item.CP) > 1500) ||
-            (item.league === 'great' && getValueOrDefault(Number, item.CP) > 500)
+            (item.league === LeagueType.Master && getValueOrDefault(Number, item.CP) > 2500) ||
+            (item.league === LeagueType.Ultra && getValueOrDefault(Number, item.CP) > 1500) ||
+            (item.league === LeagueType.Great && getValueOrDefault(Number, item.CP) > 500)
         );
         if (!isNotEmpty(bestLeague)) {
           bestLeague = evoBaseStats.filter(
@@ -475,11 +476,11 @@ const FindBattle = () => {
                           alt="pokemon-model"
                           height={32}
                           src={
-                            value.league === 'little'
+                            value.league === LeagueType.Little
                               ? APIService.getPokeOtherLeague('GBL_littlecup')
-                              : value.league === 'great'
+                              : value.league === LeagueType.Great
                               ? APIService.getPokeLeague('great_league')
-                              : value.league === 'ultra'
+                              : value.league === LeagueType.Ultra
                               ? APIService.getPokeLeague('ultra_league')
                               : APIService.getPokeLeague('master_league')
                           }

@@ -44,7 +44,8 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { Sorted, SortType } from '../enums/pvp-team.enum';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { LeagueType } from '../../../core/enums/league.enum';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -151,10 +152,10 @@ const TeamPVP = () => {
         const file = (
           await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', getValueOrDefault(String, params.serie), cp))
         ).data;
-        if (params.serie === 'all') {
+        if (params.serie === LeagueType.All) {
           document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
         } else {
-          document.title = `PVP Teams - ${params.serie === 'remix' ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
+          document.title = `PVP Teams - ${params.serie === LeagueType.Remix ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
             params.serie,
             '-',
             ' '
@@ -220,7 +221,7 @@ const TeamPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{league.name === 'All' ? getPokemonBattleLeagueName(cp) : league.name}</b>
+              <b>{isEqual(league.name, LeagueType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}</b>
             </h2>
           </div>
         )}

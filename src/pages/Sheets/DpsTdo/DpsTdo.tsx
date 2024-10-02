@@ -1210,7 +1210,7 @@ const DpsTdo = () => {
           noDataComponent={null}
           pagination={true}
           defaultSortFieldId={defaultSorted.selectedColumn}
-          defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC.toString()}
+          defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC}
           highlightOnHover={true}
           striped={true}
           paginationDefaultPage={defaultPage}

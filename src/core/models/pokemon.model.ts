@@ -198,6 +198,7 @@ export interface PokemonModel {
   buddyWalkedMegaEnergyAward: number;
   id: number;
   name: string;
+  isForceReleaseGO?: boolean;
 }
 
 export interface IPokemonGenderRatio {

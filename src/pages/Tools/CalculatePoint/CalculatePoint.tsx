@@ -161,9 +161,9 @@ const CalculatePoint = () => {
   const calculateBreakpointDef = () => {
     setResultBreakPointDef(undefined);
     const dataListDef: number[][] = [];
-    const groupDef = [];
+    const groupDef: number[] = [];
     const dataListSta: number[][] = [];
-    const groupSta = [];
+    const groupSta: number[] = [];
     let lv = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
       dataListDef[lv] = getValueOrDefault(Array, dataListDef[lv]);

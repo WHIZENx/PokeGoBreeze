@@ -39,7 +39,6 @@ import {
   DEFAULT_TRAINER_MULTIPLY,
   DEFAULT_WEATHER_BOOSTS,
   FORM_MEGA,
-  FORM_SHADOW,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -85,6 +84,7 @@ import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeLi
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 import { EqualMode, IncludeMode } from './enums/string.enum';
+import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
 
 const weatherMultiple = (
   globalOptions: IOptions | undefined,
@@ -428,7 +428,7 @@ export const calculateBetweenLevel = (
   IVsta: number,
   fromLV: number,
   toLV: number,
-  type = ''
+  type?: PokemonType
 ) => {
   // from_lv -= 0.5;
   toLV -= 0.5;
@@ -457,7 +457,7 @@ export const calculateBetweenLevel = (
     let atkStatDiff = 0;
     let defStatDiff = 0;
 
-    if (type.toUpperCase() === FORM_SHADOW) {
+    if (type === PokemonType.Shadow) {
       atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, SHADOW_ATK_BONUS(globalOptions));
       defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, SHADOW_DEF_BONUS(globalOptions));
 
@@ -489,7 +489,7 @@ export const calculateBetweenLevel = (
       type,
     });
 
-    if (type.toUpperCase() === FORM_SHADOW) {
+    if (type === PokemonType.Shadow) {
       dataList.atkStat = atkStat;
       dataList.defStat = defStat;
       dataList.atkStatDiff = atkStatDiff;
@@ -510,11 +510,11 @@ export const calculateBattleLeague = (
   IVsta: number,
   fromLV: number,
   currCP: number,
-  type: string,
+  type: PokemonType | undefined,
   maxCp?: number
 ) => {
   let level = MAX_LEVEL;
-  if (type !== 'buddy') {
+  if (type !== PokemonType.Buddy) {
     level -= 1;
   }
   if (maxCp && currCP > maxCp) {
@@ -540,11 +540,11 @@ export const calculateBattleLeague = (
     }
 
     const atkStat =
-      type.toUpperCase() === FORM_SHADOW
+      type === PokemonType.Shadow
         ? calculateStatsBattle(atk, IVatk, dataBattle.level, true, SHADOW_ATK_BONUS(globalOptions))
         : calculateStatsBattle(atk, IVatk, dataBattle.level, true);
     const defStat =
-      type.toUpperCase() === FORM_SHADOW
+      type === PokemonType.Shadow
         ? calculateStatsBattle(def, IVdef, dataBattle.level, true, SHADOW_DEF_BONUS(globalOptions))
         : calculateStatsBattle(def, IVdef, dataBattle.level, true);
 

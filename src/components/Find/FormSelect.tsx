@@ -50,7 +50,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
-  const [typePoke, setTypePoke] = useState(props.raid ? TypeRaid.BOSS.toString() : TypeRaid.POKEMON.toString());
+  const [typePoke, setTypePoke] = useState(props.raid ? TypeRaid.BOSS : TypeRaid.POKEMON);
   const [tier, setTier] = useState(getValueOrDefault(Number, props.tier, 1));
 
   const [data, setData] = useState<Species>();
@@ -380,7 +380,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             name="row-types-group"
             value={typePoke}
             onChange={(e) => {
-              setTypePoke(e.target.value);
+              setTypePoke(e.target.value as TypeRaid);
               if (props.setRaid) {
                 props.setRaid(!isEqual(e.target.value, TypeRaid.POKEMON));
               }
@@ -390,7 +390,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             }}
           >
             <FormControlLabel
-              value="pokemon"
+              value={TypeRaid.POKEMON}
               control={<Radio />}
               label={
                 <span>
@@ -399,7 +399,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               }
             />
             <FormControlLabel
-              value="boss"
+              value={TypeRaid.BOSS}
               control={<Radio />}
               label={
                 <span>

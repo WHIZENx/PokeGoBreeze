@@ -65,6 +65,8 @@ import { BuffType, TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import { LeagueType } from '../../../core/enums/league.enum';
+import { BattleType } from './enums/battle.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -715,7 +717,7 @@ const Battle = () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
         clearData();
-        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile('all', league, 'overall'))).data;
+        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(LeagueType.All, league, 'overall'))).data;
         if (!file) {
           return;
         }
@@ -1065,23 +1067,10 @@ const Battle = () => {
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
             <img width={15} height={15} alt="img-atk" src={value.type === TypeAction.ATK ? ATK_LOGO : DEF_LOGO} />
             <div className="position-absolute icon-buff">
-              {value.power === 2 ? (
-                <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-              ) : (
-                <Fragment>
-                  {value.power === 1 ? (
-                    <KeyboardArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                  ) : (
-                    <Fragment>
-                      {value.power === -1 ? (
-                        <KeyboardArrowDownIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                      ) : (
-                        <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                      )}
-                    </Fragment>
-                  )}
-                </Fragment>
-              )}
+              {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
+              {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
+              {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
+              {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
               <span className={value.power < 0 ? 'text-danger' : 'text-success'} style={{ fontSize: 12 }}>
                 {value.power}
               </span>
@@ -1374,7 +1363,7 @@ const Battle = () => {
   };
 
   const renderPokemonInfo = (
-    type: string,
+    type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
     // eslint-disable-next-line no-unused-vars
@@ -1398,7 +1387,7 @@ const Battle = () => {
                   if (isNaN(value)) {
                     return;
                   }
-                  if (type === 'pokemonCurr') {
+                  if (type === BattleType.Current) {
                     setPlayTimeline({
                       ...playTimeline,
                       pokemonCurr: PokemonBattleData.create({
@@ -1406,7 +1395,7 @@ const Battle = () => {
                         energy: value,
                       }),
                     });
-                  } else if (type === 'pokemonObj') {
+                  } else if (type === BattleType.Object) {
                     setPlayTimeline({
                       ...playTimeline,
                       pokemonObj: PokemonBattleData.create({
@@ -1574,7 +1563,7 @@ const Battle = () => {
         <option value={10000}>Master League</option>
       </Form.Select>
       <div className="row element-top" style={{ margin: 0 }}>
-        <div className="col-lg-3">{renderPokemonInfo('pokemonCurr', pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}</div>
+        <div className="col-lg-3">{renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}</div>
         <div className="col-lg-6">
           {pokemonCurr.pokemonData && pokemonObj.pokemonData && isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) && (
             <Fragment>
@@ -1713,7 +1702,7 @@ const Battle = () => {
             </Fragment>
           )}
         </div>
-        <div className="col-lg-3">{renderPokemonInfo('pokemonObj', pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
+        <div className="col-lg-3">{renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
       </div>
       {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
         <div className="text-center element-top">
