@@ -2,6 +2,7 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
+import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from './extension';
 import { getStyleRuleValue } from './utils';
@@ -184,28 +185,28 @@ export const findStabType = (types: string[], findType: string) => {
   return types.some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
 };
 
-export const getPokemonBattleLeagueName = (cp: number) => {
+export const getPokemonBattleLeagueName = (cp = BattleLeagueCPType.Master) => {
   switch (cp) {
-    case 500:
+    case BattleLeagueCPType.Little:
       return 'Little Cup';
-    case 1500:
-      return 'Great league';
-    case 2500:
-      return 'Ultra league';
+    case BattleLeagueCPType.Great:
+      return 'Great League';
+    case BattleLeagueCPType.Ultra:
+      return 'Ultra League';
     default:
-      return 'Master league';
+      return 'Master League';
   }
 };
 
-export const getPokemonBattleLeagueIcon = (cp: number) => {
+export const getPokemonBattleLeagueIcon = (cp = BattleLeagueCPType.Master) => {
   switch (cp) {
-    case 500:
-      return APIService.getPokeOtherLeague('GBL_littlecup');
-    case 1500:
-      return APIService.getPokeLeague('great_league');
-    case 2500:
-      return APIService.getPokeLeague('ultra_league');
+    case BattleLeagueCPType.Little:
+      return APIService.getPokeOtherLeague(BattleLeagueIconType.Little);
+    case BattleLeagueCPType.Great:
+      return APIService.getPokeLeague(BattleLeagueIconType.Great);
+    case BattleLeagueCPType.Ultra:
+      return APIService.getPokeLeague(BattleLeagueIconType.Ultra);
     default:
-      return APIService.getPokeLeague('master_league');
+      return APIService.getPokeLeague(BattleLeagueIconType.Master);
   }
 };

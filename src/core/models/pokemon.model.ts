@@ -155,9 +155,9 @@ interface ShadowSetting {
 }
 
 export interface PokemonModel {
-  obSpecialAttackMoves?: string[];
-  eliteQuickMove?: string[];
-  eliteCinematicMove?: string[];
+  obSpecialAttackMoves?: (string | number)[];
+  eliteQuickMove?: (string | number)[];
+  eliteCinematicMove?: (string | number)[];
   form?: string | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | null | undefined;
@@ -170,8 +170,8 @@ export interface PokemonModel {
   camera: Camera;
   encounter: IEncounter;
   stats?: IStatsGO;
-  quickMoves?: string[];
-  cinematicMoves?: string[];
+  quickMoves?: (string | number)[];
+  cinematicMoves?: (string | number)[];
   animationTime: number[];
   evolutionIds?: string[];
   evolutionPips: number;

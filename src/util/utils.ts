@@ -544,22 +544,18 @@ export const getDataWithKey = <T>(data: any, key: string | number) => {
   return new Object() as T;
 };
 
-export const checkMoveSetAvailable = (pokemon: PokemonModel | IPokemonData | undefined) => {
+export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   if (!pokemon) {
     return false;
   }
 
-  const eliteQuickMoves = getValueOrDefault(Array, (pokemon as PokemonModel).eliteQuickMove ?? (pokemon as IPokemonData).eliteQuickMove);
-  const eliteCinematicMoves = getValueOrDefault(
-    Array,
-    (pokemon as PokemonModel).eliteCinematicMove ?? (pokemon as IPokemonData).eliteCinematicMove
-  );
-  const specialMoves = getValueOrDefault(Array, (pokemon as PokemonModel).obSpecialAttackMoves ?? (pokemon as IPokemonData).specialMoves);
-  const allMoves = getValueOrDefault(
-    Array,
-    pokemon.quickMoves?.concat(getValueOrDefault(Array, pokemon.cinematicMoves), eliteQuickMoves, eliteCinematicMoves, specialMoves)
-  );
-  if (allMoves.length <= 2 && (allMoves.at(0) === 'STRUGGLE' || isInclude(allMoves.at(0), 'SPLASH')) && allMoves.at(1) === 'STRUGGLE') {
+  const quickMoves = getValueOrDefault(Array, pokemon.quickMoves);
+  const cinematicMoves = getValueOrDefault(Array, pokemon.cinematicMoves);
+  const eliteQuickMoves = getValueOrDefault(Array, pokemon.eliteQuickMove);
+  const eliteCinematicMoves = getValueOrDefault(Array, pokemon.eliteCinematicMove);
+  const specialMoves = getValueOrDefault(Array, pokemon.specialMoves);
+  const allMoves = quickMoves.concat(cinematicMoves, eliteQuickMoves, eliteCinematicMoves, specialMoves);
+  if (allMoves.length <= 2 && (quickMoves[0] === 'STRUGGLE' || isInclude(quickMoves[0], 'SPLASH')) && cinematicMoves[0] === 'STRUGGLE') {
     return false;
   }
   return true;

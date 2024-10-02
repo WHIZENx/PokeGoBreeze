@@ -85,6 +85,7 @@ import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
+import { BattleLeagueCPType } from './enums/compute.enum';
 
 const weatherMultiple = (
   globalOptions: IOptions | undefined,
@@ -1201,7 +1202,7 @@ export const queryStatesEvoChain = (
     defIV,
     staIV,
     level,
-    500
+    BattleLeagueCPType.Little
   );
   const dataGreat = findCPforLeague(
     pokemonStats.atk,
@@ -1211,7 +1212,7 @@ export const queryStatesEvoChain = (
     defIV,
     staIV,
     level,
-    1500
+    BattleLeagueCPType.Great
   );
   const dataUltra = findCPforLeague(
     pokemonStats.atk,
@@ -1221,7 +1222,7 @@ export const queryStatesEvoChain = (
     defIV,
     staIV,
     level,
-    2500
+    BattleLeagueCPType.Ultra
   );
   const dataMaster = findCPforLeague(
     pokemonStats.atk,
@@ -1241,9 +1242,9 @@ export const queryStatesEvoChain = (
     undefined,
     true
   );
-  const ultraStatsProd = sortStatsProd(statsProd.filter((item) => getValueOrDefault(Number, item.CP) <= 2500));
-  const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => getValueOrDefault(Number, item.CP) <= 1500));
-  const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => getValueOrDefault(Number, item.CP) <= 500));
+  const ultraStatsProd = sortStatsProd(statsProd.filter((item) => getValueOrDefault(Number, item.CP) <= BattleLeagueCPType.Ultra));
+  const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => getValueOrDefault(Number, item.CP) <= BattleLeagueCPType.Great));
+  const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => getValueOrDefault(Number, item.CP) <= BattleLeagueCPType.Little));
 
   const little = littleStatsProd.find(
     (item) =>

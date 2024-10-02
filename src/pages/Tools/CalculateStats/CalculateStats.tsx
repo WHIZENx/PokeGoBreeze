@@ -25,6 +25,8 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { getValueOrDefault, isNullOrEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { EvoPath } from '../../../core/models/API/species.model';
 import { PokemonType } from '../BattleDamage/enums/damage.enum';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 const Calculate = () => {
   useChangeTitle('Calculate CP&IV - Tool');
@@ -90,13 +92,49 @@ const Calculate = () => {
     setStatLevel(result.level);
     setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
     setDataLittleLeague(
-      calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke, 500)
+      calculateBattleLeague(
+        globalOptions,
+        statATK,
+        statDEF,
+        statSTA,
+        ATKIv,
+        DEFIv,
+        STAIv,
+        result.level,
+        result.CP,
+        typePoke,
+        BattleLeagueCPType.Little
+      )
     );
     setDataGreatLeague(
-      calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke, 1500)
+      calculateBattleLeague(
+        globalOptions,
+        statATK,
+        statDEF,
+        statSTA,
+        ATKIv,
+        DEFIv,
+        STAIv,
+        result.level,
+        result.CP,
+        typePoke,
+        BattleLeagueCPType.Great
+      )
     );
     setDataUltraLeague(
-      calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke, 2500)
+      calculateBattleLeague(
+        globalOptions,
+        statATK,
+        statDEF,
+        statSTA,
+        ATKIv,
+        DEFIv,
+        STAIv,
+        result.level,
+        result.CP,
+        typePoke,
+        BattleLeagueCPType.Ultra
+      )
     );
     setDataMasterLeague(
       calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke)
@@ -515,10 +553,10 @@ const Calculate = () => {
                             alt="img-league"
                             width={30}
                             height={30}
-                            src={APIService.getPokeOtherLeague('GBL_littlecup')}
+                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
                           />
                           <span className={dataLittleLeague ? (dataLittleLeague.elidge ? '' : 'text-danger') : ''}>
-                            Little Cup
+                            {getPokemonBattleLeagueName(BattleLeagueCPType.Little)}
                             {dataLittleLeague ? dataLittleLeague.elidge ? '' : <span> (Not Elidge)</span> : ''}
                           </span>
                         </td>
@@ -628,10 +666,10 @@ const Calculate = () => {
                             alt="img-league"
                             width={30}
                             height={30}
-                            src={APIService.getPokeLeague('great_league')}
+                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
                           />
                           <span className={dataGreatLeague ? (dataGreatLeague.elidge ? '' : 'text-danger') : ''}>
-                            Great League
+                            {getPokemonBattleLeagueName(BattleLeagueCPType.Great)}
                             {dataGreatLeague ? dataGreatLeague.elidge ? '' : <span> (Not Elidge)</span> : ''}
                           </span>
                         </td>
@@ -739,10 +777,10 @@ const Calculate = () => {
                             alt="img-league"
                             width={30}
                             height={30}
-                            src={APIService.getPokeLeague('ultra_league')}
+                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
                           />
                           <span className={dataUltraLeague ? (dataUltraLeague.elidge ? '' : 'text-danger') : ''}>
-                            Ultra League
+                            {getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}
                             {dataUltraLeague ? dataUltraLeague.elidge ? '' : <span> (Not Elidge)</span> : ''}
                           </span>
                         </td>
@@ -845,14 +883,8 @@ const Calculate = () => {
                       </tr>
                       <tr className="text-center">
                         <td className="table-sub-header" colSpan={4}>
-                          <img
-                            style={{ marginRight: 10 }}
-                            alt="img-league"
-                            width={30}
-                            height={30}
-                            src={APIService.getPokeLeague('master_league')}
-                          />
-                          Master League
+                          <img style={{ marginRight: 10 }} alt="img-league" width={30} height={30} src={getPokemonBattleLeagueIcon()} />
+                          {getPokemonBattleLeagueName()}
                         </td>
                       </tr>
                       <tr>

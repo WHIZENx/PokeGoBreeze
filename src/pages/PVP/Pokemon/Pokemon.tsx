@@ -26,6 +26,7 @@ import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -96,19 +97,26 @@ const PokemonPVP = () => {
       const maxCP = toNumber(getValueOrDefault(String, params.cp));
 
       let bestStats = new BattleBaseStats();
-      if (maxCP < 10000) {
-        let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+      if (maxCP < BattleLeagueCPType.InsMaster) {
+        let minCP =
+          maxCP === BattleLeagueCPType.Little
+            ? BattleLeagueCPType.Master
+            : maxCP === BattleLeagueCPType.Great
+            ? BattleLeagueCPType.Little
+            : maxCP === BattleLeagueCPType.Ultra
+            ? BattleLeagueCPType.Great
+            : BattleLeagueCPType.Ultra;
         const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, MAX_LEVEL);
 
         if (maxPokeCP < minCP) {
-          if (maxPokeCP <= 500) {
+          if (maxPokeCP <= BattleLeagueCPType.Little) {
             minCP = 0;
-          } else if (maxPokeCP <= 1500) {
-            minCP = 500;
-          } else if (maxPokeCP <= 2500) {
-            minCP = 1500;
+          } else if (maxPokeCP <= BattleLeagueCPType.Great) {
+            minCP = BattleLeagueCPType.Little;
+          } else if (maxPokeCP <= BattleLeagueCPType.Ultra) {
+            minCP = BattleLeagueCPType.Great;
           } else {
-            minCP = 2500;
+            minCP = BattleLeagueCPType.Ultra;
           }
         }
         const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats?.sta), minCP, maxCP);

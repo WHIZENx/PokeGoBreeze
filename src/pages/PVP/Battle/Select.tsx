@@ -16,6 +16,7 @@ import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
 import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
@@ -60,18 +61,25 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
-    let minCP = props.league === 500 ? 0 : props.league === 1500 ? 500 : props.league === 2500 ? 1500 : 2500;
+    let minCP =
+      props.league === BattleLeagueCPType.Little
+        ? BattleLeagueCPType.Master
+        : props.league === BattleLeagueCPType.Great
+        ? BattleLeagueCPType.Little
+        : props.league === BattleLeagueCPType.Ultra
+        ? BattleLeagueCPType.Great
+        : BattleLeagueCPType.Ultra;
     const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats.sta) + MAX_IV, MAX_LEVEL);
 
     if (maxPokeCP < minCP) {
-      if (maxPokeCP <= 500) {
-        minCP = 0;
-      } else if (maxPokeCP <= 1500) {
-        minCP = 500;
-      } else if (maxPokeCP <= 2500) {
-        minCP = 1500;
+      if (maxPokeCP <= BattleLeagueCPType.Little) {
+        minCP = BattleLeagueCPType.Master;
+      } else if (maxPokeCP <= BattleLeagueCPType.Great) {
+        minCP = BattleLeagueCPType.Little;
+      } else if (maxPokeCP <= BattleLeagueCPType.Ultra) {
+        minCP = BattleLeagueCPType.Great;
       } else {
-        minCP = 2500;
+        minCP = BattleLeagueCPType.Ultra;
       }
     }
     const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats.sta), minCP, props.league);

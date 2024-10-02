@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, getAllMoves, splitAndCapitalize } from '../../../util/utils';
-import { findAssetForm, findStabType } from '../../../util/compute';
+import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
 import {
   FORM_NORMAL,
@@ -67,6 +67,7 @@ import { loadPVPMoves } from '../../../store/effects/store.effects';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleType } from './enums/battle.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -98,7 +99,7 @@ const Battle = () => {
     showTap: false,
     timelineType: 1,
     duration: 1,
-    league: toNumber(params.cp) ?? 500,
+    league: toNumber(params.cp) ?? BattleLeagueCPType.Little,
   });
   const { showTap, timelineType, duration, league } = options;
 
@@ -721,9 +722,7 @@ const Battle = () => {
         if (!file) {
           return;
         }
-        document.title = `PVP Battle Simulator - ${
-          league === 500 ? 'Little Cup' : league === 1500 ? 'Great League' : league === 2500 ? 'Ultra League' : 'Master League'
-        }`;
+        document.title = `PVP Battle Simulator - ${getPokemonBattleLeagueName(league)}`;
 
         const result = file
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
@@ -1557,10 +1556,10 @@ const Battle = () => {
         }}
         defaultValue={league}
       >
-        <option value={500}>Little Cup</option>
-        <option value={1500}>Great League</option>
-        <option value={2500}>Ultra League</option>
-        <option value={10000}>Master League</option>
+        <option value={BattleLeagueCPType.Little}>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</option>
+        <option value={BattleLeagueCPType.Great}>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</option>
+        <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
+        <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
       </Form.Select>
       <div className="row element-top" style={{ margin: 0 }}>
         <div className="col-lg-3">{renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}</div>

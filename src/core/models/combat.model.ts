@@ -23,10 +23,12 @@ export class Buff implements IBuff {
 
 interface IMove extends MoveSetting {
   id: number;
+  name: string;
 }
 
 export class Move implements IMove {
   id = 0;
+  name = '';
   movementId: string | number = '';
   animationId = 0;
   pokemonType = '';

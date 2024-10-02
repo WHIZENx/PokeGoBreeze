@@ -32,6 +32,7 @@ import {
 } from '../../../util/extension';
 import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -379,7 +380,7 @@ const Leagues = () => {
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
                       badgeContent={value.count}
-                      max={10000}
+                      max={BattleLeagueCPType.InsMaster}
                       sx={{
                         paddingBottom:
                           value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? '0 !important' : '1.5rem !important',
@@ -460,7 +461,7 @@ const Leagues = () => {
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
                       badgeContent={dataStore.leagues.season.rewards.rank[rank].premium?.[index].count}
-                      max={10000}
+                      max={BattleLeagueCPType.InsMaster}
                       sx={{
                         paddingBottom:
                           dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon ||

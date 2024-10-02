@@ -45,6 +45,7 @@ import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isIncludeList, toNumber } from '../../util/extension';
 import { EffectiveType } from './enums/type-eff.enum';
 import { ArcheType } from './enums/arche-type.enum';
+import { BattleLeagueCPType } from '../../util/enums/compute.enum';
 
 export const Header = (data: IPokemonBattleRanking | undefined) => {
   return (
@@ -196,26 +197,33 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
       getValueOrDefault(Number, stats?.sta) + MAX_IV,
       level
     );
-    if (maxCP === 10000) {
+    if (maxCP === BattleLeagueCPType.InsMaster) {
       return BattleBaseStats.create({
-        CP: isNaN(calcCP) ? 0 : calcCP,
+        CP: isNaN(calcCP) ? BattleLeagueCPType.Master : calcCP,
         id: getValueOrDefault(Number, data?.id),
       });
     } else {
-      let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+      let minCP =
+        maxCP === BattleLeagueCPType.Little
+          ? BattleLeagueCPType.Master
+          : maxCP === BattleLeagueCPType.Great
+          ? BattleLeagueCPType.Little
+          : maxCP === BattleLeagueCPType.Ultra
+          ? BattleLeagueCPType.Great
+          : BattleLeagueCPType.Ultra;
       if (isNaN(calcCP)) {
-        calcCP = 0;
+        calcCP = BattleLeagueCPType.Master;
       }
 
       if (calcCP < minCP) {
-        if (calcCP <= 500) {
+        if (calcCP <= BattleLeagueCPType.Little) {
           minCP = 0;
-        } else if (calcCP <= 1500) {
-          minCP = 500;
-        } else if (calcCP <= 2500) {
-          minCP = 1500;
+        } else if (calcCP <= BattleLeagueCPType.Great) {
+          minCP = BattleLeagueCPType.Little;
+        } else if (calcCP <= BattleLeagueCPType.Ultra) {
+          minCP = BattleLeagueCPType.Great;
         } else {
-          minCP = 2500;
+          minCP = BattleLeagueCPType.Ultra;
         }
       }
       const allStats = calStatsProd(
@@ -237,14 +245,17 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
         <li className="element-top">
           CP:{' '}
           <b>
-            {maxCP === 10000
+            {maxCP === BattleLeagueCPType.InsMaster
               ? `${calculateStatsTopRank(stats, MAX_LEVEL - 1)?.CP}-${currStats?.CP}`
               : `${getValueOrDefault(Number, currStats?.CP)}`}
           </b>
         </li>
         <li className={getValueOrDefault(Number, currStats?.level) <= 40 ? 'element-top' : ''}>
-          Level: <b>{maxCP === 10000 ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${getValueOrDefault(Number, currStats?.level)}`} </b>
-          {(getValueOrDefault(Number, currStats?.level) > 40 || maxCP === 10000) && (
+          Level:{' '}
+          <b>
+            {maxCP === BattleLeagueCPType.InsMaster ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${getValueOrDefault(Number, currStats?.level)}`}{' '}
+          </b>
+          {(getValueOrDefault(Number, currStats?.level) > 40 || maxCP === BattleLeagueCPType.InsMaster) && (
             <b>
               (
               <CandyXL id={id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
@@ -253,9 +264,21 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           )}
         </li>
         <li className="element-top">
-          <IVBar title="Attack" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.atk)} style={{ maxWidth: 500 }} />
-          <IVBar title="Defense" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.def)} style={{ maxWidth: 500 }} />
-          <IVBar title="HP" iv={maxCP === 10000 ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.sta)} style={{ maxWidth: 500 }} />
+          <IVBar
+            title="Attack"
+            iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.atk)}
+            style={{ maxWidth: 500 }}
+          />
+          <IVBar
+            title="Defense"
+            iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.def)}
+            style={{ maxWidth: 500 }}
+          />
+          <IVBar
+            title="HP"
+            iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.sta)}
+            style={{ maxWidth: 500 }}
+          />
         </li>
       </ul>
     );
