@@ -431,6 +431,11 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       pokemon.pokedexWeightKg = item.weightkg;
       pokemon.pokemonClass = item.pokemonClass;
 
+      const pokemonForms = result.filter((p) => p.num === item.num).map((p) => p.forme);
+      if (isIncludeList(pokemonForms, pokemon.form)) {
+        return;
+      }
+
       const types = item.types.map((type) => type.toUpperCase());
       const optional = new PokemonDataOptional({
         ...item,
