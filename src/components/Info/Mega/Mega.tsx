@@ -6,18 +6,28 @@ import { splitAndCapitalize } from '../../../util/utils';
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_MEGA } from '../../../util/constants';
-import { IForm } from '../../../core/models/API/form.model';
+import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isInclude, isUndefined } from '../../../util/extension';
+import { TempEvo } from '../../../core/models/evolution.model';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const Mega = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
-  const [arrEvoList, setArrEvoList] = useState<(IForm | undefined)[]>([]);
+  const [arrEvoList, setArrEvoList] = useState<IForm[]>([]);
 
   useEffect(() => {
-    setArrEvoList(
-      props.formList.filter((item) => item.at(0)?.form.formName?.toUpperCase().includes(FORM_MEGA)).map((item) => item.at(0)?.form)
-    );
+    const result = props.formList
+      .filter((item) => isInclude(item.at(0)?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive))
+      .map((item) => {
+        const form = item.at(0);
+        if (!form) {
+          return new Form();
+        }
+        return form.form;
+      })
+      .filter((item) => !isUndefined(item.id));
+    setArrEvoList(result);
   }, [props.formList]);
 
   const getQuestEvo = (name: string) => {
@@ -26,14 +36,14 @@ const Mega = (props: IFormSpecialComponent) => {
       .map((text) => text.toUpperCase())
       .join('_');
 
-    const pokemon = evoData?.find((item) => item.tempEvo?.find((value) => value.tempEvolutionName === name));
+    const pokemon = evoData.find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)));
     if (pokemon) {
-      return pokemon.tempEvo?.find((item) => item.tempEvolutionName === name);
+      return pokemon.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     } else {
-      return {
+      return TempEvo.create({
         firstTempEvolution: 'Unavailable',
         tempEvolution: 'Unavailable',
-      };
+      });
     }
   };
 
@@ -50,33 +60,25 @@ const Mega = (props: IFormSpecialComponent) => {
                 id="img-pokemon"
                 height="96"
                 alt="img-pokemon"
-                src={APIService.getPokeGifSprite(getValueOrDefault(String, value?.name))}
+                src={APIService.getPokeGifSprite(value.name)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = `${value?.sprites?.frontDefault}`;
+                  e.currentTarget.src = `${value.sprites?.frontDefault}`;
                 }}
               />
               <div id="id-pokemon" style={{ color: 'black' }}>
                 <b>#{props.id}</b>
               </div>
               <div>
-                <b className="link-title">{splitAndCapitalize(value?.name, '-', ' ')}</b>
+                <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
               </div>
               <span className="caption">
                 First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>
-                  {getQuestEvo(getValueOrDefault(String, value?.name))
-                    ? `x${getQuestEvo(getValueOrDefault(String, value?.name))?.firstTempEvolution}`
-                    : 'Unavailable'}
-                </b>
+                <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.firstTempEvolution}` : 'Unavailable'}</b>
               </span>
               <span className="caption">
                 Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>
-                  {getQuestEvo(getValueOrDefault(String, value?.name))
-                    ? `x${getQuestEvo(getValueOrDefault(String, value?.name))?.tempEvolution}`
-                    : 'Unavailable'}
-                </b>
+                <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.tempEvolution}` : 'Unavailable'}</b>
               </span>
             </li>
           ))}

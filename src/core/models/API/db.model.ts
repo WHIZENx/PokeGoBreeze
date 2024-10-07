@@ -19,14 +19,9 @@ interface IField {
 
 export class Database<T> implements IDatabase<T> {
   command = '';
-  fields: IField[];
+  fields: IField[] = [];
   rowAsArray?: boolean;
   rowCount = 0;
-  rows: T[];
+  rows: T[] = [];
   viaNeonFetch?: boolean;
-
-  constructor() {
-    this.fields = [];
-    this.rows = [];
-  }
 }

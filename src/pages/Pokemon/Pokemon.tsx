@@ -17,7 +17,14 @@ import {
 } from '../../core/models/API/form.model';
 import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
 import { Species } from '../../core/models/API/species.model';
-import { OptionsPokemon, IPokemonGenderRatio, IPokemonData } from '../../core/models/pokemon.model';
+import {
+  OptionsPokemon,
+  IPokemonGenderRatio,
+  IPokemonData,
+  PokemonModel,
+  WeightHeight,
+  PokemonProgress,
+} from '../../core/models/pokemon.model';
 import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
@@ -31,7 +38,7 @@ import {
   getPokemonDetails,
   splitAndCapitalize,
 } from '../../util/utils';
-import PokemonModel from '../../components/Info/Assets/PokemonModel';
+import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
 import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
@@ -46,8 +53,9 @@ import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 import { LocationState } from '../../core/models/router.model';
+import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -86,7 +94,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [version, setVersion] = useState('');
   const [region, setRegion] = useState('');
   const [generation, setGeneration] = useState('');
-  const [WH, setWH] = useState({ weight: -1, height: -1 });
+  const [WH, setWH] = useState(new WeightHeight());
   const [formName, setFormName] = useState<string>();
   const [originForm, setOriginForm] = useState<string>();
   const [originSoundCry, setOriginSoundCry] = useState<IFormSoundCry[]>([]);
@@ -97,9 +105,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const [costModifier, setCostModifier] = useState<ITypeCost>();
 
-  const [progress, setProgress] = useState({ isLoadedForms: false });
-
-  const { isLoadedForms } = progress;
+  const [progress, setProgress] = useState(new PokemonProgress());
 
   const axiosSource = useRef(APIService.getCancelToken());
   const { enqueueSnackbar } = useSnackbar();
@@ -136,12 +142,12 @@ const Pokemon = (props: IPokemonPage) => {
       setCostModifier(
         new TypeCost({
           purified: PokemonTypeCost.create({
-            candy: getValueOrDefault(Number, pokemon?.purified?.candy),
-            stardust: getValueOrDefault(Number, pokemon?.purified?.stardust),
+            candy: pokemon?.purified?.candy,
+            stardust: pokemon?.purified?.stardust,
           }),
           thirdMove: PokemonTypeCost.create({
-            candy: getValueOrDefault(Number, pokemon?.thirdMove?.candy),
-            stardust: getValueOrDefault(Number, pokemon?.thirdMove?.stardust),
+            candy: pokemon?.thirdMove?.candy,
+            stardust: pokemon?.thirdMove?.stardust,
           }),
         })
       );
@@ -153,10 +159,12 @@ const Pokemon = (props: IPokemonPage) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                getValueOrDefault(String, data.varieties.find((v) => item.pokemon.name.includes(v.pokemon.name))?.pokemon.name),
+                getValueOrDefault(String, data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name),
                 new Form({
                   ...item,
-                  formName: item.formName.toUpperCase() === FORM_GMAX ? item.name.replace(`${data.name}-`, '') : item.formName,
+                  formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
+                    ? item.name.replace(`${data.name}-`, '')
+                    : item.formName,
                 })
               )
             )
@@ -166,7 +174,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       const indexPokemonGO = generatePokemonGoForms(pokemonData, dataFormList, formListResult, data.id, data.name);
 
-      if (pokemon?.isShadow && pokemon?.purified?.candy && pokemon?.purified.stardust) {
+      if (pokemon?.isShadow && pokemon.purified?.candy && pokemon.purified.stardust) {
         generatePokemonGoShadowForms(dataPokeList, formListResult, data.id, data.name, indexPokemonGO);
       }
 
@@ -183,38 +191,44 @@ const Pokemon = (props: IPokemonPage) => {
           .flatMap((form) => form)
           .find(
             (item) =>
-              convertPokemonAPIDataName(item.form.formName).toLowerCase().replaceAll('_', '-') === formParams ||
-              convertPokemonAPIDataName(item.form.name).toLowerCase().replaceAll('_', '-') === `${item.defaultName}-${formParams}`
+              isEqual(convertPokemonAPIDataName(item.form.formName).replaceAll('_', '-'), formParams, EqualMode.IgnoreCaseSensitive) ||
+              isEqual(
+                convertPokemonAPIDataName(item.form.name).replaceAll('_', '-'),
+                `${item.defaultName}-${formParams}`,
+                EqualMode.IgnoreCaseSensitive
+              )
           );
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
         } else {
-          currentForm = defaultForm.find((item) => item?.form.id === data.id);
+          currentForm = defaultForm.find((item) => item.form.id === data.id);
           searchParams.delete('form');
           setSearchParams(searchParams);
         }
       } else if (router.action === Action.Pop && props.searching) {
-        currentForm = defaultForm.find((item) => item?.form.formName === props.searching?.form);
+        currentForm = defaultForm.find((item) => isEqual(item.form.formName, props.searching?.form));
       } else {
-        currentForm = defaultForm.find((item) => item?.form.id === data.id);
+        currentForm = defaultForm.find((item) => item.form.id === data.id);
       }
       if (!currentForm) {
         currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === data.id);
       }
-      let defaultData = dataPokeList.find((value) => value.name === currentForm?.form.name);
+      let defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.form.name));
       if (!defaultData) {
-        defaultData = dataPokeList.find((value) => value.name === currentForm?.name);
+        defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
       }
-      setWH((prevWH) => ({
-        ...prevWH,
-        weight: getValueOrDefault(Number, defaultData?.weight),
-        height: getValueOrDefault(Number, defaultData?.height),
-      }));
+      setWH((prevWH) =>
+        WeightHeight.create({
+          ...prevWH,
+          weight: getValueOrDefault(Number, defaultData?.weight),
+          height: getValueOrDefault(Number, defaultData?.height),
+        })
+      );
       setCurrentData(defaultData);
       setCurrentForm(currentForm ?? defaultForm.at(0));
       setData(data);
 
-      setProgress((p) => ({ ...p, isLoadedForms: true }));
+      setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     },
     [pokemonData, searchParams]
   );
@@ -250,13 +264,13 @@ const Pokemon = (props: IPokemonPage) => {
     setOriginForm(undefined);
     setReleased(true);
     setFormName(undefined);
-    setWH({ weight: -1, height: -1 });
+    setWH(new WeightHeight());
     setVersion('');
     setRegion('');
     setGeneration('');
     setPokeRatio(undefined);
     if (isForceClear) {
-      setProgress((p) => ({ ...p, isLoadedForms: false }));
+      setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: false }));
       setFormList([]);
       setPokeData([]);
       setCurrentForm(undefined);
@@ -267,7 +281,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = params.id?.toLowerCase() ?? props.id;
-    if (id && getValueOrDefault(Number, data?.id) !== parseInt(id) && isNotEmpty(pokemonData)) {
+    if (id && getValueOrDefault(Number, data?.id) !== toNumber(id) && isNotEmpty(pokemonData)) {
       clearData(true);
       queryPokemon(id);
     }
@@ -280,17 +294,9 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     if (!data) {
-      let id = 0;
-      if (params.id && !isNaN(parseInt(params.id))) {
-        id = parseInt(params.id);
-      } else if (props.id) {
-        id = parseInt(props.id);
-      }
+      const id = toNumber(params.id ?? props.id);
       setDataStorePokemon({
-        current: {
-          id,
-          name: '',
-        },
+        current: new PokemonModel(id),
       });
       setCostModifier(undefined);
     }
@@ -301,7 +307,7 @@ const Pokemon = (props: IPokemonPage) => {
     if (id && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.loading) {
-          const currentId = getPokemonById(pokemonData, parseInt(id));
+          const currentId = getPokemonById(pokemonData, toNumber(id));
           if (currentId) {
             const result = {
               prev: getPokemonById(pokemonData, currentId.id - 1),
@@ -328,7 +334,7 @@ const Pokemon = (props: IPokemonPage) => {
   const checkReleased = (id: number, form: string, defaultForm: IPokemonFormModify) => {
     if (!form) {
       if (defaultForm) {
-        form = defaultForm.form?.formName || defaultForm.defaultName;
+        form = defaultForm.form.formName || defaultForm.defaultName;
       } else {
         return false;
       }
@@ -349,13 +355,15 @@ const Pokemon = (props: IPokemonPage) => {
       const gen = data?.generation.url?.split('/').at(6);
       setGeneration(getValueOrDefault(String, gen));
       if (!params.id) {
-        setRegion(regionList[parseInt(getValueOrDefault(String, gen))]);
+        setRegion(regionList[toNumber(getValueOrDefault(String, gen))]);
       } else {
-        const currentRegion = Object.values(regionList).find((item) => currentForm.form.formName.includes(item.toLowerCase()));
+        const currentRegion = Object.values(regionList).find((item) =>
+          isInclude(currentForm.form.formName, item, IncludeMode.IncludeIgnoreCaseSensitive)
+        );
         if (!isEmpty(currentForm.form.formName) && currentRegion) {
-          setRegion(!region || region !== currentRegion ? currentRegion : region);
+          setRegion(!region || !isEqual(region, currentRegion) ? currentRegion : region);
         } else {
-          setRegion(regionList[parseInt(getValueOrDefault(String, gen))]);
+          setRegion(regionList[toNumber(getValueOrDefault(String, gen))]);
         }
       }
       const nameInfo =
@@ -383,8 +391,8 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = params.id?.toLowerCase() ?? props.id;
-    if (isNotEmpty(pokemonData) && id && parseInt(id.toString()) > 0) {
-      const currentId = getPokemonById(pokemonData, parseInt(id.toString()));
+    if (isNotEmpty(pokemonData) && id && toNumber(id) > 0) {
+      const currentId = getPokemonById(pokemonData, toNumber(id));
       if (currentId) {
         setDataStorePokemon({
           prev: getPokemonById(pokemonData, currentId.id - 1),
@@ -396,7 +404,7 @@ const Pokemon = (props: IPokemonPage) => {
   }, [pokemonData, params.id, props.id]);
 
   const reload = (element: JSX.Element, color = '#f5f5f5') => {
-    if (isLoadedForms) {
+    if (progress.isLoadedForms) {
       return element;
     }
     return (
@@ -440,7 +448,7 @@ const Pokemon = (props: IPokemonPage) => {
                   )}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                    if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                       e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
                     } else {
                       e.currentTarget.src = APIService.getPokeFullSprite(0);
@@ -451,13 +459,13 @@ const Pokemon = (props: IPokemonPage) => {
               <div className="d-inline-block">
                 <PokemonTable
                   id={dataStorePokemon?.current?.id}
-                  gen={parseInt(generation)}
+                  gen={toNumber(generation, -1)}
                   formName={formName}
                   region={region}
                   version={version}
                   weight={WH.weight}
                   height={WH.height}
-                  isLoadedForms={isLoadedForms}
+                  isLoadedForms={progress.isLoadedForms}
                 />
               </div>
               <div className="d-inline-block" style={{ padding: 0 }}>
@@ -476,13 +484,7 @@ const Pokemon = (props: IPokemonPage) => {
                         <div className="d-flex align-items-center row-extra td-costs">
                           <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
                           {reload(
-                            <span>
-                              {costModifier?.thirdMove.candy
-                                ? costModifier.purified.candy === -1
-                                  ? ''
-                                  : `x${costModifier.thirdMove.candy}`
-                                : 'Unavailable'}
-                            </span>
+                            <span>{!isUndefined(costModifier?.thirdMove.candy) ? `x${costModifier?.thirdMove.candy}` : 'Unavailable'}</span>
                           )}
                         </div>
                         <div className="row-extra d-flex">
@@ -491,11 +493,7 @@ const Pokemon = (props: IPokemonPage) => {
                           </div>
                           {reload(
                             <span>
-                              {costModifier?.thirdMove.stardust
-                                ? costModifier.purified.stardust === -1
-                                  ? ''
-                                  : `x${costModifier.thirdMove.stardust}`
-                                : 'Unavailable'}
+                              {!isUndefined(costModifier?.thirdMove.stardust) ? `x${costModifier?.thirdMove.stardust}` : 'Unavailable'}
                             </span>
                           )}
                         </div>
@@ -513,13 +511,7 @@ const Pokemon = (props: IPokemonPage) => {
                         <div className="d-flex align-items-center row-extra td-costs">
                           <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
                           {reload(
-                            <span>
-                              {costModifier?.purified.candy
-                                ? costModifier.purified.candy === -1
-                                  ? ''
-                                  : `x${costModifier.purified.candy}`
-                                : 'Unavailable'}
-                            </span>
+                            <span>{!isUndefined(costModifier?.purified.candy) ? `x${costModifier?.purified.candy}` : 'Unavailable'}</span>
                           )}
                         </div>
                         <div className="row-extra d-flex">
@@ -528,11 +520,7 @@ const Pokemon = (props: IPokemonPage) => {
                           </div>
                           {reload(
                             <span>
-                              {costModifier?.purified.stardust
-                                ? costModifier.purified.stardust === -1
-                                  ? ''
-                                  : `x${costModifier.purified.stardust}`
-                                : 'Unavailable'}
+                              {!isUndefined(costModifier?.purified.stardust) ? `x${costModifier?.purified.stardust}` : 'Unavailable'}
                             </span>
                           )}
                         </div>
@@ -558,13 +546,13 @@ const Pokemon = (props: IPokemonPage) => {
               defaultId={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
               region={region}
               setProgress={setProgress}
-              isLoadedForms={isLoadedForms}
+              isLoadedForms={progress.isLoadedForms}
             />
-            <PokemonModel
+            <PokemonAssetComponent
               id={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
               name={getValueOrDefault(String, dataStorePokemon?.current?.name)}
               originSoundCry={originSoundCry}
-              isLoadedForms={isLoadedForms}
+              isLoadedForms={progress.isLoadedForms}
             />
           </div>
         </Fragment>

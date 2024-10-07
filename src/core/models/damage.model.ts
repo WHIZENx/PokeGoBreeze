@@ -1,3 +1,5 @@
+import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
+import { MIN_LEVEL } from '../../util/constants';
 import { IPokemonFormModify } from './API/form.model';
 import { ICombat } from './combat.model';
 
@@ -30,7 +32,6 @@ export interface IBattleState {
   mega?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BattleState implements IBattleState {
   stab = false;
   wb = false;
@@ -49,10 +50,10 @@ export class BattleState implements IBattleState {
 
 export interface IPokemonDmgOption {
   objPoke?: IPokemonFormModify;
-  type?: string;
+  type?: PokemonType;
   currPoke?: IPokemonFormModify;
   currLevel: number;
-  typeObj?: string;
+  typeObj?: PokemonType;
   objLevel: number;
   move?: ICombat;
   battleState?: IBattleState;
@@ -60,21 +61,21 @@ export interface IPokemonDmgOption {
   hp?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonDmgOption implements IPokemonDmgOption {
   objPoke?: IPokemonFormModify;
-  type?: string;
+  type?: PokemonType;
   currPoke?: IPokemonFormModify;
-  currLevel = 0;
-  typeObj?: string;
-  objLevel = 0;
+  currLevel = MIN_LEVEL;
+  typeObj?: PokemonType;
+  objLevel = MIN_LEVEL;
   move?: ICombat;
   battleState?: IBattleState;
   damage?: number;
   hp?: number;
 
-  constructor() {
-    this.currLevel = 0;
-    this.objLevel = 1;
+  static create(value: IPokemonDmgOption) {
+    const obj = new PokemonDmgOption();
+    Object.assign(obj, value);
+    return obj;
   }
 }

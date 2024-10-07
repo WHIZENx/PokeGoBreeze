@@ -25,9 +25,9 @@ export interface IPokemonBattleData {
   bestStats: IBattleBaseStats | undefined;
   currentStats: IBattleBaseStats | undefined;
   pokemon: IPokemonData | undefined;
-  fMove: ICombat | undefined | null;
-  cMove: ICombat | undefined | null;
-  cMoveSec: ICombat | undefined | null;
+  fMove: ICombat | undefined;
+  cMove: ICombat | undefined;
+  cMoveSec: ICombat | undefined;
   energy: number;
   block: number;
   turn: number;
@@ -74,10 +74,10 @@ export interface IPokemonBattle {
   disableCMoveSec: boolean;
   disableCMovePri: boolean;
   shadow?: boolean;
-  pokemonData?: IPokemonBattleData | null;
-  fMove?: ICombat | null;
-  cMovePri?: ICombat | null;
-  cMoveSec?: ICombat | null;
+  pokemonData?: IPokemonBattleData;
+  fMove?: ICombat;
+  cMovePri?: ICombat;
+  cMoveSec?: ICombat;
   timeline: ITimeline[];
   energy: number;
   block: number;
@@ -85,27 +85,19 @@ export interface IPokemonBattle {
   audio?: any;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonBattle implements IPokemonBattle {
   disableCMoveSec = false;
   disableCMovePri = false;
   shadow?: boolean;
-  pokemonData?: IPokemonBattleData | null;
-  fMove?: ICombat | null;
-  cMovePri?: ICombat | null;
-  cMoveSec?: ICombat | null;
-  timeline: ITimeline[];
-  energy: number;
-  block: number;
-  chargeSlot: number;
+  pokemonData?: IPokemonBattleData;
+  fMove?: ICombat;
+  cMovePri?: ICombat;
+  cMoveSec?: ICombat;
+  timeline: ITimeline[] = [];
+  energy = 0;
+  block = DEFAULT_BLOCK;
+  chargeSlot = ChargeType.Primary;
   audio?: any;
-
-  constructor() {
-    this.timeline = [];
-    this.energy = 0;
-    this.block = DEFAULT_BLOCK;
-    this.chargeSlot = ChargeType.Primary;
-  }
 
   static create(value: IPokemonBattle) {
     const obj = new PokemonBattle();
@@ -116,31 +108,30 @@ export class PokemonBattle implements IPokemonBattle {
 
 export interface ITimeline {
   timer: number;
-  type: string | undefined;
-  color: string | undefined;
+  type?: string;
+  color?: string;
   size: number;
-  tap: boolean;
+  tap?: boolean;
   block: number;
   energy: number;
-  move: ICombat | undefined;
+  move?: ICombat;
   hp: number;
   buff?: IBuff[];
-  dmgImmune: boolean;
+  dmgImmune?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class TimelineModel implements ITimeline {
   timer = 0;
-  type: string | undefined;
-  color: string | undefined;
+  type?: string;
+  color?: string;
   size = 0;
-  tap = false;
+  tap?: boolean;
   block = 0;
   energy = 0;
-  move: ICombat | undefined;
+  move?: ICombat;
   hp = 0;
-  buff: IBuff[] | undefined;
-  dmgImmune = false;
+  buff?: IBuff[];
+  dmgImmune?: boolean;
 
   constructor({ ...props }: ITimeline) {
     Object.assign(this, props);
@@ -164,7 +155,6 @@ export interface IPokemonTeamData {
   purified: boolean | undefined;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonTeamData implements IPokemonTeamData {
   id: number | undefined;
   name: string | undefined;
@@ -207,7 +197,6 @@ export interface IPokemonBattleRanking {
   score: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonBattleRanking implements IPokemonBattleRanking {
   data: RankingsPVP | undefined;
   id: number | undefined;

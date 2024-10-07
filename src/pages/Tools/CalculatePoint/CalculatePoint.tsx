@@ -131,7 +131,7 @@ const CalculatePoint = () => {
   const calculateBreakpointAtk = () => {
     setResultBreakPointAtk(undefined);
     const dataList: number[][] = [];
-    const group = [];
+    const group: number[] = [];
     let lv = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
       dataList[lv] = getValueOrDefault(Array, dataList[lv]);
@@ -161,9 +161,9 @@ const CalculatePoint = () => {
   const calculateBreakpointDef = () => {
     setResultBreakPointDef(undefined);
     const dataListDef: number[][] = [];
-    const groupDef = [];
+    const groupDef: number[] = [];
     const dataListSta: number[][] = [];
-    const groupSta = [];
+    const groupSta: number[] = [];
     let lv = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
       dataListDef[lv] = getValueOrDefault(Array, dataListDef[lv]);
@@ -549,12 +549,12 @@ const CalculatePoint = () => {
                         - Move Type:{' '}
                         <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>{capitalize(moveDef.type)}</span>
                       </p>
-                      {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef?.type))}
+                      {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef.type))}
                       <p>
                         - Damage:{' '}
                         <b>
                           {moveDef.pvePower}
-                          {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef?.type)) && (
+                          {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef.type)) && (
                             <span className="caption-small text-success"> (x1.2)</span>
                           )}
                         </b>
@@ -703,14 +703,14 @@ const CalculatePoint = () => {
                         </p>
                         <p>
                           - Move Type:{' '}
-                          <span className={combineClasses('type-icon-small', fMove?.type?.toLowerCase())}>{capitalize(fMove.type)}</span>
+                          <span className={combineClasses('type-icon-small', fMove.type?.toLowerCase())}>{capitalize(fMove.type)}</span>
                         </p>
-                        {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove?.type))}
+                        {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove.type))}
                         <p>
                           - Damage:{' '}
                           <b>
                             {fMove.pvePower}
-                            {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove?.type)) && (
+                            {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove.type)) && (
                               <span className="caption-small text-success"> (x1.2)</span>
                             )}
                           </b>
@@ -737,14 +737,14 @@ const CalculatePoint = () => {
                         </p>
                         <p>
                           - Move Type:{' '}
-                          <span className={combineClasses('type-icon-small', cMove?.type?.toLowerCase())}>{capitalize(cMove.type)}</span>
+                          <span className={combineClasses('type-icon-small', cMove.type?.toLowerCase())}>{capitalize(cMove.type)}</span>
                         </p>
-                        {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove?.type))}
+                        {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove.type))}
                         <p>
                           - Damage:{' '}
                           <b>
                             {cMove.pvePower}
-                            {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove?.type)) && (
+                            {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove.type)) && (
                               <span className="caption-small text-success"> (x1.2)</span>
                             )}
                           </b>

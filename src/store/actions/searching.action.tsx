@@ -24,7 +24,6 @@ export class SetPokemonMainSearch implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ResetPokemonMainSearch implements Action {
   readonly type = SearchingActionTypes.resetPokemonMainSearch;
 
@@ -36,7 +35,6 @@ export class ResetPokemonMainSearch implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetPokemonToolSearch implements Action {
   readonly type = SearchingActionTypes.setPokemonToolSearch;
 
@@ -51,7 +49,6 @@ export class SetPokemonToolSearch implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ResetPokemonToolSearch implements Action {
   readonly type = SearchingActionTypes.resetPokemonToolSearch;
 

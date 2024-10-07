@@ -8,7 +8,8 @@ import { StoreState } from '../../store/models/state.model';
 import { TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { getValueOrDefault, isIncludeList, isNotEmpty } from '../../util/extension';
+import { IncludeMode } from '../../util/enums/string.enum';
 
 const Info = (props: IInfoComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
@@ -16,9 +17,9 @@ const Info = (props: IInfoComponent) => {
 
   const getWeatherEffective = (types: string[]) => {
     const data: string[] = [];
-    Object.entries(weatherEffective ?? new WeatherBoost()).forEach(([key, value]) => {
-      types?.forEach((type) => {
-        if (value.includes(type?.toUpperCase()) && !data.includes(key)) {
+    Object.entries(weatherEffective ?? new WeatherBoost()).forEach(([key, value]: [string, string[]]) => {
+      types.forEach((type) => {
+        if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive) && !isIncludeList(data, key)) {
           data.push(key);
         }
       });
@@ -39,7 +40,7 @@ const Info = (props: IInfoComponent) => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;
         types.forEach((type) => {
-          valueEffective *= value[type?.toUpperCase()];
+          valueEffective *= value[type.toUpperCase()];
         });
         if (valueEffective >= 2.56) {
           data.veryWeak?.push(key);

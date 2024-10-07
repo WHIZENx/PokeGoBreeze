@@ -27,8 +27,21 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../../store/actions';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, isNullOrEmpty } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isNullOrEmpty,
+  toNumber,
+} from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
+import { LeagueType } from '../../../core/enums/league.enum';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -73,11 +86,16 @@ const FindBattle = () => {
       }
       let curr;
       if (form === FORM_NORMAL) {
-        curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && form === item.forme);
+        curr = dataStore?.pokemon?.find((item) => isIncludeList(currId, item.num) && isEqual(form, item.forme));
       } else {
-        curr = dataStore?.pokemon?.find((item) => currId?.includes(item.num) && item.forme?.includes(form));
+        curr = dataStore?.pokemon?.find((item) => isIncludeList(currId, item.num) && isInclude(item.forme, form));
       }
-      if (!arr.map((i) => i.id).includes(getValueOrDefault(Number, curr?.num))) {
+      if (
+        !isIncludeList(
+          arr.map((i) => i.id),
+          curr?.num
+        )
+      ) {
         arr.push({
           ...curr,
           form,
@@ -102,7 +120,12 @@ const FindBattle = () => {
 
   const prevEvoChain = useCallback(
     (obj: IPokemonData, defaultForm: string, arr: IEvolution[], result: IEvolution[][]) => {
-      if (!arr.map((i) => i.id).includes(obj.num)) {
+      if (
+        !isIncludeList(
+          arr.map((i) => i.id),
+          obj.num
+        )
+      ) {
         arr.push({
           ...obj,
           name: getValueOrDefault(String, obj.pokemonId),
@@ -115,7 +138,9 @@ const FindBattle = () => {
       obj.evoList?.forEach((i) => {
         currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => obj.num === i.evoToId && i.evoToForm === defaultForm));
+      const curr = dataStore?.pokemon?.filter((item) =>
+        item.evoList?.find((i) => obj.num === i.evoToId && isEqual(i.evoToForm, defaultForm))
+      );
       if (isNotEmpty(curr)) {
         curr?.forEach((item) => prevEvoChain(item, defaultForm, arr, result));
       } else {
@@ -127,22 +152,22 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const isForm = isNullOrEmpty(form?.form.formName?.toUpperCase())
+      const currentForm = isNullOrEmpty(form?.form.formName?.toUpperCase())
         ? FORM_NORMAL
         : form?.form.formName.replaceAll('-', '_').toUpperCase();
-      let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isForm === i.evoToForm));
+      let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
       if (!isNotEmpty(curr)) {
-        if (isForm === FORM_NORMAL) {
-          curr = dataStore?.pokemon?.filter((item) => id === item.num && isForm === item.forme);
+        if (currentForm === FORM_NORMAL) {
+          curr = dataStore?.pokemon?.filter((item) => id === item.num && isEqual(currentForm, item.forme));
         } else {
-          curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme?.includes(isForm ?? FORM_NORMAL));
+          curr = dataStore?.pokemon?.filter((item) => id === item.num && isInclude(item.forme, currentForm ?? FORM_NORMAL));
         }
       }
       if (!isNotEmpty(curr)) {
         curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme === FORM_NORMAL);
       }
       const result: IEvolution[][] = [];
-      curr?.forEach((item) => prevEvoChain(item, isForm ?? FORM_NORMAL, [], result));
+      curr?.forEach((item) => prevEvoChain(item, currentForm ?? FORM_NORMAL, [], result));
       return result;
     },
     [prevEvoChain, form, dataStore?.pokemon]
@@ -151,7 +176,7 @@ const FindBattle = () => {
   const searchStatsPoke = useCallback(
     (level: number) => {
       const arr: IQueryStatesEvoChain[][] = [];
-      getEvoChain(id)?.forEach((item) => {
+      getEvoChain(id).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
           const data = queryStatesEvoChain(
@@ -226,9 +251,9 @@ const FindBattle = () => {
         );
         bestLeague = bestLeague.filter(
           (item) =>
-            (item.league === 'master' && getValueOrDefault(Number, item.CP) > 2500) ||
-            (item.league === 'ultra' && getValueOrDefault(Number, item.CP) > 1500) ||
-            (item.league === 'great' && getValueOrDefault(Number, item.CP) > 500)
+            (item.league === LeagueType.Master && getValueOrDefault(Number, item.CP) > BattleLeagueCPType.Ultra) ||
+            (item.league === LeagueType.Ultra && getValueOrDefault(Number, item.CP) > BattleLeagueCPType.Great) ||
+            (item.league === LeagueType.Great && getValueOrDefault(Number, item.CP) > BattleLeagueCPType.Little)
         );
         if (!isNotEmpty(bestLeague)) {
           bestLeague = evoBaseStats.filter(
@@ -252,7 +277,7 @@ const FindBattle = () => {
   const onSearchStatsPoke = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (!searchCP || parseInt(searchCP) < 10 || isNaN(parseInt(searchCP))) {
+      if (toNumber(searchCP) < 10) {
         return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
       }
       const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
@@ -278,7 +303,7 @@ const FindBattle = () => {
 
   const getImageList = (id: number) => {
     const isForm = isNullOrEmpty(form?.form.formName?.toUpperCase()) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
-    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => item.form?.includes(isForm ?? FORM_NORMAL));
+    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => isInclude(item.form, isForm ?? FORM_NORMAL));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
     }
@@ -453,13 +478,13 @@ const FindBattle = () => {
                           alt="pokemon-model"
                           height={32}
                           src={
-                            value.league === 'little'
-                              ? APIService.getPokeOtherLeague('GBL_littlecup')
-                              : value.league === 'great'
-                              ? APIService.getPokeLeague('great_league')
-                              : value.league === 'ultra'
-                              ? APIService.getPokeLeague('ultra_league')
-                              : APIService.getPokeLeague('master_league')
+                            value.league === LeagueType.Little
+                              ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)
+                              : value.league === LeagueType.Great
+                              ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)
+                              : value.league === LeagueType.Ultra
+                              ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)
+                              : getPokemonBattleLeagueIcon()
                           }
                         />
                         <div>
@@ -525,8 +550,8 @@ const FindBattle = () => {
                                   {item.battleLeague.little.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={APIService.getPokeOtherLeague('GBL_littlecup')} />{' '}
-                                        <b>Little Cup</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />{' '}
+                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</b>
                                       </h6>
                                       <li>
                                         Rank: <b>#{item.battleLeague.little.rank}</b>
@@ -567,8 +592,8 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={APIService.getPokeOtherLeague('GBL_littlecup')} />{' '}
-                                        <b>Little Cup</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />{' '}
+                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
@@ -580,8 +605,8 @@ const FindBattle = () => {
                                   {item.battleLeague.great.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('great_league')} />{' '}
-                                        <b>Great League</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />{' '}
+                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</b>
                                       </h6>
                                       <li>
                                         Rank: <b>#{item.battleLeague.great.rank}</b>
@@ -622,8 +647,8 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('great_league')} />{' '}
-                                        <b>Little Cup</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />{' '}
+                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
@@ -635,8 +660,8 @@ const FindBattle = () => {
                                   {item.battleLeague.ultra.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('ultra_league')} />{' '}
-                                        <b>Ultra League</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />{' '}
+                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</b>
                                       </h6>
                                       <li>
                                         Rank: <b>#{item.battleLeague.ultra.rank}</b>
@@ -677,8 +702,8 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('ultra_league')} />{' '}
-                                        <b>Little Cup</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />{' '}
+                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
@@ -690,8 +715,8 @@ const FindBattle = () => {
                                   {item.battleLeague.master.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('master_league')} />{' '}
-                                        <b>Master League</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />{' '}
+                                        <b>{getPokemonBattleLeagueName()}</b>
                                       </h6>
                                       <li>
                                         Rank: <b>#{item.battleLeague.master.rank}</b>
@@ -732,8 +757,8 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={APIService.getPokeLeague('master_league')} />{' '}
-                                        <b>Little Cup</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />{' '}
+                                        <b>{getPokemonBattleLeagueName()}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge

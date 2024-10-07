@@ -15,7 +15,7 @@ import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link, Location, useLocation, useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
-import { IPokemonData } from '../../../core/models/pokemon.model';
+import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -25,8 +25,18 @@ import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { convertColumnDataType, DynamicObj, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
+import {
+  convertColumnDataType,
+  DynamicObj,
+  getValueOrDefault,
+  isEmpty,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
 import { LocationState } from '../../../core/models/router.model';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -70,7 +80,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
             e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
           }}
         />
-        {splitAndCapitalize(row.name?.replaceAll('_', '-'), '-', ' ')}
+        {splitAndCapitalize(row.name.replaceAll('_', '-'), '-', ' ')}
       </>
     ),
     minWidth: '200px',
@@ -125,6 +135,22 @@ const customStyles: TableStyles = {
   },
 };
 
+interface IFilter {
+  match: boolean;
+  releasedGO: boolean;
+}
+
+class Filter implements IFilter {
+  match = false;
+  releasedGO = false;
+
+  static create(value: IFilter) {
+    const obj = new Filter();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
 const StatsRanking = () => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   useChangeTitle('Stats Ranking');
@@ -132,7 +158,7 @@ const StatsRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
-      when: (row) => row.slug === select?.slug,
+      when: (row) => isEqual(row.slug, select?.slug),
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -222,18 +248,17 @@ const StatsRanking = () => {
 
   const [select, setSelect] = useState<IPokemonStatsRanking>();
 
-  const [filters, setFilters] = useState({ match: false, releasedGO: false });
+  const [filters, setFilters] = useState(new Filter());
   const { match, releasedGO } = filters;
 
-  const [progress, setProgress] = useState({ isLoadedForms: false });
-  const { isLoadedForms } = progress;
+  const [progress, setProgress] = useState(new PokemonProgress());
 
   useEffect(() => {
     if (isNotEmpty(pokemonData) && !isNotEmpty(pokemonList)) {
       const pokemon = sortRanking(mappingData(pokemonData.filter((pokemon) => pokemon.num > 0)), sortId);
       setPokemonList(pokemon);
       setPokemonFilter(pokemon);
-      setProgress((p) => ({ ...p, isLoadedForms: true }));
+      setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     }
   }, [pokemonList, pokemonData]);
 
@@ -248,7 +273,7 @@ const StatsRanking = () => {
     if (id && isNotEmpty(pokemonFilter)) {
       const form = searchParams.get('form');
       const index = pokemonFilter.findIndex(
-        (row) => row.num === parseInt(id) && row.forme === (form?.replaceAll('-', '_').toUpperCase() || FORM_NORMAL)
+        (row) => row.num === toNumber(id) && isEqual(row.forme, form?.replaceAll('-', '_') || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
       );
       if (index > -1) {
         const result = pokemonFilter[index];
@@ -274,9 +299,10 @@ const StatsRanking = () => {
               (pokemon) =>
                 isEmpty(search) ||
                 (match
-                  ? pokemon.num.toString() === search || splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase() === search.toLowerCase()
-                  : pokemon.num.toString().includes(search) ||
-                    splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()))
+                  ? isEqual(pokemon.num, search) ||
+                    isEqual(splitAndCapitalize(pokemon.name, '-', ' '), search, EqualMode.IgnoreCaseSensitive)
+                  : isInclude(pokemon.num, search) ||
+                    isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive))
             )
         );
       }, 100);
@@ -289,7 +315,7 @@ const StatsRanking = () => {
       formName: getValueOrDefault(String, pokemon.forme),
       id: pokemon.num,
       isDefault: true,
-      isMega: pokemon.slug?.toUpperCase().includes(FORM_MEGA),
+      isMega: isInclude(pokemon.slug, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
       name: pokemon.name,
       types: getValueOrDefault(Array, pokemon.types),
       version: getValueOrDefault(String, pokemon.version),
@@ -309,11 +335,11 @@ const StatsRanking = () => {
               alt="img-full-pokemon"
               src={APIService.getPokeFullSprite(
                 getValueOrDefault(Number, select?.num),
-                convertPokemonImageName(select && select.baseForme === select.forme ? '' : select?.forme)
+                convertPokemonImageName(select && isEqual(select.baseForme, select.forme) ? '' : select?.forme)
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                   e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, select?.num));
                 } else {
                   e.currentTarget.src = APIService.getPokeFullSprite(0);
@@ -333,18 +359,18 @@ const StatsRanking = () => {
               weight={getValueOrDefault(Number, select?.weightkg)}
               height={getValueOrDefault(Number, select?.heightm)}
               className="table-stats-ranking"
-              isLoadedForms={isLoadedForms}
+              isLoadedForms={progress.isLoadedForms}
             />
           </div>
           {select && (
             <div className="col-xl-7" style={{ padding: 0 }}>
               <TableMove
                 data={select}
-                id={select?.num}
+                id={select.num}
                 form={convertToPokemonForm(select)}
-                statATK={select?.atk.attack}
-                statDEF={select?.def.defense}
-                statSTA={select?.sta.stamina}
+                statATK={select.atk.attack}
+                statDEF={select.def.defense}
+                statSTA={select.sta.stamina}
                 maxHeight={400}
               />
             </div>
@@ -372,11 +398,11 @@ const StatsRanking = () => {
           />
         </div>
         <FormControlLabel
-          control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
+          control={<Checkbox checked={match} onChange={(_, check) => setFilters(Filter.create({ ...filters, match: check }))} />}
           label="Match Pokémon"
         />
         <FormControlLabel
-          control={<Checkbox checked={releasedGO} onChange={(_, check) => setFilters({ ...filters, releasedGO: check })} />}
+          control={<Checkbox checked={releasedGO} onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))} />}
           label={
             <span className="d-flex align-items-center">
               Released in GO
@@ -400,14 +426,14 @@ const StatsRanking = () => {
         defaultSortAsc={false}
         highlightOnHover={true}
         onRowClicked={(row) => {
-          if (select?.name !== row.name) {
+          if (!isEqual(select?.name, row.name)) {
             setFilterParams(row);
           }
         }}
         onSort={(rows) => {
           if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonFilter, parseInt(getValueOrDefault(String, rows.id?.toString()))));
-            setSortId(parseInt(getValueOrDefault(String, rows.id?.toString())));
+            setPokemonFilter(sortRanking(pokemonFilter, toNumber(getValueOrDefault(String, rows.id?.toString()))));
+            setSortId(toNumber(getValueOrDefault(String, rows.id?.toString())));
           }
         }}
         conditionalRowStyles={conditionalRowStyles}

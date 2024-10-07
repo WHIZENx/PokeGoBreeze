@@ -12,7 +12,8 @@ import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
+import { IncludeMode } from '../../util/enums/string.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
@@ -38,7 +39,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     const name = splitAndCapitalize(value.name, '-', ' ');
     const iconName =
       pokemonIcon && pokemonIcon.split('/').at(9) ? splitAndCapitalize(pokemonIcon.split('/').at(9)?.replace('.png', ''), '-', ' ') : '';
-    if (iconName !== name) {
+    if (!isEqual(iconName, name)) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
       setSearch(name);
       if (props.defaultSetting) {
@@ -151,8 +152,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
               .filter(
                 (item) =>
                   item.num > 0 &&
-                  (splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
-                    item.num.toString().includes(search))
+                  (isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+                    isInclude(item.num, search))
               )
               .slice(0, firstInit + eachCounter * startIndex)
               .map((value, index) => (

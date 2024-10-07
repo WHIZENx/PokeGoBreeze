@@ -30,7 +30,20 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { LeagueType } from '../../../core/enums/league.enum';
+import { Sorted } from '../enums/pvp-team.enum';
+import { SortType } from '../enums/pvp-ranking-enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -45,8 +58,8 @@ const RankingPVP = () => {
   const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
   const [storeStats, setStoreStats] = useState<boolean[]>();
   const [onLoadData, setOnLoadData] = useState(false);
-  const sortedBy = useRef('score');
-  const [sorted, setSorted] = useState(1);
+  const sortedBy = useRef(SortType.Score);
+  const [sorted, setSorted] = useState(Sorted.DESC);
 
   const styleSheet = useRef<CSSStyleSheet>();
 
@@ -76,7 +89,7 @@ const RankingPVP = () => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
-        const cp = parseInt(getValueOrDefault(String, params.cp));
+        const cp = toNumber(getValueOrDefault(String, params.cp));
         const file = (
           await APIService.getFetchUrl<RankingsPVP[]>(
             APIService.getRankingFile(getValueOrDefault(String, params.serie), cp, getValueOrDefault(String, params.type))
@@ -85,10 +98,10 @@ const RankingPVP = () => {
         if (!file) {
           return;
         }
-        if (params.serie === 'all') {
+        if (params.serie === LeagueType.All) {
           document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
         } else {
-          document.title = `PVP Ranking - ${params.serie === 'remix' ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
+          document.title = `PVP Ranking - ${params.serie === LeagueType.Remix ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
             params.serie,
             '-',
             ' '
@@ -96,7 +109,7 @@ const RankingPVP = () => {
         }
         const filePVP = file.map((item) => {
           const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
+          const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
           const id = pokemon?.num;
           const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
@@ -109,18 +122,18 @@ const RankingPVP = () => {
           let fMoveData = item.moveset.at(0);
           const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(1)));
           const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(2)));
-          if (fMoveData?.includes('HIDDEN_POWER')) {
+          if (isInclude(fMoveData, 'HIDDEN_POWER')) {
             fMoveData = 'HIDDEN_POWER';
           }
 
-          let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);
-          const cMovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
+          let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
+          const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
           let cMoveSec;
           if (cMoveDataSec) {
-            cMoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
+            cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
           }
 
-          if (fMove && item.moveset.at(0)?.includes('HIDDEN_POWER')) {
+          if (fMove && isInclude(item.moveset.at(0), 'HIDDEN_POWER')) {
             fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, item.moveset.at(0)?.split('_').at(2)) });
           }
 
@@ -135,15 +148,13 @@ const RankingPVP = () => {
             stats,
             atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
             def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-            sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats?.sta)),
-            prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats?.sta)),
+            sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
+            prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
             fMove,
             cMovePri,
             cMoveSec,
-            shadow: item.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
-            purified:
-              pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMovePri?.name)) ||
-              (cMoveDataSec && pokemon?.purifiedMoves?.includes(cMoveDataSec)) === true,
+            shadow: isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
+            purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec),
           });
         });
         setRankingData(filePVP);
@@ -213,7 +224,7 @@ const RankingPVP = () => {
             <div className="ranking-group w-100">
               <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
               <div style={{ marginRight: 15 }}>
-                <span className="ranking-score score-ic">{data?.data?.score}</span>
+                <span className="ranking-score score-ic">{data.data?.score}</span>
               </div>
             </div>
           </div>
@@ -221,7 +232,7 @@ const RankingPVP = () => {
         <Accordion.Body
           style={{
             padding: 0,
-            backgroundImage: computeBgType(data?.pokemon?.types, data?.shadow, data?.purified, 0.8, styleSheet.current),
+            backgroundImage: computeBgType(data.pokemon?.types, data.shadow, data.purified, 0.8, styleSheet.current),
           }}
         >
           {storeStats && storeStats[key] && (
@@ -233,7 +244,7 @@ const RankingPVP = () => {
                   {Body(
                     getValueOrDefault(Array, dataStore?.assets),
                     getValueOrDefault(Array, dataStore?.pokemon),
-                    data?.data,
+                    data.data,
                     params.cp,
                     params.type
                   )}
@@ -246,7 +257,7 @@ const RankingPVP = () => {
                   <hr />
                   {TypeEffective(getValueOrDefault(Array, data.pokemon?.types))}
                 </div>
-                <div className="container">{MoveSet(data?.data?.moves, data.pokemon, getValueOrDefault(Array, dataStore?.combat))}</div>
+                <div className="container">{MoveSet(data.data?.moves, data.pokemon, getValueOrDefault(Array, dataStore?.combat))}</div>
               </div>
               <LeaveToggle eventKey={key.toString()}>
                 <span className="text-danger">
@@ -267,8 +278,8 @@ const RankingPVP = () => {
   };
 
   const renderLeague = () => {
-    const cp = parseInt(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => item.id === params.serie && item.cp.includes(cp));
+    const cp = toNumber(getValueOrDefault(String, params.cp));
+    const league = pvp?.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league ? (
@@ -280,7 +291,7 @@ const RankingPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{league?.name === 'All' ? getPokemonBattleLeagueName(cp) : league?.name}</b>
+              <b>{isEqual(league.name, LeagueType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}</b>
             </h2>
           </div>
         ) : (
@@ -301,7 +312,7 @@ const RankingPVP = () => {
           {scoreType.map((type, index) => (
             <Button
               key={index}
-              className={params.type?.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+              className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
               onClick={() => {
                 setOnLoadData(false);
                 navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`);
@@ -328,10 +339,12 @@ const RankingPVP = () => {
                 className="text-center"
                 style={{ width: 'max-content' }}
                 onClick={() => {
-                  setSorted(sorted ? 0 : 1);
+                  setSorted(sorted ? Sorted.ASC : Sorted.DESC);
                 }}
               >
-                <span className={combineClasses('ranking-sort ranking-score', sortedBy.current === 'score' ? 'ranking-selected' : '')}>
+                <span
+                  className={combineClasses('ranking-sort ranking-score', sortedBy.current === SortType.Score ? 'ranking-selected' : '')}
+                >
                   Score
                   {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
                 </span>
@@ -342,8 +355,9 @@ const RankingPVP = () => {
             {rankingData
               .filter(
                 (pokemon) =>
-                  splitAndCapitalize(pokemon.name, '-', ' ').toLowerCase().includes(search.toLowerCase()) ||
-                  pokemon.id?.toString().includes(search)
+                  pokemon.id &&
+                  (isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+                    isInclude(pokemon.id, search))
               )
               .sort((a, b) => setSortedPokemonBattle(a, b))
               .map((value, index) => (

@@ -20,7 +20,19 @@ import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague
 import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
-import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../../util/extension';
+import {
+  combineClasses,
+  getValueOrDefault,
+  isEmpty,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
+import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
+import { IncludeMode } from '../../../util/enums/string.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -66,8 +78,8 @@ const Leagues = () => {
     if (dataStore?.leagues) {
       const leagues = getValueOrDefault(Array, dataStore?.leagues?.data);
       setLeagues(leagues);
-      setOpenedLeague(leagues.filter((league) => dataStore?.leagues?.allowLeagues.includes(getValueOrDefault(String, league.id))));
-      setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === rank + 1));
+      setOpenedLeague(leagues.filter((league) => isIncludeList(dataStore.leagues.allowLeagues, league.id)));
+      setSetting(dataStore.leagues.season.settings.find((data) => data.rankLevel === rank + 1));
     }
   }, [dataStore?.leagues]);
 
@@ -76,24 +88,21 @@ const Leagues = () => {
       const timeOutId = setTimeout(() => {
         setLeagueFilter(
           leagues.filter((value) => {
-            if (dataStore?.leagues?.allowLeagues.includes(getValueOrDefault(String, value.id))) {
+            if (isIncludeList(dataStore?.leagues?.allowLeagues, value.id)) {
               return false;
             }
             let textTitle = '';
-            if (
-              getValueOrDefault(String, value.id).includes('SEEKER') &&
-              ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(value.title)
-            ) {
+            if (isInclude(value.id, 'SEEKER') && isIncludeList(['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'], value.title)) {
               textTitle = splitAndCapitalize(getValueOrDefault(String, value.id).replace('VS_', '').toLowerCase(), '_', ' ');
             } else {
               textTitle = splitAndCapitalize(value.title.toLowerCase(), '_', ' ');
             }
-            if (getValueOrDefault(String, value.id).includes('SAFARI_ZONE')) {
+            if (isInclude(value.id, 'SAFARI_ZONE')) {
               textTitle += ` ${getValueOrDefault(String, value.id).split('_').at(3)} ${capitalize(
                 getValueOrDefault(String, value.id).split('_').at(4)
               )}`;
             }
-            return isEmpty(search) || textTitle.toLowerCase().includes(search.toLowerCase());
+            return isEmpty(search) || isInclude(textTitle, search, IncludeMode.IncludeIgnoreCaseSensitive);
           })
         );
       }, 300);
@@ -104,7 +113,7 @@ const Leagues = () => {
   const [show, setShow] = useState(false);
 
   const handleShow = (type: string | undefined, track: string, step: number) => {
-    if (type === 'pokemon') {
+    if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
       Object.values(dataStore?.leagues?.season.rewards.pokemon ?? new Object()).forEach((value) => {
@@ -145,11 +154,10 @@ const Leagues = () => {
           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
             <img alt="img-league" height={50} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
             <b className={league.enabled ? '' : 'text-danger'}>
-              {(getValueOrDefault(String, league.id).includes('SEEKER') &&
-              ['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'].includes(league.title)
+              {(isInclude(league.id, 'SEEKER') && isIncludeList(['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'], league.title)
                 ? splitAndCapitalize(getValueOrDefault(String, league.id).replace('VS_', '').toLowerCase(), '_', ' ')
                 : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
-                (getValueOrDefault(String, league.id).includes('SAFARI_ZONE')
+                (isInclude(league.id, 'SAFARI_ZONE')
                   ? ` ${getValueOrDefault(String, league.id).split('_').at(3)} ${capitalize(
                       getValueOrDefault(String, league.id).split('_').at(4)
                     )}`
@@ -161,15 +169,15 @@ const Leagues = () => {
           <div className="sub-body">
             <h4 className="title-leagues">{splitAndCapitalize(getValueOrDefault(String, league.id).toLowerCase(), '_', ' ')}</h4>
             <div className="text-center">
-              {league.league !== league.title &&
-              !league.title.includes('REMIX') &&
-              !getValueOrDefault(String, league.iconUrl).includes('pogo') ? (
+              {!isEqual(league.league, league.title) &&
+              !isInclude(league.title, LeagueType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
+              !isInclude(league.iconUrl, 'pogo') ? (
                 <div className="league">
                   <img
                     alt="img-league"
                     height={140}
                     src={APIService.getAssetPokeGo(
-                      getValueOrDefault(String, dataStore?.leagues?.data.find((item) => item.title === league.league)?.iconUrl)
+                      getValueOrDefault(String, dataStore?.leagues?.data.find((item) => isEqual(item.title, league.league))?.iconUrl)
                     )}
                   />
                   <span className={combineClasses('badge-league', league.league.toLowerCase().replaceAll('_', '-'))}>
@@ -208,11 +216,11 @@ const Leagues = () => {
               {league.conditions.timestamp && (
                 <li>
                   <h6 className="title-leagues">Event time</h6>
-                  <span style={{ fontWeight: 500 }}>Start Date: {getTime(league.conditions.timestamp?.start)}</span>
-                  {league.conditions.timestamp?.end && (
+                  <span style={{ fontWeight: 500 }}>Start Date: {getTime(league.conditions.timestamp.start)}</span>
+                  {league.conditions.timestamp.end && (
                     <span style={{ fontWeight: 500 }}>
                       <br />
-                      End Date: {getTime(league.conditions.timestamp?.end)}
+                      End Date: {getTime(league.conditions.timestamp.end)}
                     </span>
                   )}
                 </li>
@@ -235,7 +243,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -250,7 +258,7 @@ const Leagues = () => {
                       </div>
                       <span className="caption">
                         {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                          item.form?.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                          item.form.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
                         }`}
                       </span>
                     </Link>
@@ -265,7 +273,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -280,7 +288,7 @@ const Leagues = () => {
                       </div>
                       <span className="caption">
                         {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                          item.form?.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                          item.form.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
                         }`}
                       </span>
                     </Link>
@@ -311,16 +319,16 @@ const Leagues = () => {
         <div className="col-md-4 d-flex justify-content-end" style={{ padding: 0 }}>
           <Form.Select
             onChange={(e) => {
-              setRank(parseInt(e.target.value));
-              if (parseInt(e.target.value) < 24) {
-                setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === parseInt(e.target.value) + 1));
+              setRank(toNumber(e.target.value));
+              if (toNumber(e.target.value) < 24) {
+                setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1));
               }
             }}
             defaultValue={rank}
           >
             {Object.keys(getValueOrDefault(Array, dataStore?.leagues?.season.rewards.rank)).map((value, index) => (
               <option key={index} value={value}>
-                Rank {value} {parseInt(value) > 20 && `( ${rankName(parseInt(value))} )`}
+                Rank {value} {toNumber(value) > 20 && `( ${rankName(toNumber(value))} )`}
               </option>
             ))}
           </Form.Select>
@@ -331,7 +339,7 @@ const Leagues = () => {
           <div className="d-flex justify-content-center element-top">
             <div className="season-league">
               <div className="group-rank-league reward-league text-center">
-                <div className="rank-header">Season {dataStore?.leagues?.season.season}</div>
+                <div className="rank-header">Season {dataStore.leagues.season.season}</div>
                 <Badge
                   color="primary"
                   className="position-relative d-inline-block img-link"
@@ -363,7 +371,7 @@ const Leagues = () => {
                   <span className="caption text-black">Premium</span>
                 </Badge>
               </div>
-              {dataStore?.leagues?.season.rewards.rank[rank].free?.map((value, index) => (
+              {dataStore.leagues.season.rewards.rank[rank].free?.map((value, index) => (
                 <Fragment key={index}>
                   <div className="group-rank-league text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
@@ -372,9 +380,10 @@ const Leagues = () => {
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
                       badgeContent={value.count}
-                      max={10000}
+                      max={BattleLeagueCPType.InsMaster}
                       sx={{
-                        paddingBottom: value.type === 'pokemon' || value.type === 'itemLoot' ? '0 !important' : '1.5rem !important',
+                        paddingBottom:
+                          value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? '0 !important' : '1.5rem !important',
                         paddingTop: '1.5rem !important',
                         minWidth: 64,
                       }}
@@ -384,7 +393,7 @@ const Leagues = () => {
                           <CloseIcon fontSize="large" sx={{ color: 'red', height: 82 }} />
                         </Fragment>
                       )}
-                      {value.type === 'pokemon' && (
+                      {value.type === RewardType.Pokemon && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -396,11 +405,11 @@ const Leagues = () => {
                           <VisibilityIcon
                             className="view-pokemon"
                             sx={{ fontSize: '1rem', color: 'black' }}
-                            onClick={() => handleShow(value.type, 'FREE', value.step)}
+                            onClick={() => handleShow(value.type, LeagueRewardType.Free, value.step)}
                           />
                         </Fragment>
                       )}
-                      {value.type === 'itemLoot' && (
+                      {value.type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -412,7 +421,7 @@ const Leagues = () => {
                           <VisibilityIcon className="view-pokemon" sx={{ fontSize: '1rem', color: 'black' }} />
                         </Fragment>
                       )}
-                      {value.type === 'ITEM_RARE_CANDY' && (
+                      {value.type === RewardType.RareCandy && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -423,7 +432,7 @@ const Leagues = () => {
                           <span className="caption text-black">Rare Candy</span>
                         </Fragment>
                       )}
-                      {value.type === 'stardust' && (
+                      {value.type === RewardType.Stardust && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -434,7 +443,7 @@ const Leagues = () => {
                           <span className="caption text-black">Stardust</span>
                         </Fragment>
                       )}
-                      {value.type === 'ITEM_MOVE_REROLL_SPECIAL_ATTACK' && (
+                      {value.type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -451,23 +460,23 @@ const Leagues = () => {
                       color="primary"
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
-                      badgeContent={dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].count}
-                      max={10000}
+                      badgeContent={dataStore.leagues.season.rewards.rank[rank].premium?.[index].count}
+                      max={BattleLeagueCPType.InsMaster}
                       sx={{
                         paddingBottom:
-                          dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'pokemon' ||
-                          dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'itemLoot'
+                          dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon ||
+                          dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.ItemLoot
                             ? '0 !important'
                             : '1.5rem !important',
                         minWidth: 64,
                       }}
                     >
-                      {!dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type && (
+                      {!dataStore.leagues.season.rewards.rank[rank].premium?.[index].type && (
                         <Fragment>
                           <CloseIcon fontSize="large" sx={{ color: 'red', height: 82 }} />
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'pokemon' && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -480,12 +489,16 @@ const Leagues = () => {
                             className="view-pokemon"
                             sx={{ fontSize: '1rem', color: 'black' }}
                             onClick={() =>
-                              handleShow(dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type, 'PREMIUM', value.step)
+                              handleShow(
+                                dataStore.leagues.season.rewards.rank[rank].premium?.[index].type,
+                                LeagueRewardType.Premium,
+                                value.step
+                              )
                             }
                           />
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'itemLoot' && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -497,13 +510,17 @@ const Leagues = () => {
                           <VisibilityIcon
                             className="view-pokemon"
                             sx={{ fontSize: '1rem', color: 'black' }}
-                            // onClick={() =>
-                            //   handleShow(dataStore?.leagues?.season.rewards.rank[rank].premium[index].type, 'PREMIUM', value.step)
-                            // }
+                            onClick={() =>
+                              handleShow(
+                                dataStore.leagues?.season.rewards.rank[rank].premium?.[index].type,
+                                LeagueRewardType.Premium,
+                                value.step
+                              )
+                            }
                           />
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'ITEM_RARE_CANDY' && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.RareCandy && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -514,7 +531,7 @@ const Leagues = () => {
                           <span className="caption text-black">Rare Candy</span>
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'stardust' && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Stardust && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -525,7 +542,7 @@ const Leagues = () => {
                           <span className="caption text-black">Stardust</span>
                         </Fragment>
                       )}
-                      {dataStore?.leagues?.season.rewards.rank[rank].premium?.[index].type === 'ITEM_MOVE_REROLL_SPECIAL_ATTACK' && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -578,19 +595,19 @@ const Leagues = () => {
               <span className="require-rank-info">
                 {setting?.additionalTotalBattlesRequired && (
                   <li>
-                    Complete <b>{setting?.additionalTotalBattlesRequired}</b> battle
-                    {setting?.additionalTotalBattlesRequired > 1 && 's'}.
+                    Complete <b>{setting.additionalTotalBattlesRequired}</b> battle
+                    {setting.additionalTotalBattlesRequired > 1 && 's'}.
                   </li>
                 )}
                 {setting?.additionalWinsRequired && (
                   <li>
-                    Win <b>{setting?.additionalWinsRequired}</b> battle
-                    {setting?.additionalWinsRequired > 1 && 's'}.
+                    Win <b>{setting.additionalWinsRequired}</b> battle
+                    {setting.additionalWinsRequired > 1 && 's'}.
                   </li>
                 )}
                 {setting?.minRatingRequired && (
                   <li>
-                    Reach a battle rating of <b>{setting?.minRatingRequired}</b> or higher.
+                    Reach a battle rating of <b>{setting.minRatingRequired}</b> or higher.
                   </li>
                 )}
               </span>
@@ -641,7 +658,7 @@ const Leagues = () => {
                 Rank {rank} {rank > 20 && `(${rankName(rank)})`}
               </div>
               <div className="reward-info">
-                {showData.track === 'free' ? (
+                {showData.track === LeagueRewardType.Free.toLowerCase() ? (
                   <div className="d-flex" style={{ columnGap: 8 }}>
                     <img
                       className="pokemon-sprite-small filter-shadow"
@@ -674,7 +691,7 @@ const Leagues = () => {
                   className="img-link text-center"
                   key={index}
                   to={`/pokemon/${item.id}${
-                    item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                    item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                   }`}
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
@@ -701,7 +718,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form?.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >

@@ -40,7 +40,8 @@ import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-h
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
+import { IncludeMode } from '../../util/enums/string.enum';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -49,6 +50,55 @@ const versionProps: Partial<MenuProps> = {
     },
   },
 };
+
+interface IFilter {
+  match: boolean;
+  releasedGO: boolean;
+  allShiny: boolean;
+  gen: number[];
+  version: number[];
+  mega: boolean;
+  gmax: boolean;
+  primal: boolean;
+  legendary: boolean;
+  mythic: boolean;
+  ultraBeast: boolean;
+}
+
+class Filter implements IFilter {
+  match = false;
+  releasedGO = false;
+  allShiny = false;
+  gen: number[] = [];
+  version: number[] = [];
+  mega = false;
+  gmax = false;
+  primal = false;
+  legendary = false;
+  mythic = false;
+  ultraBeast = false;
+
+  static setFilterGenAndVersion(gen: number[], version: number[]) {
+    const obj = new Filter();
+    obj.gen = gen;
+    obj.version = version;
+    return obj;
+  }
+}
+
+interface IBtnSelect {
+  gen: boolean;
+  version: boolean;
+}
+
+class BtnSelect implements IBtnSelect {
+  gen = false;
+  version = false;
+
+  constructor({ ...props }: IBtnSelect) {
+    Object.assign(this, props);
+  }
+}
 
 const Home = () => {
   useChangeTitle('Home');
@@ -66,33 +116,28 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const scrollID = useRef(0);
 
-  const [filters, setFilters] = useState({
-    match: false,
-    releasedGO: false,
-    allShiny: false,
-    gen: Object.values(genList).map((_, index) => index),
-    version: versionList.map((_, index) => index),
-    mega: false,
-    gmax: false,
-    primal: false,
-    legendary: false,
-    mythic: false,
-    ultraBeast: false,
-  });
+  const [filters, setFilters] = useState(
+    Filter.setFilterGenAndVersion(
+      Object.values(genList).map((_, index) => index),
+      versionList.map((_, index) => index)
+    )
+  );
 
   const { match, releasedGO, allShiny, gen, version, mega, gmax, primal, legendary, mythic, ultraBeast } = filters;
 
-  const [btnSelected, setBtnSelected] = useState({
-    gen: true,
-    version: true,
-  });
+  const [btnSelected, setBtnSelected] = useState(
+    new BtnSelect({
+      gen: true,
+      version: true,
+    })
+  );
 
   const subItem = 100;
 
   const addTypeArr = (value: string) => {
     let types = selectTypes;
-    if (types.includes(value)) {
-      return setSelectTypes([...types].filter((item) => item !== value));
+    if (isIncludeList(types, value)) {
+      return setSelectTypes([...types].filter((item) => !isEqual(item, value)));
     } else {
       types = types.slice(0, 1);
     }
@@ -113,7 +158,7 @@ const Home = () => {
           data?.pokemon
             .map((item) => {
               const assetForm = queryAssetForm(data.assets, item.num, item.forme);
-              return new PokemonHomeModel(item, assetForm, versionList);
+              return new PokemonHomeModel(item, assetForm);
             })
             .sort((a, b) => a.id - b.id)
         )
@@ -123,29 +168,30 @@ const Home = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (dataList) {
+    if (isNotEmpty(dataList)) {
       const timeOutId = setTimeout(
         () => {
-          const result = dataList?.filter((item) => {
+          const result = dataList.filter((item) => {
             const boolFilterType =
               !isNotEmpty(selectTypes) ||
-              (item.types?.every((item) => selectTypes.includes(item?.toUpperCase())) && item.types.length === selectTypes.length);
+              (item.types.every((item) => isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)) &&
+                item.types.length === selectTypes.length);
             const boolFilterPoke =
               isEmpty(searchTerm) ||
               (match
-                ? splitAndCapitalize(item.name, '-', ' ').toLowerCase() === searchTerm.toLowerCase() || item.id?.toString() === searchTerm
-                : splitAndCapitalize(item.name, '-', ' ').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  item.id?.toString().includes(searchTerm));
+                ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
+                : isInclude(splitAndCapitalize(item.name, '-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
+                  isInclude(item.id, searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = mega ? item.forme?.toUpperCase().includes(FORM_MEGA) : true;
-            const boolGmax = gmax ? item.forme?.toUpperCase().includes(FORM_GMAX) : true;
-            const boolPrimal = primal ? item.forme?.toUpperCase().includes(FORM_PRIMAL) : true;
+            const boolMega = mega ? isInclude(item.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) : true;
+            const boolGmax = gmax ? isInclude(item.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive) : true;
+            const boolPrimal = primal ? isInclude(item.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive) : true;
             const boolLegend = legendary ? item.class === TYPE_LEGENDARY : true;
             const boolMythic = mythic ? item.class === TYPE_MYTHIC : true;
             const boolUltra = ultraBeast ? item.class === TYPE_ULTRA_BEAST : true;
 
-            const findGen = item.gen === 0 ? true : gen.includes(item.gen - 1);
-            const findVersion = item.version === -1 ? true : version.includes(item?.version);
+            const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
+            const findVersion = item.version === -1 || isIncludeList(version, item.version);
             return (
               boolFilterType &&
               boolFilterPoke &&
@@ -162,7 +208,7 @@ const Home = () => {
           });
           scrollID.current = 0;
           setResult(result);
-          setListOfPokemon(result?.slice(0, subItem));
+          setListOfPokemon(result.slice(0, subItem));
           setLoading(false);
         },
         listOfPokemon > result ? listOfPokemon.length : result.length
@@ -185,61 +231,43 @@ const Home = () => {
   }, [listOfPokemon]);
 
   const handleChangeGen = (event: SelectChangeEvent<number[]>) => {
+    const isSelect = isIncludeList(event.target.value as number[], -1);
+    if (isSelect) {
+      setBtnSelected({
+        ...btnSelected,
+        gen: !btnSelected.gen,
+      });
+    }
+    const gen = !isSelect
+      ? (event.target.value as number[]).sort((a, b) => a - b)
+      : btnSelected.gen
+      ? []
+      : Object.values(genList).map((_, index) => index);
+
     setFilters({
       ...filters,
-      gen: (event.target.value as number[]).sort((a, b) => a - b),
+      gen,
     });
   };
 
   const handleChangeVersion = (event: SelectChangeEvent<number[]>) => {
+    const isSelect = isIncludeList(event.target.value as number[], -1);
+    if (isSelect) {
+      setBtnSelected({
+        ...btnSelected,
+        version: !btnSelected.version,
+      });
+    }
+    const version = !isSelect
+      ? (event.target.value as number[]).sort((a, b) => a - b)
+      : btnSelected.version
+      ? []
+      : versionList.map((_, index) => index);
+
     setFilters({
       ...filters,
-      version: (event.target.value as number[]).sort((a, b) => a - b),
+      version,
     });
-  };
-
-  const setFilterGen = () => {
-    if (btnSelected.gen) {
-      setFilters({
-        ...filters,
-        gen: [],
-      });
-      setBtnSelected({
-        ...btnSelected,
-        gen: false,
-      });
-    } else {
-      setFilters({
-        ...filters,
-        gen: versionList.map((_, index) => index),
-      });
-      setBtnSelected({
-        ...btnSelected,
-        gen: true,
-      });
-    }
-  };
-
-  const setFilterVersion = () => {
-    if (btnSelected.version) {
-      setFilters({
-        ...filters,
-        version: [],
-      });
-      setBtnSelected({
-        ...btnSelected,
-        version: false,
-      });
-    } else {
-      setFilters({
-        ...filters,
-        version: versionList.map((_, index) => index),
-      });
-      setBtnSelected({
-        ...btnSelected,
-        version: true,
-      });
-    }
   };
 
   return (
@@ -259,7 +287,7 @@ const Home = () => {
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
                   `btn-select-type w-100 border-types btn-${theme.palette.mode}`,
-                  selectTypes.includes(item) ? `select-type${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}` : ''
+                  isIncludeList(selectTypes, item) ? `select-type${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}` : ''
                 )}
                 style={{ padding: 10, transition: TRANSITION_TIME }}
               >
@@ -338,19 +366,18 @@ const Home = () => {
                       input={<OutlinedInput label="Generation(s)" />}
                       renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
                     >
-                      <MenuItem disableRipple={true} disableTouchRipple={true}>
+                      <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
                         <ListItemText
                           primary={
-                            <button
-                              onClick={setFilterGen}
-                              className={combineClasses('btn', btnSelected.gen ? 'btn-danger' : 'btn-success')}
-                            >{`${btnSelected.gen ? 'Deselect All' : 'Select All'}`}</button>
+                            <button className={combineClasses('btn', btnSelected.gen ? 'btn-danger' : 'btn-success')}>{`${
+                              btnSelected.gen ? 'Deselect All' : 'Select All'
+                            }`}</button>
                           }
                         />
                       </MenuItem>
                       {Object.values(genList).map((_, index) => (
                         <MenuItem key={index} value={index}>
-                          <Checkbox checked={gen.includes(index)} />
+                          <Checkbox checked={isIncludeList(gen, index)} />
                           <ListItemText primary={`Generation ${index + 1} (${regionList[index + 1]})`} />
                         </MenuItem>
                       ))}
@@ -366,19 +393,18 @@ const Home = () => {
                       renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
                       MenuProps={versionProps}
                     >
-                      <MenuItem disableRipple={true} disableTouchRipple={true}>
+                      <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
                         <ListItemText
                           primary={
-                            <button
-                              onClick={setFilterVersion}
-                              className={combineClasses('btn', btnSelected.version ? 'btn-danger' : 'btn-success')}
-                            >{`${btnSelected.version ? 'Deselect All' : 'Select All'}`}</button>
+                            <button className={combineClasses('btn', btnSelected.version ? 'btn-danger' : 'btn-success')}>{`${
+                              btnSelected.version ? 'Deselect All' : 'Select All'
+                            }`}</button>
                           }
                         />
                       </MenuItem>
                       {versionList.map((value, index) => (
                         <MenuItem key={index} value={index}>
-                          <Checkbox checked={version.includes(index)} />
+                          <Checkbox checked={isIncludeList(version, index)} />
                           <ListItemText primary={value} />
                         </MenuItem>
                       ))}

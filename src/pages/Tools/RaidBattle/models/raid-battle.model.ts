@@ -34,7 +34,6 @@ interface IRaidSummary {
   bossHp: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class RaidSummary implements IRaidSummary {
   dpsAtk = 0;
   dpsDef = 0;
@@ -55,7 +54,6 @@ export interface IRaidResult {
   summary: RaidSummary;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class RaidResult implements IRaidResult {
   pokemon: PokemonMoveData[] = [];
   summary = new RaidSummary();
@@ -71,7 +69,6 @@ interface IRaidSetting {
   pokemon?: IPokemonData;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class RaidSetting implements IRaidSetting {
   isShow = false;
   id = 0;

@@ -9,7 +9,8 @@ import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
+import { InputType } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
@@ -67,7 +68,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   useEffect(() => {
     if (isNotEmpty(combat)) {
       if (props.pokemon?.num) {
-        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon?.forme), props.moveType, props.selected);
+        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon.forme), props.moveType, props.selected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
@@ -93,7 +94,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
               <div className="result-move-select">
                 <div>
                   {resultMove
-                    .filter((value) => value?.name !== props.move?.name)
+                    .filter((value) => !isEqual(value.name, props.move?.name))
                     .map((value, index) => (
                       <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
                         <CardMoveSmall value={value} />
@@ -122,7 +123,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
           <div className="result-move-select-default">
             <div>
               {resultMove
-                .filter((value) => value.name !== props.move?.name)
+                .filter((value) => !isEqual(value.name, props.move?.name))
                 .map((value, index) => (
                   <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
                     <CardMove value={value} />
@@ -137,7 +138,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   return (
     <Fragment>
-      {props.inputType === 'small' && <Fragment>{smallInput()}</Fragment>}
+      {props.inputType === InputType.Small && <Fragment>{smallInput()}</Fragment>}
       {!props.inputType && <Fragment>{defaultInput()}</Fragment>}
     </Fragment>
   );

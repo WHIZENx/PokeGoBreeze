@@ -1,7 +1,7 @@
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
-import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta } from './stats.model';
+import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';
 
 export interface IPVPDataModel {
   rankings: PVPInfo[];
@@ -26,7 +26,7 @@ export interface TeamsPVP {
   teams: Teams[];
 }
 
-export interface Performers {
+export interface IPerformers {
   id: number | undefined;
   name: string | undefined;
   speciesId: string;
@@ -49,18 +49,57 @@ export interface Performers {
   usageTrend: string[];
 }
 
+export class Performers implements IPerformers {
+  id: number | undefined;
+  name: string | undefined;
+  speciesId = '';
+  pokemonData: IPokemonData | undefined;
+  form: string | undefined | null;
+  stats = new StatsBase();
+  atk: IStatsAtk | undefined;
+  def: IStatsDef | undefined;
+  sta: IStatsSta | undefined;
+  fMove: ICombat | undefined;
+  cMovePri: ICombat | undefined;
+  cMoveSec: ICombat | undefined;
+  shadow = false;
+  purified: boolean | undefined;
+  games = 0;
+  individualScore = 0;
+  pokemon = '';
+  teamScore = 0;
+  performersTotalGames = 0;
+  usageTrend: string[] = [];
+
+  constructor({ ...props }: IPerformers) {
+    Object.assign(this, props);
+  }
+}
+
 interface Properties {
   lastUpdated: string;
   totalPerformers: number;
   totalTeams: number;
 }
 
-export interface Teams {
+export interface ITeams {
   games: number;
   team: string;
   teamScore: number;
   teamsData: IPokemonTeamData[];
   teamsTotalGames: number;
+}
+
+export class Teams implements ITeams {
+  games = 0;
+  team = '';
+  teamScore = 0;
+  teamsData: IPokemonTeamData[] = [];
+  teamsTotalGames = 0;
+
+  constructor({ ...props }: ITeams) {
+    Object.assign(this, props);
+  }
 }
 
 export interface RankingsPVP {
@@ -93,17 +132,11 @@ interface IPokemonRankingStats {
   hp?: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonRankingStats implements IPokemonRankingStats {
   product?: number;
   atk = 0;
   def = 0;
   hp?: number;
-
-  constructor() {
-    this.atk = 0;
-    this.def = 0;
-  }
 }
 
 export interface IMovePokemonRanking {
@@ -111,7 +144,6 @@ export interface IMovePokemonRanking {
   fastMoves: PokemonRankingMove[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class MovePokemonRanking implements IMovePokemonRanking {
   chargedMoves: PokemonRankingMove[] = [];
   fastMoves: PokemonRankingMove[] = [];
@@ -136,7 +168,6 @@ export interface IBattlePokemonData {
   purified?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class BattlePokemonData implements IBattlePokemonData {
   counters: PokemonVersus[] = [];
   matchups: PokemonVersus[] = [];

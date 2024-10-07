@@ -1,5 +1,5 @@
 import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
-import { DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 
@@ -15,25 +15,14 @@ export interface IPokemonSprit {
 }
 
 export class PokemonSprit implements IPokemonSprit {
-  backDefault: string;
-  backFemale: string;
-  backShiny: string;
-  backShinyFemale: string;
-  frontDefault: string;
-  frontFemale: string;
-  frontShiny: string;
-  frontShinyFemale: string;
-
-  constructor() {
-    this.backDefault = '';
-    this.backFemale = '';
-    this.backShiny = '';
-    this.backShinyFemale = '';
-    this.frontDefault = '';
-    this.frontFemale = '';
-    this.frontShiny = '';
-    this.frontShinyFemale = '';
-  }
+  backDefault = '';
+  backFemale = '';
+  backShiny = '';
+  backShinyFemale = '';
+  frontDefault = '';
+  frontFemale = '';
+  frontShiny = '';
+  frontShinyFemale = '';
 
   static setDetails(info: SpriteInfo | undefined) {
     const obj = new PokemonSprit();
@@ -80,7 +69,6 @@ export interface IPokemonFormDetail {
   version: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonFormDetail implements IPokemonFormDetail {
   formName = '';
   id = 0;
@@ -138,7 +126,6 @@ export interface IPokemonFormModify {
   sprites?: IPokemonSprit;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonFormModify implements IPokemonFormModify {
   defaultId = 0;
   defaultName = '';
@@ -161,7 +148,6 @@ export interface PokemonDataForm {
   types: string[];
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class PokemonFormModifyModel implements IPokemonFormModify {
   defaultId: number;
   defaultName: string;
@@ -201,7 +187,6 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Form implements IForm {
   formName = '';
   id: number | undefined;
@@ -220,8 +205,6 @@ export class Form implements IForm {
       this.id = data.id;
       this.isDefault = data.isDefault;
       this.isMega = data.isMega;
-      this.isShadow = false;
-      this.isPurified = false;
       this.name = data.name;
       this.version = data.version;
       this.types = data.types;
@@ -241,7 +224,6 @@ export interface IFormSoundCry {
   cries: DynamicObj<string>;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class FormSoundCry implements IFormSoundCry {
   form: string;
   cries: DynamicObj<string>;
@@ -249,7 +231,7 @@ export class FormSoundCry implements IFormSoundCry {
   constructor(pokemon: IPokemonDetail) {
     const fullName = isNotEmpty(pokemon.forms) ? pokemon.forms[0].name : '';
     const speciesName = pokemon.species.name;
-    this.form = fullName === speciesName ? FORM_NORMAL : fullName.replace(`${speciesName}-`, '').replaceAll('-', '_').toUpperCase();
+    this.form = isEqual(fullName, speciesName) ? FORM_NORMAL : fullName.replace(`${speciesName}-`, '').replaceAll('-', '_').toUpperCase();
     this.cries = pokemon.cries;
   }
 }

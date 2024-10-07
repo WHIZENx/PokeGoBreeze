@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 
+interface Spinner {
+  message?: string;
+  error?: any;
+}
+
 export enum SpinnerActionTypes {
   showSpinner = 'SHOW_SPINNER',
   showSpinnerMsg = 'SHOW_SPINNER_MSG',
@@ -12,9 +17,9 @@ export enum SpinnerActionTypes {
 export class ShowSpinner implements Action {
   readonly type = SpinnerActionTypes.showSpinner;
 
-  constructor(public payload?: { error: any }) {}
+  constructor(public payload?: Spinner) {}
 
-  static create(value?: { error: any }) {
+  static create(value?: Spinner) {
     const { type, payload } = new ShowSpinner(value);
     return {
       type,
@@ -23,13 +28,12 @@ export class ShowSpinner implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ShowSpinnerMsg implements Action {
   readonly type = SpinnerActionTypes.showSpinnerMsg;
 
-  constructor(public payload: { message: string; error: any }) {}
+  constructor(public payload: Spinner) {}
 
-  static create(value: { message: string; error: any }) {
+  static create(value: Spinner) {
     const { type, payload } = new ShowSpinnerMsg(value);
     return {
       type,
@@ -38,7 +42,6 @@ export class ShowSpinnerMsg implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class HideSpinner implements Action {
   readonly type = SpinnerActionTypes.hideSpinner;
 
@@ -50,7 +53,6 @@ export class HideSpinner implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetBar implements Action {
   readonly type = SpinnerActionTypes.setBar;
 
@@ -65,7 +67,6 @@ export class SetBar implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class SetPercent implements Action {
   readonly type = SpinnerActionTypes.setPercent;
 

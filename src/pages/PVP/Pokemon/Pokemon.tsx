@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/constants';
+import { FORM_MEGA, FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/constants';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -23,7 +23,10 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { LeagueType } from '../../../core/enums/league.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -48,13 +51,17 @@ const PokemonPVP = () => {
   const fetchPokemonInfo = useCallback(async () => {
     dispatch(SpinnerActions.ShowSpinner.create());
     try {
-      const cp = parseInt(getValueOrDefault(String, params.cp));
+      const cp = toNumber(getValueOrDefault(String, params.cp));
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
-          APIService.getRankingFile(paramName?.includes('_mega') ? 'mega' : 'all', cp, getValueOrDefault(String, params.type))
+          APIService.getRankingFile(
+            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? FORM_MEGA.toLowerCase() : LeagueType.All,
+            cp,
+            getValueOrDefault(String, params.type)
+          )
         )
-      ).data.find((pokemon) => pokemon.speciesId === paramName);
+      ).data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
 
       if (!data) {
         setFound(false);
@@ -62,7 +69,7 @@ const PokemonPVP = () => {
       }
 
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-      const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
+      const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
       const id = pokemon?.num;
       const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
       document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(params.type)})`;
@@ -72,37 +79,44 @@ const PokemonPVP = () => {
       let fMoveData = data.moveset.at(0);
       const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, data.moveset.at(1)));
       const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, data.moveset.at(2)));
-      if (fMoveData?.includes('HIDDEN_POWER')) {
+      if (isInclude(fMoveData, 'HIDDEN_POWER')) {
         fMoveData = 'HIDDEN_POWER';
       }
 
-      let fMove = dataStore?.combat?.find((item) => item.name === fMoveData);
-      const cMovePri = dataStore?.combat?.find((item) => item.name === cMoveDataPri);
+      let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
+      const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
       let cMoveSec;
       if (cMoveDataSec) {
-        cMoveSec = dataStore?.combat?.find((item) => item.name === cMoveDataSec);
+        cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
       }
 
-      if (fMove && data.moveset.at(0)?.includes('HIDDEN_POWER')) {
+      if (fMove && isInclude(data.moveset.at(0), 'HIDDEN_POWER')) {
         fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, data.moveset.at(0)?.split('_').at(2)) });
       }
 
-      const maxCP = parseInt(getValueOrDefault(String, params.cp));
+      const maxCP = toNumber(getValueOrDefault(String, params.cp));
 
       let bestStats = new BattleBaseStats();
-      if (maxCP < 10000) {
-        let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+      if (maxCP < BattleLeagueCPType.InsMaster) {
+        let minCP =
+          maxCP === BattleLeagueCPType.Little
+            ? BattleLeagueCPType.Master
+            : maxCP === BattleLeagueCPType.Great
+            ? BattleLeagueCPType.Little
+            : maxCP === BattleLeagueCPType.Ultra
+            ? BattleLeagueCPType.Great
+            : BattleLeagueCPType.Ultra;
         const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, MAX_LEVEL);
 
         if (maxPokeCP < minCP) {
-          if (maxPokeCP <= 500) {
+          if (maxPokeCP <= BattleLeagueCPType.Little) {
             minCP = 0;
-          } else if (maxPokeCP <= 1500) {
-            minCP = 500;
-          } else if (maxPokeCP <= 2500) {
-            minCP = 1500;
+          } else if (maxPokeCP <= BattleLeagueCPType.Great) {
+            minCP = BattleLeagueCPType.Little;
+          } else if (maxPokeCP <= BattleLeagueCPType.Ultra) {
+            minCP = BattleLeagueCPType.Great;
           } else {
-            minCP = 2500;
+            minCP = BattleLeagueCPType.Ultra;
           }
         }
         const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats?.sta), minCP, maxCP);
@@ -120,16 +134,14 @@ const PokemonPVP = () => {
           stats,
           atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
           def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats?.sta)),
-          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats?.sta)),
+          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
+          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
           fMove,
           cMovePri,
           cMoveSec,
           bestStats,
-          shadow: data.speciesName.toUpperCase().includes(`(${FORM_SHADOW})`),
-          purified:
-            pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMovePri?.name)) ||
-            pokemon?.purifiedMoves?.includes(getValueOrDefault(String, cMoveSec?.name)),
+          shadow: isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
+          purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
         })
       );
       dispatch(SpinnerActions.HideSpinner.create());
@@ -162,8 +174,8 @@ const PokemonPVP = () => {
   }, [fetchPokemonInfo, rankingPoke, pvp, router.action, dispatch]);
 
   const renderLeague = () => {
-    const cp = parseInt(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => item.id === 'all' && item.cp.includes(cp));
+    const cp = toNumber(getValueOrDefault(String, params.cp));
+    const league = pvp?.rankings.find((item) => item.id === LeagueType.All && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -175,7 +187,7 @@ const PokemonPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{league.name === 'All' ? getPokemonBattleLeagueName(cp) : league.name}</b>
+              <b>{isEqual(league.name, LeagueType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}</b>
             </h2>
           </div>
         )}
@@ -209,7 +221,7 @@ const PokemonPVP = () => {
               {scoreType.map((type, index) => (
                 <Button
                   key={index}
-                  className={params.type?.toLowerCase() === type.toLowerCase() ? 'active' : ''}
+                  className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
                   onClick={() => navigate(`/pvp/${params.cp}/${type.toLowerCase()}/${params.pokemon}`)}
                 >
                   {type}
@@ -226,7 +238,7 @@ const PokemonPVP = () => {
                   <img
                     alt="img-league"
                     className="pokemon-sprite-raid"
-                    src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke?.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
+                    src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
                   />
                 </div>
                 <div>{Header(rankingPoke)}</div>

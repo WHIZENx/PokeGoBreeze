@@ -20,7 +20,6 @@ export class SetTheme implements Action {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ResetTheme implements Action {
   readonly type = ThemeActionTypes.resetTheme;
 

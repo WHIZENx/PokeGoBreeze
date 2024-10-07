@@ -6,7 +6,7 @@ import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
 import { ICardMoveComponent } from '../models/component.model';
-import { getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
 
 const CardMove = (props: ICardMoveComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
@@ -15,7 +15,7 @@ const CardMove = (props: ICardMoveComponent) => {
 
   useEffect(() => {
     if (isNotEmpty(combat) && props.value) {
-      const move = combat.find((item) => item.name === props.value?.name);
+      const move = combat.find((item) => isEqual(item.name, props.value?.name));
       setData(move);
     }
   }, [combat, props.value]);

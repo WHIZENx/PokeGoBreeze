@@ -7,6 +7,7 @@ import { IPokemonBattle } from '../PVP/models/battle.model';
 import { IPokemonDmgOption } from '../../core/models/damage.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
+import { PokemonType } from '../Tools/BattleDamage/enums/damage.enum';
 
 export interface IMovePage {
   id?: number;
@@ -40,7 +41,7 @@ export interface IPokemonPage {
 }
 
 export interface ISelectPokeComponent {
-  data: (IBattlePokemonData | undefined)[];
+  data: IBattlePokemonData[];
   league: number;
   pokemonBattle: IPokemonBattle;
   setPokemonBattle: React.Dispatch<React.SetStateAction<IPokemonBattle>>;
@@ -52,7 +53,7 @@ export interface IDamageTableComponent {
 }
 
 export interface IStatsTableComponent {
-  setStatType?: React.Dispatch<React.SetStateAction<string>>;
+  setStatType?: React.Dispatch<React.SetStateAction<PokemonType>>;
   setStatLevel?: React.Dispatch<React.SetStateAction<number>>;
   statATK: number;
   statDEF: number;

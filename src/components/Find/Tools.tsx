@@ -26,7 +26,8 @@ import {
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { IncludeMode } from '../../util/enums/string.enum';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
@@ -42,14 +43,14 @@ const Tools = (props: IToolsComponent) => {
   );
 
   useEffect(() => {
-    if (parseInt(props.tier.toString()) > 5 && !props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA)) {
+    if (props.tier > 5 && !isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
     } else if (
-      parseInt(props.tier.toString()) === 5 &&
-      props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) &&
+      props.tier === 5 &&
+      isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
       pokemonData.find((item) => item.num === props.id)?.pokemonClass
     ) {
       setCurrTier(6);
@@ -60,19 +61,19 @@ const Tools = (props: IToolsComponent) => {
   }, [props.currForm?.form.formName, props.id, props.setTier, props.tier]);
 
   useEffect(() => {
-    const formATK = filterFormList(props.stats?.attack.ranking) as IStatsAtk;
-    const formDEF = filterFormList(props.stats?.defense.ranking) as IStatsDef;
+    const formATK = filterFormList(props.stats?.attack.ranking) as IStatsAtk | undefined;
+    const formDEF = filterFormList(props.stats?.defense.ranking) as IStatsDef | undefined;
     const formSTA = filterFormList(props.stats?.stamina.ranking) as IStatsSta;
     const formProd = filterFormList(props.stats?.statProd.ranking) as IStatsProd;
 
     setStatsPokemon({
       atk:
-        props.isRaid && props.tier && !props.hide
-          ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(getValueOrDefault(Number, formATK?.attack), props.tier) })
+        props.isRaid && props.tier && !props.hide && formATK
+          ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(formATK.attack, props.tier) })
           : formATK,
       def:
-        props.isRaid && props.tier && !props.hide
-          ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(getValueOrDefault(Number, formDEF?.defense), props.tier) })
+        props.isRaid && props.tier && !props.hide && formDEF
+          ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(formDEF.defense, props.tier) })
           : formDEF,
       sta: props.isRaid && props.tier && !props.hide ? StatsSta.create({ ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta }) : formSTA,
       prod: props.isRaid && props.tier && !props.hide ? undefined : formProd,
@@ -116,9 +117,9 @@ const Tools = (props: IToolsComponent) => {
           <Form.Select
             className="w-100"
             onChange={(e) => {
-              setCurrTier(parseInt(e.target.value));
+              setCurrTier(toNumber(e.target.value));
               if (props.setTier) {
-                props.setTier(parseInt(e.target.value));
+                props.setTier(toNumber(e.target.value));
               }
               if (props.onClearStats) {
                 props.onClearStats(true);
@@ -129,13 +130,15 @@ const Tools = (props: IToolsComponent) => {
             <optgroup label="Normal Tiers">
               <option value={1}>Tier 1</option>
               <option value={3}>Tier 3</option>
-              {!props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) && <option value={5}>Tier 5</option>}
+              {!isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) && (
+                <option value={5}>Tier 5</option>
+              )}
             </optgroup>
             <optgroup label="Legacy Tiers">
               <option value={2}>Tier 2</option>
               <option value={4}>Tier 4</option>
             </optgroup>
-            {props.currForm?.form.formName?.toUpperCase().includes(FORM_MEGA) && (
+            {isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) && (
               <Fragment>
                 {pokemonData.find((item) => item.num === props.id)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">
@@ -177,7 +180,7 @@ const Tools = (props: IToolsComponent) => {
                   STA
                 </td>
                 <td className="text-center">
-                  {statsPokemon?.sta ? Math.floor(statsPokemon?.sta?.stamina / RAID_BOSS_TIER[props.tier].CPm) : 0}
+                  {statsPokemon?.sta ? Math.floor(statsPokemon.sta.stamina / RAID_BOSS_TIER[props.tier].CPm) : 0}
                 </td>
               </tr>
               <tr>

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, getAllMoves, splitAndCapitalize } from '../../../util/utils';
-import { findAssetForm, findStabType } from '../../../util/compute';
+import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
 import {
   FORM_NORMAL,
@@ -61,10 +61,13 @@ import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { StatsBase } from '../../../core/models/stats.model';
-import { TypeAction } from '../../../enums/type.enum';
+import { BuffType, TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import { LeagueType } from '../../../core/enums/league.enum';
+import { BattleType } from './enums/battle.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -91,12 +94,12 @@ const Battle = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
-  const [data, setData] = useState<(IBattlePokemonData | undefined)[]>([]);
+  const [data, setData] = useState<IBattlePokemonData[]>([]);
   const [options, setOptions] = useState<OptionsBattle>({
     showTap: false,
     timelineType: 1,
     duration: 1,
-    league: params.cp ? parseInt(params.cp) : 500,
+    league: toNumber(params.cp) ?? BattleLeagueCPType.Little,
   });
   const { showTap, timelineType, duration, league } = options;
 
@@ -114,29 +117,14 @@ const Battle = () => {
 
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
-  const State = (
-    timer: number,
-    block: number,
-    energy: number,
-    hp: number,
-    type: string | undefined = undefined,
-    tap = false,
-    color: string | undefined = undefined,
-    size: number | undefined = undefined,
-    move: ICombat | undefined = undefined,
-    dmgImmune = false
-  ) => {
+  const State = (timer: number, block: number, energy: number, hp: number, type?: string) => {
     return new TimelineModel({
       timer,
       type,
-      move,
-      color,
-      size: size ?? DEFAULT_SIZE,
-      tap,
+      size: DEFAULT_SIZE,
       block,
       energy,
       hp: Math.max(0, hp),
-      dmgImmune,
     });
   };
 
@@ -162,12 +150,12 @@ const Battle = () => {
       pokeObj.shadow ??= false;
       return (
         (atkPoke *
-          getValueOrDefault(Number, move?.pvpPower) *
-          (findStabType(getValueOrDefault(Array, poke.pokemon?.types), getValueOrDefault(String, move?.type))
+          move.pvpPower *
+          (findStabType(getValueOrDefault(Array, poke.pokemon?.types), getValueOrDefault(String, move.type))
             ? STAB_MULTIPLY(dataStore?.options)
             : 1) *
           (poke.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
-          getTypeEffective(dataStore?.typeEff, getValueOrDefault(String, move?.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
+          getTypeEffective(dataStore?.typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
         (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))
       );
     }
@@ -289,16 +277,16 @@ const Battle = () => {
             chargeSlotPlayer1 = getRandomInt(ChargeType.Primary, ChargeType.Secondary);
           }
           if (
-            player1.energy >= Math.abs(getValueOrDefault(Number, player1.cMove?.pvpEnergy)) &&
+            player1.energy >= Math.abs(getValueOrDefault(Number, player1.cMove.pvpEnergy)) &&
             ((!preRandomPlayer1 && chargeSlotPlayer1 !== ChargeType.Secondary) ||
               (postRandomPlayer1 && chargeSlotPlayer1 === ChargeType.Primary))
           ) {
             chargeType = ChargeType.Primary;
-            player1.energy += getValueOrDefault(Number, player1.cMove?.pvpEnergy);
+            player1.energy += getValueOrDefault(Number, player1.cMove.pvpEnergy);
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
-              color: player1.cMove?.type?.toLowerCase(),
+              color: player1.cMove.type?.toLowerCase(),
               size: DEFAULT_SIZE,
               move: player1.cMove,
             });
@@ -309,16 +297,16 @@ const Battle = () => {
             chargedPriCount = DEFAULT_AMOUNT;
           }
           if (
-            player1.energy >= Math.abs(getValueOrDefault(Number, player1.cMoveSec?.pvpEnergy)) &&
+            player1.energy >= Math.abs(getValueOrDefault(Number, player1.cMoveSec.pvpEnergy)) &&
             ((!preRandomPlayer1 && chargeSlotPlayer1 !== ChargeType.Primary) ||
               (postRandomPlayer1 && chargeSlotPlayer1 === ChargeType.Secondary))
           ) {
             chargeType = ChargeType.Secondary;
-            player1.energy += getValueOrDefault(Number, player1.cMoveSec?.pvpEnergy);
+            player1.energy += getValueOrDefault(Number, player1.cMoveSec.pvpEnergy);
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
-              color: player1.cMoveSec?.type?.toLowerCase(),
+              color: player1.cMoveSec.type?.toLowerCase(),
               size: DEFAULT_SIZE,
               move: player1.cMoveSec,
             });
@@ -336,16 +324,16 @@ const Battle = () => {
             chargeSlotPlayer2 = getRandomInt(ChargeType.Primary, ChargeType.Secondary);
           }
           if (
-            player2.energy >= Math.abs(getValueOrDefault(Number, player2.cMove?.pvpEnergy)) &&
+            player2.energy >= Math.abs(getValueOrDefault(Number, player2.cMove.pvpEnergy)) &&
             ((!preRandomPlayer2 && !postRandomPlayer2 && chargeSlotPlayer2 !== ChargeType.Secondary) ||
               (postRandomPlayer2 && chargeSlotPlayer2 === ChargeType.Primary))
           ) {
             chargeType = ChargeType.Primary;
-            player2.energy += getValueOrDefault(Number, player2.cMove?.pvpEnergy);
+            player2.energy += getValueOrDefault(Number, player2.cMove.pvpEnergy);
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
-              color: player2.cMove?.type?.toLowerCase(),
+              color: player2.cMove.type?.toLowerCase(),
               size: DEFAULT_SIZE,
               move: player2.cMove,
             });
@@ -356,16 +344,16 @@ const Battle = () => {
             chargedSecCount = DEFAULT_AMOUNT;
           }
           if (
-            player2.energy >= Math.abs(getValueOrDefault(Number, player2.cMoveSec?.pvpEnergy)) &&
+            player2.energy >= Math.abs(getValueOrDefault(Number, player2.cMoveSec.pvpEnergy)) &&
             ((!preRandomPlayer2 && !postRandomPlayer2 && chargeSlotPlayer2 !== ChargeType.Primary) ||
               (postRandomPlayer2 && chargeSlotPlayer2 === ChargeType.Secondary))
           ) {
             chargeType = ChargeType.Secondary;
-            player2.energy += getValueOrDefault(Number, player2.cMoveSec?.pvpEnergy);
+            player2.energy += getValueOrDefault(Number, player2.cMoveSec.pvpEnergy);
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
-              color: player2.cMoveSec?.type?.toLowerCase(),
+              color: player2.cMoveSec.type?.toLowerCase(),
               size: DEFAULT_SIZE,
               move: player2.cMoveSec,
             });
@@ -397,11 +385,11 @@ const Battle = () => {
             if (!preChargeSec) {
               player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
             }
-            player1.energy += getValueOrDefault(Number, player1.fMove?.pvpEnergy);
+            player1.energy += getValueOrDefault(Number, player1.fMove.pvpEnergy);
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Fast,
-              color: player1.fMove?.type?.toLowerCase(),
+              color: player1.fMove.type?.toLowerCase(),
               move: player1.fMove,
               dmgImmune: preChargeSec,
               tap: preChargeSec && player1.turn === 1 ? true : timelinePri[timer].tap,
@@ -436,11 +424,11 @@ const Battle = () => {
             } else {
               immuneSec = true;
             }
-            player2.energy += getValueOrDefault(Number, player2.fMove?.pvpEnergy);
+            player2.energy += getValueOrDefault(Number, player2.fMove.pvpEnergy);
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Fast,
-              color: player2.fMove?.type?.toLowerCase(),
+              color: player2.fMove.type?.toLowerCase(),
               move: player2.fMove,
               dmgImmune: preChargePri,
               tap: preChargePri && player2.turn === 1 ? true : timelineSec[timer].tap,
@@ -461,7 +449,7 @@ const Battle = () => {
               timelinePri[timer] = new TimelineModel({
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player1.cMove?.type?.toLowerCase(),
+                color: player1.cMove.type?.toLowerCase(),
                 size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player1.cMove,
               });
@@ -470,7 +458,7 @@ const Battle = () => {
               timelinePri[timer] = new TimelineModel({
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player1.cMoveSec?.type?.toLowerCase(),
+                color: player1.cMoveSec.type?.toLowerCase(),
                 size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player1.cMoveSec,
               });
@@ -492,7 +480,7 @@ const Battle = () => {
               timelineSec[timer] = new TimelineModel({
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player2.cMove?.type?.toLowerCase(),
+                color: player2.cMove.type?.toLowerCase(),
                 size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player2.cMove,
               });
@@ -501,7 +489,7 @@ const Battle = () => {
               timelineSec[timer] = new TimelineModel({
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player2.cMoveSec?.type?.toLowerCase(),
+                color: player2.cMoveSec.type?.toLowerCase(),
                 size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player2.cMoveSec,
               });
@@ -541,9 +529,9 @@ const Battle = () => {
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
-            if (isNotEmpty(moveType?.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType?.buffs?.at(0)?.buffChance)) {
-              moveType?.buffs.forEach((value) => {
-                if (value.target === 'target') {
+            if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
+              moveType.buffs.forEach((value) => {
+                if (value.target === BuffType.Target) {
                   player2 = PokemonBattleData.create({
                     ...player2,
                     stats: {
@@ -607,9 +595,9 @@ const Battle = () => {
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = parseFloat(Math.random().toFixed(3));
-            if (isNotEmpty(moveType?.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType?.buffs?.at(0)?.buffChance)) {
-              moveType?.buffs.forEach((value) => {
-                if (value.target === 'target') {
+            if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
+              moveType.buffs.forEach((value) => {
+                if (value.target === BuffType.Target) {
                   player1 = PokemonBattleData.create({
                     ...player1,
                     stats: {
@@ -730,40 +718,37 @@ const Battle = () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
         clearData();
-        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile('all', league, 'overall'))).data;
+        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(LeagueType.All, league, 'overall'))).data;
         if (!file) {
           return;
         }
-        document.title = `PVP Battle Simulator - ${
-          league === 500 ? 'Little Cup' : league === 1500 ? 'Great League' : league === 2500 ? 'Ultra League' : 'Master League'
-        }`;
+        document.title = `PVP Battle Simulator - ${getPokemonBattleLeagueName(league)}`;
 
-        setData(
-          file
-            .filter((pokemon) => !pokemon.speciesId.includes('_xs'))
-            .map((item) => {
-              const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-              const pokemon = dataStore?.pokemon?.find((pokemon) => pokemon.slug === name);
-              if (!pokemon) {
-                return;
-              }
+        const result = file
+          .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
+          .map((item) => {
+            const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+            const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
+            if (!pokemon) {
+              return new BattlePokemonData();
+            }
 
-              const id = pokemon?.num;
-              const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+            const id = pokemon.num;
+            const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon.num, pokemon.forme ?? FORM_NORMAL);
 
-              const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+            const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
-              return BattlePokemonData.create({
-                ...item,
-                name,
-                pokemon,
-                id,
-                form,
-                stats,
-              });
-            })
-            .filter((pokemon) => pokemon)
-        );
+            return BattlePokemonData.create({
+              ...item,
+              name,
+              pokemon,
+              id,
+              form,
+              stats,
+            });
+          })
+          .filter((pokemon) => pokemon.id > 0);
+        setData(result);
         dispatch(SpinnerActions.HideSpinner.create());
       } catch (e) {
         dispatch(
@@ -825,7 +810,7 @@ const Battle = () => {
   const arrStore = useRef<(DOMRect | undefined)[]>([]);
 
   const getTranslation = (elem: HTMLElement) => {
-    return elem ? parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
+    return elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
   };
 
   const onPlayLineMove = (e: TimelineEvent<HTMLDivElement>) => {
@@ -843,8 +828,10 @@ const Battle = () => {
     }
     if (!xNormal.current) {
       const element = ReactDOM.findDOMNode(timelineNormalContainer.current) as Element;
-      const rect = element?.getBoundingClientRect();
-      xNormal.current = rect.left;
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        xNormal.current = rect.left;
+      }
     }
     overlappingPos(arrBound.current, x + getValueOrDefault(Number, xNormal.current));
   };
@@ -887,8 +874,10 @@ const Battle = () => {
         });
         if (!xNormal.current) {
           const element = ReactDOM.findDOMNode(timelineNormalContainer.current) as Element;
-          const rect = element?.getBoundingClientRect();
-          xNormal.current = rect.left;
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            xNormal.current = rect.left;
+          }
         }
         if (!isNotEmpty(arrBound.current)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
@@ -1034,7 +1023,7 @@ const Battle = () => {
     let xCurrent = 0,
       transform;
     if (elem) {
-      xCurrent = parseInt(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''));
+      xCurrent = toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', ''));
     }
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
@@ -1077,23 +1066,10 @@ const Battle = () => {
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
             <img width={15} height={15} alt="img-atk" src={value.type === TypeAction.ATK ? ATK_LOGO : DEF_LOGO} />
             <div className="position-absolute icon-buff">
-              {value.power === 2 ? (
-                <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-              ) : (
-                <Fragment>
-                  {value.power === 1 ? (
-                    <KeyboardArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                  ) : (
-                    <Fragment>
-                      {value.power === -1 ? (
-                        <KeyboardArrowDownIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                      ) : (
-                        <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                      )}
-                    </Fragment>
-                  )}
-                </Fragment>
-              )}
+              {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
+              {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
+              {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
+              {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
               <span className={value.power < 0 ? 'text-danger' : 'text-success'} style={{ fontSize: 12 }}>
                 {value.power}
               </span>
@@ -1112,14 +1088,14 @@ const Battle = () => {
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
   ) => {
     e.preventDefault();
-    const level = parseInt((document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value);
-    const atk = parseInt((document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value);
-    const def = parseInt((document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value);
-    const sta = parseInt((document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value);
+    const level = toNumber((document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value);
+    const atk = toNumber((document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value);
+    const def = toNumber((document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value);
+    const sta = toNumber((document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value);
 
     const cp = calculateCP(atk, def, sta, level);
 
-    if (cp > parseInt(getValueOrDefault(String, params?.cp))) {
+    if (cp > toNumber(getValueOrDefault(String, params?.cp))) {
       enqueueSnackbar(`This stats Pokémon CP is greater than ${params.cp}, which is not permitted by the league.`, {
         variant: 'error',
       });
@@ -1139,7 +1115,7 @@ const Battle = () => {
 
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
-      const statsSTA = calculateStatsBattle(getValueOrDefault(Number, statsBattle?.sta), sta, level);
+      const statsSTA = calculateStatsBattle(getValueOrDefault(Number, statsBattle.sta), sta, level);
       stats = BattleBaseStats.create({
         IV: StatsBase.setValue(atk, def, sta),
         CP: getValueOrDefault(Number, cp),
@@ -1180,9 +1156,9 @@ const Battle = () => {
 
     let stats: IBattleBaseStats | undefined;
     if (isRandom) {
-      stats = pokemon.pokemonData?.allStats[getRandomInt(0, pokemon.pokemonData?.allStats.length - 1)];
+      stats = pokemon.pokemonData.allStats[getRandomInt(0, pokemon.pokemonData.allStats.length - 1)];
     } else {
-      stats = pokemon.pokemonData?.bestStats;
+      stats = pokemon.pokemonData.bestStats;
     }
 
     (document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.level?.toString());
@@ -1349,18 +1325,18 @@ const Battle = () => {
               find={true}
               title="Fast Move"
               move={pokemon.fMove}
-              elite={pokemon.pokemonData?.pokemon?.eliteQuickMove?.includes(getValueOrDefault(String, pokemon.fMove?.name))}
+              elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteQuickMove, pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
                 find={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                elite={pokemon.pokemonData?.pokemon?.eliteCinematicMove?.includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
-                shadow={pokemon.pokemonData?.pokemon?.shadowMoves?.includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
-                purified={pokemon.pokemonData?.pokemon?.purifiedMoves?.includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
-                special={pokemon.pokemonData?.pokemon?.specialMoves?.includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
-                unavailable={!getAllMoves(pokemon.pokemonData?.pokemon).includes(getValueOrDefault(String, pokemon.cMovePri?.name))}
+                elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMove, pokemon.cMovePri?.name)}
+                shadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMovePri?.name)}
+                purified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMovePri?.name)}
+                special={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMovePri?.name)}
+                unavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMovePri?.name)}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1370,11 +1346,11 @@ const Battle = () => {
                   find={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={pokemon.pokemonData?.pokemon?.eliteCinematicMove?.includes(pokemon.cMoveSec.name)}
-                  shadow={pokemon.pokemonData?.pokemon?.shadowMoves?.includes(pokemon.cMoveSec.name)}
-                  purified={pokemon.pokemonData?.pokemon?.purifiedMoves?.includes(pokemon.cMoveSec.name)}
-                  special={pokemon.pokemonData?.pokemon?.specialMoves?.includes(pokemon.cMoveSec.name)}
-                  unavailable={!getAllMoves(pokemon.pokemonData?.pokemon).includes(pokemon.cMoveSec.name)}
+                  elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMove, pokemon.cMoveSec.name)}
+                  shadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMoveSec.name)}
+                  purified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMoveSec.name)}
+                  special={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMoveSec.name)}
+                  unavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMoveSec.name)}
                 />
                 {findBuff(pokemon.cMoveSec)}
               </div>
@@ -1386,7 +1362,7 @@ const Battle = () => {
   };
 
   const renderPokemonInfo = (
-    type: string,
+    type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
     // eslint-disable-next-line no-unused-vars
@@ -1406,11 +1382,11 @@ const Battle = () => {
                 min={0}
                 max={100}
                 onInput={(e) => {
-                  const value = parseInt(e.currentTarget.value);
+                  const value = toNumber(e.currentTarget.value);
                   if (isNaN(value)) {
                     return;
                   }
-                  if (type === 'pokemonCurr') {
+                  if (type === BattleType.Current) {
                     setPlayTimeline({
                       ...playTimeline,
                       pokemonCurr: PokemonBattleData.create({
@@ -1418,7 +1394,7 @@ const Battle = () => {
                         energy: value,
                       }),
                     });
-                  } else if (type === 'pokemonObj') {
+                  } else if (type === BattleType.Object) {
                     setPlayTimeline({
                       ...playTimeline,
                       pokemonObj: PokemonBattleData.create({
@@ -1449,7 +1425,7 @@ const Battle = () => {
                       energy: 0,
                     }),
                   });
-                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: parseInt(e.target.value) }));
+                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: toNumber(e.target.value) }));
                 }}
               >
                 <option value={0}>0</option>
@@ -1476,7 +1452,7 @@ const Battle = () => {
                         energy: 0,
                       }),
                     });
-                    setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: parseInt(e.target.value) }));
+                    setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: toNumber(e.target.value) }));
                   }}
                 >
                   <option value={ChargeType.Primary} disabled={pokemon.disableCMovePri || !pokemon.cMovePri}>
@@ -1575,18 +1551,18 @@ const Battle = () => {
     <div className="container element-top battle-body-container">
       <Form.Select
         onChange={(e) => {
-          navigate(`/pvp/battle/${parseInt(e.target.value)}`);
-          setOptions({ ...options, league: parseInt(e.target.value) });
+          navigate(`/pvp/battle/${toNumber(e.target.value)}`);
+          setOptions({ ...options, league: toNumber(e.target.value) });
         }}
         defaultValue={league}
       >
-        <option value={500}>Little Cup</option>
-        <option value={1500}>Great League</option>
-        <option value={2500}>Ultra League</option>
-        <option value={10000}>Master League</option>
+        <option value={BattleLeagueCPType.Little}>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</option>
+        <option value={BattleLeagueCPType.Great}>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</option>
+        <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
+        <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
       </Form.Select>
       <div className="row element-top" style={{ margin: 0 }}>
-        <div className="col-lg-3">{renderPokemonInfo('pokemonCurr', pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}</div>
+        <div className="col-lg-3">{renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}</div>
         <div className="col-lg-6">
           {pokemonCurr.pokemonData && pokemonObj.pokemonData && isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) && (
             <Fragment>
@@ -1678,7 +1654,7 @@ const Battle = () => {
                     value={timelineType}
                     onChange={(e) =>
                       onChangeTimeline(
-                        parseInt(e.target.value),
+                        toNumber(e.target.value),
                         getValueOrDefault(Number, timelineType ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth)
                       )
                     }
@@ -1725,7 +1701,7 @@ const Battle = () => {
             </Fragment>
           )}
         </div>
-        <div className="col-lg-3">{renderPokemonInfo('pokemonObj', pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
+        <div className="col-lg-3">{renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
       </div>
       {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
         <div className="text-center element-top">

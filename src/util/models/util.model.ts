@@ -25,7 +25,6 @@ export interface IArrayStats {
   baseStatsProd: number;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class ArrayStats implements IArrayStats {
   id = 0;
   name = '';

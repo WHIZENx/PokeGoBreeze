@@ -2,7 +2,9 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
-import { getValueOrDefault, isNotEmpty } from './extension';
+import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
+import { EqualMode } from './enums/string.enum';
+import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from './extension';
 import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
@@ -78,11 +80,16 @@ export const raidEgg = (tier: number, mega: boolean, primal: boolean, ultra?: bo
 };
 
 export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
-  let data = candyData?.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData.find((item) =>
+    isIncludeList(
+      item.familyGroup.map((value) => value.id),
+      id
+    )
+  );
   if (!data) {
-    data = candyData?.find((item) => item.familyId === id);
+    data = candyData.find((item) => item.familyId === id);
     if (!data) {
-      data = candyData?.find((item) => item.familyId === 0);
+      data = candyData.find((item) => item.familyId === 0);
     }
   }
   return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.secondaryColor.r))}, ${Math.round(
@@ -91,11 +98,16 @@ export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
 };
 
 export const computeCandyColor = (candyData: ICandy[], id: number) => {
-  let data = candyData?.find((item) => item.familyGroup.map((value) => value.id).includes(id));
+  let data = candyData.find((item) =>
+    isIncludeList(
+      item.familyGroup.map((value) => value.id),
+      id
+    )
+  );
   if (!data) {
-    data = candyData?.find((item) => item.familyId === id);
+    data = candyData.find((item) => item.familyId === id);
     if (!data) {
-      data = candyData?.find((item) => item.familyId === 0);
+      data = candyData.find((item) => item.familyId === 0);
     }
   }
   return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.primaryColor.r))}, ${Math.round(
@@ -136,11 +148,11 @@ export const computeBgType = (
 };
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {
-  const pokemonAssets = assets?.find((asset) => asset.id === id);
+  const pokemonAssets = assets.find((asset) => asset.id === id);
   if (!pokemonAssets || name?.toUpperCase() === FORM_GMAX) {
     return;
   }
-  const asset = pokemonAssets?.image.find((img) => img.form === name);
+  const asset = pokemonAssets.image.find((img) => isEqual(img.form, name));
   if (asset) {
     return asset;
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {
@@ -170,31 +182,31 @@ export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: st
 };
 
 export const findStabType = (types: string[], findType: string) => {
-  return types.some((type) => type.toUpperCase() === findType.toUpperCase());
+  return types.some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
 };
 
-export const getPokemonBattleLeagueName = (cp: number) => {
+export const getPokemonBattleLeagueName = (cp = BattleLeagueCPType.Master) => {
   switch (cp) {
-    case 500:
+    case BattleLeagueCPType.Little:
       return 'Little Cup';
-    case 1500:
-      return 'Great league';
-    case 2500:
-      return 'Ultra league';
+    case BattleLeagueCPType.Great:
+      return 'Great League';
+    case BattleLeagueCPType.Ultra:
+      return 'Ultra League';
     default:
-      return 'Master league';
+      return 'Master League';
   }
 };
 
-export const getPokemonBattleLeagueIcon = (cp: number) => {
+export const getPokemonBattleLeagueIcon = (cp = BattleLeagueCPType.Master) => {
   switch (cp) {
-    case 500:
-      return APIService.getPokeOtherLeague('GBL_littlecup');
-    case 1500:
-      return APIService.getPokeLeague('great_league');
-    case 2500:
-      return APIService.getPokeLeague('ultra_league');
+    case BattleLeagueCPType.Little:
+      return APIService.getPokeOtherLeague(BattleLeagueIconType.Little);
+    case BattleLeagueCPType.Great:
+      return APIService.getPokeLeague(BattleLeagueIconType.Great);
+    case BattleLeagueCPType.Ultra:
+      return APIService.getPokeLeague(BattleLeagueIconType.Ultra);
     default:
-      return APIService.getPokeLeague('master_league');
+      return APIService.getPokeLeague(BattleLeagueIconType.Master);
   }
 };
