@@ -16,6 +16,7 @@ import {
   mappingReleasedPokemonGO,
   optionPokeImg,
   optionPokeSound,
+  mappingMoveSetPokemonGO,
 } from '../../core/options';
 import { pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
 import APIService from '../../services/API.service';
@@ -147,8 +148,11 @@ export const loadGameMaster = (
       dispatch(StoreActions.SetTypeEff.create(typeEff));
       dispatch(StoreActions.SetWeatherBoost.create(weatherBoost));
       dispatch(StoreActions.SetSticker.create(optionSticker(gm.data, pokemon)));
-      dispatch(StoreActions.SetCombat.create(optionCombat(gm.data, typeEff)));
+      const combat = optionCombat(gm.data, typeEff);
+      dispatch(StoreActions.SetCombat.create(combat));
       dispatch(StoreActions.SetLeagues.create(league));
+
+      mappingMoveSetPokemonGO(pokemon, combat);
 
       if (timestampLoaded.images || timestampLoaded.sounds) {
         await loadAssets(dispatch, imageRoot, soundsRoot, pokemon, setStateImage, setStateSound);

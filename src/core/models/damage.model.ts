@@ -1,3 +1,4 @@
+import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
 import { MIN_LEVEL } from '../../util/constants';
 import { IPokemonFormModify } from './API/form.model';
 import { ICombat } from './combat.model';
@@ -49,10 +50,10 @@ export class BattleState implements IBattleState {
 
 export interface IPokemonDmgOption {
   objPoke?: IPokemonFormModify;
-  type?: string;
+  type?: PokemonType;
   currPoke?: IPokemonFormModify;
   currLevel: number;
-  typeObj?: string;
+  typeObj?: PokemonType;
   objLevel: number;
   move?: ICombat;
   battleState?: IBattleState;
@@ -62,10 +63,10 @@ export interface IPokemonDmgOption {
 
 export class PokemonDmgOption implements IPokemonDmgOption {
   objPoke?: IPokemonFormModify;
-  type?: string;
+  type?: PokemonType;
   currPoke?: IPokemonFormModify;
   currLevel = MIN_LEVEL;
-  typeObj?: string;
+  typeObj?: PokemonType;
   objLevel = MIN_LEVEL;
   move?: ICombat;
   battleState?: IBattleState;

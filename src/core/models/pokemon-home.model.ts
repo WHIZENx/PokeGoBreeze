@@ -1,5 +1,5 @@
 import APIService from '../../services/API.service';
-import { FORM_NORMAL } from '../../util/constants';
+import { FORM_NORMAL, versionList } from '../../util/constants';
 import { getValueOrDefault } from '../../util/extension';
 import { convertPokemonImageName, splitAndCapitalize } from '../../util/utils';
 import { IImage } from './asset.model';
@@ -41,7 +41,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
   releasedGO: boolean;
   image: IImage;
 
-  constructor(item: IPokemonData, assetForm: IImage | undefined | null, versionList: string[]) {
+  constructor(item: IPokemonData, assetForm: IImage | undefined | null) {
     this.id = getValueOrDefault(Number, item.num);
     this.name = item.name;
     this.forme = assetForm?.default
@@ -54,7 +54,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.baseStats = item.baseStats;
     this.gen = item.gen;
     this.region = item.region;
-    this.version = versionList.indexOf(splitAndCapitalize(item.version, '-', ' '));
+    this.version = versionList.indexOf(splitAndCapitalize(item.version, '-', ' ').replace(/GO$/i, 'GO'));
     this.goStats = StatsPokemonGO.create({
       atk: item.baseStats.atk,
       def: item.baseStats.def,

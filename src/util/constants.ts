@@ -2,9 +2,12 @@ import { IOptions } from '../core/models/options.model';
 import { PVPInfo } from '../core/models/pvp.model';
 import { getOption } from '../core/options';
 import { TypeAction } from '../enums/type.enum';
-import APIService from '../services/API.service';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
 import { DynamicObj } from './extension';
+import { LeagueType } from '../core/enums/league.enum';
+import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
+import { BattleLeagueCPType } from './enums/compute.enum';
 
 // KeyCode
 export const KEY_ENTER = 13;
@@ -218,21 +221,21 @@ export const versionList = [
   'Scarlet Violet',
 ];
 
-export const typeCostPowerUp = (type: string) => {
-  switch (type.toUpperCase()) {
-    case FORM_SHADOW:
+export const typeCostPowerUp = (type: PokemonType | undefined) => {
+  switch (type) {
+    case PokemonType.Shadow:
       return CostPowerUp.create({
         stardust: 1.2,
         candy: 1.2,
         type,
       });
-    case FORM_PURIFIED:
+    case PokemonType.Purified:
       return CostPowerUp.create({
         stardust: 0.9,
         candy: 0.9,
         type,
       });
-    case 'LUCKY':
+    case PokemonType.Lucky:
       return CostPowerUp.create({
         stardust: 0.5,
         candy: 1,
@@ -249,28 +252,28 @@ export const typeCostPowerUp = (type: string) => {
 
 export const leaguesTeamBattle: PVPInfo[] = [
   {
-    id: 'all',
-    name: 'Little Cup',
-    cp: [500],
-    logo: APIService.getPokeOtherLeague('GBL_littlecup'),
+    id: LeagueType.All,
+    name: getPokemonBattleLeagueName(BattleLeagueCPType.Little),
+    cp: [BattleLeagueCPType.Little],
+    logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Little),
   },
   {
-    id: 'all',
-    name: 'Great League',
-    cp: [1500],
-    logo: APIService.getPokeLeague('great_league'),
+    id: LeagueType.All,
+    name: getPokemonBattleLeagueName(BattleLeagueCPType.Great),
+    cp: [BattleLeagueCPType.Great],
+    logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Great),
   },
   {
-    id: 'all',
-    name: 'Ultra League',
-    cp: [2500],
-    logo: APIService.getPokeLeague('ultra_league'),
+    id: LeagueType.All,
+    name: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra),
+    cp: [BattleLeagueCPType.Ultra],
+    logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra),
   },
   {
-    id: 'all',
-    name: 'Master League',
-    cp: [10000],
-    logo: APIService.getPokeLeague('master_league'),
+    id: LeagueType.All,
+    name: getPokemonBattleLeagueName(),
+    cp: [BattleLeagueCPType.InsMaster],
+    logo: getPokemonBattleLeagueIcon(),
   },
 ];
 

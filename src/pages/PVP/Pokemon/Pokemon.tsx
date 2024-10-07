@@ -25,6 +25,8 @@ import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { LeagueType } from '../../../core/enums/league.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -54,7 +56,7 @@ const PokemonPVP = () => {
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
           APIService.getRankingFile(
-            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? FORM_MEGA.toLowerCase() : 'all',
+            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? FORM_MEGA.toLowerCase() : LeagueType.All,
             cp,
             getValueOrDefault(String, params.type)
           )
@@ -95,19 +97,26 @@ const PokemonPVP = () => {
       const maxCP = toNumber(getValueOrDefault(String, params.cp));
 
       let bestStats = new BattleBaseStats();
-      if (maxCP < 10000) {
-        let minCP = maxCP === 500 ? 0 : maxCP === 1500 ? 500 : maxCP === 2500 ? 1500 : 2500;
+      if (maxCP < BattleLeagueCPType.InsMaster) {
+        let minCP =
+          maxCP === BattleLeagueCPType.Little
+            ? BattleLeagueCPType.Master
+            : maxCP === BattleLeagueCPType.Great
+            ? BattleLeagueCPType.Little
+            : maxCP === BattleLeagueCPType.Ultra
+            ? BattleLeagueCPType.Great
+            : BattleLeagueCPType.Ultra;
         const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, MAX_LEVEL);
 
         if (maxPokeCP < minCP) {
-          if (maxPokeCP <= 500) {
+          if (maxPokeCP <= BattleLeagueCPType.Little) {
             minCP = 0;
-          } else if (maxPokeCP <= 1500) {
-            minCP = 500;
-          } else if (maxPokeCP <= 2500) {
-            minCP = 1500;
+          } else if (maxPokeCP <= BattleLeagueCPType.Great) {
+            minCP = BattleLeagueCPType.Little;
+          } else if (maxPokeCP <= BattleLeagueCPType.Ultra) {
+            minCP = BattleLeagueCPType.Great;
           } else {
-            minCP = 2500;
+            minCP = BattleLeagueCPType.Ultra;
           }
         }
         const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats?.sta), minCP, maxCP);
@@ -166,7 +175,7 @@ const PokemonPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => item.id === 'all' && isIncludeList(item.cp, cp));
+    const league = pvp?.rankings.find((item) => item.id === LeagueType.All && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -178,7 +187,7 @@ const PokemonPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{league.name === 'All' ? getPokemonBattleLeagueName(cp) : league.name}</b>
+              <b>{isEqual(league.name, LeagueType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}</b>
             </h2>
           </div>
         )}

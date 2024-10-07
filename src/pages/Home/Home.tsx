@@ -158,7 +158,7 @@ const Home = () => {
           data?.pokemon
             .map((item) => {
               const assetForm = queryAssetForm(data.assets, item.num, item.forme);
-              return new PokemonHomeModel(item, assetForm, versionList);
+              return new PokemonHomeModel(item, assetForm);
             })
             .sort((a, b) => a.id - b.id)
         )
@@ -231,61 +231,43 @@ const Home = () => {
   }, [listOfPokemon]);
 
   const handleChangeGen = (event: SelectChangeEvent<number[]>) => {
+    const isSelect = isIncludeList(event.target.value as number[], -1);
+    if (isSelect) {
+      setBtnSelected({
+        ...btnSelected,
+        gen: !btnSelected.gen,
+      });
+    }
+    const gen = !isSelect
+      ? (event.target.value as number[]).sort((a, b) => a - b)
+      : btnSelected.gen
+      ? []
+      : Object.values(genList).map((_, index) => index);
+
     setFilters({
       ...filters,
-      gen: (event.target.value as number[]).sort((a, b) => a - b),
+      gen,
     });
   };
 
   const handleChangeVersion = (event: SelectChangeEvent<number[]>) => {
+    const isSelect = isIncludeList(event.target.value as number[], -1);
+    if (isSelect) {
+      setBtnSelected({
+        ...btnSelected,
+        version: !btnSelected.version,
+      });
+    }
+    const version = !isSelect
+      ? (event.target.value as number[]).sort((a, b) => a - b)
+      : btnSelected.version
+      ? []
+      : versionList.map((_, index) => index);
+
     setFilters({
       ...filters,
-      version: (event.target.value as number[]).sort((a, b) => a - b),
+      version,
     });
-  };
-
-  const setFilterGen = () => {
-    if (btnSelected.gen) {
-      setFilters({
-        ...filters,
-        gen: [],
-      });
-      setBtnSelected({
-        ...btnSelected,
-        gen: false,
-      });
-    } else {
-      setFilters({
-        ...filters,
-        gen: versionList.map((_, index) => index),
-      });
-      setBtnSelected({
-        ...btnSelected,
-        gen: true,
-      });
-    }
-  };
-
-  const setFilterVersion = () => {
-    if (btnSelected.version) {
-      setFilters({
-        ...filters,
-        version: [],
-      });
-      setBtnSelected({
-        ...btnSelected,
-        version: false,
-      });
-    } else {
-      setFilters({
-        ...filters,
-        version: versionList.map((_, index) => index),
-      });
-      setBtnSelected({
-        ...btnSelected,
-        version: true,
-      });
-    }
   };
 
   return (
@@ -384,13 +366,12 @@ const Home = () => {
                       input={<OutlinedInput label="Generation(s)" />}
                       renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
                     >
-                      <MenuItem disableRipple={true} disableTouchRipple={true}>
+                      <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
                         <ListItemText
                           primary={
-                            <button
-                              onClick={setFilterGen}
-                              className={combineClasses('btn', btnSelected.gen ? 'btn-danger' : 'btn-success')}
-                            >{`${btnSelected.gen ? 'Deselect All' : 'Select All'}`}</button>
+                            <button className={combineClasses('btn', btnSelected.gen ? 'btn-danger' : 'btn-success')}>{`${
+                              btnSelected.gen ? 'Deselect All' : 'Select All'
+                            }`}</button>
                           }
                         />
                       </MenuItem>
@@ -412,13 +393,12 @@ const Home = () => {
                       renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
                       MenuProps={versionProps}
                     >
-                      <MenuItem disableRipple={true} disableTouchRipple={true}>
+                      <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
                         <ListItemText
                           primary={
-                            <button
-                              onClick={setFilterVersion}
-                              className={combineClasses('btn', btnSelected.version ? 'btn-danger' : 'btn-success')}
-                            >{`${btnSelected.version ? 'Deselect All' : 'Select All'}`}</button>
+                            <button className={combineClasses('btn', btnSelected.version ? 'btn-danger' : 'btn-success')}>{`${
+                              btnSelected.version ? 'Deselect All' : 'Select All'
+                            }`}</button>
                           }
                         />
                       </MenuItem>

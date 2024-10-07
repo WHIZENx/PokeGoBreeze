@@ -30,8 +30,9 @@ import {
   isNotEmpty,
   toNumber,
 } from '../../../util/extension';
-import { LeagueRewardType, RewardType } from '../../../core/enums/league.enum';
+import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -168,7 +169,9 @@ const Leagues = () => {
           <div className="sub-body">
             <h4 className="title-leagues">{splitAndCapitalize(getValueOrDefault(String, league.id).toLowerCase(), '_', ' ')}</h4>
             <div className="text-center">
-              {!isEqual(league.league, league.title) && !isInclude(league.title, 'REMIX') && !isInclude(league.iconUrl, 'pogo') ? (
+              {!isEqual(league.league, league.title) &&
+              !isInclude(league.title, LeagueType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
+              !isInclude(league.iconUrl, 'pogo') ? (
                 <div className="league">
                   <img
                     alt="img-league"
@@ -377,7 +380,7 @@ const Leagues = () => {
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
                       badgeContent={value.count}
-                      max={10000}
+                      max={BattleLeagueCPType.InsMaster}
                       sx={{
                         paddingBottom:
                           value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? '0 !important' : '1.5rem !important',
@@ -458,7 +461,7 @@ const Leagues = () => {
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
                       badgeContent={dataStore.leagues.season.rewards.rank[rank].premium?.[index].count}
-                      max={10000}
+                      max={BattleLeagueCPType.InsMaster}
                       sx={{
                         paddingBottom:
                           dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon ||

@@ -205,8 +205,6 @@ export class Form implements IForm {
       this.id = data.id;
       this.isDefault = data.isDefault;
       this.isMega = data.isMega;
-      this.isShadow = false;
-      this.isPurified = false;
       this.name = data.name;
       this.version = data.version;
       this.types = data.types;

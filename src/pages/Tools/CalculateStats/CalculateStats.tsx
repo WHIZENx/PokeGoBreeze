@@ -18,12 +18,15 @@ import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { getValueOrDefault, isNullOrEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { EvoPath } from '../../../core/models/API/species.model';
+import { PokemonType } from '../BattleDamage/enums/damage.enum';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 const Calculate = () => {
   useChangeTitle('Calculate CP&IV - Tool');
@@ -43,7 +46,7 @@ const Calculate = () => {
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [typePoke, setTypePoke] = useState('');
+  const [typePoke, setTypePoke] = useState(PokemonType.None);
 
   const [pokeStats, setPokeStats] = useState<IStatsCalculate>();
   const [statLevel, setStatLevel] = useState(1);
@@ -89,13 +92,49 @@ const Calculate = () => {
     setStatLevel(result.level);
     setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
     setDataLittleLeague(
-      calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke, 500)
+      calculateBattleLeague(
+        globalOptions,
+        statATK,
+        statDEF,
+        statSTA,
+        ATKIv,
+        DEFIv,
+        STAIv,
+        result.level,
+        result.CP,
+        typePoke,
+        BattleLeagueCPType.Little
+      )
     );
     setDataGreatLeague(
-      calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke, 1500)
+      calculateBattleLeague(
+        globalOptions,
+        statATK,
+        statDEF,
+        statSTA,
+        ATKIv,
+        DEFIv,
+        STAIv,
+        result.level,
+        result.CP,
+        typePoke,
+        BattleLeagueCPType.Great
+      )
     );
     setDataUltraLeague(
-      calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke, 2500)
+      calculateBattleLeague(
+        globalOptions,
+        statATK,
+        statDEF,
+        statSTA,
+        ATKIv,
+        DEFIv,
+        STAIv,
+        result.level,
+        result.CP,
+        typePoke,
+        BattleLeagueCPType.Ultra
+      )
     );
     setDataMasterLeague(
       calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke)
@@ -217,34 +256,52 @@ const Calculate = () => {
               row={true}
               aria-labelledby="row-types-group-label"
               name="row-types-group"
-              defaultValue=""
-              onChange={(e) => setTypePoke(e.target.value)}
+              defaultValue={PokemonType.None}
+              onChange={(e) => {
+                setPokeStats(undefined);
+                setStatData(undefined);
+                setStatLevel(0);
+                setDataLittleLeague(undefined);
+                setDataGreatLeague(undefined);
+                setDataUltraLeague(undefined);
+                setDataMasterLeague(undefined);
+                setTypePoke(e.target.value as PokemonType);
+              }}
             >
-              <FormControlLabel value="" control={<Radio />} label={<span>None</span>} />
+              <FormControlLabel value={PokemonType.None} control={<Radio />} label={<span>{capitalize(PokemonType.None)}</span>} />
               <FormControlLabel
-                value="buddy"
+                value={PokemonType.Buddy}
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> Buddy
+                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {capitalize(PokemonType.Buddy)}
                   </span>
                 }
               />
               <FormControlLabel
-                value="shadow"
+                value={PokemonType.Lucky}
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(FORM_SHADOW)}
+                    <img height={28} alt="img-lucky" src={APIService.getPokeLucky()} /> {capitalize(PokemonType.Lucky)}
                   </span>
                 }
               />
               <FormControlLabel
-                value="purified"
+                value={PokemonType.Shadow}
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> {capitalize(FORM_PURIFIED)}
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(PokemonType.Shadow)}
+                  </span>
+                }
+              />
+              <FormControlLabel
+                value={PokemonType.Purified}
+                control={<Radio />}
+                label={
+                  <span>
+                    <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> {capitalize(PokemonType.Purified)}
                   </span>
                 }
               />
@@ -270,7 +327,7 @@ const Calculate = () => {
                 valueLabelDisplay="off"
                 step={0.5}
                 min={MIN_LEVEL}
-                max={typePoke === 'buddy' ? MAX_LEVEL : MAX_LEVEL - 1}
+                max={typePoke === PokemonType.Buddy ? MAX_LEVEL : MAX_LEVEL - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={pokeStats ? false : true}
                 onChange={(_, value) => onHandleLevel(value as number)}
@@ -317,13 +374,13 @@ const Calculate = () => {
                                 {statData.resultBetweenStadust}
                                 {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenStadustDiff) > 0 && (
                                   <Fragment>
-                                    {statData.type?.toUpperCase() === FORM_SHADOW && (
+                                    {statData.type === PokemonType.Shadow && (
                                       <span className="shadow-text"> (+{statData.resultBetweenStadustDiff})</span>
                                     )}
-                                    {statData.type?.toUpperCase() === FORM_PURIFIED && (
+                                    {statData.type === PokemonType.Purified && (
                                       <span className="purified-text"> (-{statData.resultBetweenStadustDiff})</span>
                                     )}
-                                    {statData.type === 'buddy' && (
+                                    {statData.type === PokemonType.Lucky && (
                                       <span className="buddy-text"> (-{statData.resultBetweenStadustDiff})</span>
                                     )}
                                   </Fragment>
@@ -353,13 +410,15 @@ const Calculate = () => {
                                 {statData.resultBetweenCandy}
                                 {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenCandyDiff) > 0 && (
                                   <Fragment>
-                                    {statData.type?.toUpperCase() === FORM_SHADOW && (
+                                    {statData.type === PokemonType.Shadow && (
                                       <span className="shadow-text"> (+{statData.resultBetweenCandyDiff})</span>
                                     )}
-                                    {statData.type?.toUpperCase() === FORM_PURIFIED && (
+                                    {statData.type === PokemonType.Purified && (
                                       <span className="purified-text"> (-{statData.resultBetweenCandyDiff})</span>
                                     )}
-                                    {statData.type === 'buddy' && <span className="buddy-text"> (-{statData.resultBetweenCandyDiff})</span>}
+                                    {statData.type === PokemonType.Lucky && (
+                                      <span className="buddy-text"> (-{statData.resultBetweenCandyDiff})</span>
+                                    )}
                                   </Fragment>
                                 )}
                               </span>
@@ -392,13 +451,13 @@ const Calculate = () => {
                                 {statData.resultBetweenXLCandy}
                                 {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenXLCandyDiff) > 0 && (
                                   <Fragment>
-                                    {statData.type?.toUpperCase() === FORM_SHADOW && (
+                                    {statData.type === PokemonType.Shadow && (
                                       <span className="shadow-text"> (+{statData.resultBetweenXLCandyDiff})</span>
                                     )}
-                                    {statData.type?.toUpperCase() === FORM_PURIFIED && (
+                                    {statData.type === PokemonType.Purified && (
                                       <span className="purified-text"> (-{statData.resultBetweenXLCandyDiff})</span>
                                     )}
-                                    {statData.type === 'buddy' && (
+                                    {statData.type === PokemonType.Lucky && (
                                       <span className="buddy-text"> (-{statData.resultBetweenXLCandyDiff})</span>
                                     )}
                                   </Fragment>
@@ -424,7 +483,7 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData.type?.toUpperCase() !== FORM_SHADOW ? (
+                            statData.type !== PokemonType.Shadow ? (
                               calculateStatsBattle(statATK, getValueOrDefault(Number, pokeStats?.IV.atk), statLevel, true)
                             ) : (
                               <Fragment>
@@ -449,7 +508,7 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData.type?.toUpperCase() !== FORM_SHADOW ? (
+                            statData.type !== PokemonType.Shadow ? (
                               calculateStatsBattle(statDEF, getValueOrDefault(Number, pokeStats?.IV.def), statLevel, true)
                             ) : (
                               <Fragment>
@@ -494,10 +553,10 @@ const Calculate = () => {
                             alt="img-league"
                             width={30}
                             height={30}
-                            src={APIService.getPokeOtherLeague('GBL_littlecup')}
+                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
                           />
                           <span className={dataLittleLeague ? (dataLittleLeague.elidge ? '' : 'text-danger') : ''}>
-                            Little Cup
+                            {getPokemonBattleLeagueName(BattleLeagueCPType.Little)}
                             {dataLittleLeague ? dataLittleLeague.elidge ? '' : <span> (Not Elidge)</span> : ''}
                           </span>
                         </td>
@@ -545,7 +604,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataLittleLeague && dataLittleLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
+                              <span className={statData?.type !== PokemonType.Lucky ? `${statData?.type}-text` : ''}>
                                 {dataLittleLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
@@ -564,7 +623,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataLittleLeague && dataLittleLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
+                              <span className={statData?.type !== PokemonType.Lucky ? `${statData?.type}-text` : ''}>
                                 {dataLittleLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
@@ -578,7 +637,7 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           {dataLittleLeague && dataLittleLeague.elidge ? (
-                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
+                            <span className={statData?.type === PokemonType.Shadow ? 'text-success' : ''}>
                               {dataLittleLeague.stats?.atk}
                             </span>
                           ) : (
@@ -588,7 +647,7 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           {dataLittleLeague && dataLittleLeague.elidge ? (
-                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
+                            <span className={statData?.type === PokemonType.Shadow ? 'text-danger' : ''}>
                               {dataLittleLeague.stats?.def}
                             </span>
                           ) : (
@@ -607,10 +666,10 @@ const Calculate = () => {
                             alt="img-league"
                             width={30}
                             height={30}
-                            src={APIService.getPokeLeague('great_league')}
+                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
                           />
                           <span className={dataGreatLeague ? (dataGreatLeague.elidge ? '' : 'text-danger') : ''}>
-                            Great League
+                            {getPokemonBattleLeagueName(BattleLeagueCPType.Great)}
                             {dataGreatLeague ? dataGreatLeague.elidge ? '' : <span> (Not Elidge)</span> : ''}
                           </span>
                         </td>
@@ -658,7 +717,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataGreatLeague && dataGreatLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
+                              <span className={statData?.type !== PokemonType.Lucky ? `${statData?.type}-text` : ''}>
                                 {dataGreatLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
@@ -677,7 +736,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataGreatLeague && dataGreatLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
+                              <span className={statData?.type !== PokemonType.Lucky ? `${statData?.type}-text` : ''}>
                                 {dataGreatLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
@@ -691,7 +750,7 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           {dataGreatLeague && dataGreatLeague.elidge ? (
-                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
+                            <span className={statData?.type === PokemonType.Shadow ? 'text-success' : ''}>
                               {dataGreatLeague.stats?.atk}
                             </span>
                           ) : (
@@ -701,9 +760,7 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           {dataGreatLeague && dataGreatLeague.elidge ? (
-                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
-                              {dataGreatLeague.stats?.def}
-                            </span>
+                            <span className={statData?.type === PokemonType.Shadow ? 'text-danger' : ''}>{dataGreatLeague.stats?.def}</span>
                           ) : (
                             '-'
                           )}
@@ -720,10 +777,10 @@ const Calculate = () => {
                             alt="img-league"
                             width={30}
                             height={30}
-                            src={APIService.getPokeLeague('ultra_league')}
+                            src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
                           />
                           <span className={dataUltraLeague ? (dataUltraLeague.elidge ? '' : 'text-danger') : ''}>
-                            Ultra League
+                            {getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}
                             {dataUltraLeague ? dataUltraLeague.elidge ? '' : <span> (Not Elidge)</span> : ''}
                           </span>
                         </td>
@@ -771,7 +828,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataUltraLeague && dataUltraLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
+                              <span className={statData?.type !== PokemonType.Lucky ? `${statData?.type}-text` : ''}>
                                 {dataUltraLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
@@ -790,7 +847,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataUltraLeague && dataUltraLeague.elidge ? (
-                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
+                              <span className={statData?.type !== PokemonType.Lucky ? `${statData?.type}-text` : ''}>
                                 {dataUltraLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
@@ -804,7 +861,7 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           {dataUltraLeague && dataUltraLeague.elidge ? (
-                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
+                            <span className={statData?.type === PokemonType.Shadow ? 'text-success' : ''}>
                               {dataUltraLeague.stats?.atk}
                             </span>
                           ) : (
@@ -814,9 +871,7 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           {dataUltraLeague && dataUltraLeague.elidge ? (
-                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
-                              {dataUltraLeague.stats?.def}
-                            </span>
+                            <span className={statData?.type === PokemonType.Shadow ? 'text-danger' : ''}>{dataUltraLeague.stats?.def}</span>
                           ) : (
                             '-'
                           )}
@@ -828,14 +883,8 @@ const Calculate = () => {
                       </tr>
                       <tr className="text-center">
                         <td className="table-sub-header" colSpan={4}>
-                          <img
-                            style={{ marginRight: 10 }}
-                            alt="img-league"
-                            width={30}
-                            height={30}
-                            src={APIService.getPokeLeague('master_league')}
-                          />
-                          Master League
+                          <img style={{ marginRight: 10 }} alt="img-league" width={30} height={30} src={getPokemonBattleLeagueIcon()} />
+                          {getPokemonBattleLeagueName()}
                         </td>
                       </tr>
                       <tr>
@@ -881,7 +930,7 @@ const Calculate = () => {
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
                             )}
                             {dataMasterLeague ? (
-                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
+                              <span className={statData?.type !== PokemonType.Lucky ? `${statData?.type}-text` : ''}>
                                 {dataMasterLeague.rangeValue?.resultBetweenCandy}
                               </span>
                             ) : (
@@ -900,7 +949,7 @@ const Calculate = () => {
                               />
                             )}
                             {dataMasterLeague ? (
-                              <span className={statData?.type !== 'buddy' ? `${statData?.type}-text` : ''}>
+                              <span className={statData?.type !== PokemonType.Lucky ? `${statData?.type}-text` : ''}>
                                 {dataMasterLeague.rangeValue?.resultBetweenXLCandy}
                               </span>
                             ) : (
@@ -914,7 +963,7 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
                           {dataMasterLeague ? (
-                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-success' : ''}>
+                            <span className={statData?.type === PokemonType.Shadow ? 'text-success' : ''}>
                               {dataMasterLeague.stats?.atk}
                             </span>
                           ) : (
@@ -924,7 +973,7 @@ const Calculate = () => {
                         <td className="text-center">
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
                           {dataMasterLeague ? (
-                            <span className={statData?.type?.toUpperCase() === FORM_SHADOW ? 'text-danger' : ''}>
+                            <span className={statData?.type === PokemonType.Shadow ? 'text-danger' : ''}>
                               {dataMasterLeague.stats?.def}
                             </span>
                           ) : (

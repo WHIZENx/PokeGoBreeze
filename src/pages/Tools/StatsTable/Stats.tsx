@@ -5,8 +5,6 @@ import DataTable, { TableColumn } from 'react-data-table-component';
 import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd } from '../../../util/calculate';
 
-import APIService from '../../../services/API.service';
-
 import Find from '../../../components/Find/Find';
 import { MIN_IV, MAX_IV } from '../../../util/constants';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
@@ -15,6 +13,8 @@ import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { combineClasses, getValueOrDefault, toNumber } from '../../../util/extension';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
@@ -75,7 +75,7 @@ const StatsTable = () => {
   const [statSTA, setStatSTA] = useState(0);
 
   const currStatBattle = useRef<IBattleBaseStats[]>([]);
-  const [battleLeague, setBattleLeague] = useState(500);
+  const [battleLeague, setBattleLeague] = useState(BattleLeagueCPType.Little);
 
   const [statsBattle, setStatsBattle] = useState<IBattleBaseStats[]>([]);
 
@@ -86,7 +86,7 @@ const StatsTable = () => {
   }, [statATK, statDEF, statSTA, battleLeague]);
 
   const clearStats = () => {
-    setBattleLeague(500);
+    setBattleLeague(BattleLeagueCPType.Little);
     setSearchCP('');
     setATKIv(0);
     setDEFIv(0);
@@ -121,46 +121,46 @@ const StatsTable = () => {
       </h1>
       <div className="d-flex text-center" style={{ marginTop: 15, marginBottom: 15, gap: 10, overflowX: 'auto' }}>
         <button
-          className={combineClasses('btn btn-form', battleLeague === 500 ? 'form-selected' : '')}
+          className={combineClasses('btn btn-form', battleLeague === BattleLeagueCPType.Little ? 'form-selected' : '')}
           style={{ height: 200 }}
-          onClick={() => setBattleLeague(500)}
+          onClick={() => setBattleLeague(BattleLeagueCPType.Little)}
         >
-          <img alt="img-league" width={128} height={128} src={APIService.getPokeOtherLeague('GBL_littlecup')} />
+          <img alt="img-league" width={128} height={128} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />
           <div>
-            <b>Little Cup</b>
+            <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</b>
           </div>
-          <span className="text-danger">CP below 500</span>
+          <span className="text-danger">CP below {BattleLeagueCPType.Little}</span>
         </button>
         <button
-          className={combineClasses('btn btn-form', battleLeague === 1500 ? 'form-selected' : '')}
+          className={combineClasses('btn btn-form', battleLeague === BattleLeagueCPType.Great ? 'form-selected' : '')}
           style={{ height: 200 }}
-          onClick={() => setBattleLeague(1500)}
+          onClick={() => setBattleLeague(BattleLeagueCPType.Great)}
         >
-          <img alt="img-league" width={128} height={128} src={APIService.getPokeLeague('great_league')} />
+          <img alt="img-league" width={128} height={128} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />
           <div>
-            <b>Great League</b>
+            <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</b>
           </div>
-          <span className="text-danger">CP below 1500</span>
+          <span className="text-danger">CP below {BattleLeagueCPType.Great}</span>
         </button>
         <button
-          className={combineClasses('btn btn-form', battleLeague === 2500 ? 'form-selected' : '')}
+          className={combineClasses('btn btn-form', battleLeague === BattleLeagueCPType.Ultra ? 'form-selected' : '')}
           style={{ height: 200 }}
-          onClick={() => setBattleLeague(2500)}
+          onClick={() => setBattleLeague(BattleLeagueCPType.Ultra)}
         >
-          <img alt="img-league" width={128} height={128} src={APIService.getPokeLeague('ultra_league')} />
+          <img alt="img-league" width={128} height={128} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />
           <div>
-            <b>Ultra League</b>
+            <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</b>
           </div>
-          <span className="text-danger">CP below 2500</span>
+          <span className="text-danger">CP below {BattleLeagueCPType.Ultra}</span>
         </button>
         <button
           className={combineClasses('btn btn-form', battleLeague === 0 ? 'form-selected' : '')}
           style={{ height: 200 }}
           onClick={() => setBattleLeague(0)}
         >
-          <img alt="img-league" width={128} height={128} src={APIService.getPokeLeague('master_league')} />
+          <img alt="img-league" width={128} height={128} src={getPokemonBattleLeagueIcon()} />
           <div>
-            <b>Master League</b>
+            <b>{getPokemonBattleLeagueName()}</b>
           </div>
           <span className="text-danger">No limit CP</span>
         </button>

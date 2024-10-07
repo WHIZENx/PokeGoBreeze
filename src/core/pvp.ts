@@ -2,6 +2,7 @@ import { APIPath, APITree } from '../services/models/api.model';
 import { IncludeMode } from '../util/enums/string.enum';
 import { getValueOrDefault, isInclude, toNumber } from '../util/extension';
 import { splitAndCapitalize } from '../util/utils';
+import { LeagueType } from './enums/league.enum';
 import { ILeague, LeaguePVP } from './models/league.model';
 
 export const pvpConvertPath = (data: APITree, path: string) => {
@@ -19,7 +20,7 @@ export const pvpFindPath = (data: string[], path: string) => {
 export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
   return [...new Set(data.map((league) => league.split('/').at(0)))].map((league) => {
     let item;
-    if (league !== 'all') {
+    if (league !== LeagueType.All) {
       item = leagues.find((item) => isInclude(item.iconUrl, league));
       if (!item) {
         item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));
@@ -47,7 +48,7 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
 export const convertPVPTrain = (data: string[], leagues: ILeague[]) => {
   return [...new Set(data.map((league) => league.split('/').at(0)))].map((league) => {
     let item;
-    if (league !== 'all') {
+    if (league !== LeagueType.All) {
       item = leagues.find((item) => isInclude(item.iconUrl, league, IncludeMode.IncludeIgnoreCaseSensitive));
       if (!item) {
         item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));

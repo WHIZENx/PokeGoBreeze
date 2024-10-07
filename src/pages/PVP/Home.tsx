@@ -15,6 +15,9 @@ import { LocalStorageConfig } from '../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../store/models/local-storage.model';
 import { getTime } from '../../util/utils';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
+import { EqualMode } from '../../util/enums/string.enum';
+import { LeagueType } from '../../core/enums/league.enum';
+import { BattleLeagueIconType } from '../../util/enums/compute.enum';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -71,10 +74,10 @@ const PVPHome = () => {
   const renderLeagueLogo = (logo: string, cp: number) => {
     if (
       !logo ||
-      (logo && isInclude(logo, 'GBL_littlecup')) ||
-      isInclude(logo, 'great_league') ||
-      isInclude(logo, 'ultra_league') ||
-      isInclude(logo, 'master_league')
+      (logo && isInclude(logo, BattleLeagueIconType.Little)) ||
+      isInclude(logo, BattleLeagueIconType.Great) ||
+      isInclude(logo, BattleLeagueIconType.Ultra) ||
+      isInclude(logo, BattleLeagueIconType.Master)
     ) {
       return getPokemonBattleLeagueIcon(cp);
     }
@@ -82,7 +85,7 @@ const PVPHome = () => {
   };
 
   const renderLeagueName = (name: string, cp: number) => {
-    if (name === 'All') {
+    if (isEqual(name, LeagueType.All, EqualMode.IgnoreCaseSensitive)) {
       return getPokemonBattleLeagueName(cp);
     }
     return name;

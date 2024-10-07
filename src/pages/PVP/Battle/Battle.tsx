@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, getAllMoves, splitAndCapitalize } from '../../../util/utils';
-import { findAssetForm, findStabType } from '../../../util/compute';
+import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
 import {
   FORM_NORMAL,
@@ -65,6 +65,9 @@ import { BuffType, TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import { LeagueType } from '../../../core/enums/league.enum';
+import { BattleType } from './enums/battle.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -96,7 +99,7 @@ const Battle = () => {
     showTap: false,
     timelineType: 1,
     duration: 1,
-    league: toNumber(params.cp) ?? 500,
+    league: toNumber(params.cp) ?? BattleLeagueCPType.Little,
   });
   const { showTap, timelineType, duration, league } = options;
 
@@ -715,13 +718,11 @@ const Battle = () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
         clearData();
-        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile('all', league, 'overall'))).data;
+        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(LeagueType.All, league, 'overall'))).data;
         if (!file) {
           return;
         }
-        document.title = `PVP Battle Simulator - ${
-          league === 500 ? 'Little Cup' : league === 1500 ? 'Great League' : league === 2500 ? 'Ultra League' : 'Master League'
-        }`;
+        document.title = `PVP Battle Simulator - ${getPokemonBattleLeagueName(league)}`;
 
         const result = file
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
@@ -1065,23 +1066,10 @@ const Battle = () => {
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
             <img width={15} height={15} alt="img-atk" src={value.type === TypeAction.ATK ? ATK_LOGO : DEF_LOGO} />
             <div className="position-absolute icon-buff">
-              {value.power === 2 ? (
-                <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-              ) : (
-                <Fragment>
-                  {value.power === 1 ? (
-                    <KeyboardArrowUpIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                  ) : (
-                    <Fragment>
-                      {value.power === -1 ? (
-                        <KeyboardArrowDownIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                      ) : (
-                        <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: value.power < 0 ? 'red' : 'green' }} />
-                      )}
-                    </Fragment>
-                  )}
-                </Fragment>
-              )}
+              {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
+              {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
+              {value.power === -1 && <KeyboardArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
+              {value.power <= -2 && <KeyboardDoubleArrowDownIcon fontSize="small" sx={{ color: 'red' }} />}
               <span className={value.power < 0 ? 'text-danger' : 'text-success'} style={{ fontSize: 12 }}>
                 {value.power}
               </span>
@@ -1374,7 +1362,7 @@ const Battle = () => {
   };
 
   const renderPokemonInfo = (
-    type: string,
+    type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
     // eslint-disable-next-line no-unused-vars
@@ -1398,7 +1386,7 @@ const Battle = () => {
                   if (isNaN(value)) {
                     return;
                   }
-                  if (type === 'pokemonCurr') {
+                  if (type === BattleType.Current) {
                     setPlayTimeline({
                       ...playTimeline,
                       pokemonCurr: PokemonBattleData.create({
@@ -1406,7 +1394,7 @@ const Battle = () => {
                         energy: value,
                       }),
                     });
-                  } else if (type === 'pokemonObj') {
+                  } else if (type === BattleType.Object) {
                     setPlayTimeline({
                       ...playTimeline,
                       pokemonObj: PokemonBattleData.create({
@@ -1568,13 +1556,13 @@ const Battle = () => {
         }}
         defaultValue={league}
       >
-        <option value={500}>Little Cup</option>
-        <option value={1500}>Great League</option>
-        <option value={2500}>Ultra League</option>
-        <option value={10000}>Master League</option>
+        <option value={BattleLeagueCPType.Little}>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</option>
+        <option value={BattleLeagueCPType.Great}>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</option>
+        <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
+        <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
       </Form.Select>
       <div className="row element-top" style={{ margin: 0 }}>
-        <div className="col-lg-3">{renderPokemonInfo('pokemonCurr', pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}</div>
+        <div className="col-lg-3">{renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}</div>
         <div className="col-lg-6">
           {pokemonCurr.pokemonData && pokemonObj.pokemonData && isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) && (
             <Fragment>
@@ -1713,7 +1701,7 @@ const Battle = () => {
             </Fragment>
           )}
         </div>
-        <div className="col-lg-3">{renderPokemonInfo('pokemonObj', pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
+        <div className="col-lg-3">{renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
       </div>
       {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
         <div className="text-center element-top">

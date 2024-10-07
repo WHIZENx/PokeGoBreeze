@@ -81,6 +81,7 @@ import {
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
 
 interface IOption {
   weatherBoss: boolean;
@@ -107,8 +108,8 @@ interface IFilterGroup {
   onlyShadow: boolean;
   onlyMega: boolean;
   onlyReleasedGO: boolean;
-  sortBy: number;
-  sorted: number;
+  sortBy: SortType;
+  sorted: SortDirectionType;
 }
 
 class FilterGroup implements IFilterGroup {
@@ -118,8 +119,8 @@ class FilterGroup implements IFilterGroup {
   onlyShadow = false;
   onlyMega = false;
   onlyReleasedGO = false;
-  sortBy = 0;
-  sorted = 0;
+  sortBy = SortType.DPS;
+  sorted = SortDirectionType.ASC;
 
   static create(value: IFilterGroup) {
     const obj = new FilterGroup();
@@ -184,8 +185,8 @@ const RaidBattle = () => {
     onlyShadow: false,
     onlyMega: false,
     onlyReleasedGO: true,
-    sortBy: 0,
-    sorted: 0,
+    sortBy: SortType.DPS,
+    sorted: SortDirectionType.ASC,
   });
 
   const [filters, setFilters] = useState(
@@ -817,10 +818,10 @@ const RaidBattle = () => {
   };
 
   const resultBattle = (bossHp: number, timer: number) => {
-    const status = enableTimeAllow && timer >= timeAllow ? 1 : bossHp === 0 ? 0 : 2;
+    const status = enableTimeAllow && timer >= timeAllow ? RaidState.TIMEOUT : bossHp <= 0 ? RaidState.WIN : RaidState.LOSS;
     return (
-      <td colSpan={3} className={combineClasses('text-center', `bg-${status === 0 ? 'success' : 'danger'}`)}>
-        <span className="text-white">{status === 0 ? 'WIN' : status === 1 ? 'TIME OUT' : 'LOSS'}</span>
+      <td colSpan={3} className={combineClasses('text-center', `bg-${status === RaidState.WIN ? 'success' : 'danger'}`)}>
+        <span className="text-white">{status}</span>
       </td>
     );
   };
@@ -1265,7 +1266,11 @@ const RaidBattle = () => {
             <p className="text-primary">
               <b>
                 {`Sort By: ${
-                  used.sortBy === 0 ? 'Damage Per Seconds (DPS)' : used.sortBy === 1 ? 'Total Damage Output (TDO)' : 'Tankiness'
+                  used.sortBy === SortType.DPS
+                    ? 'Damage Per Seconds (DPS)'
+                    : used.sortBy === SortType.TDO
+                    ? 'Total Damage Output (TDO)'
+                    : 'Tankiness'
                 }`}{' '}
                 <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${used.onlyMega ? '*Only Mega' : ''}`}</span>
               </b>

@@ -27,7 +27,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { combineClasses, DynamicObj, getValueOrDefault, isInclude } from '../../../util/extension';
-import { ChargeAbility } from './enums/damage.enum';
+import { ChargeAbility, PokemonType } from './enums/damage.enum';
 import { IncludeMode } from '../../../util/enums/string.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
@@ -89,7 +89,7 @@ const Damage = () => {
   const [statLvATK, setStatLvATK] = useState(0);
 
   const [statLevel, setStatLevel] = useState(1);
-  const [statType, setStatType] = useState('');
+  const [statType, setStatType] = useState(PokemonType.None);
 
   const [formObj, setFormObj] = useState<IPokemonFormModify>();
 
@@ -101,7 +101,7 @@ const Damage = () => {
   const [statLvSTAObj, setStatLvSTAObj] = useState(0);
 
   const [statLevelObj, setStatLevelObj] = useState(1);
-  const [statTypeObj, setStatTypeObj] = useState('');
+  const [statTypeObj, setStatTypeObj] = useState(PokemonType.None);
 
   const [enableFriend, setEnableFriend] = useState(false);
   const [battleState, setBattleState] = useState(new Filter());

@@ -11,3 +11,12 @@ export enum LeagueRewardType {
   Free = 'FREE',
   Premium = 'PREMIUM',
 }
+
+export enum LeagueType {
+  All = 'all',
+  Remix = 'remix',
+  Little = 'little',
+  Great = 'great',
+  Ultra = 'ultra',
+  Master = 'master',
+}

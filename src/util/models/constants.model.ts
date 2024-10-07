@@ -1,3 +1,5 @@
+import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
+
 export interface ITier {
   level: number;
   CPm: number;
@@ -21,13 +23,13 @@ export class Tier implements ITier {
 interface ICostPowerUp {
   stardust: number;
   candy: number;
-  type: string;
+  type: PokemonType | undefined;
 }
 
 export class CostPowerUp implements ICostPowerUp {
   stardust = 0;
   candy = 0;
-  type = '';
+  type: PokemonType | undefined;
 
   static create(value: ICostPowerUp) {
     const obj = new CostPowerUp();
