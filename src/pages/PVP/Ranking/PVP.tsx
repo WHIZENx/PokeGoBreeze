@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from 'react';
+import React, { useState, useEffect, Fragment, useRef, useCallback } from 'react';
 import '../PVP.scss';
 
 import { convertNameRankingToOri, splitAndCapitalize, capitalize, getStyleSheet, replaceTempMovePvpName } from '../../../util/utils';
@@ -21,7 +21,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/constants';
-import { Action } from 'history';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -57,7 +56,6 @@ const RankingPVP = () => {
 
   const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
   const [storeStats, setStoreStats] = useState<boolean[]>();
-  const [onLoadData, setOnLoadData] = useState(false);
   const sortedBy = useRef(SortType.Score);
   const [sorted, setSorted] = useState(Sorted.DESC);
 
@@ -80,121 +78,108 @@ const RankingPVP = () => {
     if (!pvp) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
-    if (isNotEmpty(dataStore?.combat) && dataStore?.combat?.every((combat) => !combat.archetype)) {
-      loadPVPMoves(dispatch);
+  }, [pvp]);
+
+  const fetchPokemonRanking = useCallback(async () => {
+    dispatch(SpinnerActions.ShowSpinner.create());
+    try {
+      const cp = toNumber(getValueOrDefault(String, params.cp));
+      const file = (
+        await APIService.getFetchUrl<RankingsPVP[]>(
+          APIService.getRankingFile(getValueOrDefault(String, params.serie), cp, getValueOrDefault(String, params.type))
+        )
+      ).data;
+      if (!file) {
+        return;
+      }
+      if (params.serie === LeagueType.All) {
+        document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
+      } else {
+        document.title = `PVP Ranking - ${params.serie === LeagueType.Remix ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
+          params.serie,
+          '-',
+          ' '
+        )} (${capitalize(params.type)})`;
+      }
+      const filePVP = file.map((item) => {
+        const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+        const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
+        const id = pokemon?.num;
+        const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+
+        const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+
+        if (!styleSheet.current) {
+          styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
+        }
+
+        let fMoveData = item.moveset.at(0);
+        const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(1)));
+        const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(2)));
+        if (isInclude(fMoveData, 'HIDDEN_POWER')) {
+          fMoveData = 'HIDDEN_POWER';
+        }
+
+        let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
+        const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
+        let cMoveSec;
+        if (cMoveDataSec) {
+          cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
+        }
+
+        if (fMove && isInclude(item.moveset.at(0), 'HIDDEN_POWER')) {
+          fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, item.moveset.at(0)?.split('_').at(2)) });
+        }
+
+        return new PokemonBattleRanking({
+          data: item,
+          score: item.score,
+          id,
+          speciesId: item.speciesId,
+          name,
+          form,
+          pokemon,
+          stats,
+          atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
+          def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
+          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
+          prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
+          fMove,
+          cMovePri,
+          cMoveSec,
+          shadow: isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
+          purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec),
+        });
+      });
+      setRankingData(filePVP);
+      setStoreStats([...Array(filePVP.length).keys()].map(() => false));
+      dispatch(SpinnerActions.HideSpinner.create());
+    } catch (e) {
+      dispatch(
+        SpinnerActions.ShowSpinnerMsg.create({
+          error: true,
+          message: (e as Error).message,
+        })
+      );
     }
-  }, [pvp, dataStore?.combat]);
+  }, [params.serie, params.type, params.cp, statsRanking, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, dispatch]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
-      dispatch(SpinnerActions.ShowSpinner.create());
-      try {
-        const cp = toNumber(getValueOrDefault(String, params.cp));
-        const file = (
-          await APIService.getFetchUrl<RankingsPVP[]>(
-            APIService.getRankingFile(getValueOrDefault(String, params.serie), cp, getValueOrDefault(String, params.type))
-          )
-        ).data;
-        if (!file) {
-          return;
-        }
-        if (params.serie === LeagueType.All) {
-          document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
-        } else {
-          document.title = `PVP Ranking - ${params.serie === LeagueType.Remix ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
-            params.serie,
-            '-',
-            ' '
-          )} (${capitalize(params.type)})`;
-        }
-        const filePVP = file.map((item) => {
-          const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-          const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
-          const id = pokemon?.num;
-          const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
-
-          const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-
-          if (!styleSheet.current) {
-            styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
-          }
-
-          let fMoveData = item.moveset.at(0);
-          const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(1)));
-          const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(2)));
-          if (isInclude(fMoveData, 'HIDDEN_POWER')) {
-            fMoveData = 'HIDDEN_POWER';
-          }
-
-          let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
-          const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
-          let cMoveSec;
-          if (cMoveDataSec) {
-            cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
-          }
-
-          if (fMove && isInclude(item.moveset.at(0), 'HIDDEN_POWER')) {
-            fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, item.moveset.at(0)?.split('_').at(2)) });
-          }
-
-          return new PokemonBattleRanking({
-            data: item,
-            score: item.score,
-            id,
-            speciesId: item.speciesId,
-            name,
-            form,
-            pokemon,
-            stats,
-            atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
-            def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-            sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
-            prod: statsRanking?.statProd.ranking.find((i) => i.prod === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
-            fMove,
-            cMovePri,
-            cMoveSec,
-            shadow: isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
-            purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec),
-          });
-        });
-        setRankingData(filePVP);
-        setStoreStats([...Array(filePVP.length).keys()].map(() => false));
-        dispatch(SpinnerActions.HideSpinner.create());
-      } catch (e) {
-        dispatch(
-          SpinnerActions.ShowSpinnerMsg.create({
-            error: true,
-            message: (e as Error).message,
-          })
-        );
-      }
+      await fetchPokemonRanking();
+      router.action = null as AnyAction[''];
     };
-    if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets) && !onLoadData) {
-      setOnLoadData(true);
-      if (router.action === Action.Push) {
-        router.action = null as AnyAction[''];
-        setTimeout(() => fetchPokemon(), 100);
-      } else if (!isNotEmpty(rankingData) && pvp) {
+    if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
+      if (dataStore?.combat.every((combat) => !combat.archetype)) {
+        loadPVPMoves(dispatch);
+      } else if (router.action) {
         fetchPokemon();
       }
     }
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [
-    dispatch,
-    params.serie,
-    params.cp,
-    params.type,
-    rankingData,
-    pvp,
-    router.action,
-    onLoadData,
-    statsRanking,
-    dataStore?.combat,
-    dataStore?.pokemon,
-    dataStore?.assets,
-  ]);
+  }, [fetchPokemonRanking, rankingData, pvp, router.action, dispatch]);
 
   const renderItem = (data: IPokemonBattleRanking, key: number) => {
     return (
@@ -313,10 +298,7 @@ const RankingPVP = () => {
             <Button
               key={index}
               className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
-              onClick={() => {
-                setOnLoadData(false);
-                navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`);
-              }}
+              onClick={() => navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`)}
             >
               {type}
             </Button>

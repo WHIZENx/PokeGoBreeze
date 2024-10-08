@@ -1080,7 +1080,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       const track = isInclude(item.templateId, LeagueRewardType.Free) ? LeagueRewardType.Free : LeagueRewardType.Premium;
       data.availablePokemon.forEach((value) => {
         if (!rewards.pokemon[value.unlockedAtRank]) {
-          rewards.pokemon[value.unlockedAtRank] = new PokemonRewardLeague({
+          rewards.pokemon[value.unlockedAtRank] = PokemonRewardLeague.create({
             rank: value.unlockedAtRank,
             free: [],
             premium: [],

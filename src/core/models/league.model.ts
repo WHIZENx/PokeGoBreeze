@@ -95,8 +95,10 @@ export class PokemonRewardLeague implements IPokemonRewardLeague {
   free?: IPokemonRewardSetLeague[];
   premium?: IPokemonRewardSetLeague[];
 
-  constructor({ ...props }: IPokemonRewardLeague) {
-    Object.assign(this, props);
+  static create(value: IPokemonRewardLeague) {
+    const obj = new PokemonRewardLeague();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 

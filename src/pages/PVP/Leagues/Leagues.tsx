@@ -16,7 +16,13 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
-import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
+import {
+  ILeague,
+  IPokemonRewardSetLeague,
+  PokemonRewardLeague,
+  PokemonRewardSetLeague,
+  SettingLeague,
+} from '../../../core/models/league.model';
 import { FORM_NORMAL } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
@@ -116,7 +122,7 @@ const Leagues = () => {
     if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
-      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? new Object()).forEach((value) => {
+      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? new PokemonRewardLeague()).forEach((value) => {
         if (value.rank <= rank) {
           result.push(
             ...value[track.toLowerCase()].map((item: IPokemonRewardSetLeague) => {
