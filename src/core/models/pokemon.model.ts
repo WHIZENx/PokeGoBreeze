@@ -4,7 +4,8 @@ import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/co
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
+import { getValueOrDefault, isEqual, isUndefined, toNumber } from '../../util/extension';
+import { EqualMode } from '../../util/enums/string.enum';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -541,7 +542,10 @@ export class PokemonData implements IPokemonData {
     obj.num = pokemon.id;
     obj.name = capitalize(pokemon.name.replaceAll('_', '-'));
     if (pokemon.id !== 201) {
-      obj.fullName = pokemon.form && pokemon.form !== FORM_NORMAL ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
+      obj.fullName =
+        pokemon.form && !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+          ? `${pokemon.pokemonId}_${pokemon.form}`
+          : pokemon.pokemonId;
     } else {
       obj.fullName = getValueOrDefault(String, pokemon.form);
     }

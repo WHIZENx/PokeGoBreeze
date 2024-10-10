@@ -121,7 +121,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   },
   {
     name: 'Stat Prod',
-    selector: (row) => row.statProd.prod,
+    selector: (row) => row.prod.product,
     sortable: true,
     width: '150px',
   },
@@ -186,12 +186,13 @@ const StatsRanking = () => {
           stamina: getValueOrDefault(Number, statsTag.sta),
           rank: getValueOrDefault(Number, stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
         },
-        statProd: {
-          prod: statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta),
+        prod: {
+          product: statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta),
           rank: getValueOrDefault(
             Number,
-            stats?.statProd?.ranking?.find((stat) => stat.prod === statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta))
-              ?.rank
+            stats?.statProd?.ranking?.find(
+              (stat) => stat.product === statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta)
+            )?.rank
           ),
         },
       });
@@ -213,7 +214,7 @@ const StatsRanking = () => {
     } else if (id === ColumnType.Sta) {
       sortBy = [TypeAction.STA, 'stamina'];
     } else if (id === ColumnType.Prod) {
-      sortBy = ['statProd', 'prod'];
+      sortBy = [TypeAction.PROD, 'product'];
     }
     return pokemon
       .sort((a, b) => setSortedPokemonRanking(a, b, sortBy))
@@ -228,7 +229,7 @@ const StatsRanking = () => {
 
   const getSortId = () => {
     let idSort = ColumnType.Prod;
-    const statsBy = location.state?.stats;
+    const statsBy = location.state?.stats as TypeAction;
     if (statsBy) {
       if (statsBy === TypeAction.ATK) {
         idSort = ColumnType.Atk;
@@ -381,7 +382,7 @@ const StatsRanking = () => {
         statATK={select?.atk}
         statDEF={select?.def}
         statSTA={select?.sta}
-        statProd={select?.statProd}
+        statProd={select?.prod}
         pokemonStats={stats}
         id={select?.num}
         form={getValueOrDefault(String, select?.forme)}

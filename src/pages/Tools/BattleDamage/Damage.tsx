@@ -26,9 +26,9 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, isInclude } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isInclude } from '../../../util/extension';
 import { ChargeAbility, PokemonType } from './enums/damage.enum';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -118,7 +118,7 @@ const Damage = () => {
           MAX_IV,
           statLevel,
           false,
-          statType.toUpperCase() === FORM_SHADOW ? SHADOW_ATK_BONUS(globalOptions) : 1
+          isEqual(statType, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) ? SHADOW_ATK_BONUS(globalOptions) : 1
         )
       );
     }
@@ -129,7 +129,7 @@ const Damage = () => {
           MAX_IV,
           statLevelObj,
           false,
-          statTypeObj.toUpperCase() === FORM_SHADOW ? SHADOW_DEF_BONUS(globalOptions) : 1
+          isEqual(statTypeObj, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) ? SHADOW_DEF_BONUS(globalOptions) : 1
         )
       );
     }
@@ -354,7 +354,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{getDataWithKey<ITrainerFriendship>(globalOptions?.trainerFriendship, battleState.fLevel).atkBonus.toFixed(2)}
+                      x{getDataWithKey<ITrainerFriendship>(globalOptions?.trainerFriendship, battleState.fLevel).atkBonus?.toFixed(2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>

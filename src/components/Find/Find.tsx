@@ -72,7 +72,7 @@ const Find = (props: IFindComponent) => {
     }
   };
 
-  const handleSetStats = (type: string, value: number) => {
+  const handleSetStats = (type: TypeAction, value: number) => {
     if (type === TypeAction.ATK && props.setStatATK) {
       props.setStatATK(value);
     } else if (type === TypeAction.DEF && props.setStatDEF) {

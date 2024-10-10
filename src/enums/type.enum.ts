@@ -24,6 +24,7 @@ export enum TypeAction {
   ATK = 'atk',
   DEF = 'def',
   STA = 'sta',
+  PROD = 'prod',
 }
 
 export enum BuffType {

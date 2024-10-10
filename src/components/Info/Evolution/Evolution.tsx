@@ -112,7 +112,9 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const modelEvoChain = (pokemon: IEvolution) => {
-    const name = pokeSetName(pokemon.form !== FORM_NORMAL ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name);
+    const name = pokeSetName(
+      !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name
+    );
     let form =
       pokemon.id === 718 && isEmpty(pokemon.form) ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
     form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
@@ -376,7 +378,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   useEffect(() => {
     if (props.id && props.forme) {
-      if (props.forme.formName.toUpperCase() !== FORM_GMAX) {
+      if (!isEqual(props.forme.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
         getEvoChainStore(props.id, props.forme);
       } else {
         getGmaxChain(props.id, props.forme);
@@ -472,7 +474,7 @@ const Evolution = (props: IEvolutionComponent) => {
                                   <FemaleIcon fontSize="small" />
                                 ) : (
                                   <Fragment>
-                                    {data.quest.genderRequirement === TypeSex.MALE.toUpperCase() ? (
+                                    {isEqual(data.quest.genderRequirement, TypeSex.MALE, EqualMode.IgnoreCaseSensitive) ? (
                                       <MaleIcon fontSize="small" />
                                     ) : (
                                       <FemaleIcon fontSize="small" />
@@ -591,7 +593,9 @@ const Evolution = (props: IEvolutionComponent) => {
             <Fragment>
               {chain.length > 1 || (chain.length === 1 && !isEqual(form, FORM_NORMAL) && !isEmpty(form)) ? (
                 <Fragment>
-                  {form !== FORM_NORMAL && !isEmpty(form) && !isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) ? (
+                  {!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) &&
+                  !isEmpty(form) &&
+                  !isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) ? (
                     <ThemeProvider theme={customTheme}>
                       <Badge
                         color="secondary"

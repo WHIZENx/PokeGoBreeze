@@ -452,7 +452,7 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: IS
   const checkRankAtk = pokemonStats?.attack.ranking.find((item) => item.attack === stats.atk);
   const checkRankDef = pokemonStats?.defense.ranking.find((item) => item.defense === stats.def);
   const checkRankSta = pokemonStats?.stamina.ranking.find((item) => item.stamina === stats.sta);
-  const checkRankProd = pokemonStats?.statProd.ranking.find((item) => item.prod === stats.prod);
+  const checkRankProd = pokemonStats?.statProd.ranking.find((item) => item.product === stats.prod);
   if (checkRankAtk) {
     data.attackRank = checkRankAtk.rank;
   }
@@ -491,7 +491,7 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
     .filter((pokemon) => pokemon.num === id)
     .find(
       (pokemon) =>
-        pokemon.forme?.toUpperCase() === FORM_NORMAL ||
+        isEqual(pokemon.forme, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) ||
         (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.forme, EqualMode.IgnoreCaseSensitive))
     );
   if (!result) {

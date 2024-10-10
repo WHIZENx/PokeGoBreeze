@@ -152,9 +152,7 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const currentForm = isNullOrEmpty(form?.form.formName?.toUpperCase())
-        ? FORM_NORMAL
-        : form?.form.formName.replaceAll('-', '_').toUpperCase();
+      const currentForm = isNullOrEmpty(form?.form.formName) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
       let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
       if (!isNotEmpty(curr)) {
         if (currentForm === FORM_NORMAL) {
@@ -302,7 +300,7 @@ const FindBattle = () => {
   );
 
   const getImageList = (id: number) => {
-    const isForm = isNullOrEmpty(form?.form.formName?.toUpperCase()) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
+    const isForm = isNullOrEmpty(form?.form.formName) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
     let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => isInclude(item.form, isForm ?? FORM_NORMAL));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
@@ -503,7 +501,7 @@ const FindBattle = () => {
             {evoChain.map((value, index) => (
               <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
-                  {!value.at(0)?.form?.toUpperCase() ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0)?.form, '-', ' ')}
+                  {!value.at(0)?.form ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0)?.form, '-', ' ')}
                   {' Form'}
                 </div>
                 <Accordion.Item eventKey="0">

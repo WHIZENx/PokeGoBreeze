@@ -275,7 +275,7 @@ const CalculatePoint = () => {
     enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: 'success' });
   };
 
-  const setIconBattle = (pri: string, sec: string) => {
+  const setIconBattle = (pri: TypeAction, sec: TypeAction) => {
     return (
       <div className="d-flex">
         <div className="border-type-stat text-center">

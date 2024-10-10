@@ -185,7 +185,7 @@ const Move = (props: IMovePage) => {
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
               {Object.keys(data?.typeEff ?? new TypeEff())
-                .filter((type) => type !== 'FAIRY')
+                .filter((type) => !isEqual(type, 'FAIRY', EqualMode.IgnoreCaseSensitive))
                 .map((value, index) => (
                   <option key={index} value={value}>
                     {capitalize(value)}

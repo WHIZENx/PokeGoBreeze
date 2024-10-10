@@ -266,7 +266,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     return StatsProd.create({
       id: item.id,
       form: item.form,
-      prod: item.baseStatsProd,
+      product: item.baseStatsProd,
       rank: prodRanking.length - prodRanking.indexOf(item.baseStatsProd),
     });
   });
@@ -652,7 +652,7 @@ export const calculateStatsByTag = (
 
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
-    sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+    sta = !isEqual(tag, 'shedinja', EqualMode.IgnoreCaseSensitive) ? calBaseSTA(baseStats, checkNerf) : 1;
   }
   return StatsBase.setValue(atk, def, sta);
 };

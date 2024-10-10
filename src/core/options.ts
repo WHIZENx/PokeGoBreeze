@@ -143,9 +143,10 @@ const optionFormNoneSpecial = (data: PokemonDataGM[]) => {
   return result;
 };
 
-const findPokemonData = (id: number, name: string): IPokemonData | undefined => {
+const findPokemonData = (id: number, name: string, isDefault = false): IPokemonData | undefined => {
   return Object.values(pokemonStoreData).find(
-    (pokemon: IPokemonData) => pokemon.num === id && isEqual(name, convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug))
+    (pokemon: IPokemonData) =>
+      pokemon.num === id && isEqual(name, convertPokemonDataName(isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug))
   );
 };
 
@@ -229,7 +230,10 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
 
     const pokemonBaseData = findPokemonData(
       pokemon.id,
-      pokemon.form && pokemon.form !== FORM_NORMAL ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId
+      pokemon.form && !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+        ? `${pokemon.pokemonId}_${pokemon.form}`
+        : pokemon.pokemonId,
+      isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
     );
     if (pokemonBaseData) {
       optional.slug = convertPokemonDataName(pokemonBaseData.slug).replaceAll('_', '-').toLowerCase();
@@ -242,7 +246,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       pokemon.pokedexWeightKg = pokemonBaseData.weightkg;
       optional.isBaby = pokemonBaseData.isBaby;
 
-      if (!pokemon.stats?.baseAttack && !pokemon.stats?.baseAttack && !pokemon.stats?.baseAttack) {
+      if (!pokemon.stats?.baseAttack && !pokemon.stats?.baseDefense && !pokemon.stats?.baseStamina) {
         const stats = calculateStatsByTag(undefined, pokemonBaseData.baseStats, pokemonBaseData.slug);
         pokemon.stats = {
           baseAttack: stats.atk,
@@ -404,7 +408,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       }
     }
 
-    if (pokemon.form !== FORM_SHADOW) {
+    if (!isEqual(pokemon.form, FORM_SHADOW, EqualMode.IgnoreCaseSensitive)) {
       const pokemonData = PokemonData.create(pokemon, types, optional);
       result.push(pokemonData);
     }
@@ -519,7 +523,7 @@ const cleanPokemonDupForm = (result: IPokemonData[]) => {
       (p) =>
         isEqual(pokemon.forme, FORM_NORMAL) &&
         p.num === pokemon.num &&
-        p.forme !== FORM_NORMAL &&
+        !isEqual(p.forme, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) &&
         p.baseForme &&
         isEqual(p.baseForme, p.forme)
     );
@@ -533,10 +537,8 @@ const cleanPokemonDupForm = (result: IPokemonData[]) => {
       const tempPokemon = concatPokemon.find((p) => isEqual(p.forme, FORM_NORMAL));
       if (tempPokemon) {
         concatPokemon
-          .filter((p) => p.forme !== FORM_NORMAL)
-          .forEach((p) => {
-            tempPokemon.evoList?.concat(getValueOrDefault(Array, p.evoList));
-          });
+          .filter((p) => !isEqual(p.forme, FORM_NORMAL, EqualMode.IgnoreCaseSensitive))
+          .forEach((p) => tempPokemon.evoList?.concat(getValueOrDefault(Array, p.evoList)));
         result.push(tempPokemon);
       }
     }
@@ -897,7 +899,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
   moveSet.forEach((move) => {
     if (move.name === 'HIDDEN_POWER') {
       Object.keys(types)
-        .filter((type) => type !== 'NORMAL' && type !== 'FAIRY')
+        .filter((type) => !isEqual(type, 'NORMAL', EqualMode.IgnoreCaseSensitive) && !isEqual(type, 'FAIRY', EqualMode.IgnoreCaseSensitive))
         .forEach((type, index) =>
           result.push(
             Combat.create({
@@ -975,7 +977,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
               (value.form as string[]).forEach((form) => {
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
                   whiteList.push(new PokemonPermission({ ...value, form: FORM_NORMAL }));
-                } else if (form !== 'FORM_UNSET') {
+                } else if (!isEqual(form, 'FORM_UNSET', EqualMode.IgnoreCaseSensitive)) {
                   whiteList.push(new PokemonPermission({ ...value, form: form.replace(`${value.name}_`, '') }));
                 }
               });
@@ -1003,7 +1005,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
               (value.form as string[]).forEach((form) => {
                 if (form === 'FORM_UNSET' && value.form.length === 1) {
                   banList.push(new PokemonPermission({ ...value, form: FORM_NORMAL }));
-                } else if (form !== 'FORM_UNSET') {
+                } else if (!isEqual(form, 'FORM_UNSET', EqualMode.IgnoreCaseSensitive)) {
                   banList.push(new PokemonPermission({ ...value, form: form.replace(`${value.name}_`, '') }));
                 }
               });

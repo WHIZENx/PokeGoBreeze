@@ -37,7 +37,7 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 interface LeagueData {
@@ -249,7 +249,9 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                          ? ''
+                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -264,7 +266,9 @@ const Leagues = () => {
                       </div>
                       <span className="caption">
                         {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                          item.form.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                          isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                            ? ''
+                            : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
                         }`}
                       </span>
                     </Link>
@@ -279,7 +283,9 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                          ? ''
+                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -294,7 +300,9 @@ const Leagues = () => {
                       </div>
                       <span className="caption">
                         {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                          item.form.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                          isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                            ? ''
+                            : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
                         }`}
                       </span>
                     </Link>
@@ -664,7 +672,7 @@ const Leagues = () => {
                 Rank {rank} {rank > 20 && `(${rankName(rank)})`}
               </div>
               <div className="reward-info">
-                {showData.track === LeagueRewardType.Free.toLowerCase() ? (
+                {isEqual(showData.track, LeagueRewardType.Free, EqualMode.IgnoreCaseSensitive) ? (
                   <div className="d-flex" style={{ columnGap: 8 }}>
                     <img
                       className="pokemon-sprite-small filter-shadow"
@@ -697,7 +705,9 @@ const Leagues = () => {
                   className="img-link text-center"
                   key={index}
                   to={`/pokemon/${item.id}${
-                    item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                    isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                      ? ''
+                      : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                   }`}
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
@@ -724,7 +734,9 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                          ? ''
+                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >

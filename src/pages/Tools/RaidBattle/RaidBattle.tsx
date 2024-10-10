@@ -80,7 +80,7 @@ import {
 } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
 
 interface IOption {
@@ -113,7 +113,7 @@ interface IFilterGroup {
 }
 
 class FilterGroup implements IFilterGroup {
-  level = 0;
+  level = MIN_LEVEL;
   isShadow = false;
   iv = new StatsBase();
   onlyShadow = false;
@@ -232,7 +232,7 @@ const RaidBattle = () => {
     setShowOption(true);
   };
 
-  const validIV = (value: number | undefined) => {
+  const isInvalidIV = (value: number | undefined) => {
     return !value || value < MIN_IV || value > MAX_IV;
   };
 
@@ -245,7 +245,7 @@ const RaidBattle = () => {
   };
 
   const handleSaveOption = () => {
-    if (validIV(selected.iv.atk) || validIV(selected.iv.def) || validIV(selected.iv.sta)) {
+    if (isInvalidIV(selected.iv.atk) || isInvalidIV(selected.iv.def) || isInvalidIV(selected.iv.sta)) {
       return;
     }
     const changeResult =
@@ -282,7 +282,7 @@ const RaidBattle = () => {
 
   const handleSaveSettingPokemon = () => {
     const pokemon = showSettingPokemon.pokemon;
-    if (validIV(pokemon?.stats?.iv.atk) || validIV(pokemon?.stats?.iv.def) || validIV(pokemon?.stats?.iv.sta)) {
+    if (isInvalidIV(pokemon?.stats?.iv.atk) || isInvalidIV(pokemon?.stats?.iv.def) || isInvalidIV(pokemon?.stats?.iv.sta)) {
       return;
     }
     setPokemonBattle(
@@ -566,7 +566,7 @@ const RaidBattle = () => {
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: IPokemonMoveData[] = [];
     data?.pokemon?.forEach((pokemon) => {
-      if (pokemon && pokemon.forme?.toUpperCase() !== FORM_GMAX) {
+      if (pokemon && !isEqual(pokemon.forme, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.quickMoves), false, pokemonTarget, pokemon.isShadow);
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMove), true, pokemonTarget, pokemon.isShadow);
       }

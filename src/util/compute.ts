@@ -149,7 +149,7 @@ export const computeBgType = (
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets || name?.toUpperCase() === FORM_GMAX) {
+  if (!pokemonAssets || isEqual(name, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
     return;
   }
   const asset = pokemonAssets.image.find((img) => isEqual(img.form, name));
