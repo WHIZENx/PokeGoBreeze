@@ -76,6 +76,7 @@ import {
   isIncludeList,
   isNotEmpty,
   isUndefined,
+  toFloat,
   toNumber,
 } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
@@ -835,7 +836,7 @@ const RaidBattle = () => {
           <Form.Select
             value={filters.selected.level}
             className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: parseFloat(e.target.value) } })}
+            onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: toFloat(e.target.value) } })}
           >
             {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
               <option key={index} value={value}>
@@ -1042,7 +1043,7 @@ const RaidBattle = () => {
                       ...showSettingPokemon,
                       pokemon: {
                         ...showSettingPokemon.pokemon,
-                        stats: { ...showSettingPokemon.pokemon.stats, level: parseFloat(e.target.value) },
+                        stats: { ...showSettingPokemon.pokemon.stats, level: toFloat(e.target.value) },
                       },
                     })
                   );

@@ -13,7 +13,7 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat } from '../../../util/extension';
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
@@ -64,7 +64,7 @@ const columns: TableColumnModify<ICombat>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => parseFloat((row.pvePower / (row.durationMs / 1000)).toFixed(2)),
+    selector: (row) => toFloat(row.pvePower / (row.durationMs / 1000), 2),
     sortable: true,
   },
 ];

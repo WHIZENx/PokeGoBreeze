@@ -36,6 +36,7 @@ import {
   isEqual,
   isIncludeList,
   isNotEmpty,
+  toFloat,
   toNumber,
 } from '../../util/extension';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
@@ -81,13 +82,13 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => parseFloat(row.dps.toFixed(2)),
+    selector: (row) => toFloat(row.dps, 2),
     sortable: true,
     minWidth: '90px',
   },
   {
     name: 'TDO',
-    selector: (row) => parseFloat(row.tdo.toFixed(2)),
+    selector: (row) => toFloat(row.tdo, 2),
     sortable: true,
     minWidth: '90px',
   },

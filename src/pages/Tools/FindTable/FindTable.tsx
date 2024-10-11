@@ -22,7 +22,7 @@ import {
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isNotEmpty, toNumber } from '../../../util/extension';
+import { getValueOrDefault, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
 
 interface IFindCP {
   level: number;
@@ -210,7 +210,7 @@ const FindTable = () => {
               All of result: <b>{preIvArr?.result.length}</b>
             </p>
             <p className="element-top">
-              Average of percent: <b>{parseFloat(avgPercent.toFixed(2))}</b>
+              Average of percent: <b>{toFloat(avgPercent, 2)}</b>
             </p>
             <p className="element-top">
               Average of HP: <b>{Math.round(avgHP)}</b>

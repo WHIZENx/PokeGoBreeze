@@ -2,6 +2,7 @@ import { createPool } from '@vercel/postgres';
 import { CPMData } from '../core/models/cpm.model';
 import { IPokemonDetail } from '../core/models/API/info.model';
 import { PokemonEncounter } from '../core/models/pokemon.model';
+import { toFloat } from '../util/extension';
 
 const db = createPool({
   connectionString: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
@@ -60,7 +61,7 @@ export const createDbPokemonEncounter = async (pokemon: PokemonEncounter, index:
   ) VALUES (
     ${index + 1},
     ${pokemon.name},
-    ${parseFloat(pokemon.basecapturerate.toString())},
-    ${parseFloat(pokemon.basefleerate.toString())}
+    ${toFloat(pokemon.basecapturerate)},
+    ${toFloat(pokemon.basefleerate)}
   )`;
 };

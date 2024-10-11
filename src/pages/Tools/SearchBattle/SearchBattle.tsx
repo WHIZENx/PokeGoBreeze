@@ -36,6 +36,7 @@ import {
   isIncludeList,
   isNotEmpty,
   isNullOrEmpty,
+  toFloat,
   toNumber,
 } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
@@ -325,7 +326,7 @@ const FindBattle = () => {
   };
 
   const getTextColorRatio = (value: number) => {
-    value = parseFloat(value.toFixed(2));
+    value = toFloat(value, 2);
     return `rank-${value === 100 ? 'max' : value >= 90 ? 'excellent' : value >= 80 ? 'great' : value >= 70 ? 'nice' : 'normal'}`;
   };
 

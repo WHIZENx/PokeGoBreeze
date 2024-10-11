@@ -80,7 +80,7 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isUndefined, toNumber } from './extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isUndefined, toFloat, toNumber } from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 import { EqualMode, IncludeMode } from './enums/string.enum';
@@ -371,7 +371,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: string) =
                 def: defIV,
                 sta: staIV,
                 level,
-                percent: parseFloat((((atkIV + defIV + staIV) * 100) / 45).toFixed(2)),
+                percent: toFloat(((atkIV + defIV + staIV) * 100) / (MAX_IV * 3), 2),
                 hp: Math.max(1, calculateStatsBattle(sta, staIV, level, true)),
               })
             );

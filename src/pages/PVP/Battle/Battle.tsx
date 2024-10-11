@@ -64,7 +64,7 @@ import { StatsBase } from '../../../core/models/stats.model';
 import { BuffType, TypeAction } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
@@ -528,7 +528,7 @@ const Battle = () => {
             const moveType = chargeType === ChargeType.Primary ? player1.cMove : player1.cMoveSec;
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
-            const randInt = parseFloat(Math.random().toFixed(3));
+            const randInt = toFloat(Math.random(), 3);
             if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
               moveType.buffs.forEach((value) => {
                 if (value.target === BuffType.Target) {
@@ -594,7 +594,7 @@ const Battle = () => {
             const moveType = chargeType === ChargeType.Primary ? player2.cMove : player2.cMoveSec;
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
-            const randInt = parseFloat(Math.random().toFixed(3));
+            const randInt = toFloat(Math.random(), 3);
             if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
               moveType.buffs.forEach((value) => {
                 if (value.target === BuffType.Target) {
@@ -1664,11 +1664,7 @@ const Battle = () => {
                   </RadioGroup>
                   <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} disabled={playState}>
                     <InputLabel>Speed</InputLabel>
-                    <Select
-                      value={duration}
-                      onChange={(e) => setOptions({ ...options, duration: parseFloat(e.target.value.toString()) })}
-                      label="Speed"
-                    >
+                    <Select value={duration} onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })} label="Speed">
                       <MenuItem value={0.5}>x0.5</MenuItem>
                       <MenuItem value={1}>Normal</MenuItem>
                       <MenuItem value={2}>x2</MenuItem>

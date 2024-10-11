@@ -67,6 +67,7 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
+  toFloat,
   toNumber,
 } from '../../../util/extension';
 import { InputType } from '../../../components/Input/enums/input-type.enum';
@@ -222,19 +223,19 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => parseFloat(row.dps.toFixed(3)),
+    selector: (row) => toFloat(row.dps, 3),
     sortable: true,
     minWidth: '80px',
   },
   {
     name: 'TDO',
-    selector: (row) => parseFloat(row.tdo.toFixed(3)),
+    selector: (row) => toFloat(row.tdo, 3),
     sortable: true,
     minWidth: '100px',
   },
   {
     name: 'DPS^3*TDO',
-    selector: (row) => parseFloat(row.multiDpsTdo.toFixed(3)),
+    selector: (row) => toFloat(row.multiDpsTdo, 3),
     sortable: true,
     minWidth: '140px',
   },
@@ -982,7 +983,7 @@ const DpsTdo = () => {
                       OptionOtherDPS.create({
                         ...options,
                         delay: Delay.create({
-                          fTime: parseFloat(e.currentTarget.value),
+                          fTime: toFloat(e.currentTarget.value),
                           cTime: getValueOrDefault(Number, options.delay?.cTime),
                         }),
                       })
@@ -1005,7 +1006,7 @@ const DpsTdo = () => {
                         ...options,
                         delay: Delay.create({
                           fTime: getValueOrDefault(Number, options.delay?.fTime),
-                          cTime: parseFloat(e.currentTarget.value),
+                          cTime: toFloat(e.currentTarget.value),
                         }),
                       })
                     )
@@ -1078,7 +1079,7 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        pokemonLevel: e.target.value ? parseFloat(e.target.value) : 0,
+                        pokemonLevel: toFloat(e.target.value, -1, MIN_LEVEL),
                       })
                     }
                   >
@@ -1103,7 +1104,7 @@ const DpsTdo = () => {
                       setOptions(
                         OptionOtherDPS.create({
                           ...options,
-                          pokemonDefObj: parseFloat(e.currentTarget.value),
+                          pokemonDefObj: toFloat(e.currentTarget.value),
                         })
                       )
                     }
@@ -1115,7 +1116,7 @@ const DpsTdo = () => {
                   <Form.Select
                     style={{ borderRadius: 0 }}
                     className="form-control"
-                    defaultValue={String(weatherBoosts)}
+                    defaultValue={getValueOrDefault(String, weatherBoosts)}
                     onChange={(e) =>
                       setOptions(
                         OptionOtherDPS.create({
@@ -1125,7 +1126,7 @@ const DpsTdo = () => {
                       )
                     }
                   >
-                    <option value="">Extream</option>
+                    <option value="">Extreme</option>
                     {Object.keys(data?.weatherBoost ?? new WeatherBoost()).map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
