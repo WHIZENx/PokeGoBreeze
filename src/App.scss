@@ -32,18 +32,6 @@ a {
   }
 }
 
-.loading-spin-table {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-  background-color: white;
-  padding: 15px;
-  border-radius: 5px;
-  box-shadow: 0 8px 8px 0 rgb(0 0 0 / 20%);
-}
-
 .link-url {
   color: #0d6efd;
   cursor: pointer;

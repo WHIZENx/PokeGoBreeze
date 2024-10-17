@@ -43,6 +43,7 @@ import { Toggle } from '../../../core/models/pvp.model';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { VariantType } from '../../../enums/type.enum';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -277,13 +278,13 @@ const FindBattle = () => {
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (toNumber(searchCP) < 10) {
-        return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+        return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
       }
       const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
       if (!result.level) {
         return enqueueSnackbar(
           `At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`,
-          { variant: 'error' }
+          { variant: VariantType.Error }
         );
       }
       dispatch(SpinnerActions.ShowSpinner.create());
@@ -293,7 +294,7 @@ const FindBattle = () => {
           `Search success at CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${
             result.IV.sta
           } found in ${name} ${splitAndCapitalize(form?.form.formName, '-', ' ')}`,
-          { variant: 'success' }
+          { variant: VariantType.Success }
         );
       }, 500);
     },

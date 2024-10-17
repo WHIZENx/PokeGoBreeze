@@ -8,6 +8,7 @@ export enum RaidState {
 export enum SortType {
   DPS,
   TDO,
+  TTK,
   TANK,
 }
 

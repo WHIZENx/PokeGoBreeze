@@ -18,7 +18,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { TypeAction, TypeMove } from '../../enums/type.enum';
+import { TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -134,7 +134,7 @@ const Move = (props: IMovePage) => {
             ' '
           )}`;
         } else {
-          enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: 'error' });
+          enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: VariantType.Error });
           if (id) {
             document.title = `#${id} - Not Found`;
           }

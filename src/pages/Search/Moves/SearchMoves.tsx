@@ -6,7 +6,7 @@ import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../.
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
-import { TypeMove } from '../../../enums/type.enum';
+import { TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -168,7 +168,7 @@ const Search = () => {
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       <TextField
                         type="text"
-                        variant="outlined"
+                        variant={VariantType.Outlined}
                         placeholder="Enter Name or ID"
                         defaultValue={fMoveName}
                         onChange={(e) => setFilters(Filter.create({ ...filters, fMoveName: e.target.value }))}
@@ -224,7 +224,7 @@ const Search = () => {
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       <TextField
                         type="text"
-                        variant="outlined"
+                        variant={VariantType.Outlined}
                         placeholder="Enter Name or ID"
                         defaultValue={cMoveName}
                         onChange={(e) => setFilters(Filter.create({ ...filters, cMoveName: e.target.value }))}

@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { getValueOrDefault, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
+import { VariantType } from '../../../enums/type.enum';
 
 interface IFindCP {
   level: number;
@@ -140,12 +141,12 @@ const FindTable = () => {
 
   const findStatsIv = useCallback(() => {
     if (toNumber(searchCP) < 10) {
-      return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+      return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
     }
     const result = predictStat(statATK, statDEF, statSTA, searchCP);
     if (!isNotEmpty(result.result)) {
       setPreIvArr(undefined);
-      return enqueueSnackbar(`At CP: ${result.CP} impossible found in ${name}`, { variant: 'error' });
+      return enqueueSnackbar(`At CP: ${result.CP} impossible found in ${name}`, { variant: VariantType.Error });
     }
     setPreIvArr(result);
   }, [enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);
@@ -176,7 +177,7 @@ const FindTable = () => {
       searchSTAIv < MIN_IV ||
       searchSTAIv > MAX_IV
     ) {
-      return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+      return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
     }
     const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
     setPreCpArr(result);

@@ -1152,13 +1152,13 @@ export const rankMove = (
   types: string[]
 ) => {
   if (!move) {
-    return new PokemonQueryRankMove({ data: [] });
+    return new PokemonQueryRankMove();
   }
   const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, atk, def, sta, types);
   move.quickMoves?.forEach((vf) => setQueryMove(data, vf, move, false));
   move.eliteQuickMove?.forEach((vf) => setQueryMove(data, vf, move, true));
 
-  return new PokemonQueryRankMove({
+  return PokemonQueryRankMove.create({
     data: data.dataList,
     maxOff: Math.max(...data.dataList.map((item) => item.eDPS.offensive)),
     maxDef: Math.max(...data.dataList.map((item) => item.eDPS.defensive)),

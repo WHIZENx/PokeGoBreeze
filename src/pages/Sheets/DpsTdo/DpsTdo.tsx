@@ -10,8 +10,8 @@ import {
   FORM_PRIMAL,
   FORM_PURIFIED,
   FORM_SHADOW,
+  levelList,
   MAX_IV,
-  MAX_LEVEL,
   MIN_IV,
   MIN_LEVEL,
   TYPE_LEGENDARY,
@@ -32,7 +32,6 @@ import {
 import DataTable from 'react-data-table-component';
 import APIService from '../../../services/API.service';
 
-import loadingImg from '../../../assets/loading.png';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
@@ -72,6 +71,7 @@ import {
 } from '../../../util/extension';
 import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import Loading from '../../../components/Sprites/Loading/Loading';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -1083,7 +1083,7 @@ const DpsTdo = () => {
                       })
                     }
                   >
-                    {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+                    {levelList.map((value, index) => (
                       <option key={index} value={value}>
                         {value}
                       </option>
@@ -1185,17 +1185,7 @@ const DpsTdo = () => {
         </div>
       </div>
       <div className="position-relative">
-        <div className="loading-group-spin-table" style={{ display: !showSpinner ? 'none' : 'block' }} />
-        <div className="loading-spin-table text-center" style={{ display: !showSpinner ? 'none' : 'block' }}>
-          <img className="loading" width={64} height={64} alt="img-pokemon" src={loadingImg} />
-          <span className="caption text-black" style={{ fontSize: 18 }}>
-            <b>
-              Loading<span id="p1">.</span>
-              <span id="p2">.</span>
-              <span id="p3">.</span>
-            </b>
-          </span>
-        </div>
+        <Loading isShow={showSpinner} bgColor={'white'} />
         <DataTable
           columns={convertColumnDataType(columns)}
           data={dataFilter}

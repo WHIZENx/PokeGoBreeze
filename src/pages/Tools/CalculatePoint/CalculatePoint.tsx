@@ -8,7 +8,7 @@ import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
 import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { findStabType } from '../../../util/compute';
-import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+import { levelList, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 import { useSnackbar } from 'notistack';
 
@@ -16,7 +16,7 @@ import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
-import { TypeAction, TypeMove } from '../../../enums/type.enum';
+import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -155,7 +155,7 @@ const CalculatePoint = () => {
     }
     const colorTone = computeColorTone([...new Set(group)].sort((a, b) => a - b));
     setResultBreakPointAtk({ data: dataList, colorTone });
-    enqueueSnackbar('Calculate breakpoint attacker successfully!', { variant: 'success' });
+    enqueueSnackbar('Calculate breakpoint attacker successfully!', { variant: VariantType.Success });
   };
 
   const calculateBreakpointDef = () => {
@@ -198,7 +198,7 @@ const CalculatePoint = () => {
       colorToneDef,
       colorToneSta,
     });
-    enqueueSnackbar('Calculate breakpoint defender successfully!', { variant: 'success' });
+    enqueueSnackbar('Calculate breakpoint defender successfully!', { variant: VariantType.Success });
   };
 
   const computeColorTone = (data: number[]) => {
@@ -272,7 +272,7 @@ const CalculatePoint = () => {
     const maxLength = Math.max(...dataList.map((item) => item.length));
     dataList = dataList.map((item) => item.concat(Array(maxLength - item.length).fill(0)));
     setResultBulkPointDef({ data: dataList, maxLength });
-    enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: 'success' });
+    enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: VariantType.Success });
   };
 
   const setIconBattle = (pri: TypeAction, sec: TypeAction) => {
@@ -470,7 +470,7 @@ const CalculatePoint = () => {
                         </tr>
                       </thead>
                       <tbody className="text-center">
-                        {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
+                        {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
                             {[...Array(MAX_IV + 1).keys()].map((iv, index) => (
@@ -598,7 +598,7 @@ const CalculatePoint = () => {
                         </tr>
                       </thead>
                       <tbody className="text-center">
-                        {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
+                        {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
                             {[...Array(MAX_IV + 1).keys()].map((iv, index) => (
@@ -650,7 +650,7 @@ const CalculatePoint = () => {
                         </tr>
                       </thead>
                       <tbody className="text-center">
-                        {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
+                        {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
                             {[...Array(MAX_IV + 1).keys()].map((_, index) => (
@@ -860,7 +860,7 @@ const CalculatePoint = () => {
                         </tr>
                       </thead>
                       <tbody className="text-center">
-                        {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((level, i) => (
+                        {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
                             {resultBulkPointDef ? (

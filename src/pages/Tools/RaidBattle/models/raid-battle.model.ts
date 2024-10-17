@@ -34,7 +34,7 @@ interface IRaidSummary {
   bossHp: number;
 }
 
-class RaidSummary implements IRaidSummary {
+export class RaidSummary implements IRaidSummary {
   dpsAtk = 0;
   dpsDef = 0;
   tdoAtk = 0;

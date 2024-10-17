@@ -29,6 +29,7 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isInclude } from '../../../util/extension';
 import { ChargeAbility, PokemonType } from './enums/damage.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { VariantType } from '../../../enums/type.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -185,7 +186,7 @@ const Damage = () => {
           })
         );
       } else {
-        enqueueSnackbar('Please select move for pokémon!', { variant: 'error' });
+        enqueueSnackbar('Please select move for pokémon!', { variant: VariantType.Error });
       }
     },
     [

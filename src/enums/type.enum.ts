@@ -31,3 +31,24 @@ export enum BuffType {
   Target = 'target',
   Attacker = 'attacker',
 }
+
+export enum GlobalType {
+  None = -1,
+  All = 0,
+}
+
+export enum VariantType {
+  Default = 'default',
+  Error = 'error',
+  Success = 'success',
+  Warning = 'warning',
+  Info = 'info',
+  Dark = 'dark',
+  Light = 'light',
+  Determinate = 'determinate',
+  Danger = 'danger',
+  Standard = 'standard',
+  Secondary = 'secondary',
+  Outlined = 'outlined',
+  Primary = 'primary',
+}

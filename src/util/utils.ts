@@ -886,16 +886,12 @@ export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
 };
 
 export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
-  if (!pokemon) {
-    return [];
-  }
-
-  return getValueOrDefault(Array, pokemon.quickMoves).concat(
-    getValueOrDefault(Array, pokemon.eliteQuickMove),
-    getValueOrDefault(Array, pokemon.cinematicMoves),
-    getValueOrDefault(Array, pokemon.eliteCinematicMove),
-    getValueOrDefault(Array, pokemon.shadowMoves),
-    getValueOrDefault(Array, pokemon.purifiedMoves),
-    getValueOrDefault(Array, pokemon.specialMoves)
+  return getValueOrDefault(Array, pokemon?.quickMoves).concat(
+    getValueOrDefault(Array, pokemon?.eliteQuickMove),
+    getValueOrDefault(Array, pokemon?.cinematicMoves),
+    getValueOrDefault(Array, pokemon?.eliteCinematicMove),
+    getValueOrDefault(Array, pokemon?.shadowMoves),
+    getValueOrDefault(Array, pokemon?.purifiedMoves),
+    getValueOrDefault(Array, pokemon?.specialMoves)
   );
 };

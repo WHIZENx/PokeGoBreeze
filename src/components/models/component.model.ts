@@ -400,6 +400,26 @@ export interface ITypeBarComponent {
   type: string | undefined;
 }
 
+export interface ILoadingComponent {
+  isShow: boolean;
+  size?: number;
+  fontSize?: number;
+  opacity?: number;
+  bgColor?: string;
+  isVertical?: boolean;
+}
+
+export interface ILoadGroupComponent {
+  className?: string;
+  isShow: boolean;
+  size?: number;
+  fontSize?: number;
+  opacity?: number;
+  bgColor?: string;
+  isVertical?: boolean;
+  hideAttr?: boolean;
+}
+
 export interface IWeatherComponent {
   arr: string[];
   style: React.CSSProperties | undefined;

@@ -15,7 +15,7 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, ICombat } from '../../../core/models/combat.model';
 import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
-import { IPokemonQueryMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
+import { IPokemonQueryMove, IPokemonQueryRankMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
@@ -64,9 +64,7 @@ class TableSort implements ITableSort {
 const TableMove = (props: ITableMoveComponent) => {
   const theme = useTheme<ThemeModify>();
   const data = useSelector((state: StoreState) => state.store.data);
-  const [move, setMove] = useState<PokemonQueryRankMove>({
-    data: [],
-  });
+  const [move, setMove] = useState<IPokemonQueryRankMove>(new PokemonQueryRankMove());
   const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
 
   const [stateSorted, setStateSorted] = useState(
@@ -89,10 +87,10 @@ const TableMove = (props: ITableMoveComponent) => {
   const { offensive, defensive } = stateSorted;
 
   const filterUnknownMove = (moves: string[] | undefined) => {
-    if (!moves || !isNotEmpty(moves)) {
-      return [];
-    }
-    return moves.map((move) => data?.combat?.find((item) => isEqual(item.name, move)) ?? new Combat()).filter((move) => move.id > 0);
+    return getValueOrDefault(
+      Array,
+      moves?.map((move) => data?.combat?.find((item) => isEqual(item.name, move)) ?? new Combat()).filter((move) => move.id > 0)
+    );
   };
 
   const filterMoveType = (combat: IPokemonData | undefined) => {
@@ -166,9 +164,7 @@ const TableMove = (props: ITableMoveComponent) => {
 
   useEffect(() => {
     setMoveOrigin(undefined);
-    setMove({
-      data: [],
-    });
+    setMove(new PokemonQueryRankMove());
     if (props.form) {
       findMove();
     }
