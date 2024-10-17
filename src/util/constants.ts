@@ -7,7 +7,7 @@ import { DynamicObj } from './extension';
 import { LeagueType } from '../core/enums/league.enum';
 import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
-import { BattleLeagueCPType } from './enums/compute.enum';
+import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 
 // KeyCode
 export const KEY_ENTER = 13;
@@ -303,3 +303,5 @@ export const genRoman = (gen: number) => {
 };
 
 export const scoreType = ['Overall', 'Leads', 'Closers', 'Switches', 'Chargers', 'Attackers', 'Consistency'];
+export const leaguesDefault = [BattleLeagueIconType.Great, BattleLeagueIconType.Ultra, BattleLeagueIconType.Master];
+export const levelList = Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5);

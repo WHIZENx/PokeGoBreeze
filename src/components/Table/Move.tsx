@@ -28,7 +28,7 @@ const Move = (props: IMoveComponent) => {
       const result = retrieveMoves(getValueOrDefault(Array, data?.pokemon), id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
-        if (props.type !== TypeMove.CHARGE) {
+        if (!props.type || isEqual(props.type, TypeMove.FAST)) {
           result.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
@@ -37,25 +37,24 @@ const Move = (props: IMoveComponent) => {
           });
           setCountFM(simpleMove.length);
         }
-        if (props.type === TypeMove.FAST) {
-          return setResultMove(simpleMove);
+        if (!props.type || isEqual(props.type, TypeMove.CHARGE)) {
+          result.cinematicMoves?.forEach((value) => {
+            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+          });
+          result.eliteCinematicMove?.forEach((value) => {
+            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+          });
+          result.shadowMoves?.forEach((value) => {
+            simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+          });
+          result.purifiedMoves?.forEach((value) => {
+            simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+          });
+          result.specialMoves?.forEach((value) => {
+            simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+          });
         }
-        result.cinematicMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
-        });
-        result.eliteCinematicMove?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
-        });
-        result.shadowMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, true, false, false));
-        });
-        result.purifiedMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, true, false));
-        });
-        result.specialMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, true));
-        });
-        setResultMove(simpleMove);
+        return setResultMove(simpleMove);
       }
     },
     [props.type, data?.pokemon]

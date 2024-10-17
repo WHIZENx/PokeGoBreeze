@@ -10,8 +10,8 @@ import {
   FORM_PRIMAL,
   FORM_PURIFIED,
   FORM_SHADOW,
+  levelList,
   MAX_IV,
-  MAX_LEVEL,
   MIN_IV,
   MIN_LEVEL,
   TYPE_LEGENDARY,
@@ -32,7 +32,6 @@ import {
 import DataTable from 'react-data-table-component';
 import APIService from '../../../services/API.service';
 
-import loadingImg from '../../../assets/loading.png';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import { Box } from '@mui/system';
@@ -67,10 +66,12 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
+  toFloat,
   toNumber,
 } from '../../../util/extension';
 import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import Loading from '../../../components/Sprites/Loading/Loading';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -222,19 +223,19 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => parseFloat(row.dps.toFixed(3)),
+    selector: (row) => toFloat(row.dps, 3),
     sortable: true,
     minWidth: '80px',
   },
   {
     name: 'TDO',
-    selector: (row) => parseFloat(row.tdo.toFixed(3)),
+    selector: (row) => toFloat(row.tdo, 3),
     sortable: true,
     minWidth: '100px',
   },
   {
     name: 'DPS^3*TDO',
-    selector: (row) => parseFloat(row.multiDpsTdo.toFixed(3)),
+    selector: (row) => toFloat(row.multiDpsTdo, 3),
     sortable: true,
     minWidth: '140px',
   },
@@ -666,22 +667,13 @@ const DpsTdo = () => {
     );
   }, [
     dispatch,
+    filters,
+    options,
+    selectTypes,
     dataTargetPokemon,
     fMoveTargetPokemon,
     cMoveTargetPokemon,
     searchTerm,
-    dpsTable,
-    match,
-    selectTypes,
-    showShadow,
-    showEliteMove,
-    showMega,
-    enableElite,
-    enableShadow,
-    enableMega,
-    enableBest,
-    bestOf,
-    releasedGO,
     defaultPage,
     defaultRowPerPage,
     defaultSorted,
@@ -991,7 +983,7 @@ const DpsTdo = () => {
                       OptionOtherDPS.create({
                         ...options,
                         delay: Delay.create({
-                          fTime: parseFloat(e.currentTarget.value),
+                          fTime: toFloat(e.currentTarget.value),
                           cTime: getValueOrDefault(Number, options.delay?.cTime),
                         }),
                       })
@@ -1014,7 +1006,7 @@ const DpsTdo = () => {
                         ...options,
                         delay: Delay.create({
                           fTime: getValueOrDefault(Number, options.delay?.fTime),
-                          cTime: parseFloat(e.currentTarget.value),
+                          cTime: toFloat(e.currentTarget.value),
                         }),
                       })
                     )
@@ -1087,11 +1079,11 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        pokemonLevel: e.target.value ? parseFloat(e.target.value) : 0,
+                        pokemonLevel: toFloat(e.target.value, -1, MIN_LEVEL),
                       })
                     }
                   >
-                    {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+                    {levelList.map((value, index) => (
                       <option key={index} value={value}>
                         {value}
                       </option>
@@ -1112,7 +1104,7 @@ const DpsTdo = () => {
                       setOptions(
                         OptionOtherDPS.create({
                           ...options,
-                          pokemonDefObj: parseFloat(e.currentTarget.value),
+                          pokemonDefObj: toFloat(e.currentTarget.value),
                         })
                       )
                     }
@@ -1124,7 +1116,7 @@ const DpsTdo = () => {
                   <Form.Select
                     style={{ borderRadius: 0 }}
                     className="form-control"
-                    defaultValue={String(weatherBoosts)}
+                    defaultValue={getValueOrDefault(String, weatherBoosts)}
                     onChange={(e) =>
                       setOptions(
                         OptionOtherDPS.create({
@@ -1134,7 +1126,7 @@ const DpsTdo = () => {
                       )
                     }
                   >
-                    <option value="">Extream</option>
+                    <option value="">Extreme</option>
                     {Object.keys(data?.weatherBoost ?? new WeatherBoost()).map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
@@ -1193,17 +1185,7 @@ const DpsTdo = () => {
         </div>
       </div>
       <div className="position-relative">
-        <div className="loading-group-spin-table" style={{ display: !showSpinner ? 'none' : 'block' }} />
-        <div className="loading-spin-table text-center" style={{ display: !showSpinner ? 'none' : 'block' }}>
-          <img className="loading" width={64} height={64} alt="img-pokemon" src={loadingImg} />
-          <span className="caption text-black" style={{ fontSize: 18 }}>
-            <b>
-              Loading<span id="p1">.</span>
-              <span id="p2">.</span>
-              <span id="p3">.</span>
-            </b>
-          </span>
-        </div>
+        <Loading isShow={showSpinner} bgColor={'white'} />
         <DataTable
           columns={convertColumnDataType(columns)}
           data={dataFilter}

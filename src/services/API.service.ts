@@ -2,8 +2,8 @@ import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios
 import { APIUrl } from './constants';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
-import { isEmpty, isInclude } from '../util/extension';
-import { IncludeMode } from '../util/enums/string.enum';
+import { isEmpty, isEqual, isInclude } from '../util/extension';
+import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 
 class APIService {
   date: Date;
@@ -110,7 +110,7 @@ class APIService {
   }
 
   getTypeSprite(type: string) {
-    if (type.toLowerCase() === 'unknown') {
+    if (isEqual(type, 'unknown', EqualMode.IgnoreCaseSensitive)) {
       return this.getPokeSprite(0);
     }
     return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;

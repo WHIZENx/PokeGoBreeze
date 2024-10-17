@@ -18,7 +18,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { TypeAction, TypeMove } from '../../enums/type.enum';
+import { TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -36,6 +36,7 @@ import {
   isEqual,
   isIncludeList,
   isNotEmpty,
+  toFloat,
   toNumber,
 } from '../../util/extension';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
@@ -81,13 +82,13 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => parseFloat(row.dps.toFixed(2)),
+    selector: (row) => toFloat(row.dps, 2),
     sortable: true,
     minWidth: '90px',
   },
   {
     name: 'TDO',
-    selector: (row) => parseFloat(row.tdo.toFixed(2)),
+    selector: (row) => toFloat(row.tdo, 2),
     sortable: true,
     minWidth: '90px',
   },
@@ -133,7 +134,7 @@ const Move = (props: IMovePage) => {
             ' '
           )}`;
         } else {
-          enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: 'error' });
+          enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: VariantType.Error });
           if (id) {
             document.title = `#${id} - Not Found`;
           }
@@ -185,7 +186,7 @@ const Move = (props: IMovePage) => {
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
               {Object.keys(data?.typeEff ?? new TypeEff())
-                .filter((type) => type !== 'FAIRY')
+                .filter((type) => !isEqual(type, 'FAIRY', EqualMode.IgnoreCaseSensitive))
                 .map((value, index) => (
                   <option key={index} value={value}>
                     {capitalize(value)}

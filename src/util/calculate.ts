@@ -80,7 +80,7 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isUndefined, toNumber } from './extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isUndefined, toFloat, toNumber } from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 import { EqualMode, IncludeMode } from './enums/string.enum';
@@ -266,7 +266,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     return StatsProd.create({
       id: item.id,
       form: item.form,
-      prod: item.baseStatsProd,
+      product: item.baseStatsProd,
       rank: prodRanking.length - prodRanking.indexOf(item.baseStatsProd),
     });
   });
@@ -371,7 +371,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: string) =
                 def: defIV,
                 sta: staIV,
                 level,
-                percent: parseFloat((((atkIV + defIV + staIV) * 100) / 45).toFixed(2)),
+                percent: toFloat(((atkIV + defIV + staIV) * 100) / (MAX_IV * 3), 2),
                 hp: Math.max(1, calculateStatsBattle(sta, staIV, level, true)),
               })
             );
@@ -652,7 +652,7 @@ export const calculateStatsByTag = (
 
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
-    sta = tag !== 'shedinja' ? calBaseSTA(baseStats, checkNerf) : 1;
+    sta = !isEqual(tag, 'shedinja', EqualMode.IgnoreCaseSensitive) ? calBaseSTA(baseStats, checkNerf) : 1;
   }
   return StatsBase.setValue(atk, def, sta);
 };
@@ -1152,13 +1152,13 @@ export const rankMove = (
   types: string[]
 ) => {
   if (!move) {
-    return new PokemonQueryRankMove({ data: [] });
+    return new PokemonQueryRankMove();
   }
   const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, atk, def, sta, types);
   move.quickMoves?.forEach((vf) => setQueryMove(data, vf, move, false));
   move.eliteQuickMove?.forEach((vf) => setQueryMove(data, vf, move, true));
 
-  return new PokemonQueryRankMove({
+  return PokemonQueryRankMove.create({
     data: data.dataList,
     maxOff: Math.max(...data.dataList.map((item) => item.eDPS.offensive)),
     maxDef: Math.max(...data.dataList.map((item) => item.eDPS.defensive)),

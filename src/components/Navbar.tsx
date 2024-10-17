@@ -11,6 +11,7 @@ import { Box, LinearProgress } from '@mui/material';
 import { SpinnerState, StoreState } from '../store/models/state.model';
 import { getEdgeItem } from '../services/edge.service';
 import { EdgeKey } from '../services/constants/edgeKey';
+import { VariantType } from '../enums/type.enum';
 
 const NavbarComponent = () => {
   const timestamp = useSelector((state: StoreState) => state.store.timestamp);
@@ -24,7 +25,7 @@ const NavbarComponent = () => {
 
   return (
     <Fragment>
-      <Navbar collapseOnSelect={true} bg="dark" expand="lg" variant="dark">
+      <Navbar collapseOnSelect={true} bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
         <Link className="navbar-brand" to="/">
           <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{ marginLeft: 10, marginRight: 10 }} />
           PokéGoBreeze
@@ -119,7 +120,7 @@ const NavbarComponent = () => {
       </Navbar>
       {spinner.bar.show && (
         <Box sx={{ width: '100%', position: 'absolute', zIndex: 7 }}>
-          <LinearProgress variant="determinate" value={spinner.bar.percent} />
+          <LinearProgress variant={VariantType.Determinate} value={spinner.bar.percent} />
         </Box>
       )}
     </Fragment>

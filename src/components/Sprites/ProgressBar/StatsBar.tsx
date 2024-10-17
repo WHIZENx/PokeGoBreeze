@@ -41,7 +41,7 @@ const StatsBar = (props: IStatsBarComponent) => {
             .replaceAll('_', '-')
             .toLowerCase()}`,
           {
-            state: { stats: getValueOrDefault(String, props.statType).toLowerCase() },
+            state: { stats: props.statType },
           }
         )
       }

@@ -4,7 +4,8 @@ import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/co
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
+import { getValueOrDefault, isEqual, isUndefined, toNumber } from '../../util/extension';
+import { EqualMode } from '../../util/enums/string.enum';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -541,7 +542,10 @@ export class PokemonData implements IPokemonData {
     obj.num = pokemon.id;
     obj.name = capitalize(pokemon.name.replaceAll('_', '-'));
     if (pokemon.id !== 201) {
-      obj.fullName = pokemon.form && pokemon.form !== FORM_NORMAL ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
+      obj.fullName =
+        pokemon.form && !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+          ? `${pokemon.pokemonId}_${pokemon.form}`
+          : pokemon.pokemonId;
     } else {
       obj.fullName = getValueOrDefault(String, pokemon.form);
     }
@@ -558,7 +562,7 @@ export class PokemonData implements IPokemonData {
     obj.baseStats = StatsPokemon.create({
       atk: getValueOrDefault(Number, pokemon.stats?.baseAttack),
       def: getValueOrDefault(Number, pokemon.stats?.baseDefense),
-      sta: getValueOrDefault(Number, pokemon.stats?.baseStamina),
+      sta: pokemon.stats?.baseStamina,
     });
     obj.statsGO = StatsPokemonGO.create({
       atk: obj.baseStats.atk,
@@ -569,9 +573,12 @@ export class PokemonData implements IPokemonData {
     obj.heightm = pokemon.pokedexHeightM;
     obj.weightkg = pokemon.pokedexWeightKg;
     obj.color = options?.color ?? 'None';
-    obj.evos = pokemon.evolutionIds ? pokemon.evolutionIds.map((name) => capitalize(name)) : [];
+    obj.evos = getValueOrDefault(
+      Array,
+      pokemon.evolutionIds?.map((name) => capitalize(name))
+    );
     obj.baseForme = options?.baseForme;
-    obj.prevo = capitalize(getValueOrDefault(String, pokemon.parentPokemonId));
+    obj.prevo = capitalize(pokemon.parentPokemonId);
     obj.releasedGO = getValueOrDefault(Boolean, options?.releasedGO);
     obj.isTransferable = pokemon.isTransferable;
     obj.isDeployable = pokemon.isDeployable;
@@ -585,39 +592,18 @@ export class PokemonData implements IPokemonData {
     obj.forme = pokemon.form ? pokemon.form : FORM_NORMAL;
     obj.encounter = pokemon.encounter;
     obj.isShadow = pokemon.shadow ? true : false;
-    obj.formChange = getValueOrDefault(Array, pokemon.formChange);
+    obj.formChange = pokemon.formChange;
 
-    obj.quickMoves = getValueOrDefault(
-      Array,
-      pokemon.quickMoves?.map((move) => replaceTempMoveName(move.toString()))
-    );
-    obj.cinematicMoves = getValueOrDefault(
-      Array,
-      pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move.toString()))
-    );
-    obj.eliteQuickMove = getValueOrDefault(
-      Array,
-      pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move.toString()))
-    );
-    obj.eliteCinematicMove = getValueOrDefault(
-      Array,
-      pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move.toString()))
-    );
-    obj.specialMoves = getValueOrDefault(
-      Array,
-      pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move.toString()))
-    );
-    obj.shadowMoves = getValueOrDefault(
-      Array,
-      options?.shadowMoves?.map((move) => replaceTempMoveName(move.toString()))
-    );
-    obj.purifiedMoves = getValueOrDefault(
-      Array,
-      options?.purifiedMoves?.map((move) => replaceTempMoveName(move.toString()))
-    );
+    obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move.toString()));
+    obj.cinematicMoves = pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move.toString()));
+    obj.eliteQuickMove = pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move.toString()));
+    obj.eliteCinematicMove = pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move.toString()));
+    obj.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move.toString()));
+    obj.shadowMoves = options?.shadowMoves?.map((move) => replaceTempMoveName(move.toString()));
+    obj.purifiedMoves = options?.purifiedMoves?.map((move) => replaceTempMoveName(move.toString()));
 
-    obj.evoList = getValueOrDefault(Array, options?.evoList);
-    obj.tempEvo = getValueOrDefault(Array, options?.tempEvo);
+    obj.evoList = options?.evoList;
+    obj.tempEvo = options?.tempEvo;
     obj.purified = options?.purified;
     obj.thirdMove = options?.thirdMove;
 

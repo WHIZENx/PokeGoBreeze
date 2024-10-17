@@ -16,8 +16,14 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
-import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
-import { FORM_NORMAL } from '../../../util/constants';
+import {
+  ILeague,
+  IPokemonRewardSetLeague,
+  PokemonRewardLeague,
+  PokemonRewardSetLeague,
+  SettingLeague,
+} from '../../../core/models/league.model';
+import { FORM_NORMAL, leaguesDefault } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import {
@@ -31,8 +37,9 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
-import { IncludeMode } from '../../../util/enums/string.enum';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
+import { VariantType } from '../../../enums/type.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -116,7 +123,7 @@ const Leagues = () => {
     if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
-      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? new Object()).forEach((value) => {
+      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? new PokemonRewardLeague()).forEach((value) => {
         if (value.rank <= rank) {
           result.push(
             ...value[track.toLowerCase()].map((item: IPokemonRewardSetLeague) => {
@@ -154,10 +161,11 @@ const Leagues = () => {
           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
             <img alt="img-league" height={50} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
             <b className={league.enabled ? '' : 'text-danger'}>
-              {(isInclude(league.id, 'SEEKER') && isIncludeList(['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'], league.title)
+              {(isInclude(league.id, BattleLeagueTag.Seeker, IncludeMode.IncludeIgnoreCaseSensitive) &&
+              isIncludeList(leaguesDefault, league.title, IncludeMode.IncludeIgnoreCaseSensitive)
                 ? splitAndCapitalize(getValueOrDefault(String, league.id).replace('VS_', '').toLowerCase(), '_', ' ')
                 : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
-                (isInclude(league.id, 'SAFARI_ZONE')
+                (isInclude(league.id, BattleLeagueTag.SafariZone, IncludeMode.IncludeIgnoreCaseSensitive)
                   ? ` ${getValueOrDefault(String, league.id).split('_').at(3)} ${capitalize(
                       getValueOrDefault(String, league.id).split('_').at(4)
                     )}`
@@ -243,7 +251,9 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                          ? ''
+                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -258,7 +268,9 @@ const Leagues = () => {
                       </div>
                       <span className="caption">
                         {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                          item.form.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                          isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                            ? ''
+                            : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
                         }`}
                       </span>
                     </Link>
@@ -273,7 +285,9 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                          ? ''
+                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -288,7 +302,9 @@ const Leagues = () => {
                       </div>
                       <span className="caption">
                         {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                          item.form.toUpperCase() === FORM_NORMAL ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                          isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                            ? ''
+                            : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
                         }`}
                       </span>
                     </Link>
@@ -382,8 +398,9 @@ const Leagues = () => {
                       badgeContent={value.count}
                       max={BattleLeagueCPType.InsMaster}
                       sx={{
-                        paddingBottom:
-                          value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? '0 !important' : '1.5rem !important',
+                        paddingBottom: `${
+                          value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? '0' : '1.5rem'
+                        } !important`,
                         paddingTop: '1.5rem !important',
                         minWidth: 64,
                       }}
@@ -463,11 +480,12 @@ const Leagues = () => {
                       badgeContent={dataStore.leagues.season.rewards.rank[rank].premium?.[index].count}
                       max={BattleLeagueCPType.InsMaster}
                       sx={{
-                        paddingBottom:
+                        paddingBottom: `${
                           dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon ||
                           dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.ItemLoot
-                            ? '0 !important'
-                            : '1.5rem !important',
+                            ? '0'
+                            : '1.5rem'
+                        } !important`,
                         minWidth: 64,
                       }}
                     >
@@ -658,7 +676,7 @@ const Leagues = () => {
                 Rank {rank} {rank > 20 && `(${rankName(rank)})`}
               </div>
               <div className="reward-info">
-                {showData.track === LeagueRewardType.Free.toLowerCase() ? (
+                {isEqual(showData.track, LeagueRewardType.Free, EqualMode.IgnoreCaseSensitive) ? (
                   <div className="d-flex" style={{ columnGap: 8 }}>
                     <img
                       className="pokemon-sprite-small filter-shadow"
@@ -691,7 +709,9 @@ const Leagues = () => {
                   className="img-link text-center"
                   key={index}
                   to={`/pokemon/${item.id}${
-                    item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                    isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                      ? ''
+                      : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                   }`}
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
@@ -718,7 +738,9 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        item.form.toUpperCase() === FORM_NORMAL ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+                          ? ''
+                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >
@@ -738,7 +760,7 @@ const Leagues = () => {
             )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant={VariantType.Secondary} onClick={handleClose}>
               Close
             </Button>
           </Modal.Footer>

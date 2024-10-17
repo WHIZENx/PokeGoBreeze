@@ -3,7 +3,6 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import APIService from '../../services/API.service';
 import Tools from './Tools';
 
-import loading from '../../assets/loading.png';
 import {
   capitalize,
   convertPokemonImageName,
@@ -32,11 +31,12 @@ import { FORM_GMAX, FORM_NORMAL } from '../../util/constants';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IFormSelectComponent } from '../models/component.model';
-import { TypeRaid } from '../../enums/type.enum';
+import { TypeRaid, VariantType } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
+import LoadGroup from '../Sprites/Loading/LoadingGroup';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -148,7 +148,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: 'error' });
+          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
         });
     },
     [enqueueSnackbar, fetchMap]
@@ -360,16 +360,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             ))}
           </Fragment>
         ) : (
-          <div className="loading-group vertical-center">
-            <img className="loading" width={40} height={40} alt="img-pokemon" src={loading} />
-            <span className="caption text-black" style={{ fontSize: 18 }}>
-              <b>
-                Loading<span id="p1">.</span>
-                <span id="p2">.</span>
-                <span id="p3">.</span>
-              </b>
-            </span>
-          </div>
+          <LoadGroup isShow={true} isVertical={true} hideAttr={true} size={40} />
         )}
       </div>
       {!props.hide && (

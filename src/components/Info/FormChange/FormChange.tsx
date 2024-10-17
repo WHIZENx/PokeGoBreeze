@@ -19,11 +19,9 @@ const FromChange = (props: IFromChangeComponent) => {
 
   const getImageList = (id: number) => {
     const model = assets.find((item) => item.id === id);
-    return model
-      ? [...new Set(model.image.map((item) => item.form))].map(
-          (value) => new PokemonModelComponent(getValueOrDefault(String, value), model.image)
-        )
-      : [];
+    return [...new Set(model?.image.map((item) => item.form))].map(
+      (value) => new PokemonModelComponent(getValueOrDefault(String, value), getValueOrDefault(Array, model?.image))
+    );
   };
 
   useEffect(() => {

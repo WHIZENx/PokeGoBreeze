@@ -61,17 +61,17 @@ import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { StatsBase } from '../../../core/models/stats.model';
-import { BuffType, TypeAction } from '../../../enums/type.enum';
+import { BuffType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
 import { LeagueType } from '../../../core/enums/league.enum';
-import { BattleType } from './enums/battle.enum';
+import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 interface OptionsBattle {
   showTap: boolean;
-  timelineType: number;
+  timelineType: TimelineType;
   duration: number;
   league: number;
 }
@@ -97,7 +97,7 @@ const Battle = () => {
   const [data, setData] = useState<IBattlePokemonData[]>([]);
   const [options, setOptions] = useState<OptionsBattle>({
     showTap: false,
-    timelineType: 1,
+    timelineType: TimelineType.Normal,
     duration: 1,
     league: toNumber(params.cp) ?? BattleLeagueCPType.Little,
   });
@@ -191,7 +191,7 @@ const Battle = () => {
   const battleAnimation = () => {
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
       enqueueSnackbar('Something went wrong! Please try again.', {
-        variant: 'error',
+        variant: VariantType.Error,
       });
       return;
     }
@@ -203,7 +203,7 @@ const Battle = () => {
       (!pokemonObj.disableCMovePri && !pokemonObj.cMovePri)
     ) {
       enqueueSnackbar('Required charge move', {
-        variant: 'error',
+        variant: VariantType.Error,
       });
       return;
     }
@@ -528,7 +528,7 @@ const Battle = () => {
             const moveType = chargeType === ChargeType.Primary ? player1.cMove : player1.cMoveSec;
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
-            const randInt = parseFloat(Math.random().toFixed(3));
+            const randInt = toFloat(Math.random(), 3);
             if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
               moveType.buffs.forEach((value) => {
                 if (value.target === BuffType.Target) {
@@ -594,7 +594,7 @@ const Battle = () => {
             const moveType = chargeType === ChargeType.Primary ? player2.cMove : player2.cMoveSec;
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
-            const randInt = parseFloat(Math.random().toFixed(3));
+            const randInt = toFloat(Math.random(), 3);
             if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
               moveType.buffs.forEach((value) => {
                 if (value.target === BuffType.Target) {
@@ -863,7 +863,7 @@ const Battle = () => {
     const elem = document.getElementById('play-line');
     let xCurrent = 0;
     if (elem) {
-      if (timelineType) {
+      if (timelineType === TimelineType.Normal) {
         xCurrent = elem.style.transform
           ? getTranslation(elem) >= getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2
             ? 0
@@ -902,7 +902,7 @@ const Battle = () => {
       start.current = performance.now();
     }
     timelinePlay.current = requestAnimationFrame(function animate(timestamp: number) {
-      if (timelineType) {
+      if (timelineType === TimelineType.Normal) {
         const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
         const width = Math.min(
           getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2,
@@ -962,7 +962,7 @@ const Battle = () => {
   const resetTimeLine = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
-    if (timelineType && timelineNormalContainer.current) {
+    if (timelineType === TimelineType.Normal && timelineNormalContainer.current) {
       timelineNormalContainer.current.scrollTo({
         left: 0,
       });
@@ -1017,7 +1017,7 @@ const Battle = () => {
     scrollWidth.current = e.currentTarget.scrollLeft;
   };
 
-  const onChangeTimeline = (type: number, prevWidth: number) => {
+  const onChangeTimeline = (type: TimelineType, prevWidth: number) => {
     stopTimeLine();
     let elem = document.getElementById('play-line');
     let xCurrent = 0,
@@ -1027,7 +1027,7 @@ const Battle = () => {
     }
     setOptions({ ...options, timelineType: type });
     setTimeout(() => {
-      if (type) {
+      if (type === TimelineType.Normal) {
         if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline)) {
           for (let i = 0; i < pokemonCurr.timeline.length; i++) {
             arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
@@ -1097,7 +1097,7 @@ const Battle = () => {
 
     if (cp > toNumber(getValueOrDefault(String, params?.cp))) {
       enqueueSnackbar(`This stats Pokémon CP is greater than ${params.cp}, which is not permitted by the league.`, {
-        variant: 'error',
+        variant: VariantType.Error,
       });
       return;
     }
@@ -1617,7 +1617,7 @@ const Battle = () => {
                 </Card>
               </Accordion>
               <div>
-                {timelineType ? (
+                {timelineType === TimelineType.Normal ? (
                   <Fragment>
                     {TimeLine(
                       pokemonCurr,
@@ -1655,20 +1655,19 @@ const Battle = () => {
                     onChange={(e) =>
                       onChangeTimeline(
                         toNumber(e.target.value),
-                        getValueOrDefault(Number, timelineType ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth)
+                        getValueOrDefault(
+                          Number,
+                          timelineType === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
+                        )
                       )
                     }
                   >
-                    <FormControlLabel value={0} control={<Radio />} label={<span>Fit Timeline</span>} />
-                    <FormControlLabel value={1} control={<Radio />} label={<span>Normal Timeline</span>} />
+                    <FormControlLabel value={TimelineType.Fit} control={<Radio />} label={<span>Fit Timeline</span>} />
+                    <FormControlLabel value={TimelineType.Normal} control={<Radio />} label={<span>Normal Timeline</span>} />
                   </RadioGroup>
-                  <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} disabled={playState}>
+                  <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
                     <InputLabel>Speed</InputLabel>
-                    <Select
-                      value={duration}
-                      onChange={(e) => setOptions({ ...options, duration: parseFloat(e.target.value.toString()) })}
-                      label="Speed"
-                    >
+                    <Select value={duration} onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })} label="Speed">
                       <MenuItem value={0.5}>x0.5</MenuItem>
                       <MenuItem value={1}>Normal</MenuItem>
                       <MenuItem value={2}>x2</MenuItem>

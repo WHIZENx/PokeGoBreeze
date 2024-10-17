@@ -36,12 +36,14 @@ import {
   isIncludeList,
   isNotEmpty,
   isNullOrEmpty,
+  toFloat,
   toNumber,
 } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { VariantType } from '../../../enums/type.enum';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -152,9 +154,7 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const currentForm = isNullOrEmpty(form?.form.formName?.toUpperCase())
-        ? FORM_NORMAL
-        : form?.form.formName.replaceAll('-', '_').toUpperCase();
+      const currentForm = isNullOrEmpty(form?.form.formName) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
       let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
       if (!isNotEmpty(curr)) {
         if (currentForm === FORM_NORMAL) {
@@ -278,13 +278,13 @@ const FindBattle = () => {
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (toNumber(searchCP) < 10) {
-        return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+        return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
       }
       const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
       if (!result.level) {
         return enqueueSnackbar(
           `At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`,
-          { variant: 'error' }
+          { variant: VariantType.Error }
         );
       }
       dispatch(SpinnerActions.ShowSpinner.create());
@@ -294,7 +294,7 @@ const FindBattle = () => {
           `Search success at CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${
             result.IV.sta
           } found in ${name} ${splitAndCapitalize(form?.form.formName, '-', ' ')}`,
-          { variant: 'success' }
+          { variant: VariantType.Success }
         );
       }, 500);
     },
@@ -302,7 +302,7 @@ const FindBattle = () => {
   );
 
   const getImageList = (id: number) => {
-    const isForm = isNullOrEmpty(form?.form.formName?.toUpperCase()) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
+    const isForm = isNullOrEmpty(form?.form.formName) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
     let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => isInclude(item.form, isForm ?? FORM_NORMAL));
     if (!img) {
       img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
@@ -327,7 +327,7 @@ const FindBattle = () => {
   };
 
   const getTextColorRatio = (value: number) => {
-    value = parseFloat(value.toFixed(2));
+    value = toFloat(value, 2);
     return `rank-${value === 100 ? 'max' : value >= 90 ? 'excellent' : value >= 80 ? 'great' : value >= 70 ? 'nice' : 'normal'}`;
   };
 
@@ -503,7 +503,7 @@ const FindBattle = () => {
             {evoChain.map((value, index) => (
               <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
                 <div className="form-header">
-                  {!value.at(0)?.form?.toUpperCase() ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0)?.form, '-', ' ')}
+                  {!value.at(0)?.form ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0)?.form, '-', ' ')}
                   {' Form'}
                 </div>
                 <Accordion.Item eventKey="0">

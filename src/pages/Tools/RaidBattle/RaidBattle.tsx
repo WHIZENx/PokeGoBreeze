@@ -12,8 +12,8 @@ import {
   FORM_NORMAL,
   FORM_PRIMAL,
   FORM_SHADOW,
+  levelList,
   MAX_IV,
-  MAX_LEVEL,
   MIN_IV,
   MIN_LEVEL,
   RAID_BOSS_TIER,
@@ -62,7 +62,7 @@ import {
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { TypeMove } from '../../../enums/type.enum';
+import { TypeMove, VariantType } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -76,11 +76,12 @@ import {
   isIncludeList,
   isNotEmpty,
   isUndefined,
+  toFloat,
   toNumber,
 } from '../../../util/extension';
-import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, TrainerBattle } from './models/raid-battle.model';
+import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, RaidSummary, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
 
 interface IOption {
@@ -113,7 +114,7 @@ interface IFilterGroup {
 }
 
 class FilterGroup implements IFilterGroup {
-  level = 0;
+  level = MIN_LEVEL;
   isShadow = false;
   iv = new StatsBase();
   onlyShadow = false;
@@ -232,20 +233,20 @@ const RaidBattle = () => {
     setShowOption(true);
   };
 
-  const validIV = (value: number | undefined) => {
+  const isInvalidIV = (value: number | undefined) => {
     return !value || value < MIN_IV || value > MAX_IV;
   };
 
   const setSortedResult = (primary: IPokemonMoveData, secondary: IPokemonMoveData, sortIndex: string[]) => {
-    const a = primary as unknown as DynamicObj<number>;
-    const b = secondary as unknown as DynamicObj<number>;
+    const a = primary as unknown as DynamicObj<SortType>;
+    const b = secondary as unknown as DynamicObj<SortType>;
     return filters.selected.sorted
       ? a[sortIndex[filters.selected.sortBy]] - b[sortIndex[filters.selected.sortBy]]
       : b[sortIndex[filters.selected.sortBy]] - a[sortIndex[filters.selected.sortBy]];
   };
 
   const handleSaveOption = () => {
-    if (validIV(selected.iv.atk) || validIV(selected.iv.def) || validIV(selected.iv.sta)) {
+    if (isInvalidIV(selected.iv.atk) || isInvalidIV(selected.iv.def) || isInvalidIV(selected.iv.sta)) {
       return;
     }
     const changeResult =
@@ -282,7 +283,7 @@ const RaidBattle = () => {
 
   const handleSaveSettingPokemon = () => {
     const pokemon = showSettingPokemon.pokemon;
-    if (validIV(pokemon?.stats?.iv.atk) || validIV(pokemon?.stats?.iv.def) || validIV(pokemon?.stats?.iv.sta)) {
+    if (isInvalidIV(pokemon?.stats?.iv.atk) || isInvalidIV(pokemon?.stats?.iv.def) || isInvalidIV(pokemon?.stats?.iv.sta)) {
       return;
     }
     setPokemonBattle(
@@ -428,7 +429,7 @@ const RaidBattle = () => {
         }
 
         if (!statsAttacker || !statsDefender) {
-          enqueueSnackbar('Something went wrong!', { variant: 'error' });
+          enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
           return;
         }
 
@@ -566,7 +567,7 @@ const RaidBattle = () => {
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: IPokemonMoveData[] = [];
     data?.pokemon?.forEach((pokemon) => {
-      if (pokemon && pokemon.forme?.toUpperCase() !== FORM_GMAX) {
+      if (pokemon && !isEqual(pokemon.forme, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.quickMoves), false, pokemonTarget, pokemon.isShadow);
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMove), true, pokemonTarget, pokemon.isShadow);
       }
@@ -632,7 +633,7 @@ const RaidBattle = () => {
       });
 
       if (!statsDefender) {
-        enqueueSnackbar('Something went wrong!', { variant: 'error' });
+        enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
         return;
       }
 
@@ -674,10 +675,10 @@ const RaidBattle = () => {
     const trainer = trainerBattle.map((trainer) => trainer.pokemons);
     const trainerNoPokemon = trainer.filter((pokemon) => isNotEmpty(pokemon.filter((item) => !item.dataTargetPokemon)));
     if (isNotEmpty(trainerNoPokemon)) {
-      enqueueSnackbar('Please select Pokémon to raid battle!', { variant: 'error' });
+      enqueueSnackbar('Please select Pokémon to raid battle!', { variant: VariantType.Error });
       return;
     }
-    enqueueSnackbar('Simulator battle raid successfully!', { variant: 'success' });
+    enqueueSnackbar('Simulator battle raid successfully!', { variant: VariantType.Success });
 
     const turn: IPokemonRaidModel[][] = [];
     trainer.forEach((pokemons, trainerId) => {
@@ -692,14 +693,14 @@ const RaidBattle = () => {
     turn.forEach((group) => {
       const dataList = new RaidResult({
         pokemon: [],
-        summary: {
+        summary: RaidSummary.create({
           dpsAtk: 0,
           dpsDef: 0,
           tdoAtk: 0,
           tdoDef: 0,
           timer,
           bossHp: Math.max(0, bossHp),
-        },
+        }),
       });
       group.forEach((pokemon) => {
         if (pokemon.dataTargetPokemon) {
@@ -835,9 +836,9 @@ const RaidBattle = () => {
           <Form.Select
             value={filters.selected.level}
             className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: parseFloat(e.target.value) } })}
+            onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: toFloat(e.target.value) } })}
           >
-            {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+            {levelList.map((value, index) => (
               <option key={index} value={value}>
                 {value}
               </option>
@@ -943,10 +944,10 @@ const RaidBattle = () => {
             className="form-control"
             onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
           >
-            <option value={0}>Damage Per Second</option>
-            <option value={1}>Total Damage Output</option>
-            <option value={2}>Time To Kill</option>
-            <option value={3}>Tankiness</option>
+            <option value={SortType.DPS}>Damage Per Second</option>
+            <option value={SortType.TDO}>Total Damage Output</option>
+            <option value={SortType.TTK}>Time To Kill</option>
+            <option value={SortType.TANK}>Tankiness</option>
           </Form.Select>
           <span className="input-group-text">Priority</span>
           <Form.Select
@@ -955,8 +956,8 @@ const RaidBattle = () => {
             className="form-control"
             onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
           >
-            <option value={0}>Best</option>
-            <option value={1}>Worst</option>
+            <option value={SortDirectionType.ASC}>Best</option>
+            <option value={SortDirectionType.DESC}>Worst</option>
           </Form.Select>
         </div>
       </form>
@@ -1042,14 +1043,14 @@ const RaidBattle = () => {
                       ...showSettingPokemon,
                       pokemon: {
                         ...showSettingPokemon.pokemon,
-                        stats: { ...showSettingPokemon.pokemon.stats, level: parseFloat(e.target.value) },
+                        stats: { ...showSettingPokemon.pokemon.stats, level: toFloat(e.target.value) },
                       },
                     })
                   );
                 }
               }}
             >
-              {Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5).map((value, index) => (
+              {levelList.map((value, index) => (
                 <option key={index} value={value}>
                   {value}
                 </option>
@@ -1270,6 +1271,8 @@ const RaidBattle = () => {
                     ? 'Damage Per Seconds (DPS)'
                     : used.sortBy === SortType.TDO
                     ? 'Total Damage Output (TDO)'
+                    : used.sortBy === SortType.TTK
+                    ? 'Time To Kill'
                     : 'Tankiness'
                 }`}{' '}
                 <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${used.onlyMega ? '*Only Mega' : ''}`}</span>
@@ -1700,10 +1703,10 @@ const RaidBattle = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant={VariantType.Secondary} onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSave}>
+          <Button variant={VariantType.Primary} onClick={handleSave}>
             Save changes
           </Button>
         </Modal.Footer>
@@ -1717,10 +1720,10 @@ const RaidBattle = () => {
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalFormFilters()}</div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseOption}>
+          <Button variant={VariantType.Secondary} onClick={handleCloseOption}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSaveOption}>
+          <Button variant={VariantType.Primary} onClick={handleSaveOption}>
             Save changes
           </Button>
         </Modal.Footer>
@@ -1734,10 +1737,10 @@ const RaidBattle = () => {
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalFormSetting()}</div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseSettingPokemon}>
+          <Button variant={VariantType.Secondary} onClick={handleCloseSettingPokemon}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSaveSettingPokemon}>
+          <Button variant={VariantType.Primary} onClick={handleSaveSettingPokemon}>
             Save
           </Button>
         </Modal.Footer>

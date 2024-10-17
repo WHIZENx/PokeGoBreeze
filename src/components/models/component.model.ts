@@ -32,6 +32,7 @@ import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
 import { InputType } from '../Input/enums/input-type.enum';
+import { TypeAction, TypeMove } from '../../enums/type.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -130,7 +131,7 @@ export interface IFormSelectComponent {
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   setForm?: (form: IPokemonFormModify | undefined) => void;
   stats: IStatsRank | null;
-  onHandleSetStats?: (type: string, value: number) => void;
+  onHandleSetStats?: (type: TypeAction, value: number) => void;
   data: IPokemonData[];
   setUrlEvo?: React.Dispatch<React.SetStateAction<EvoPath>>;
   objective?: boolean;
@@ -144,7 +145,7 @@ export interface IToolsComponent {
   dataPoke: IPokemonDetail[];
   stats: IStatsRank | null;
   setForm: ((form: IPokemonFormModify | undefined) => void) | undefined;
-  onSetStats: ((type: string, value: number) => void) | undefined;
+  onSetStats: ((type: TypeAction, value: number) => void) | undefined;
   onClearStats: ((reset?: boolean) => void) | undefined;
   isRaid: boolean;
   tier: number;
@@ -251,7 +252,7 @@ export interface ISelectMoveComponent {
   setMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   clearData?: () => void;
   pokemon: IPokemonData | undefined;
-  moveType: string;
+  moveType: TypeMove;
   inputType?: InputType;
   selected?: boolean;
   disable?: boolean;
@@ -366,7 +367,7 @@ export interface IStatsBarComponent {
   optionalStats?: string;
   id?: number;
   form?: string;
-  statType?: string;
+  statType: TypeAction;
 }
 
 export interface ITypeComponent {
@@ -397,6 +398,26 @@ export interface ITypeBadgeComponent {
 
 export interface ITypeBarComponent {
   type: string | undefined;
+}
+
+export interface ILoadingComponent {
+  isShow: boolean;
+  size?: number;
+  fontSize?: number;
+  opacity?: number;
+  bgColor?: string;
+  isVertical?: boolean;
+}
+
+export interface ILoadGroupComponent {
+  className?: string;
+  isShow: boolean;
+  size?: number;
+  fontSize?: number;
+  opacity?: number;
+  bgColor?: string;
+  isVertical?: boolean;
+  hideAttr?: boolean;
 }
 
 export interface IWeatherComponent {
@@ -434,7 +455,7 @@ export interface IPokemonTableComponent {
 }
 
 export interface IMoveComponent {
-  type?: string;
+  type?: TypeMove;
   id: number;
   form: string;
   move: ICombat | undefined;

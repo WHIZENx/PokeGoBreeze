@@ -77,7 +77,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     }
   };
 
-  const findMove = (id: number, form: string, type: string) => {
+  const findMove = (id: number, form: string, type: TypeMove) => {
     const result = retrieveMoves(pokemonData, id, form);
     if (result) {
       const simpleMove: ISelectMoveModel[] = [];

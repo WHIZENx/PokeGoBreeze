@@ -65,6 +65,14 @@ export const toNumber = (value: string | number | null | undefined, defaultValue
   return parseInt((value || defaultValue).toString());
 };
 
+export const toFloat = (value: string | number | null | undefined, fixedRounding = -1, defaultValue = 0) => {
+  const result = parseFloat((value || defaultValue).toString());
+  if (fixedRounding < 0) {
+    return result;
+  }
+  return parseFloat(result.toFixed(fixedRounding));
+};
+
 export const isEqual = (
   value: string | number | undefined | null,
   compareValue: string | number | undefined | null,

@@ -16,7 +16,15 @@ import { ICounterComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isInclude, isNotEmpty, isUndefined } from '../../../util/extension';
+import {
+  combineClasses,
+  convertColumnDataType,
+  getValueOrDefault,
+  isInclude,
+  isNotEmpty,
+  isUndefined,
+  toFloat,
+} from '../../../util/extension';
 import { APIUrl } from '../../../services/constants';
 
 const customStyles: TableStyles = {
@@ -192,7 +200,7 @@ const Counter = (props: ICounterComponent) => {
     },
     {
       name: '%',
-      selector: (row) => parseFloat(row.ratio.toFixed(2)),
+      selector: (row) => toFloat(row.ratio, 2),
       sortable: true,
       width: '20%',
     },
