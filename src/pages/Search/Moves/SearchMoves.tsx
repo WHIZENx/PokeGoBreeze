@@ -6,14 +6,14 @@ import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../.
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
-import { TypeMove } from '../../../enums/type.enum';
+import { TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat } from '../../../util/extension';
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
@@ -44,7 +44,11 @@ const columns: TableColumnModify<ICombat>[] = [
   {
     name: 'Name',
     selector: (row) => (
-      <Link to={`/move/${row.track}${row.track === 281 && row.type !== 'NORMAL' ? `?type=${row.type?.toLowerCase()}` : ''}`}>
+      <Link
+        to={`/move/${row.track}${
+          row.track === 281 && !isEqual(row.type, 'NORMAL', EqualMode.IgnoreCaseSensitive) ? `?type=${row.type?.toLowerCase()}` : ''
+        }`}
+      >
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),
@@ -60,7 +64,7 @@ const columns: TableColumnModify<ICombat>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => parseFloat((row.pvePower / (row.durationMs / 1000)).toFixed(2)),
+    selector: (row) => toFloat(row.pvePower / (row.durationMs / 1000), 2),
     sortable: true,
   },
 ];
@@ -164,7 +168,7 @@ const Search = () => {
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       <TextField
                         type="text"
-                        variant="outlined"
+                        variant={VariantType.Outlined}
                         placeholder="Enter Name or ID"
                         defaultValue={fMoveName}
                         onChange={(e) => setFilters(Filter.create({ ...filters, fMoveName: e.target.value }))}
@@ -220,7 +224,7 @@ const Search = () => {
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       <TextField
                         type="text"
-                        variant="outlined"
+                        variant={VariantType.Outlined}
                         placeholder="Enter Name or ID"
                         defaultValue={cMoveName}
                         onChange={(e) => setFilters(Filter.create({ ...filters, cMoveName: e.target.value }))}

@@ -236,11 +236,11 @@ export class StatsSta implements IStatsSta {
 }
 
 export interface IStatsProd extends OptionsStats {
-  prod: number;
+  product: number;
 }
 
 export class StatsProd implements IStatsProd {
-  prod = 0;
+  product = 0;
   rank = 0;
   id?: number;
   form?: string;
@@ -269,7 +269,7 @@ export interface IPokemonStatsRanking {
   atk: IStatsAtk;
   def: IStatsDef;
   sta: IStatsSta;
-  statProd: IStatsProd;
+  prod: IStatsProd;
   types: string[];
   url?: string;
   releasedGO: boolean;
@@ -292,7 +292,7 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   atk = new StatsAtk();
   def = new StatsDef();
   sta = new StatsSta();
-  statProd = new StatsProd();
+  prod = new StatsProd();
   types: string[] = [];
   url?: string;
   releasedGO = false;

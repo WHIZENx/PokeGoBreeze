@@ -7,11 +7,11 @@ import { getPokemonById, mappingPokemonName } from '../../util/utils';
 import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
-import loading from '../../assets/loading.png';
 import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isInclude, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
+import LoadGroup from '../Sprites/Loading/LoadingGroup';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -72,7 +72,7 @@ const Find = (props: IFindComponent) => {
     }
   };
 
-  const handleSetStats = (type: string, value: number) => {
+  const handleSetStats = (type: TypeAction, value: number) => {
     if (type === TypeAction.ATK && props.setStatATK) {
       props.setStatATK(value);
     } else if (type === TypeAction.DEF && props.setStatDEF) {
@@ -227,16 +227,7 @@ const Find = (props: IFindComponent) => {
             className="ph-picture d-flex align-item-center justify-content-center position-relative w-50"
             style={{ height: 600, backgroundColor: '#f8f8f8' }}
           >
-            <div className="loading-group vertical-center">
-              <img className="loading" width={40} height={40} alt="img-pokemon" src={loading} />
-              <span className="caption text-black" style={{ fontSize: 18 }}>
-                <b>
-                  Loading<span id="p1">.</span>
-                  <span id="p2">.</span>
-                  <span id="p3">.</span>
-                </b>
-              </span>
-            </div>
+            <LoadGroup isShow={true} isVertical={true} hideAttr={true} size={40} />
           </div>
         </div>
       )}

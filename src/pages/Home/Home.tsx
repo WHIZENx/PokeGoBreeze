@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import loadingImg from '../../assets/loading.png';
 
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
@@ -42,6 +41,7 @@ import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
+import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -517,16 +517,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className="position-fixed loading-spin-table text-center" style={{ display: !loading ? 'none' : 'block' }}>
-        <img className="loading" width={64} height={64} alt="img-pokemon" src={loadingImg} />
-        <span className="caption text-black" style={{ fontSize: 18 }}>
-          <b>
-            Loading<span id="p1">.</span>
-            <span id="p2">.</span>
-            <span id="p3">.</span>
-          </b>
-        </span>
-      </div>
+      <LoadGroup className={'position-fixed'} isShow={loading} isVertical={false} hideAttr={false} />
       <div className="text-center bg-white">
         <div className="loading-group-spin-table" style={{ display: !loading ? 'none' : 'block' }} />
         <ul className="d-grid pokemon-content">
@@ -534,7 +525,7 @@ const Home = () => {
             <CardPokemonInfo
               key={index}
               name={row.name}
-              forme={getValueOrDefault(String, row.forme)}
+              forme={row.forme}
               defaultImg={allShiny}
               image={row.image}
               id={row.id}

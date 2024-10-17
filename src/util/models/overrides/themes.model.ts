@@ -1,4 +1,4 @@
-import { Palette, PaletteColor, PaletteMode, Theme, TypeBackground } from '@mui/material';
+import { Palette, PaletteColor, Theme, TypeBackground } from '@mui/material';
 import { TypeTheme } from '../../../enums/type.enum';
 
 interface Constants {
@@ -38,7 +38,7 @@ export interface ThemeModify extends Theme {
   palette: PaletteModify;
 }
 
-export const getDesignThemes = (mode: PaletteMode) =>
+export const getDesignThemes = (mode: TypeTheme) =>
   ({
     palette: {
       constant,

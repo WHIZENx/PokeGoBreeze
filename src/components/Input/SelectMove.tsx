@@ -28,7 +28,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   };
 
   const findMove = useCallback(
-    (id: number, form: string, type: string, selected = false) => {
+    (id: number, form: string, type: TypeMove, selected = false) => {
       const result = retrieveMoves(combat, id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];

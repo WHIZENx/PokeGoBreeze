@@ -27,6 +27,7 @@ import { EvoPath } from '../../../core/models/API/species.model';
 import { PokemonType } from '../BattleDamage/enums/damage.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { VariantType } from '../../../enums/type.enum';
 
 const Calculate = () => {
   useChangeTitle('Calculate CP&IV - Tool');
@@ -77,16 +78,18 @@ const Calculate = () => {
 
   const calculateStatsPoke = useCallback(() => {
     if (toNumber(searchCP) < 10) {
-      return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: 'error' });
+      enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
+      return;
     }
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
     if (!result.level) {
-      return enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`, {
-        variant: 'error',
+      enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`, {
+        variant: VariantType.Error,
       });
+      return;
     }
     enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} found in ${typePoke} ${name}`, {
-      variant: 'success',
+      variant: VariantType.Success,
     });
     setPokeStats(result);
     setStatLevel(result.level);

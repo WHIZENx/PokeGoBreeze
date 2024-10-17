@@ -42,7 +42,6 @@ import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes, ThemeModify } from './util/models/overrides/themes.model';
 import { TRANSITION_TIME } from './util/constants';
-import { PaletteMode } from '@mui/material';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/localStorage';
@@ -125,7 +124,7 @@ export default function Main() {
     []
   );
 
-  const theme = useMemo(() => createTheme(getDesignThemes(mode as PaletteMode)), [mode]);
+  const theme = useMemo(() => createTheme(getDesignThemes(mode)), [mode]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>

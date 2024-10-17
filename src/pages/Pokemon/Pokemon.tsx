@@ -56,6 +56,7 @@ import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
+import { VariantType } from '../../enums/type.enum';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -248,7 +249,7 @@ const Pokemon = (props: IPokemonPage) => {
           if (APIService.isCancel(e)) {
             return;
           }
-          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: 'error' });
+          enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
           if (params.id) {
             document.title = `#${params.id} - Not Found`;
             setIsFound(false);

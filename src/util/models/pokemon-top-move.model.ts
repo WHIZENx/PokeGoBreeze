@@ -73,8 +73,10 @@ export class PokemonQueryRankMove implements IPokemonQueryRankMove {
   maxOff?: number;
   maxDef?: number;
 
-  constructor({ ...props }: IPokemonQueryRankMove) {
-    Object.assign(this, props);
+  static create(value: IPokemonQueryRankMove) {
+    const obj = new PokemonQueryRankMove();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 

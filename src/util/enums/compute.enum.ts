@@ -13,3 +13,8 @@ export enum BattleLeagueIconType {
   Ultra = 'ultra_league',
   Master = 'master_league',
 }
+
+export enum BattleLeagueTag {
+  Seeker = 'seeker',
+  SafariZone = 'safari_zone',
+}

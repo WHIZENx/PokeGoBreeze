@@ -391,7 +391,7 @@ const SearchTypes = () => {
             <Tab eventKey="fastMovesList" title="Fast Move List">
               <DataTable
                 columns={convertColumnDataType(columnMove)}
-                data={result ? result.fastMove : []}
+                data={result.fastMove}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}
@@ -402,7 +402,7 @@ const SearchTypes = () => {
             <Tab eventKey="chargesMovesList" title="Charged Move List">
               <DataTable
                 columns={convertColumnDataType(columnMove)}
-                data={result ? result.chargedMove : []}
+                data={result.chargedMove}
                 pagination={true}
                 defaultSortFieldId={1}
                 highlightOnHover={true}

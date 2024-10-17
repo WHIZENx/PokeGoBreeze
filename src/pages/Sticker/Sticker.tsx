@@ -14,6 +14,8 @@ import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { getValueOrDefault, isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
+import { GlobalType } from '../../enums/type.enum';
+import { ShopType } from './enums/sticker-type.enum';
 
 interface PokemonStickerModel {
   id?: number | null;
@@ -22,8 +24,8 @@ interface PokemonStickerModel {
 
 const Sticker = () => {
   useChangeTitle('Stickers List');
-  const [id, setId] = useState(0);
-  const [shopType, setShopType] = useState(0);
+  const [id, setId] = useState(GlobalType.All);
+  const [shopType, setShopType] = useState(ShopType.All);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);
 
   const pokeStickerList = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.stickers));
@@ -58,17 +60,17 @@ const Sticker = () => {
       setPokemonStickerFilter(
         pokeStickerList
           .filter((item) => {
-            if (!shopType) {
+            if (shopType === ShopType.All) {
               return true;
-            } else if (shopType === 2) {
+            } else if (shopType === ShopType.Unavailable) {
               return !item.shop;
             }
             return item.shop;
           })
           .filter((item) => {
-            if (!id) {
+            if (id === GlobalType.All) {
               return true;
-            } else if (id === -1) {
+            } else if (id === GlobalType.None) {
               return !item.pokemonId;
             }
             return item.pokemonId === id;
@@ -86,23 +88,25 @@ const Sticker = () => {
       <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find Sticker</span>
         <Form.Select className="form-control input-search" value={id} onChange={(e) => setId(toNumber(e.target.value))}>
-          <option value={0}>All</option>
-          <option value={-1}>None</option>
-          {selectPokemon.map((value, index) => (
-            <option key={index} value={getValueOrDefault(Number, value.id)}>{`#${value.id} ${splitAndCapitalize(
-              value.name,
-              '_',
-              ' '
-            )}`}</option>
-          ))}
+          <option value={GlobalType.All}>All</option>
+          <option value={GlobalType.None}>None</option>
+          {selectPokemon
+            .filter((value) => getValueOrDefault(Number, value.id) > 0)
+            .map((value, index) => (
+              <option key={index} value={getValueOrDefault(Number, value.id)}>{`#${value.id} ${splitAndCapitalize(
+                value.name,
+                '_',
+                ' '
+              )}`}</option>
+            ))}
         </Form.Select>
       </div>
       <FormControl className="element-top">
         <FormLabel>Filter sticker shopping</FormLabel>
         <RadioGroup row={true} value={shopType} onChange={(e) => setShopType(toNumber(e.target.value))}>
-          <FormControlLabel value={0} control={<Radio />} label="All" />
-          <FormControlLabel value={1} control={<Radio />} label="Available" />
-          <FormControlLabel value={2} control={<Radio />} label="Unavailable" />
+          <FormControlLabel value={ShopType.All} control={<Radio />} label="All" />
+          <FormControlLabel value={ShopType.Available} control={<Radio />} label="Available" />
+          <FormControlLabel value={ShopType.Unavailable} control={<Radio />} label="Unavailable" />
         </RadioGroup>
       </FormControl>
       <div className="sticker-container">

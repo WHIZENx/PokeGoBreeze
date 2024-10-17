@@ -46,17 +46,17 @@ const Stats = (props: IStatsComponent) => {
   useEffect(() => {
     const atk = setShadowStats(
       props.stats || props.statATK ? (props.statATK ? props.statATK.attack : calBaseATK(props.stats, true)) : 0,
-      'atk'
+      TypeAction.ATK
     );
     const def = setShadowStats(
       props.stats || props.statDEF ? (props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats, true)) : 0,
-      'def'
+      TypeAction.DEF
     );
     const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats, true)) : 0;
     const prod = setShadowStats(
       props.stats || props.statProd
         ? props.statProd
-          ? props.statProd.prod
+          ? props.statProd.product
           : calBaseATK(props.stats, true) * calBaseDEF(props.stats, true) * calBaseSTA(props.stats, true)
         : 0
     );
@@ -82,7 +82,7 @@ const Stats = (props: IStatsComponent) => {
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.isShadow]);
 
-  const setShadowStats = (stats: number, type?: string) => {
+  const setShadowStats = (stats: number, type?: TypeAction) => {
     if (props.isShadow) {
       return Math.round(
         stats *
@@ -107,7 +107,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.atk}
         id={props.id}
         form={props.form}
-        statType="atk"
+        statType={TypeAction.ATK}
       />
       <StatsBar
         tag="DEF"
@@ -118,7 +118,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.def}
         id={props.id}
         form={props.form}
-        statType="def"
+        statType={TypeAction.DEF}
       />
       <StatsBar
         tag="STA"
@@ -129,7 +129,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.sta}
         id={props.id}
         form={props.form}
-        statType="sta"
+        statType={TypeAction.STA}
       />
       <StatsBar
         tag="Stat Prod"
@@ -141,7 +141,7 @@ const Stats = (props: IStatsComponent) => {
         optionalStats={`${(currentStats.stats.prod / Math.pow(10, 6)).toFixed(2)} MM`}
         id={props.id}
         form={props.form}
-        statType="prod"
+        statType={TypeAction.PROD}
       />
     </div>
   );

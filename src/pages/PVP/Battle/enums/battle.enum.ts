@@ -3,3 +3,8 @@ export enum BattleType {
   Current = 'pokemonCurr',
   Object = 'pokemonObj',
 }
+
+export enum TimelineType {
+  Fit = 0,
+  Normal,
+}

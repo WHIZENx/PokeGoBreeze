@@ -16,7 +16,7 @@ import { loadTheme } from '../store/effects/theme.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { getEdgeItem } from '../services/edge.service';
 import { EdgeKey } from '../services/constants/edgeKey';
-import { TypeTheme } from '../enums/type.enum';
+import { TypeTheme, VariantType } from '../enums/type.enum';
 import { LocalStorageConfig } from '../store/constants/localStorage';
 
 const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void }) => {
@@ -47,7 +47,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
 
   return (
     <Fragment>
-      <Navbar collapseOnSelect={true} bg="dark" expand="lg" variant="dark">
+      <Navbar collapseOnSelect={true} bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
         <Link className="navbar-brand" to="/">
           <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{ marginLeft: 10, marginRight: 10 }} />
           PokéGoBreeze
@@ -154,7 +154,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
       </Navbar>
       {spinner.bar.show && (
         <Box sx={{ width: '100%', position: 'absolute', zIndex: 7 }}>
-          <LinearProgress variant="determinate" value={spinner.bar.percent} />
+          <LinearProgress variant={VariantType.Determinate} value={spinner.bar.percent} />
         </Box>
       )}
     </Fragment>
