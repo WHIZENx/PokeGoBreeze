@@ -7,9 +7,9 @@ import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
 import { ITypeBadgeComponent } from '../../models/component.model';
 import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
+import { MoveType } from '../../../enums/type.enum';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
@@ -32,22 +32,22 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
             <span className="type-badge-border">
               {props.elite && (
                 <span className="type-icon-small ic elite-ic">
-                  <span>Elite</span>
+                  <span>{MoveType.Elite}</span>
                 </span>
               )}
               {props.shadow && (
                 <span className="type-icon-small ic shadow-ic">
-                  <span>{capitalize(FORM_SHADOW)}</span>
+                  <span>{MoveType.Shadow}</span>
                 </span>
               )}
               {props.purified && (
                 <span className="type-icon-small ic purified-ic">
-                  <span>{capitalize(FORM_PURIFIED)}</span>
+                  <span>{MoveType.Purified}</span>
                 </span>
               )}
               {props.special && (
                 <span className="type-icon-small ic special-ic">
-                  <span>Special</span>
+                  <span>{MoveType.Special}</span>
                 </span>
               )}
               {props.unavailable && (

@@ -37,6 +37,7 @@ import {
   isIncludeList,
   isNotEmpty,
   toFloat,
+  toFloatWithPadding,
   toNumber,
 } from '../../util/extension';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
@@ -45,6 +46,18 @@ const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
   const b = rowB.name.toLowerCase();
   return a === b ? 0 : a > b ? 1 : -1;
+};
+
+const numSortDps = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
+  const a = toFloat(rowA.dps);
+  const b = toFloat(rowB.dps);
+  return a - b;
+};
+
+const numSortTdo = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
+  const a = toFloat(rowA.tdo);
+  const b = toFloat(rowB.tdo);
+  return a - b;
 };
 
 const columns: TableColumnModify<IPokemonTopMove>[] = [
@@ -82,14 +95,16 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => toFloat(row.dps, 2),
+    selector: (row) => toFloatWithPadding(row.dps, 2),
     sortable: true,
+    sortFunction: numSortDps,
     minWidth: '90px',
   },
   {
     name: 'TDO',
-    selector: (row) => toFloat(row.tdo, 2),
+    selector: (row) => toFloatWithPadding(row.tdo, 2),
     sortable: true,
+    sortFunction: numSortTdo,
     minWidth: '90px',
   },
 ];

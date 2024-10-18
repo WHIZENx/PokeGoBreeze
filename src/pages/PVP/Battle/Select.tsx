@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { capitalize, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
@@ -17,6 +17,7 @@ import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.m
 import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { MoveType } from '../../../enums/type.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
@@ -190,7 +191,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           <span className="pokemon-select-right">
             {isInclude(pokemon?.speciesId, '_shadow') && (
               <span style={{ marginRight: 5 }} className="type-icon-small ic shadow-ic">
-                {capitalize(FORM_SHADOW)}
+                {MoveType.Shadow}
               </span>
             )}
             {score > 0 && (

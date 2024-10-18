@@ -1056,7 +1056,7 @@ const Battle = () => {
     }, 100);
   };
 
-  const findBuff = (move: ICombat | undefined | null) => {
+  const findBuff = (move: ICombat | undefined) => {
     if (!isNotEmpty(move?.buffs)) {
       return;
     }
