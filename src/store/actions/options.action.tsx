@@ -3,7 +3,7 @@ import { Action } from 'redux';
 import { OptionDPSModel } from '../models/options.model';
 
 export enum OptionsActionTypes {
-  setDpsSheetOptions = 'SET_DPS_SHEET_OPTIONS',
+  setDpsSheetOptions = '[Options] SetDPSSheetOptions',
 }
 
 export class SetDpsSheetOptions implements Action {

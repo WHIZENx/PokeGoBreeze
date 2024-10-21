@@ -4,7 +4,7 @@ import { Action } from 'redux';
 import { DeviceModel } from '../reducers/device.reducer';
 
 export enum DeviceActionTypes {
-  setDevice = 'SET_DEVICE',
+  setDevice = '[Device] SetDevice',
 }
 
 export class SetDevice implements Action {

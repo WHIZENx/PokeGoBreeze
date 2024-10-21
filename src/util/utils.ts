@@ -248,7 +248,10 @@ export const convertNameRankingToForm = (text: string) => {
   return text + form;
 };
 
-export const convertNameRankingToOri = (text: string, form: string) => {
+export const convertNameRankingToOri = (text: string | undefined, form: string) => {
+  if (!text) {
+    return '';
+  }
   const formOri = form;
   if (text === 'lanturnw') {
     text = 'lanturn';
@@ -744,7 +747,6 @@ export const generatePokemonGoForms = (
           new PokemonSprit(),
           index,
           FORM_NORMAL,
-          false,
           false
         );
         formListResult.push([pokemonGOModify]);
@@ -782,8 +784,7 @@ export const generatePokemonGoShadowForms = (
         ),
         new PokemonSprit(),
         index,
-        FORM_SHADOW,
-        true
+        FORM_SHADOW
       );
       index--;
       const pokemonPurifiedModify = new PokemonFormModifyModel(
@@ -799,8 +800,7 @@ export const generatePokemonGoShadowForms = (
         ),
         new PokemonSprit(),
         index,
-        FORM_PURIFIED,
-        true
+        FORM_PURIFIED
       );
       formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
     });

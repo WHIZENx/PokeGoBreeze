@@ -7,11 +7,11 @@ interface Spinner {
 }
 
 export enum SpinnerActionTypes {
-  showSpinner = 'SHOW_SPINNER',
-  showSpinnerMsg = 'SHOW_SPINNER_MSG',
-  hideSpinner = 'HIDE_SPINNER',
-  setBar = 'SET_BAR',
-  setPercent = 'SET_PERCENT',
+  showSpinner = '[Spinner] ShowSpinner',
+  showSpinnerMsg = '[Spinner] ShowSpinnerMsg',
+  hideSpinner = '[Spinner] HideSpinner',
+  setBar = '[Spinner] SetBar',
+  setPercent = '[Spinner] SetPercent',
 }
 
 export class ShowSpinner implements Action {

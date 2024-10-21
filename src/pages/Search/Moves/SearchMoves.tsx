@@ -13,7 +13,16 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat } from '../../../util/extension';
+import {
+  combineClasses,
+  convertColumnDataType,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  toFloat,
+  toFloatWithPadding,
+} from '../../../util/extension';
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
@@ -27,6 +36,12 @@ const moveSort = (rowA: ICombat, rowB: ICombat) => {
   const a = getValueOrDefault(String, rowA.type?.toLowerCase());
   const b = getValueOrDefault(String, rowB.type?.toLowerCase());
   return a === b ? 0 : a > b ? 1 : -1;
+};
+
+const numSortDps = (rowA: ICombat, rowB: ICombat) => {
+  const a = toFloat(rowA.pvePower / (rowA.durationMs / 1000));
+  const b = toFloat(rowB.pvePower / (rowB.durationMs / 1000));
+  return a - b;
 };
 
 const columns: TableColumnModify<ICombat>[] = [
@@ -64,7 +79,8 @@ const columns: TableColumnModify<ICombat>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => toFloat(row.pvePower / (row.durationMs / 1000), 2),
+    selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
+    sortFunction: numSortDps,
     sortable: true,
   },
 ];

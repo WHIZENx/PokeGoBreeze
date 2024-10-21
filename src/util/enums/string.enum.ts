@@ -10,3 +10,8 @@ export enum IncludeMode {
   IncludeBetween,
   IncludeBetweenIgnoreCaseSensitive,
 }
+
+export enum PaddingMode {
+  Start = 1,
+  End,
+}

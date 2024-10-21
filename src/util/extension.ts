@@ -2,7 +2,7 @@
 import './extensions/string.extension';
 import { TableColumn } from 'react-data-table-component';
 import { TableColumnModify } from './models/overrides/data-table.model';
-import { EqualMode, IncludeMode } from './enums/string.enum';
+import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
 
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
 
@@ -71,6 +71,25 @@ export const toFloat = (value: string | number | null | undefined, fixedRounding
     return result;
   }
   return parseFloat(result.toFixed(fixedRounding));
+};
+
+export const padding = (num: number, plusLength: number, mode = PaddingMode.End, fillString = '0') => {
+  let result = num.toString();
+  const [integer, point] = result.split('.');
+  if (mode === PaddingMode.Start) {
+    result = result.padStart(plusLength + (isInclude(result, '.') ? 1 + getValueOrDefault(Number, point?.length) : 0), fillString);
+  } else if (mode === PaddingMode.End) {
+    result = result.padEnd(plusLength + (isInclude(result, '.') ? 1 + getValueOrDefault(Number, integer?.length) : 0), fillString);
+  }
+  return result;
+};
+
+export const toFloatWithPadding = (value: string | number | null | undefined, fixedRounding: number, defaultValue = 0) => {
+  const result = parseFloat((value || defaultValue).toString());
+  if (result === 0) {
+    return result.toString();
+  }
+  return padding(parseFloat(result.toFixed(fixedRounding)), fixedRounding);
 };
 
 export const isEqual = (

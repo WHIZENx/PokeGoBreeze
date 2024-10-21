@@ -10,10 +10,10 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { FORM_MEGA, FORM_PRIMAL, FORM_PURIFIED, FORM_SHADOW, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { FORM_MEGA, FORM_PRIMAL, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { TypeTheme } from '../../../enums/type.enum';
+import { MoveType, TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
@@ -24,6 +24,7 @@ import {
   isNotEmpty,
   isUndefined,
   toFloat,
+  toFloatWithPadding,
 } from '../../../util/extension';
 import { APIUrl } from '../../../services/constants';
 
@@ -90,6 +91,12 @@ const customStyles: TableStyles = {
   },
 };
 
+const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
+  const a = toFloat(rowA.ratio);
+  const b = toFloat(rowB.ratio);
+  return a - b;
+};
+
 const Counter = (props: ICounterComponent) => {
   const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
@@ -154,7 +161,7 @@ const Counter = (props: ICounterComponent) => {
           <span className="w-100">
             {row.fMove.elite && (
               <span className="type-icon-small ic elite-ic">
-                <span>Elite</span>
+                <span>{MoveType.Elite}</span>
               </span>
             )}
           </span>
@@ -175,22 +182,22 @@ const Counter = (props: ICounterComponent) => {
           <span className="w-100">
             {row.cMove.elite && (
               <span className="type-icon-small ic elite-ic">
-                <span>Elite</span>
+                <span>{MoveType.Elite}</span>
               </span>
             )}
             {row.cMove.shadow && (
               <span className="type-icon-small ic shadow-ic">
-                <span>{capitalize(FORM_SHADOW)}</span>
+                <span>{MoveType.Shadow}</span>
               </span>
             )}
             {row.cMove.purified && (
               <span className="type-icon-small ic purified-ic">
-                <span>{capitalize(FORM_PURIFIED)}</span>
+                <span>{MoveType.Purified}</span>
               </span>
             )}
             {row.cMove.special && (
               <span className="type-icon-small ic special-ic">
-                <span>Special</span>
+                <span>{MoveType.Special}</span>
               </span>
             )}
           </span>
@@ -200,8 +207,9 @@ const Counter = (props: ICounterComponent) => {
     },
     {
       name: '%',
-      selector: (row) => toFloat(row.ratio, 2),
+      selector: (row) => toFloatWithPadding(row.ratio, 2),
       sortable: true,
+      sortFunction: numSortRatio,
       width: '20%',
     },
   ];

@@ -12,9 +12,21 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, getValueOrDefault, toFloat, toNumber } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+
+const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
+  const a = toFloat(getValueOrDefault(Number, rowA.statsProds) / 1000);
+  const b = toFloat(getValueOrDefault(Number, rowB.statsProds) / 1000);
+  return a - b;
+};
+
+const numSortStatsProdsPercent = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
+  const a = toFloat(rowA.ratio);
+  const b = toFloat(rowB.ratio);
+  return a - b;
+};
 
 export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
@@ -49,13 +61,15 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   },
   {
     name: 'Stat Prod (*1000)',
-    selector: (row) => toFloat(getValueOrDefault(Number, row.statsProds) / 1000, 2),
+    selector: (row) => toFloatWithPadding(getValueOrDefault(Number, row.statsProds) / 1000, 2),
     sortable: true,
+    sortFunction: numSortStatsProd,
   },
   {
     name: 'Stat Prod (%)',
-    selector: (row) => toFloat(row.ratio, 2),
+    selector: (row) => toFloatWithPadding(row.ratio, 2),
     sortable: true,
+    sortFunction: numSortStatsProdsPercent,
   },
 ];
 

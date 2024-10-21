@@ -8,7 +8,6 @@ import {
   FORM_GMAX,
   FORM_MEGA,
   FORM_PRIMAL,
-  FORM_PURIFIED,
   FORM_SHADOW,
   levelList,
   MAX_IV,
@@ -44,7 +43,7 @@ import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'history';
-import { TypeMove } from '../../../enums/type.enum';
+import { MoveType, TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { Elite, IPokemonData } from '../../../core/models/pokemon.model';
@@ -67,6 +66,7 @@ import {
   isIncludeList,
   isNotEmpty,
   toFloat,
+  toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
 import { InputType } from '../../../components/Input/enums/input-type.enum';
@@ -104,6 +104,24 @@ const cMoveSort = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   const a = getValueOrDefault(String, rowA.cMove?.name.toLowerCase());
   const b = getValueOrDefault(String, rowB.cMove?.name.toLowerCase());
   return a === b ? 0 : a > b ? 1 : -1;
+};
+
+const numSortDps = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
+  const a = toFloat(rowA.dps);
+  const b = toFloat(rowB.dps);
+  return a - b;
+};
+
+const numSortTdo = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
+  const a = toFloat(rowA.tdo);
+  const b = toFloat(rowB.tdo);
+  return a - b;
+};
+
+const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
+  const a = toFloat(rowA.multiDpsTdo);
+  const b = toFloat(rowB.multiDpsTdo);
+  return a - b;
 };
 
 const columns: TableColumnModify<PokemonSheetData>[] = [
@@ -171,7 +189,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           <span className="text-b-ic">{splitAndCapitalize(row.fMove?.name, '_', ' ')}</span>
           {row.elite?.fMove && (
             <span className="type-icon-small ic elite-ic">
-              <span>Elite</span>
+              <span>{MoveType.Elite}</span>
             </span>
           )}
         </div>
@@ -196,22 +214,22 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ')}</span>
           {row.elite?.cMove && (
             <span className="type-icon-small ic elite-ic">
-              <span>Elite</span>
+              <span>{MoveType.Elite}</span>
             </span>
           )}
           {row.mShadow && (
             <span className="type-icon-small ic shadow-ic">
-              <span>{capitalize(FORM_SHADOW)}</span>
+              <span>{MoveType.Shadow}</span>
             </span>
           )}
           {row.purified && (
             <span className="type-icon-small ic purified-ic">
-              <span>{capitalize(FORM_PURIFIED)}</span>
+              <span>{MoveType.Purified}</span>
             </span>
           )}
           {row.special && (
             <span className="type-icon-small ic special-ic">
-              <span>Special</span>
+              <span>{MoveType.Special}</span>
             </span>
           )}
         </div>
@@ -223,20 +241,23 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   },
   {
     name: 'DPS',
-    selector: (row) => toFloat(row.dps, 3),
+    selector: (row) => toFloatWithPadding(row.dps, 3),
     sortable: true,
+    sortFunction: numSortDps,
     minWidth: '80px',
   },
   {
     name: 'TDO',
-    selector: (row) => toFloat(row.tdo, 3),
+    selector: (row) => toFloatWithPadding(row.tdo, 3),
     sortable: true,
+    sortFunction: numSortTdo,
     minWidth: '100px',
   },
   {
     name: 'DPS^3*TDO',
-    selector: (row) => toFloat(row.multiDpsTdo, 3),
+    selector: (row) => toFloatWithPadding(row.multiDpsTdo, 3),
     sortable: true,
+    sortFunction: numSortMulti,
     minWidth: '140px',
   },
   {
@@ -1207,7 +1228,7 @@ const DpsTdo = () => {
           onSort={(selectedColumn, sortDirection) => {
             setDefaultSorted(
               OptionDPSSort.create({
-                selectedColumn: toNumber(getValueOrDefault(String, selectedColumn.id?.toString(), '1')),
+                selectedColumn: toNumber(selectedColumn.id?.toString(), 1),
                 sortDirection,
               })
             );

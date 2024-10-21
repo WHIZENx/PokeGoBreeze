@@ -7,8 +7,6 @@ import { combineClasses } from '../../util/extension';
 
 const SelectBadge = (props: ISelectBadgeComponent) => {
   const Badge = (props: ISelectBadgeComponent, text: string, priorityNumber: number) => {
-    const spiritBadge = priorityBadge(priorityNumber);
-
     return (
       <div className="text-center">
         <div
@@ -19,7 +17,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
             <img
               alt="frame-type"
               className={combineClasses('frame-type-sprit', priorityNumber === 4 ? 'filter-platinum' : '')}
-              src={spiritBadge}
+              src={priorityBadge(priorityNumber)}
             />
           </span>
           {priorityNumber > 0 && (

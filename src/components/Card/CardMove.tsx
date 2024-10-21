@@ -4,9 +4,9 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
-import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
 import { ICardMoveComponent } from '../models/component.model';
 import { getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
+import { MoveType } from '../../enums/type.enum';
 
 const CardMove = (props: ICardMoveComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
@@ -35,10 +35,10 @@ const CardMove = (props: ICardMoveComponent) => {
             <b>{splitAndCapitalize(data.name, '_', ' ')}</b>
           </span>
           <span className="d-flex">
-            {data.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
-            {data.shadow && <span className="type-icon-small ic shadow-ic">{capitalize(FORM_SHADOW)}</span>}
-            {data.purified && <span className="type-icon-small ic purified-ic">{capitalize(FORM_PURIFIED)}</span>}
-            {data.special && <span className="type-icon-small ic special-ic">Special</span>}
+            {data.elite && <span className="type-icon-small ic elite-ic">{MoveType.Elite}</span>}
+            {data.shadow && <span className="type-icon-small ic shadow-ic">{MoveType.Shadow}</span>}
+            {data.purified && <span className="type-icon-small ic purified-ic">{MoveType.Purified}</span>}
+            {data.special && <span className="type-icon-small ic special-ic">{MoveType.Special}</span>}
           </span>
         </div>
       )}

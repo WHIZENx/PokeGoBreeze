@@ -3,8 +3,8 @@ import { Action } from 'redux';
 import { IPokemonData } from '../../core/models/pokemon.model';
 
 export enum StatsActionTypes {
-  setStats = 'SET_STATS',
-  resetStats = 'RESET_STATS',
+  setStats = '[Stats] SetStats',
+  resetStats = '[Stats] ResetStats',
 }
 
 export class SetStats implements Action {

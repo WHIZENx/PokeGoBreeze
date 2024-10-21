@@ -14,7 +14,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, ICombat } from '../../../core/models/combat.model';
-import { FORM_GMAX, FORM_PURIFIED, FORM_SHADOW, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { FORM_GMAX, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { IPokemonQueryMove, IPokemonQueryRankMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
@@ -22,6 +22,7 @@ import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
 import { EqualMode } from '../../../util/enums/string.enum';
 import { TableType, TypeSorted } from './enums/table-type.enum';
+import { MoveType } from '../../../enums/type.enum';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -182,7 +183,7 @@ const TableMove = (props: ITableMoveComponent) => {
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.fMove.elite && (
                 <span className="type-icon-small ic elite-ic">
-                  <span>Elite</span>
+                  <span>{MoveType.Elite}</span>
                 </span>
               )}
             </span>
@@ -197,22 +198,22 @@ const TableMove = (props: ITableMoveComponent) => {
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.cMove.elite && (
                 <span className="type-icon-small ic elite-ic">
-                  <span>Elite</span>
+                  <span>{MoveType.Elite}</span>
                 </span>
               )}
               {value.cMove.shadow && (
                 <span className="type-icon-small ic shadow-ic">
-                  <span>{capitalize(FORM_SHADOW)}</span>
+                  <span>{MoveType.Shadow}</span>
                 </span>
               )}
               {value.cMove.purified && (
                 <span className="type-icon-small ic purified-ic">
-                  <span>{capitalize(FORM_PURIFIED)}</span>
+                  <span>{MoveType.Purified}</span>
                 </span>
               )}
               {value.cMove.special && (
                 <span className="type-icon-small ic special-ic">
-                  <span>Special</span>
+                  <span>{MoveType.Special}</span>
                 </span>
               )}
             </span>
@@ -239,22 +240,22 @@ const TableMove = (props: ITableMoveComponent) => {
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
                   {value.elite && (
                     <span className="type-icon-small ic elite-ic">
-                      <span>Elite</span>
+                      <span>{MoveType.Elite}</span>
                     </span>
                   )}
                   {value.shadow && (
                     <span className="type-icon-small ic shadow-ic">
-                      <span>{capitalize(FORM_SHADOW)}</span>
+                      <span>{MoveType.Shadow}</span>
                     </span>
                   )}
                   {value.purified && (
                     <span className="type-icon-small ic purified-ic">
-                      <span>{capitalize(FORM_PURIFIED)}</span>
+                      <span>{MoveType.Purified}</span>
                     </span>
                   )}
                   {value.special && (
                     <span className="type-icon-small ic special-ic">
-                      <span>Special</span>
+                      <span>{MoveType.Special}</span>
                     </span>
                   )}
                 </span>

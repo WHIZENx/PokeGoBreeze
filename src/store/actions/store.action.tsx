@@ -12,21 +12,21 @@ import { PokemonPVPMove } from '../../core/models/pvp.model';
 import { DynamicObj } from '../../util/extension';
 
 export enum StoreActionTypes {
-  getStore = 'GET_STORE',
-  setTimestamp = 'SET_TIMESTAMP',
-  setOptions = 'SET_OPTIONS',
-  setTypeEff = 'SET_TYPE_EFF',
-  setWeatherBoost = 'SET_WEATHER_BOOST',
-  setPokemon = 'SET_POKEMON',
-  setSticker = 'SET_STICKER',
-  setCombat = 'SET_COMBAT',
-  setAssets = 'SET_ASSETS',
-  setLeagues = 'SET_LEAGUES',
-  setLogoPokeGO = 'SET_LOGO_POKEGO',
-  setCPM = 'SET_CPM',
-  setPVP = 'SET_PVP',
-  setPVPMoves = 'SET_PVP_MOVES',
-  resetStore = 'RESET_STORE',
+  getStore = '[Store] GetStore',
+  setTimestamp = '[Store] SetTimestamp',
+  setOptions = '[Store] SetOptions',
+  setTypeEff = '[Store] SetTypeEff',
+  setWeatherBoost = '[Store] SetWeatherBoost',
+  setPokemon = '[Store] SetPokemon',
+  setSticker = '[Store] SetSticker',
+  setCombat = '[Store] SetCombat',
+  setAssets = '[Store] SetAssets',
+  setLeagues = '[Store] SetLeagues',
+  setLogoPokeGO = '[Store] SetLogoPokeGO',
+  setCPM = '[Store] SetCPM',
+  setPVP = '[Store] SetPVP',
+  setPVPMoves = '[Store] SetPVPMoves',
+  resetStore = '[Store] ResetStore',
 }
 
 export class LoadStore implements Action {

@@ -180,7 +180,6 @@ export interface IPokemonBattleRanking {
   data: RankingsPVP | undefined;
   id: number | undefined;
   name: string | undefined;
-  speciesId?: string;
   pokemon: IPokemonData | undefined;
   form: string | undefined | null;
   stats: IStatsBase;
@@ -194,14 +193,12 @@ export interface IPokemonBattleRanking {
   bestStats?: IBattleBaseStats;
   shadow: boolean;
   purified: boolean | undefined;
-  score: number;
 }
 
 export class PokemonBattleRanking implements IPokemonBattleRanking {
   data: RankingsPVP | undefined;
   id: number | undefined;
   name: string | undefined;
-  speciesId?: string;
   pokemon: IPokemonData | undefined;
   form = '';
   stats = new StatsBase();
@@ -215,7 +212,6 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   bestStats?: IBattleBaseStats;
   shadow = false;
   purified = false;
-  score = 0;
 
   constructor({ ...props }: IPokemonBattleRanking) {
     Object.assign(this, props);

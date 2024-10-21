@@ -6,9 +6,9 @@ import APIService from '../../services/API.service';
 import { capitalize, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
 import { ICardSmallComponent } from '../models/component.model';
 import { combineClasses, getValueOrDefault, isEqual } from '../../util/extension';
+import { MoveType } from '../../enums/type.enum';
 
 const CardMoveSmall = (props: ICardSmallComponent) => {
   const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
@@ -35,10 +35,10 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(props.value.name, '_', ' ')}</span>
               <span className="d-flex">
-                {props.value.elite && <span className="type-icon-small ic elite-ic">Elite</span>}
-                {props.value.shadow && <span className="type-icon-small ic shadow-ic">{capitalize(FORM_SHADOW)}</span>}
-                {props.value.purified && <span className="type-icon-small ic purified-ic">{capitalize(FORM_PURIFIED)}</span>}
-                {props.value.special && <span className="type-icon-small ic special-ic">Special</span>}
+                {props.value.elite && <span className="type-icon-small ic elite-ic">{MoveType.Elite}</span>}
+                {props.value.shadow && <span className="type-icon-small ic shadow-ic">{MoveType.Shadow}</span>}
+                {props.value.purified && <span className="type-icon-small ic purified-ic">{MoveType.Purified}</span>}
+                {props.value.special && <span className="type-icon-small ic special-ic">{MoveType.Special}</span>}
               </span>
               {props.show && !props.disable && (
                 <div className="select-down d-flex align-items-center">
