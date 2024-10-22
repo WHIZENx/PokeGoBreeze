@@ -110,7 +110,7 @@ export interface RankingsPVP {
   rating: number;
   score: number;
   scores: number[];
-  speciesId: string;
+  speciesId?: string;
   speciesName: string;
   stats: PokemonRankingStats;
 }
@@ -157,7 +157,7 @@ export interface IBattlePokemonData {
   rating: number;
   score: number;
   scores: number[];
-  speciesId: string;
+  speciesId?: string;
   speciesName: string;
   stats: IPokemonRankingStats;
   name: string | undefined;
@@ -176,7 +176,7 @@ export class BattlePokemonData implements IBattlePokemonData {
   rating = 0;
   score = 0;
   scores: number[] = [];
-  speciesId = '';
+  speciesId?: string;
   speciesName = '';
   stats = new PokemonRankingStats();
   name: string | undefined;

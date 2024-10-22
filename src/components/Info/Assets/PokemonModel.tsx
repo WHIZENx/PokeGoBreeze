@@ -41,7 +41,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(data?.assets) && isNotEmpty(data?.pokemon)) {
+    if (props.id > 0 && isNotEmpty(data?.assets) && isNotEmpty(data?.pokemon)) {
       setPokeAssets(getImageList(props.id));
     }
   }, [data?.assets, data?.pokemon, props.id]);

@@ -2,8 +2,9 @@ import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios
 import { APIUrl } from './constants';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
-import { isEmpty, isEqual, isInclude } from '../util/extension';
+import { isEqual, isInclude } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
+import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
 
 class APIService {
   date: Date;
@@ -259,15 +260,15 @@ class APIService {
     return `${APIUrl.POGO_ASSET_API_URL}Buddy/pokemonBuddyCrownSml.png`;
   }
 
-  getItemEvo(item: string) {
-    if (item === 'Beans') {
+  getItemEvo(item: ItemEvolutionRequireType) {
+    if (item === ItemEvolutionRequireType.Beans) {
       return this.getPokeSprite(0);
     }
     return `${APIUrl.POGO_ASSET_API_URL}Items/Bag_${item}_Sprite.png`;
   }
 
-  getItemTroy(item: string) {
-    return isEmpty(item) ? `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey.png` : `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
+  getItemTroy(item?: ItemLureRequireType) {
+    return !item ? `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey.png` : `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
   }
 
   getSoundCryPokemon(name: string) {
