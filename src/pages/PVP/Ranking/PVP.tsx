@@ -133,9 +133,7 @@ const RankingPVP = () => {
 
         return new PokemonBattleRanking({
           data: item,
-          score: item.score,
           id,
-          speciesId: item.speciesId,
           name,
           form,
           pokemon,
@@ -192,7 +190,7 @@ const RankingPVP = () => {
           }}
         >
           <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
-            <Link to={`/pvp/${params.cp}/overall/${data.speciesId?.replaceAll('_', '-')}`}>
+            <Link to={`/pvp/${params.cp}/overall/${data.data?.speciesId?.replaceAll('_', '-')}`}>
               <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
             </Link>
             <div className="d-flex justify-content-center">

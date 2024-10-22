@@ -2,8 +2,8 @@
 import { Action } from 'redux';
 
 export enum ThemeActionTypes {
-  setTheme = 'SET_THEME',
-  resetTheme = 'RESET_THEME',
+  setTheme = '[Theme] SetTheme',
+  resetTheme = '[Theme] ResetTheme',
 }
 
 export class SetTheme implements Action {

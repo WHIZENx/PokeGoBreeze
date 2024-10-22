@@ -126,7 +126,6 @@ const PokemonPVP = () => {
       setRankingPoke(
         new PokemonBattleRanking({
           data,
-          score: data.score,
           id,
           name,
           pokemon,

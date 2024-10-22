@@ -4,10 +4,10 @@ import { IToolSearching } from '../../core/models/searching.model';
 import { ISearchingModel } from '../models/searching.model';
 
 export enum SearchingActionTypes {
-  setPokemonMainSearch = 'SET_POKEMON_MAIN_SEARCH',
-  resetPokemonMainSearch = 'RESET_POKEMON_MAIN_SEARCH',
-  setPokemonToolSearch = 'SET_POKEMON_TOOL_SEARCH',
-  resetPokemonToolSearch = 'RESET_POKEMON_TOOL_SEARCH',
+  setPokemonMainSearch = '[Searching] SetPokemonMainSearch',
+  resetPokemonMainSearch = '[Searching] ResetPokemonMainSearch',
+  setPokemonToolSearch = '[Searching] SetPokemonToolSearch',
+  resetPokemonToolSearch = '[Searching] ResetPokemonToolSearch',
 }
 
 export class SetPokemonMainSearch implements Action {

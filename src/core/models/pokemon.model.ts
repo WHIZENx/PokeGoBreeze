@@ -6,6 +6,7 @@ import { ISelectMoveModel } from '../../components/Input/models/select-move.mode
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 import { getValueOrDefault, isEqual, isUndefined, toNumber } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
+import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -55,8 +56,8 @@ interface EvolutionBranch {
   mustBeBuddy: boolean;
   onlyDaytime: boolean;
   onlyNighttime: boolean;
-  lureItemRequirement: string;
-  evolutionItemRequirement: string;
+  lureItemRequirement: ItemLureType;
+  evolutionItemRequirement: ItemEvolutionType;
   onlyUpsideDown: boolean;
   questDisplay: QuestDisplay[];
   temporaryEvolution: string;

@@ -52,3 +52,10 @@ export enum VariantType {
   Outlined = 'outlined',
   Primary = 'primary',
 }
+
+export enum MoveType {
+  Elite = 'Elite',
+  Shadow = 'Shadow',
+  Purified = 'Purified',
+  Special = 'Special',
+}
