@@ -88,18 +88,18 @@ export class RankRewardLeague implements IRankRewardLeague {
 
 export interface IPokemonRewardLeague {
   rank?: number;
-  free?: IPokemonRewardSetLeague[];
-  premium?: IPokemonRewardSetLeague[];
+  free: IPokemonRewardSetLeague[];
+  premium: IPokemonRewardSetLeague[];
 }
 
 export class PokemonRewardLeague implements IPokemonRewardLeague {
   rank?: number;
-  free?: IPokemonRewardSetLeague[];
-  premium?: IPokemonRewardSetLeague[];
+  free: IPokemonRewardSetLeague[] = [];
+  premium: IPokemonRewardSetLeague[] = [];
 
-  static create(value: IPokemonRewardLeague) {
+  static create(rank: number) {
     const obj = new PokemonRewardLeague();
-    Object.assign(obj, value);
+    obj.rank = rank;
     return obj;
   }
 }

@@ -1073,9 +1073,9 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           result.count = reward.item.count;
         }
         if (!data.rewardTrack) {
-          rewards.rank[data.rankLevel].free.push(result);
+          rewards.rank[data.rankLevel].free?.push(result);
         } else {
-          rewards.rank[data.rankLevel].premium.push(result);
+          rewards.rank[data.rankLevel].premium?.push(result);
         }
       });
     });
@@ -1087,9 +1087,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       const track = isInclude(item.templateId, LeagueRewardType.Free) ? LeagueRewardType.Free : LeagueRewardType.Premium;
       data.availablePokemon.forEach((value) => {
         if (!rewards.pokemon[value.unlockedAtRank]) {
-          rewards.pokemon[value.unlockedAtRank] = PokemonRewardLeague.create({
-            rank: value.unlockedAtRank,
-          });
+          rewards.pokemon[value.unlockedAtRank] = PokemonRewardLeague.create(value.unlockedAtRank);
         }
         const result = new PokemonRewardSetLeague();
         let poke = new PokemonReward();
