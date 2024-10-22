@@ -1,13 +1,27 @@
-interface IEvolutionQuestCondition {
-  desc?: string;
+import { ConditionType, ItemEvolutionRequireType, ItemLureRequireType, QuestType } from '../enums/option.enum';
+
+interface IOpponentPokemonBattle {
+  requireDefeat: boolean;
+  types: string[];
+}
+
+export class OpponentPokemonBattle implements IOpponentPokemonBattle {
+  requireDefeat = false;
+  types: string[] = [];
+}
+
+export interface IEvolutionQuestCondition {
+  desc?: ConditionType;
   pokemonType?: string[];
   throwType?: string;
+  opponentPokemonBattle?: IOpponentPokemonBattle;
 }
 
 export class EvolutionQuestCondition implements IEvolutionQuestCondition {
-  desc?: string;
+  desc?: ConditionType;
   pokemonType?: string[];
   throwType?: string;
+  opponentPokemonBattle?: IOpponentPokemonBattle;
 }
 
 interface IEvolutionQuest {
@@ -16,12 +30,12 @@ interface IEvolutionQuest {
   mustBeBuddy?: boolean;
   onlyDaytime?: boolean;
   onlyNighttime?: boolean;
-  lureItemRequirement?: string;
-  evolutionItemRequirement?: string;
+  lureItemRequirement?: ItemLureRequireType;
+  evolutionItemRequirement?: ItemEvolutionRequireType;
   onlyUpsideDown?: boolean;
   condition?: IEvolutionQuestCondition;
   goal?: number;
-  type?: string;
+  type?: QuestType;
   randomEvolution?: boolean;
 }
 
@@ -31,12 +45,12 @@ export class EvolutionQuest implements IEvolutionQuest {
   mustBeBuddy?: boolean;
   onlyDaytime?: boolean;
   onlyNighttime?: boolean;
-  lureItemRequirement?: string;
-  evolutionItemRequirement?: string;
+  lureItemRequirement?: ItemLureRequireType;
+  evolutionItemRequirement?: ItemEvolutionRequireType;
   onlyUpsideDown?: boolean;
   condition?: IEvolutionQuestCondition;
   goal?: number;
-  type?: string;
+  type?: QuestType;
   randomEvolution?: boolean;
 }
 

@@ -70,17 +70,19 @@ export interface IPokemonRewardSetLeague {
 
 export interface IRankRewardLeague {
   rank?: number;
-  free?: IRankRewardSetLeague[];
-  premium?: IRankRewardSetLeague[];
+  free: IRankRewardSetLeague[];
+  premium: IRankRewardSetLeague[];
 }
 
 export class RankRewardLeague implements IRankRewardLeague {
   rank?: number;
-  free?: IRankRewardSetLeague[];
-  premium?: IRankRewardSetLeague[];
+  free: IRankRewardSetLeague[] = [];
+  premium: IRankRewardSetLeague[] = [];
 
-  constructor({ ...props }: IRankRewardLeague) {
-    Object.assign(this, props);
+  static create(rank: number) {
+    const obj = new RankRewardLeague();
+    obj.rank = rank;
+    return obj;
   }
 }
 

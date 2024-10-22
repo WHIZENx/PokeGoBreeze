@@ -1,4 +1,5 @@
 import { DynamicObj } from '../../util/extension';
+import { ConditionType, LeagueConditionType, QuestType } from '../enums/option.enum';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
 import { IStatsBase, StatsBase } from './stats.model';
@@ -229,7 +230,7 @@ interface WithPokemonCpLimit {
 
 interface PokemonCondition {
   pokemonBanList?: PokemonConditionPermission;
-  type: string;
+  type: LeagueConditionType;
   pokemonCaughtTimestamp?: PokemonCaughtTimestamp;
   withPokemonType?: WithPokemonType;
   pokemonLevelRange?: PokemonLevelRange;
@@ -249,7 +250,7 @@ interface CombatLeague {
 
 interface EvolutionQuestTemplate {
   questTemplateId: string;
-  questType: string;
+  questType: QuestType;
   goals: EvolutionGoal[];
 }
 
@@ -285,7 +286,7 @@ export interface PokemonDataGM {
 }
 
 interface EvolutionGoal {
-  condition: EvolutionCondition[];
+  condition?: EvolutionCondition[];
   target: number;
 }
 
@@ -297,10 +298,16 @@ interface WithThrowType {
   throwType: string;
 }
 
+interface OpponentPokemonBattleStatus {
+  requireDefeat: boolean;
+  opponentPokemonType: string[];
+}
+
 interface EvolutionCondition {
-  type: string;
+  type: ConditionType;
   withPokemonType?: WithPokemonType;
   withThrowType?: WithThrowType;
+  withOpponentPokemonBattleStatus?: OpponentPokemonBattleStatus;
 }
 
 export interface IPokemonPermission {

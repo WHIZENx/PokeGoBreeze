@@ -46,6 +46,7 @@ import { Action } from 'history';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 
 interface IPokemonEvo {
   prev?: string;
@@ -280,7 +281,7 @@ const Evolution = (props: IEvolutionComponent) => {
                 id: evo.evoToId,
                 name: evo.evoToName,
                 form: evo.evoToForm,
-                canPurified: evo.purificationEvoCandyCost ? true : false,
+                canPurified: evo.purificationEvoCandyCost > 0,
                 evoList: [],
                 tempEvo: [],
               })
@@ -303,7 +304,7 @@ const Evolution = (props: IEvolutionComponent) => {
           name: evo.evoToName,
           form: evo.evoToForm,
           prev: poke.name,
-          canPurified: evo.purificationEvoCandyCost ? true : false,
+          canPurified: evo.purificationEvoCandyCost > 0,
           evoList: [],
           tempEvo: [],
         })
@@ -529,13 +530,13 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.condition && (
                           <span className="caption">
-                            {data.quest.condition.desc === 'THROW_TYPE' && (
+                            {data.quest.condition.desc === ConditionType.Throw && (
                               <Fragment>
                                 <CallMadeIcon fontSize="small" />
                                 <span>{`${capitalize(data.quest.condition.throwType)} x${data.quest.goal}`}</span>
                               </Fragment>
                             )}
-                            {data?.quest.condition.desc === 'POKEMON_TYPE' && (
+                            {data?.quest.condition.desc === ConditionType.Pokemon && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
                                 {data.quest.condition.pokemonType?.map((value, index) => (
                                   <img
@@ -552,15 +553,27 @@ const Evolution = (props: IEvolutionComponent) => {
                                 <span style={{ marginLeft: 2 }}>{`x${data.quest.goal}`}</span>
                               </div>
                             )}
-                            {data.quest.condition.desc === 'WIN_RAID_STATUS' && (
+                            {data.quest.condition.desc === ConditionType.WinRaid && (
                               <Fragment>
                                 <SportsMartialArtsIcon fontSize="small" />
                                 <span>{`x${data.quest.goal}`}</span>
                               </Fragment>
                             )}
+                            {data.quest.condition.desc === ConditionType.PokemonBattle && (
+                              <Fragment>
+                                <div className="inline-flex" style={{ gap: 3 }}>
+                                  {data.quest.condition.opponentPokemonBattle?.types.map((value, index) => (
+                                    <img key={index} width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value)} />
+                                  ))}
+                                </div>
+                                <span style={{ fontSize: 11, lineHeight: 1 }}>{`Battle x${data.quest.goal} ${
+                                  data.quest.condition.opponentPokemonBattle?.requireDefeat ? 'Defeat' : ''
+                                }`}</span>
+                              </Fragment>
+                            )}
                           </span>
                         )}
-                        {data?.quest?.type === 'BUDDY_EARN_AFFECTION_POINTS' && (
+                        {data?.quest?.type === QuestType.BuddyEarn && (
                           <span className="caption">
                             <Fragment>
                               <FavoriteIcon fontSize="small" sx={{ color: 'red' }} />
@@ -568,11 +581,19 @@ const Evolution = (props: IEvolutionComponent) => {
                             </Fragment>
                           </span>
                         )}
-                        {data?.quest?.type === 'BUDDY_FEED' && (
+                        {data?.quest?.type === QuestType.BuddyFeed && (
                           <span className="caption">
                             <Fragment>
                               <RestaurantIcon fontSize="small" />
                               <span>{`x${data.quest.goal}`}</span>
+                            </Fragment>
+                          </span>
+                        )}
+                        {data?.quest?.type === QuestType.UseIncense && (
+                          <span className="caption">
+                            <Fragment>
+                              <img width={20} height={20} src={APIService.getItemSprite('Incense_0')} />
+                              <div style={{ fontSize: 11, lineHeight: 1 }}>Use Incense</div>
                             </Fragment>
                           </span>
                         )}
@@ -688,7 +709,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <DarkModeIcon fontSize="small" /> : Evolution during at night.
                 </span>
                 <span className="d-block caption">
-                  - <img alt="img-troy-required" height={20} src={APIService.getItemTroy('')} /> : Evolution in lure module.
+                  - <img alt="img-troy-required" height={20} src={APIService.getItemTroy()} /> : Evolution in lure module.
                 </span>
                 <span className="d-block caption">
                   - <SecurityUpdateIcon fontSize="small" /> : Evolution at upside down phone.
@@ -708,6 +729,10 @@ const Evolution = (props: IEvolutionComponent) => {
                 <span className="d-block caption">
                   - <RestaurantIcon fontSize="small" /> : Buddy feed.
                 </span>
+                <span className="d-block caption">
+                  - <img width={20} height={20} src={APIService.getItemSprite('Incense_0')} /> : Use Incense.
+                </span>
+                <span className="d-block caption">- Pokemon Battle.</span>
               </span>
             </PopoverConfig>
           }
