@@ -77,6 +77,7 @@ import {
   isNotEmpty,
   isUndefined,
   toFloat,
+  toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, RaidSummary, TrainerBattle } from './models/raid-battle.model';
@@ -85,16 +86,16 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
 
 interface IOption {
-  weatherBoss: boolean;
-  weatherCounter: boolean;
-  released: boolean;
+  isWeatherBoss: boolean;
+  isWeatherCounter: boolean;
+  isReleased: boolean;
   enableTimeAllow: boolean;
 }
 
 class Option implements IOption {
-  weatherBoss = false;
-  weatherCounter = false;
-  released = false;
+  isWeatherBoss = false;
+  isWeatherCounter = false;
+  isReleased = false;
   enableTimeAllow = false;
 
   constructor({ ...props }: IOption) {
@@ -172,9 +173,9 @@ const RaidBattle = () => {
 
   const [options, setOptions] = useState(
     new Option({
-      weatherBoss: false,
-      weatherCounter: false,
-      released: true,
+      isWeatherBoss: false,
+      isWeatherCounter: false,
+      isReleased: true,
       enableTimeAllow: true,
     })
   );
@@ -199,7 +200,7 @@ const RaidBattle = () => {
 
   const { used, selected } = filters;
 
-  const { weatherBoss, released, enableTimeAllow } = options;
+  const { isWeatherBoss, isReleased, enableTimeAllow } = options;
 
   const [timeAllow, setTimeAllow] = useState(0);
 
@@ -357,7 +358,7 @@ const RaidBattle = () => {
       result.quickMoves?.forEach((value) => {
         simpleFMove.push(new SelectMoveModel(value, false, false, false, false));
       });
-      result.eliteQuickMove?.forEach((value) => {
+      result.eliteQuickMoves?.forEach((value) => {
         simpleFMove.push(new SelectMoveModel(value, true, false, false, false));
       });
       setFMove(simpleFMove.at(0));
@@ -366,7 +367,7 @@ const RaidBattle = () => {
       result.cinematicMoves?.forEach((value) => {
         simpleCMove.push(new SelectMoveModel(value, false, false, false, false));
       });
-      result.eliteCinematicMove?.forEach((value) => {
+      result.eliteCinematicMoves?.forEach((value) => {
         simpleCMove.push(new SelectMoveModel(value, true, false, false, false));
       });
       result.shadowMoves?.forEach((value) => {
@@ -393,8 +394,8 @@ const RaidBattle = () => {
     movePoke: string[],
     value: IPokemonData | undefined,
     vf: string,
-    shadow: boolean,
-    purified: boolean,
+    isShadow: boolean,
+    isPurified: boolean,
     fElite: boolean,
     cElite: boolean,
     specialMove: string[] | undefined,
@@ -412,7 +413,7 @@ const RaidBattle = () => {
           fMove,
           cMove,
           types: getValueOrDefault(Array, value?.types),
-          shadow,
+          isShadow,
         });
         let statsDefender = new BattleCalculate({
           atk: statBossATK,
@@ -421,7 +422,7 @@ const RaidBattle = () => {
           fMove: data?.combat?.find((item) => isEqual(item.name, fMove?.name)),
           cMove: data?.combat?.find((item) => isEqual(item.name, cMove?.name)),
           types: getValueOrDefault(Array, form?.form.types),
-          isStab: weatherBoss,
+          isStab: isWeatherBoss,
         });
         const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
         if (pokemonTarget) {
@@ -456,9 +457,9 @@ const RaidBattle = () => {
           attackHpRemain: Math.floor(getValueOrDefault(Number, statsAttacker.hp)) - Math.min(timeAllow, ttkDef) * dpsDef,
           defendHpRemain: Math.floor(getValueOrDefault(Number, statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
           death: Math.floor(getValueOrDefault(Number, statsDefender.hp) / tdoAtk),
-          shadow,
-          purified: purified && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
-          mShadow: shadow && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          isShadow,
+          isPurified: isPurified && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          mShadow: isShadow && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -537,7 +538,7 @@ const RaidBattle = () => {
       ) {
         addCPokeData(
           dataList,
-          getValueOrDefault(Array, pokemon.eliteCinematicMove),
+          getValueOrDefault(Array, pokemon.eliteCinematicMoves),
           pokemon,
           vf,
           true,
@@ -550,7 +551,7 @@ const RaidBattle = () => {
       } else {
         addCPokeData(
           dataList,
-          getValueOrDefault(Array, pokemon.eliteCinematicMove),
+          getValueOrDefault(Array, pokemon.eliteCinematicMoves),
           pokemon,
           vf,
           false,
@@ -569,7 +570,7 @@ const RaidBattle = () => {
     data?.pokemon?.forEach((pokemon) => {
       if (pokemon && !isEqual(pokemon.forme, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.quickMoves), false, pokemonTarget, pokemon.isShadow);
-        addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMove), true, pokemonTarget, pokemon.isShadow);
+        addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMoves), true, pokemonTarget, pokemon.isShadow);
       }
     });
     if (pokemonTarget) {
@@ -620,7 +621,7 @@ const RaidBattle = () => {
         fMove,
         cMove,
         types: getValueOrDefault(Array, pokemon.dataTargetPokemon?.types),
-        shadow: false,
+        isShadow: false,
       });
       const statsDefender = new BattleCalculate({
         atk: statBossATK,
@@ -629,7 +630,7 @@ const RaidBattle = () => {
         fMove: data?.combat?.find((item) => isEqual(item.name, fMove?.name)),
         cMove: data?.combat?.find((item) => isEqual(item.name, cMove?.name)),
         types: getValueOrDefault(Array, form?.form.types),
-        isStab: weatherBoss,
+        isStab: isWeatherBoss,
       });
 
       if (!statsDefender) {
@@ -1148,7 +1149,7 @@ const RaidBattle = () => {
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
         <div className="col-lg" style={{ padding: 0 }}>
           <Find
-            hide={true}
+            isHide={true}
             title="Raid Boss"
             clearStats={resetData}
             setStatATK={setStatATK}
@@ -1215,13 +1216,13 @@ const RaidBattle = () => {
             <div className="row align-items-center element-top" style={{ margin: 0 }}>
               <div className="col-6 d-flex justify-content-end">
                 <FormControlLabel
-                  control={<Checkbox checked={weatherBoss} onChange={(_, check) => setOptions({ ...options, weatherBoss: check })} />}
+                  control={<Checkbox checked={isWeatherBoss} onChange={(_, check) => setOptions({ ...options, isWeatherBoss: check })} />}
                   label="Boss Weather Boost"
                 />
               </div>
               <div className="col-6">
                 <FormControlLabel
-                  control={<Checkbox checked={released} onChange={(_, check) => setOptions({ ...options, released: check })} />}
+                  control={<Checkbox checked={isReleased} onChange={(_, check) => setOptions({ ...options, isReleased: check })} />}
                   label="Only Release in Pokémon GO"
                 />
               </div>
@@ -1313,7 +1314,7 @@ const RaidBattle = () => {
                 if (!used.onlyShadow) {
                   return true;
                 }
-                return obj.shadow;
+                return obj.isShadow;
               })
               .slice(0, 10)
               .map((value, index) => (
@@ -1325,7 +1326,7 @@ const RaidBattle = () => {
                       }`}
                       className="sprite-raid position-relative"
                     >
-                      {value.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+                      {value.isShadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
                       <img
                         className="pokemon-sprite-raid"
                         alt="img-pokemon"
@@ -1349,30 +1350,30 @@ const RaidBattle = () => {
                     </b>
                   </span>
                   <span className="d-block element-top">
-                    DPS: <b>{value.dpsAtk.toFixed(2)}</b>
+                    DPS: <b>{toFloatWithPadding(value.dpsAtk, 2)}</b>
                   </span>
                   <span className="d-block">
-                    Total Damage Output: <b>{value.tdoAtk.toFixed(2)}</b>
+                    Total Damage Output: <b>{toFloatWithPadding(value.tdoAtk, 2)}</b>
                   </span>
                   <span className="d-block">
                     Death: <b className={value.death === 0 ? 'text-success' : 'text-danger'}>{value.death}</b>
                   </span>
                   <span className="d-block">
-                    Time to Kill <span className="d-inline-block caption">(Boss)</span>: <b>{value.ttkAtk.toFixed(2)} sec</b>
+                    Time to Kill <span className="d-inline-block caption">(Boss)</span>: <b>{toFloatWithPadding(value.ttkAtk, 2)} sec</b>
                   </span>
                   <span className="d-block">
-                    Time is Killed: <b>{value.ttkDef.toFixed(2)} sec</b>
+                    Time is Killed: <b>{toFloatWithPadding(value.ttkDef, 2)} sec</b>
                   </span>
                   <hr />
                   <div className="container" style={{ marginBottom: 15 }}>
-                    <TypeBadge title="Fast Move" move={value.fMove} elite={value.elite?.fMove} />
+                    <TypeBadge title="Fast Move" move={value.fMove} isElite={value.elite?.fMove} />
                     <TypeBadge
                       title="Charged Move"
                       move={value.cMove}
-                      elite={value.elite?.cMove}
-                      shadow={value.mShadow}
-                      purified={value.purified}
-                      special={value.special}
+                      isElite={value.elite?.cMove}
+                      isShadow={value.mShadow}
+                      isPurified={value.isPurified}
+                      isSpecial={value.isSpecial}
                     />
                   </div>
                 </div>
@@ -1494,14 +1495,14 @@ const RaidBattle = () => {
               <TypeInfo arr={getValueOrDefault(Array, form?.form.types)} />
             </div>
             <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
-              <TypeBadge title="Fast Move" move={fMove} elite={fMove?.elite} />
+              <TypeBadge title="Fast Move" move={fMove} isElite={fMove?.isElite} />
               <TypeBadge
                 title="Charged Move"
                 move={cMove}
-                elite={cMove?.elite}
-                shadow={cMove?.shadow}
-                purified={cMove?.purified}
-                special={cMove?.special}
+                isElite={cMove?.isElite}
+                isShadow={cMove?.isShadow}
+                isPurified={cMove?.isPurified}
+                isSpecial={cMove?.isSpecial}
               />
             </div>
             {resultBoss && (
@@ -1512,20 +1513,20 @@ const RaidBattle = () => {
                     <span className="d-block element-top">
                       DPS:{' '}
                       <b>
-                        {resultBoss.minDPS.toFixed(2)} - {resultBoss.maxDPS.toFixed(2)}
+                        {toFloatWithPadding(resultBoss.minDPS, 2)} - {toFloatWithPadding(resultBoss.maxDPS, 2)}
                       </b>
                     </span>
                     <span className="d-block">
-                      Average DPS: <b>{((resultBoss.minDPS + resultBoss.maxDPS) / 2).toFixed(2)}</b>
+                      Average DPS: <b>{toFloatWithPadding((resultBoss.minDPS + resultBoss.maxDPS) / 2, 2)}</b>
                     </span>
                     <span className="d-block">
                       Total Damage Output:{' '}
                       <b>
-                        {resultBoss.minTDO.toFixed(2)} - {resultBoss.maxTDO.toFixed(2)}
+                        {toFloatWithPadding(resultBoss.minTDO, 2)} - {toFloatWithPadding(resultBoss.maxTDO, 2)}
                       </b>
                     </span>
                     <span className="d-block">
-                      Average Total Damage Output: <b>{((resultBoss.minTDO + resultBoss.maxTDO) / 2).toFixed(2)}</b>
+                      Average Total Damage Output: <b>{toFloatWithPadding((resultBoss.minTDO + resultBoss.maxTDO) / 2, 2)}</b>
                     </span>
                     <span className="d-block">
                       Boss HP Remaining:{' '}
@@ -1599,9 +1600,11 @@ const RaidBattle = () => {
                                     <span className="caption">{splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}</span>
                                   </div>
                                 </td>
-                                <td>{data.dpsAtk.toFixed(2)}</td>
-                                <td>{Math.floor(data.tdoAtk) === 0 ? '-' : data.tdoAtk.toFixed(2)}</td>
-                                <td>{Math.floor(getValueOrDefault(Number, data.atkHpRemain)) === 0 ? data.ttkDef.toFixed(2) : '-'}</td>
+                                <td>{toFloatWithPadding(data.dpsAtk, 2)}</td>
+                                <td>{Math.floor(data.tdoAtk) === 0 ? '-' : toFloatWithPadding(data.tdoAtk, 2)}</td>
+                                <td>
+                                  {Math.floor(getValueOrDefault(Number, data.atkHpRemain)) === 0 ? toFloatWithPadding(data.ttkDef, 2) : '-'}
+                                </td>
                                 <td>
                                   <b>
                                     <span
@@ -1624,9 +1627,9 @@ const RaidBattle = () => {
                               </tr>
                             )}
                             <tr className="text-summary">
-                              <td colSpan={2}>Total DPS: {result.summary.dpsAtk.toFixed(2)}</td>
+                              <td colSpan={2}>Total DPS: {toFloatWithPadding(result.summary.dpsAtk, 2)}</td>
                               <td className="text-center" colSpan={2}>
-                                Total TDO: {result.summary.tdoAtk.toFixed(2)}
+                                Total TDO: {toFloatWithPadding(result.summary.tdoAtk, 2)}
                               </td>
                               <td colSpan={2}>Boss HP Remain: {Math.floor(result.summary.bossHp - result.summary.tdoAtk)}</td>
                             </tr>
@@ -1635,7 +1638,7 @@ const RaidBattle = () => {
                               (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
                               <tr className="text-summary">
                                 <td colSpan={3}>
-                                  <TimerIcon /> Time To Battle Remain: {result.summary.timer.toFixed(2)}{' '}
+                                  <TimerIcon /> Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}{' '}
                                   {enableTimeAllow && `/ ${timeAllow}`}
                                 </td>
                                 {resultBattle(Math.floor(result.summary.bossHp - result.summary.tdoAtk), result.summary.timer)}
@@ -1661,7 +1664,7 @@ const RaidBattle = () => {
             {pokemonBattle.map((pokemon, index) => (
               <div className={index === 0 ? '' : 'element-top'} key={index}>
                 <PokemonRaid
-                  controls={true}
+                  isControls={true}
                   id={index}
                   pokemon={pokemon}
                   data={pokemonBattle}

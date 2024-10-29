@@ -18,7 +18,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       <Fragment>
         {isNotEmpty(data) && (
           <Fragment>
-            <h6 className={props.block ? 'element-top' : ''}>
+            <h6 className={props.isBlock ? 'element-top' : ''}>
               <b className="text-shadow">x{text}</b>
             </h6>
             <div className="d-flex flex-wrap" style={{ gap: 5 }}>

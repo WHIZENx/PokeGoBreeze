@@ -36,7 +36,7 @@ import CandyXL from '../../components/Sprites/Candy/CandyXL';
 import { IStatsRank, IStatsBase, HexagonStats } from '../../core/models/stats.model';
 import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { Combat, ICombat } from '../../core/models/combat.model';
+import { ICombat } from '../../core/models/combat.model';
 import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/constants';
 import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/models/pvp.model';
 import { IPokemonBattleRanking } from './models/battle.model';
@@ -46,6 +46,7 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isIncludeList, t
 import { EffectiveType } from './enums/type-eff.enum';
 import { ArcheType } from './enums/arche-type.enum';
 import { BattleLeagueCPType } from '../../util/enums/compute.enum';
+import { BackgroundType } from './enums/model-type.enum';
 
 export const Header = (data: IPokemonBattleRanking | undefined) => {
   return (
@@ -58,45 +59,45 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
             </b>
           </h3>
         )}
-        <TypeInfo shadow={true} block={true} color="white" arr={data?.pokemon?.types} />
+        <TypeInfo isShadow={true} isBlock={true} color="white" arr={data?.pokemon?.types} />
       </div>
       <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
         Recommend Moveset in PVP
       </h6>
       <div className="d-flex flex-wrap element-top" style={{ columnGap: 10 }}>
         <TypeBadge
-          grow={true}
-          find={true}
+          isGrow={true}
+          isFind={true}
           title="Fast Move"
           color="white"
           move={data?.fMove}
-          elite={isIncludeList(data?.pokemon?.cinematicMoves, data?.fMove?.name)}
-          unavailable={data?.fMove && !isIncludeList(getAllMoves(data.pokemon), data.fMove.name)}
+          isElite={isIncludeList(data?.pokemon?.cinematicMoves, data?.fMove?.name)}
+          isUnavailable={data?.fMove && !isIncludeList(getAllMoves(data.pokemon), data.fMove.name)}
         />
         <TypeBadge
-          grow={true}
-          find={true}
+          isGrow={true}
+          isFind={true}
           title="Primary Charged Move"
           color="white"
           move={data?.cMovePri}
-          elite={isIncludeList(data?.pokemon?.eliteCinematicMove, data?.cMovePri?.name)}
-          shadow={isIncludeList(data?.pokemon?.shadowMoves, data?.cMovePri?.name)}
-          purified={isIncludeList(data?.pokemon?.purifiedMoves, data?.cMovePri?.name)}
-          special={isIncludeList(data?.pokemon?.specialMoves, data?.cMovePri?.name)}
-          unavailable={data?.cMovePri && !isIncludeList(getAllMoves(data.pokemon), data.cMovePri.name)}
+          isElite={isIncludeList(data?.pokemon?.eliteCinematicMoves, data?.cMovePri?.name)}
+          isShadow={isIncludeList(data?.pokemon?.shadowMoves, data?.cMovePri?.name)}
+          isPurified={isIncludeList(data?.pokemon?.purifiedMoves, data?.cMovePri?.name)}
+          isSpecial={isIncludeList(data?.pokemon?.specialMoves, data?.cMovePri?.name)}
+          isUnavailable={data?.cMovePri && !isIncludeList(getAllMoves(data.pokemon), data.cMovePri.name)}
         />
         {data?.cMoveSec && (
           <TypeBadge
-            grow={true}
-            find={true}
+            isGrow={true}
+            isFind={true}
             title="Secondary Charged Move"
             color="white"
             move={data.cMoveSec}
-            elite={isIncludeList(data.pokemon?.eliteCinematicMove, data.cMoveSec.name)}
-            shadow={isIncludeList(data.pokemon?.shadowMoves, data.cMoveSec.name)}
-            purified={isIncludeList(data.pokemon?.purifiedMoves, data.cMoveSec.name)}
-            special={isIncludeList(data.pokemon?.specialMoves, data.cMoveSec.name)}
-            unavailable={!isIncludeList(getAllMoves(data.pokemon), data.cMoveSec.name)}
+            isElite={isIncludeList(data.pokemon?.eliteCinematicMoves, data.cMoveSec.name)}
+            isShadow={isIncludeList(data.pokemon?.shadowMoves, data.cMoveSec.name)}
+            isPurified={isIncludeList(data.pokemon?.purifiedMoves, data.cMoveSec.name)}
+            isSpecial={isIncludeList(data.pokemon?.specialMoves, data.cMoveSec.name)}
+            isUnavailable={!isIncludeList(getAllMoves(data.pokemon), data.cMoveSec.name)}
           />
         )}
       </div>
@@ -111,7 +112,7 @@ export const Body = (
   cp: string | undefined,
   type: string | undefined
 ) => {
-  const renderItemList = (data: PokemonVersus, bgType: number) => {
+  const renderItemList = (data: PokemonVersus, bgType: BackgroundType) => {
     const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
     const pokemon = pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
@@ -140,13 +141,13 @@ export const Body = (
             <b className="text-white text-shadow">
               #{id} {splitAndCapitalize(name, '-', ' ')}
             </b>
-            <TypeInfo shadow={true} hideText={true} height={20} arr={pokemon?.types} />
+            <TypeInfo isShadow={true} isHideText={true} height={20} arr={pokemon?.types} />
           </div>
         </div>
         <div style={{ marginRight: 15 }}>
           <span
             className="ranking-score score-ic text-white text-shadow filter-shadow"
-            style={{ backgroundColor: bgType === 0 ? 'lightgreen' : 'lightcoral' }}
+            style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
           >
             {data.rating}
           </span>
@@ -167,7 +168,7 @@ export const Body = (
         {data?.matchups
           .sort((a, b) => b.rating - a.rating)
           .map((matchup, index) => (
-            <Fragment key={index}>{renderItemList(matchup, 0)}</Fragment>
+            <Fragment key={index}>{renderItemList(matchup, BackgroundType.Matchup)}</Fragment>
           ))}
       </div>
       <div className="col-lg-6 element-top" style={{ padding: 0 }}>
@@ -180,7 +181,7 @@ export const Body = (
         {data?.counters
           .sort((a, b) => a.rating - b.rating)
           .map((counter, index) => (
-            <Fragment key={index}>{renderItemList(counter, 1)}</Fragment>
+            <Fragment key={index}>{renderItemList(counter, BackgroundType.Counter)}</Fragment>
           ))}
       </div>
     </div>
@@ -372,7 +373,7 @@ export const TypeEffective = (types: string[]) => {
 };
 
 export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPokemonData | undefined, combatData: ICombat[]) => {
-  const findArchetype = (archetype: string) => {
+  const findArchetype = (archetype: ArcheType) => {
     return Object.values(ArcheType).map((value, index) => (
       <Fragment key={index}>
         {isInclude(archetype, value) && !(isInclude(archetype, ArcheType.SelfDebuff) && value === ArcheType.Debuff) && (
@@ -400,25 +401,17 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
   };
 
   const findMove = (name: string, uses: number) => {
-    const oldName = name;
-    if (isInclude(name, 'HIDDEN_POWER')) {
-      name = 'HIDDEN_POWER';
+    const move = combatData.find((move) => isEqual(move.name, name));
+    let isElite = false;
+    let isSpecial = false;
+    if (isIncludeList(combatList?.eliteQuickMoves, name)) {
+      isElite = true;
     }
-    let move = combatData.find((move) => isEqual(move.name, name));
-    if (move && isInclude(oldName, 'HIDDEN_POWER')) {
-      move = Combat.create({ ...move, type: getValueOrDefault(String, oldName.split('_').at(2)) });
-    }
-
-    let elite = false;
-    let special = false;
-    if (isIncludeList(combatList?.eliteQuickMove, name)) {
-      elite = true;
-    }
-    if (isIncludeList(combatList?.eliteCinematicMove, name)) {
-      elite = true;
+    if (isIncludeList(combatList?.eliteCinematicMoves, name)) {
+      isElite = true;
     }
     if (isIncludeList(combatList?.specialMoves, name)) {
-      special = true;
+      isSpecial = true;
     }
 
     return (
@@ -438,7 +431,7 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
             src={APIService.getTypeSprite(getValueOrDefault(String, move?.type))}
           />
           <span className="filter-shadow">
-            {splitAndCapitalize(oldName, '_', ' ')} {(elite || special) && <b className="filter-shadow">*</b>}
+            {splitAndCapitalize(name, '_', ' ')} {(isElite || isSpecial) && <b className="filter-shadow">*</b>}
           </span>
         </div>
         <div className="d-flex align-items-center" style={{ columnGap: 10 }}>

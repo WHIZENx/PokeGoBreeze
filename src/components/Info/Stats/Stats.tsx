@@ -12,7 +12,7 @@ import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault } from '../../../util/extension';
+import { getValueOrDefault, toFloatWithPadding } from '../../../util/extension';
 
 interface ICurrentStats {
   stats: IStatsPokemonGO;
@@ -138,7 +138,7 @@ const Stats = (props: IStatsComponent) => {
         rank={isAvailable.statProdRank ? isAvailable.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.statProd}
         currentStats={currentStats.stats.prod}
-        optionalStats={`${(currentStats.stats.prod / Math.pow(10, 6)).toFixed(2)} MM`}
+        optionalStats={`${toFloatWithPadding(currentStats.stats.prod / Math.pow(10, 6), 2)} MM`}
         id={props.id}
         form={props.form}
         statType={TypeAction.PROD}

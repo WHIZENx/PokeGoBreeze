@@ -2,13 +2,15 @@ import { SpinnerActions } from '../actions';
 import { SpinnerActionsUnion } from '../actions/spinner.action';
 
 export interface SpinnerModel {
-  loading: boolean;
-  bar: {
-    show: boolean;
-    percent: number;
-  };
+  isLoading: boolean;
+  bar: BarModel;
   message: string | null;
   error: ErrorModel | null;
+}
+
+interface BarModel {
+  isShow: boolean;
+  percent: number;
 }
 
 interface ErrorModel {
@@ -17,9 +19,9 @@ interface ErrorModel {
 }
 
 const initialize: SpinnerModel = {
-  loading: false,
+  isLoading: false,
   bar: {
-    show: false,
+    isShow: false,
     percent: 0,
   },
   message: null,
@@ -31,13 +33,13 @@ const SpinnerReducer = (state: SpinnerModel = initialize, action: SpinnerActions
     case SpinnerActions.SpinnerActionTypes.showSpinner:
       return {
         ...state,
-        loading: true,
+        isLoading: true,
         error: action.payload?.error,
       };
     case SpinnerActions.SpinnerActionTypes.showSpinnerMsg:
       return {
         ...state,
-        loading: true,
+        isLoading: true,
         message: action.payload.message,
         error: action.payload.error,
       };
@@ -45,14 +47,14 @@ const SpinnerReducer = (state: SpinnerModel = initialize, action: SpinnerActions
       return {
         ...state,
         message: null,
-        loading: false || (state.error ? true : false),
+        isLoading: false || Boolean(state.error),
       };
     case SpinnerActions.SpinnerActionTypes.setBar:
       return {
         ...state,
         bar: {
           ...state.bar,
-          show: action.payload,
+          isShow: action.payload,
         },
       };
     case SpinnerActions.SpinnerActionTypes.setPercent:

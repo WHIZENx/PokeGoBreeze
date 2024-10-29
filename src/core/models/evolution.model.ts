@@ -27,31 +27,31 @@ export class EvolutionQuestCondition implements IEvolutionQuestCondition {
 interface IEvolutionQuest {
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
-  mustBeBuddy?: boolean;
-  onlyDaytime?: boolean;
-  onlyNighttime?: boolean;
+  isMustBeBuddy?: boolean;
+  isOnlyDaytime?: boolean;
+  isOnlyNighttime?: boolean;
   lureItemRequirement?: ItemLureRequireType;
   evolutionItemRequirement?: ItemEvolutionRequireType;
-  onlyUpsideDown?: boolean;
+  isOnlyUpsideDown?: boolean;
   condition?: IEvolutionQuestCondition;
   goal?: number;
   type?: QuestType;
-  randomEvolution?: boolean;
+  isRandomEvolution?: boolean;
 }
 
 export class EvolutionQuest implements IEvolutionQuest {
   genderRequirement?: string;
   kmBuddyDistanceRequirement?: number;
-  mustBeBuddy?: boolean;
-  onlyDaytime?: boolean;
-  onlyNighttime?: boolean;
+  isMustBeBuddy?: boolean;
+  isOnlyDaytime?: boolean;
+  isOnlyNighttime?: boolean;
   lureItemRequirement?: ItemLureRequireType;
   evolutionItemRequirement?: ItemEvolutionRequireType;
-  onlyUpsideDown?: boolean;
+  isOnlyUpsideDown?: boolean;
   condition?: IEvolutionQuestCondition;
   goal?: number;
   type?: QuestType;
-  randomEvolution?: boolean;
+  isRandomEvolution?: boolean;
 }
 
 export interface IEvoList {

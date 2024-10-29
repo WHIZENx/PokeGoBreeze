@@ -307,20 +307,17 @@ const Pokemon = (props: IPokemonPage) => {
     const id = params.id ? params.id.toLowerCase() : props.id;
     if (id && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
-        if (!spinner.loading) {
+        if (!spinner.isLoading) {
           const currentId = getPokemonById(pokemonData, toNumber(id));
           if (currentId) {
-            const result = {
-              prev: getPokemonById(pokemonData, currentId.id - 1),
-              current: getPokemonById(pokemonData, currentId.id - 1),
-              next: getPokemonById(pokemonData, currentId.id + 1),
-            };
-            if (result.prev && event.keyCode === KEY_LEFT) {
+            const prev = getPokemonById(pokemonData, currentId.id - 1);
+            const next = getPokemonById(pokemonData, currentId.id + 1);
+            if (prev && event.keyCode === KEY_LEFT) {
               event.preventDefault();
-              params.id ? navigate(`/pokemon/${result.prev.id}`, { replace: true }) : props.onDecId?.();
-            } else if (result.next && event.keyCode === KEY_RIGHT) {
+              params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
+            } else if (next && event.keyCode === KEY_RIGHT) {
               event.preventDefault();
-              params.id ? navigate(`/pokemon/${result.next.id}`, { replace: true }) : props.onIncId?.();
+              params.id ? navigate(`/pokemon/${next.id}`, { replace: true }) : props.onIncId?.();
             }
           }
         }
@@ -330,7 +327,7 @@ const Pokemon = (props: IPokemonPage) => {
         document.removeEventListener('keyup', keyDownHandler, false);
       };
     }
-  }, [params.id, props.id, spinner.loading, pokemonData]);
+  }, [params.id, props.id, spinner.isLoading, pokemonData]);
 
   const checkReleased = (id: number, form: string, defaultForm: IPokemonFormModify) => {
     if (!form) {
@@ -433,7 +430,7 @@ const Pokemon = (props: IPokemonPage) => {
             className={combineClasses('element-bottom position-relative poke-container', props.isSearch ? '' : 'container')}
           >
             <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-              <AlertReleased released={released} formName={formName} icon={icon} />
+              <AlertReleased isReleased={released} formName={formName} icon={icon} />
               <div className="d-inline-block img-desc">
                 <img
                   className="pokemon-main-sprite"

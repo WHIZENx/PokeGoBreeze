@@ -64,16 +64,17 @@ import { GenderType } from './enums/asset.enum';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
 import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType, LeagueConditionType } from './enums/option.enum';
+import { StatsBase } from './models/stats.model';
 
-export const getOption = <T>(options: any, args: string[]): T => {
+export const getOption = <T>(options: any, args: string[], defaultValue?: T): T => {
   if (!options) {
-    return options;
+    return defaultValue || options;
   }
 
   args.forEach((arg) => {
     options = options[arg];
   });
-  return options;
+  return options || defaultValue;
 };
 
 export const optionSettings = (data: PokemonDataGM[]) => {
@@ -84,6 +85,8 @@ export const optionSettings = (data: PokemonDataGM[]) => {
       settings.combatOptions.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
       settings.combatOptions.shadowBonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
       settings.combatOptions.shadowBonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
+      settings.combatOptions.purifiedBonus = StatsBase.setValue(item.data.combatSettings.purifiedPokemonAttackMultiplierVsShadow);
+      settings.combatOptions.maxEnergy = item.data.combatSettings.maxEnergy;
 
       settings.throwCharge.normal = item.data.combatSettings.chargeScoreBase;
       settings.throwCharge.nice = item.data.combatSettings.chargeScoreNice;
@@ -94,6 +97,9 @@ export const optionSettings = (data: PokemonDataGM[]) => {
       settings.battleOptions.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
       settings.battleOptions.shadowBonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
       settings.battleOptions.shadowBonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
+      settings.battleOptions.purifiedBonus = StatsBase.setValue(item.data.battleSettings.purifiedPokemonAttackMultiplierVsShadow);
+      settings.battleOptions.maxEnergy = item.data.battleSettings.maximumEnergy;
+      settings.battleOptions.dodgeDamageReductionPercent = item.data.battleSettings.dodgeDamageReductionPercent;
     } else if (isInclude(item.templateId, 'BUDDY_LEVEL_')) {
       const level = item.templateId.replace('BUDDY_LEVEL_', '');
       settings.buddyFriendship[level] = new BuddyFriendship();
@@ -306,13 +312,13 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
         dataEvo.quest.kmBuddyDistanceRequirement = evo.kmBuddyDistanceRequirement;
       }
       if (evo.mustBeBuddy) {
-        dataEvo.quest.mustBeBuddy = evo.mustBeBuddy;
+        dataEvo.quest.isMustBeBuddy = evo.mustBeBuddy;
       }
       if (evo.onlyDaytime) {
-        dataEvo.quest.onlyDaytime = evo.onlyDaytime;
+        dataEvo.quest.isOnlyDaytime = evo.onlyDaytime;
       }
       if (evo.onlyNighttime) {
-        dataEvo.quest.onlyNighttime = evo.onlyNighttime;
+        dataEvo.quest.isOnlyNighttime = evo.onlyNighttime;
       }
       if (evo.lureItemRequirement) {
         if (evo.lureItemRequirement === ItemLureType.Magnetic) {
@@ -349,7 +355,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
         }
       }
       if (evo.onlyUpsideDown) {
-        dataEvo.quest.onlyUpsideDown = evo.onlyUpsideDown;
+        dataEvo.quest.isOnlyUpsideDown = evo.onlyUpsideDown;
       }
       if (isNotEmpty(evo.questDisplay)) {
         const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
@@ -384,7 +390,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
         dataEvo.quest.goal = target;
         dataEvo.quest.type = template?.data.evolutionQuestTemplate?.questType;
       } else if (pokemonSettings.evolutionBranch && pokemonSettings.evolutionBranch.length > 1 && !isNotEmpty(Object.keys(dataEvo.quest))) {
-        dataEvo.quest.randomEvolution = evo.form ? false : true;
+        dataEvo.quest.isRandomEvolution = !evo.form;
       }
       if (evo.temporaryEvolution) {
         const tempEvo = {
@@ -627,7 +633,7 @@ export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         const id = item.data.iapItemDisplay.sku.replace('STICKER_', '');
         const sticker = stickers.find((sticker) => isEqual(sticker.id, id.split('.')[0]));
         if (sticker) {
-          sticker.shop = true;
+          sticker.isShop = true;
           sticker.pack.push(toNumber(id.replace(`${sticker.id}.`, '')));
         }
       } else if (item.data.stickerMetadata) {
@@ -906,7 +912,8 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
 
   const result = moveSet;
   moveSet.forEach((move) => {
-    if (move.name === 'HIDDEN_POWER') {
+    if (move.id === 281) {
+      move.isMultipleWithType = true;
       Object.keys(types)
         .filter((type) => !isEqual(type, 'NORMAL', EqualMode.IgnoreCaseSensitive) && !isEqual(type, 'FAIRY', EqualMode.IgnoreCaseSensitive))
         .forEach((type, index) =>
@@ -914,7 +921,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             Combat.create({
               ...move,
               id: toNumber(`${move.id}${index}`),
-              name: `${move.name}_${type}`,
+              name: `${move.name}_${type}`.replace('_NORMAL', ''),
               type,
             })
           )
@@ -1158,8 +1165,8 @@ export const mappingMoveSetPokemonGO = (pokemonData: IPokemonData[], combat: ICo
   pokemonData.forEach((pokemon) => {
     pokemon.quickMoves = convertMoveName(combat, pokemon.quickMoves);
     pokemon.cinematicMoves = convertMoveName(combat, pokemon.cinematicMoves);
-    pokemon.eliteQuickMove = convertMoveName(combat, pokemon.eliteQuickMove);
-    pokemon.eliteCinematicMove = convertMoveName(combat, pokemon.eliteCinematicMove);
+    pokemon.eliteQuickMoves = convertMoveName(combat, pokemon.eliteQuickMoves);
+    pokemon.eliteCinematicMoves = convertMoveName(combat, pokemon.eliteCinematicMoves);
     pokemon.specialMoves = convertMoveName(combat, pokemon.specialMoves);
     pokemon.purifiedMoves = convertMoveName(combat, pokemon.purifiedMoves);
     pokemon.shadowMoves = convertMoveName(combat, pokemon.shadowMoves);

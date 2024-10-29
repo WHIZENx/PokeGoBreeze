@@ -52,32 +52,32 @@ interface IPokemonEvo {
   prev?: string;
   name: string;
   id: number;
-  baby: boolean;
+  isBaby: boolean;
   form: string;
-  gmax: boolean;
+  isGmax: boolean;
   sprite: string;
-  purified?: boolean;
+  isPurified?: boolean;
 }
 
 class PokemonEvo implements IPokemonEvo {
   prev?: string;
   name: string;
   id: number;
-  baby: boolean;
+  isBaby: boolean;
   form: string;
-  gmax: boolean;
+  isGmax: boolean;
   sprite: string;
-  purified?: boolean;
+  isPurified?: boolean;
 
-  constructor(name: string, id: number, form: string, sprite: string, prev = '', gmax = false, baby = false, purified = false) {
+  constructor(name: string, id: number, form: string, sprite: string, prev = '', isGmax = false, isBaby = false, isPurified = false) {
     this.prev = prev;
     this.name = name;
     this.id = id;
-    this.baby = baby;
+    this.isBaby = isBaby;
     this.form = form;
-    this.gmax = gmax;
+    this.isGmax = isGmax;
     this.sprite = sprite;
-    this.purified = purified;
+    this.isPurified = isPurified;
   }
 }
 
@@ -399,8 +399,8 @@ const Evolution = (props: IEvolutionComponent) => {
   const renderImgGif = (value: IPokemonEvo) => {
     return (
       <>
-        {props.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
-        {props.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+        {props.isPurified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+        {props.isShadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
         <img
           className="pokemon-sprite"
           id="img-pokemon"
@@ -418,7 +418,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
     const form = getValueOrDefault(String, value.form, props.forme?.formName);
     let offsetY = 35;
-    offsetY += value.baby ? 20 : 0;
+    offsetY += value.isBaby ? 20 : 0;
     offsetY += arrEvoList.length === 1 ? 20 : 0;
 
     const startAnchor = {
@@ -440,7 +440,7 @@ const Evolution = (props: IEvolutionComponent) => {
               labels={{
                 end: (
                   <div className="position-absolute" style={{ left: -40 }}>
-                    {!value.gmax && (
+                    {!value.isGmax && (
                       <div>
                         {!data?.itemCost && (data?.candyCost || data?.purificationEvoCandyCost) && (
                           <span
@@ -448,10 +448,10 @@ const Evolution = (props: IEvolutionComponent) => {
                             style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                           >
                             <Candy id={value.id} />
-                            <span style={{ marginLeft: 2 }}>{`x${props.purified ? data.purificationEvoCandyCost : data.candyCost}`}</span>
+                            <span style={{ marginLeft: 2 }}>{`x${props.isPurified ? data.purificationEvoCandyCost : data.candyCost}`}</span>
                           </span>
                         )}
-                        {props.purified && data?.candyCost && data?.purificationEvoCandyCost && (
+                        {props.isPurified && data?.candyCost && data?.purificationEvoCandyCost && (
                           <span className="d-block text-end caption text-danger">{`-${
                             data.candyCost - data.purificationEvoCandyCost
                           }`}</span>
@@ -460,7 +460,7 @@ const Evolution = (props: IEvolutionComponent) => {
                     )}
                     {isNotEmpty(Object.keys(data?.quest ?? new EvolutionQuest())) && (
                       <Fragment>
-                        {data?.quest?.randomEvolution && (
+                        {data?.quest?.isRandomEvolution && (
                           <span className="caption">
                             <QuestionMarkIcon fontSize="small" />
                           </span>
@@ -488,7 +488,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.kmBuddyDistanceRequirement && (
                           <span className="caption">
-                            {data.quest.mustBeBuddy ? (
+                            {data.quest.isMustBeBuddy ? (
                               <div className="d-flex align-items-end">
                                 <DirectionsWalkIcon fontSize="small" />
                                 <PetsIcon sx={{ fontSize: '1rem' }} />
@@ -499,12 +499,12 @@ const Evolution = (props: IEvolutionComponent) => {
                             {`${data.quest.kmBuddyDistanceRequirement}km`}
                           </span>
                         )}
-                        {data?.quest?.onlyDaytime && (
+                        {data?.quest?.isOnlyDaytime && (
                           <span className="caption">
                             <WbSunnyIcon fontSize="small" />
                           </span>
                         )}
-                        {data?.quest?.onlyNighttime && (
+                        {data?.quest?.isOnlyNighttime && (
                           <span className="caption">
                             <DarkModeIcon fontSize="small" />
                           </span>
@@ -523,7 +523,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {data?.quest?.lureItemRequirement && (
                           <img alt="img-troy-required" height={20} src={APIService.getItemTroy(data.quest.lureItemRequirement)} />
                         )}
-                        {data?.quest?.onlyUpsideDown && (
+                        {data?.quest?.isOnlyUpsideDown && (
                           <span className="caption">
                             <SecurityUpdateIcon fontSize="small" />
                           </span>
@@ -654,7 +654,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
           </div>
         </span>
-        {value.baby && <span className="caption text-danger">(Baby)</span>}
+        {value.isBaby && <span className="caption text-danger">(Baby)</span>}
         <p>
           {value.id === props.id && isEqual(form, convertPokemonAPIDataName(props.forme?.formName) || FORM_NORMAL) && (
             <span className="caption" style={{ color: theme.palette.customText.caption }}>

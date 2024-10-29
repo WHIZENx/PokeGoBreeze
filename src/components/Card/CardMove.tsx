@@ -35,10 +35,10 @@ const CardMove = (props: ICardMoveComponent) => {
             <b>{splitAndCapitalize(data.name, '_', ' ')}</b>
           </span>
           <span className="d-flex">
-            {data.elite && <span className="type-icon-small ic elite-ic">{MoveType.Elite}</span>}
-            {data.shadow && <span className="type-icon-small ic shadow-ic">{MoveType.Shadow}</span>}
-            {data.purified && <span className="type-icon-small ic purified-ic">{MoveType.Purified}</span>}
-            {data.special && <span className="type-icon-small ic special-ic">{MoveType.Special}</span>}
+            {data.isElite && <span className="type-icon-small ic elite-ic">{MoveType.Elite}</span>}
+            {data.isShadow && <span className="type-icon-small ic shadow-ic">{MoveType.Shadow}</span>}
+            {data.isPurified && <span className="type-icon-small ic purified-ic">{MoveType.Purified}</span>}
+            {data.isSpecial && <span className="type-icon-small ic special-ic">{MoveType.Special}</span>}
           </span>
         </div>
       )}

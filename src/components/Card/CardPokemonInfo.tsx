@@ -17,7 +17,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const shinyRef: React.LegacyRef<HTMLImageElement> = useRef(null);
 
   const onTouchEnd = () => {
-    if (props.defaultImg) {
+    if (props.isDefaultImg) {
       return;
     }
 
@@ -30,7 +30,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   };
 
   const onHoverShiny = () => {
-    if (props.defaultImg) {
+    if (props.isDefaultImg) {
       return;
     }
 
@@ -39,7 +39,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   };
 
   const onLeaveShiny = () => {
-    if (props.defaultImg) {
+    if (props.isDefaultImg) {
       return;
     }
 
@@ -63,7 +63,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           onMouseOver={onHoverShiny}
           onMouseLeave={onLeaveShiny}
           ref={shinyRef}
-          className={combineClasses('shiny-pokemon', props.defaultImg ? 'active' : '')}
+          className={combineClasses('shiny-pokemon', props.isDefaultImg ? 'active' : '')}
           height={32}
           src={APIService.getShinyIcon()}
         />
@@ -78,11 +78,11 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               ref={imageRef}
               className="pokemon-sprite-large"
               alt="pokemon-img"
-              src={props.image.shiny && (isShiny || props.defaultImg) ? props.image.shiny : props.image.default}
+              src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
             />
           </span>
         </div>
-        <TypeInfo arr={props.types} hideText={true} height={24} />
+        <TypeInfo arr={props.types} isHideText={true} height={24} />
         <b>
           <span style={{ fontSize: 14 }} className="text-info text-center caption text-black">{`#${props.id} ${splitAndCapitalize(
             props.name.replaceAll('_', '-'),

@@ -80,9 +80,9 @@ interface PokemonSheetData {
   dps: number;
   tdo: number;
   multiDpsTdo: number;
-  shadow: boolean;
-  purified: boolean;
-  special: boolean;
+  isShadow: boolean;
+  isPurified: boolean;
+  isSpecial: boolean;
   mShadow: boolean;
   elite: Elite;
   cp: number;
@@ -139,8 +139,8 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
-        {row.shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-        {row.purified && <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />}
+        {row.isShadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+        {row.isPurified && <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />}
         <img
           height={48}
           alt="img-pokemon"
@@ -222,12 +222,12 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
               <span>{MoveType.Shadow}</span>
             </span>
           )}
-          {row.purified && (
+          {row.isPurified && (
             <span className="type-icon-small ic purified-ic">
               <span>{MoveType.Purified}</span>
             </span>
           )}
-          {row.special && (
+          {row.isSpecial && (
             <span className="type-icon-small ic special-ic">
               <span>{MoveType.Special}</span>
             </span>
@@ -299,7 +299,7 @@ const DpsTdo = () => {
   const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPS());
 
   const {
-    match,
+    isMatch,
     showEliteMove,
     showShadow,
     enableShadow,
@@ -327,7 +327,7 @@ const DpsTdo = () => {
   } = filters;
 
   const [options, setOptions] = useState(new OptionOtherDPS());
-  const { weatherBoosts, trainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
+  const { weatherBoosts, isTrainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionStore?.dpsSheet?.selectTypes));
@@ -337,9 +337,9 @@ const DpsTdo = () => {
     movePoke: string[],
     pokemon: IPokemonData,
     vf: string,
-    shadow: boolean,
-    purified: boolean,
-    special: boolean,
+    isShadow: boolean,
+    isPurified: boolean,
+    isSpecial: boolean,
     fElite: boolean,
     cElite: boolean,
     specialMove: string[] = []
@@ -357,9 +357,9 @@ const DpsTdo = () => {
           fMove,
           cMove,
           types: pokemon.types,
-          shadow,
+          isShadow,
           weatherBoosts: getValueOrDefault(String, options.weatherBoosts),
-          pokemonFriend: options.trainerFriend,
+          isPokemonFriend: options.isTrainerFriend,
           pokemonFriendLevel: options.pokemonFriendLevel,
         });
 
@@ -394,10 +394,10 @@ const DpsTdo = () => {
             statsAttacker.def,
             getValueOrDefault(Number, statsAttacker.hp),
             statsAttacker.types,
-            statsAttacker.shadow,
+            statsAttacker.isShadow,
             options
           );
-          tdo = calculateTDO(data?.options, statsAttacker.def, getValueOrDefault(Number, statsAttacker.hp), dps, statsAttacker.shadow);
+          tdo = calculateTDO(data?.options, statsAttacker.def, getValueOrDefault(Number, statsAttacker.hp), dps, statsAttacker.isShadow);
         }
         dataList.push({
           pokemon,
@@ -406,10 +406,10 @@ const DpsTdo = () => {
           dps,
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
-          shadow,
-          purified: purified && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
-          special,
-          mShadow: shadow && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          isShadow,
+          isPurified: isPurified && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          isSpecial,
+          mShadow: isShadow && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           elite: {
             fMove: fElite,
             cMove: cElite,
@@ -439,7 +439,7 @@ const DpsTdo = () => {
           );
           addCPokeData(
             dataList,
-            getValueOrDefault(Array, pokemon.eliteCinematicMove),
+            getValueOrDefault(Array, pokemon.eliteCinematicMoves),
             pokemon,
             vf,
             true,
@@ -487,7 +487,7 @@ const DpsTdo = () => {
         false,
         pokemon.specialMoves
       );
-      addCPokeData(dataList, getValueOrDefault(Array, pokemon.eliteCinematicMove), pokemon, vf, false, false, false, fElite, true);
+      addCPokeData(dataList, getValueOrDefault(Array, pokemon.eliteCinematicMoves), pokemon, vf, false, false, false, fElite, true);
     });
   };
 
@@ -496,7 +496,7 @@ const DpsTdo = () => {
     data?.pokemon?.forEach((pokemon) => {
       if (pokemon) {
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.quickMoves), false, pokemon.isShadow);
-        addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMove), true, pokemon.isShadow);
+        addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMoves), true, pokemon.isShadow);
       }
     });
     setShowSpinner(false);
@@ -520,13 +520,13 @@ const DpsTdo = () => {
           isIncludeList(selectTypes, item.cMove?.type, IncludeMode.IncludeIgnoreCaseSensitive));
       const boolFilterPoke =
         isEmpty(searchTerm) ||
-        (match
+        (isMatch
           ? isEqual(item.pokemon.name.replaceAll('-', ' '), searchTerm, EqualMode.IgnoreCaseSensitive) ||
             isEqual(item.pokemon.num, searchTerm)
           : isInclude(item.pokemon.name.replaceAll('-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
             isInclude(item.pokemon.num, searchTerm));
 
-      const boolShowShadow = !showShadow && item.shadow;
+      const boolShowShadow = !showShadow && item.isShadow;
       const boolShowElite = !showEliteMove && (item.elite.fMove || item.elite.cMove);
       const boolShowMega = !showMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolShowGmax = !showGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
@@ -535,7 +535,7 @@ const DpsTdo = () => {
       const boolShowMythic = !showMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
 
-      const boolOnlyShadow = enableShadow && item.shadow;
+      const boolOnlyShadow = enableShadow && item.isShadow;
       const boolOnlyElite = enableElite && (item.elite.fMove || item.elite.cMove);
       const boolOnlyMega = enableMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolOnlyGmax = enableGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
@@ -648,7 +648,7 @@ const DpsTdo = () => {
     }
   }, [
     dpsTable,
-    match,
+    isMatch,
     selectTypes,
     showShadow,
     showEliteMove,
@@ -733,7 +733,7 @@ const DpsTdo = () => {
                 className={combineClasses('btn-select-type w-100 border-types', isIncludeList(selectTypes, item) ? 'select-type' : '')}
                 style={{ padding: 10 }}
               >
-                <TypeInfo block={true} arr={[item]} />
+                <TypeInfo isBlock={true} arr={[item]} />
               </button>
             </div>
           ))}
@@ -754,7 +754,7 @@ const DpsTdo = () => {
                 </div>
                 <div className="d-flex col-md-3">
                   <FormControlLabel
-                    control={<Checkbox checked={match} onChange={(_, check) => setFilters({ ...filters, match: check })} />}
+                    control={<Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />}
                     label="Match Pokémon"
                   />
                 </div>
@@ -931,11 +931,11 @@ const DpsTdo = () => {
                     <span className="input-group-text">Defender</span>
                     <SelectPokemon
                       pokemon={dataTargetPokemon}
-                      selected={true}
+                      isSelected={true}
                       setCurrentPokemon={setDataTargetPokemon}
                       setFMovePokemon={setFMoveTargetPokemon}
                       setCMovePokemon={setCMoveTargetPokemon}
-                      disable={showSpinner}
+                      isDisable={showSpinner}
                     />
                   </div>
                 </Box>
@@ -948,7 +948,7 @@ const DpsTdo = () => {
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
                       moveType={TypeMove.FAST}
-                      disable={showSpinner}
+                      isDisable={showSpinner}
                     />
                   </div>
                 </Box>
@@ -961,7 +961,7 @@ const DpsTdo = () => {
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}
                       moveType={TypeMove.CHARGE}
-                      disable={showSpinner}
+                      isDisable={showSpinner}
                     />
                   </div>
                 </Box>
@@ -1119,7 +1119,7 @@ const DpsTdo = () => {
                     className="form-control"
                     placeholder="Defense target"
                     min={1}
-                    disabled={dataTargetPokemon ? true : false}
+                    disabled={Boolean(dataTargetPokemon)}
                     required={true}
                     onInput={(e) =>
                       setOptions(
@@ -1170,7 +1170,7 @@ const DpsTdo = () => {
                             setOptions(
                               OptionOtherDPS.create({
                                 ...options,
-                                trainerFriend: check,
+                                isTrainerFriend: check,
                                 pokemonFriendLevel: 0,
                               })
                             );
@@ -1180,7 +1180,7 @@ const DpsTdo = () => {
                       label="Friendship Level:"
                     />
                     <LevelRating
-                      disabled={!trainerFriend}
+                      disabled={!isTrainerFriend}
                       onChange={(_, value) => {
                         setOptions(
                           OptionOtherDPS.create({

@@ -36,14 +36,14 @@ const SelectMove = (props: ISelectMoveComponent) => {
           result.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
-          result.eliteQuickMove?.forEach((value) => {
+          result.eliteQuickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
         } else {
           result.cinematicMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
-          result.eliteCinematicMove?.forEach((value) => {
+          result.eliteCinematicMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
           result.shadowMoves?.forEach((value) => {
@@ -68,19 +68,19 @@ const SelectMove = (props: ISelectMoveComponent) => {
   useEffect(() => {
     if (isNotEmpty(combat)) {
       if (props.pokemon?.num) {
-        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon.forme), props.moveType, props.selected);
+        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon.forme), props.moveType, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
     }
-  }, [props.pokemon?.num, props.pokemon?.forme, props.selected, resultMove.length, combat, findMove]);
+  }, [props.pokemon?.num, props.pokemon?.forme, props.isSelected, resultMove.length, combat, findMove]);
 
   const smallInput = () => {
     return (
       <div
         className={combineClasses(
           'position-relative d-flex align-items-center form-control',
-          !props.disable && props.pokemon ? 'card-select-enabled' : 'card-select-disabled'
+          !props.isDisable && props.pokemon ? 'card-select-enabled' : 'card-select-disabled'
         )}
         style={{ padding: 0, borderRadius: 0 }}
       >
@@ -89,7 +89,12 @@ const SelectMove = (props: ISelectMoveComponent) => {
         )}
         {isNotEmpty(resultMove) && (
           <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-            <CardMoveSmall value={props.move} show={props.pokemon ? true : false} disable={props.disable} select={resultMove?.length > 1} />
+            <CardMoveSmall
+              value={props.move}
+              isShow={Boolean(props.pokemon)}
+              isDisable={props.isDisable}
+              isSelect={resultMove?.length > 1}
+            />
             {showMove && resultMove && (
               <div className="result-move-select">
                 <div>

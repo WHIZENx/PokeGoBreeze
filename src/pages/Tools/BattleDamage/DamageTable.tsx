@@ -13,7 +13,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { IDamageTableComponent } from '../../models/page.model';
 import { ThrowOption } from '../../../core/models/options.model';
 import { ILabelDamage, LabelDamage } from '../../../core/models/damage.model';
-import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, toFloatWithPadding } from '../../../util/extension';
 import { PokemonType } from './enums/damage.enum';
 
 const eff: DynamicObj<ILabelDamage> = {
@@ -107,7 +107,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Stab</td>
               <td>
                 {props.result.battleState ? (
-                  props.result.battleState.stab ? (
+                  props.result.battleState.isStab ? (
                     <DoneIcon sx={{ color: 'green' }} />
                   ) : (
                     <CloseIcon sx={{ color: 'red' }} />
@@ -121,7 +121,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Weather Boosts</td>
               <td>
                 {props.result.battleState ? (
-                  props.result.battleState.wb ? (
+                  props.result.battleState.isWb ? (
                     <DoneIcon sx={{ color: 'green' }} />
                   ) : (
                     <CloseIcon sx={{ color: 'red' }} />
@@ -135,7 +135,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Dodge</td>
               <td>
                 {props.result.battleState ? (
-                  props.result.battleState.dodge ? (
+                  props.result.battleState.isDodge ? (
                     <DoneIcon sx={{ color: 'green' }} />
                   ) : (
                     <CloseIcon sx={{ color: 'red' }} />
@@ -149,7 +149,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Battle with Trainer</td>
               <td>
                 {props.result.battleState ? (
-                  props.result.battleState.trainer ? (
+                  props.result.battleState.isTrainer ? (
                     <DoneIcon sx={{ color: 'green' }} />
                   ) : (
                     <CloseIcon sx={{ color: 'red' }} />
@@ -204,10 +204,11 @@ const DamageTable = (props: IDamageTableComponent) => {
                   <Fragment>
                     {props.result.damage < getValueOrDefault(Number, props.result.move?.pvePower) ? (
                       <b className="text-success">
-                        {(
+                        {toFloatWithPadding(
                           ((getValueOrDefault(Number, props.result.move?.pvePower) - props.result.damage) * 100) /
-                          getValueOrDefault(Number, props.result.move?.pvePower)
-                        ).toFixed(2)}
+                            getValueOrDefault(Number, props.result.move?.pvePower),
+                          2
+                        )}
                         %
                       </b>
                     ) : (

@@ -10,7 +10,7 @@ const Spinner = () => {
 
   return (
     <Fragment>
-      {spinner.loading && (
+      {spinner.isLoading && (
         <div className="spinner-container">
           <div className="loading-group-spin" />
           <div className="loading-spin-container">

@@ -46,7 +46,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           </div>
         )}
         <Badge color="primary" overlap="circular" badgeContent={props.id + 1} />
-        {props.controls && (
+        {props.isControls && (
           <div className="d-flex ic-group-small">
             <span
               className={combineClasses('ic-copy-small text-white', dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary')}
@@ -94,7 +94,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       <SelectPokemon
         clearData={props.clearData}
-        selected={true}
+        isSelected={true}
         pokemon={dataTargetPokemon}
         defaultSetting={props.defaultSetting}
         setCurrentPokemon={setDataTargetPokemon}
@@ -107,7 +107,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       {dataTargetPokemon ? (
         <SelectMove
-          selected={true}
+          isSelected={true}
           inputType={InputType.Small}
           clearData={props.clearData}
           pokemon={dataTargetPokemon}
@@ -128,7 +128,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       {dataTargetPokemon ? (
         <SelectMove
-          selected={true}
+          isSelected={true}
           inputType={InputType.Small}
           clearData={props.clearData}
           pokemon={dataTargetPokemon}

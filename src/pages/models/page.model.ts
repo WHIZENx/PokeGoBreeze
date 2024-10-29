@@ -14,7 +14,7 @@ export interface IMovePage {
 }
 
 export interface IAlertReleasedComponent {
-  released: boolean;
+  isReleased: boolean;
   formName: string | undefined;
   icon: string | undefined;
 }

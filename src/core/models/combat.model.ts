@@ -1,4 +1,5 @@
 import { BuffType, TypeAction } from '../../enums/type.enum';
+import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { MoveSetting } from './options.model';
 
 export interface IBuff {
@@ -81,12 +82,13 @@ export interface ICombat {
   accuracyChance: number;
   criticalChance: number;
   staminaLossScalar: number;
-  archetype: string | undefined;
+  archetype: ArcheType | undefined;
   abbreviation: string | undefined;
-  elite?: boolean;
-  shadow?: boolean;
-  purified?: boolean;
-  special?: boolean;
+  isMultipleWithType: boolean;
+  isElite?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
+  isSpecial?: boolean;
 }
 
 export class Combat implements ICombat {
@@ -107,12 +109,13 @@ export class Combat implements ICombat {
   accuracyChance = 0;
   criticalChance = 0;
   staminaLossScalar = 0;
-  archetype: string | undefined;
+  archetype: ArcheType | undefined;
   abbreviation: string | undefined;
-  elite?: boolean;
-  shadow?: boolean;
-  purified?: boolean;
-  special?: boolean;
+  isMultipleWithType = false;
+  isElite?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
+  isSpecial?: boolean;
 
   static create(value: ICombat) {
     const obj = new Combat();

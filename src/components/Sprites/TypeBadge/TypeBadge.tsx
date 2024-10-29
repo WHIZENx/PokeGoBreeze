@@ -22,35 +22,35 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
   }, [combat, props.move?.name]);
 
   return (
-    <div className={combineClasses('type-badge-container', props.grow ? 'filter-shadow' : '')} style={props.style}>
+    <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>
       <span className="caption text-type-border" style={{ color: props.color ?? 'gray' }}>
         {props.title}
       </span>
       <Link to={`/move/${move?.id}`} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-border position-relative')}>
-          {(props.elite || props.shadow || props.purified || props.special || props.unavailable) && (
+          {(props.isElite || props.isShadow || props.isPurified || props.isSpecial || props.isUnavailable) && (
             <span className="type-badge-border">
-              {props.elite && (
+              {props.isElite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>{MoveType.Elite}</span>
                 </span>
               )}
-              {props.shadow && (
+              {props.isShadow && (
                 <span className="type-icon-small ic shadow-ic">
                   <span>{MoveType.Shadow}</span>
                 </span>
               )}
-              {props.purified && (
+              {props.isPurified && (
                 <span className="type-icon-small ic purified-ic">
                   <span>{MoveType.Purified}</span>
                 </span>
               )}
-              {props.special && (
+              {props.isSpecial && (
                 <span className="type-icon-small ic special-ic">
                   <span>{MoveType.Special}</span>
                 </span>
               )}
-              {props.unavailable && (
+              {props.isUnavailable && (
                 <span className="type-icon-small ic unavailable-ic">
                   <span>Unavailable</span>
                 </span>

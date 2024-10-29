@@ -101,8 +101,8 @@ const TableMove = (props: ITableMoveComponent) => {
     return setMoveOrigin({
       fastMoves: filterUnknownMove(combat.quickMoves),
       chargedMoves: filterUnknownMove(combat.cinematicMoves),
-      eliteFastMoves: filterUnknownMove(combat.eliteQuickMove),
-      eliteChargedMoves: filterUnknownMove(combat.eliteCinematicMove),
+      eliteFastMoves: filterUnknownMove(combat.eliteQuickMoves),
+      eliteChargedMoves: filterUnknownMove(combat.eliteCinematicMoves),
       purifiedMoves: props.form?.isShadow ? [] : filterUnknownMove(combat.purifiedMoves),
       shadowMoves: props.form?.isPurified ? [] : filterUnknownMove(combat.shadowMoves),
       specialMoves: filterUnknownMove(combat.specialMoves),
@@ -181,7 +181,7 @@ const TableMove = (props: ITableMoveComponent) => {
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-              {value.fMove.elite && (
+              {value.fMove.isElite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>{MoveType.Elite}</span>
                 </span>
@@ -196,22 +196,22 @@ const TableMove = (props: ITableMoveComponent) => {
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-              {value.cMove.elite && (
+              {value.cMove.isElite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>{MoveType.Elite}</span>
                 </span>
               )}
-              {value.cMove.shadow && (
+              {value.cMove.isShadow && (
                 <span className="type-icon-small ic shadow-ic">
                   <span>{MoveType.Shadow}</span>
                 </span>
               )}
-              {value.cMove.purified && (
+              {value.cMove.isPurified && (
                 <span className="type-icon-small ic purified-ic">
                   <span>{MoveType.Purified}</span>
                 </span>
               )}
-              {value.cMove.special && (
+              {value.cMove.isSpecial && (
                 <span className="type-icon-small ic special-ic">
                   <span>{MoveType.Special}</span>
                 </span>
@@ -238,22 +238,22 @@ const TableMove = (props: ITableMoveComponent) => {
                 </div>
                 <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-                  {value.elite && (
+                  {value.isElite && (
                     <span className="type-icon-small ic elite-ic">
                       <span>{MoveType.Elite}</span>
                     </span>
                   )}
-                  {value.shadow && (
+                  {value.isShadow && (
                     <span className="type-icon-small ic shadow-ic">
                       <span>{MoveType.Shadow}</span>
                     </span>
                   )}
-                  {value.purified && (
+                  {value.isPurified && (
                     <span className="type-icon-small ic purified-ic">
                       <span>{MoveType.Purified}</span>
                     </span>
                   )}
-                  {value.special && (
+                  {value.isSpecial && (
                     <span className="type-icon-small ic special-ic">
                       <span>{MoveType.Special}</span>
                     </span>

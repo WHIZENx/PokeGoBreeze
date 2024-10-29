@@ -68,15 +68,18 @@ const Tools = (props: IToolsComponent) => {
 
     setStatsPokemon({
       atk:
-        props.isRaid && props.tier && !props.hide && formATK
+        props.isRaid && props.tier > 0 && !props.isHide && formATK
           ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(formATK.attack, props.tier) })
           : formATK,
       def:
-        props.isRaid && props.tier && !props.hide && formDEF
+        props.isRaid && props.tier > 0 && !props.isHide && formDEF
           ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(formDEF.defense, props.tier) })
           : formDEF,
-      sta: props.isRaid && props.tier && !props.hide ? StatsSta.create({ ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta }) : formSTA,
-      prod: props.isRaid && props.tier && !props.hide ? undefined : formProd,
+      sta:
+        props.isRaid && props.tier > 0 && !props.isHide
+          ? StatsSta.create({ ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta })
+          : formSTA,
+      prod: props.isRaid && props.tier && !props.isHide ? undefined : formProd,
     });
     if (props.currForm && isNotEmpty(props.dataPoke)) {
       setCurrDataPoke(convertStatsEffort(props.dataPoke.find((item) => item.id === props.id)?.stats));
@@ -84,13 +87,13 @@ const Tools = (props: IToolsComponent) => {
       if (props.onSetStats && formATK && formDEF && formSTA) {
         props.onSetStats(
           TypeAction.ATK,
-          props.isRaid && props.tier && !props.hide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack
+          props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack
         );
         props.onSetStats(
           TypeAction.DEF,
-          props.isRaid && props.tier && !props.hide ? calculateRaidStat(formDEF.defense, props.tier) : formDEF.defense
+          props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formDEF.defense, props.tier) : formDEF.defense
         );
-        props.onSetStats(TypeAction.STA, props.isRaid && props.tier && !props.hide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
+        props.onSetStats(TypeAction.STA, props.isRaid && props.tier && !props.isHide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
         if (props.setForm) {
           props.setForm(props.currForm);
         }
@@ -107,7 +110,7 @@ const Tools = (props: IToolsComponent) => {
     props.stats?.stamina.ranking,
     props.isRaid,
     props.tier,
-    props.hide,
+    props.isHide,
   ]);
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
@@ -55,7 +55,7 @@ const PVPHome = () => {
     if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-    if (spinner.loading) {
+    if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
   }, [pvp, spinner, combat, dispatch]);
@@ -210,16 +210,20 @@ const PVPHome = () => {
       <div className="group-selected">
         {leaguesTeamBattle
           .filter((value) => value.cp.length > 0)
-          .map((value, index) => (
-            <Link key={index} to={`/pvp/battle/${value.cp}`}>
-              <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={!value.logo ? getPokemonBattleLeagueIcon(value.cp[0]) : value.logo} />
-                <div>
-                  <b>{value.name}</b>
-                </div>
-                <span className="text-danger">CP below {value.cp}</span>
-              </Button>
-            </Link>
+          .map((value, i) => (
+            <Fragment key={i}>
+              {value.cp.map((cp, index) => (
+                <Link key={index} to={`/pvp/battle/${cp}`}>
+                  <Button key={index} className="btn btn-form" style={{ height: 200 }}>
+                    <img alt="img-league" width={128} height={128} src={value.logo ?? getPokemonBattleLeagueIcon(cp)} />
+                    <div>
+                      <b>{value.name}</b>
+                    </div>
+                    <span className="text-danger">CP below {cp}</span>
+                  </Button>
+                </Link>
+              ))}
+            </Fragment>
           ))}
       </div>
     </div>

@@ -131,23 +131,31 @@ const Move = (props: IMovePage) => {
   const queryMoveData = useCallback(
     (id: number) => {
       if (isNotEmpty(data?.combat)) {
-        let move: ICombat | undefined;
-        if (id === 281) {
-          move = data?.combat?.find(
-            (item) =>
-              item.track === id &&
-              isEqual(item.type, getValueOrDefault(String, searchParams.get('type'), 'NORMAL'), EqualMode.IgnoreCaseSensitive)
-          );
+        const moves = data?.combat?.filter((item) => item.track === id || item.id === id);
+        let move = moves?.find((item) => item.id === id);
+        if (move?.isMultipleWithType) {
+          searchParams.set('type', getValueOrDefault(String, move.type).toLowerCase());
         } else {
-          move = data?.combat?.find((item) => item.track === id);
+          move = moves?.find((item) => item.track === id);
         }
+        // if (id === 281) {
+        //   move = data?.combat?.find(
+        //     (item) =>
+        //       item.track === id &&
+        //       isEqual(item.type, getValueOrDefault(String, searchParams.get('type'), 'NORMAL'), EqualMode.IgnoreCaseSensitive)
+        //   );
+        // } else {
+        //   move = data?.combat?.find((item) => item.track === id);
+        //   if (!move) {
+        //     move = data?.combat?.find((item) => item.id === id);
+        //     if (move?.isMultipleWithType) {
+        //       searchParams.set('type', getValueOrDefault(String, move.type).toLowerCase());
+        //     }
+        //   }
+        // }
         if (move) {
           setMove(move);
-          document.title = `#${move.track} - ${splitAndCapitalize(
-            move.track === 281 ? 'HIDDEN_POWER' : move.name.toLowerCase(),
-            '_',
-            ' '
-          )}`;
+          document.title = `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`;
         } else {
           enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: VariantType.Error });
           if (id) {
@@ -161,9 +169,9 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     if (!move) {
-      const id = params.id ? params.id.toLowerCase() : props.id;
-      if (id) {
-        queryMoveData(toNumber(id));
+      const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+      if (id > 0) {
+        queryMoveData(id);
       }
     }
   }, [params.id, props.id, queryMoveData, move]);
@@ -181,11 +189,11 @@ const Move = (props: IMovePage) => {
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
             <h1 className="text-move">
-              <b>{splitAndCapitalize(move.track === 281 ? 'HIDDEN_POWER' : move.name.toLowerCase(), '_', ' ')}</b>
+              <b>{splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}</b>
             </h1>
             <TypeBar type={move.type} />
           </div>
-          {move.track === 281 && (
+          {move.isMultipleWithType && (
             <Form.Select
               style={{ maxWidth: 250 }}
               className="element-top w-50"
@@ -223,11 +231,7 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={3}>{`Stats ${splitAndCapitalize(
-                  move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(),
-                  '_',
-                  ' '
-                )} in Pokémon GO`}</th>
+                <th colSpan={3}>{`Stats ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} in Pokémon GO`}</th>
               </tr>
             </thead>
             <tbody>
@@ -240,7 +244,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Name</td>
                 <td colSpan={2}>
-                  <b>{splitAndCapitalize(move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(), '_', ' ')}</b>
+                  <b>{splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}</b>
                 </td>
               </tr>
               <tr>
@@ -295,8 +299,8 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{(move.pvePower * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{(move.pvePower * 0.2).toFixed(2)}</span>
+                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data?.options), 2)}</span>{' '}
+                      <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvePower * 0.2, 2)}</span>
                     </>
                   )}
                 </td>
@@ -333,8 +337,8 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{(move.pvpPower * STAB_MULTIPLY(data?.options)).toFixed(2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{(move.pvpPower * 0.2).toFixed(2)}</span>
+                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data?.options), 2)}</span>{' '}
+                      <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvpPower * 0.2, 2)}</span>
                     </>
                   )}
                 </td>
@@ -428,11 +432,7 @@ const Move = (props: IMovePage) => {
           <table className="table-info move-damage-table">
             <thead className="text-center">
               <tr>
-                <th colSpan={2}>{`Damage ${splitAndCapitalize(
-                  move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(),
-                  '_',
-                  ' '
-                )} Simulator`}</th>
+                <th colSpan={2}>{`Damage ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')} Simulator`}</th>
               </tr>
             </thead>
             <tbody>
@@ -443,33 +443,39 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>DPS</td>
-                <td>{move && `${(move.pvePower / (move.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${toFloatWithPadding(move.pvePower / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move.pvePower * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${toFloatWithPadding((move.pvePower * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(2 Effect Bonus)</span>
                 </td>
-                <td>{move && `${((move.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>
+                  {move &&
+                    `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move.durationMs / 1000), 2)}`}
+                </td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(STAB+Weather+Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>
+                  {move &&
+                    `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move.durationMs / 1000), 2)}`}
+                </td>
               </tr>
               {move?.typeMove === TypeMove.FAST && (
                 <tr>
                   <td>EPS</td>
-                  <td>{move && `${(move.pveEnergy / (move.durationMs / 1000)).toFixed(2)}`}</td>
+                  <td>{move && `${toFloatWithPadding(move.pveEnergy / (move.durationMs / 1000), 2)}`}</td>
                 </tr>
               )}
               <tr className="text-center">
@@ -479,23 +485,19 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td>DPS</td>
-                <td>{move && `${(move.pvpPower / (move.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${toFloatWithPadding(move.pvpPower / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               <tr>
                 <td>
                   DPS
                   <span className="caption">(STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${((move.pvpPower * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000)).toFixed(2)}`}</td>
+                <td>{move && `${toFloatWithPadding((move.pvpPower * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>
                   <div className="input-group align-items-center justify-content-center">
-                    <span>{`Top Pokémon in move ${splitAndCapitalize(
-                      move?.track === 281 ? 'HIDDEN_POWER' : move?.name.toLowerCase(),
-                      '_',
-                      ' '
-                    )}`}</span>
+                    <span>{`Top Pokémon in move ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`}</span>
                     <FormControlLabel
                       control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
                       label={

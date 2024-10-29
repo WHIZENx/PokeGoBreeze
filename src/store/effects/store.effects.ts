@@ -29,6 +29,11 @@ import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
 import { getValueOrDefault, isInclude, toNumber } from '../../util/extension';
 
+interface Timestamp {
+  images: boolean;
+  sounds: boolean;
+}
+
 interface Files {
   files: FileName[];
 }
@@ -120,7 +125,7 @@ export const loadGameMaster = (
   dispatch: Dispatch,
   imageRoot: APITreeRoot[],
   soundsRoot: APITreeRoot[],
-  timestampLoaded: { images: boolean; sounds: boolean },
+  timestampLoaded: Timestamp,
   setStateImage: SetValue<string>,
   setStateSound: SetValue<string>,
   stateImage: string,

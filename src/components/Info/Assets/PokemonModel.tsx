@@ -33,7 +33,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
     gender.current = {
       malePercent: detail?.genderRatio.M,
       femalePercent: detail?.genderRatio.F,
-      genderlessPercent: detail?.genderRatio.M === 0 && detail?.genderRatio.F === 0 ? 1 : 0,
+      genderlessPercent: Number(detail?.genderRatio.M === 0 && detail?.genderRatio.F === 0),
     };
     return [...new Set(model?.image.map((item) => item.form))].map(
       (value) => new PokemonModelComponent(getValueOrDefault(String, value), getValueOrDefault(Array, model?.image))

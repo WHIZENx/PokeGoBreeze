@@ -18,7 +18,7 @@ export interface IPokemonBattleData {
   name?: string;
   form?: string;
   id?: number;
-  shadow: boolean;
+  isShadow: boolean;
   allStats?: IBattleBaseStats[];
   hp: number;
   stats: IStatsBase | undefined;
@@ -40,7 +40,7 @@ export class PokemonBattleData implements IPokemonBattleData {
   name?: string;
   form?: string;
   id?: number;
-  shadow = false;
+  isShadow = false;
   allStats?: IBattleBaseStats[];
   hp = 0;
   stats: IStatsBase | undefined;
@@ -73,7 +73,7 @@ export class PokemonBattleData implements IPokemonBattleData {
 export interface IPokemonBattle {
   disableCMoveSec: boolean;
   disableCMovePri: boolean;
-  shadow?: boolean;
+  isShadow?: boolean;
   pokemonData?: IPokemonBattleData;
   fMove?: ICombat;
   cMovePri?: ICombat;
@@ -88,7 +88,7 @@ export interface IPokemonBattle {
 export class PokemonBattle implements IPokemonBattle {
   disableCMoveSec = false;
   disableCMovePri = false;
-  shadow?: boolean;
+  isShadow?: boolean;
   pokemonData?: IPokemonBattleData;
   fMove?: ICombat;
   cMovePri?: ICombat;
@@ -111,13 +111,13 @@ export interface ITimeline {
   type?: string;
   color?: string;
   size: number;
-  tap?: boolean;
+  isTap?: boolean;
   block: number;
   energy: number;
   move?: ICombat;
   hp: number;
   buff?: IBuff[];
-  dmgImmune?: boolean;
+  isDmgImmune?: boolean;
 }
 
 export class TimelineModel implements ITimeline {
@@ -125,13 +125,13 @@ export class TimelineModel implements ITimeline {
   type?: string;
   color?: string;
   size = 0;
-  tap?: boolean;
+  isTap?: boolean;
   block = 0;
   energy = 0;
   move?: ICombat;
   hp = 0;
   buff?: IBuff[];
-  dmgImmune?: boolean;
+  isDmgImmune?: boolean;
 
   constructor({ ...props }: ITimeline) {
     Object.assign(this, props);
@@ -151,8 +151,8 @@ export interface IPokemonTeamData {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  shadow: boolean;
-  purified: boolean | undefined;
+  isShadow: boolean;
+  isPurified: boolean;
 }
 
 export class PokemonTeamData implements IPokemonTeamData {
@@ -168,8 +168,8 @@ export class PokemonTeamData implements IPokemonTeamData {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  shadow = false;
-  purified: boolean | undefined;
+  isShadow = false;
+  isPurified = false;
 
   constructor({ ...props }: IPokemonTeamData) {
     Object.assign(this, props);
@@ -191,8 +191,8 @@ export interface IPokemonBattleRanking {
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
-  shadow: boolean;
-  purified: boolean | undefined;
+  isShadow: boolean;
+  isPurified: boolean;
 }
 
 export class PokemonBattleRanking implements IPokemonBattleRanking {
@@ -210,8 +210,8 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
-  shadow = false;
-  purified = false;
+  isShadow = false;
+  isPurified = false;
 
   constructor({ ...props }: IPokemonBattleRanking) {
     Object.assign(this, props);

@@ -18,7 +18,6 @@ import { RouterState, StatsState, StoreState } from '../../../store/models/state
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { BattleBaseStats } from '../../../util/models/calculate.model';
-import { Combat } from '../../../core/models/combat.model';
 import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
@@ -76,22 +75,16 @@ const PokemonPVP = () => {
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
-      let fMoveData = data.moveset.at(0);
-      const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, data.moveset.at(1)));
-      const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, data.moveset.at(2)));
-      if (isInclude(fMoveData, 'HIDDEN_POWER')) {
-        fMoveData = 'HIDDEN_POWER';
-      }
+      const [fMoveData] = data.moveset;
+      let [, cMoveDataPri, cMoveDataSec] = data.moveset;
+      cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, cMoveDataPri));
+      cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, cMoveDataSec));
 
-      let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
+      const fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
       const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
       let cMoveSec;
       if (cMoveDataSec) {
         cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
-      }
-
-      if (fMove && isInclude(data.moveset.at(0), 'HIDDEN_POWER')) {
-        fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, data.moveset.at(0)?.split('_').at(2)) });
       }
 
       const maxCP = toNumber(getValueOrDefault(String, params.cp));
@@ -139,8 +132,8 @@ const PokemonPVP = () => {
           cMovePri,
           cMoveSec,
           bestStats,
-          shadow: isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
-          purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
+          isShadow: isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
+          isPurified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
         })
       );
       dispatch(SpinnerActions.HideSpinner.create());
@@ -203,8 +196,8 @@ const PokemonPVP = () => {
           style={{
             backgroundImage: computeBgType(
               rankingPoke?.pokemon?.types,
-              rankingPoke?.shadow,
-              rankingPoke?.purified,
+              rankingPoke?.isShadow,
+              rankingPoke?.isPurified,
               0.8,
               undefined,
               rankingPoke ? undefined : 'rgb(100, 100, 100)'
@@ -230,8 +223,8 @@ const PokemonPVP = () => {
             <div className="w-100 ranking-info element-top">
               <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
                 <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                  {rankingPoke?.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-                  {rankingPoke?.purified && (
+                  {rankingPoke?.isShadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+                  {rankingPoke?.isPurified && (
                     <img height={64} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
                   )}
                   <img

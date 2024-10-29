@@ -224,7 +224,10 @@ const FindTable = () => {
                   <b>{fourStar}</b>
                 </div>
               </div>
-              <p>{((getValueOrDefault(Number, fourStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
+              <p>
+                {toFloatWithPadding((getValueOrDefault(Number, fourStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1), 2)}
+                %
+              </p>
             </div>
             <div className="d-inline-block text-center">
               <div className="three-star">
@@ -234,7 +237,13 @@ const FindTable = () => {
                   <b>{threeStar}</b>
                 </div>
               </div>
-              <p>{((getValueOrDefault(Number, threeStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
+              <p>
+                {toFloatWithPadding(
+                  (getValueOrDefault(Number, threeStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1),
+                  2
+                )}
+                %
+              </p>
             </div>
             <div className="d-inline-block text-center">
               <div className="two-star">
@@ -244,7 +253,9 @@ const FindTable = () => {
                   <b>{twoStar}</b>
                 </div>
               </div>
-              <p>{((getValueOrDefault(Number, twoStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
+              <p>
+                {toFloatWithPadding((getValueOrDefault(Number, twoStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1), 2)}%
+              </p>
             </div>
             <div className="d-inline-block text-center">
               <div className="one-star">
@@ -254,7 +265,9 @@ const FindTable = () => {
                   <b>{oneStar}</b>
                 </div>
               </div>
-              <p>{((getValueOrDefault(Number, oneStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
+              <p>
+                {toFloatWithPadding((getValueOrDefault(Number, oneStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1), 2)}%
+              </p>
             </div>
             <div className="d-inline-block text-center">
               <div className="zero-star">
@@ -264,7 +277,10 @@ const FindTable = () => {
                   <b>{zeroStar}</b>
                 </div>
               </div>
-              <p>{((getValueOrDefault(Number, zeroStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1)).toFixed(2)}%</p>
+              <p>
+                {toFloatWithPadding((getValueOrDefault(Number, zeroStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1), 2)}
+                %
+              </p>
             </div>
           </Fragment>
         )}
@@ -358,7 +374,7 @@ const FindTable = () => {
     <Fragment>
       <div className="container element-top">
         <Find
-          hide={true}
+          isHide={true}
           clearStats={clearArrStats}
           setStatATK={setStatATK}
           setStatDEF={setStatDEF}

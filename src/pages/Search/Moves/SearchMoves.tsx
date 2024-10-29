@@ -59,11 +59,7 @@ const columns: TableColumnModify<ICombat>[] = [
   {
     name: 'Name',
     selector: (row) => (
-      <Link
-        to={`/move/${row.track}${
-          row.track === 281 && !isEqual(row.type, 'NORMAL', EqualMode.IgnoreCaseSensitive) ? `?type=${row.type?.toLowerCase()}` : ''
-        }`}
-      >
+      <Link to={`/move/${row.track}${row.isMultipleWithType ? `?type=${row.type?.toLowerCase()}` : ''}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),

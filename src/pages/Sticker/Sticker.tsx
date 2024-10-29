@@ -63,9 +63,9 @@ const Sticker = () => {
             if (shopType === ShopType.All) {
               return true;
             } else if (shopType === ShopType.Unavailable) {
-              return !item.shop;
+              return !item.isShop;
             }
-            return item.shop;
+            return item.isShop;
           })
           .filter((item) => {
             if (id === GlobalType.All) {
@@ -124,7 +124,7 @@ const Sticker = () => {
                   placement="auto"
                   overlay={
                     <PopoverConfig id={`popover-sticker-${index}`}>
-                      {value.shop ? <span>Available in shop sell pack: {value.pack.join(', ')}</span> : <span>Unavailable in shop</span>}
+                      {value.isShop ? <span>Available in shop sell pack: {value.pack.join(', ')}</span> : <span>Unavailable in shop</span>}
                     </PopoverConfig>
                   }
                 >
@@ -144,7 +144,7 @@ const Sticker = () => {
                         }}
                       />
                     </Badge>
-                    {value.shop && (
+                    {value.isShop && (
                       <span className="icon-shop">
                         <ShoppingCartIcon fontSize="small" sx={{ color: 'white' }} />
                       </span>

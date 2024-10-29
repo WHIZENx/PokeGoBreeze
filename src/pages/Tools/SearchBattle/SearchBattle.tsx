@@ -36,6 +36,7 @@ import {
   isIncludeList,
   isNotEmpty,
   isNullOrEmpty,
+  toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
@@ -344,7 +345,7 @@ const FindBattle = () => {
   return (
     <div className="container">
       <Find
-        hide={true}
+        isHide={true}
         clearStats={clearArrStats}
         setStatATK={setStatATK}
         setStatDEF={setStatDEF}
@@ -486,7 +487,7 @@ const FindBattle = () => {
                           }
                         />
                         <div>
-                          <b>{value.ratio?.toFixed(2)}</b>
+                          <b>{toFloatWithPadding(value.ratio, 2)}</b>
                         </div>
                         <span className="caption">CP: {value.CP}</span>
                       </div>
@@ -562,7 +563,7 @@ const FindBattle = () => {
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.little.ratio))}
                                         >
-                                          <b>{item.battleLeague.little.ratio?.toFixed(2)}</b>
+                                          <b>{toFloatWithPadding(item.battleLeague.little.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
@@ -617,7 +618,7 @@ const FindBattle = () => {
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.great.ratio))}
                                         >
-                                          <b>{item.battleLeague.great.ratio?.toFixed(2)}</b>
+                                          <b>{toFloatWithPadding(item.battleLeague.great.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
@@ -672,7 +673,7 @@ const FindBattle = () => {
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.ultra.ratio))}
                                         >
-                                          <b>{item.battleLeague.ultra.ratio?.toFixed(2)}</b>
+                                          <b>{toFloatWithPadding(item.battleLeague.ultra.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
@@ -727,7 +728,7 @@ const FindBattle = () => {
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.master.ratio))}
                                         >
-                                          <b>{item.battleLeague.master.ratio?.toFixed(2)}</b>
+                                          <b>{toFloatWithPadding(item.battleLeague.master.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>

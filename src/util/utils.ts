@@ -554,8 +554,8 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 
   const quickMoves = getValueOrDefault(Array, pokemon.quickMoves);
   const cinematicMoves = getValueOrDefault(Array, pokemon.cinematicMoves);
-  const eliteQuickMoves = getValueOrDefault(Array, pokemon.eliteQuickMove);
-  const eliteCinematicMoves = getValueOrDefault(Array, pokemon.eliteCinematicMove);
+  const eliteQuickMoves = getValueOrDefault(Array, pokemon.eliteQuickMoves);
+  const eliteCinematicMoves = getValueOrDefault(Array, pokemon.eliteCinematicMoves);
   const specialMoves = getValueOrDefault(Array, pokemon.specialMoves);
   const allMoves = quickMoves.concat(cinematicMoves, eliteQuickMoves, eliteCinematicMoves, specialMoves);
   if (allMoves.length <= 2 && (quickMoves[0] === 'STRUGGLE' || isInclude(quickMoves[0], 'SPLASH')) && cinematicMoves[0] === 'STRUGGLE') {
@@ -887,9 +887,9 @@ export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
 
 export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
   return getValueOrDefault(Array, pokemon?.quickMoves).concat(
-    getValueOrDefault(Array, pokemon?.eliteQuickMove),
+    getValueOrDefault(Array, pokemon?.eliteQuickMoves),
     getValueOrDefault(Array, pokemon?.cinematicMoves),
-    getValueOrDefault(Array, pokemon?.eliteCinematicMove),
+    getValueOrDefault(Array, pokemon?.eliteCinematicMoves),
     getValueOrDefault(Array, pokemon?.shadowMoves),
     getValueOrDefault(Array, pokemon?.purifiedMoves),
     getValueOrDefault(Array, pokemon?.specialMoves)

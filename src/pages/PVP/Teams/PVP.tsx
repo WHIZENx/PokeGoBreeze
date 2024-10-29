@@ -41,6 +41,7 @@ import {
   isIncludeList,
   isNotEmpty,
   isNullOrUndefined,
+  toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
 import { Sorted, SortType } from '../enums/pvp-team.enum';
@@ -93,11 +94,11 @@ const TeamPVP = () => {
       [fMoveText, cMovePriText, cMoveSecText] = moveSet.split('/');
     }
 
-    const fastMoveSet = getValueOrDefault(Array, pokemon?.quickMoves?.concat(getValueOrDefault(Array, pokemon.eliteQuickMove)));
+    const fastMoveSet = getValueOrDefault(Array, pokemon?.quickMoves?.concat(getValueOrDefault(Array, pokemon.eliteQuickMoves)));
     const chargedMoveSet = getValueOrDefault(
       Array,
       pokemon?.cinematicMoves?.concat(
-        getValueOrDefault(Array, pokemon.eliteCinematicMove),
+        getValueOrDefault(Array, pokemon.eliteCinematicMoves),
         getValueOrDefault(Array, pokemon.shadowMoves),
         getValueOrDefault(Array, pokemon.purifiedMoves),
         getValueOrDefault(Array, pokemon.specialMoves)
@@ -129,8 +130,8 @@ const TeamPVP = () => {
       fMove,
       cMovePri,
       cMoveSec,
-      shadow: isInclude(speciesId, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive),
-      purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
+      isShadow: isInclude(speciesId, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive),
+      isPurified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
     });
     return result;
   };
@@ -165,13 +166,14 @@ const TeamPVP = () => {
         const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);
         const teamsTotalGames = file.teams.reduce((p, c) => p + c.games, 0);
 
-        file.performers = file.performers.map((item) => {
-          return new Performers({
-            ...item,
-            ...mappingPokemonData(item.pokemon),
-            performersTotalGames,
-          });
-        });
+        file.performers = file.performers.map(
+          (item) =>
+            new Performers({
+              ...item,
+              ...mappingPokemonData(item.pokemon),
+              performersTotalGames,
+            })
+        );
 
         file.teams = file.teams.map((item) => {
           const teamsData = item.team.split('|').map((value) => mappingPokemonData(value));
@@ -348,7 +350,7 @@ const TeamPVP = () => {
               key={index}
               style={{
                 columnGap: '1rem',
-                backgroundImage: computeBgType(value.pokemonData?.types, value.shadow, value.purified, 1, styleSheet.current),
+                backgroundImage: computeBgType(value.pokemonData?.types, value.isShadow, value.isPurified, 1, styleSheet.current),
               }}
             >
               <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
@@ -356,8 +358,8 @@ const TeamPVP = () => {
               </Link>
               <div className="d-flex justify-content-center">
                 <span className="position-relative filter-shadow" style={{ width: 96 }}>
-                  {value.shadow && <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-                  {value.purified && <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />}
+                  {value.isShadow && <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+                  {value.isPurified && <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />}
                   <img
                     alt="img-league"
                     className="pokemon-sprite"
@@ -369,42 +371,42 @@ const TeamPVP = () => {
                 <div>
                   <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
                     <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
-                    <TypeInfo hideText={true} block={true} shadow={true} height={20} color="white" arr={value.pokemonData?.types} />
+                    <TypeInfo isHideText={true} isBlock={true} isShadow={true} height={20} color="white" arr={value.pokemonData?.types} />
                   </div>
                   <div className="d-flex" style={{ columnGap: 10 }}>
                     <TypeBadge
-                      grow={true}
-                      find={true}
+                      isGrow={true}
+                      isFind={true}
                       title="Fast Move"
                       color="white"
                       move={value.fMove}
-                      elite={isIncludeList(value.pokemonData?.eliteQuickMove, value.fMove?.name)}
-                      unavailable={!isIncludeList(getAllMoves(value.pokemonData), value.fMove?.name)}
+                      isElite={isIncludeList(value.pokemonData?.eliteQuickMoves, value.fMove?.name)}
+                      isUnavailable={!isIncludeList(getAllMoves(value.pokemonData), value.fMove?.name)}
                     />
                     <TypeBadge
-                      grow={true}
-                      find={true}
+                      isGrow={true}
+                      isFind={true}
                       title="Primary Charged Move"
                       color="white"
                       move={value.cMovePri}
-                      elite={isIncludeList(value.pokemonData?.eliteCinematicMove, value.cMovePri?.name)}
-                      shadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMovePri?.name)}
-                      purified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMovePri?.name)}
-                      special={isIncludeList(value.pokemonData?.specialMoves, value.cMovePri?.name)}
-                      unavailable={value.cMovePri && !isIncludeList(getAllMoves(value.pokemonData), value.cMovePri.name)}
+                      isElite={isIncludeList(value.pokemonData?.eliteCinematicMoves, value.cMovePri?.name)}
+                      isShadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMovePri?.name)}
+                      isPurified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMovePri?.name)}
+                      isSpecial={isIncludeList(value.pokemonData?.specialMoves, value.cMovePri?.name)}
+                      isUnavailable={value.cMovePri && !isIncludeList(getAllMoves(value.pokemonData), value.cMovePri.name)}
                     />
                     {value.cMoveSec && (
                       <TypeBadge
-                        grow={true}
-                        find={true}
+                        isGrow={true}
+                        isFind={true}
                         title="Secondary Charged Move"
                         color="white"
                         move={value.cMoveSec}
-                        elite={isIncludeList(value.pokemonData?.eliteCinematicMove, value.cMoveSec.name)}
-                        shadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMoveSec.name)}
-                        purified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMoveSec.name)}
-                        special={isIncludeList(value.pokemonData?.specialMoves, value.cMoveSec.name)}
-                        unavailable={value.cMoveSec && !isIncludeList(getAllMoves(value.pokemonData), value.cMoveSec.name)}
+                        isElite={isIncludeList(value.pokemonData?.eliteCinematicMoves, value.cMoveSec.name)}
+                        isShadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMoveSec.name)}
+                        isPurified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMoveSec.name)}
+                        isSpecial={isIncludeList(value.pokemonData?.specialMoves, value.cMoveSec.name)}
+                        isUnavailable={value.cMoveSec && !isIncludeList(getAllMoves(value.pokemonData), value.cMoveSec.name)}
                       />
                     )}
                   </div>
@@ -417,7 +419,7 @@ const TeamPVP = () => {
                     <span className="ranking-score score-ic">{value.individualScore}</span>
                   </div>
                   <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic">
-                    {((value.games * 100) / value.performersTotalGames).toFixed(2)}
+                    {toFloatWithPadding((value.games * 100) / value.performersTotalGames, 2)}
                     <span className="caption text-black">
                       {value.games}/{value.performersTotalGames}
                     </span>
@@ -477,10 +479,10 @@ const TeamPVP = () => {
                         <div className="text-center" key={index}>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                              {value.shadow && (
+                              {value.isShadow && (
                                 <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                               )}
-                              {value.purified && (
+                              {value.isPurified && (
                                 <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
                               )}
                               <img
@@ -499,7 +501,7 @@ const TeamPVP = () => {
                         <span className="ranking-score score-ic">{value.teamScore}</span>
                       </div>
                       <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic">
-                        {((value.games * 100) / value.teamsTotalGames).toFixed(2)}
+                        {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
                         <span className="caption text-black">
                           {value.games}/{value.teamsTotalGames}
                         </span>
@@ -516,7 +518,7 @@ const TeamPVP = () => {
                         style={{
                           padding: 15,
                           gap: '1rem',
-                          backgroundImage: computeBgType(value.pokemonData?.types, value.shadow, value.purified),
+                          backgroundImage: computeBgType(value.pokemonData?.types, value.isShadow, value.isPurified),
                         }}
                       >
                         <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
@@ -524,8 +526,10 @@ const TeamPVP = () => {
                         </Link>
                         <div className="d-flex justify-content-center">
                           <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                            {value.shadow && <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-                            {value.purified && (
+                            {value.isShadow && (
+                              <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                            )}
+                            {value.isPurified && (
                               <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
                             )}
                             <img
@@ -540,9 +544,9 @@ const TeamPVP = () => {
                             <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
                               <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
                               <TypeInfo
-                                hideText={true}
-                                block={true}
-                                shadow={true}
+                                isHideText={true}
+                                isBlock={true}
+                                isShadow={true}
                                 height={20}
                                 color="white"
                                 arr={value.pokemonData?.types}
@@ -550,38 +554,38 @@ const TeamPVP = () => {
                             </div>
                             <div className="d-flex" style={{ gap: 10 }}>
                               <TypeBadge
-                                grow={true}
-                                find={true}
+                                isGrow={true}
+                                isFind={true}
                                 title="Fast Move"
                                 color="white"
                                 move={value.fMove}
-                                elite={isIncludeList(value.pokemonData?.eliteQuickMove, value.fMove?.name)}
-                                unavailable={!isIncludeList(getAllMoves(value.pokemonData), value.fMove?.name)}
+                                isElite={isIncludeList(value.pokemonData?.eliteQuickMoves, value.fMove?.name)}
+                                isUnavailable={!isIncludeList(getAllMoves(value.pokemonData), value.fMove?.name)}
                               />
                               <TypeBadge
-                                grow={true}
-                                find={true}
+                                isGrow={true}
+                                isFind={true}
                                 title="Primary Charged Move"
                                 color="white"
                                 move={value.cMovePri}
-                                elite={isIncludeList(value.pokemonData?.eliteCinematicMove, value.cMovePri?.name)}
-                                shadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMovePri?.name)}
-                                purified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMovePri?.name)}
-                                special={isIncludeList(value.pokemonData?.specialMoves, value.cMovePri?.name)}
-                                unavailable={!isIncludeList(getAllMoves(value.pokemonData), value.cMovePri?.name)}
+                                isElite={isIncludeList(value.pokemonData?.eliteCinematicMoves, value.cMovePri?.name)}
+                                isShadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMovePri?.name)}
+                                isPurified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMovePri?.name)}
+                                isSpecial={isIncludeList(value.pokemonData?.specialMoves, value.cMovePri?.name)}
+                                isUnavailable={!isIncludeList(getAllMoves(value.pokemonData), value.cMovePri?.name)}
                               />
                               {value.cMoveSec && (
                                 <TypeBadge
-                                  grow={true}
-                                  find={true}
+                                  isGrow={true}
+                                  isFind={true}
                                   title="Secondary Charged Move"
                                   color="white"
                                   move={value.cMoveSec}
-                                  elite={isIncludeList(value.pokemonData?.eliteCinematicMove, value.cMoveSec.name)}
-                                  shadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMoveSec.name)}
-                                  purified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMoveSec.name)}
-                                  special={isIncludeList(value.pokemonData?.specialMoves, value.cMoveSec.name)}
-                                  unavailable={!isIncludeList(getAllMoves(value.pokemonData), value.cMoveSec.name)}
+                                  isElite={isIncludeList(value.pokemonData?.eliteCinematicMoves, value.cMoveSec.name)}
+                                  isShadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMoveSec.name)}
+                                  isPurified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMoveSec.name)}
+                                  isSpecial={isIncludeList(value.pokemonData?.specialMoves, value.cMoveSec.name)}
+                                  isUnavailable={!isIncludeList(getAllMoves(value.pokemonData), value.cMoveSec.name)}
                                 />
                               )}
                             </div>

@@ -33,7 +33,7 @@ export interface OptionDPSModel {
 }
 
 interface IOptionFiltersDPS {
-  match: boolean;
+  isMatch: boolean;
   showEliteMove: boolean;
   showShadow: boolean;
   showMega: boolean;
@@ -61,7 +61,7 @@ interface IOptionFiltersDPS {
 }
 
 export class OptionFiltersDPS implements IOptionFiltersDPS {
-  match = false;
+  isMatch = false;
   showEliteMove = true;
   showShadow = true;
   showMega = true;
@@ -113,7 +113,7 @@ export interface IOptionOtherDPS {
   delay?: IDelay;
   specific?: Specific;
   weatherBoosts?: string;
-  trainerFriend?: boolean;
+  isTrainerFriend?: boolean;
   pokemonFriendLevel?: number;
   pokemonDefObj: number;
   ivAtk: number;
@@ -127,7 +127,7 @@ export class OptionOtherDPS implements IOptionOtherDPS {
   delay?: IDelay;
   specific?: Specific;
   weatherBoosts?: string;
-  trainerFriend?: boolean;
+  isTrainerFriend?: boolean;
   pokemonFriendLevel?: number;
   pokemonDefObj = DEFAULT_POKEMON_DEF_OBJ;
   ivAtk = MAX_IV;

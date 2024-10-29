@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useRef } from 'react';
 
 import '../../Tools/CalculateStats/CalculateStats.scss';
 
@@ -26,8 +26,8 @@ const Search = () => {
   const pokemonName = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
 
   const [startIndex, setStartIndex] = useState(0);
-  const firstInit = 20;
-  const eachCounter = 10;
+  const firstInit = useRef(20);
+  const eachCounter = useRef(10);
 
   const [id, setId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
   const [selectId, setSelectId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
@@ -61,7 +61,7 @@ const Search = () => {
     setSelectId(id);
   }, [id]);
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
+  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
@@ -91,18 +91,15 @@ const Search = () => {
   const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      const result = {
-        prev: getPokemonById(pokemonName, currentId.id - 1),
-        current: currentId,
-        next: getPokemonById(pokemonName, currentId.id + 1),
-      };
+      const prev = getPokemonById(pokemonName, currentId.id - 1);
+      const next = getPokemonById(pokemonName, currentId.id + 1);
       if (event.keyCode === KEY_ENTER) {
         setShowResult(false);
         setId(selectId);
-      } else if (result.prev && event.keyCode === KEY_UP) {
-        setSelectId(result.prev.id);
-      } else if (result.next && event.keyCode === KEY_DOWN) {
-        setSelectId(result.next.id);
+      } else if (prev && event.keyCode === KEY_UP) {
+        setSelectId(prev.id);
+      } else if (next && event.keyCode === KEY_DOWN) {
+        setSelectId(next.id);
       } else {
         setSearchTerm(search);
       }
@@ -139,7 +136,7 @@ const Search = () => {
         </div>
         <div className="result" style={{ display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>
           <Fragment>
-            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
+            {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
               <div
                 className={combineClasses(
                   'container card-pokemon',
