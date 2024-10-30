@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../services/API.service';
 import FormSelect from './FormSelect';
 
@@ -15,16 +15,18 @@ import LoadGroup from '../Sprites/Loading/LoadingGroup';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
-  const firstInit = 20;
-  const eachCounter = 10;
-  const cardHeight = 65;
+  const firstInit = useRef(20);
+  const eachCounter = useRef(10);
+  const cardHeight = useRef(65);
 
   const stats = useSelector((state: StatsState) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
 
-  const [id, setId] = useState(searching ? (props.objective ? (searching ? (searching.obj ? searching.obj.id : 1) : 1) : searching.id) : 1);
+  const [id, setId] = useState(
+    searching ? (props.isObjective ? (searching ? (searching.obj ? searching.obj.id : 1) : 1) : searching.id) : 1
+  );
 
   const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
 
@@ -50,7 +52,7 @@ const Find = (props: IFindComponent) => {
     }
   }, [pokemonList, searchTerm]);
 
-  const listenScrollEvent = (ele: { currentTarget: { scrollTop: number; offsetHeight: number } }) => {
+  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = ele.currentTarget.scrollTop;
     const fullHeight = ele.currentTarget.offsetHeight;
     if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
@@ -125,8 +127,10 @@ const Find = (props: IFindComponent) => {
       <div
         className="col d-flex justify-content-center"
         style={{
-          height: Math.min(eachCounter, pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).length + 1) * cardHeight,
-          maxHeight: eachCounter * cardHeight,
+          height:
+            Math.min(eachCounter.current, pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).length + 1) *
+            cardHeight.current,
+          maxHeight: eachCounter.current * cardHeight.current,
         }}
       >
         <div className="btn-group-search">
@@ -142,7 +146,7 @@ const Find = (props: IFindComponent) => {
         </div>
         <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
           <Fragment>
-            {pokemonListFilter.slice(0, firstInit + eachCounter * startIndex).map((value, index) => (
+            {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
               <div
                 className={combineClasses('container card-pokemon', value.id === id ? 'selected' : '')}
                 key={index}
@@ -177,8 +181,8 @@ const Find = (props: IFindComponent) => {
             <FormSelect
               router={router}
               searching={searching}
-              hide={props.hide}
-              raid={props.raid}
+              isHide={props.isHide}
+              isRaid={props.isRaid}
               setRaid={props.setRaid}
               tier={props.tier}
               setTier={props.setTier}
@@ -193,7 +197,7 @@ const Find = (props: IFindComponent) => {
               onSetPrev={decId}
               onSetNext={incId}
               setUrlEvo={props.setUrlEvo}
-              objective={props.objective}
+              isObjective={props.isObjective}
               pokemonName={pokemonData}
             />
           )}
@@ -209,7 +213,7 @@ const Find = (props: IFindComponent) => {
       </h1>
       {isNotEmpty(pokemonList) ? (
         <div className="row search-container">
-          {props.swap ? (
+          {props.isSwap ? (
             <Fragment>
               {showPokemon()}
               {searchPokemon()}
@@ -227,7 +231,7 @@ const Find = (props: IFindComponent) => {
             className="ph-picture d-flex align-item-center justify-content-center position-relative w-50"
             style={{ height: 600, backgroundColor: '#f8f8f8' }}
           >
-            <LoadGroup isShow={true} isVertical={true} hideAttr={true} size={40} />
+            <LoadGroup isShow={true} isVertical={true} isHideAttr={true} size={40} />
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 
 import { replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/constants';
-import { Combat, ICombat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
@@ -20,7 +20,7 @@ import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { MoveType } from '../../../enums/type.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -36,21 +36,27 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   const [pokemonIcon, setPokemonIcon] = useState('');
   const [score, setScore] = useState(0);
 
+  const [startIndex, setStartIndex] = useState(0);
+  const firstInit = useRef(20);
+  const eachCounter = useRef(10);
+
+  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const scrollTop = ele.currentTarget.scrollTop;
+    const fullHeight = ele.currentTarget.offsetHeight;
+    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
+      setStartIndex(startIndex + 1);
+    }
+  };
+
   const selectPokemon = (value: IBattlePokemonData) => {
     props.clearData(false);
-    let [fMove, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
+    const [fMove] = getValueOrDefault(Array, value.moveset);
+    let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
     setSearch(splitAndCapitalize(value.pokemon.name, '-', ' '));
     setPokemonIcon(APIService.getPokeIconSprite(getValueOrDefault(String, value.pokemon.sprite)));
     setPokemon(value);
 
-    if (isInclude(fMove, 'HIDDEN_POWER')) {
-      fMove = 'HIDDEN_POWER';
-    }
-
     const fMoveCombat = combat.find((item) => isEqual(item.name, fMove));
-    if (fMoveCombat && isInclude(value.moveset.at(0), 'HIDDEN_POWER')) {
-      fMoveCombat.type = getValueOrDefault(String, value.moveset.at(0)?.split('_').at(2));
-    }
     setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
 
@@ -93,7 +99,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           pokemonData: PokemonBattleData.create({
             ...value,
             form: getValueOrDefault(String, value.form),
-            shadow: getValueOrDefault(Boolean, value.shadow),
+            isShadow: getValueOrDefault(Boolean, value.isShadow),
             hp: getValueOrDefault(Number, value.stats.hp),
             fMove: fMoveCombat,
             cMove: cMovePriCombat,
@@ -115,7 +121,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMovePriCombat?.sound))),
             cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMoveSecCombat?.sound))),
           },
-          shadow: isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive),
+          isShadow: isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive),
         })
       );
     }
@@ -221,12 +227,17 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         />
       </div>
       {isNotEmpty(props.data) && (
-        <div className="result-pokemon" style={{ display: show ? 'block' : 'none', maxHeight: 274 }}>
+        <div
+          className="result-pokemon"
+          style={{ display: show ? 'block' : 'none', maxHeight: 274 }}
+          onScroll={listenScrollEvent.bind(this)}
+        >
           {props.data
             .filter(
               (pokemon) =>
                 pokemon && isInclude(splitAndCapitalize(pokemon.pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive)
             )
+            .slice(0, firstInit.current + eachCounter.current * startIndex)
             .map((value, index) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
                 <CardPokemon
@@ -247,23 +258,13 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         style={{ padding: 0, borderRadius: 0 }}
       >
         <div className="card-move-input" tabIndex={0} onClick={() => setShowFMove(true)} onBlur={() => setShowFMove(false)}>
-          <CardMoveSmall value={fMove} show={pokemon ? true : false} select={isNotEmpty(props.data) && props.data.length > 1} />
+          <CardMoveSmall value={fMove} isShow={Boolean(pokemon)} isSelect={isNotEmpty(props.data) && props.data.length > 1} />
           {showFMove && isNotEmpty(props.data) && pokemon && (
             <div className="result-move-select">
               <div>
                 {props.data
                   .find((value) => isEqual(value.speciesId, pokemon.speciesId))
-                  ?.moves.fastMoves.map((value) => {
-                    let move = value.moveId;
-                    if (isInclude(move, 'HIDDEN_POWER')) {
-                      move = 'HIDDEN_POWER';
-                    }
-                    let fMove = combat.find((item) => isEqual(item.name, move));
-                    if (fMove && isInclude(value.moveId, 'HIDDEN_POWER')) {
-                      fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, value.moveId.split('_').at(2)) });
-                    }
-                    return fMove;
-                  })
+                  ?.moves.fastMoves.map((value) => combat.find((item) => isEqual(item.name, value.moveId)))
                   .filter((value) => value && !isEqual(value.name, fMove?.name))
                   .map((value, index) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
@@ -321,9 +322,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           >
             <CardMoveSmall
               value={cMovePri}
-              show={pokemon ? true : false}
-              disable={props.pokemonBattle.disableCMovePri}
-              select={isNotEmpty(props.data) && props.data.length > 1}
+              isShow={Boolean(pokemon)}
+              isDisable={props.pokemonBattle.disableCMovePri}
+              isSelect={isNotEmpty(props.data) && props.data.length > 1}
             />
             {showCMovePri && isNotEmpty(props.data) && pokemon && (
               <div className="result-move-select">
@@ -403,11 +404,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           >
             <CardMoveSmall
               value={cMoveSec}
-              empty={!cMoveSec ? true : false}
-              show={pokemon ? true : false}
+              isEmpty={!cMoveSec}
+              isShow={Boolean(pokemon)}
               clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
-              disable={props.pokemonBattle.disableCMoveSec}
-              select={isNotEmpty(props.data) && props.data.length > 1}
+              isDisable={props.pokemonBattle.disableCMoveSec}
+              isSelect={isNotEmpty(props.data) && props.data.length > 1}
             />
             {showCMoveSec && isNotEmpty(props.data) && pokemon && (
               <div className="result-move-select">

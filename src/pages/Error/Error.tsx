@@ -15,10 +15,10 @@ const Error = () => {
   useChangeTitle(location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found');
 
   useEffect(() => {
-    if (spinner.loading) {
+    if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [spinner.loading, dispatch]);
+  }, [spinner.isLoading, dispatch]);
 
   return (
     <div className="d-block position-relative">

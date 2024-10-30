@@ -13,7 +13,7 @@ import { getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension'
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();
-  const assets = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.assets));
+  const assets = useSelector((state: StoreState) => state.store.data.assets);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
 

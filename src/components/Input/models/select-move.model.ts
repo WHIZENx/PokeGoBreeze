@@ -1,23 +1,23 @@
 export interface ISelectMoveModel {
   name: string;
-  elite: boolean;
-  shadow: boolean;
-  purified: boolean;
-  special: boolean;
+  isElite: boolean;
+  isShadow: boolean;
+  isPurified: boolean;
+  isSpecial: boolean;
 }
 
 export class SelectMoveModel implements ISelectMoveModel {
   name = '';
-  elite = false;
-  shadow = false;
-  purified = false;
-  special = false;
+  isElite = false;
+  isShadow = false;
+  isPurified = false;
+  isSpecial = false;
 
-  constructor(name: string, elite: boolean, shadow: boolean, purified: boolean, special: boolean) {
+  constructor(name: string, isElite: boolean, isShadow: boolean, isPurified: boolean, isSpecial: boolean) {
     this.name = name;
-    this.elite = elite;
-    this.shadow = shadow;
-    this.purified = purified;
-    this.special = special;
+    this.isElite = isElite;
+    this.isShadow = isShadow;
+    this.isPurified = isPurified;
+    this.isSpecial = isSpecial;
   }
 }

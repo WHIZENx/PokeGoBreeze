@@ -1,7 +1,7 @@
 import CardPokemon from '../Card/CardPokemon';
 import CloseIcon from '@mui/icons-material/Close';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import './Select.scss';
 import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
@@ -16,11 +16,11 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } fro
 import { IncludeMode } from '../../util/enums/string.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
 
   const [startIndex, setStartIndex] = useState(0);
-  const firstInit = 20;
-  const eachCounter = 10;
+  const firstInit = useRef(20);
+  const eachCounter = useRef(10);
 
   const [pokemonIcon, setPokemonIcon] = useState(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
   const [showPokemon, setShowPokemon] = useState(false);
@@ -48,10 +48,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       if (props.setCurrentPokemon) {
         props.setCurrentPokemon(value);
       }
-      if (props.selected && props.setFMovePokemon) {
+      if (props.isSelected && props.setFMovePokemon) {
         props.setFMovePokemon(findMove(value.num, getValueOrDefault(String, value.forme), TypeMove.FAST));
       }
-      if (props.selected && props.setCMovePokemon) {
+      if (props.isSelected && props.setCMovePokemon) {
         props.setCMovePokemon(findMove(value.num, getValueOrDefault(String, value.forme), TypeMove.CHARGE));
       }
       if (props.clearData) {
@@ -85,14 +85,14 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         result.quickMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, false, false, false, false));
         });
-        result.eliteQuickMove?.forEach((value) => {
+        result.eliteQuickMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, true, false, false, false));
         });
       } else {
         result.cinematicMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, false, false, false, false));
         });
-        result.eliteCinematicMove?.forEach((value) => {
+        result.eliteCinematicMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, true, false, false, false));
         });
         result.shadowMoves?.forEach((value) => {
@@ -118,7 +118,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   return (
     <div
-      className={combineClasses('position-relative d-flex align-items-center form-control', props.disable ? 'card-select-disabled' : '')}
+      className={combineClasses('position-relative d-flex align-items-center form-control', props.isDisable ? 'card-select-disabled' : '')}
       style={{ padding: 0, borderRadius: 0 }}
     >
       <div className="card-pokemon-input">
@@ -144,7 +144,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         </div>
         <div
           className="result-pokemon"
-          onScroll={(e) => listenScrollEvent(e)}
+          onScroll={listenScrollEvent.bind(this)}
           style={{ display: showPokemon ? 'block' : 'none', maxHeight: props.maxHeight ?? 274 }}
         >
           <div>
@@ -155,7 +155,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
                   (isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
                     isInclude(item.num, search))
               )
-              .slice(0, firstInit + eachCounter * startIndex)
+              .slice(0, firstInit.current + eachCounter.current * startIndex)
               .map((value, index) => (
                 <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
                   <CardPokemon value={value} />

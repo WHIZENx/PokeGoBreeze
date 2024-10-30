@@ -8,7 +8,7 @@ import { VariantType } from '../../../enums/type.enum';
 const AlertReleased = (props: IAlertReleasedComponent) => {
   return (
     <>
-      {!props.released && (
+      {!props.isReleased && (
         <Alert variant={VariantType.Danger}>
           <h5 className="text-danger" style={{ margin: 0 }}>
             * <b>{splitAndCapitalize(convertPokemonAPIDataName(props.formName?.replaceAll(' ', '-')), '_', ' ')}</b> not released in Pokémon

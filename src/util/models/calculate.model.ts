@@ -16,10 +16,10 @@ export interface IBattleCalculate {
   fMove?: ICombat;
   cMove?: ICombat;
   types: string[];
-  shadow?: boolean;
+  isShadow?: boolean;
   isStab?: boolean;
   weatherBoosts?: string;
-  pokemonFriend?: boolean;
+  isPokemonFriend?: boolean;
   pokemonFriendLevel?: number;
   isDoubleCharge?: boolean;
   cMoveSec?: ICombat;
@@ -32,10 +32,10 @@ export class BattleCalculate implements IBattleCalculate {
   fMove?: ICombat;
   cMove?: ICombat;
   types: string[] = [];
-  shadow?: boolean;
+  isShadow?: boolean;
   isStab?: boolean;
   weatherBoosts?: string;
-  pokemonFriend?: boolean;
+  isPokemonFriend?: boolean;
   pokemonFriendLevel?: number;
   isDoubleCharge?: boolean;
   cMoveSec?: ICombat;
@@ -102,12 +102,12 @@ export class BetweenLevelCalculate implements IBetweenLevelCalculate {
 }
 
 export interface IBattleLeagueCalculate {
-  elidge: boolean;
+  isElidge: boolean;
   maxCP?: number;
   IV: IStatsBase;
   CP: number;
   level: number;
-  limit: boolean;
+  isLimit: boolean;
   rangeValue?: IBetweenLevelCalculate;
   stats?: IStatsBase;
 }
@@ -383,17 +383,17 @@ export class StatsCalculate implements IStatsCalculate {
 }
 
 export class BattleLeagueCalculate implements IBattleLeagueCalculate {
-  elidge = false;
+  isElidge = false;
   maxCP?: number;
   IV = new StatsBase();
   CP = 0;
   level = 0;
-  limit = false;
+  isLimit = false;
   rangeValue?: IBetweenLevelCalculate;
   stats?: IStatsBase;
 
-  constructor(elidge: boolean, maxCP?: number, atk?: number, def?: number, sta?: number, CP?: number, level?: number, limit?: boolean) {
-    this.elidge = elidge;
+  constructor(isElidge: boolean, maxCP?: number, atk?: number, def?: number, sta?: number, CP?: number, level?: number, isLimit?: boolean) {
+    this.isElidge = isElidge;
     this.maxCP = maxCP;
     this.IV = new StatsPokemonGO();
     this.IV.atk = getValueOrDefault(Number, atk);
@@ -401,7 +401,7 @@ export class BattleLeagueCalculate implements IBattleLeagueCalculate {
     this.IV.sta = getValueOrDefault(Number, sta);
     this.CP = getValueOrDefault(Number, CP);
     this.level = getValueOrDefault(Number, level);
-    this.limit = getValueOrDefault(Boolean, limit);
+    this.isLimit = getValueOrDefault(Boolean, isLimit);
   }
 }
 

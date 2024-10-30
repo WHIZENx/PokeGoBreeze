@@ -54,23 +54,23 @@ export const rankIconCenterName = (rank: number) => {
   }
 };
 
-export const raidEgg = (tier: number, mega: boolean, primal: boolean, ultra?: boolean) => {
+export const raidEgg = (tier: number, isMega: boolean, isPrimal: boolean, isUltra?: boolean) => {
   if (tier === 1) {
     return APIService.getRaidSprite('raid_egg_0_icon');
   } else if (tier === 3) {
     return APIService.getRaidSprite('raid_egg_1_icon');
   } else if (tier === 4) {
-    if (mega) {
+    if (isMega) {
       return APIService.getRaidSprite('raid_egg_3_icon');
     }
     return APIService.getRaidSprite('raid_egg_5_icon');
   } else if (tier === 5) {
-    if (ultra) {
+    if (isUltra) {
       return APIService.getRaidSprite('raid_ultra_icon');
     }
     return APIService.getRaidSprite('raid_egg_2_icon');
   } else if (tier === 6) {
-    if (primal) {
+    if (isPrimal) {
       return APIService.getRaidSprite('raid_egg_primal_icon');
     }
     return APIService.getRaidSprite('raid_egg_4_icon');

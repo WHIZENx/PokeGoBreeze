@@ -1,5 +1,3 @@
-import { getValueOrDefault } from '../../util/extension';
-
 export interface OptionsRank {
   minRank: number;
   maxRank: number;
@@ -108,11 +106,11 @@ export class StatsBase implements IStatsBase {
   def = 0;
   sta?: number;
 
-  static setValue(atk: number, def: number, sta?: number) {
+  static setValue(atk = 1, def = 1, sta?: number) {
     const obj = new StatsBase();
     obj.atk = atk;
     obj.def = def;
-    obj.sta = getValueOrDefault(Number, sta);
+    obj.sta = sta;
     return obj;
   }
 }

@@ -31,14 +31,14 @@ const TypeInfo = (props: ITypeComponent) => {
       ) : (
         <>
           {isNotEmpty(props.arr) && (
-            <div className={combineClasses(props.block ? '' : 'element-top', props.shadow ? 'filter-shadow' : '')} style={props.style}>
+            <div className={combineClasses(props.isBlock ? '' : 'element-top', props.isShadow ? 'filter-shadow' : '')} style={props.style}>
               {props.text && <p>{props.text}</p>}
               <div className="d-inline-flex flex-wrap type-list align-items-center">
                 {props.arr?.map((value, index) => (
                   <div className="text-center d-flex" key={index}>
-                    {props.hideText ? (
+                    {props.isHideText ? (
                       <img
-                        className={props.shadow ? 'filter-shadow' : ''}
+                        className={props.isShadow ? 'filter-shadow' : ''}
                         width={props.height}
                         height={props.height}
                         alt="img-pokemon"
@@ -51,7 +51,7 @@ const TypeInfo = (props: ITypeComponent) => {
                     ) : (
                       <div>
                         <img
-                          className={props.shadow ? 'filter-shadow' : ''}
+                          className={props.isShadow ? 'filter-shadow' : ''}
                           width={36}
                           height={36}
                           alt="img-pokemon"
@@ -60,7 +60,7 @@ const TypeInfo = (props: ITypeComponent) => {
                         <span
                           className={combineClasses(
                             'caption',
-                            props.shadow ? `text-shadow${theme.palette.mode === TypeTheme.DARK ? '-white' : ''}` : ''
+                            props.isShadow ? `text-shadow${theme.palette.mode === TypeTheme.DARK ? '-white' : ''}` : ''
                           )}
                           style={{ color: props.color ?? theme.palette.text.primary }}
                         >

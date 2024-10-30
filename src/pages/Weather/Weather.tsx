@@ -10,8 +10,8 @@ import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 
 const Weather = () => {
   useChangeTitle('Weather Boosts');
-  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
-  const weatherBoosts = useSelector((state: StoreState) => state.store.data?.weatherBoost);
+  const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
+  const weatherBoosts = useSelector((state: StoreState) => state.store.data.weatherBoost);
 
   return (
     <div className="container element-top">

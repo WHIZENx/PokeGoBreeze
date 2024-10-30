@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
-import { DynamicObj, getValueOrDefault } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, toFloatWithPadding } from '../../../util/extension';
 
 interface IPointer {
   x: number;
@@ -38,7 +38,7 @@ const Hexagon = (props: IHexagonComponent) => {
     center: IPointer,
     percentage: number,
     color: string,
-    fill: boolean
+    isFill: boolean
   ) => {
     const start = getHexConnerCord(center, percentage, 0);
     ctx?.beginPath();
@@ -49,7 +49,7 @@ const Hexagon = (props: IHexagonComponent) => {
     }
     ctx?.setLineDash([20, 15]);
     if (ctx) {
-      if (fill) {
+      if (isFill) {
         ctx.fillStyle = 'gray';
         ctx.fill();
       }
@@ -62,12 +62,12 @@ const Hexagon = (props: IHexagonComponent) => {
 
   const drawStatsHex = (ctx: CanvasRenderingContext2D | null | undefined, center: IPointer, stat: IHexagonStats, hexSize: number) => {
     const stats: DynamicObj<number> = {
-      '0': (getValueOrDefault(Number, stat.switching) * hexSize) / 100,
-      '1': (getValueOrDefault(Number, stat.charger) * hexSize) / 100,
-      '2': (getValueOrDefault(Number, stat.closer) * hexSize) / 100,
-      '3': (getValueOrDefault(Number, stat.cons) * hexSize) / 100,
-      '4': (getValueOrDefault(Number, stat.atk) * hexSize) / 100,
-      '5': (getValueOrDefault(Number, stat.lead) * hexSize) / 100,
+      '0': (stat.switching * hexSize) / 100,
+      '1': (stat.charger * hexSize) / 100,
+      '2': (stat.closer * hexSize) / 100,
+      '3': (stat.cons * hexSize) / 100,
+      '4': (stat.atk * hexSize) / 100,
+      '5': (stat.lead * hexSize) / 100,
     };
     const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
     ctx?.beginPath();
@@ -100,7 +100,7 @@ const Hexagon = (props: IHexagonComponent) => {
 
   const drawHexagon = useCallback(
     (stats: IHexagonStats) => {
-      const hexBorderSize = getValueOrDefault(Number, props.size);
+      const hexBorderSize = props.size;
       const hexSize = hexBorderSize / 2;
 
       const ctx = canvasHex.current?.getContext('2d');
@@ -194,32 +194,32 @@ const Hexagon = (props: IHexagonComponent) => {
       {initHex && (
         <Fragment>
           <div className="position-absolute text-center leader-text">
-            {getValueOrDefault(Number, props.stats.lead).toFixed(1)}
+            {toFloatWithPadding(props.stats.lead, 1)}
             <br />
             <b>Leader</b>
           </div>
           <div className="position-absolute text-center attacker-text">
-            {getValueOrDefault(Number, props.stats.atk).toFixed(1)}
+            {toFloatWithPadding(props.stats.atk, 1)}
             <br />
             <b>Attacker</b>
           </div>
           <div className="position-absolute text-center consistence-text">
-            {getValueOrDefault(Number, props.stats.cons).toFixed(1)}
+            {toFloatWithPadding(props.stats.cons, 1)}
             <br />
             <b>Consistence</b>
           </div>
           <div className="position-absolute text-center closer-text">
-            {getValueOrDefault(Number, props.stats.closer).toFixed(1)}
+            {toFloatWithPadding(props.stats.closer, 1)}
             <br />
             <b>Closer</b>
           </div>
           <div className="position-absolute text-center charger-text">
-            {getValueOrDefault(Number, props.stats.charger).toFixed(1)}
+            {toFloatWithPadding(props.stats.charger, 1)}
             <br />
             <b>Charger</b>
           </div>
           <div className="position-absolute text-center switch-text">
-            {getValueOrDefault(Number, props.stats.switching).toFixed(1)}
+            {toFloatWithPadding(props.stats.switching, 1)}
             <br />
             <b>Switch</b>
           </div>

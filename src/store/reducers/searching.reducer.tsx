@@ -2,7 +2,7 @@ import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { SearchingActions } from '../actions';
 import { SearchingActionsUnion } from '../actions/searching.action';
 
-const initialize = {
+const initialize: SearchingOptionsModel = {
   mainSearching: null,
   toolSearching: null,
 };

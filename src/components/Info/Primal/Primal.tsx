@@ -8,12 +8,12 @@ import { StoreState } from '../../../store/models/state.model';
 import { FORM_PRIMAL } from '../../../util/constants';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { getValueOrDefault, isEqual, isInclude, isUndefined } from '../../../util/extension';
+import { isEqual, isInclude, isUndefined } from '../../../util/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 
 const Primal = (props: IFormSpecialComponent) => {
-  const evoData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const evoData = useSelector((state: StoreState) => state.store.data.pokemon);
   const [arrEvoList, setArrEvoList] = useState<IForm[]>([]);
 
   useEffect(() => {

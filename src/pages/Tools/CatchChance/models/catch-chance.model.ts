@@ -86,12 +86,12 @@ export class Medal implements IMedal {
 
 interface IAdvanceOption {
   ballType: PokeBallType;
-  normalThrow: boolean;
+  isNormalThrow: boolean;
 }
 
 export class AdvanceOption implements IAdvanceOption {
   ballType = PokeBallType.PokeBall;
-  normalThrow = false;
+  isNormalThrow = false;
 
   static create(value: IAdvanceOption) {
     const obj = new AdvanceOption();
@@ -101,21 +101,21 @@ export class AdvanceOption implements IAdvanceOption {
 }
 
 interface IPokeBallOption {
-  advance: boolean;
-  curveBall: boolean;
-  razzBerry: boolean;
-  goldenRazzBerry: boolean;
-  silverPinaps: boolean;
-  shadow: boolean;
+  isAdvance: boolean;
+  isCurveBall: boolean;
+  isRazzBerry: boolean;
+  isGoldenRazzBerry: boolean;
+  isSilverPinaps: boolean;
+  isShadow: boolean;
 }
 
 export class PokeBallOption implements IPokeBallOption {
-  advance = false;
-  curveBall = false;
-  razzBerry = false;
-  goldenRazzBerry = false;
-  silverPinaps = false;
-  shadow = false;
+  isAdvance = false;
+  isCurveBall = false;
+  isRazzBerry = false;
+  isGoldenRazzBerry = false;
+  isSilverPinaps = false;
+  isShadow = false;
 
   static create(value: IPokeBallOption) {
     const obj = new PokeBallOption();

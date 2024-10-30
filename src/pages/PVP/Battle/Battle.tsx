@@ -8,6 +8,7 @@ import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../.
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
 import {
   FORM_NORMAL,
+  MAX_ENERGY,
   MAX_IV,
   MAX_LEVEL,
   MIN_IV,
@@ -146,17 +147,17 @@ const Battle = () => {
         pokeObj.currentStats?.level ?? MIN_LEVEL,
         true
       );
-      poke.shadow ??= false;
-      pokeObj.shadow ??= false;
+      poke.isShadow ??= false;
+      pokeObj.isShadow ??= false;
       return (
         (atkPoke *
           move.pvpPower *
           (findStabType(getValueOrDefault(Array, poke.pokemon?.types), getValueOrDefault(String, move.type))
-            ? STAB_MULTIPLY(dataStore?.options)
+            ? STAB_MULTIPLY(dataStore.options)
             : 1) *
-          (poke.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
-          getTypeEffective(dataStore?.typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
-        (defPokeObj * (pokeObj.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))
+          (poke.isShadow ? SHADOW_ATK_BONUS(dataStore.options) : 1) *
+          getTypeEffective(dataStore.typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
+        (defPokeObj * (pokeObj.isShadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))
       );
     }
     return 1;
@@ -176,7 +177,7 @@ const Battle = () => {
       energy: getValueOrDefault(Number, poke.energy),
       block: poke.block ?? DEFAULT_BLOCK,
       turn: Math.ceil(getValueOrDefault(Number, poke.fMove?.durationMs) / 500),
-      shadow: getValueOrDefault(Boolean, poke.shadow),
+      isShadow: getValueOrDefault(Boolean, poke.isShadow),
       disableCMovePri: poke.disableCMovePri,
       disableCMoveSec: poke.disableCMoveSec,
     });
@@ -369,14 +370,14 @@ const Battle = () => {
           if (!tapPri) {
             tapPri = true;
             if (!preChargeSec) {
-              timelinePri[timer] = new TimelineModel({ ...timelinePri[timer], tap: true, move: player1.fMove });
+              timelinePri[timer] = new TimelineModel({ ...timelinePri[timer], isTap: true, move: player1.fMove });
             } else {
-              timelinePri[timer].tap = false;
+              timelinePri[timer].isTap = false;
             }
             fastPriDelay = player1.turn - 1;
           } else {
             if (timelinePri[timer]) {
-              timelinePri[timer].tap = false;
+              timelinePri[timer].isTap = false;
             }
           }
 
@@ -391,8 +392,8 @@ const Battle = () => {
               type: AttackType.Fast,
               color: player1.fMove.type?.toLowerCase(),
               move: player1.fMove,
-              dmgImmune: preChargeSec,
-              tap: preChargeSec && player1.turn === 1 ? true : timelinePri[timer].tap,
+              isDmgImmune: preChargeSec,
+              isTap: preChargeSec && player1.turn === 1 ? true : timelinePri[timer].isTap,
             });
           } else {
             fastPriDelay -= 1;
@@ -406,14 +407,14 @@ const Battle = () => {
           if (!tapSec) {
             tapSec = true;
             if (!preChargePri) {
-              timelineSec[timer] = new TimelineModel({ ...timelineSec[timer], tap: true, move: player2.fMove });
+              timelineSec[timer] = new TimelineModel({ ...timelineSec[timer], isTap: true, move: player2.fMove });
             } else {
-              timelineSec[timer].tap = false;
+              timelineSec[timer].isTap = false;
             }
             fastSecDelay = player2.turn - 1;
           } else {
             if (timelineSec[timer]) {
-              timelineSec[timer].tap = false;
+              timelineSec[timer].isTap = false;
             }
           }
 
@@ -430,8 +431,8 @@ const Battle = () => {
               type: AttackType.Fast,
               color: player2.fMove.type?.toLowerCase(),
               move: player2.fMove,
-              dmgImmune: preChargePri,
-              tap: preChargePri && player2.turn === 1 ? true : timelineSec[timer].tap,
+              isDmgImmune: preChargePri,
+              isTap: preChargePri && player2.turn === 1 ? true : timelineSec[timer].isTap,
             });
           } else {
             fastSecDelay -= 1;
@@ -503,8 +504,8 @@ const Battle = () => {
             timelineSec[timer].type = AttackType.Block;
           }
         }
-        timelinePri[timer].tap = false;
-        timelineSec[timer].tap = false;
+        timelinePri[timer].isTap = false;
+        timelineSec[timer].isTap = false;
       }
     }, 1);
     let isDelay = false,
@@ -661,10 +662,10 @@ const Battle = () => {
           tapSec = false;
           if (immunePri) {
             player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
-            timelinePri[timer].dmgImmune = true;
+            timelinePri[timer].isDmgImmune = true;
           } else if (immuneSec) {
             player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
-            timelineSec[timer].dmgImmune = true;
+            timelineSec[timer].isDmgImmune = true;
           }
           immunePri = false;
           immuneSec = false;
@@ -728,13 +729,13 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
             if (!pokemon) {
               return new BattlePokemonData();
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon.num, pokemon.forme ?? FORM_NORMAL);
+            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.forme ?? FORM_NORMAL);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -753,20 +754,20 @@ const Battle = () => {
       } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
-            error: true,
+            isError: true,
             message: (e as Error).message,
           })
         );
       }
     },
-    [dataStore?.options, dataStore?.pokemon, dataStore?.assets, dispatch]
+    [dataStore.options, dataStore.pokemon, dataStore.assets, dispatch]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (dataStore?.options && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
+    if (isNotEmpty(dataStore.pokemon) && isNotEmpty(dataStore.assets)) {
       fetchPokemon(league);
     }
     return () => {
@@ -775,10 +776,10 @@ const Battle = () => {
   }, [fetchPokemonBattle, league, dispatch]);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore?.combat) && dataStore?.combat.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(dataStore.combat) && dataStore.combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [dataStore?.combat, dispatch]);
+  }, [dataStore.combat, dispatch]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
@@ -1188,7 +1189,7 @@ const Battle = () => {
           <Accordion.Body>
             <div className="w-100 d-flex justify-content-center">
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                {pokemon.shadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+                {pokemon.isShadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
                 <img
                   alt="img-league"
                   className="pokemon-sprite-raid"
@@ -1224,7 +1225,7 @@ const Battle = () => {
             <b>
               {Math.floor(
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsATK) *
-                  (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1)
+                  (pokemon.isShadow ? SHADOW_ATK_BONUS(dataStore.options) : 1)
               )}
             </b>
             <br />
@@ -1233,7 +1234,7 @@ const Battle = () => {
             <b>
               {Math.floor(
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
-                  (pokemon.shadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1)
+                  (pokemon.isShadow ? SHADOW_DEF_BONUS(dataStore.options) : 1)
               )}
             </b>
             <br />
@@ -1247,7 +1248,7 @@ const Battle = () => {
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsATK) *
                   getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
                   getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsSTA) *
-                  (pokemon.shadow ? SHADOW_ATK_BONUS(dataStore?.options) * SHADOW_DEF_BONUS(dataStore?.options) : 1)
+                  (pokemon.isShadow ? SHADOW_ATK_BONUS(dataStore.options) * SHADOW_DEF_BONUS(dataStore.options) : 1)
               )}
             </b>
             <br />
@@ -1322,35 +1323,35 @@ const Battle = () => {
             </div>
             <hr />
             <TypeBadge
-              find={true}
+              isFind={true}
               title="Fast Move"
               move={pokemon.fMove}
-              elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteQuickMove, pokemon.fMove?.name)}
+              isElite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteQuickMoves, pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
-                find={true}
+                isFind={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMove, pokemon.cMovePri?.name)}
-                shadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMovePri?.name)}
-                purified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMovePri?.name)}
-                special={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMovePri?.name)}
-                unavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMovePri?.name)}
+                isElite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMoves, pokemon.cMovePri?.name)}
+                isShadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMovePri?.name)}
+                isPurified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMovePri?.name)}
+                isSpecial={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMovePri?.name)}
+                isUnavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMovePri?.name)}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
             {pokemon.cMoveSec && (
               <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
                 <TypeBadge
-                  find={true}
+                  isFind={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  elite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMove, pokemon.cMoveSec.name)}
-                  shadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMoveSec.name)}
-                  purified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMoveSec.name)}
-                  special={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMoveSec.name)}
-                  unavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMoveSec.name)}
+                  isElite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMoves, pokemon.cMoveSec.name)}
+                  isShadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMoveSec.name)}
+                  isPurified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMoveSec.name)}
+                  isSpecial={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMoveSec.name)}
+                  isUnavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMoveSec.name)}
                 />
                 {findBuff(pokemon.cMoveSec)}
               </div>
@@ -1380,7 +1381,7 @@ const Battle = () => {
                 defaultValue={pokemon.energy}
                 type="number"
                 min={0}
-                max={100}
+                max={MAX_ENERGY(dataStore.options)}
                 onInput={(e) => {
                   const value = toNumber(e.currentTarget.value);
                   if (isNaN(value)) {
@@ -1477,28 +1478,28 @@ const Battle = () => {
                     text={splitAndCapitalize(pokemon.cMovePri?.name, '_', ' ')}
                     type={pokemon.cMovePri?.type}
                     size={80}
-                    maxEnergy={100}
+                    maxEnergy={MAX_ENERGY(dataStore.options)}
                     moveEnergy={getValueOrDefault(Number, Math.abs(getValueOrDefault(Number, pokemon.cMovePri?.pvpEnergy)))}
                     energy={getValueOrDefault(
                       Number,
                       (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type]?.energy,
                       pokemon.energy
                     )}
-                    disable={pokemon.disableCMovePri}
+                    isDisable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
                     <CircleBar
                       text={splitAndCapitalize(pokemon.cMoveSec.name, '_', ' ')}
                       type={pokemon.cMoveSec.type}
                       size={80}
-                      maxEnergy={100}
+                      maxEnergy={MAX_ENERGY(dataStore.options)}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
                       energy={getValueOrDefault(
                         Number,
                         (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type]?.energy,
                         pokemon.energy
                       )}
-                      disable={pokemon.disableCMoveSec}
+                      isDisable={pokemon.disableCMoveSec}
                     />
                   )}
                 </div>

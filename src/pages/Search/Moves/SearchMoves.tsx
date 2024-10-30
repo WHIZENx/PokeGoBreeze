@@ -10,7 +10,6 @@ import { TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
@@ -59,11 +58,7 @@ const columns: TableColumnModify<ICombat>[] = [
   {
     name: 'Name',
     selector: (row) => (
-      <Link
-        to={`/move/${row.track}${
-          row.track === 281 && !isEqual(row.type, 'NORMAL', EqualMode.IgnoreCaseSensitive) ? `?type=${row.type?.toLowerCase()}` : ''
-        }`}
-      >
+      <Link to={`/move/${row.track}${row.isMultipleWithType ? `?type=${row.type?.toLowerCase()}` : ''}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),
@@ -108,8 +103,8 @@ class Filter implements IFilter {
 const Search = () => {
   useChangeTitle('Moves - Search');
   const theme = useTheme<ThemeModify>();
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
-  const types = useSelector((state: StoreState) => state.store.data?.typeEff);
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
+  const types = useSelector((state: StoreState) => state.store.data.typeEff);
 
   const [filters, setFilters] = useState(new Filter());
 
@@ -173,7 +168,7 @@ const Search = () => {
                           <MenuItem value={SelectType.All} defaultChecked={true}>
                             {SelectType.All}
                           </MenuItem>
-                          {Object.keys(types ?? new TypeEff()).map((value, index) => (
+                          {Object.keys(types).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
                               {capitalize(value)}
                             </MenuItem>
@@ -229,7 +224,7 @@ const Search = () => {
                           onChange={(e) => setFilters(Filter.create({ ...filters, cMoveType: e.target.value }))}
                         >
                           <MenuItem value={SelectType.All}>{SelectType.All}</MenuItem>
-                          {Object.keys(types ?? new TypeEff()).map((value, index) => (
+                          {Object.keys(types).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
                               {capitalize(value)}
                             </MenuItem>

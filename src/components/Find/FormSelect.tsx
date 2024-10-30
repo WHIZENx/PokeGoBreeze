@@ -50,7 +50,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
-  const [typePoke, setTypePoke] = useState(props.raid ? TypeRaid.BOSS : TypeRaid.POKEMON);
+  const [typePoke, setTypePoke] = useState(props.isRaid ? TypeRaid.BOSS : TypeRaid.POKEMON);
   const [tier, setTier] = useState(getValueOrDefault(Number, props.tier, 1));
 
   const [data, setData] = useState<Species>();
@@ -116,7 +116,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         const defaultFormSearch = formListResult
           .flatMap((value) => value)
           .find((item) =>
-            isEqual(item.form.formName, props.objective ? (props.searching?.obj ? props.searching.obj.form : '') : props.searching?.form)
+            isEqual(item.form.formName, props.isObjective ? (props.searching?.obj ? props.searching.obj.form : '') : props.searching?.form)
           );
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
@@ -182,7 +182,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         fullName: currentForm.form.name,
         timestamp: new Date(),
       });
-      if (props.objective && (props.searching?.obj?.id !== props.id || !isEqual(props.searching?.obj?.form, currentForm.form.formName))) {
+      if (props.isObjective && (props.searching?.obj?.id !== props.id || !isEqual(props.searching?.obj?.form, currentForm.form.formName))) {
         obj = ToolSearching.create({
           ...obj,
           obj: {
@@ -191,7 +191,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         });
         dispatch(SearchingActions.SetPokemonToolSearch.create(obj));
       }
-      if (!props.objective && (props.searching?.id !== props.id || !isEqual(props.searching?.form, currentForm.form.formName))) {
+      if (!props.isObjective && (props.searching?.id !== props.id || !isEqual(props.searching?.form, currentForm.form.formName))) {
         obj = ToolSearching.create({
           ...obj,
           ...result,
@@ -345,7 +345,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                         e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
                       }}
                       alt="img-icon-form"
-                      src={formIconAssets(value, getValueOrDefault(Number, currentForm.defaultId))}
+                      src={formIconAssets(value, currentForm.defaultId)}
                     />
                     <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
                     {getValueOrDefault(Number, value.form.id) > 0 && value.form.id === currentForm.defaultId && (
@@ -360,10 +360,10 @@ const FormSelect = (props: IFormSelectComponent) => {
             ))}
           </Fragment>
         ) : (
-          <LoadGroup isShow={true} isVertical={true} hideAttr={true} size={40} />
+          <LoadGroup isShow={true} isVertical={true} isHideAttr={true} size={40} />
         )}
       </div>
-      {!props.hide && (
+      {!props.isHide && (
         <div className="d-flex justify-content-center text-center">
           <TypeRadioGroup
             row={true}
@@ -406,7 +406,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         <div className="col-sm-6" />
       </div>
       <Tools
-        hide={props.hide}
+        isHide={props.isHide}
         isRaid={!isEqual(typePoke, TypeRaid.POKEMON)}
         tier={tier}
         setTier={onSetTier}

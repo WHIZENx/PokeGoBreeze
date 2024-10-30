@@ -53,8 +53,8 @@ interface BulkPointDef {
 
 const CalculatePoint = () => {
   useChangeTitle('Calculate Point Stats - Tools');
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
-  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff);
+  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
+  const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
@@ -143,8 +143,8 @@ const CalculatePoint = () => {
           move ? (!isRaid && pvpDmg ? move.pvpPower : move.pvePower) : 0,
           BattleState.create({
             effective: getTypeEffective(typeEff, getValueOrDefault(String, move?.type), getValueOrDefault(Array, formDef?.form.types)),
-            stab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move?.type)),
-            wb: (!pvpDmg || isRaid) && weatherBoosts,
+            isStab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move?.type)),
+            isWb: (!pvpDmg || isRaid) && weatherBoosts,
           }),
           false
         );
@@ -176,8 +176,8 @@ const CalculatePoint = () => {
           moveDef ? (!isRaid && pvpDmg ? moveDef.pvpPower : moveDef.pvePower) : 0,
           BattleState.create({
             effective: getTypeEffective(typeEff, getValueOrDefault(String, moveDef?.type), getValueOrDefault(Array, form?.form.types)),
-            stab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef?.type)),
-            wb: (!pvpDmg || isRaid) && weatherBoosts,
+            isStab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef?.type)),
+            isWb: (!pvpDmg || isRaid) && weatherBoosts,
           }),
           false
         );
@@ -233,8 +233,8 @@ const CalculatePoint = () => {
               getValueOrDefault(Number, !isRaid && pvpDmg ? cMove?.pvpPower : cMove?.pvePower),
               BattleState.create({
                 effective: getTypeEffective(typeEff, getValueOrDefault(String, cMove?.type), getValueOrDefault(Array, form?.form.types)),
-                stab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove?.type)),
-                wb: (!pvpDmg || isRaid) && weatherBoosts,
+                isStab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove?.type)),
+                isWb: (!pvpDmg || isRaid) && weatherBoosts,
               }),
               false
             )) /
@@ -245,8 +245,8 @@ const CalculatePoint = () => {
             getValueOrDefault(Number, !isRaid && pvpDmg ? fMove?.pvpPower : fMove?.pvePower),
             BattleState.create({
               effective: getTypeEffective(typeEff, getValueOrDefault(String, fMove?.type), getValueOrDefault(Array, form?.form.types)),
-              stab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove?.type)),
-              wb: (!pvpDmg || isRaid) && weatherBoosts,
+              isStab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove?.type)),
+              isWb: (!pvpDmg || isRaid) && weatherBoosts,
             }),
             false
           )
@@ -339,7 +339,7 @@ const CalculatePoint = () => {
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
         <div className="col-lg" style={{ padding: 0 }}>
           <Find
-            hide={true}
+            isHide={true}
             title="Attacker Pokémon"
             clearStats={clearData}
             setStatATK={setStatATK}
@@ -352,8 +352,8 @@ const CalculatePoint = () => {
         </div>
         <div className="col-lg d-flex justify-content-center" style={{ padding: 0 }}>
           <Find
-            swap={true}
-            raid={isRaid}
+            isSwap={true}
+            isRaid={isRaid}
             setRaid={setIsRaid}
             tier={tier}
             setTier={setTier}
@@ -364,7 +364,7 @@ const CalculatePoint = () => {
             setForm={onSetFormDef}
             setName={setNameDef}
             setId={setIdDef}
-            objective={true}
+            isObjective={true}
           />
         </div>
       </div>
@@ -379,12 +379,12 @@ const CalculatePoint = () => {
                   <Move
                     text="Select Moves"
                     id={id}
-                    selectDefault={true}
+                    isSelectDefault={true}
                     form={form ? form.form.name : name.toLowerCase()}
                     setMove={setMove}
                     move={move}
                     clearData={clearDataAtk}
-                    highlight={true}
+                    isHighlight={true}
                   />
                   <FormControlLabel
                     control={
@@ -507,12 +507,12 @@ const CalculatePoint = () => {
                   <Move
                     text="Select Moves"
                     id={idDef}
-                    selectDefault={true}
+                    isSelectDefault={true}
                     form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                     setMove={setMoveDef}
                     move={moveDef}
                     clearData={clearDataDef}
-                    highlight={true}
+                    isHighlight={true}
                   />
                   <FormControlLabel
                     control={
@@ -688,13 +688,13 @@ const CalculatePoint = () => {
                     <Move
                       text="Fast Moves"
                       id={idDef}
-                      selectDefault={true}
+                      isSelectDefault={true}
                       form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                       setMove={setFMove}
                       move={fMove}
                       type={TypeMove.FAST}
                       clearData={clearDataBulk}
-                      highlight={true}
+                      isHighlight={true}
                     />
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -722,13 +722,13 @@ const CalculatePoint = () => {
                     <Move
                       text="Charged Moves"
                       id={idDef}
-                      selectDefault={true}
+                      isSelectDefault={true}
                       form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                       setMove={setCMove}
                       move={cMove}
                       type={TypeMove.CHARGE}
                       clearData={clearDataBulk}
-                      highlight={true}
+                      isHighlight={true}
                     />
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>

@@ -10,7 +10,7 @@ import { AttackType } from './enums/attack-type.enum';
 import { combineClasses, isNotEmpty } from '../../../util/extension';
 
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, hide = false) => {
-  const renderMoveBadgeBorder = (move: ICombat | undefined, border: boolean, shadow = false) => {
+  const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, shadow = false) => {
     if (!move) {
       return;
     }
@@ -18,7 +18,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
       <div className="d-flex flex-wrap align-items-center" style={{ gap: 5 }}>
         <span
           className={combineClasses(
-            `${move.type?.toLowerCase()}${border ? '-border' : ''}`,
+            `${move.type?.toLowerCase()}${isBorder ? '-border' : ''}`,
             'type-select-bg d-flex align-items-center border-type-init'
           )}
         >
@@ -66,7 +66,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               <Badge
                 color="primary"
                 overlap="circular"
-                badgeContent={value.tap ? 'Tap' : undefined}
+                badgeContent={value.isTap ? 'Tap' : undefined}
                 className={combineClasses('fast-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}
                 anchorOrigin={{
                   vertical: 'top',
@@ -77,7 +77,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                   <span className="text-warning" style={{ fontSize: 12 }}>
                     <b>Fast Attack!</b>
                   </span>
-                  {value.tap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
+                  {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
                 </div>
               </Badge>
             )}
@@ -85,29 +85,29 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               <Badge
                 color="primary"
                 overlap="circular"
-                badgeContent={value.tap ? 'Tap' : undefined}
+                badgeContent={value.isTap ? 'Tap' : undefined}
                 className={combineClasses(
-                  pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.dmgImmune
+                  pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune
                     ? 'fast-attack-container text-shadow'
                     : 'wait-attack-container',
                   end ? 'justify-content-end' : '',
                   'turn-battle',
-                  value.tap ? `${value.color}-border` : ''
+                  value.isTap ? `${value.color}-border` : ''
                 )}
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: end ? 'right' : 'left',
                 }}
               >
-                {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.dmgImmune ? (
+                {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune ? (
                   <div className={combineClasses('fast-attack-content text-center', value.move?.type?.toLowerCase())}>
                     <span className="text-warning" style={{ fontSize: 12 }}>
                       <b>Fast Attack!</b>
                     </span>
-                    {value.tap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
+                    {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
                   </div>
                 ) : (
-                  <Fragment>{value.tap && <Fragment>{renderMoveBadgeBorder(value.move, true)}</Fragment>}</Fragment>
+                  <Fragment>{value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, true)}</Fragment>}</Fragment>
                 )}
               </Badge>
             )}
@@ -196,17 +196,17 @@ export const TimeLine = (
           <div className="d-flex" style={{ columnGap: 10, width: 'max-content' }}>
             {poke.timeline.map((value, index) => (
               <span className="position-relative" key={index} style={{ width: value.size }}>
-                {value.tap && (
+                {value.isTap && (
                   <div
                     style={{
                       display: !showTap ? 'none' : 'block',
                       opacity: 0.5,
-                      borderColor: value.dmgImmune ? 'red' : 'black',
+                      borderColor: value.isDmgImmune ? 'red' : 'black',
                     }}
                     className="charge-attack"
                   />
                 )}
-                {!value.tap && (
+                {!value.isTap && (
                   <Fragment>
                     {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                       <div className="position-absolute icon-buff-timeline">
@@ -324,7 +324,7 @@ export const TimeLineFit = (
           <div className="position-relative timeline-fit-container">
             {poke.timeline.map((value, index) => (
               <Fragment key={index}>
-                {value.tap && (
+                {value.isTap && (
                   <div
                     className="charge-attack"
                     style={{
@@ -332,11 +332,11 @@ export const TimeLineFit = (
                       opacity: 0.5,
                       width: value.size,
                       left: calculateFitPoint(poke.timeline.length, index),
-                      borderColor: value.dmgImmune ? 'red' : 'black',
+                      borderColor: value.isDmgImmune ? 'red' : 'black',
                     }}
                   />
                 )}
-                {!value.tap && (
+                {!value.isTap && (
                   <Fragment>
                     {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
                       <div

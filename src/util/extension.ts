@@ -41,15 +41,15 @@ export const isNotEmpty = <T>(array: T[] | null | undefined = []) => {
   return getValueOrDefault(Boolean, array && array.length > 0);
 };
 
-export const isUndefined = <T>(value?: T | null) => {
+export const isUndefined = <T>(value?: T | null): value is undefined => {
   return typeof value === 'undefined' && value === undefined;
 };
 
-export const isNull = <T>(value?: T | null) => {
+export const isNull = <T>(value?: T | null): value is null => {
   return typeof value !== 'undefined' && value === null;
 };
 
-export const isNullOrUndefined = <T>(value?: T | null) => {
+export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined => {
   return getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
 };
 
@@ -57,7 +57,7 @@ export const isEmpty = (value?: string | null) => {
   return getValueOrDefault(Boolean, value?.isEmpty(), false);
 };
 
-export const isNullOrEmpty = (value?: string | null) => {
+export const isNullOrEmpty = (value?: string | null): value is string | null => {
   return getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
 };
 

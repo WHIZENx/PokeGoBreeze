@@ -10,15 +10,15 @@ const Spinner = () => {
 
   return (
     <Fragment>
-      {spinner.loading && (
+      {spinner.isLoading && (
         <div className="spinner-container">
           <div className="loading-group-spin" />
           <div className="loading-spin-container">
             <div className="loading-spin text-center">
-              <img className={spinner.error ? '' : 'loading'} width={64} height={64} alt="img-pokemon" src={loading} />
+              <img className={spinner.error?.isError ? '' : 'loading'} width={64} height={64} alt="img-pokemon" src={loading} />
               <span className="caption text-white text-shadow" style={{ fontSize: 18 }}>
                 <b>
-                  {spinner.error ? (
+                  {spinner.error?.isError ? (
                     <Fragment>
                       Oops
                       <br />
@@ -32,14 +32,13 @@ const Spinner = () => {
                       >
                         Retry Again
                       </p>
-                      {device.isMobile && <p className="text-danger">{spinner.error.msg}</p>}
+                      {device.isMobile && <p className="text-danger">{spinner.error.message}</p>}
                     </Fragment>
                   ) : (
                     <Fragment>
                       Loading<span id="p1">.</span>
                       <span id="p2">.</span>
                       <span id="p3">.</span>
-                      {spinner.message && <p className="spinner-msg">{spinner.message}</p>}
                     </Fragment>
                   )}
                 </b>

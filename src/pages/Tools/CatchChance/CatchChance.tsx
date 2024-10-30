@@ -31,7 +31,16 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj, getValueOrDefault, isEqual, isIncludeList, isNotEmpty, isNullOrEmpty, toNumber } from '../../../util/extension';
+import {
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isIncludeList,
+  isNotEmpty,
+  isNullOrEmpty,
+  toFloatWithPadding,
+  toNumber,
+} from '../../../util/extension';
 import {
   Medal,
   MedalType,
@@ -46,7 +55,7 @@ import {
 import { PokeBallType } from './enums/poke-ball.enum';
 
 const CatchChance = () => {
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const CIRCLE_DISTANCE = 200;
@@ -71,12 +80,12 @@ const CatchChance = () => {
     })
   );
   const [advanceOption, setAdvanceOption] = useState(new AdvanceOption());
-  const { ballType, normalThrow } = advanceOption;
+  const { ballType, isNormalThrow } = advanceOption;
   const [colorCircle, setColorCircle] = useState('rgb(0, 255, 0)');
-  const [encounter, setEncounter] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [isEncounter, setIsEncounter] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [options, setOptions] = useState(new PokeBallOption());
-  const { advance, curveBall, razzBerry, goldenRazzBerry, silverPinaps, shadow } = options;
+  const { isAdvance, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, isShadow } = options;
 
   const pokeBallType: PokeBallThreshold[] = [
     { name: 'Poke Ball', threshold: POKE_BALL_INC_CHANCE },
@@ -101,32 +110,32 @@ const CatchChance = () => {
   }, [form]);
 
   useEffect(() => {
-    if (!advance && data && medal) {
+    if (!isAdvance && data && medal) {
       calculateCatch();
     }
-  }, [advance, medal, level, curveBall, razzBerry, goldenRazzBerry, silverPinaps, shadow]);
+  }, [isAdvance, medal, level, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, isShadow]);
 
   useEffect(() => {
     if (data && medal) {
       renderRingColor();
     }
-  }, [ballType, medal, level, razzBerry, goldenRazzBerry, silverPinaps]);
+  }, [ballType, medal, level, isRazzBerry, isGoldenRazzBerry, isSilverPinaps]);
 
   useEffect(() => {
-    if (advance) {
+    if (isAdvance) {
       setThrowTitle(renderTitleThrow());
       calculateAdvance();
     }
-  }, [advance, radius]);
+  }, [isAdvance, radius]);
 
   useEffect(() => {
-    if (advance) {
+    if (isAdvance) {
       calculateAdvance();
     }
-  }, [advance, radius, medal, level, curveBall, razzBerry, goldenRazzBerry, silverPinaps, ballType, normalThrow]);
+  }, [isAdvance, radius, medal, level, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, ballType, isNormalThrow]);
 
   useEffect(() => {
-    setLoading(false);
+    setIsLoading(false);
   }, [form]);
 
   const medalCatchChance = (priority: number) => {
@@ -157,12 +166,12 @@ const CatchChance = () => {
             ball.threshold *
             ((minThreshold + maxThreshold) / 2) *
             medalChance *
-            (curveBall ? CURVE_INC_CHANCE : 1) *
-            (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-            (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
-            (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
+            (isCurveBall ? CURVE_INC_CHANCE : 1) *
+            (isRazzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
+            (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
+            (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
           const prob = calculateCatchChance(
-            data.obShadowFormBaseCaptureRate && options.shadow
+            data.obShadowFormBaseCaptureRate && options.isShadow
               ? data.obShadowFormBaseCaptureRate
               : getValueOrDefault(Number, data.baseCaptureRate),
             level,
@@ -183,9 +192,9 @@ const CatchChance = () => {
     const formName = convertPokemonAPIDataName(form.form.name);
     const pokemon = pokemonData.find((data) => data.num === id && isEqual(data.fullName, formName));
     if (!pokemon || !pokemon.encounter) {
-      return setEncounter(false);
+      return setIsEncounter(false);
     }
-    setEncounter(true);
+    setIsEncounter(true);
     if (pokemon) {
       let medalType = new Medal();
       const [typePri, typeSec] = pokemon.types;
@@ -297,10 +306,10 @@ const CatchChance = () => {
         pokeBall[1].threshold *
         threshold *
         medalChance *
-        (curveBall && !disable ? CURVE_INC_CHANCE : 1) *
-        (razzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-        (goldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
-        (silverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
+        (isCurveBall && !disable ? CURVE_INC_CHANCE : 1) *
+        (isRazzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
+        (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
+        (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
       const prob = calculateCatchChance(getValueOrDefault(Number, data?.baseCaptureRate), level, multiplier);
       const result = Math.min(prob * 100, 100);
       return result;
@@ -309,7 +318,7 @@ const CatchChance = () => {
   };
 
   const calculateAdvance = () => {
-    const threshold = normalThrow ? 1 : 1 + (100 - radius) / 100;
+    const threshold = isNormalThrow ? 1 : 1 + (100 - radius) / 100;
     const result = calculateProb(false, threshold);
     const pokeBall = Object.entries(pokeBallType).find((_, index) => index === ballType);
     if (pokeBall) {
@@ -317,14 +326,14 @@ const CatchChance = () => {
         DataAdvance.create({
           result,
           ballName: pokeBall[1].name,
-          throwType: normalThrow ? 'Normal Throw' : throwTitle.type,
+          throwType: isNormalThrow ? 'Normal Throw' : throwTitle.type,
         })
       );
     }
   };
 
   const clearStats = () => {
-    setLoading(true);
+    setIsLoading(true);
   };
 
   return (
@@ -333,7 +342,7 @@ const CatchChance = () => {
         <div className="col-md-6" style={{ padding: 0 }}>
           <div className="d-flex justify-content-center">
             <Find
-              hide={true}
+              isHide={true}
               clearStats={clearStats}
               title="Select Pokémon"
               setStatATK={setStatATK}
@@ -345,7 +354,7 @@ const CatchChance = () => {
           </div>
         </div>
         <div className="col-md-6 position-relative" style={{ padding: 0 }}>
-          {!encounter && (
+          {!isEncounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
                 <b>{splitAndCapitalize(convertPokemonAPIDataName(form?.form.name), '_', ' ')}</b> cannot be encountered in wild.
@@ -362,8 +371,8 @@ const CatchChance = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={curveBall}
-                      onChange={(_, check) => setOptions(PokeBallOption.create({ ...options, curveBall: check }))}
+                      checked={isCurveBall}
+                      onChange={(_, check) => setOptions(PokeBallOption.create({ ...options, isCurveBall: check }))}
                     />
                   }
                   label="Curve Ball"
@@ -371,14 +380,14 @@ const CatchChance = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={razzBerry}
+                      checked={isRazzBerry}
                       onChange={(_, check) =>
                         setOptions(
                           PokeBallOption.create({
                             ...options,
-                            razzBerry: check,
-                            silverPinaps: check ? false : check,
-                            goldenRazzBerry: check ? false : check,
+                            isRazzBerry: check,
+                            isSilverPinaps: check ? false : check,
+                            isGoldenRazzBerry: check ? false : check,
                           })
                         )
                       }
@@ -393,14 +402,14 @@ const CatchChance = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={goldenRazzBerry}
+                      checked={isGoldenRazzBerry}
                       onChange={(_, check) =>
                         setOptions(
                           PokeBallOption.create({
                             ...options,
-                            goldenRazzBerry: check,
-                            silverPinaps: check ? false : check,
-                            razzBerry: check ? false : check,
+                            isGoldenRazzBerry: check,
+                            isSilverPinaps: check ? false : check,
+                            isRazzBerry: check ? false : check,
                           })
                         )
                       }
@@ -415,14 +424,14 @@ const CatchChance = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={silverPinaps}
+                      checked={isSilverPinaps}
                       onChange={(_, check) =>
                         setOptions(
                           PokeBallOption.create({
                             ...options,
-                            silverPinaps: check,
-                            goldenRazzBerry: check ? false : check,
-                            razzBerry: check ? false : check,
+                            isSilverPinaps: check,
+                            isGoldenRazzBerry: check ? false : check,
+                            isRazzBerry: check ? false : check,
                           })
                         )
                       }
@@ -452,7 +461,7 @@ const CatchChance = () => {
                   step={0.5}
                   min={MIN_LEVEL}
                   max={MAX_LEVEL - 1}
-                  disabled={data ? false : true}
+                  disabled={!data}
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />
               </div>
@@ -483,12 +492,12 @@ const CatchChance = () => {
                     <h5>
                       {data &&
                         `${
-                          (data.obShadowFormAttackProbability && shadow
+                          (data.obShadowFormAttackProbability && isShadow
                             ? data.obShadowFormAttackProbability
                             : getValueOrDefault(Number, data.attackProbability)) * 100
                         }%`}
                     </h5>
-                    <p>{data && `Time: ${(getValueOrDefault(Number, data.attackTimerS) / 10).toFixed(2)} sec`}</p>
+                    <p>{data && `Time: ${toFloatWithPadding(getValueOrDefault(Number, data.attackTimerS) / 10, 2)} sec`}</p>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
@@ -497,12 +506,12 @@ const CatchChance = () => {
                   <h5>
                     {data &&
                       `${
-                        data.obShadowFormDodgeProbability && shadow
+                        data.obShadowFormDodgeProbability && isShadow
                           ? data.obShadowFormDodgeProbability
                           : getValueOrDefault(Number, data.dodgeProbability) * 100
                       }%`}
                   </h5>
-                  <p>{data && `Time: ${(getValueOrDefault(Number, data.dodgeDurationS) / 10).toFixed(2)} sec`}</p>
+                  <p>{data && `Time: ${toFloatWithPadding(getValueOrDefault(Number, data.dodgeDurationS) / 10, 2)} sec`}</p>
                 </div>
               </div>
             </div>
@@ -512,9 +521,9 @@ const CatchChance = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={shadow}
+                    checked={isShadow}
                     onChange={(_, check) => {
-                      setOptions(PokeBallOption.create({ ...options, shadow: check }));
+                      setOptions(PokeBallOption.create({ ...options, isShadow: check }));
                     }}
                   />
                 }
@@ -530,9 +539,9 @@ const CatchChance = () => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={advance}
+                  checked={isAdvance}
                   onChange={(_, check) => {
-                    setOptions(PokeBallOption.create({ ...options, advance: check }));
+                    setOptions(PokeBallOption.create({ ...options, isAdvance: check }));
                     if (check) {
                       calculateAdvance();
                     }
@@ -542,7 +551,7 @@ const CatchChance = () => {
               label="Advance options"
             />
           </div>
-          {advance && (
+          {isAdvance && (
             <Fragment>
               <div className="d-flex flex-wrap justify-content-center" style={{ gap: 10 }}>
                 <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -561,13 +570,16 @@ const CatchChance = () => {
                 </FormControl>
                 <FormControlLabel
                   control={
-                    <Checkbox checked={normalThrow} onChange={(_, check) => setAdvanceOption({ ...advanceOption, normalThrow: check })} />
+                    <Checkbox
+                      checked={isNormalThrow}
+                      onChange={(_, check) => setAdvanceOption({ ...advanceOption, isNormalThrow: check })}
+                    />
                   }
                   label="Normal Throw "
                 />
               </div>
               <div className="row element-top position-relative" style={{ margin: 0 }}>
-                {normalThrow && (
+                {isNormalThrow && (
                   <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter" />
                 )}
                 <div className="col-md-6">
@@ -584,7 +596,7 @@ const CatchChance = () => {
                         min={0}
                         max={100}
                         marks={false}
-                        disabled={data ? false : true}
+                        disabled={!data}
                         onChange={(_, v) => onHandleRadius(v as number)}
                       />
                     </div>
@@ -607,13 +619,13 @@ const CatchChance = () => {
               </div>
             </Fragment>
           )}
-          {shadow && <></>}
+          {isShadow && <></>}
         </div>
       </div>
       <hr />
       <div className="position-relative">
-        {loading && <div className="position-absolute w-100 h-100 impossible-encounter" />}
-        {!advance && encounter && data && isIncludeList(Object.keys(data), 'result') && (
+        {isLoading && <div className="position-absolute w-100 h-100 impossible-encounter" />}
+        {!isAdvance && isEncounter && data && isIncludeList(Object.keys(data), 'result') && (
           <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
             <div className="container table-container">
               <table className="table-catch-chance w-100">
@@ -694,7 +706,7 @@ const CatchChance = () => {
             </div>
           </div>
         )}
-        {advance && encounter && dataAdv && (
+        {isAdvance && isEncounter && dataAdv && (
           <div className="d-flex flex-wrap justify-content-center">
             <div className="container table-container">
               <table className="table-catch-chance w-100">

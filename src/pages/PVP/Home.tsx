@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
@@ -38,8 +38,8 @@ class OptionsHome implements IOptionsHome {
 const PVPHome = () => {
   useChangeTitle('PVP - Simulator');
   const dispatch = useDispatch();
-  const pvp = useSelector((state: StoreState) => state.store?.data?.pvp);
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
+  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
@@ -49,19 +49,19 @@ const PVPHome = () => {
   const { rank, team } = options;
 
   useEffect(() => {
-    if (!pvp) {
+    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
     if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-    if (spinner.loading) {
+    if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [pvp, spinner, combat, dispatch]);
+  }, [pvp.rankings, pvp.trains, spinner, combat, dispatch]);
 
   useEffect(() => {
-    if (!rank && !team && pvp) {
+    if (!rank && !team && isNotEmpty(pvp.rankings) && isNotEmpty(pvp.trains)) {
       setOptions(
         OptionsHome.create({
           rank: pvp.rankings.at(0),
@@ -69,7 +69,7 @@ const PVPHome = () => {
         })
       );
     }
-  }, [rank, team, pvp]);
+  }, [rank, team, pvp.rankings, pvp.trains]);
 
   const renderLeagueLogo = (logo: string, cp: number) => {
     if (
@@ -116,12 +116,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: pvp?.rankings.find((item) => isEqual(item.id, e.target.value)),
+                rank: pvp.rankings.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvp?.rankings.map((value, index) => (
+          {pvp.rankings.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -165,12 +165,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: pvp?.trains.find((item) => isEqual(item.id, e.target.value)),
+                team: pvp.trains.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvp?.trains.map((value, index) => (
+          {pvp.trains.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -210,16 +210,20 @@ const PVPHome = () => {
       <div className="group-selected">
         {leaguesTeamBattle
           .filter((value) => value.cp.length > 0)
-          .map((value, index) => (
-            <Link key={index} to={`/pvp/battle/${value.cp}`}>
-              <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={!value.logo ? getPokemonBattleLeagueIcon(value.cp[0]) : value.logo} />
-                <div>
-                  <b>{value.name}</b>
-                </div>
-                <span className="text-danger">CP below {value.cp}</span>
-              </Button>
-            </Link>
+          .map((value, i) => (
+            <Fragment key={i}>
+              {value.cp.map((cp, index) => (
+                <Link key={index} to={`/pvp/battle/${cp}`}>
+                  <Button key={index} className="btn btn-form" style={{ height: 200 }}>
+                    <img alt="img-league" width={128} height={128} src={value.logo ?? getPokemonBattleLeagueIcon(cp)} />
+                    <div>
+                      <b>{value.name}</b>
+                    </div>
+                    <span className="text-danger">CP below {cp}</span>
+                  </Button>
+                </Link>
+              ))}
+            </Fragment>
           ))}
       </div>
     </div>

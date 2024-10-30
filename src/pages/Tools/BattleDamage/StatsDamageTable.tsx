@@ -17,7 +17,7 @@ import { toNumber } from '../../../util/extension';
 import { PokemonType } from './enums/damage.enum';
 
 const StatsTable = (props: IStatsTableComponent) => {
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
+  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType] = useState(PokemonType.None.toString());

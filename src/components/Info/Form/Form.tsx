@@ -260,11 +260,11 @@ const FormComponent = (props: IFormInfoComponent) => {
               setId={props.setId}
               id={props.defaultId}
               forme={props.form?.form}
-              formDefault={props.defaultId === props.form?.form.id}
+              isFormDefault={props.defaultId === props.form?.form.id}
               region={props.region}
               pokemonRouter={props.pokemonRouter}
-              purified={props.form?.form.isPurified}
-              shadow={props.form?.form.isShadow}
+              isPurified={props.form?.form.isPurified}
+              isShadow={props.form?.form.isShadow}
               setProgress={props.setProgress}
               isLoadedForms={props.isLoadedForms}
             />
@@ -289,11 +289,11 @@ const FormComponent = (props: IFormInfoComponent) => {
           setId={props.setId}
           id={props.defaultId}
           forme={props.form?.form}
-          formDefault={props.defaultId === props.form?.form.id}
+          isFormDefault={props.defaultId === props.form?.form.id}
           region={props.region}
           pokemonRouter={props.pokemonRouter}
-          purified={props.form?.form.isPurified}
-          shadow={props.form?.form.isShadow}
+          isPurified={props.form?.form.isPurified}
+          isShadow={props.form?.form.isShadow}
           setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
         />

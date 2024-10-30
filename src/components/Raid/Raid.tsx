@@ -20,7 +20,7 @@ import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const [tier, setTier] = useState(1);
   const [pokemonClass, setPokemonClass] = useState<string | null>();
 

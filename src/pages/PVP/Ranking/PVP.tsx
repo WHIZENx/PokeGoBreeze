@@ -24,7 +24,6 @@ import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/constants';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
-import { Combat } from '../../../core/models/combat.model';
 import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
@@ -48,7 +47,7 @@ const RankingPVP = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const dataStore = useSelector((state: StoreState) => state.store.data);
-  const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
+  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
@@ -64,6 +63,18 @@ const RankingPVP = () => {
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
+  const [startIndex, setStartIndex] = useState(0);
+  const firstInit = useRef(20);
+  const eachCounter = useRef(10);
+
+  const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const scrollTop = ele.currentTarget.scrollTop;
+    const fullHeight = ele.currentTarget.offsetHeight;
+    if (scrollTop * 1.1 >= fullHeight * (startIndex + 1)) {
+      setStartIndex(startIndex + 1);
+    }
+  };
+
   const LeaveToggle = (props: Toggle) => {
     const decoratedOnClick = useAccordionButton(props.eventKey);
 
@@ -75,7 +86,7 @@ const RankingPVP = () => {
   };
 
   useEffect(() => {
-    if (!pvp) {
+    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
   }, [pvp]);
@@ -103,9 +114,9 @@ const RankingPVP = () => {
       }
       const filePVP = file.map((item) => {
         const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-        const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
+        const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -113,22 +124,16 @@ const RankingPVP = () => {
           styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
         }
 
-        let fMoveData = item.moveset.at(0);
-        const cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(1)));
-        const cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, item.moveset.at(2)));
-        if (isInclude(fMoveData, 'HIDDEN_POWER')) {
-          fMoveData = 'HIDDEN_POWER';
-        }
+        const [fMoveData] = item.moveset;
+        let [, cMoveDataPri, cMoveDataSec] = item.moveset;
+        cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, cMoveDataPri));
+        cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, cMoveDataSec));
 
-        let fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
-        const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
+        const fMove = dataStore.combat.find((item) => isEqual(item.name, fMoveData));
+        const cMovePri = dataStore.combat.find((item) => isEqual(item.name, cMoveDataPri));
         let cMoveSec;
         if (cMoveDataSec) {
-          cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
-        }
-
-        if (fMove && isInclude(item.moveset.at(0), 'HIDDEN_POWER')) {
-          fMove = Combat.create({ ...fMove, type: getValueOrDefault(String, item.moveset.at(0)?.split('_').at(2)) });
+          cMoveSec = dataStore.combat.find((item) => isEqual(item.name, cMoveDataSec));
         }
 
         return new PokemonBattleRanking({
@@ -145,8 +150,8 @@ const RankingPVP = () => {
           fMove,
           cMovePri,
           cMoveSec,
-          shadow: isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
-          purified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec),
+          isShadow: isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
+          isPurified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec),
         });
       });
       setRankingData(filePVP);
@@ -155,20 +160,20 @@ const RankingPVP = () => {
     } catch (e) {
       dispatch(
         SpinnerActions.ShowSpinnerMsg.create({
-          error: true,
+          isError: true,
           message: (e as Error).message,
         })
       );
     }
-  }, [params.serie, params.type, params.cp, statsRanking, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, dispatch]);
+  }, [params.serie, params.type, params.cp, statsRanking, dataStore.combat, dataStore.pokemon, dataStore.assets, dispatch]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
       router.action = null as AnyAction[''];
     };
-    if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
-      if (dataStore?.combat.every((combat) => !combat.archetype)) {
+    if (statsRanking && isNotEmpty(dataStore.combat) && isNotEmpty(dataStore.pokemon) && isNotEmpty(dataStore.assets)) {
+      if (dataStore.combat.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
       } else if (router.action) {
         fetchPokemon();
@@ -195,8 +200,8 @@ const RankingPVP = () => {
             </Link>
             <div className="d-flex justify-content-center">
               <span className="position-relative" style={{ width: 50 }}>
-                {data.shadow && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-                {data.purified && <img height={28} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />}
+                {data.isShadow && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+                {data.isPurified && <img height={28} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />}
                 <img
                   alt="img-league"
                   className="pokemon-sprite-accordion"
@@ -215,7 +220,7 @@ const RankingPVP = () => {
         <Accordion.Body
           style={{
             padding: 0,
-            backgroundImage: computeBgType(data.pokemon?.types, data.shadow, data.purified, 0.8, styleSheet.current),
+            backgroundImage: computeBgType(data.pokemon?.types, data.isShadow, data.isPurified, 0.8, styleSheet.current),
           }}
         >
           {storeStats && storeStats[key] && (
@@ -224,13 +229,7 @@ const RankingPVP = () => {
                 <div className="w-100 ranking-info element-top">
                   {Header(data)}
                   <hr />
-                  {Body(
-                    getValueOrDefault(Array, dataStore?.assets),
-                    getValueOrDefault(Array, dataStore?.pokemon),
-                    data.data,
-                    params.cp,
-                    params.type
-                  )}
+                  {Body(dataStore.assets, dataStore.pokemon, data.data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />
@@ -240,7 +239,7 @@ const RankingPVP = () => {
                   <hr />
                   {TypeEffective(getValueOrDefault(Array, data.pokemon?.types))}
                 </div>
-                <div className="container">{MoveSet(data.data?.moves, data.pokemon, getValueOrDefault(Array, dataStore?.combat))}</div>
+                <div className="container">{MoveSet(data.data?.moves, data.pokemon, dataStore.combat)}</div>
               </div>
               <LeaveToggle eventKey={key.toString()}>
                 <span className="text-danger">
@@ -262,7 +261,7 @@ const RankingPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = pvp.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league ? (
@@ -311,7 +310,7 @@ const RankingPVP = () => {
             onKeyUp={(e) => setSearch(e.currentTarget.value)}
           />
         </div>
-        <div className="ranking-container">
+        <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
           <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
             <div />
             <div className="d-flex" style={{ marginRight: 15 }}>
@@ -340,6 +339,7 @@ const RankingPVP = () => {
                     isInclude(pokemon.id, search))
               )
               .sort((a, b) => setSortedPokemonBattle(a, b))
+              .slice(0, firstInit.current + eachCounter.current * startIndex)
               .map((value, index) => (
                 <Fragment key={index}>{renderItem(value, index)}</Fragment>
               ))}

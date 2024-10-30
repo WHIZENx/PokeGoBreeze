@@ -40,10 +40,10 @@ export interface ICardMoveComponent {
 
 export interface ICardSmallComponent {
   value: ISelectMoveModel | ICombat | undefined;
-  empty?: boolean;
-  disable?: boolean;
-  show?: boolean;
-  select?: boolean;
+  isEmpty?: boolean;
+  isDisable?: boolean;
+  isShow?: boolean;
+  isSelect?: boolean;
   clearData?: () => void;
 }
 
@@ -58,7 +58,7 @@ export interface ICardPokemonInfoComponent {
   id: number;
   name: string;
   forme: string | undefined;
-  defaultImg: boolean;
+  isDefaultImg: boolean;
   types: string[];
   pokemonStat: IStatsPokemonGO;
   atkMaxStats: number | undefined;
@@ -71,10 +71,10 @@ export interface ICardPokemonInfoComponent {
 export interface ICardTypeComponent {
   value?: string;
   name?: string;
-  elite?: boolean;
-  shadow?: boolean;
-  purified?: boolean;
-  special?: boolean;
+  isElite?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
+  isSpecial?: boolean;
 }
 
 export interface ICardWeatherComponent {
@@ -86,7 +86,7 @@ export interface ITypeEffectiveComponent {
 }
 
 export interface ITypeEffectiveSelectComponent {
-  block?: boolean;
+  isBlock?: boolean;
   effect: number;
   types: string[];
 }
@@ -102,8 +102,8 @@ export interface IFindComponent {
   setStatATK?: React.Dispatch<React.SetStateAction<number>>;
   setStatDEF?: React.Dispatch<React.SetStateAction<number>>;
   setStatSTA?: React.Dispatch<React.SetStateAction<number>>;
-  hide?: boolean;
-  raid?: boolean;
+  isHide?: boolean;
+  isRaid?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   tier?: number;
   setTier?: React.Dispatch<React.SetStateAction<number>>;
@@ -111,14 +111,14 @@ export interface IFindComponent {
   urlEvo?: EvoPath;
   setUrlEvo?: React.Dispatch<React.SetStateAction<EvoPath>>;
   title?: string;
-  swap?: boolean;
-  objective?: boolean;
+  isSwap?: boolean;
+  isObjective?: boolean;
 }
 
 export interface IFormSelectComponent {
   router: ReduxRouterState;
   searching: IToolSearching | null;
-  raid?: boolean;
+  isRaid?: boolean;
   tier?: number;
   id?: number;
   onClearStats?: (reset?: boolean) => void;
@@ -127,14 +127,14 @@ export interface IFormSelectComponent {
   onSetNext?: () => void;
   name: string;
   setName?: React.Dispatch<React.SetStateAction<string>>;
-  hide?: boolean;
+  isHide?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   setForm?: (form: IPokemonFormModify | undefined) => void;
   stats: IStatsRank | null;
   onHandleSetStats?: (type: TypeAction, value: number) => void;
   data: IPokemonData[];
   setUrlEvo?: React.Dispatch<React.SetStateAction<EvoPath>>;
-  objective?: boolean;
+  isObjective?: boolean;
   pokemonName: IPokemonData[];
 }
 
@@ -150,7 +150,7 @@ export interface IToolsComponent {
   isRaid: boolean;
   tier: number;
   setTier: (tier: number) => void;
-  hide: boolean | undefined;
+  isHide?: boolean;
 }
 
 export interface IAssetPokemonModelComponent {
@@ -163,12 +163,12 @@ export interface IAssetPokemonModelComponent {
 export interface IEvolutionComponent {
   forme: IForm | undefined;
   region: string;
-  formDefault: boolean;
+  isFormDefault: boolean;
   id: number | undefined;
   setId?: (id: number) => void;
   pokemonRouter: ReduxRouterState;
-  purified: boolean | undefined;
-  shadow: boolean | undefined;
+  isPurified?: boolean;
+  isShadow?: boolean;
   setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
   isLoadedForms: boolean;
 }
@@ -254,18 +254,18 @@ export interface ISelectMoveComponent {
   pokemon: IPokemonData | undefined;
   moveType: TypeMove;
   inputType?: InputType;
-  selected?: boolean;
-  disable?: boolean;
+  isSelected?: boolean;
+  isDisable?: boolean;
 }
 
 export interface ISelectPokemonComponent {
   pokemon?: IPokemonData;
   setCurrentPokemon: React.Dispatch<React.SetStateAction<IPokemonData | undefined>>;
-  selected: boolean;
+  isSelected: boolean;
   setFMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   setCMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   clearData?: () => void;
-  disable?: boolean;
+  isDisable?: boolean;
   defaultSetting?: IPokemonDataStats;
   maxHeight?: number;
 }
@@ -276,7 +276,7 @@ export interface IPokemonRaidComponent {
   data: PokemonRaidModel[];
   setData: React.Dispatch<React.SetStateAction<PokemonRaidModel[]>>;
   defaultSetting: IPokemonDataStats;
-  controls: boolean;
+  isControls: boolean;
   onCopyPokemon: (index: number) => void;
   onRemovePokemon: (index: number) => void;
   onOptionsPokemon: (index: number, pokemon: IPokemonData) => void;
@@ -337,7 +337,7 @@ export interface ICircleBarComponent {
   moveEnergy: number;
   energy: number;
   maxEnergy: number;
-  disable: boolean | undefined;
+  isDisable?: boolean;
 }
 
 export interface IHpBarComponent {
@@ -372,11 +372,11 @@ export interface IStatsBarComponent {
 
 export interface ITypeComponent {
   arr: string[] | undefined;
-  block?: boolean;
-  shadow?: boolean;
+  isBlock?: boolean;
+  isShadow?: boolean;
   style?: React.CSSProperties;
   text?: string;
-  hideText?: boolean;
+  isHideText?: boolean;
   height?: string | number;
   color?: string;
   isShow?: boolean;
@@ -384,16 +384,16 @@ export interface ITypeComponent {
 
 export interface ITypeBadgeComponent {
   move: ISelectMoveModel | ICombat | null | undefined;
-  find?: boolean;
-  grow?: boolean;
+  isFind?: boolean;
+  isGrow?: boolean;
   style?: React.CSSProperties;
   color?: string;
   title?: string;
-  elite?: boolean;
-  shadow?: boolean;
-  purified?: boolean;
-  special?: boolean;
-  unavailable?: boolean;
+  isElite?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
+  isSpecial?: boolean;
+  isUnavailable?: boolean;
 }
 
 export interface ITypeBarComponent {
@@ -417,19 +417,19 @@ export interface ILoadGroupComponent {
   opacity?: number;
   bgColor?: string;
   isVertical?: boolean;
-  hideAttr?: boolean;
+  isHideAttr?: boolean;
 }
 
 export interface IWeatherComponent {
   arr: string[];
-  style: React.CSSProperties | undefined;
+  style?: React.CSSProperties;
   text?: string;
 }
 
 export interface ICounterComponent {
   def: number;
-  types: string[] | undefined;
-  isShadow: boolean | undefined;
+  types?: string[];
+  isShadow?: boolean;
 }
 
 export interface ITableMoveComponent {
@@ -461,7 +461,7 @@ export interface IMoveComponent {
   move: ICombat | undefined;
   setMove: (move: ICombat | undefined) => void | React.Dispatch<React.SetStateAction<ICombat | undefined>>;
   text: string;
-  selectDefault: boolean;
+  isSelectDefault: boolean;
   clearData?: (option?: boolean) => void;
-  highlight?: boolean;
+  isHighlight?: boolean;
 }
