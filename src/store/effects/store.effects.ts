@@ -114,7 +114,7 @@ export const loadTimestamp = async (
       dispatch(SpinnerActions.SetBar.create(false));
       dispatch(
         SpinnerActions.ShowSpinnerMsg.create({
-          error: true,
+          isError: true,
           message: e.message,
         })
       );
@@ -178,7 +178,7 @@ export const loadGameMaster = (
       dispatch(SpinnerActions.SetBar.create(false));
       dispatch(
         SpinnerActions.ShowSpinnerMsg.create({
-          error: true,
+          isError: true,
           message: e.message,
         })
       );

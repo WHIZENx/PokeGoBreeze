@@ -3,7 +3,8 @@ import { replaceTempMovePvpName } from '../../util/utils';
 import { Store, StoreModel } from '../models/store.model';
 import { StoreActions } from '../../store/actions';
 import { StoreActionsUnion } from '../actions/store.action';
-import { getValueOrDefault, isEqual } from '../../util/extension';
+import { IWeatherBoost } from '../../core/models/weatherBoost.model';
+import { isEqual } from '../../util/extension';
 
 const initialize: StoreModel = new Store();
 
@@ -14,7 +15,10 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
     case StoreActions.StoreActionTypes.setCPM:
       return {
         ...state,
-        cpm: action.payload,
+        data: {
+          ...state.data,
+          cpm: action.payload,
+        },
       };
     case StoreActions.StoreActionTypes.setTimestamp:
       return {
@@ -47,7 +51,7 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
         ...state,
         data: {
           ...state.data,
-          weatherBoost: action.payload,
+          weatherBoost: action.payload as unknown as IWeatherBoost,
         },
       };
     case StoreActions.StoreActionTypes.setPokemon:
@@ -96,13 +100,13 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
         data: {
           ...state.data,
           pvp: {
-            rankings: convertPVPRankings(action.payload.rankings, getValueOrDefault(Array, state.data?.leagues?.data)),
-            trains: convertPVPTrain(action.payload.trains, getValueOrDefault(Array, state.data?.leagues?.data)),
+            rankings: convertPVPRankings(action.payload.rankings, state.data.leagues.data),
+            trains: convertPVPTrain(action.payload.trains, state.data.leagues.data),
           },
         },
       };
     case StoreActions.StoreActionTypes.setPVPMoves: {
-      const result = state.data?.combat?.map((move) => {
+      const result = state.data.combat.map((move) => {
         const movePVP = action.payload.find((data) =>
           isEqual(data.moveId, move.name === 'HIDDEN_POWER' ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
         );

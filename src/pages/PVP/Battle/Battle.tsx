@@ -153,11 +153,11 @@ const Battle = () => {
         (atkPoke *
           move.pvpPower *
           (findStabType(getValueOrDefault(Array, poke.pokemon?.types), getValueOrDefault(String, move.type))
-            ? STAB_MULTIPLY(dataStore?.options)
+            ? STAB_MULTIPLY(dataStore.options)
             : 1) *
-          (poke.isShadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1) *
-          getTypeEffective(dataStore?.typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
-        (defPokeObj * (pokeObj.isShadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1))
+          (poke.isShadow ? SHADOW_ATK_BONUS(dataStore.options) : 1) *
+          getTypeEffective(dataStore.typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
+        (defPokeObj * (pokeObj.isShadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))
       );
     }
     return 1;
@@ -729,13 +729,13 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
             if (!pokemon) {
               return new BattlePokemonData();
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon.num, pokemon.forme ?? FORM_NORMAL);
+            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.forme ?? FORM_NORMAL);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -754,20 +754,20 @@ const Battle = () => {
       } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
-            error: true,
+            isError: true,
             message: (e as Error).message,
           })
         );
       }
     },
-    [dataStore?.options, dataStore?.pokemon, dataStore?.assets, dispatch]
+    [dataStore.options, dataStore.pokemon, dataStore.assets, dispatch]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (dataStore?.options && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
+    if (isNotEmpty(dataStore.pokemon) && isNotEmpty(dataStore.assets)) {
       fetchPokemon(league);
     }
     return () => {
@@ -776,10 +776,10 @@ const Battle = () => {
   }, [fetchPokemonBattle, league, dispatch]);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore?.combat) && dataStore?.combat.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(dataStore.combat) && dataStore.combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [dataStore?.combat, dispatch]);
+  }, [dataStore.combat, dispatch]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
@@ -1225,7 +1225,7 @@ const Battle = () => {
             <b>
               {Math.floor(
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsATK) *
-                  (pokemon.isShadow ? SHADOW_ATK_BONUS(dataStore?.options) : 1)
+                  (pokemon.isShadow ? SHADOW_ATK_BONUS(dataStore.options) : 1)
               )}
             </b>
             <br />
@@ -1234,7 +1234,7 @@ const Battle = () => {
             <b>
               {Math.floor(
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
-                  (pokemon.isShadow ? SHADOW_DEF_BONUS(dataStore?.options) : 1)
+                  (pokemon.isShadow ? SHADOW_DEF_BONUS(dataStore.options) : 1)
               )}
             </b>
             <br />
@@ -1248,7 +1248,7 @@ const Battle = () => {
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsATK) *
                   getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
                   getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsSTA) *
-                  (pokemon.isShadow ? SHADOW_ATK_BONUS(dataStore?.options) * SHADOW_DEF_BONUS(dataStore?.options) : 1)
+                  (pokemon.isShadow ? SHADOW_ATK_BONUS(dataStore.options) * SHADOW_DEF_BONUS(dataStore.options) : 1)
               )}
             </b>
             <br />
@@ -1381,7 +1381,7 @@ const Battle = () => {
                 defaultValue={pokemon.energy}
                 type="number"
                 min={0}
-                max={MAX_ENERGY(dataStore?.options)}
+                max={MAX_ENERGY(dataStore.options)}
                 onInput={(e) => {
                   const value = toNumber(e.currentTarget.value);
                   if (isNaN(value)) {
@@ -1478,7 +1478,7 @@ const Battle = () => {
                     text={splitAndCapitalize(pokemon.cMovePri?.name, '_', ' ')}
                     type={pokemon.cMovePri?.type}
                     size={80}
-                    maxEnergy={MAX_ENERGY(dataStore?.options)}
+                    maxEnergy={MAX_ENERGY(dataStore.options)}
                     moveEnergy={getValueOrDefault(Number, Math.abs(getValueOrDefault(Number, pokemon.cMovePri?.pvpEnergy)))}
                     energy={getValueOrDefault(
                       Number,
@@ -1492,7 +1492,7 @@ const Battle = () => {
                       text={splitAndCapitalize(pokemon.cMoveSec.name, '_', ' ')}
                       type={pokemon.cMoveSec.type}
                       size={80}
-                      maxEnergy={MAX_ENERGY(dataStore?.options)}
+                      maxEnergy={MAX_ENERGY(dataStore.options)}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
                       energy={getValueOrDefault(
                         Number,

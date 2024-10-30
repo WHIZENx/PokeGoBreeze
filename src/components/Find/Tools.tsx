@@ -30,7 +30,7 @@ import { getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/e
 import { IncludeMode } from '../../util/enums/string.enum';
 
 const Tools = (props: IToolsComponent) => {
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const [currDataPoke, setCurrDataPoke] = useState<IStatsPokemon>();
   const [currTier, setCurrTier] = useState(props.tier);
 

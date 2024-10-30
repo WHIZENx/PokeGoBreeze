@@ -31,7 +31,7 @@ import { VariantType } from '../../../enums/type.enum';
 
 const Calculate = () => {
   useChangeTitle('Calculate CP&IV - Tool');
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
+  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);

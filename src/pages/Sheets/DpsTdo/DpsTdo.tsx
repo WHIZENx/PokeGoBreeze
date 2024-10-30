@@ -52,7 +52,6 @@ import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../..
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
-import { WeatherBoost } from '../../../core/models/weatherBoost.model';
 import { OptionsActions } from '../../../store/actions';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
@@ -345,8 +344,8 @@ const DpsTdo = () => {
     specialMove: string[] = []
   ) => {
     movePoke.forEach((vc: string) => {
-      const fMove = data?.combat?.find((item) => isEqual(item.name, vf));
-      const cMove = data?.combat?.find((item) => isEqual(item.name, vc));
+      const fMove = data.combat.find((item) => isEqual(item.name, vf));
+      const cMove = data.combat.find((item) => isEqual(item.name, vc));
 
       if (fMove && cMove) {
         const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
@@ -370,8 +369,8 @@ const DpsTdo = () => {
             atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
             def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
             hp: calculateStatsBattle(getValueOrDefault(Number, statsDef.sta), ivHp, pokemonLevel),
-            fMove: data?.combat?.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
-            cMove: data?.combat?.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
+            fMove: data.combat.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
+            cMove: data.combat.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
             types: dataTargetPokemon.types,
             weatherBoosts: getValueOrDefault(String, options.weatherBoosts),
           });
@@ -380,14 +379,14 @@ const DpsTdo = () => {
             return;
           }
 
-          const dpsDef = calculateBattleDPSDefender(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender);
-          dps = calculateBattleDPS(data?.options, data?.typeEff, data?.weatherBoost, statsAttacker, statsDefender, dpsDef);
+          const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+          dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
           tdo = dps * TimeToKill(Math.floor(getValueOrDefault(Number, statsAttacker.hp)), dpsDef);
         } else {
           dps = calculateAvgDPS(
-            data?.options,
-            data?.typeEff,
-            data?.weatherBoost,
+            data.options,
+            data.typeEff,
+            data.weatherBoost,
             statsAttacker.fMove,
             statsAttacker.cMove,
             getValueOrDefault(Number, statsAttacker.atk),
@@ -397,7 +396,7 @@ const DpsTdo = () => {
             statsAttacker.isShadow,
             options
           );
-          tdo = calculateTDO(data?.options, statsAttacker.def, getValueOrDefault(Number, statsAttacker.hp), dps, statsAttacker.isShadow);
+          tdo = calculateTDO(data.options, statsAttacker.def, getValueOrDefault(Number, statsAttacker.hp), dps, statsAttacker.isShadow);
         }
         dataList.push({
           pokemon,
@@ -493,7 +492,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
-    data?.pokemon?.forEach((pokemon) => {
+    data.pokemon.forEach((pokemon) => {
       if (pokemon) {
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.quickMoves), false, pokemon.isShadow);
         addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMoves), true, pokemon.isShadow);
@@ -549,7 +548,7 @@ const DpsTdo = () => {
         const result = checkPokemonGO(
           item.pokemon.num,
           getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
-          getValueOrDefault(Array, data?.pokemon)
+          data.pokemon
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, result?.releasedGO);
       }
@@ -604,29 +603,20 @@ const DpsTdo = () => {
   };
 
   useEffect(() => {
-    if (data?.typeEff) {
-      setTypes(Object.keys(data?.typeEff));
+    if (data.typeEff) {
+      setTypes(Object.keys(data.typeEff));
     }
-  }, [data?.typeEff]);
+  }, [data.typeEff]);
 
   useEffect(() => {
-    if (isNotEmpty(data?.pokemon) && isNotEmpty(data?.combat) && data?.options && data?.typeEff && data?.weatherBoost) {
+    if (isNotEmpty(data.pokemon) && isNotEmpty(data.combat)) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDpsTable(calculateDPSTable());
       }, 300);
       return () => clearTimeout(timeOutId);
     }
-  }, [
-    dataTargetPokemon,
-    fMoveTargetPokemon,
-    cMoveTargetPokemon,
-    data?.pokemon,
-    data?.combat,
-    data?.options,
-    data?.typeEff,
-    data?.weatherBoost,
-  ]);
+  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, data.pokemon, data.combat, data.options, data.typeEff, data.weatherBoost]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
@@ -1148,7 +1138,7 @@ const DpsTdo = () => {
                     }
                   >
                     <option value="">Extreme</option>
-                    {Object.keys(data?.weatherBoost ?? new WeatherBoost()).map((value, index) => (
+                    {Object.keys(data.weatherBoost).map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
                       </option>

@@ -16,7 +16,7 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } fro
 import { IncludeMode } from '../../util/enums/string.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);

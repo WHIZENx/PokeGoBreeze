@@ -47,7 +47,7 @@ const RankingPVP = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const dataStore = useSelector((state: StoreState) => state.store.data);
-  const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
+  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
@@ -86,7 +86,7 @@ const RankingPVP = () => {
   };
 
   useEffect(() => {
-    if (!pvp) {
+    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
   }, [pvp]);
@@ -114,9 +114,9 @@ const RankingPVP = () => {
       }
       const filePVP = file.map((item) => {
         const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-        const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
+        const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -129,11 +129,11 @@ const RankingPVP = () => {
         cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, cMoveDataPri));
         cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, cMoveDataSec));
 
-        const fMove = dataStore?.combat?.find((item) => isEqual(item.name, fMoveData));
-        const cMovePri = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataPri));
+        const fMove = dataStore.combat.find((item) => isEqual(item.name, fMoveData));
+        const cMovePri = dataStore.combat.find((item) => isEqual(item.name, cMoveDataPri));
         let cMoveSec;
         if (cMoveDataSec) {
-          cMoveSec = dataStore?.combat?.find((item) => isEqual(item.name, cMoveDataSec));
+          cMoveSec = dataStore.combat.find((item) => isEqual(item.name, cMoveDataSec));
         }
 
         return new PokemonBattleRanking({
@@ -160,20 +160,20 @@ const RankingPVP = () => {
     } catch (e) {
       dispatch(
         SpinnerActions.ShowSpinnerMsg.create({
-          error: true,
+          isError: true,
           message: (e as Error).message,
         })
       );
     }
-  }, [params.serie, params.type, params.cp, statsRanking, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, dispatch]);
+  }, [params.serie, params.type, params.cp, statsRanking, dataStore.combat, dataStore.pokemon, dataStore.assets, dispatch]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
       router.action = null as AnyAction[''];
     };
-    if (statsRanking && isNotEmpty(dataStore?.combat) && isNotEmpty(dataStore?.pokemon) && isNotEmpty(dataStore?.assets)) {
-      if (dataStore?.combat.every((combat) => !combat.archetype)) {
+    if (statsRanking && isNotEmpty(dataStore.combat) && isNotEmpty(dataStore.pokemon) && isNotEmpty(dataStore.assets)) {
+      if (dataStore.combat.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
       } else if (router.action) {
         fetchPokemon();
@@ -229,13 +229,7 @@ const RankingPVP = () => {
                 <div className="w-100 ranking-info element-top">
                   {Header(data)}
                   <hr />
-                  {Body(
-                    getValueOrDefault(Array, dataStore?.assets),
-                    getValueOrDefault(Array, dataStore?.pokemon),
-                    data.data,
-                    params.cp,
-                    params.type
-                  )}
+                  {Body(dataStore.assets, dataStore.pokemon, data.data, params.cp, params.type)}
                 </div>
                 <div className="container">
                   <hr />
@@ -245,7 +239,7 @@ const RankingPVP = () => {
                   <hr />
                   {TypeEffective(getValueOrDefault(Array, data.pokemon?.types))}
                 </div>
-                <div className="container">{MoveSet(data.data?.moves, data.pokemon, getValueOrDefault(Array, dataStore?.combat))}</div>
+                <div className="container">{MoveSet(data.data?.moves, data.pokemon, dataStore.combat)}</div>
               </div>
               <LeaveToggle eventKey={key.toString()}>
                 <span className="text-danger">
@@ -267,7 +261,7 @@ const RankingPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = pvp.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league ? (

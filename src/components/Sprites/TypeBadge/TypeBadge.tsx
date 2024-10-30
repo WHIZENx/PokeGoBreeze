@@ -8,11 +8,11 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { ITypeBadgeComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
+import { combineClasses, isEqual, isNotEmpty } from '../../../util/extension';
 import { MoveType } from '../../../enums/type.enum';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {

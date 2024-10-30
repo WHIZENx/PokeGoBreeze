@@ -3,9 +3,8 @@ import { SpinnerActionsUnion } from '../actions/spinner.action';
 
 export interface SpinnerModel {
   isLoading: boolean;
+  error?: ErrorModel;
   bar: BarModel;
-  message: string | null;
-  error: ErrorModel | null;
 }
 
 interface BarModel {
@@ -13,9 +12,9 @@ interface BarModel {
   percent: number;
 }
 
-interface ErrorModel {
-  error: boolean;
-  msg: string;
+export interface ErrorModel {
+  isError: boolean;
+  message: string;
 }
 
 const initialize: SpinnerModel = {
@@ -24,8 +23,6 @@ const initialize: SpinnerModel = {
     isShow: false,
     percent: 0,
   },
-  message: null,
-  error: null,
 };
 
 const SpinnerReducer = (state: SpinnerModel = initialize, action: SpinnerActionsUnion) => {
@@ -34,19 +31,18 @@ const SpinnerReducer = (state: SpinnerModel = initialize, action: SpinnerActions
       return {
         ...state,
         isLoading: true,
-        error: action.payload?.error,
+        error: undefined,
       };
     case SpinnerActions.SpinnerActionTypes.showSpinnerMsg:
       return {
         ...state,
         isLoading: true,
-        message: action.payload.message,
-        error: action.payload.error,
+        error: action.payload,
       };
     case SpinnerActions.SpinnerActionTypes.hideSpinner:
       return {
         ...state,
-        message: null,
+        error: undefined,
         isLoading: false || Boolean(state.error),
       };
     case SpinnerActions.SpinnerActionTypes.setBar:

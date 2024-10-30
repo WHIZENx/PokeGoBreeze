@@ -16,13 +16,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
-import {
-  ILeague,
-  IPokemonRewardSetLeague,
-  PokemonRewardLeague,
-  PokemonRewardSetLeague,
-  SettingLeague,
-} from '../../../core/models/league.model';
+import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
 import { FORM_NORMAL, leaguesDefault } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
@@ -61,7 +55,7 @@ const Leagues = () => {
   const [showData, setShowData] = useState<LeagueData>();
 
   const getAssetPokeGo = (id: number, form: string) => {
-    const asset = queryAssetForm(getValueOrDefault(Array, dataStore?.assets), id, form);
+    const asset = queryAssetForm(dataStore.assets, id, form);
     if (asset) {
       return APIService.getPokemonModel(asset.default);
     } else {
@@ -82,20 +76,20 @@ const Leagues = () => {
   };
 
   useEffect(() => {
-    if (dataStore?.leagues) {
-      const leagues = getValueOrDefault(Array, dataStore?.leagues?.data);
+    const leagues = dataStore.leagues.data;
+    if (isNotEmpty(leagues)) {
       setLeagues(leagues);
       setOpenedLeague(leagues.filter((league) => isIncludeList(dataStore.leagues.allowLeagues, league.id)));
       setSetting(dataStore.leagues.season.settings.find((data) => data.rankLevel === rank + 1));
     }
-  }, [dataStore?.leagues]);
+  }, [dataStore.leagues]);
 
   useEffect(() => {
     if (isNotEmpty(leagues)) {
       const timeOutId = setTimeout(() => {
         setLeagueFilter(
           leagues.filter((value) => {
-            if (isIncludeList(dataStore?.leagues?.allowLeagues, value.id)) {
+            if (isIncludeList(dataStore.leagues.allowLeagues, value.id)) {
               return false;
             }
             let textTitle = '';
@@ -123,19 +117,27 @@ const Leagues = () => {
     if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
-      Object.values(dataStore?.leagues?.season.rewards.pokemon ?? new PokemonRewardLeague()).forEach((value) => {
-        if (value.rank <= rank) {
-          result.push(
-            ...value[track.toLowerCase()].map((item: IPokemonRewardSetLeague) => {
-              if (item.guaranteedLimited) {
-                return PokemonRewardSetLeague.create({
-                  ...item,
-                  rank: value.rank,
-                });
-              }
-              return item;
-            })
-          );
+      Object.values(dataStore.leagues.season.rewards.pokemon).forEach((value) => {
+        if (getValueOrDefault(Number, value.rank) <= rank) {
+          let tireRewards: IPokemonRewardSetLeague[] = [];
+          if (isEqual(track, LeagueRewardType.Free, EqualMode.IgnoreCaseSensitive)) {
+            tireRewards = value.free;
+          } else if (isEqual(track, LeagueRewardType.Premium, EqualMode.IgnoreCaseSensitive)) {
+            tireRewards = value.premium;
+          }
+          if (isNotEmpty(tireRewards)) {
+            result.push(
+              ...tireRewards.map((item) => {
+                if (item.guaranteedLimited) {
+                  return PokemonRewardSetLeague.create({
+                    ...item,
+                    rank: value.rank,
+                  });
+                }
+                return item;
+              })
+            );
+          }
         }
       });
       setShowData({
@@ -159,11 +161,11 @@ const Leagues = () => {
       <Accordion.Item key={index} eventKey={index.toString()}>
         <Accordion.Header className={isOpened ? 'league-opened' : ''}>
           <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-            <img alt="img-league" height={50} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
+            <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl)} />
             <b className={league.enabled ? '' : 'text-danger'}>
               {(isInclude(league.id, BattleLeagueTag.Seeker, IncludeMode.IncludeIgnoreCaseSensitive) &&
               isIncludeList(leaguesDefault, league.title, IncludeMode.IncludeIgnoreCaseSensitive)
-                ? splitAndCapitalize(getValueOrDefault(String, league.id).replace('VS_', '').toLowerCase(), '_', ' ')
+                ? splitAndCapitalize(league.id?.replace('VS_', '').toLowerCase(), '_', ' ')
                 : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
                 (isInclude(league.id, BattleLeagueTag.SafariZone, IncludeMode.IncludeIgnoreCaseSensitive)
                   ? ` ${getValueOrDefault(String, league.id).split('_').at(3)} ${capitalize(
@@ -184,19 +186,17 @@ const Leagues = () => {
                   <img
                     alt="img-league"
                     height={140}
-                    src={APIService.getAssetPokeGo(
-                      getValueOrDefault(String, dataStore?.leagues?.data.find((item) => isEqual(item.title, league.league))?.iconUrl)
-                    )}
+                    src={APIService.getAssetPokeGo(dataStore.leagues.data.find((item) => isEqual(item.title, league.league))?.iconUrl)}
                   />
                   <span className={combineClasses('badge-league', league.league.toLowerCase().replaceAll('_', '-'))}>
                     <div className="sub-badge">
-                      <img alt="img-league" height={50} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
+                      <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl)} />
                     </div>
                   </span>
                 </div>
               ) : (
                 <div>
-                  <img alt="img-league" height={140} src={APIService.getAssetPokeGo(getValueOrDefault(String, league.iconUrl))} />
+                  <img alt="img-league" height={140} src={APIService.getAssetPokeGo(league.iconUrl)} />
                 </div>
               )}
             </div>
@@ -328,8 +328,8 @@ const Leagues = () => {
       <div className="row" style={{ rowGap: 10, margin: 0 }}>
         <div className="col-md-8 d-flex justify-content-start align-items-center" style={{ padding: 0 }}>
           <span style={{ fontWeight: 500 }}>
-            <span>Season Date: {getTime(dataStore?.leagues?.season.timestamp.start)}</span>{' '}
-            <span>- {getTime(dataStore?.leagues?.season.timestamp.end)}</span>
+            <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>{' '}
+            <span>- {getTime(dataStore.leagues.season.timestamp.end)}</span>
           </span>
         </div>
         <div className="col-md-4 d-flex justify-content-end" style={{ padding: 0 }}>
@@ -337,12 +337,12 @@ const Leagues = () => {
             onChange={(e) => {
               setRank(toNumber(e.target.value));
               if (toNumber(e.target.value) < 24) {
-                setSetting(dataStore?.leagues?.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1));
+                setSetting(dataStore.leagues.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1));
               }
             }}
             defaultValue={rank}
           >
-            {Object.keys(getValueOrDefault(Array, dataStore?.leagues?.season.rewards.rank)).map((value, index) => (
+            {Object.keys(dataStore.leagues.season.rewards.rank).map((value, index) => (
               <option key={index} value={value}>
                 Rank {value} {toNumber(value) > 20 && `( ${rankName(toNumber(value))} )`}
               </option>
@@ -350,7 +350,7 @@ const Leagues = () => {
           </Form.Select>
         </div>
       </div>
-      {dataStore?.leagues ? (
+      {isNotEmpty(dataStore.leagues.data) ? (
         <Fragment>
           <div className="d-flex justify-content-center element-top">
             <div className="season-league">

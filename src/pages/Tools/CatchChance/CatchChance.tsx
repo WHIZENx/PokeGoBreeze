@@ -55,7 +55,7 @@ import {
 import { PokeBallType } from './enums/poke-ball.enum';
 
 const CatchChance = () => {
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const CIRCLE_DISTANCE = 200;

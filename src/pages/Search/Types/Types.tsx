@@ -13,9 +13,7 @@ import { FormControlLabel, Switch, useTheme } from '@mui/material';
 import { TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { DEFAULT_TYPES } from '../../../util/constants';
 import { ICombat } from '../../../core/models/combat.model';
-import { TypeEff } from '../../../core/models/type-eff.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from '../../../util/extension';
@@ -194,20 +192,20 @@ const SearchTypes = () => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data?.combat) && isNotEmpty(data?.pokemon)) {
+    if (isNotEmpty(data.combat) && isNotEmpty(data.pokemon)) {
       setAllData(
         PokemonTypeData.create({
-          pokemon: getValueOrDefault(Number, data?.pokemon?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length, 1) - 1,
-          fastMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.FAST).length,
-          chargedMoves: data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE).length,
+          pokemon: data.pokemon.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+          fastMoves: data.combat.filter((type) => type.typeMove === TypeMove.FAST).length,
+          chargedMoves: data.combat.filter((type) => type.typeMove === TypeMove.CHARGE).length,
         })
       );
     }
-  }, [releasedGO, data?.combat, data?.pokemon]);
+  }, [releasedGO, data.combat, data.pokemon]);
 
   useEffect(() => {
-    setTypeList(data?.typeEff ? Object.keys(data?.typeEff) : DEFAULT_TYPES);
-  }, [data?.typeEff]);
+    setTypeList(Object.keys(data.typeEff));
+  }, [data.typeEff]);
 
   useEffect(() => {
     if (isNotEmpty(typeList) && !currentType) {
@@ -216,27 +214,18 @@ const SearchTypes = () => {
   }, [typeList, currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data?.pokemon) && isNotEmpty(data?.combat)) {
+    if (isNotEmpty(data.pokemon) && isNotEmpty(data.combat)) {
       setResult(
         PokemonType.create({
-          pokemonList: getValueOrDefault(
-            Array,
-            data?.pokemon
-              ?.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-              .filter((pokemon) => isIncludeList(pokemon.types, currentType))
-          ),
-          fastMove: getValueOrDefault(
-            Array,
-            data?.combat?.filter((type) => type.typeMove === TypeMove.FAST && isEqual(type.type, currentType))
-          ),
-          chargedMove: getValueOrDefault(
-            Array,
-            data?.combat?.filter((type) => type.typeMove === TypeMove.CHARGE && isEqual(type.type, currentType))
-          ),
+          pokemonList: data.pokemon
+            .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
+            .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
+          fastMove: data.combat.filter((type) => type.typeMove === TypeMove.FAST && isEqual(type.type, currentType)),
+          chargedMove: data.combat.filter((type) => type.typeMove === TypeMove.CHARGE && isEqual(type.type, currentType)),
         })
       );
     }
-  }, [currentType, releasedGO, data?.pokemon, data?.combat]);
+  }, [currentType, releasedGO, data.pokemon, data.combat]);
 
   const changeType = (value: string) => {
     setShowType(false);
@@ -263,7 +252,7 @@ const SearchTypes = () => {
             {showType && (
               <div className="result-type">
                 <ul>
-                  {Object.keys(data?.typeEff ?? new TypeEff())
+                  {Object.keys(data.typeEff)
                     .filter((value) => !isEqual(value, currentType))
                     .map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>

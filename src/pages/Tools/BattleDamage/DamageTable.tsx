@@ -11,7 +11,6 @@ import { capitalize, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { IDamageTableComponent } from '../../models/page.model';
-import { ThrowOption } from '../../../core/models/options.model';
 import { ILabelDamage, LabelDamage } from '../../../core/models/damage.model';
 import { combineClasses, DynamicObj, getValueOrDefault, toFloatWithPadding } from '../../../util/extension';
 import { PokemonType } from './enums/damage.enum';
@@ -44,7 +43,7 @@ const eff: DynamicObj<ILabelDamage> = {
 };
 
 const DamageTable = (props: IDamageTableComponent) => {
-  const globalOptions = useSelector((state: StoreState) => state.store.data?.options);
+  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
 
   return (
     <div className="container">
@@ -167,11 +166,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize(
-                      Object.keys(globalOptions?.throwCharge ?? new ThrowOption()).at(
-                        getValueOrDefault(Number, props.result.battleState.cLevel)
-                      )
-                    )
+                  ? capitalize(Object.keys(globalOptions.throwCharge).at(getValueOrDefault(Number, props.result.battleState.cLevel)))
                   : '-'}
               </td>
             </tr>

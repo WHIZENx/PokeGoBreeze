@@ -22,7 +22,7 @@ const Find = (props: IFindComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
 
   const [id, setId] = useState(
     searching ? (props.isObjective ? (searching ? (searching.obj ? searching.obj.id : 1) : 1) : searching.id) : 1

@@ -53,8 +53,8 @@ interface BulkPointDef {
 
 const CalculatePoint = () => {
   useChangeTitle('Calculate Point Stats - Tools');
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
-  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff);
+  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
+  const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);

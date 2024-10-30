@@ -9,7 +9,7 @@ import { getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
 import { MoveType } from '../../enums/type.enum';
 
 const CardMove = (props: ICardMoveComponent) => {
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
 
   const [data, setData] = useState<ICombat>();
 

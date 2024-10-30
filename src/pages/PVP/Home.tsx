@@ -38,8 +38,8 @@ class OptionsHome implements IOptionsHome {
 const PVPHome = () => {
   useChangeTitle('PVP - Simulator');
   const dispatch = useDispatch();
-  const pvp = useSelector((state: StoreState) => state.store?.data?.pvp);
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
+  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
@@ -49,7 +49,7 @@ const PVPHome = () => {
   const { rank, team } = options;
 
   useEffect(() => {
-    if (!pvp) {
+    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
     if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
@@ -58,10 +58,10 @@ const PVPHome = () => {
     if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [pvp, spinner, combat, dispatch]);
+  }, [pvp.rankings, pvp.trains, spinner, combat, dispatch]);
 
   useEffect(() => {
-    if (!rank && !team && pvp) {
+    if (!rank && !team && isNotEmpty(pvp.rankings) && isNotEmpty(pvp.trains)) {
       setOptions(
         OptionsHome.create({
           rank: pvp.rankings.at(0),
@@ -69,7 +69,7 @@ const PVPHome = () => {
         })
       );
     }
-  }, [rank, team, pvp]);
+  }, [rank, team, pvp.rankings, pvp.trains]);
 
   const renderLeagueLogo = (logo: string, cp: number) => {
     if (
@@ -116,12 +116,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: pvp?.rankings.find((item) => isEqual(item.id, e.target.value)),
+                rank: pvp.rankings.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvp?.rankings.map((value, index) => (
+          {pvp.rankings.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -165,12 +165,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: pvp?.trains.find((item) => isEqual(item.id, e.target.value)),
+                team: pvp.trains.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvp?.trains.map((value, index) => (
+          {pvp.trains.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>

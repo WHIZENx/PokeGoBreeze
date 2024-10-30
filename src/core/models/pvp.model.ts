@@ -5,20 +5,27 @@ import { IPokemonData, PokemonData } from './pokemon.model';
 import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';
 
 export interface IPVPDataModel {
-  rankings: PVPInfo[];
-  trains: PVPInfo[];
+  rankings: IPVPInfo[];
+  trains: IPVPInfo[];
 }
 
 export class PVPDataModel implements IPVPDataModel {
-  rankings: PVPInfo[] = [];
-  trains: PVPInfo[] = [];
+  rankings: IPVPInfo[] = [];
+  trains: IPVPInfo[] = [];
 }
 
-export interface PVPInfo {
+export interface IPVPInfo {
   id: string;
   name: string;
   cp: number[];
-  logo: string | null;
+  logo?: string;
+}
+
+export class PVPInfo implements IPVPInfo {
+  id = '';
+  name = '';
+  cp: number[] = [];
+  logo?: string;
 }
 
 export interface TeamsPVP {

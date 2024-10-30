@@ -124,10 +124,8 @@ const Counter = (props: ICounterComponent) => {
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(getValueOrDefault(Array, data?.assets), row.pokemonId, getValueOrDefault(String, row.pokemonForme))
-                    ? APIService.getPokemonModel(
-                        findAssetForm(getValueOrDefault(Array, data?.assets), row.pokemonId, getValueOrDefault(String, row.pokemonForme))
-                      )
+                  findAssetForm(data.assets, row.pokemonId, getValueOrDefault(String, row.pokemonForme))
+                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, getValueOrDefault(String, row.pokemonForme)))
                     : APIService.getPokeFullSprite(row.pokemonId)
                 }
                 onError={(e) => {
@@ -262,13 +260,13 @@ const Counter = (props: ICounterComponent) => {
           signal.removeEventListener('abort', abortHandler);
         }
         result = counterPokemon(
-          data?.options,
-          getValueOrDefault(Array, data?.pokemon),
-          data?.typeEff,
-          data?.weatherBoost,
-          props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
+          data.options,
+          data.pokemon,
+          data.typeEff,
+          data.weatherBoost,
+          props.def * (props.isShadow ? SHADOW_DEF_BONUS(data.options) : 1),
           getValueOrDefault(Array, props.types),
-          getValueOrDefault(Array, data?.combat)
+          data.combat
         );
         resolve(result);
       };
@@ -331,11 +329,7 @@ const Counter = (props: ICounterComponent) => {
             if (!releasedGO) {
               return true;
             }
-            const result = checkPokemonGO(
-              pokemon.pokemonId,
-              convertPokemonDataName(pokemon.pokemonName),
-              getValueOrDefault(Array, data?.pokemon)
-            );
+            const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemon);
             return getValueOrDefault(Boolean, pokemon.releasedGO, result?.releasedGO);
           })}
       />

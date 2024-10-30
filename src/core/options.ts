@@ -954,28 +954,21 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       item.data.combatLeague.pokemonCondition.forEach((con) => {
         if (con.type === LeagueConditionType.CaughtTime) {
           result.conditions.timestamp = LeagueTimestamp.create({
-            start: 0,
-            end: 0,
+            start: con.pokemonCaughtTimestamp?.afterTimestamp,
+            end: con.pokemonCaughtTimestamp?.beforeTimestamp,
           });
-          result.conditions.timestamp.start = con.pokemonCaughtTimestamp?.afterTimestamp;
-          result.conditions.timestamp.end = con.pokemonCaughtTimestamp?.beforeTimestamp;
-        }
-        if (con.type === LeagueConditionType.UniquePokemon) {
+        } else if (con.type === LeagueConditionType.UniquePokemon) {
           result.conditions.uniqueSelected = true;
-        }
-        if (con.type === LeagueConditionType.PokemonType) {
+        } else if (con.type === LeagueConditionType.PokemonType) {
           result.conditions.uniqueType = getValueOrDefault(
             Array,
             con.withPokemonType?.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''))
           );
-        }
-        if (con.type === LeagueConditionType.PokemonLevelRange) {
+        } else if (con.type === LeagueConditionType.PokemonLevelRange) {
           result.conditions.maxLevel = con.pokemonLevelRange?.maxLevel;
-        }
-        if (con.type === LeagueConditionType.PokemonLimitCP) {
+        } else if (con.type === LeagueConditionType.PokemonLimitCP) {
           result.conditions.maxCp = con.withPokemonCpLimit?.maxCp;
-        }
-        if (con.type === LeagueConditionType.Whitelist) {
+        } else if (con.type === LeagueConditionType.Whitelist) {
           result.conditions.whiteList = getValueOrDefault(
             Array,
             con.pokemonWhiteList?.pokemon.map((poke) => {
@@ -1002,8 +995,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
             }
           });
           result.conditions.whiteList = whiteList.sort((a, b) => getValueOrDefault(Number, a.id) - getValueOrDefault(Number, b.id));
-        }
-        if (con.type === LeagueConditionType.BanList) {
+        } else if (con.type === LeagueConditionType.BanList) {
           result.conditions.banned = getValueOrDefault(
             Array,
             con.pokemonBanList?.pokemon.map((poke) => {

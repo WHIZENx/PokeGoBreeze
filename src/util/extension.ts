@@ -57,7 +57,7 @@ export const isEmpty = (value?: string | null) => {
   return getValueOrDefault(Boolean, value?.isEmpty(), false);
 };
 
-export const isNullOrEmpty = (value?: string | null) => {
+export const isNullOrEmpty = (value?: string | null): value is string | null => {
   return getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
 };
 

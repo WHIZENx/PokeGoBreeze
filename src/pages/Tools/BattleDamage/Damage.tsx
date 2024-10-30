@@ -21,7 +21,7 @@ import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { ITrainerFriendship, ThrowOption } from '../../../core/models/options.model';
+import { ITrainerFriendship } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
@@ -74,8 +74,8 @@ class Filter implements IFilter {
 
 const Damage = () => {
   useChangeTitle('Damage Simulator - Battle Simulator');
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
-  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff);
+  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
+  const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
@@ -357,7 +357,7 @@ const Damage = () => {
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
                       x
                       {toFloatWithPadding(
-                        getDataWithKey<ITrainerFriendship>(globalOptions?.trainerFriendship, battleState.fLevel).atkBonus,
+                        getDataWithKey<ITrainerFriendship>(globalOptions.trainerFriendship, battleState.fLevel).atkBonus,
                         2
                       )}
                     </Box>
@@ -378,7 +378,7 @@ const Damage = () => {
                           );
                         }}
                       >
-                        {Object.entries(globalOptions?.throwCharge ?? new ThrowOption()).map(([type, value], index) => (
+                        {Object.entries(globalOptions.throwCharge).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>x{value}</span>

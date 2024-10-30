@@ -23,7 +23,7 @@ const Search = () => {
   const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
-  const pokemonName = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
+  const pokemonName = useSelector((state: StoreState) => state.store.data.pokemon);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);

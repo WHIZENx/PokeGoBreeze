@@ -31,17 +31,7 @@ import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
-import {
-  DynamicObj,
-  getValueOrDefault,
-  isEqual,
-  isInclude,
-  isIncludeList,
-  isNotEmpty,
-  isNullOrEmpty,
-  isNullOrUndefined,
-  toNumber,
-} from './extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, isNullOrUndefined, toNumber } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 
 class Mask {
@@ -157,16 +147,10 @@ export const HundoRate = styled(Rating)(() => ({
 }));
 
 export const capitalize = (str: string | undefined | null) => {
-  if (isNullOrEmpty(str)) {
-    return '';
-  }
   return getValueOrDefault(String, str?.charAt(0).toUpperCase()) + getValueOrDefault(String, str?.slice(1).toLowerCase());
 };
 
 export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string) => {
-  if (isNullOrEmpty(str)) {
-    return '';
-  }
   return getValueOrDefault(
     String,
     str
@@ -176,11 +160,8 @@ export const splitAndCapitalize = (str: string | undefined | null, splitBy: stri
   );
 };
 
-export const reversedCapitalize = (str: string, splitBy: string, joinBy: string) => {
-  if (isNullOrEmpty(str)) {
-    return '';
-  }
-  return str.replaceAll(joinBy, splitBy).toLowerCase();
+export const reversedCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string) => {
+  return getValueOrDefault(String, str?.replaceAll(joinBy, splitBy).toLowerCase());
 };
 
 export const getTime = (value: string | number | undefined, notFull = false) => {
@@ -825,9 +806,9 @@ export const getFormFromForms = (
   return filterForm;
 };
 
-export const retrieveMoves = (combat: IPokemonData[], id: number, form: string) => {
-  if (isNotEmpty(combat)) {
-    const resultFirst = combat.filter((item) => item.num === id);
+export const retrieveMoves = (pokemon: IPokemonData[], id: number, form: string) => {
+  if (isNotEmpty(pokemon)) {
+    const resultFirst = pokemon.filter((item) => item.num === id);
     form =
       form
         .toLowerCase()

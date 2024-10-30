@@ -1,10 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Action } from 'redux';
-
-interface Spinner {
-  message?: string;
-  error?: any;
-}
+import { ErrorModel } from '../reducers/spinner.reducer';
 
 export enum SpinnerActionTypes {
   showSpinner = '[Spinner] ShowSpinner',
@@ -17,13 +13,10 @@ export enum SpinnerActionTypes {
 export class ShowSpinner implements Action {
   readonly type = SpinnerActionTypes.showSpinner;
 
-  constructor(public payload?: Spinner) {}
-
-  static create(value?: Spinner) {
-    const { type, payload } = new ShowSpinner(value);
+  static create() {
+    const { type } = new ShowSpinner();
     return {
       type,
-      payload,
     };
   }
 }
@@ -31,9 +24,9 @@ export class ShowSpinner implements Action {
 export class ShowSpinnerMsg implements Action {
   readonly type = SpinnerActionTypes.showSpinnerMsg;
 
-  constructor(public payload: Spinner) {}
+  constructor(public payload: ErrorModel) {}
 
-  static create(value: Spinner) {
+  static create(value: ErrorModel) {
     const { type, payload } = new ShowSpinnerMsg(value);
     return {
       type,

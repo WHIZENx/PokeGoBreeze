@@ -26,8 +26,6 @@ import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
 import { IMovePage } from '../models/page.model';
-import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { TypeEff } from '../../core/models/type-eff.model';
 import { TableColumnModify } from '../../util/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -122,7 +120,7 @@ const Move = (props: IMovePage) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getWeatherEffective = (type: string) => {
-    const result = Object.entries(data?.weatherBoost ?? new WeatherBoost())?.find(([, value]: [string, string[]]) => {
+    const result = Object.entries(data.weatherBoost)?.find(([, value]: [string, string[]]) => {
       return isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive);
     });
     return result && result.at(0);
@@ -130,29 +128,14 @@ const Move = (props: IMovePage) => {
 
   const queryMoveData = useCallback(
     (id: number) => {
-      if (isNotEmpty(data?.combat)) {
-        const moves = data?.combat?.filter((item) => item.track === id || item.id === id);
-        let move = moves?.find((item) => item.id === id);
+      if (isNotEmpty(data.combat)) {
+        const moves = data.combat.filter((item) => item.track === id || item.id === id);
+        let move = moves.find((item) => item.id === id);
         if (move?.isMultipleWithType) {
           searchParams.set('type', getValueOrDefault(String, move.type).toLowerCase());
         } else {
-          move = moves?.find((item) => item.track === id);
+          move = moves.find((item) => item.track === id);
         }
-        // if (id === 281) {
-        //   move = data?.combat?.find(
-        //     (item) =>
-        //       item.track === id &&
-        //       isEqual(item.type, getValueOrDefault(String, searchParams.get('type'), 'NORMAL'), EqualMode.IgnoreCaseSensitive)
-        //   );
-        // } else {
-        //   move = data?.combat?.find((item) => item.track === id);
-        //   if (!move) {
-        //     move = data?.combat?.find((item) => item.id === id);
-        //     if (move?.isMultipleWithType) {
-        //       searchParams.set('type', getValueOrDefault(String, move.type).toLowerCase());
-        //     }
-        //   }
-        // }
         if (move) {
           setMove(move);
           document.title = `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`;
@@ -164,7 +147,7 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, data?.combat]
+    [enqueueSnackbar, data.combat]
   );
 
   useEffect(() => {
@@ -177,11 +160,11 @@ const Move = (props: IMovePage) => {
   }, [params.id, props.id, queryMoveData, move]);
 
   useEffect(() => {
-    if (move && data?.options && isNotEmpty(data?.pokemon) && data?.typeEff && data?.weatherBoost) {
-      const result = queryTopMove(data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost, move);
+    if (move && isNotEmpty(data.pokemon)) {
+      const result = queryTopMove(data.options, data.pokemon, data.typeEff, data.weatherBoost, move);
       setTopList(result);
     }
-  }, [move, data?.options, data?.pokemon, data?.typeEff, data?.weatherBoost]);
+  }, [move, data.options, data.pokemon, data.typeEff, data.weatherBoost]);
 
   return (
     <div className={combineClasses('element-bottom poke-container', props.id ? '' : 'container')}>
@@ -201,14 +184,12 @@ const Move = (props: IMovePage) => {
                 searchParams.set('type', e.target.value.toLowerCase());
                 setSearchParams(searchParams);
                 setMove(
-                  data?.combat?.find(
-                    (item) => item.track === move.track && isEqual(item.type, e.target.value, EqualMode.IgnoreCaseSensitive)
-                  )
+                  data.combat.find((item) => item.track === move.track && isEqual(item.type, e.target.value, EqualMode.IgnoreCaseSensitive))
                 );
               }}
               defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
             >
-              {Object.keys(data?.typeEff ?? new TypeEff())
+              {Object.keys(data.typeEff)
                 .filter((type) => !isEqual(type, 'FAIRY', EqualMode.IgnoreCaseSensitive))
                 .map((value, index) => (
                   <option key={index} value={value}>
@@ -299,7 +280,7 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data?.options), 2)}</span>{' '}
+                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>{' '}
                       <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvePower * 0.2, 2)}</span>
                     </>
                   )}
@@ -337,7 +318,7 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data?.options), 2)}</span>{' '}
+                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>{' '}
                       <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvpPower * 0.2, 2)}</span>
                     </>
                   )}
@@ -450,7 +431,7 @@ const Move = (props: IMovePage) => {
                   DPS
                   <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${toFloatWithPadding((move.pvePower * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000), 2)}`}</td>
+                <td>{move && `${toFloatWithPadding((move.pvePower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               <tr>
                 <td>
@@ -459,7 +440,7 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>
                   {move &&
-                    `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 2)) / (move.durationMs / 1000), 2)}`}
+                    `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 2)) / (move.durationMs / 1000), 2)}`}
                 </td>
               </tr>
               <tr>
@@ -469,7 +450,7 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>
                   {move &&
-                    `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data?.options), 3)) / (move.durationMs / 1000), 2)}`}
+                    `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 3)) / (move.durationMs / 1000), 2)}`}
                 </td>
               </tr>
               {move?.typeMove === TypeMove.FAST && (
@@ -492,7 +473,7 @@ const Move = (props: IMovePage) => {
                   DPS
                   <span className="caption">(STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${toFloatWithPadding((move.pvpPower * STAB_MULTIPLY(data?.options)) / (move.durationMs / 1000), 2)}`}</td>
+                <td>{move && `${toFloatWithPadding((move.pvpPower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>
@@ -528,7 +509,7 @@ const Move = (props: IMovePage) => {
                       const result = checkPokemonGO(
                         pokemon.num,
                         convertPokemonDataName(pokemon.sprite ?? pokemon.name.replaceAll(' ', '_')),
-                        getValueOrDefault(Array, data?.pokemon)
+                        data.pokemon
                       );
                       return getValueOrDefault(Boolean, pokemon.releasedGO, result?.releasedGO);
                     })}

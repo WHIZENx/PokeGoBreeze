@@ -13,7 +13,7 @@ import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../ut
 import { InputType } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const pokemon = useSelector((state: StoreState) => state.store.data.pokemon);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
 
@@ -29,7 +29,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   const findMove = useCallback(
     (id: number, form: string, type: TypeMove, selected = false) => {
-      const result = retrieveMoves(combat, id, form);
+      const result = retrieveMoves(pokemon, id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
         if (type === TypeMove.FAST) {
@@ -66,14 +66,14 @@ const SelectMove = (props: ISelectMoveComponent) => {
   );
 
   useEffect(() => {
-    if (isNotEmpty(combat)) {
+    if (isNotEmpty(pokemon)) {
       if (props.pokemon?.num) {
         findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon.forme), props.moveType, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
     }
-  }, [props.pokemon?.num, props.pokemon?.forme, props.isSelected, resultMove.length, combat, findMove]);
+  }, [props.pokemon?.num, props.pokemon?.forme, props.isSelected, resultMove.length, pokemon, findMove]);
 
   const smallInput = () => {
     return (

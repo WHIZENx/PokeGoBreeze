@@ -90,7 +90,7 @@ const TableMove = (props: ITableMoveComponent) => {
   const filterUnknownMove = (moves: string[] | undefined) => {
     return getValueOrDefault(
       Array,
-      moves?.map((move) => data?.combat?.find((item) => isEqual(item.name, move)) ?? new Combat()).filter((move) => move.id > 0)
+      moves?.map((move) => data.combat.find((item) => isEqual(item.name, move)) ?? new Combat()).filter((move) => move.id > 0)
     );
   };
 
@@ -110,7 +110,7 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const findMove = useCallback(() => {
-    const combatPoke = data?.pokemon?.filter((item) =>
+    const combatPoke = data.pokemon.filter((item) =>
       props.form?.id || props.form?.isShadow || props.form?.isPurified
         ? item.num === getValueOrDefault(Number, props.data?.num)
         : isEqual(
@@ -127,11 +127,11 @@ const TableMove = (props: ITableMoveComponent) => {
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       } else if (!isNotEmpty(combatPoke) && props.id) {
-        const combatPoke = data?.pokemon?.filter(
+        const combatPoke = data.pokemon.filter(
           (item) => item.num === getValueOrDefault(Number, props.id) && isEqual(item.baseSpecies, item.name)
         );
-        filterMoveType(combatPoke?.at(0));
-        return setMove(setRankMove(combatPoke?.at(0)));
+        filterMoveType(combatPoke.at(0));
+        return setMove(setRankMove(combatPoke.at(0)));
       }
 
       const formName = convertPokemonAPIDataName(props.form?.name);
@@ -148,13 +148,13 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const setRankMove = (result: IPokemonData | undefined) => {
     return rankMove(
-      data?.options,
-      data?.typeEff,
-      data?.weatherBoost,
-      getValueOrDefault(Array, data?.combat),
+      data.options,
+      data.typeEff,
+      data.weatherBoost,
+      data.combat,
       result,
-      props.statATK * (props.form?.isShadow ? SHADOW_ATK_BONUS(data?.options) : 1),
-      props.statDEF * (props.form?.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
+      props.statATK * (props.form?.isShadow ? SHADOW_ATK_BONUS(data.options) : 1),
+      props.statDEF * (props.form?.isShadow ? SHADOW_DEF_BONUS(data.options) : 1),
       props.statSTA,
       getValueOrDefault(
         Array,

@@ -18,14 +18,14 @@ const Move = (props: IMoveComponent) => {
 
   const findMoveData = useCallback(
     (move: string) => {
-      return data?.combat?.find((item) => isEqual(item.name, move));
+      return data.combat.find((item) => isEqual(item.name, move));
     },
-    [data?.combat]
+    [data.combat]
   );
 
   const findMove = useCallback(
     (id: number, form: string) => {
-      const result = retrieveMoves(getValueOrDefault(Array, data?.pokemon), id, form);
+      const result = retrieveMoves(data.pokemon, id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
         if (!props.type || isEqual(props.type, TypeMove.FAST)) {
@@ -57,7 +57,7 @@ const Move = (props: IMoveComponent) => {
         return setResultMove(simpleMove);
       }
     },
-    [props.type, data?.pokemon]
+    [props.type, data.pokemon]
   );
 
   useEffect(() => {

@@ -51,13 +51,8 @@ import { LeagueType } from '../../../core/enums/league.enum';
 const TeamPVP = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
-  const allMoves = useSelector((state: StoreState) =>
-    getValueOrDefault(
-      Array,
-      state.store.data?.combat?.map((c) => c.name)
-    )
-  );
-  const pvp = useSelector((state: StoreState) => state.store.data?.pvp);
+  const allMoves = useSelector((state: StoreState) => state.store.data.combat.map((c) => c.name));
+  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
   const params = useParams();
@@ -76,9 +71,9 @@ const TeamPVP = () => {
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-    const pokemon = dataStore?.pokemon?.find((pokemon) => isEqual(pokemon.slug, name));
+    const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
-    const form = findAssetForm(getValueOrDefault(Array, dataStore?.assets), pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+    const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -137,13 +132,13 @@ const TeamPVP = () => {
   };
 
   useEffect(() => {
-    if (!pvp) {
+    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
-    if (isNotEmpty(dataStore?.combat) && dataStore?.combat?.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(dataStore.combat) && dataStore.combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [pvp, dataStore?.combat]);
+  }, [pvp, dataStore.combat]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -188,7 +183,7 @@ const TeamPVP = () => {
       } catch (e) {
         dispatch(
           SpinnerActions.ShowSpinnerMsg.create({
-            error: true,
+            isError: true,
             message: (e as Error).message,
           })
         );
@@ -196,10 +191,11 @@ const TeamPVP = () => {
     };
     if (
       !rankingData &&
-      pvp &&
-      isNotEmpty(dataStore?.combat) &&
-      isNotEmpty(dataStore?.pokemon) &&
-      isNotEmpty(dataStore?.assets) &&
+      isNotEmpty(pvp.rankings) &&
+      isNotEmpty(pvp.trains) &&
+      isNotEmpty(dataStore.combat) &&
+      isNotEmpty(dataStore.pokemon) &&
+      isNotEmpty(dataStore.assets) &&
       statsRanking
     ) {
       fetchPokemon();
@@ -207,11 +203,11 @@ const TeamPVP = () => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore?.combat, dataStore?.pokemon, dataStore?.assets, statsRanking]);
+  }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore.combat, dataStore.pokemon, dataStore.assets, statsRanking]);
 
   const renderLeague = () => {
     const cp = toNumber(getValueOrDefault(String, params.cp));
-    const league = pvp?.trains?.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = pvp.trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -250,7 +246,7 @@ const TeamPVP = () => {
     }
 
     for (const name of nameSet) {
-      move = dataStore?.combat?.find(
+      move = dataStore.combat.find(
         (item) =>
           (item.abbreviation && isEqual(item.abbreviation, tag)) ||
           (!item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(name)))
@@ -261,7 +257,7 @@ const TeamPVP = () => {
     }
 
     nameSet = findMoveTeam(tag, allMoves, true);
-    move = dataStore?.combat?.find(
+    move = dataStore.combat.find(
       (item) =>
         (item.abbreviation && isEqual(item.abbreviation, tag)) ||
         (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))

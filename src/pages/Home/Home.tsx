@@ -144,26 +144,21 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (data?.typeEff) {
-      setTypes(Object.keys(data?.typeEff));
-    }
-  }, [data?.typeEff]);
+    setTypes(Object.keys(data.typeEff));
+  }, [data.typeEff]);
 
   useEffect(() => {
-    if (isNotEmpty(data?.assets) && isNotEmpty(data?.pokemon)) {
+    if (isNotEmpty(data.assets) && isNotEmpty(data.pokemon)) {
       setDataList(
-        getValueOrDefault(
-          Array,
-          data?.pokemon
-            .map((item) => {
-              const assetForm = queryAssetForm(data.assets, item.num, item.forme);
-              return new PokemonHomeModel(item, assetForm);
-            })
-            .sort((a, b) => a.id - b.id)
-        )
+        data.pokemon
+          .map((item) => {
+            const assetForm = queryAssetForm(data.assets, item.num, item.forme);
+            return new PokemonHomeModel(item, assetForm);
+          })
+          .sort((a, b) => a.id - b.id)
       );
     }
-  }, [data?.assets, data?.pokemon]);
+  }, [data.assets, data.pokemon]);
 
   useEffect(() => {
     setIsLoading(true);

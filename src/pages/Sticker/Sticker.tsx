@@ -28,7 +28,7 @@ const Sticker = () => {
   const [shopType, setShopType] = useState(ShopType.All);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);
 
-  const pokeStickerList = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.stickers));
+  const pokeStickerList = useSelector((state: StoreState) => state.store.data.stickers);
 
   const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 

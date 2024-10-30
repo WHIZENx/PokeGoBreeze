@@ -87,10 +87,10 @@ const Stats = (props: IStatsComponent) => {
       return Math.round(
         stats *
           (type === TypeAction.ATK
-            ? SHADOW_ATK_BONUS(data?.options)
+            ? SHADOW_ATK_BONUS(data.options)
             : type === TypeAction.DEF
-            ? SHADOW_DEF_BONUS(data?.options)
-            : SHADOW_ATK_BONUS(data?.options) * SHADOW_DEF_BONUS(data?.options))
+            ? SHADOW_DEF_BONUS(data.options)
+            : SHADOW_ATK_BONUS(data.options) * SHADOW_DEF_BONUS(data.options))
       );
     }
     return stats;

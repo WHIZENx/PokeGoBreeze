@@ -7,11 +7,11 @@ import { capitalize, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ICardSmallComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual } from '../../util/extension';
+import { combineClasses, isEqual } from '../../util/extension';
 import { MoveType } from '../../enums/type.enum';
 
 const CardMoveSmall = (props: ICardSmallComponent) => {
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.combat));
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
 
   return (
     <Fragment>

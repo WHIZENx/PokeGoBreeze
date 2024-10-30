@@ -20,7 +20,7 @@ import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { MoveType } from '../../../enums/type.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
-  const combat = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.combat));
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);

@@ -93,7 +93,7 @@ const customTheme = createTheme({
 
 const Evolution = (props: IEvolutionComponent) => {
   const theme = useTheme<ThemeModify>();
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
