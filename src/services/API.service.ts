@@ -284,7 +284,7 @@ class APIService {
     return `${APIUrl.POGO_SOUND_API_URL}Pokemon Moves/${sound}.wav`;
   }
 
-  getAssetPokeGo(image: string) {
+  getAssetPokeGo(image?: string) {
     return isInclude(image, 'gofestCatch2022')
       ? `${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/${image}`
       : `${APIUrl.POGO_PROD_ASSET_URL}${image}`;

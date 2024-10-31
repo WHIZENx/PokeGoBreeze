@@ -12,6 +12,8 @@ interface CombatSetting {
   chargeScoreNice: number;
   chargeScoreGreat: number;
   chargeScoreExcellent: number;
+  maxEnergy: number;
+  purifiedPokemonAttackMultiplierVsShadow: number;
 }
 
 interface BattleSetting {
@@ -19,6 +21,9 @@ interface BattleSetting {
   sameTypeAttackBonusMultiplier: number;
   shadowPokemonAttackBonusMultiplier: number;
   shadowPokemonDefenseBonusMultiplier: number;
+  maximumEnergy: number;
+  dodgeDamageReductionPercent: number;
+  purifiedPokemonAttackMultiplierVsShadow: number;
 }
 
 interface BuddyLevelSetting {
@@ -331,23 +336,33 @@ export class PokemonPermission implements IPokemonPermission {
 interface ICombatOption {
   stab: number;
   shadowBonus: IStatsBase;
+  purifiedBonus: IStatsBase;
+  maxEnergy: number;
 }
 
 class CombatOption implements ICombatOption {
   stab = 0;
   shadowBonus = new StatsBase();
+  purifiedBonus = new StatsBase();
+  maxEnergy = 0;
 }
 
 interface IBattleOption {
   enemyAttackInterval: number;
   stab: number;
   shadowBonus: IStatsBase;
+  purifiedBonus: IStatsBase;
+  maxEnergy: number;
+  dodgeDamageReductionPercent: number;
 }
 
 class BattleOption implements IBattleOption {
   enemyAttackInterval = 0;
   stab = 0;
   shadowBonus = new StatsBase();
+  purifiedBonus = new StatsBase();
+  maxEnergy = 0;
+  dodgeDamageReductionPercent = 0;
 }
 
 interface IThrowOption {

@@ -2,7 +2,7 @@ import React from 'react';
 import { splitAndCapitalize } from '../../../util/utils';
 import { genRoman } from '../../../util/constants';
 import { IPokemonTableComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isUndefined } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isUndefined, toFloatWithPadding } from '../../../util/extension';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, color = '#f5f5f5') => {
@@ -49,14 +49,13 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           <td colSpan={2}>
             {reload(
               <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                {isUndefined(props.gen) || getValueOrDefault(Number, props.gen) < 0 ? (
+                {isUndefined(props.gen) || props.gen < 0 ? (
                   <></>
-                ) : getValueOrDefault(Number, props.gen) === 0 ? (
+                ) : props.gen === 0 ? (
                   <b>Unknown</b>
                 ) : (
                   <>
-                    <b>{genRoman(getValueOrDefault(Number, props.gen))}</b>{' '}
-                    <span className="text-gen">{`Gen ${getValueOrDefault(Number, props.gen)}`}</span>
+                    <b>{genRoman(props.gen)}</b> <span className="text-gen">{`Gen ${getValueOrDefault(Number, props.gen)}`}</span>
                   </>
                 )}
               </h5>,
@@ -91,7 +90,9 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                 <div className="d-inline-block" style={{ marginRight: 5 }}>
                   <h6>Weight:</h6>
                 </div>
-                <div className="d-inline-block">{reload(<h6>{props.weight >= 0 && `${(props.weight / 10).toFixed(2)} kg`}</h6>)}</div>
+                <div className="d-inline-block">
+                  {reload(<h6>{props.weight >= 0 && `${toFloatWithPadding(props.weight / 10, 2)} kg`}</h6>)}
+                </div>
               </div>
             </div>
             <div className="d-flex align-items-center h-100 w-50" style={{ float: 'left' }}>
@@ -99,7 +100,9 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                 <div className="d-inline-block" style={{ marginRight: 5 }}>
                   <h6>Height:</h6>
                 </div>
-                <div className="d-inline-block">{reload(<h6>{props.height >= 0 && `${(props.height / 10).toFixed(2)} m`}</h6>)}</div>
+                <div className="d-inline-block">
+                  {reload(<h6>{props.height >= 0 && `${toFloatWithPadding(props.height / 10, 2)} m`}</h6>)}
+                </div>
               </div>
             </div>
           </td>

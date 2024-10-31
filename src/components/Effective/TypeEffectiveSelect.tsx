@@ -11,14 +11,14 @@ import { combineClasses, getValueOrDefault, isNotEmpty } from '../../util/extens
 import { EffectiveType } from '../../pages/PVP/enums/type-eff.enum';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
-  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
+  const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
 
   const renderEffective = (text: string, data: string[]) => {
     return (
       <Fragment>
         {isNotEmpty(data) && (
           <Fragment>
-            <h6 className={props.block ? 'element-top' : ''}>
+            <h6 className={props.isBlock ? 'element-top' : ''}>
               <b className="text-shadow">x{text}</b>
             </h6>
             <div className="d-flex flex-wrap" style={{ gap: 5 }}>
@@ -51,7 +51,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       neutral: [],
     });
     if (effect === EffectiveType.WEAK) {
-      Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
+      Object.entries(typeEffective).forEach(([key, value]) => {
         let valueEffective = 1;
         types.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
@@ -70,7 +70,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === EffectiveType.NEUTRAL) {
-      Object.entries(typeEffective ?? new TypeEff()).forEach(([key, value]) => {
+      Object.entries(typeEffective).forEach(([key, value]) => {
         let valueEffective = 1;
         types.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];

@@ -1,7 +1,6 @@
 import { createPool } from '@vercel/postgres';
 import { CPMData } from '../core/models/cpm.model';
-import { IPokemonDetail } from '../core/models/API/info.model';
-import { PokemonEncounter } from '../core/models/pokemon.model';
+import { IPokemonName, PokemonEncounter } from '../core/models/pokemon.model';
 import { toFloat } from '../util/extension';
 
 const db = createPool({
@@ -9,7 +8,7 @@ const db = createPool({
 });
 
 export const getDbCpMultiply = async () => {
-  return await db.sql`SELECT * from tblCpMultiply`;
+  return await db.sql<CPMData>`SELECT * from tblCpMultiply`;
 };
 
 export const createDbCpMultiply = async (cpm: CPMData) => {
@@ -35,10 +34,10 @@ export const createDbCpMultiply = async (cpm: CPMData) => {
 };
 
 export const getDbPokemonName = async () => {
-  return await db.sql`SELECT * from tblPokemonName`;
+  return await db.sql<IPokemonName>`SELECT * from tblPokemonName`;
 };
 
-export const createDbPokemonName = async (pokemon: IPokemonDetail) => {
+export const createDbPokemonName = async (pokemon: IPokemonName) => {
   return await db.sql`INSERT INTO tblPokemonName(
     Id,
     Name

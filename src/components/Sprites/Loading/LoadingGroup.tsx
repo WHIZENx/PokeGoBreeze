@@ -11,7 +11,7 @@ interface Element {
   opacity?: number;
   bgColor: string;
   isVertical?: boolean;
-  hideAttr?: boolean;
+  isHideAttr?: boolean;
 }
 
 const LoadHideAttr = styled.div<Element>`
@@ -49,7 +49,7 @@ const LoadGroup = (props: ILoadGroupComponent) => {
 
   return (
     <Fragment>
-      {props.hideAttr ? (
+      {props.isHideAttr ? (
         <LoadHideAttr className={className} bgColor={props.bgColor || 'white'} isShow={props.isShow} isVertical={props.isVertical}>
           {ref}
         </LoadHideAttr>

@@ -136,12 +136,12 @@ const customStyles: TableStyles = {
 };
 
 interface IFilter {
-  match: boolean;
+  isMatch: boolean;
   releasedGO: boolean;
 }
 
 class Filter implements IFilter {
-  match = false;
+  isMatch = false;
   releasedGO = false;
 
   static create(value: IFilter) {
@@ -164,7 +164,7 @@ const StatsRanking = () => {
   ];
 
   const stats = useSelector((state: StatsState) => state.stats);
-  const pokemonData = useSelector((state: StoreState) => getValueOrDefault(Array, state.store?.data?.pokemon));
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: IPokemonData[]) => {
@@ -250,7 +250,7 @@ const StatsRanking = () => {
   const [select, setSelect] = useState<IPokemonStatsRanking>();
 
   const [filters, setFilters] = useState(new Filter());
-  const { match, releasedGO } = filters;
+  const { isMatch, releasedGO } = filters;
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
@@ -299,7 +299,7 @@ const StatsRanking = () => {
             .filter(
               (pokemon) =>
                 isEmpty(search) ||
-                (match
+                (isMatch
                   ? isEqual(pokemon.num, search) ||
                     isEqual(splitAndCapitalize(pokemon.name, '-', ' '), search, EqualMode.IgnoreCaseSensitive)
                   : isInclude(pokemon.num, search) ||
@@ -309,7 +309,7 @@ const StatsRanking = () => {
       }, 100);
       return () => clearTimeout(timeOutId);
     }
-  }, [search, match, releasedGO, pokemonList]);
+  }, [search, isMatch, releasedGO, pokemonList]);
 
   const convertToPokemonForm = (pokemon: IPokemonData | IPokemonStatsRanking) => {
     return Form.create({
@@ -399,7 +399,7 @@ const StatsRanking = () => {
           />
         </div>
         <FormControlLabel
-          control={<Checkbox checked={match} onChange={(_, check) => setFilters(Filter.create({ ...filters, match: check }))} />}
+          control={<Checkbox checked={isMatch} onChange={(_, check) => setFilters(Filter.create({ ...filters, isMatch: check }))} />}
           label="Match Pokémon"
         />
         <FormControlLabel

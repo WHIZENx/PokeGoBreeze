@@ -18,21 +18,21 @@ const Move = (props: IMoveComponent) => {
 
   const findMoveData = useCallback(
     (move: string) => {
-      return data?.combat?.find((item) => isEqual(item.name, move));
+      return data.combat.find((item) => isEqual(item.name, move));
     },
-    [data?.combat]
+    [data.combat]
   );
 
   const findMove = useCallback(
     (id: number, form: string) => {
-      const result = retrieveMoves(getValueOrDefault(Array, data?.pokemon), id, form);
+      const result = retrieveMoves(data.pokemon, id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
         if (!props.type || isEqual(props.type, TypeMove.FAST)) {
           result.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
-          result.eliteQuickMove?.forEach((value) => {
+          result.eliteQuickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
           setCountFM(simpleMove.length);
@@ -41,7 +41,7 @@ const Move = (props: IMoveComponent) => {
           result.cinematicMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, false, false, false, false));
           });
-          result.eliteCinematicMove?.forEach((value) => {
+          result.eliteCinematicMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, true, false, false, false));
           });
           result.shadowMoves?.forEach((value) => {
@@ -57,7 +57,7 @@ const Move = (props: IMoveComponent) => {
         return setResultMove(simpleMove);
       }
     },
-    [props.type, data?.pokemon]
+    [props.type, data.pokemon]
   );
 
   useEffect(() => {
@@ -93,10 +93,10 @@ const Move = (props: IMoveComponent) => {
               <CardType
                 value={getValueOrDefault(String, findType(currentMove.name))}
                 name={splitAndCapitalize(currentMove.name, '_', ' ')}
-                elite={currentMove.elite}
-                shadow={currentMove.shadow}
-                purified={currentMove.purified}
-                special={currentMove.special}
+                isElite={currentMove.isElite}
+                isShadow={currentMove.isShadow}
+                isPurified={currentMove.isPurified}
+                isSpecial={currentMove.isSpecial}
               />
             ) : (
               <CardType />
@@ -108,7 +108,7 @@ const Move = (props: IMoveComponent) => {
                 {resultMove && (
                   <Fragment>
                     {resultMove
-                      .filter((value) => props.selectDefault || (!props.selectDefault && !isEqual(value.name, currentMove?.name)))
+                      .filter((value) => props.isSelectDefault || (!props.isSelectDefault && !isEqual(value.name, currentMove?.name)))
                       .map((value, index) => (
                         <Fragment key={index}>
                           {!props.type && index === 0 && (
@@ -124,17 +124,17 @@ const Move = (props: IMoveComponent) => {
                           <li
                             className={combineClasses(
                               'container card-pokemon',
-                              props.highlight && isEqual(currentMove?.name, value.name) ? 'bg-card-highlight' : ''
+                              props.isHighlight && isEqual(currentMove?.name, value.name) ? 'bg-card-highlight' : ''
                             )}
                             onMouseDown={() => changeMove(value)}
                           >
                             <CardType
                               value={getValueOrDefault(String, findType(value.name))}
                               name={splitAndCapitalize(value.name, '_', ' ')}
-                              elite={value.elite}
-                              shadow={value.shadow}
-                              purified={value.purified}
-                              special={value.special}
+                              isElite={value.isElite}
+                              isShadow={value.isShadow}
+                              isPurified={value.isPurified}
+                              isSpecial={value.isSpecial}
                             />
                           </li>
                         </Fragment>

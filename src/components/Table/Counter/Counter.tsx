@@ -118,16 +118,14 @@ const Counter = (props: ICounterComponent) => {
                 'position-relative group-pokemon-sprite'
               )}
             >
-              {row.cMove.shadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-              {row.cMove.purified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+              {row.cMove.isShadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+              {row.cMove.isPurified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
               <img
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(getValueOrDefault(Array, data?.assets), row.pokemonId, getValueOrDefault(String, row.pokemonForme))
-                    ? APIService.getPokemonModel(
-                        findAssetForm(getValueOrDefault(Array, data?.assets), row.pokemonId, getValueOrDefault(String, row.pokemonForme))
-                      )
+                  findAssetForm(data.assets, row.pokemonId, getValueOrDefault(String, row.pokemonForme))
+                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, getValueOrDefault(String, row.pokemonForme)))
                     : APIService.getPokeFullSprite(row.pokemonId)
                 }
                 onError={(e) => {
@@ -159,7 +157,7 @@ const Counter = (props: ICounterComponent) => {
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.fMove.elite && (
+            {row.fMove.isElite && (
               <span className="type-icon-small ic elite-ic">
                 <span>{MoveType.Elite}</span>
               </span>
@@ -180,22 +178,22 @@ const Counter = (props: ICounterComponent) => {
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.cMove.elite && (
+            {row.cMove.isElite && (
               <span className="type-icon-small ic elite-ic">
                 <span>{MoveType.Elite}</span>
               </span>
             )}
-            {row.cMove.shadow && (
+            {row.cMove.isShadow && (
               <span className="type-icon-small ic shadow-ic">
                 <span>{MoveType.Shadow}</span>
               </span>
             )}
-            {row.cMove.purified && (
+            {row.cMove.isPurified && (
               <span className="type-icon-small ic purified-ic">
                 <span>{MoveType.Purified}</span>
               </span>
             )}
-            {row.cMove.special && (
+            {row.cMove.isSpecial && (
               <span className="type-icon-small ic special-ic">
                 <span>{MoveType.Special}</span>
               </span>
@@ -262,13 +260,13 @@ const Counter = (props: ICounterComponent) => {
           signal.removeEventListener('abort', abortHandler);
         }
         result = counterPokemon(
-          data?.options,
-          getValueOrDefault(Array, data?.pokemon),
-          data?.typeEff,
-          data?.weatherBoost,
-          props.def * (props.isShadow ? SHADOW_DEF_BONUS(data?.options) : 1),
+          data.options,
+          data.pokemon,
+          data.typeEff,
+          data.weatherBoost,
+          props.def * (props.isShadow ? SHADOW_DEF_BONUS(data.options) : 1),
           getValueOrDefault(Array, props.types),
-          getValueOrDefault(Array, data?.combat)
+          data.combat
         );
         resolve(result);
       };
@@ -331,11 +329,7 @@ const Counter = (props: ICounterComponent) => {
             if (!releasedGO) {
               return true;
             }
-            const result = checkPokemonGO(
-              pokemon.pokemonId,
-              convertPokemonDataName(pokemon.pokemonName),
-              getValueOrDefault(Array, data?.pokemon)
-            );
+            const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemon);
             return getValueOrDefault(Boolean, pokemon.releasedGO, result?.releasedGO);
           })}
       />

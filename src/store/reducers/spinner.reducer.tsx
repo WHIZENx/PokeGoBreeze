@@ -2,28 +2,27 @@ import { SpinnerActions } from '../actions';
 import { SpinnerActionsUnion } from '../actions/spinner.action';
 
 export interface SpinnerModel {
-  loading: boolean;
-  bar: {
-    show: boolean;
-    percent: number;
-  };
-  message: string | null;
-  error: ErrorModel | null;
+  isLoading: boolean;
+  error?: ErrorModel;
+  bar: BarModel;
 }
 
-interface ErrorModel {
-  error: boolean;
-  msg: string;
+interface BarModel {
+  isShow: boolean;
+  percent: number;
+}
+
+export interface ErrorModel {
+  isError: boolean;
+  message: string;
 }
 
 const initialize: SpinnerModel = {
-  loading: false,
+  isLoading: false,
   bar: {
-    show: false,
+    isShow: false,
     percent: 0,
   },
-  message: null,
-  error: null,
 };
 
 const SpinnerReducer = (state: SpinnerModel = initialize, action: SpinnerActionsUnion) => {
@@ -31,28 +30,27 @@ const SpinnerReducer = (state: SpinnerModel = initialize, action: SpinnerActions
     case SpinnerActions.SpinnerActionTypes.showSpinner:
       return {
         ...state,
-        loading: true,
-        error: action.payload?.error,
+        isLoading: true,
+        error: undefined,
       };
     case SpinnerActions.SpinnerActionTypes.showSpinnerMsg:
       return {
         ...state,
-        loading: true,
-        message: action.payload.message,
-        error: action.payload.error,
+        isLoading: true,
+        error: action.payload,
       };
     case SpinnerActions.SpinnerActionTypes.hideSpinner:
       return {
         ...state,
-        message: null,
-        loading: false || (state.error ? true : false),
+        error: undefined,
+        isLoading: false || Boolean(state.error),
       };
     case SpinnerActions.SpinnerActionTypes.setBar:
       return {
         ...state,
         bar: {
           ...state.bar,
-          show: action.payload,
+          isShow: action.payload,
         },
       };
     case SpinnerActions.SpinnerActionTypes.setPercent:

@@ -4,7 +4,7 @@ export interface ISticker {
   stickerUrl: string | undefined;
   pokemonId?: number;
   pokemonName: string | undefined;
-  shop: boolean;
+  isShop: boolean;
   pack: number[];
 }
 
@@ -14,6 +14,6 @@ export class Sticker implements ISticker {
   stickerUrl: string | undefined;
   pokemonId?: number;
   pokemonName: string | undefined;
-  shop = false;
+  isShop = false;
   pack: number[] = [];
 }

@@ -21,12 +21,12 @@ import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { ITrainerFriendship, ThrowOption } from '../../../core/models/options.model';
+import { ITrainerFriendship } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isInclude } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isInclude, toFloatWithPadding } from '../../../util/extension';
 import { ChargeAbility, PokemonType } from './enums/damage.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { VariantType } from '../../../enums/type.enum';
@@ -51,17 +51,17 @@ const labels: DynamicObj<ILabelDamage> = {
 };
 
 interface IFilter {
-  weather: boolean;
-  dodge: boolean;
-  trainer: boolean;
+  isWeather: boolean;
+  isDodge: boolean;
+  isTrainer: boolean;
   fLevel: number;
   cLevel: number;
 }
 
 class Filter implements IFilter {
-  weather = false;
-  dodge = false;
-  trainer = false;
+  isWeather = false;
+  isDodge = false;
+  isTrainer = false;
   fLevel = 0;
   cLevel = ChargeAbility.EXCELLENT;
 
@@ -74,8 +74,8 @@ class Filter implements IFilter {
 
 const Damage = () => {
   useChangeTitle('Damage Simulator - Battle Simulator');
-  const globalOptions = useSelector((state: StoreState) => state.store?.data?.options);
-  const typeEff = useSelector((state: StoreState) => state.store?.data?.typeEff);
+  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
+  const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [id, setId] = useState(searching ? searching.id : 1);
@@ -106,7 +106,7 @@ const Damage = () => {
 
   const [enableFriend, setEnableFriend] = useState(false);
   const [battleState, setBattleState] = useState(new Filter());
-  const { weather, dodge, trainer } = battleState;
+  const { isWeather, isDodge, isTrainer } = battleState;
   const [result, setResult] = useState(new PokemonDmgOption());
 
   const { enqueueSnackbar } = useSnackbar();
@@ -161,11 +161,11 @@ const Damage = () => {
       e.preventDefault();
       if (move) {
         const eff = BattleState.create({
-          stab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)),
-          wb: battleState.weather,
-          dodge: battleState.dodge,
-          mega: isInclude(form?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
-          trainer: battleState.trainer,
+          isStab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)),
+          isWb: battleState.isWeather,
+          isDodge: battleState.isDodge,
+          isMega: isInclude(form?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
+          isTrainer: battleState.isTrainer,
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,
           effective: getTypeEffective(typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, formObj?.form.types)),
@@ -207,7 +207,7 @@ const Damage = () => {
     ]
   );
 
-  const handleCheckbox = (event: { target: { name: string; checked: boolean } }) => {
+  const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBattleState({
       ...battleState,
       [event.target.name]: event.target.checked,
@@ -219,7 +219,7 @@ const Damage = () => {
       <div className="row battle-game">
         <div className="col-lg border-window">
           <Find
-            hide={true}
+            isHide={true}
             title="Attacker Pokémon"
             clearStats={clearMove}
             setStatATK={setStatATK}
@@ -240,15 +240,15 @@ const Damage = () => {
         </div>
         <div className="col-lg border-window">
           <Find
-            hide={true}
+            isHide={true}
             title="Defender Pokémon"
-            swap={true}
+            isSwap={true}
             clearStats={clearData}
             setStatATK={setStatATKObj}
             setStatDEF={setStatDEFObj}
             setStatSTA={setStatSTAObj}
             setForm={onSetFormObj}
-            objective={true}
+            isObjective={true}
           />
           <StatsTable
             setStatLvDEF={setStatLvDEFObj}
@@ -283,11 +283,11 @@ const Damage = () => {
               <Move
                 text="Select Moves"
                 id={id}
-                selectDefault={true}
+                isSelectDefault={true}
                 form={form ? form.form.name : name.toLowerCase()}
                 setMove={setMove}
                 move={move}
-                highlight={true}
+                isHighlight={true}
               />
               <div className="element-top">
                 {move && (
@@ -314,11 +314,11 @@ const Damage = () => {
                 <div className="text-center">
                   <FormGroup>
                     <FormControlLabel
-                      control={<Checkbox checked={weather} onChange={handleCheckbox} name="weather" />}
+                      control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="weather" />}
                       label="Weather Boosts"
                     />
-                    <FormControlLabel control={<Checkbox checked={dodge} onChange={handleCheckbox} name="dodge" />} label="Dodge" />
-                    <FormControlLabel control={<Checkbox checked={trainer} onChange={handleCheckbox} name="trainer" />} label="Trainer" />
+                    <FormControlLabel control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="dodge" />} label="Dodge" />
+                    <FormControlLabel control={<Checkbox checked={isTrainer} onChange={handleCheckbox} name="trainer" />} label="Trainer" />
                   </FormGroup>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <FormControlLabel
@@ -355,7 +355,11 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{getDataWithKey<ITrainerFriendship>(globalOptions?.trainerFriendship, battleState.fLevel).atkBonus?.toFixed(2)}
+                      x
+                      {toFloatWithPadding(
+                        getDataWithKey<ITrainerFriendship>(globalOptions.trainerFriendship, battleState.fLevel).atkBonus,
+                        2
+                      )}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
@@ -374,7 +378,7 @@ const Damage = () => {
                           );
                         }}
                       >
-                        {Object.entries(globalOptions?.throwCharge ?? new ThrowOption()).map(([type, value], index) => (
+                        {Object.entries(globalOptions.throwCharge).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>x{value}</span>

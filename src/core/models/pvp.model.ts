@@ -1,23 +1,31 @@
+import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
 import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';
 
 export interface IPVPDataModel {
-  rankings: PVPInfo[];
-  trains: PVPInfo[];
+  rankings: IPVPInfo[];
+  trains: IPVPInfo[];
 }
 
 export class PVPDataModel implements IPVPDataModel {
-  rankings: PVPInfo[] = [];
-  trains: PVPInfo[] = [];
+  rankings: IPVPInfo[] = [];
+  trains: IPVPInfo[] = [];
 }
 
-export interface PVPInfo {
+export interface IPVPInfo {
   id: string;
   name: string;
   cp: number[];
-  logo: string | null;
+  logo?: string;
+}
+
+export class PVPInfo implements IPVPInfo {
+  id = '';
+  name = '';
+  cp: number[] = [];
+  logo?: string;
 }
 
 export interface TeamsPVP {
@@ -39,8 +47,8 @@ export interface IPerformers {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  shadow: boolean;
-  purified: boolean | undefined;
+  isShadow: boolean;
+  isPurified: boolean;
   games: number;
   individualScore: number;
   pokemon: string;
@@ -62,8 +70,8 @@ export class Performers implements IPerformers {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  shadow = false;
-  purified: boolean | undefined;
+  isShadow = false;
+  isPurified = false;
   games = 0;
   individualScore = 0;
   pokemon = '';
@@ -164,8 +172,8 @@ export interface IBattlePokemonData {
   pokemon: IPokemonData;
   id: number;
   form: string | undefined | null;
-  shadow?: boolean;
-  purified?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
 }
 
 export class BattlePokemonData implements IBattlePokemonData {
@@ -183,8 +191,8 @@ export class BattlePokemonData implements IBattlePokemonData {
   pokemon = new PokemonData();
   id = 0;
   form: string | undefined | null;
-  shadow?: boolean;
-  purified?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
 
   static create(value: IBattlePokemonData) {
     const obj = new BattlePokemonData();
@@ -195,7 +203,7 @@ export class BattlePokemonData implements IBattlePokemonData {
 
 export interface PokemonPVPMove {
   abbreviation: string;
-  archetype: string;
+  archetype: ArcheType;
   cooldown: number;
   energy: number;
   energyGain: number;

@@ -14,7 +14,7 @@ import { ThemeModify } from '../../util/models/overrides/themes.model';
 
 const TypeEffect = () => {
   useChangeTitle('Type Effectiveness');
-  const typeEffective = useSelector((state: StoreState) => state.store.data?.typeEff);
+  const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
   const theme = useTheme<ThemeModify>();
 
   return (

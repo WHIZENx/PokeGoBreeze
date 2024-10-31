@@ -129,7 +129,14 @@ const StatsTable = () => {
 
   return (
     <div className="container" style={{ minHeight: 1650 }}>
-      <Find hide={true} clearStats={clearStats} setStatATK={setStatATK} setStatDEF={setStatDEF} setStatSTA={setStatSTA} setName={setName} />
+      <Find
+        isHide={true}
+        clearStats={clearStats}
+        setStatATK={setStatATK}
+        setStatDEF={setStatDEF}
+        setStatSTA={setStatSTA}
+        setName={setName}
+      />
       <h1 id="main" className="text-center">
         Stats Battle Table
       </h1>

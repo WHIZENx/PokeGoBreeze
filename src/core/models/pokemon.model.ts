@@ -269,8 +269,8 @@ export interface IPokemonData {
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
-  eliteQuickMove?: string[];
-  eliteCinematicMove?: string[];
+  eliteQuickMoves?: string[];
+  eliteCinematicMoves?: string[];
   shadowMoves?: string[];
   purifiedMoves?: string[];
   evoList?: IEvoList[];
@@ -304,8 +304,8 @@ interface IPokemonDPSBattle {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  shadow?: boolean;
-  purified?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
   mShadow?: boolean;
   elite?: Elite;
   atk?: number;
@@ -314,7 +314,7 @@ interface IPokemonDPSBattle {
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  special?: boolean;
+  isSpecial?: boolean;
 }
 
 export class PokemonDPSBattle implements IPokemonDPSBattle {
@@ -331,8 +331,8 @@ export class PokemonDPSBattle implements IPokemonDPSBattle {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  shadow?: boolean;
-  purified?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
   mShadow?: boolean;
   elite?: Elite;
   atk?: number;
@@ -341,7 +341,7 @@ export class PokemonDPSBattle implements IPokemonDPSBattle {
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  special?: boolean;
+  isSpecial?: boolean;
 
   static create(value: IPokemonDPSBattle) {
     const obj = new PokemonDPSBattle();
@@ -369,8 +369,8 @@ export class PokemonMoveData implements IPokemonMoveData {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  shadow?: boolean;
-  purified?: boolean;
+  isShadow?: boolean;
+  isPurified?: boolean;
   mShadow?: boolean;
   elite?: Elite;
   atk?: number;
@@ -379,7 +379,7 @@ export class PokemonMoveData implements IPokemonMoveData {
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  special?: boolean;
+  isSpecial?: boolean;
 
   static create(value: IPokemonMoveData) {
     const obj = new PokemonMoveData();
@@ -508,8 +508,8 @@ export class PokemonData implements IPokemonData {
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
-  eliteQuickMove?: string[];
-  eliteCinematicMove?: string[];
+  eliteQuickMoves?: string[];
+  eliteCinematicMoves?: string[];
   shadowMoves?: string[];
   purifiedMoves?: string[];
   evoList?: IEvoList[];
@@ -528,7 +528,7 @@ export class PokemonData implements IPokemonData {
   formeOrder: string[] = [];
   canGigantamax: string | null = null;
   changesFrom: string | null = null;
-  cannotDynamax = false;
+  cannotDynamax = true;
 
   static create(pokemon: PokemonModel, types: string[], options?: IPokemonDataOptional) {
     const obj = new PokemonData();
@@ -592,13 +592,13 @@ export class PokemonData implements IPokemonData {
     obj.baseSpecies = capitalize(pokemon.pokemonId);
     obj.forme = pokemon.form ? pokemon.form : FORM_NORMAL;
     obj.encounter = pokemon.encounter;
-    obj.isShadow = pokemon.shadow ? true : false;
+    obj.isShadow = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;
 
     obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move.toString()));
     obj.cinematicMoves = pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move.toString()));
-    obj.eliteQuickMove = pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move.toString()));
-    obj.eliteCinematicMove = pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move.toString()));
+    obj.eliteQuickMoves = pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move.toString()));
+    obj.eliteCinematicMoves = pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move.toString()));
     obj.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move.toString()));
     obj.shadowMoves = options?.shadowMoves?.map((move) => replaceTempMoveName(move.toString()));
     obj.purifiedMoves = options?.purifiedMoves?.map((move) => replaceTempMoveName(move.toString()));

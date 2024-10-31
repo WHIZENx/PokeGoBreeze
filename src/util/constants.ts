@@ -130,7 +130,6 @@ export const DEFAULT_ENEMY_ATK_DELAY = 2;
 
 export const DEFAULT_TRAINER_MULTIPLY = 1.3;
 export const DEFAULT_MEGA_MULTIPLY = 1.1;
-export const DEFAULT_DODGE_MULTIPLY = 0.25;
 
 export const CURVE_INC_CHANCE = 1.7;
 export const PLATINUM_INC_CHANCE = 1.4;
@@ -156,21 +155,35 @@ export const MIN_IV = 0;
 export const MAX_IV = 15;
 
 export const STAB_MULTIPLY = (options: IOptions | undefined) => {
-  return getOption<number>(options, ['battleOptions', 'stab']) || 1;
+  return getOption<number>(options, ['battleOptions', 'stab'], 1);
 };
 export const MULTIPLY_LEVEL_FRIENDSHIP = (options: IOptions | undefined, level = DEFAULT_POKEMON_FRIEND_LEVEL) => {
-  return getOption<number>(options, ['trainerFriendship', level.toString(), 'atkBonus']) || 1;
+  return getOption<number>(options, ['trainerFriendship', level.toString(), 'atkBonus'], 1);
 };
 export const MULTIPLY_THROW_CHARGE = (options: IOptions | undefined, type: string) => {
-  return getOption<number>(options, ['throwCharge', type]) || 1;
+  return getOption<number>(options, ['throwCharge', type], 1);
+};
+export const DODGE_REDUCE = (options: IOptions | undefined) => {
+  return getOption<number>(options, ['battleOptions', 'dodgeDamageReductionPercent'], 0);
+};
+export const MAX_ENERGY = (options: IOptions | undefined) => {
+  return getOption<number>(options, ['battleOptions', 'maxEnergy'], 0);
 };
 
 /* Shadow exclusive bonus for Pokémon in battle */
 export const SHADOW_ATK_BONUS = (options: IOptions | undefined) => {
-  return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.ATK]) || 1;
+  return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.ATK], 1);
 };
 export const SHADOW_DEF_BONUS = (options: IOptions | undefined) => {
-  return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.DEF]) || 1;
+  return getOption<number>(options, ['combatOptions', 'shadowBonus', TypeAction.DEF], 1);
+};
+
+/* Purified exclusive bonus for Pokémon in battle */
+export const PURIFIED_ATK_BONUS = (options: IOptions | undefined) => {
+  return getOption<number>(options, ['combatOptions', 'purifiedBonus', TypeAction.ATK], 1);
+};
+export const PURIFIED_DEF_BONUS = (options: IOptions | undefined) => {
+  return getOption<number>(options, ['combatOptions', 'purifiedBonus', TypeAction.DEF], 1);
 };
 
 export const genList: DynamicObj<number[]> = {

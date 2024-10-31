@@ -26,7 +26,7 @@ const Loading = (props: ILoadingComponent) => {
   return (
     <Fragment>
       <Background bgColor={props.bgColor || 'transparent'} opacity={props.opacity ?? 0.4} isShow={props.isShow} />
-      <LoadGroup bgColor={props.bgColor || 'white'} isShow={props.isShow} isVertical={props.isVertical} hideAttr={false} />
+      <LoadGroup bgColor={props.bgColor || 'white'} isShow={props.isShow} isVertical={props.isVertical} isHideAttr={false} />
     </Fragment>
   );
 };

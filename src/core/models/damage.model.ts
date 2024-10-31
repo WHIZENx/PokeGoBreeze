@@ -22,21 +22,21 @@ export class LabelDamage implements ILabelDamage {
 }
 
 export interface IBattleState {
-  stab: boolean;
-  wb: boolean;
-  dodge?: boolean;
-  trainer?: boolean;
+  isStab: boolean;
+  isWb: boolean;
+  isDodge?: boolean;
+  isTrainer?: boolean;
   fLevel?: number;
   cLevel?: number;
   effective: number;
-  mega?: boolean;
+  isMega?: boolean;
 }
 
 export class BattleState implements IBattleState {
-  stab = false;
-  wb = false;
-  dodge?: boolean;
-  trainer?: boolean;
+  isStab = false;
+  isWb = false;
+  isDodge?: boolean;
+  isTrainer?: boolean;
   fLevel?: number;
   cLevel?: number;
   effective = 0;

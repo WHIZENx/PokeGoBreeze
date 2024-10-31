@@ -152,7 +152,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
           </IconButton>
         </Navbar.Collapse>
       </Navbar>
-      {spinner.bar.show && (
+      {spinner.bar.isShow && (
         <Box sx={{ width: '100%', position: 'absolute', zIndex: 7 }}>
           <LinearProgress variant={VariantType.Determinate} value={spinner.bar.percent} />
         </Box>

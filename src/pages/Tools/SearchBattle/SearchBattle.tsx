@@ -35,7 +35,7 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
-  isNullOrEmpty,
+  toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
@@ -87,9 +87,9 @@ const FindBattle = () => {
       }
       let curr;
       if (form === FORM_NORMAL) {
-        curr = dataStore?.pokemon?.find((item) => isIncludeList(currId, item.num) && isEqual(form, item.forme));
+        curr = dataStore.pokemon.find((item) => isIncludeList(currId, item.num) && isEqual(form, item.forme));
       } else {
-        curr = dataStore?.pokemon?.find((item) => isIncludeList(currId, item.num) && isInclude(item.forme, form));
+        curr = dataStore.pokemon.find((item) => isIncludeList(currId, item.num) && isInclude(item.forme, form));
       }
       if (
         !isIncludeList(
@@ -116,7 +116,7 @@ const FindBattle = () => {
         arr
       );
     },
-    [dataStore?.pokemon]
+    [dataStore.pokemon]
   );
 
   const prevEvoChain = useCallback(
@@ -139,7 +139,7 @@ const FindBattle = () => {
       obj.evoList?.forEach((i) => {
         currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = dataStore?.pokemon?.filter((item) =>
+      const curr = dataStore.pokemon.filter((item) =>
         item.evoList?.find((i) => obj.num === i.evoToId && isEqual(i.evoToForm, defaultForm))
       );
       if (isNotEmpty(curr)) {
@@ -148,28 +148,28 @@ const FindBattle = () => {
         result.push(arr);
       }
     },
-    [currEvoChain, dataStore?.pokemon]
+    [currEvoChain, dataStore.pokemon]
   );
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const currentForm = isNullOrEmpty(form?.form.formName) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
-      let curr = dataStore?.pokemon?.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
+      const currentForm = form?.form.formName ? form.form.formName.replaceAll('-', '_').toUpperCase() : FORM_NORMAL;
+      let curr = dataStore.pokemon.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
       if (!isNotEmpty(curr)) {
         if (currentForm === FORM_NORMAL) {
-          curr = dataStore?.pokemon?.filter((item) => id === item.num && isEqual(currentForm, item.forme));
+          curr = dataStore.pokemon.filter((item) => id === item.num && isEqual(currentForm, item.forme));
         } else {
-          curr = dataStore?.pokemon?.filter((item) => id === item.num && isInclude(item.forme, currentForm ?? FORM_NORMAL));
+          curr = dataStore.pokemon.filter((item) => id === item.num && isInclude(item.forme, currentForm ?? FORM_NORMAL));
         }
       }
       if (!isNotEmpty(curr)) {
-        curr = dataStore?.pokemon?.filter((item) => id === item.num && item.forme === FORM_NORMAL);
+        curr = dataStore.pokemon.filter((item) => id === item.num && item.forme === FORM_NORMAL);
       }
       const result: IEvolution[][] = [];
       curr?.forEach((item) => prevEvoChain(item, currentForm ?? FORM_NORMAL, [], result));
       return result;
     },
-    [prevEvoChain, form, dataStore?.pokemon]
+    [prevEvoChain, form, dataStore.pokemon]
   );
 
   const searchStatsPoke = useCallback(
@@ -178,15 +178,7 @@ const FindBattle = () => {
       getEvoChain(id).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(
-            dataStore?.options,
-            getValueOrDefault(Array, dataStore?.pokemon),
-            value,
-            level,
-            ATKIv,
-            DEFIv,
-            STAIv
-          );
+          const data = queryStatesEvoChain(dataStore.options, dataStore.pokemon, value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
             setMaxCP(data.maxCP);
           }
@@ -270,7 +262,7 @@ const FindBattle = () => {
         dispatch(SpinnerActions.HideSpinner.create());
       }
     },
-    [dispatch, dataStore?.options, ATKIv, DEFIv, STAIv, getEvoChain, id]
+    [dispatch, dataStore.options, ATKIv, DEFIv, STAIv, getEvoChain, id]
   );
 
   const onSearchStatsPoke = useCallback(
@@ -301,10 +293,10 @@ const FindBattle = () => {
   );
 
   const getImageList = (id: number) => {
-    const isForm = isNullOrEmpty(form?.form.formName) ? FORM_NORMAL : form?.form.formName.replaceAll('-', '_').toUpperCase();
-    let img = dataStore?.assets?.find((item) => item.id === id)?.image.find((item) => isInclude(item.form, isForm ?? FORM_NORMAL));
+    const isForm = form?.form.formName ? form.form.formName.replaceAll('-', '_').toUpperCase() : FORM_NORMAL;
+    let img = dataStore.assets.find((item) => item.id === id)?.image.find((item) => isInclude(item.form, isForm ?? FORM_NORMAL));
     if (!img) {
-      img = dataStore?.assets?.find((item) => item.id === id)?.image.at(0);
+      img = dataStore.assets.find((item) => item.id === id)?.image.at(0);
     }
     return img?.default;
   };
@@ -344,7 +336,7 @@ const FindBattle = () => {
   return (
     <div className="container">
       <Find
-        hide={true}
+        isHide={true}
         clearStats={clearArrStats}
         setStatATK={setStatATK}
         setStatDEF={setStatDEF}
@@ -486,7 +478,7 @@ const FindBattle = () => {
                           }
                         />
                         <div>
-                          <b>{value.ratio?.toFixed(2)}</b>
+                          <b>{toFloatWithPadding(value.ratio, 2)}</b>
                         </div>
                         <span className="caption">CP: {value.CP}</span>
                       </div>
@@ -562,7 +554,7 @@ const FindBattle = () => {
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.little.ratio))}
                                         >
-                                          <b>{item.battleLeague.little.ratio?.toFixed(2)}</b>
+                                          <b>{toFloatWithPadding(item.battleLeague.little.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
@@ -617,7 +609,7 @@ const FindBattle = () => {
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.great.ratio))}
                                         >
-                                          <b>{item.battleLeague.great.ratio?.toFixed(2)}</b>
+                                          <b>{toFloatWithPadding(item.battleLeague.great.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
@@ -672,7 +664,7 @@ const FindBattle = () => {
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.ultra.ratio))}
                                         >
-                                          <b>{item.battleLeague.ultra.ratio?.toFixed(2)}</b>
+                                          <b>{toFloatWithPadding(item.battleLeague.ultra.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
@@ -727,7 +719,7 @@ const FindBattle = () => {
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.master.ratio))}
                                         >
-                                          <b>{item.battleLeague.master.ratio?.toFixed(2)}</b>
+                                          <b>{toFloatWithPadding(item.battleLeague.master.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
