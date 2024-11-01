@@ -47,6 +47,7 @@ import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
+import { PokemonType } from '../../../pages/Tools/BattleDamage/enums/damage.enum';
 
 interface IPokemonEvo {
   prev?: string;
@@ -331,7 +332,7 @@ const Evolution = (props: IEvolutionComponent) => {
     const form =
       isEmpty(formName) || isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
         ? FORM_NORMAL
-        : forme.isPurified || forme.isShadow
+        : forme.pokemonType === PokemonType.Purified || forme.pokemonType === PokemonType.Shadow
         ? isEqual(formName, FORM_SHADOW) || isEqual(formName, FORM_PURIFIED)
           ? FORM_NORMAL
           : formName.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
@@ -399,8 +400,12 @@ const Evolution = (props: IEvolutionComponent) => {
   const renderImgGif = (value: IPokemonEvo) => {
     return (
       <>
-        {props.isPurified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
-        {props.isShadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+        {props.pokemonType === PokemonType.Purified && (
+          <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
+        )}
+        {props.pokemonType === PokemonType.Shadow && (
+          <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+        )}
         <img
           className="pokemon-sprite"
           id="img-pokemon"
@@ -448,10 +453,12 @@ const Evolution = (props: IEvolutionComponent) => {
                             style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                           >
                             <Candy id={value.id} />
-                            <span style={{ marginLeft: 2 }}>{`x${props.isPurified ? data.purificationEvoCandyCost : data.candyCost}`}</span>
+                            <span style={{ marginLeft: 2 }}>{`x${
+                              props.pokemonType === PokemonType.Purified ? data.purificationEvoCandyCost : data.candyCost
+                            }`}</span>
                           </span>
                         )}
-                        {props.isPurified && data?.candyCost && data?.purificationEvoCandyCost && (
+                        {props.pokemonType === PokemonType.Purified && data?.candyCost && data?.purificationEvoCandyCost && (
                           <span className="d-block text-end caption text-danger">{`-${
                             data.candyCost - data.purificationEvoCandyCost
                           }`}</span>

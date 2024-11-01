@@ -184,7 +184,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     if (pokemon.id !== 201) {
       pokemon.name = pokemonSettings.form ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
     } else {
-      const form = getValueOrDefault(String, pokemon.form);
+      const form = getValueOrDefault(String, pokemon.form?.toString());
       pokemon.name = form;
       pokemon.form = form.replace(/UNOWN_/, '');
     }
@@ -275,7 +275,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       if (evo.form) {
         dataEvo.evoToForm = convertAndReplaceNameGO(evo.form, name);
       } else {
-        dataEvo.evoToForm = pokemon.form ?? FORM_NORMAL;
+        dataEvo.evoToForm = pokemon.form?.toString() ?? FORM_NORMAL;
       }
 
       dataEvo.evoToName = name.replace(`_${FORM_NORMAL}`, '');
@@ -285,7 +285,10 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
           i.data.pokemonSettings &&
           isEqual(i.data.pokemonSettings.pokemonId, dataEvo.evoToName) &&
           isEqual(
-            convertAndReplaceNameGO(i.data.pokemonSettings.form ?? pokemon.form ?? FORM_NORMAL, i.data.pokemonSettings.pokemonId),
+            convertAndReplaceNameGO(
+              i.data.pokemonSettings.form?.toString() ?? pokemon.form?.toString() ?? FORM_NORMAL,
+              i.data.pokemonSettings.pokemonId
+            ),
             dataEvo.evoToForm
           )
       );
@@ -616,7 +619,7 @@ const pokemonDefaultForm = (data: PokemonDataGM[]) => {
       (!item.data.pokemonSettings.form ||
         applyPokemonReleasedGO(data, item, forms) ||
         isIncludeList(forms, item.data.pokemonSettings.form)) &&
-      !item.data.pokemonSettings.form?.endsWith(FORM_NORMAL)
+      !item.data.pokemonSettings.form?.toString().endsWith(FORM_NORMAL)
   );
 };
 

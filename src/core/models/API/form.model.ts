@@ -1,4 +1,5 @@
-import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../../util/constants';
+import { PokemonType } from '../../../pages/Tools/BattleDamage/enums/damage.enum';
+import { FORM_NORMAL } from '../../../util/constants';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
@@ -110,8 +111,7 @@ export interface IForm {
   id: number | undefined;
   isDefault: boolean;
   isMega: boolean;
-  isShadow: boolean;
-  isPurified: boolean;
+  pokemonType: PokemonType;
   name: string;
   version: string;
   types: string[];
@@ -165,7 +165,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
     types: string[],
     sprites: IPokemonSprit | undefined,
     formId: number,
-    specialForm: 'NORMAL' | 'SHADOW' | 'PURIFIED' = FORM_NORMAL,
+    pokemonType = PokemonType.None,
     isDefault = true,
     isMega = false
   ) {
@@ -177,8 +177,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
       id: formId,
       isDefault,
       isMega,
-      isShadow: specialForm === FORM_SHADOW,
-      isPurified: specialForm === FORM_PURIFIED,
+      pokemonType,
       name: fullFormName,
       version,
       types,
@@ -192,8 +191,7 @@ export class Form implements IForm {
   id: number | undefined;
   isDefault = false;
   isMega = false;
-  isShadow = false;
-  isPurified = false;
+  pokemonType = PokemonType.None;
   name = '';
   version = '';
   types: string[] = [];

@@ -1218,7 +1218,7 @@ const DpsTdo = () => {
           onSort={(selectedColumn, sortDirection) => {
             setDefaultSorted(
               OptionDPSSort.create({
-                selectedColumn: toNumber(selectedColumn.id?.toString(), 1),
+                selectedColumn: toNumber(selectedColumn.id, 1),
                 sortDirection,
               })
             );

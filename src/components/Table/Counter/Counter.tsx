@@ -2,7 +2,13 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  checkPokemonGO,
+  convertPokemonDataName,
+  getPokemonAdditionBySpecialType,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -10,10 +16,10 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { FORM_MEGA, FORM_PRIMAL, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { FORM_MEGA, FORM_PRIMAL } from '../../../util/constants';
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { MoveType, TypeTheme } from '../../../enums/type.enum';
+import { MoveType, TypeAction, TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
@@ -235,7 +241,7 @@ const Counter = (props: ICounterComponent) => {
       setCounterList([]);
       setFrame(true);
     }
-    if (!isUndefined(props.isShadow) && isNotEmpty(props.types)) {
+    if (!isUndefined(props.pokemonType) && isNotEmpty(props.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
@@ -244,7 +250,7 @@ const Counter = (props: ICounterComponent) => {
         .catch(() => setFrame(true));
     }
     return () => controller.abort();
-  }, [props.def, props.isShadow, props.types]);
+  }, [props.def, props.pokemonType, props.types]);
 
   const calculateCounter = (signal: AbortSignal, delay = 3000) => {
     return new Promise<ICounterModel[]>((resolve, reject) => {
@@ -264,7 +270,7 @@ const Counter = (props: ICounterComponent) => {
           data.pokemon,
           data.typeEff,
           data.weatherBoost,
-          props.def * (props.isShadow ? SHADOW_DEF_BONUS(data.options) : 1),
+          props.def * getPokemonAdditionBySpecialType(props.pokemonType, data.options, TypeAction.DEF),
           getValueOrDefault(Array, props.types),
           data.combat
         );

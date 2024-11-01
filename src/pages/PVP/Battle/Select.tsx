@@ -9,7 +9,7 @@ import CardPokemon from '../../../components/Card/CardPokemon';
 import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/constants';
+import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/constants';
 import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
@@ -18,6 +18,7 @@ import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEm
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { MoveType } from '../../../enums/type.enum';
+import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data.combat);
@@ -243,7 +244,13 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                 <CardPokemon
                   value={value.pokemon}
                   score={value.score}
-                  isShadow={isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)}
+                  pokemonType={
+                    isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
+                      ? PokemonType.Shadow
+                      : isInclude(value.speciesId, `_${FORM_PURIFIED}`, IncludeMode.IncludeIgnoreCaseSensitive)
+                      ? PokemonType.Purified
+                      : PokemonType.None
+                  }
                 />
               </div>
             ))}

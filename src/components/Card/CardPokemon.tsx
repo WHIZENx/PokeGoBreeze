@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { splitAndCapitalize } from '../../util/utils';
 import { ICardPokemonComponent } from '../models/component.model';
+import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
 
 const CardPokemon = (props: ICardPokemonComponent) => {
   return (
@@ -19,8 +20,11 @@ const CardPokemon = (props: ICardPokemonComponent) => {
                 e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
               }}
             />
-            {props.isShadow && (
+            {props.pokemonType === PokemonType.Shadow && (
               <img className="position-absolute" style={{ bottom: 0, right: 5 }} height={24} src={APIService.getPokeShadow()} />
+            )}
+            {props.pokemonType === PokemonType.Purified && (
+              <img className="position-absolute" style={{ bottom: 0, right: 5 }} height={24} src={APIService.getPokePurified()} />
             )}
           </div>
           {splitAndCapitalize(props.value.name.replaceAll('_', '-'), '-', ' ')}

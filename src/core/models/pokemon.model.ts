@@ -160,7 +160,7 @@ export interface PokemonModel {
   obSpecialAttackMoves?: (string | number)[];
   eliteQuickMove?: (string | number)[];
   eliteCinematicMove?: (string | number)[];
-  form?: string | null;
+  form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | null | undefined;
   formChange?: IPokemonFormChange[];
@@ -548,7 +548,7 @@ export class PokemonData implements IPokemonData {
           ? `${pokemon.pokemonId}_${pokemon.form}`
           : pokemon.pokemonId;
     } else {
-      obj.fullName = getValueOrDefault(String, pokemon.form);
+      obj.fullName = getValueOrDefault(String, pokemon.form?.toString());
     }
     obj.slug =
       options?.slug ??
@@ -590,7 +590,7 @@ export class PokemonData implements IPokemonData {
     obj.region = options?.region ?? 'Unknown';
     obj.version = options?.version ?? 'scarlet-violet';
     obj.baseSpecies = capitalize(pokemon.pokemonId);
-    obj.forme = pokemon.form ? pokemon.form : FORM_NORMAL;
+    obj.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
     obj.encounter = pokemon.encounter;
     obj.isShadow = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;
