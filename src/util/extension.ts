@@ -155,3 +155,15 @@ export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.Ca
   return array.filter((item) => isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode))
     .length;
 };
+
+export const getPropertyName = <T extends object>(
+  obj: T | null | undefined,
+  expression: (x: { [Property in keyof T]: string }) => string
+) => {
+  if (!obj) {
+    return '';
+  }
+  const res = {} as { [Property in keyof T]: string };
+  Object.keys(obj).map((k) => (res[k as keyof T] = k));
+  return expression(res);
+};

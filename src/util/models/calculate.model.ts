@@ -67,8 +67,8 @@ export interface IStatsCalculate {
 
 export interface IBetweenLevelCalculate {
   CP: number;
-  resultBetweenStadust: number;
-  resultBetweenStadustDiff?: number;
+  resultBetweenStardust: number;
+  resultBetweenStardustDiff?: number;
   resultBetweenCandy: number;
   resultBetweenCandyDiff?: number;
   resultBetweenXLCandy: number;
@@ -83,8 +83,8 @@ export interface IBetweenLevelCalculate {
 
 export class BetweenLevelCalculate implements IBetweenLevelCalculate {
   CP = 0;
-  resultBetweenStadust = 0;
-  resultBetweenStadustDiff?: number;
+  resultBetweenStardust = 0;
+  resultBetweenStardustDiff?: number;
   resultBetweenCandy = 0;
   resultBetweenCandyDiff?: number;
   resultBetweenXLCandy = 0;
@@ -250,8 +250,8 @@ export interface IBattleBaseStats {
   ratio?: number;
   resultBetweenCandy?: number;
   resultBetweenCandyDiff?: number;
-  resultBetweenStadust?: number;
-  resultBetweenStadustDiff?: number;
+  resultBetweenStardust?: number;
+  resultBetweenStardustDiff?: number;
   resultBetweenXLCandy?: number;
   resultBetweenXLCandyDiff?: number;
   stats?: IStatsBaseCalculate;
@@ -273,8 +273,8 @@ export class BattleBaseStats implements IBattleBaseStats {
   ratio?: number;
   resultBetweenCandy?: number;
   resultBetweenCandyDiff?: number;
-  resultBetweenStadust?: number;
-  resultBetweenStadustDiff?: number;
+  resultBetweenStardust?: number;
+  resultBetweenStardustDiff?: number;
   resultBetweenXLCandy?: number;
   resultBetweenXLCandyDiff?: number;
   stats?: IStatsBaseCalculate;

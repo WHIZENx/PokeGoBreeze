@@ -88,9 +88,9 @@ interface IFilter {
 }
 
 class Filter implements IFilter {
-  fMoveType = SelectType.All.toString();
+  fMoveType = SelectType.All;
   fMoveName = '';
-  cMoveType = SelectType.All.toString();
+  cMoveType = SelectType.All;
   cMoveName = '';
 
   static create(value: IFilter) {

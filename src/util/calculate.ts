@@ -437,17 +437,17 @@ export const calculateBetweenLevel = (
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
-      resultBetweenStadust: 0,
+      resultBetweenStardust: 0,
       resultBetweenCandy: 0,
       resultBetweenXLCandy: 0,
       powerUpCount: 0,
     });
   } else {
-    let betweenStadust = 0;
+    let betweenStardust = 0;
     let betweenCandy = 0;
     let betweenXlCandy = 0;
 
-    let betweenStadustDiff = 0;
+    let betweenStardustDiff = 0;
     let betweenCandyDiff = 0;
     let betweenXlCandyDiff = 0;
 
@@ -460,10 +460,10 @@ export const calculateBetweenLevel = (
     data.forEach((ele: CPMData) => {
       const result = CPMDetail.mapping(ele);
       if (ele.level >= fromLV && ele.level <= toLV) {
-        betweenStadust += Math.ceil(result.stardust * typeCostPowerUp(type).stardust);
+        betweenStardust += Math.ceil(result.stardust * typeCostPowerUp(type).stardust);
         betweenCandy += Math.ceil(result.candy * typeCostPowerUp(type).candy);
         betweenXlCandy += Math.ceil(result.xlCandy * typeCostPowerUp(type).candy);
-        betweenStadustDiff += Math.abs(result.stardust - Math.ceil(result.stardust * typeCostPowerUp(type).stardust));
+        betweenStardustDiff += Math.abs(result.stardust - Math.ceil(result.stardust * typeCostPowerUp(type).stardust));
         betweenCandyDiff += Math.abs(result.candy - Math.ceil(result.candy * typeCostPowerUp(type).candy));
         betweenXlCandyDiff += Math.abs(result.xlCandy - Math.ceil(result.xlCandy * typeCostPowerUp(type).candy));
       }
@@ -471,8 +471,8 @@ export const calculateBetweenLevel = (
 
     const dataList = new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
-      resultBetweenStadust: betweenStadust,
-      resultBetweenStadustDiff: betweenStadustDiff,
+      resultBetweenStardust: betweenStardust,
+      resultBetweenStardustDiff: betweenStardustDiff,
       resultBetweenCandy: betweenCandy,
       resultBetweenCandyDiff: betweenCandyDiff,
       resultBetweenXLCandy: betweenXlCandy,
@@ -660,14 +660,7 @@ export const calculateDamagePVE = (
     const isMega = eff.isMega ? (eff.isStab ? STAB_MULTIPLY(globalOptions) : DEFAULT_MEGA_MULTIPLY) : 1;
     const isTrainer = eff.isTrainer ? DEFAULT_TRAINER_MULTIPLY : 1;
     const isFriend = eff.fLevel ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.fLevel) : 1;
-    let isCharge = eff.cLevel ? MULTIPLY_THROW_CHARGE(globalOptions, 'normal') : 1;
-    if (eff.cLevel === 1) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'nice');
-    } else if (eff.cLevel === 2) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'great');
-    } else if (eff.cLevel === 3) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'excellent');
-    }
+    const isCharge = !isUndefined(eff.cLevel) ? MULTIPLY_THROW_CHARGE(globalOptions, eff.cLevel) : 1;
     modifier = isStab * isWb * isFriend * isDodge * isCharge * isMega * isTrainer * eff.effective;
   } else {
     modifier = isStab ? stabMultiply : 1;

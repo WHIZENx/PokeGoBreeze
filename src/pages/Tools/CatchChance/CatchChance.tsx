@@ -1,5 +1,5 @@
 import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Find/Find';
@@ -58,7 +58,7 @@ const CatchChance = () => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const CIRCLE_DISTANCE = 200;
+  const circleDistance = useRef(200);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [form, setForm] = useState<IPokemonFormModify>();
@@ -71,7 +71,7 @@ const CatchChance = () => {
   const [dataAdv, setDataAdv] = useState(new DataAdvance());
   const [medal, setMedal] = useState(new Medal());
   const [level, setLevel] = useState(MIN_LEVEL);
-  const [radius, setRadius] = useState(CIRCLE_DISTANCE / 2);
+  const [radius, setRadius] = useState(circleDistance.current / 2);
   const [throwTitle, setThrowTitle] = useState(
     new TitleThrow({
       title: 'Nice!',
@@ -610,9 +610,13 @@ const CatchChance = () => {
                 <div className="col-md-6 d-flex flex-column justify-content-center align-items-center" style={{ padding: 0 }}>
                   <h5 className="text-center">{throwTitle.title}</h5>
                   <div className="d-flex justify-content-center position-relative">
-                    <Circle line={2} color="lightgray" size={CIRCLE_DISTANCE} />
+                    <Circle line={2} color="lightgray" size={circleDistance.current} />
                     <div className="position-absolute circle-ring">
-                      <Circle line={2} color={colorCircle} size={CIRCLE_DISTANCE - ((100 - radius) * CIRCLE_DISTANCE) / 100} />
+                      <Circle
+                        line={2}
+                        color={colorCircle}
+                        size={circleDistance.current - ((100 - radius) * circleDistance.current) / 100}
+                      />
                     </div>
                   </div>
                 </div>
