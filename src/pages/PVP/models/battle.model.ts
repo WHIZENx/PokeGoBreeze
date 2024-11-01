@@ -4,6 +4,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IStatsAtk, IStatsDef, IStatsProd, IStatsSta, IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
+import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
 
 export enum ChargeType {
@@ -18,7 +19,7 @@ export interface IPokemonBattleData {
   name?: string;
   form?: string;
   id?: number;
-  isShadow: boolean;
+  pokemonType: PokemonType;
   allStats?: IBattleBaseStats[];
   hp: number;
   stats: IStatsBase | undefined;
@@ -40,7 +41,7 @@ export class PokemonBattleData implements IPokemonBattleData {
   name?: string;
   form?: string;
   id?: number;
-  isShadow = false;
+  pokemonType = PokemonType.None;
   allStats?: IBattleBaseStats[];
   hp = 0;
   stats: IStatsBase | undefined;
@@ -73,7 +74,7 @@ export class PokemonBattleData implements IPokemonBattleData {
 export interface IPokemonBattle {
   disableCMoveSec: boolean;
   disableCMovePri: boolean;
-  isShadow?: boolean;
+  pokemonType: PokemonType;
   pokemonData?: IPokemonBattleData;
   fMove?: ICombat;
   cMovePri?: ICombat;
@@ -89,6 +90,7 @@ export class PokemonBattle implements IPokemonBattle {
   disableCMoveSec = false;
   disableCMovePri = false;
   isShadow?: boolean;
+  pokemonType = PokemonType.None;
   pokemonData?: IPokemonBattleData;
   fMove?: ICombat;
   cMovePri?: ICombat;

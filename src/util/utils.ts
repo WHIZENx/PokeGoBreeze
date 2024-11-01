@@ -884,7 +884,7 @@ export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
   );
 };
 
-export const getPokemonAdditionBySpecialType = (form = PokemonType.None, options?: Options, type?: TypeAction) => {
+export const getDmgMultiplyBonus = (form = PokemonType.None, options?: Options, type?: TypeAction) => {
   switch (type) {
     case TypeAction.ATK: {
       return form === PokemonType.Shadow ? SHADOW_ATK_BONUS(options) : form === PokemonType.Purified ? PURIFIED_ATK_BONUS(options) : 1;

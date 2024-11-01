@@ -2,13 +2,7 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import {
-  capitalize,
-  checkPokemonGO,
-  convertPokemonDataName,
-  getPokemonAdditionBySpecialType,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, getDmgMultiplyBonus, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -270,7 +264,7 @@ const Counter = (props: ICounterComponent) => {
           data.pokemon,
           data.typeEff,
           data.weatherBoost,
-          props.def * getPokemonAdditionBySpecialType(props.pokemonType, data.options, TypeAction.DEF),
+          props.def * getDmgMultiplyBonus(props.pokemonType, data.options, TypeAction.DEF),
           getValueOrDefault(Array, props.types),
           data.combat
         );

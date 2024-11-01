@@ -100,7 +100,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           pokemonData: PokemonBattleData.create({
             ...value,
             form: getValueOrDefault(String, value.form),
-            isShadow: getValueOrDefault(Boolean, value.isShadow),
+            pokemonType: value.pokemonType,
             hp: getValueOrDefault(Number, value.stats.hp),
             fMove: fMoveCombat,
             cMove: cMovePriCombat,
@@ -122,7 +122,11 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMovePriCombat?.sound))),
             cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMoveSecCombat?.sound))),
           },
-          isShadow: isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive),
+          pokemonType: isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
+            ? PokemonType.Shadow
+            : isInclude(value.speciesId, `_${FORM_PURIFIED}`, IncludeMode.IncludeIgnoreCaseSensitive)
+            ? PokemonType.Purified
+            : PokemonType.None,
         })
       );
     }

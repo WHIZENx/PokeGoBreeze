@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/calculate';
-import { checkRankAllAvailable, getPokemonAdditionBySpecialType } from '../../../util/utils';
+import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../util/utils';
 
 import './Stats.scss';
 import { IStatsPokemonGO, StatsPokemonGO, StatsRankPokemonGO } from '../../../core/models/stats.model';
@@ -83,7 +83,7 @@ const Stats = (props: IStatsComponent) => {
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType]);
 
   const setStats = (stats: number, type: TypeAction) => {
-    return Math.round(stats * getPokemonAdditionBySpecialType(props.pokemonType, data.options, type));
+    return Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
   };
 
   return (

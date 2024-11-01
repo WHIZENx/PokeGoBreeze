@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, getPokemonAdditionBySpecialType, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertPokemonAPIDataName, getDmgMultiplyBonus, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -154,8 +154,8 @@ const TableMove = (props: ITableMoveComponent) => {
       data.weatherBoost,
       data.combat,
       result,
-      props.statATK * getPokemonAdditionBySpecialType(props.form?.pokemonType, data.options, TypeAction.ATK),
-      props.statDEF * getPokemonAdditionBySpecialType(props.form?.pokemonType, data.options, TypeAction.DEF),
+      props.statATK * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.ATK),
+      props.statDEF * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.DEF),
       props.statSTA,
       getValueOrDefault(
         Array,
