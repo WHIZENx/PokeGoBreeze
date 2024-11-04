@@ -57,7 +57,7 @@ interface IPokemonEvo {
   form: string;
   isGmax: boolean;
   sprite: string;
-  isPurified?: boolean;
+  pokemonType?: PokemonType;
 }
 
 class PokemonEvo implements IPokemonEvo {
@@ -68,9 +68,18 @@ class PokemonEvo implements IPokemonEvo {
   form: string;
   isGmax: boolean;
   sprite: string;
-  isPurified?: boolean;
+  pokemonType?: PokemonType;
 
-  constructor(name: string, id: number, form: string, sprite: string, prev = '', isGmax = false, isBaby = false, isPurified = false) {
+  constructor(
+    name: string,
+    id: number,
+    form: string,
+    sprite: string,
+    prev = '',
+    isGmax = false,
+    isBaby = false,
+    pokemonType = PokemonType.None
+  ) {
     this.prev = prev;
     this.name = name;
     this.id = id;
@@ -78,7 +87,7 @@ class PokemonEvo implements IPokemonEvo {
     this.form = form;
     this.isGmax = isGmax;
     this.sprite = sprite;
-    this.isPurified = isPurified;
+    this.pokemonType = pokemonType;
   }
 }
 
@@ -135,7 +144,7 @@ const Evolution = (props: IEvolutionComponent) => {
       pokemon.prev,
       false,
       getValueOrDefault(Boolean, pokemon.isBaby),
-      getValueOrDefault(Boolean, pokemon.canPurified)
+      pokemon.canPurified ? PokemonType.Purified : PokemonType.None
     );
   };
 

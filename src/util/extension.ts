@@ -62,7 +62,7 @@ export const isNullOrEmpty = (value?: string | null): value is string | null => 
 };
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) => {
-  return parseInt((value || defaultValue).toString());
+  return parseFloat((value || defaultValue).toString()) || defaultValue;
 };
 
 export const toFloat = (value: string | number | null | undefined, fixedRounding = -1, defaultValue = 0) => {

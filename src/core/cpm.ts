@@ -9,18 +9,8 @@ export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: numb
     if (baseCPM[i]) {
       result.multiplier = baseCPM[i];
     } else {
-      const lvLow = toNumber(
-        getValueOrDefault(
-          String,
-          Object.keys(baseCPM).find((key) => toNumber(key) <= i)
-        )
-      );
-      const lvHigh = toNumber(
-        getValueOrDefault(
-          String,
-          Object.keys(baseCPM).find((key) => toNumber(key) >= i)
-        )
-      );
+      const lvLow = toNumber(Object.keys(baseCPM).find((key) => toNumber(key) <= i));
+      const lvHigh = toNumber(Object.keys(baseCPM).find((key) => toNumber(key) >= i));
       result.multiplier = Math.sqrt(
         ((Math.pow(baseCPM[lvHigh], 2) - Math.pow(baseCPM[lvLow], 2)) / (lvHigh - lvLow)) * (i - lvLow) + Math.pow(baseCPM[lvLow], 2)
       );

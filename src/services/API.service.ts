@@ -45,7 +45,7 @@ class APIService {
     return this.axios.get<T>(url, options);
   }
 
-  getPokeSpices(value: string, options?: AxiosRequestConfig<any> | undefined) {
+  getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
     return this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
   }
 
@@ -53,7 +53,7 @@ class APIService {
     return this.getFetchUrl(`${APIUrl.POGO_API_URL}${path}`, options);
   }
 
-  getPokeAPI(path: string, value: string) {
+  getPokeAPI(path: string, value: number) {
     return `${APIUrl.POKE_API_URL}${path}/${value}`;
   }
 

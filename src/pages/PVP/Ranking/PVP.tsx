@@ -42,6 +42,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { Sorted } from '../enums/pvp-team.enum';
 import { SortType } from '../enums/pvp-ranking-enum';
+import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -94,7 +95,7 @@ const RankingPVP = () => {
   const fetchPokemonRanking = useCallback(async () => {
     dispatch(SpinnerActions.ShowSpinner.create());
     try {
-      const cp = toNumber(getValueOrDefault(String, params.cp));
+      const cp = toNumber(params.cp);
       const file = (
         await APIService.getFetchUrl<RankingsPVP[]>(
           APIService.getRankingFile(getValueOrDefault(String, params.serie), cp, getValueOrDefault(String, params.type))
@@ -136,6 +137,13 @@ const RankingPVP = () => {
           cMoveSec = dataStore.combat.find((item) => isEqual(item.name, cMoveDataSec));
         }
 
+        let pokemonType = PokemonType.None;
+        if (isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+          pokemonType = PokemonType.Shadow;
+        } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec)) {
+          pokemonType = PokemonType.Purified;
+        }
+
         return new PokemonBattleRanking({
           data: item,
           id,
@@ -150,8 +158,7 @@ const RankingPVP = () => {
           fMove,
           cMovePri,
           cMoveSec,
-          isShadow: isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
-          isPurified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec),
+          pokemonType,
         });
       });
       setRankingData(filePVP);
@@ -200,8 +207,12 @@ const RankingPVP = () => {
             </Link>
             <div className="d-flex justify-content-center">
               <span className="position-relative" style={{ width: 50 }}>
-                {data.isShadow && <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-                {data.isPurified && <img height={28} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />}
+                {data.pokemonType === PokemonType.Shadow && (
+                  <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                )}
+                {data.pokemonType === PokemonType.Purified && (
+                  <img height={28} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
+                )}
                 <img
                   alt="img-league"
                   className="pokemon-sprite-accordion"
@@ -220,7 +231,7 @@ const RankingPVP = () => {
         <Accordion.Body
           style={{
             padding: 0,
-            backgroundImage: computeBgType(data.pokemon?.types, data.isShadow, data.isPurified, 0.8, styleSheet.current),
+            backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, 0.8, styleSheet.current),
           }}
         >
           {storeStats && storeStats[key] && (
@@ -260,7 +271,7 @@ const RankingPVP = () => {
   };
 
   const renderLeague = () => {
-    const cp = toNumber(getValueOrDefault(String, params.cp));
+    const cp = toNumber(params.cp);
     const league = pvp.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>

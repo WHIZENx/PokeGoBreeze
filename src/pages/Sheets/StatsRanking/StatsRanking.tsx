@@ -433,8 +433,8 @@ const StatsRanking = () => {
         }}
         onSort={(rows) => {
           if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonFilter, toNumber(getValueOrDefault(String, rows.id?.toString()))));
-            setSortId(toNumber(getValueOrDefault(String, rows.id?.toString())));
+            setPokemonFilter(sortRanking(pokemonFilter, toNumber(rows.id)));
+            setSortId(toNumber(rows.id));
           }
         }}
         conditionalRowStyles={conditionalRowStyles}

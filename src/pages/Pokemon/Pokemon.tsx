@@ -235,7 +235,7 @@ const Pokemon = (props: IPokemonPage) => {
   );
 
   const queryPokemon = useCallback(
-    (id: string) => {
+    (id: number) => {
       axiosSource.current = APIService.reNewCancelToken();
       const cancelToken = axiosSource.current.token;
 
@@ -281,8 +281,8 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   useEffect(() => {
-    const id = params.id?.toLowerCase() ?? props.id;
-    if (id && getValueOrDefault(Number, data?.id) !== toNumber(id) && isNotEmpty(pokemonData)) {
+    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (id > 0 && getValueOrDefault(Number, data?.id) !== id && isNotEmpty(pokemonData)) {
       clearData(true);
       queryPokemon(id);
     }
@@ -304,8 +304,8 @@ const Pokemon = (props: IPokemonPage) => {
   }, [data]);
 
   useEffect(() => {
-    const id = params.id ? params.id.toLowerCase() : props.id;
-    if (id && isNotEmpty(pokemonData)) {
+    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (id > 0 && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.isLoading) {
           const currentId = getPokemonById(pokemonData, toNumber(id));
@@ -353,7 +353,7 @@ const Pokemon = (props: IPokemonPage) => {
       const gen = data?.generation.url?.split('/').at(6);
       setGeneration(getValueOrDefault(String, gen));
       if (!params.id) {
-        setRegion(regionList[toNumber(getValueOrDefault(String, gen))]);
+        setRegion(regionList[toNumber(gen)]);
       } else {
         const currentRegion = Object.values(regionList).find((item) =>
           isInclude(currentForm.form.formName, item, IncludeMode.IncludeIgnoreCaseSensitive)
@@ -361,7 +361,7 @@ const Pokemon = (props: IPokemonPage) => {
         if (!isEmpty(currentForm.form.formName) && currentRegion) {
           setRegion(!region || !isEqual(region, currentRegion) ? currentRegion : region);
         } else {
-          setRegion(regionList[toNumber(getValueOrDefault(String, gen))]);
+          setRegion(regionList[toNumber(gen)]);
         }
       }
       const nameInfo =
@@ -388,9 +388,9 @@ const Pokemon = (props: IPokemonPage) => {
   }, [data?.id, props.id, params.id, formName, currentForm]);
 
   useEffect(() => {
-    const id = params.id?.toLowerCase() ?? props.id;
-    if (isNotEmpty(pokemonData) && id && toNumber(id) > 0) {
-      const currentId = getPokemonById(pokemonData, toNumber(id));
+    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (isNotEmpty(pokemonData) && id > 0) {
+      const currentId = getPokemonById(pokemonData, id);
       if (currentId) {
         setDataStorePokemon({
           prev: getPokemonById(pokemonData, currentId.id - 1),

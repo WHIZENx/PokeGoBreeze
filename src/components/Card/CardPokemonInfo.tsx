@@ -9,6 +9,7 @@ import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
 import { ICardPokemonInfoComponent } from '../models/component.model';
 import { combineClasses, getValueOrDefault } from '../../util/extension';
+import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
@@ -50,7 +51,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   return (
     <li
       className="position-relative pokemon-container border-types h-100"
-      style={{ backgroundImage: computeBgType(props.types, false, false, 0.3) }}
+      style={{ backgroundImage: computeBgType(props.types, PokemonType.None, 0.3) }}
     >
       {!props.releasedGO && (
         <div className="no-released-pokemon">

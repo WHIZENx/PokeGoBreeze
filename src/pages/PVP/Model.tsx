@@ -47,6 +47,7 @@ import { EffectiveType } from './enums/type-eff.enum';
 import { ArcheType } from './enums/arche-type.enum';
 import { BattleLeagueCPType } from '../../util/enums/compute.enum';
 import { BackgroundType } from './enums/model-type.enum';
+import { PokemonType } from '../Tools/BattleDamage/enums/damage.enum';
 
 export const Header = (data: IPokemonBattleRanking | undefined) => {
   return (
@@ -122,7 +123,9 @@ export const Body = (
       <Link
         to={`/pvp/${cp}/${type}/${data.opponent.replaceAll('_', '-')}`}
         className="list-item-ranking"
-        style={{ backgroundImage: computeBgType(pokemon?.types, isInclude(data.opponent, '_shadow')) }}
+        style={{
+          backgroundImage: computeBgType(pokemon?.types, isInclude(data.opponent, '_shadow') ? PokemonType.Shadow : PokemonType.None),
+        }}
       >
         <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
           <div className="d-flex justify-content-center">

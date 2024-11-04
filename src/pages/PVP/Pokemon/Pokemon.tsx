@@ -26,6 +26,7 @@ import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNum
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,7 @@ const PokemonPVP = () => {
   const fetchPokemonInfo = useCallback(async () => {
     dispatch(SpinnerActions.ShowSpinner.create());
     try {
-      const cp = toNumber(getValueOrDefault(String, params.cp));
+      const cp = toNumber(params.cp);
       const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
@@ -87,7 +88,7 @@ const PokemonPVP = () => {
         cMoveSec = dataStore.combat.find((item) => isEqual(item.name, cMoveDataSec));
       }
 
-      const maxCP = toNumber(getValueOrDefault(String, params.cp));
+      const maxCP = toNumber(params.cp);
 
       let bestStats = new BattleBaseStats();
       if (maxCP < BattleLeagueCPType.InsMaster) {
@@ -116,6 +117,13 @@ const PokemonPVP = () => {
         bestStats = allStats[allStats.length - 1];
       }
 
+      let pokemonType = PokemonType.None;
+      if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+        pokemonType = PokemonType.Shadow;
+      } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {
+        pokemonType = PokemonType.Purified;
+      }
+
       setRankingPoke(
         new PokemonBattleRanking({
           data,
@@ -132,8 +140,7 @@ const PokemonPVP = () => {
           cMovePri,
           cMoveSec,
           bestStats,
-          isShadow: isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive),
-          isPurified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
+          pokemonType,
         })
       );
       dispatch(SpinnerActions.HideSpinner.create());
@@ -166,7 +173,7 @@ const PokemonPVP = () => {
   }, [fetchPokemonInfo, rankingPoke, pvp, router.action, dispatch]);
 
   const renderLeague = () => {
-    const cp = toNumber(getValueOrDefault(String, params.cp));
+    const cp = toNumber(params.cp);
     const league = pvp.rankings.find((item) => item.id === LeagueType.All && isIncludeList(item.cp, cp));
     return (
       <Fragment>
@@ -196,8 +203,7 @@ const PokemonPVP = () => {
           style={{
             backgroundImage: computeBgType(
               rankingPoke?.pokemon?.types,
-              rankingPoke?.isShadow,
-              rankingPoke?.isPurified,
+              rankingPoke?.pokemonType,
               0.8,
               undefined,
               rankingPoke ? undefined : 'rgb(100, 100, 100)'
@@ -223,8 +229,10 @@ const PokemonPVP = () => {
             <div className="w-100 ranking-info element-top">
               <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
                 <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                  {rankingPoke?.isShadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-                  {rankingPoke?.isPurified && (
+                  {rankingPoke?.pokemonType === PokemonType.Shadow && (
+                    <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                  )}
+                  {rankingPoke?.pokemonType === PokemonType.Purified && (
                     <img height={64} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
                   )}
                   <img

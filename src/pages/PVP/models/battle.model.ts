@@ -153,8 +153,7 @@ export interface IPokemonTeamData {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  isShadow: boolean;
-  isPurified: boolean;
+  pokemonType: PokemonType;
 }
 
 export class PokemonTeamData implements IPokemonTeamData {
@@ -170,8 +169,7 @@ export class PokemonTeamData implements IPokemonTeamData {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  isShadow = false;
-  isPurified = false;
+  pokemonType = PokemonType.None;
 
   constructor({ ...props }: IPokemonTeamData) {
     Object.assign(this, props);
@@ -193,8 +191,7 @@ export interface IPokemonBattleRanking {
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
-  isShadow: boolean;
-  isPurified: boolean;
+  pokemonType: PokemonType;
 }
 
 export class PokemonBattleRanking implements IPokemonBattleRanking {
@@ -212,8 +209,7 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
-  isShadow = false;
-  isPurified = false;
+  pokemonType = PokemonType.None;
 
   constructor({ ...props }: IPokemonBattleRanking) {
     Object.assign(this, props);

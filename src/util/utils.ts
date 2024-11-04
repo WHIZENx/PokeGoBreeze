@@ -176,9 +176,7 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
     return value;
   }
 
-  return notFull
-    ? Moment(new Date(toNumber(getValueOrDefault(String, value?.toString())))).format('D MMMM YYYY')
-    : Moment(new Date(toNumber(getValueOrDefault(String, value?.toString())))).format('HH:mm D MMMM YYYY');
+  return notFull ? Moment(new Date(toNumber(value))).format('D MMMM YYYY') : Moment(new Date(toNumber(value))).format('HH:mm D MMMM YYYY');
 };
 
 export const convertModelSpritName = (text: string) => {

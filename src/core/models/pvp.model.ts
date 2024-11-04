@@ -48,8 +48,7 @@ export interface IPerformers {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  isShadow: boolean;
-  isPurified: boolean;
+  pokemonType: PokemonType;
   games: number;
   individualScore: number;
   pokemon: string;
@@ -71,8 +70,7 @@ export class Performers implements IPerformers {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  isShadow = false;
-  isPurified = false;
+  pokemonType = PokemonType.None;
   games = 0;
   individualScore = 0;
   pokemon = '';

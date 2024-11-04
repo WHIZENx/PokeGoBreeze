@@ -47,6 +47,7 @@ import {
 import { Sorted, SortType } from '../enums/pvp-team.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
+import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -112,6 +113,13 @@ const TeamPVP = () => {
       cMoveSec = undefined;
     }
 
+    let pokemonType = PokemonType.None;
+    if (isInclude(speciesId, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive)) {
+      pokemonType = PokemonType.Shadow;
+    } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {
+      pokemonType = PokemonType.Purified;
+    }
+
     const result = new PokemonTeamData({
       id,
       name,
@@ -125,8 +133,7 @@ const TeamPVP = () => {
       fMove,
       cMovePri,
       cMoveSec,
-      isShadow: isInclude(speciesId, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive),
-      isPurified: isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name),
+      pokemonType,
     });
     return result;
   };
@@ -144,7 +151,7 @@ const TeamPVP = () => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
-        const cp = toNumber(getValueOrDefault(String, params.cp));
+        const cp = toNumber(params.cp);
         const file = (
           await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', getValueOrDefault(String, params.serie), cp))
         ).data;
@@ -206,7 +213,7 @@ const TeamPVP = () => {
   }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore.combat, dataStore.pokemon, dataStore.assets, statsRanking]);
 
   const renderLeague = () => {
-    const cp = toNumber(getValueOrDefault(String, params.cp));
+    const cp = toNumber(params.cp);
     const league = pvp.trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
@@ -346,7 +353,7 @@ const TeamPVP = () => {
               key={index}
               style={{
                 columnGap: '1rem',
-                backgroundImage: computeBgType(value.pokemonData?.types, value.isShadow, value.isPurified, 1, styleSheet.current),
+                backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, 1, styleSheet.current),
               }}
             >
               <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
@@ -354,8 +361,12 @@ const TeamPVP = () => {
               </Link>
               <div className="d-flex justify-content-center">
                 <span className="position-relative filter-shadow" style={{ width: 96 }}>
-                  {value.isShadow && <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-                  {value.isPurified && <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />}
+                  {value.pokemonType === PokemonType.Shadow && (
+                    <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                  )}
+                  {value.pokemonType === PokemonType.Purified && (
+                    <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
+                  )}
                   <img
                     alt="img-league"
                     className="pokemon-sprite"
@@ -475,10 +486,10 @@ const TeamPVP = () => {
                         <div className="text-center" key={index}>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                              {value.isShadow && (
+                              {value.pokemonType === PokemonType.Shadow && (
                                 <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                               )}
-                              {value.isPurified && (
+                              {value.pokemonType === PokemonType.Purified && (
                                 <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
                               )}
                               <img
@@ -514,7 +525,7 @@ const TeamPVP = () => {
                         style={{
                           padding: 15,
                           gap: '1rem',
-                          backgroundImage: computeBgType(value.pokemonData?.types, value.isShadow, value.isPurified),
+                          backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType),
                         }}
                       >
                         <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
@@ -522,10 +533,10 @@ const TeamPVP = () => {
                         </Link>
                         <div className="d-flex justify-content-center">
                           <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                            {value.isShadow && (
+                            {value.pokemonType === PokemonType.Shadow && (
                               <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                             )}
-                            {value.isPurified && (
+                            {value.pokemonType === PokemonType.Purified && (
                               <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
                             )}
                             <img

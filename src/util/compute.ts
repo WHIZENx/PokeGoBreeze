@@ -1,5 +1,6 @@
 import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
+import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
@@ -117,8 +118,7 @@ export const computeCandyColor = (candyData: ICandy[], id: number) => {
 
 export const computeBgType = (
   types: string[] | string | undefined,
-  shadow = false,
-  purified = false,
+  pokemonType = PokemonType.None,
   opacity = 1,
   styleSheet?: CSSStyleSheet,
   defaultColor?: string
@@ -138,10 +138,10 @@ export const computeBgType = (
     });
   }
   const [priColor, secColor] = colorsPalette;
-  if (shadow) {
+  if (pokemonType === PokemonType.Shadow) {
     return `linear-gradient(to bottom right, ${priColor}, rgb(202, 156, 236), ${secColor ?? priColor})`;
   }
-  if (purified) {
+  if (pokemonType === PokemonType.Purified) {
     return `linear-gradient(to bottom right, ${priColor}, white, ${secColor ?? priColor})`;
   }
   return `linear-gradient(to bottom right, ${priColor}, ${secColor ?? priColor})`;

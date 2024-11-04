@@ -34,7 +34,7 @@ import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid, VariantType } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 
@@ -134,7 +134,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   );
 
   const queryPokemon = useCallback(
-    (id: string) => {
+    (id: number) => {
       axiosSource.current = APIService.reNewCancelToken();
       const cancelToken = axiosSource.current.token;
 
@@ -161,9 +161,10 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [props.setName, props.name, currentForm]);
 
   useEffect(() => {
-    if (props.id && getValueOrDefault(Number, data?.id) !== props.id && isNotEmpty(props.data)) {
+    const id = toNumber(props.id);
+    if (id > 0 && getValueOrDefault(Number, data?.id) !== id && isNotEmpty(props.data)) {
       clearData();
-      queryPokemon(props.id.toString());
+      queryPokemon(id);
     }
     return () => {
       if (data?.id) {

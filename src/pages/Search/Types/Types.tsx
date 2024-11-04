@@ -17,6 +17,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from '../../../util/extension';
+import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -135,19 +136,19 @@ const columnMove: TableColumnModify<ICombat>[] = [
   },
 ];
 
-interface IPokemonType {
+interface IPokemonTypeMove {
   pokemonList: IPokemonData[];
   fastMove: ICombat[];
   chargedMove: ICombat[];
 }
 
-class PokemonType implements IPokemonType {
+class PokemonTypeMove implements IPokemonTypeMove {
   pokemonList: IPokemonData[] = [];
   fastMove: ICombat[] = [];
   chargedMove: ICombat[] = [];
 
-  static create(value: IPokemonType) {
-    const obj = new PokemonType();
+  static create(value: IPokemonTypeMove) {
+    const obj = new PokemonTypeMove();
     Object.assign(obj, value);
     return obj;
   }
@@ -180,7 +181,7 @@ const SearchTypes = () => {
   const [releasedGO, setReleaseGO] = useState(true);
 
   const [currentType, setCurrentType] = useState('');
-  const [result, setResult] = useState(new PokemonType());
+  const [result, setResult] = useState(new PokemonTypeMove());
   const [allData, setAllData] = useState<IPokemonTypeData>();
 
   const [showType, setShowType] = useState(false);
@@ -216,7 +217,7 @@ const SearchTypes = () => {
   useEffect(() => {
     if (isNotEmpty(data.pokemon) && isNotEmpty(data.combat)) {
       setResult(
-        PokemonType.create({
+        PokemonTypeMove.create({
           pokemonList: data.pokemon
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
@@ -286,7 +287,7 @@ const SearchTypes = () => {
         <div className="col-xl-4 element-top">
           <div
             className={combineClasses('d-flex flex-column align-items-center type-info-container', `${currentType.toLowerCase()}-border`)}
-            style={{ background: computeBgType(currentType, false, false, 1) }}
+            style={{ background: computeBgType(currentType, PokemonType.None, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img
