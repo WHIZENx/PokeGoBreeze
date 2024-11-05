@@ -32,6 +32,7 @@ import { TypeSex } from '../../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
 import { WeightHeight } from '../../../core/models/pokemon.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import { PokemonType } from '../../../pages/Tools/BattleDamage/enums/damage.enum';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -129,10 +130,10 @@ const FormComponent = (props: IFormInfoComponent) => {
                     >
                       <div className="d-flex w-100 justify-content-center">
                         <div className="position-relative" style={{ width: 64 }}>
-                          {value.form.isShadow && (
+                          {value.form.pokemonType === PokemonType.Shadow && (
                             <img height={24} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                           )}
-                          {value.form.isPurified && (
+                          {value.form.pokemonType === PokemonType.Purified && (
                             <img height={24} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
                           )}
                           <img
@@ -204,7 +205,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         />
       )}
       <Stats
-        isShadow={props.form?.form.isShadow}
+        pokemonType={props.form?.form.pokemonType}
         statATK={statsPokemon?.atk}
         statDEF={statsPokemon?.def}
         statSTA={statsPokemon?.sta}
@@ -218,7 +219,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
           <Info currForm={props.form} />
-          {!props.form?.form.isShadow && !props.form?.form.isPurified && (
+          {props.form?.form.pokemonType !== PokemonType.Shadow && props.form?.form.pokemonType !== PokemonType.Purified && (
             <Fragment>
               <h5>
                 <li>Raid</li>
@@ -248,7 +249,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           <Counter
             def={getValueOrDefault(Number, statsPokemon?.def?.defense)}
             types={getValueOrDefault(Array, props.form?.form.types)}
-            isShadow={props.form?.form.isShadow}
+            pokemonType={props.form?.form.pokemonType}
           />
         </div>
       </div>
@@ -263,8 +264,7 @@ const FormComponent = (props: IFormInfoComponent) => {
               isFormDefault={props.defaultId === props.form?.form.id}
               region={props.region}
               pokemonRouter={props.pokemonRouter}
-              isPurified={props.form?.form.isPurified}
-              isShadow={props.form?.form.isShadow}
+              pokemonType={props.form?.form.pokemonType}
               setProgress={props.setProgress}
               isLoadedForms={props.isLoadedForms}
             />
@@ -292,8 +292,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           isFormDefault={props.defaultId === props.form?.form.id}
           region={props.region}
           pokemonRouter={props.pokemonRouter}
-          isPurified={props.form?.form.isPurified}
-          isShadow={props.form?.form.isShadow}
+          pokemonType={props.form?.form.pokemonType}
           setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
         />

@@ -576,7 +576,7 @@ const FindBattle = () => {
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />{' '}
-                                        {item.battleLeague.little.resultBetweenStadust}
+                                        {item.battleLeague.little.resultBetweenStardust}
                                       </li>
                                     </ul>
                                   ) : (
@@ -631,7 +631,7 @@ const FindBattle = () => {
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />{' '}
-                                        {item.battleLeague.great.resultBetweenStadust}
+                                        {item.battleLeague.great.resultBetweenStardust}
                                       </li>
                                     </ul>
                                   ) : (
@@ -686,7 +686,7 @@ const FindBattle = () => {
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />{' '}
-                                        {item.battleLeague.ultra.resultBetweenStadust}
+                                        {item.battleLeague.ultra.resultBetweenStardust}
                                       </li>
                                     </ul>
                                   ) : (
@@ -741,7 +741,7 @@ const FindBattle = () => {
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />{' '}
-                                        {item.battleLeague.master.resultBetweenStadust}
+                                        {item.battleLeague.master.resultBetweenStardust}
                                       </li>
                                     </ul>
                                   ) : (

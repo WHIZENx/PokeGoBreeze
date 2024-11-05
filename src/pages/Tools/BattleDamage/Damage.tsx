@@ -3,8 +3,8 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
-import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { capitalize, getDataWithKey, getDmgMultiplyBonus, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { FORM_MEGA, MAX_IV } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
 import './Damage.scss';
@@ -26,10 +26,10 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isInclude, toFloatWithPadding } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isInclude, toFloatWithPadding } from '../../../util/extension';
 import { ChargeAbility, PokemonType } from './enums/damage.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { VariantType } from '../../../enums/type.enum';
+import { IncludeMode } from '../../../util/enums/string.enum';
+import { TypeAction, VariantType } from '../../../enums/type.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -113,25 +113,11 @@ const Damage = () => {
 
   useEffect(() => {
     if (statATK !== 0) {
-      setStatLvATK(
-        calculateStatsBattle(
-          statATK,
-          MAX_IV,
-          statLevel,
-          false,
-          isEqual(statType, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) ? SHADOW_ATK_BONUS(globalOptions) : 1
-        )
-      );
+      setStatLvATK(calculateStatsBattle(statATK, MAX_IV, statLevel, false, getDmgMultiplyBonus(statType, globalOptions, TypeAction.ATK)));
     }
     if (statDEFObj !== 0) {
       setStatLvDEFObj(
-        calculateStatsBattle(
-          statDEFObj,
-          MAX_IV,
-          statLevelObj,
-          false,
-          isEqual(statTypeObj, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) ? SHADOW_DEF_BONUS(globalOptions) : 1
-        )
+        calculateStatsBattle(statDEFObj, MAX_IV, statLevelObj, false, getDmgMultiplyBonus(statType, globalOptions, TypeAction.DEF))
       );
     }
     if (statSTAObj !== 0) {

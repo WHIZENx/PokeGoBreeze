@@ -22,7 +22,7 @@ import {
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
-import { TypeMove } from '../enums/type.enum';
+import { TypeAction, TypeMove } from '../enums/type.enum';
 import { Delay, IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
 import { findStabType } from './compute';
 import {
@@ -46,12 +46,10 @@ import {
   MULTIPLY_LEVEL_FRIENDSHIP,
   MULTIPLY_THROW_CHARGE,
   RAID_BOSS_TIER,
-  SHADOW_ATK_BONUS,
-  SHADOW_DEF_BONUS,
   STAB_MULTIPLY,
   typeCostPowerUp,
 } from './constants';
-import { capitalize, splitAndCapitalize, checkMoveSetAvailable } from './utils';
+import { capitalize, splitAndCapitalize, checkMoveSetAvailable, getDmgMultiplyBonus } from './utils';
 import {
   BattleLeagueCalculate,
   PredictCPCalculate,
@@ -439,40 +437,33 @@ export const calculateBetweenLevel = (
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
-      resultBetweenStadust: 0,
+      resultBetweenStardust: 0,
       resultBetweenCandy: 0,
       resultBetweenXLCandy: 0,
       powerUpCount: 0,
     });
   } else {
-    let betweenStadust = 0;
+    let betweenStardust = 0;
     let betweenCandy = 0;
     let betweenXlCandy = 0;
 
-    let betweenStadustDiff = 0;
+    let betweenStardustDiff = 0;
     let betweenCandyDiff = 0;
     let betweenXlCandyDiff = 0;
 
-    let atkStat = 0;
-    let defStat = 0;
-    let atkStatDiff = 0;
-    let defStatDiff = 0;
+    const atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, getDmgMultiplyBonus(type, globalOptions, TypeAction.ATK));
+    const defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, getDmgMultiplyBonus(type, globalOptions, TypeAction.DEF));
 
-    if (type === PokemonType.Shadow) {
-      atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, SHADOW_ATK_BONUS(globalOptions));
-      defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, SHADOW_DEF_BONUS(globalOptions));
-
-      atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
-      defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
-    }
+    const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
+    const defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
 
     data.forEach((ele: CPMData) => {
       const result = CPMDetail.mapping(ele);
       if (ele.level >= fromLV && ele.level <= toLV) {
-        betweenStadust += Math.ceil(result.stardust * typeCostPowerUp(type).stardust);
+        betweenStardust += Math.ceil(result.stardust * typeCostPowerUp(type).stardust);
         betweenCandy += Math.ceil(result.candy * typeCostPowerUp(type).candy);
         betweenXlCandy += Math.ceil(result.xlCandy * typeCostPowerUp(type).candy);
-        betweenStadustDiff += Math.abs(result.stardust - Math.ceil(result.stardust * typeCostPowerUp(type).stardust));
+        betweenStardustDiff += Math.abs(result.stardust - Math.ceil(result.stardust * typeCostPowerUp(type).stardust));
         betweenCandyDiff += Math.abs(result.candy - Math.ceil(result.candy * typeCostPowerUp(type).candy));
         betweenXlCandyDiff += Math.abs(result.xlCandy - Math.ceil(result.xlCandy * typeCostPowerUp(type).candy));
       }
@@ -480,8 +471,8 @@ export const calculateBetweenLevel = (
 
     const dataList = new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
-      resultBetweenStadust: betweenStadust,
-      resultBetweenStadustDiff: betweenStadustDiff,
+      resultBetweenStardust: betweenStardust,
+      resultBetweenStardustDiff: betweenStardustDiff,
       resultBetweenCandy: betweenCandy,
       resultBetweenCandyDiff: betweenCandyDiff,
       resultBetweenXLCandy: betweenXlCandy,
@@ -540,14 +531,8 @@ export const calculateBattleLeague = (
       }
     }
 
-    const atkStat =
-      type === PokemonType.Shadow
-        ? calculateStatsBattle(atk, IVatk, dataBattle.level, true, SHADOW_ATK_BONUS(globalOptions))
-        : calculateStatsBattle(atk, IVatk, dataBattle.level, true);
-    const defStat =
-      type === PokemonType.Shadow
-        ? calculateStatsBattle(def, IVdef, dataBattle.level, true, SHADOW_DEF_BONUS(globalOptions))
-        : calculateStatsBattle(def, IVdef, dataBattle.level, true);
+    const atkStat = calculateStatsBattle(atk, IVatk, dataBattle.level, true, getDmgMultiplyBonus(type, globalOptions, TypeAction.ATK));
+    const defStat = calculateStatsBattle(def, IVdef, dataBattle.level, true, getDmgMultiplyBonus(type, globalOptions, TypeAction.DEF));
 
     dataBattle.rangeValue = calculateBetweenLevel(globalOptions, atk, def, sta, IVatk, IVdef, IVsta, fromLV, dataBattle.level, type);
     dataBattle.stats = {
@@ -675,14 +660,7 @@ export const calculateDamagePVE = (
     const isMega = eff.isMega ? (eff.isStab ? STAB_MULTIPLY(globalOptions) : DEFAULT_MEGA_MULTIPLY) : 1;
     const isTrainer = eff.isTrainer ? DEFAULT_TRAINER_MULTIPLY : 1;
     const isFriend = eff.fLevel ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.fLevel) : 1;
-    let isCharge = eff.cLevel ? MULTIPLY_THROW_CHARGE(globalOptions, 'normal') : 1;
-    if (eff.cLevel === 1) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'nice');
-    } else if (eff.cLevel === 2) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'great');
-    } else if (eff.cLevel === 3) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'excellent');
-    }
+    const isCharge = !isUndefined(eff.cLevel) ? MULTIPLY_THROW_CHARGE(globalOptions, eff.cLevel) : 1;
     modifier = isStab * isWb * isFriend * isDodge * isCharge * isMega * isTrainer * eff.effective;
   } else {
     modifier = isStab ? stabMultiply : 1;
@@ -717,8 +695,8 @@ export const calculateAvgDPS = (
   options?: IOptionOtherDPS
 ) => {
   const stabMultiply = STAB_MULTIPLY(globalOptions),
-    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
+    shadowAtkBonus = getDmgMultiplyBonus(PokemonType.Shadow, globalOptions, TypeAction.ATK),
+    shadowDefBonus = getDmgMultiplyBonus(PokemonType.Shadow, globalOptions, TypeAction.DEF),
     multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, options?.pokemonFriendLevel);
 
   const FPow = getValueOrDefault(Number, fMove?.pvePower);
@@ -810,7 +788,7 @@ export const calculateAvgDPS = (
 };
 
 export const calculateTDO = (globalOptions: IOptions | undefined, def: number, hp: number, dps: number, isShadow = false) => {
-  const shadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
+  const shadowDefBonus = getDmgMultiplyBonus(PokemonType.Shadow, globalOptions, TypeAction.DEF);
   const y = 900 / (def * (isShadow ?? DEFAULT_POKEMON_SHADOW ? shadowDefBonus : 1));
   return (hp / y) * dps;
 };
@@ -823,8 +801,8 @@ export const calculateBattleDPSDefender = (
   defender: IBattleCalculate
 ) => {
   const stabMultiply = STAB_MULTIPLY(globalOptions),
-    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
+    shadowAtkBonus = getDmgMultiplyBonus(PokemonType.Shadow, globalOptions, TypeAction.ATK),
+    shadowDefBonus = getDmgMultiplyBonus(PokemonType.Shadow, globalOptions, TypeAction.DEF);
 
   const FPowDef = getValueOrDefault(Number, defender.fMove?.pvePower);
   const CPowDef = getValueOrDefault(Number, defender.cMove?.pvePower);
@@ -878,8 +856,8 @@ export const calculateBattleDPS = (
   DPSDef: number
 ) => {
   const stabMultiply = STAB_MULTIPLY(globalOptions),
-    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
+    shadowAtkBonus = getDmgMultiplyBonus(PokemonType.Shadow, globalOptions, TypeAction.ATK),
+    shadowDefBonus = getDmgMultiplyBonus(PokemonType.Shadow, globalOptions, TypeAction.DEF),
     multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.pokemonFriendLevel);
 
   const FPow = getValueOrDefault(Number, attacker.fMove?.pvePower);

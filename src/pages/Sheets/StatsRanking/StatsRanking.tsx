@@ -37,6 +37,7 @@ import {
 } from '../../../util/extension';
 import { LocationState } from '../../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -320,8 +321,7 @@ const StatsRanking = () => {
       name: pokemon.name,
       types: getValueOrDefault(Array, pokemon.types),
       version: getValueOrDefault(String, pokemon.version),
-      isShadow: false,
-      isPurified: false,
+      pokemonType: PokemonType.None,
     });
   };
 

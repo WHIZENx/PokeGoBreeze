@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertPokemonAPIDataName, getDmgMultiplyBonus, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -14,7 +14,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, ICombat } from '../../../core/models/combat.model';
-import { FORM_GMAX, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { FORM_GMAX } from '../../../util/constants';
 import { IPokemonQueryMove, IPokemonQueryRankMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
@@ -22,7 +22,8 @@ import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
 import { EqualMode } from '../../../util/enums/string.enum';
 import { TableType, TypeSorted } from './enums/table-type.enum';
-import { MoveType } from '../../../enums/type.enum';
+import { MoveType, TypeAction } from '../../../enums/type.enum';
+import { PokemonType } from '../../../pages/Tools/BattleDamage/enums/damage.enum';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -103,15 +104,15 @@ const TableMove = (props: ITableMoveComponent) => {
       chargedMoves: filterUnknownMove(combat.cinematicMoves),
       eliteFastMoves: filterUnknownMove(combat.eliteQuickMoves),
       eliteChargedMoves: filterUnknownMove(combat.eliteCinematicMoves),
-      purifiedMoves: props.form?.isShadow ? [] : filterUnknownMove(combat.purifiedMoves),
-      shadowMoves: props.form?.isPurified ? [] : filterUnknownMove(combat.shadowMoves),
+      purifiedMoves: props.form?.pokemonType === PokemonType.Shadow ? [] : filterUnknownMove(combat.purifiedMoves),
+      shadowMoves: props.form?.pokemonType === PokemonType.Purified ? [] : filterUnknownMove(combat.shadowMoves),
       specialMoves: filterUnknownMove(combat.specialMoves),
     });
   };
 
   const findMove = useCallback(() => {
     const combatPoke = data.pokemon.filter((item) =>
-      props.form?.id || props.form?.isShadow || props.form?.isPurified
+      props.form?.id || props.form?.pokemonType === PokemonType.Shadow || props.form?.pokemonType === PokemonType.Purified
         ? item.num === getValueOrDefault(Number, props.data?.num)
         : isEqual(
             item.fullName,
@@ -153,8 +154,8 @@ const TableMove = (props: ITableMoveComponent) => {
       data.weatherBoost,
       data.combat,
       result,
-      props.statATK * (props.form?.isShadow ? SHADOW_ATK_BONUS(data.options) : 1),
-      props.statDEF * (props.form?.isShadow ? SHADOW_DEF_BONUS(data.options) : 1),
+      props.statATK * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.ATK),
+      props.statDEF * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.DEF),
       props.statSTA,
       getValueOrDefault(
         Array,

@@ -10,7 +10,7 @@ interface IOptionDPSSort {
 
 export class OptionDPSSort implements IOptionDPSSort {
   selectedColumn = ColumnSelectType.Total;
-  sortDirection = SortDirectionType.DESC.toString();
+  sortDirection = SortDirectionType.DESC;
 
   static create(value: IOptionDPSSort) {
     const obj = new OptionDPSSort();

@@ -25,6 +25,10 @@ import {
   FORM_SHADOW,
   FORM_STANDARD,
   MAX_IV,
+  PURIFIED_ATK_BONUS,
+  PURIFIED_DEF_BONUS,
+  SHADOW_ATK_BONUS,
+  SHADOW_DEF_BONUS,
 } from './constants';
 import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
@@ -33,6 +37,9 @@ import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, isNullOrUndefined, toNumber } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
+import { TypeAction } from '../enums/type.enum';
+import { Options } from '../core/models/options.model';
+import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
 
 class Mask {
   value: number;
@@ -727,7 +734,7 @@ export const generatePokemonGoForms = (
           pokemon.types,
           new PokemonSprit(),
           index,
-          FORM_NORMAL,
+          PokemonType.None,
           false
         );
         formListResult.push([pokemonGOModify]);
@@ -765,7 +772,7 @@ export const generatePokemonGoShadowForms = (
         ),
         new PokemonSprit(),
         index,
-        FORM_SHADOW
+        PokemonType.Shadow
       );
       index--;
       const pokemonPurifiedModify = new PokemonFormModifyModel(
@@ -781,7 +788,7 @@ export const generatePokemonGoShadowForms = (
         ),
         new PokemonSprit(),
         index,
-        FORM_PURIFIED
+        PokemonType.Purified
       );
       formListResult.push([pokemonShadowModify, pokemonPurifiedModify]);
     });
@@ -875,4 +882,24 @@ export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
     getValueOrDefault(Array, pokemon?.purifiedMoves),
     getValueOrDefault(Array, pokemon?.specialMoves)
   );
+};
+
+export const getDmgMultiplyBonus = (form = PokemonType.None, options?: Options, type?: TypeAction) => {
+  switch (type) {
+    case TypeAction.ATK: {
+      return form === PokemonType.Shadow ? SHADOW_ATK_BONUS(options) : form === PokemonType.Purified ? PURIFIED_ATK_BONUS(options) : 1;
+    }
+    case TypeAction.DEF: {
+      return form === PokemonType.Shadow ? SHADOW_DEF_BONUS(options) : form === PokemonType.Purified ? PURIFIED_DEF_BONUS(options) : 1;
+    }
+    case TypeAction.PROD: {
+      return form === PokemonType.Shadow
+        ? SHADOW_ATK_BONUS(options) * SHADOW_DEF_BONUS(options)
+        : form === PokemonType.Purified
+        ? PURIFIED_ATK_BONUS(options) * PURIFIED_DEF_BONUS(options)
+        : 1;
+    }
+    default:
+      return 1;
+  }
 };

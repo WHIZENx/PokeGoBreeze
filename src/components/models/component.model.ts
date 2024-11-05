@@ -33,6 +33,7 @@ import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
 import { InputType } from '../Input/enums/input-type.enum';
 import { TypeAction, TypeMove } from '../../enums/type.enum';
+import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -50,7 +51,7 @@ export interface ICardSmallComponent {
 export interface ICardPokemonComponent {
   value: IPokemonData;
   score?: number;
-  isShadow?: boolean;
+  pokemonType?: PokemonType;
 }
 
 export interface ICardPokemonInfoComponent {
@@ -167,8 +168,7 @@ export interface IEvolutionComponent {
   id: number | undefined;
   setId?: (id: number) => void;
   pokemonRouter: ReduxRouterState;
-  isPurified?: boolean;
-  isShadow?: boolean;
+  pokemonType?: PokemonType;
   setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
   isLoadedForms: boolean;
 }
@@ -203,7 +203,7 @@ export interface IFormSpecialComponent {
 }
 
 export interface IStatsComponent {
-  isShadow?: boolean;
+  pokemonType?: PokemonType;
   pokemonStats: IStatsRank | null;
   stats?: IStatsPokemon;
   statATK?: IStatsAtk;
@@ -429,7 +429,7 @@ export interface IWeatherComponent {
 export interface ICounterComponent {
   def: number;
   types?: string[];
-  isShadow?: boolean;
+  pokemonType?: PokemonType;
 }
 
 export interface ITableMoveComponent {

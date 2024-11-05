@@ -4,7 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, checkPokemonGO, getDmgMultiplyBonus, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import {
   FORM_GMAX,
@@ -17,8 +17,6 @@ import {
   MIN_IV,
   MIN_LEVEL,
   RAID_BOSS_TIER,
-  SHADOW_ATK_BONUS,
-  SHADOW_DEF_BONUS,
 } from '../../../util/constants';
 import {
   calculateBattleDPS,
@@ -62,7 +60,7 @@ import {
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { TypeMove, VariantType } from '../../../enums/type.enum';
+import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -84,6 +82,7 @@ import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, Rai
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
+import { PokemonType } from '../BattleDamage/enums/damage.enum';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -615,13 +614,21 @@ const RaidBattle = () => {
       const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
       const statsGO = pokemon.dataTargetPokemon?.stats ?? used;
       const statsAttacker = new BattleCalculate({
-        atk: calculateStatsBattle(stats.atk, statsGO.iv.atk * (statsGO.isShadow ? SHADOW_ATK_BONUS(data.options) : 1), statsGO.level),
-        def: calculateStatsBattle(stats.def, statsGO.iv.def * (statsGO.isShadow ? SHADOW_DEF_BONUS(data.options) : 1), statsGO.level),
+        atk: calculateStatsBattle(
+          stats.atk,
+          statsGO.iv.atk * (statsGO.isShadow ? getDmgMultiplyBonus(PokemonType.Shadow, data.options, TypeAction.ATK) : 1),
+          statsGO.level
+        ),
+        def: calculateStatsBattle(
+          stats.def,
+          statsGO.iv.def * (statsGO.isShadow ? getDmgMultiplyBonus(PokemonType.Shadow, data.options, TypeAction.DEF) : 1),
+          statsGO.level
+        ),
         hp: calculateStatsBattle(getValueOrDefault(Number, stats?.sta), getValueOrDefault(Number, statsGO.iv.sta), statsGO.level),
         fMove,
         cMove,
         types: getValueOrDefault(Array, pokemon.dataTargetPokemon?.types),
-        isShadow: false,
+        isShadow: statsGO.isShadow,
       });
       const statsDefender = new BattleCalculate({
         atk: statBossATK,

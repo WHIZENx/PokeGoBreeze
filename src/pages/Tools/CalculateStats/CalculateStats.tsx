@@ -372,19 +372,19 @@ const Calculate = () => {
                         </td>
                         <td>
                           {statData ? (
-                            statData.resultBetweenStadust > 0 ? (
+                            statData.resultBetweenStardust > 0 ? (
                               <span>
-                                {statData.resultBetweenStadust}
-                                {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenStadustDiff) > 0 && (
+                                {statData.resultBetweenStardust}
+                                {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenStardustDiff) > 0 && (
                                   <Fragment>
                                     {statData.type === PokemonType.Shadow && (
-                                      <span className="shadow-text"> (+{statData.resultBetweenStadustDiff})</span>
+                                      <span className="shadow-text"> (+{statData.resultBetweenStardustDiff})</span>
                                     )}
                                     {statData.type === PokemonType.Purified && (
-                                      <span className="purified-text"> (-{statData.resultBetweenStadustDiff})</span>
+                                      <span className="purified-text"> (-{statData.resultBetweenStardustDiff})</span>
                                     )}
                                     {statData.type === PokemonType.Lucky && (
-                                      <span className="buddy-text"> (-{statData.resultBetweenStadustDiff})</span>
+                                      <span className="buddy-text"> (-{statData.resultBetweenStardustDiff})</span>
                                     )}
                                   </Fragment>
                                 )}
@@ -584,7 +584,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataLittleLeague && dataLittleLeague.isElidge ? (
-                            <span className={`${statData?.type}-text`}>{dataLittleLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={`${statData?.type}-text`}>{dataLittleLeague.rangeValue?.resultBetweenStardust}</span>
                           ) : (
                             '-'
                           )}
@@ -697,7 +697,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataGreatLeague && dataGreatLeague.isElidge ? (
-                            <span className={`${statData?.type}-text`}>{dataGreatLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={`${statData?.type}-text`}>{dataGreatLeague.rangeValue?.resultBetweenStardust}</span>
                           ) : (
                             '-'
                           )}
@@ -808,7 +808,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataUltraLeague && dataUltraLeague.isElidge ? (
-                            <span className={`${statData?.type}-text`}>{dataUltraLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={`${statData?.type}-text`}>{dataUltraLeague.rangeValue?.resultBetweenStardust}</span>
                           ) : (
                             '-'
                           )}
@@ -910,7 +910,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataMasterLeague ? (
-                            <span className={`${statData?.type}-text`}>{dataMasterLeague.rangeValue?.resultBetweenStadust}</span>
+                            <span className={`${statData?.type}-text`}>{dataMasterLeague.rangeValue?.resultBetweenStardust}</span>
                           ) : (
                             '-'
                           )}

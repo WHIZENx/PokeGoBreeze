@@ -3,20 +3,10 @@ import ReactDOM from 'react-dom';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
-import { capitalize, convertNameRankingToOri, getAllMoves, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertNameRankingToOri, getAllMoves, getDmgMultiplyBonus, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
-import {
-  FORM_NORMAL,
-  MAX_ENERGY,
-  MAX_IV,
-  MAX_LEVEL,
-  MIN_IV,
-  MIN_LEVEL,
-  SHADOW_ATK_BONUS,
-  SHADOW_DEF_BONUS,
-  STAB_MULTIPLY,
-} from '../../../util/constants';
+import { FORM_NORMAL, MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -69,6 +59,7 @@ import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNot
 import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -147,17 +138,15 @@ const Battle = () => {
         pokeObj.currentStats?.level ?? MIN_LEVEL,
         true
       );
-      poke.isShadow ??= false;
-      pokeObj.isShadow ??= false;
       return (
         (atkPoke *
           move.pvpPower *
           (findStabType(getValueOrDefault(Array, poke.pokemon?.types), getValueOrDefault(String, move.type))
             ? STAB_MULTIPLY(dataStore.options)
             : 1) *
-          (poke.isShadow ? SHADOW_ATK_BONUS(dataStore.options) : 1) *
+          getDmgMultiplyBonus(poke.pokemonType, dataStore.options, TypeAction.ATK) *
           getTypeEffective(dataStore.typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
-        (defPokeObj * (pokeObj.isShadow ? SHADOW_DEF_BONUS(dataStore.options) : 1))
+        (defPokeObj * getDmgMultiplyBonus(pokeObj.pokemonType, dataStore.options, TypeAction.DEF))
       );
     }
     return 1;
@@ -177,7 +166,7 @@ const Battle = () => {
       energy: getValueOrDefault(Number, poke.energy),
       block: poke.block ?? DEFAULT_BLOCK,
       turn: Math.ceil(getValueOrDefault(Number, poke.fMove?.durationMs) / 500),
-      isShadow: getValueOrDefault(Boolean, poke.isShadow),
+      pokemonType: poke.pokemonType,
       disableCMovePri: poke.disableCMovePri,
       disableCMoveSec: poke.disableCMoveSec,
     });
@@ -746,6 +735,7 @@ const Battle = () => {
               id,
               form,
               stats,
+              pokemonType: PokemonType.None,
             });
           })
           .filter((pokemon) => pokemon.id > 0);
@@ -1189,7 +1179,9 @@ const Battle = () => {
           <Accordion.Body>
             <div className="w-100 d-flex justify-content-center">
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                {pokemon.isShadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+                {pokemon.pokemonType === PokemonType.Shadow && (
+                  <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                )}
                 <img
                   alt="img-league"
                   className="pokemon-sprite-raid"
@@ -1225,7 +1217,7 @@ const Battle = () => {
             <b>
               {Math.floor(
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsATK) *
-                  (pokemon.isShadow ? SHADOW_ATK_BONUS(dataStore.options) : 1)
+                  getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.ATK)
               )}
             </b>
             <br />
@@ -1234,7 +1226,7 @@ const Battle = () => {
             <b>
               {Math.floor(
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
-                  (pokemon.isShadow ? SHADOW_DEF_BONUS(dataStore.options) : 1)
+                  getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.DEF)
               )}
             </b>
             <br />
@@ -1248,7 +1240,7 @@ const Battle = () => {
                 getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsATK) *
                   getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
                   getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsSTA) *
-                  (pokemon.isShadow ? SHADOW_ATK_BONUS(dataStore.options) * SHADOW_DEF_BONUS(dataStore.options) : 1)
+                  getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.PROD)
               )}
             </b>
             <br />

@@ -1,5 +1,6 @@
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
+import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
 import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';
@@ -172,8 +173,7 @@ export interface IBattlePokemonData {
   pokemon: IPokemonData;
   id: number;
   form: string | undefined | null;
-  isShadow?: boolean;
-  isPurified?: boolean;
+  pokemonType: PokemonType;
 }
 
 export class BattlePokemonData implements IBattlePokemonData {
@@ -191,8 +191,7 @@ export class BattlePokemonData implements IBattlePokemonData {
   pokemon = new PokemonData();
   id = 0;
   form: string | undefined | null;
-  isShadow?: boolean;
-  isPurified?: boolean;
+  pokemonType = PokemonType.None;
 
   static create(value: IBattlePokemonData) {
     const obj = new BattlePokemonData();
