@@ -22,9 +22,11 @@ export class ToolSearching implements IToolSearching {
   timestamp = new Date();
   obj?: ISearchingModel;
 
-  static create(value: IToolSearching) {
+  static create(value: IToolSearching | null) {
     const obj = new ToolSearching();
-    Object.assign(obj, value);
+    if (value) {
+      Object.assign(obj, value);
+    }
     return obj;
   }
 }

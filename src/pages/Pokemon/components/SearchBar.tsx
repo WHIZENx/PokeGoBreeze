@@ -7,7 +7,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ISearchBarComponent } from '../../models/page.model';
 import { Action } from 'history';
 import { AnyAction } from 'redux';
-import { combineClasses, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, toNumber } from '../../../util/extension';
 
 const SearchBar = (props: ISearchBarComponent) => {
   return (
@@ -41,7 +41,7 @@ const SearchBar = (props: ISearchBarComponent) => {
                 src={APIService.getPokeFullSprite(props.data.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, props.data?.prev?.id));
+                  e.currentTarget.src = APIService.getPokeFullAsset(toNumber(props.data?.prev?.id));
                 }}
               />
             </div>
@@ -84,7 +84,7 @@ const SearchBar = (props: ISearchBarComponent) => {
                 src={APIService.getPokeFullSprite(props.data.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, props.data?.next?.id));
+                  e.currentTarget.src = APIService.getPokeFullAsset(toNumber(props.data?.next?.id));
                 }}
               />
             </div>

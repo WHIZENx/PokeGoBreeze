@@ -26,7 +26,7 @@ import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNum
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
-import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../../../enums/type.enum';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -100,7 +100,7 @@ const PokemonPVP = () => {
             : maxCP === BattleLeagueCPType.Ultra
             ? BattleLeagueCPType.Great
             : BattleLeagueCPType.Ultra;
-        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats?.sta) + MAX_IV, MAX_LEVEL);
+        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, toNumber(stats?.sta) + MAX_IV, MAX_LEVEL);
 
         if (maxPokeCP < minCP) {
           if (maxPokeCP <= BattleLeagueCPType.Little) {
@@ -113,7 +113,7 @@ const PokemonPVP = () => {
             minCP = BattleLeagueCPType.Ultra;
           }
         }
-        const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats?.sta), minCP, maxCP);
+        const allStats = calStatsProd(stats.atk, stats.def, toNumber(stats?.sta), minCP, maxCP);
         bestStats = allStats[allStats.length - 1];
       }
 
@@ -134,8 +134,8 @@ const PokemonPVP = () => {
           stats,
           atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
           def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
-          prod: statsRanking?.statProd.ranking.find((i) => i.product === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
+          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === toNumber(stats.sta)),
+          prod: statsRanking?.statProd.ranking.find((i) => i.product === stats.atk * stats.def * toNumber(stats.sta)),
           fMove,
           cMovePri,
           cMoveSec,

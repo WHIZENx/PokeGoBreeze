@@ -11,7 +11,7 @@ import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault, toFloatWithPadding } from '../../../util/extension';
+import { toFloatWithPadding, toNumber } from '../../../util/extension';
 
 interface ICurrentStats {
   stats: IStatsPokemonGO;
@@ -75,10 +75,10 @@ const Stats = (props: IStatsComponent) => {
         sta,
         prod,
       },
-      atk: (atk * 100) / getValueOrDefault(Number, props.pokemonStats?.attack.maxStats, 1),
-      def: (def * 100) / getValueOrDefault(Number, props.pokemonStats?.defense.maxStats, 1),
-      sta: (sta * 100) / getValueOrDefault(Number, props.pokemonStats?.stamina.maxStats, 1),
-      prod: (prod * 100) / getValueOrDefault(Number, props.pokemonStats?.statProd.maxStats, 1),
+      atk: (atk * 100) / toNumber(props.pokemonStats?.attack.maxStats, 1),
+      def: (def * 100) / toNumber(props.pokemonStats?.defense.maxStats, 1),
+      sta: (sta * 100) / toNumber(props.pokemonStats?.stamina.maxStats, 1),
+      prod: (prod * 100) / toNumber(props.pokemonStats?.statProd.maxStats, 1),
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType]);
 

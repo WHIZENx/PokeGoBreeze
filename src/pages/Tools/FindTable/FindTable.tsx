@@ -193,11 +193,9 @@ const FindTable = () => {
 
   const showResultTableIV = () => {
     const avgPercent =
-      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.percent, 0) /
-      getValueOrDefault(Number, preIvArr?.result.length, 1);
+      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.percent, 0) / toNumber(preIvArr?.result.length, 1);
     const avgHP =
-      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) /
-      getValueOrDefault(Number, preIvArr?.result.length, 1);
+      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) / toNumber(preIvArr?.result.length, 1);
     const fourStar = preIvArr?.result.filter((item) => item.percent === 100).length;
     const threeStar = preIvArr?.result.filter((item) => item.percent > 80 && item.percent < 100).length;
     const twoStar = preIvArr?.result.filter((item) => item.percent > 64 && item.percent <= 80).length;
@@ -224,10 +222,7 @@ const FindTable = () => {
                   <b>{fourStar}</b>
                 </div>
               </div>
-              <p>
-                {toFloatWithPadding((getValueOrDefault(Number, fourStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1), 2)}
-                %
-              </p>
+              <p>{toFloatWithPadding((toNumber(fourStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="three-star">
@@ -237,13 +232,7 @@ const FindTable = () => {
                   <b>{threeStar}</b>
                 </div>
               </div>
-              <p>
-                {toFloatWithPadding(
-                  (getValueOrDefault(Number, threeStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1),
-                  2
-                )}
-                %
-              </p>
+              <p>{toFloatWithPadding((toNumber(threeStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="two-star">
@@ -253,9 +242,7 @@ const FindTable = () => {
                   <b>{twoStar}</b>
                 </div>
               </div>
-              <p>
-                {toFloatWithPadding((getValueOrDefault(Number, twoStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1), 2)}%
-              </p>
+              <p>{toFloatWithPadding((toNumber(twoStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="one-star">
@@ -265,9 +252,7 @@ const FindTable = () => {
                   <b>{oneStar}</b>
                 </div>
               </div>
-              <p>
-                {toFloatWithPadding((getValueOrDefault(Number, oneStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1), 2)}%
-              </p>
+              <p>{toFloatWithPadding((toNumber(oneStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
             </div>
             <div className="d-inline-block text-center">
               <div className="zero-star">
@@ -277,10 +262,7 @@ const FindTable = () => {
                   <b>{zeroStar}</b>
                 </div>
               </div>
-              <p>
-                {toFloatWithPadding((getValueOrDefault(Number, zeroStar) * 100) / getValueOrDefault(Number, preIvArr?.result.length, 1), 2)}
-                %
-              </p>
+              <p>{toFloatWithPadding((toNumber(zeroStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
             </div>
           </Fragment>
         )}
@@ -300,14 +282,12 @@ const FindTable = () => {
 
   const showResultTableCP = () => {
     const avgCp =
-      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.CP, 0) /
-      getValueOrDefault(Number, preCpArr?.result.length, 1);
+      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.CP, 0) / toNumber(preCpArr?.result.length, 1);
     const avgHP =
-      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) /
-      getValueOrDefault(Number, preCpArr?.result.length, 1);
+      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) / toNumber(preCpArr?.result.length, 1);
     return (
       <Fragment>
-        {isNotEmpty(preCpArr?.result) && (
+        {preCpArr && isNotEmpty(preCpArr.result) && (
           <Fragment>
             <p className="element-top">
               Average of CP: <b>{Math.round(avgCp)}</b>
@@ -316,9 +296,9 @@ const FindTable = () => {
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <DataTable
-              title={`Levels/CP for IV: ${preCpArr?.IV.atk}/${preCpArr?.IV.def}/${preCpArr?.IV.sta}`}
+              title={`Levels/CP for IV: ${preCpArr.IV.atk}/${preCpArr.IV.def}/${preCpArr.IV.sta}`}
               columns={columnsCP}
-              data={getValueOrDefault(Array, preCpArr?.result)}
+              data={preCpArr.result}
               pagination={true}
               defaultSortFieldId={1}
               highlightOnHover={true}

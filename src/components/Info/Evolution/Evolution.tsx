@@ -41,13 +41,12 @@ import {
 } from '../../../util/constants';
 import { IForm } from '../../../core/models/API/form.model';
 import { IEvolutionComponent } from '../../models/component.model';
-import { TypeSex } from '../../../enums/type.enum';
+import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
-import { PokemonType } from '../../../pages/Tools/BattleDamage/enums/damage.enum';
 
 interface IPokemonEvo {
   prev?: string;
@@ -109,7 +108,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
     return new PokemonEvo(
       getValueOrDefault(String, pokemon?.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase()),
-      getValueOrDefault(Number, pokemon?.num),
+      toNumber(pokemon?.num),
       getValueOrDefault(String, pokemon?.forme),
       convertModelSpritName(getValueOrDefault(String, pokemon?.name)),
       undefined,
@@ -144,7 +143,7 @@ const Evolution = (props: IEvolutionComponent) => {
       pokemon.prev,
       false,
       getValueOrDefault(Boolean, pokemon.isBaby),
-      pokemon.canPurified ? PokemonType.Purified : PokemonType.None
+      pokemon.pokemonType
     );
   };
 
@@ -253,7 +252,7 @@ const Evolution = (props: IEvolutionComponent) => {
               form: evo.forme ?? FORM_NORMAL,
               evoList: getValueOrDefault(Array, evo.evoList),
               tempEvo: getValueOrDefault(Array, evo.tempEvo),
-              canPurified: getValueOrDefault(Boolean, evo.isShadow),
+              pokemonType: evo.pokemonType,
             })
           )
         );
@@ -277,7 +276,7 @@ const Evolution = (props: IEvolutionComponent) => {
             form: poke.forme ?? FORM_NORMAL,
             evoList: getValueOrDefault(Array, poke.evoList),
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
-            canPurified: getValueOrDefault(Boolean, poke.isShadow),
+            pokemonType: poke.pokemonType,
           })
         )
       );
@@ -291,7 +290,7 @@ const Evolution = (props: IEvolutionComponent) => {
                 id: evo.evoToId,
                 name: evo.evoToName,
                 form: evo.evoToForm,
-                canPurified: evo.purificationEvoCandyCost > 0,
+                pokemonType: evo.purificationEvoCandyCost > 0 ? PokemonType.Purified : PokemonType.None,
                 evoList: [],
                 tempEvo: [],
               })
@@ -314,7 +313,7 @@ const Evolution = (props: IEvolutionComponent) => {
           name: evo.evoToName,
           form: evo.evoToForm,
           prev: poke.name,
-          canPurified: evo.purificationEvoCandyCost > 0,
+          pokemonType: evo.purificationEvoCandyCost > 0 ? PokemonType.Purified : PokemonType.None,
           evoList: [],
           tempEvo: [],
         })
@@ -532,7 +531,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               <span
                                 className="d-flex align-items-center caption"
                                 style={{ color: theme.palette.customText.caption, width: 'max-content', marginLeft: 2 }}
-                              >{`x${getValueOrDefault(Number, data.itemCost)}`}</span>
+                              >{`x${toNumber(data.itemCost)}`}</span>
                             )}
                           </Fragment>
                         )}

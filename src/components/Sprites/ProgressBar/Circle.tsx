@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import APIService from '../../../services/API.service';
 import { ICircleBarComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/extension';
+import { getValueOrDefault, toNumber } from '../../../util/extension';
 
 interface Element {
   energy?: number;
@@ -27,7 +27,7 @@ const Fill = styled.div<Element>`
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
   clip: rect(
-    ${(props) => props.size - (getValueOrDefault(Number, props.energy) * props.size) / getValueOrDefault(Number, props.moveEnergy)}px,
+    ${(props) => props.size - (toNumber(props.energy) * props.size) / toNumber(props.moveEnergy)}px,
     ${(props) => props.size}px,
     ${(props) => props.size}px,
     0px
@@ -58,8 +58,7 @@ const IconFill = styled.div<Element>`
     ${(props) =>
       props.size / 2 +
       (props.size - props.size / 2) / 2 -
-      (getValueOrDefault(Number, props.energy) * (props.size / 2 + (props.size - props.size / 2))) /
-        getValueOrDefault(Number, props.moveEnergy)}px,
+      (toNumber(props.energy) * (props.size / 2 + (props.size - props.size / 2))) / toNumber(props.moveEnergy)}px,
     ${(props) => props.size / 2}px,
     ${(props) => props.size / 2}px,
     0px

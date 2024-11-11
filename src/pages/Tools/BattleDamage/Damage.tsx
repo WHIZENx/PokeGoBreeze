@@ -26,10 +26,10 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, isInclude, toFloatWithPadding } from '../../../util/extension';
-import { ChargeAbility, PokemonType } from './enums/damage.enum';
+import { combineClasses, DynamicObj, getValueOrDefault, isInclude, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { ChargeAbility } from './enums/damage.enum';
 import { IncludeMode } from '../../../util/enums/string.enum';
-import { TypeAction, VariantType } from '../../../enums/type.enum';
+import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -329,7 +329,7 @@ const Damage = () => {
                         setBattleState(
                           Filter.create({
                             ...battleState,
-                            fLevel: getValueOrDefault(Number, value),
+                            fLevel: toNumber(value),
                           })
                         );
                       }}
@@ -343,7 +343,7 @@ const Damage = () => {
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
                       x
                       {toFloatWithPadding(
-                        getDataWithKey<ITrainerFriendship>(globalOptions.trainerFriendship, battleState.fLevel).atkBonus,
+                        getDataWithKey<ITrainerFriendship>(globalOptions.trainerFriendship, battleState.fLevel)?.atkBonus,
                         2
                       )}
                     </Box>

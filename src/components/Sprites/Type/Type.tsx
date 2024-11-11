@@ -7,7 +7,7 @@ import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { isNotEmpty, combineClasses, getValueOrDefault } from '../../../util/extension';
+import { isNotEmpty, combineClasses, toNumber } from '../../../util/extension';
 
 const TypeInfo = (props: ITypeComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -18,8 +18,8 @@ const TypeInfo = (props: ITypeComponent) => {
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
           <div className="text-center" key={0}>
             <img
-              width={getValueOrDefault(Number, props.height, 36)}
-              height={getValueOrDefault(Number, props.height, 36)}
+              width={toNumber(props.height, 36)}
+              height={toNumber(props.height, 36)}
               alt="img-pokemon"
               src={APIService.getPokeSprite(0)}
             />

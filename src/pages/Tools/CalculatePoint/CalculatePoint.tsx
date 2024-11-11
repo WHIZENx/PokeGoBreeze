@@ -22,7 +22,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleState } from '../../../core/models/damage.model';
-import { combineClasses, DynamicObj, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, toNumber } from '../../../util/extension';
 
 class ColorTone {
   number: number;
@@ -166,8 +166,8 @@ const CalculatePoint = () => {
     const groupSta: number[] = [];
     let lv = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
-      dataListDef[lv] = getValueOrDefault(Array, dataListDef[lv]);
-      dataListSta[lv] = getValueOrDefault(Array, dataListSta[lv]);
+      dataListDef[lv] ??= [];
+      dataListSta[lv] ??= [];
       for (let j = MIN_IV; j <= MAX_IV; j += 1) {
         const resultDef = calculateDamagePVE(
           globalOptions,
@@ -230,7 +230,7 @@ const CalculatePoint = () => {
               globalOptions,
               statDefATK,
               calculateStatsBattle(statDEF, DEFIv, lv, true),
-              getValueOrDefault(Number, !isRaid && pvpDmg ? cMove?.pvpPower : cMove?.pvePower),
+              toNumber(!isRaid && pvpDmg ? cMove?.pvpPower : cMove?.pvePower),
               BattleState.create({
                 effective: getTypeEffective(typeEff, getValueOrDefault(String, cMove?.type), getValueOrDefault(Array, form?.form.types)),
                 isStab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove?.type)),
@@ -242,7 +242,7 @@ const CalculatePoint = () => {
             globalOptions,
             statDefATK,
             calculateStatsBattle(statDEF, DEFIv, lv, true),
-            getValueOrDefault(Number, !isRaid && pvpDmg ? fMove?.pvpPower : fMove?.pvePower),
+            toNumber(!isRaid && pvpDmg ? fMove?.pvpPower : fMove?.pvePower),
             BattleState.create({
               effective: getTypeEffective(typeEff, getValueOrDefault(String, fMove?.type), getValueOrDefault(Array, form?.form.types)),
               isStab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove?.type)),
@@ -260,7 +260,7 @@ const CalculatePoint = () => {
     let lv = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
       let count = 0;
-      dataList[lv] = getValueOrDefault(Array, dataList[lv]);
+      dataList[lv] ??= [];
       let result = computeBulk(count, i);
       while (result > 0) {
         dataList[lv].push(result);
@@ -293,7 +293,7 @@ const CalculatePoint = () => {
               />
             </span>
           </Badge>
-          <span className="caption">{splitAndCapitalize(getValueOrDefault(String, form?.form.name), '-', ' ')}</span>
+          <span className="caption">{splitAndCapitalize(form?.form.name, '-', ' ')}</span>
           <span className="caption">
             <b>{pri === TypeAction.ATK ? 'Attacker' : 'Defender'}</b>
           </span>
@@ -313,7 +313,7 @@ const CalculatePoint = () => {
               />
             </span>
           </Badge>
-          <span className="caption">{splitAndCapitalize(getValueOrDefault(String, formDef?.form.name), '-', ' ')}</span>
+          <span className="caption">{splitAndCapitalize(formDef?.form.name, '-', ' ')}</span>
           <span className="caption">
             <b>{sec === TypeAction.ATK ? 'Attacker' : 'Defender'}</b>
           </span>

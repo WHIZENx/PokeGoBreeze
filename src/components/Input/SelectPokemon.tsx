@@ -7,7 +7,7 @@ import './Select.scss';
 import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
-import { TypeMove } from '../../enums/type.enum';
+import { MoveType, TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
@@ -83,26 +83,26 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       const simpleMove: ISelectMoveModel[] = [];
       if (type === TypeMove.FAST) {
         result.quickMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+          simpleMove.push(new SelectMoveModel(value, MoveType.None));
         });
         result.eliteQuickMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+          simpleMove.push(new SelectMoveModel(value, MoveType.Elite));
         });
       } else {
         result.cinematicMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+          simpleMove.push(new SelectMoveModel(value, MoveType.None));
         });
         result.eliteCinematicMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+          simpleMove.push(new SelectMoveModel(value, MoveType.Elite));
         });
         result.shadowMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+          simpleMove.push(new SelectMoveModel(value, MoveType.Shadow));
         });
         result.purifiedMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+          simpleMove.push(new SelectMoveModel(value, MoveType.Purified));
         });
         result.specialMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+          simpleMove.push(new SelectMoveModel(value, MoveType.Special));
         });
       }
       return simpleMove[0];

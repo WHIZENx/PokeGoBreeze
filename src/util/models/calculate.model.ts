@@ -5,8 +5,8 @@ import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
 import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
-import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
-import { getValueOrDefault } from '../extension';
+import { PokemonType } from '../../enums/type.enum';
+import { getValueOrDefault, toNumber } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
 export interface IBattleCalculate {
@@ -215,7 +215,7 @@ export interface IQueryStatesEvoChain {
   tempEvo: ITempEvo[];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
-  canPurified?: boolean;
+  pokemonType?: PokemonType;
 }
 
 export class QueryStatesEvoChain implements IQueryStatesEvoChain {
@@ -229,7 +229,7 @@ export class QueryStatesEvoChain implements IQueryStatesEvoChain {
   tempEvo: ITempEvo[] = [];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
-  canPurified?: boolean;
+  pokemonType?: PokemonType;
 
   constructor({ ...props }: IQueryStatesEvoChain) {
     Object.assign(this, props);
@@ -396,11 +396,11 @@ export class BattleLeagueCalculate implements IBattleLeagueCalculate {
     this.isElidge = isElidge;
     this.maxCP = maxCP;
     this.IV = new StatsPokemonGO();
-    this.IV.atk = getValueOrDefault(Number, atk);
-    this.IV.def = getValueOrDefault(Number, def);
-    this.IV.sta = getValueOrDefault(Number, sta);
-    this.CP = getValueOrDefault(Number, CP);
-    this.level = getValueOrDefault(Number, level);
+    this.IV.atk = toNumber(atk);
+    this.IV.def = toNumber(def);
+    this.IV.sta = toNumber(sta);
+    this.CP = toNumber(CP);
+    this.level = toNumber(level);
     this.isLimit = getValueOrDefault(Boolean, isLimit);
   }
 }

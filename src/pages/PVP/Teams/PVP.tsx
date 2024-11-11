@@ -6,7 +6,7 @@ import {
   convertNameRankingToForm,
   convertNameRankingToOri,
   findMoveTeam,
-  getAllMoves,
+  getMoveType,
   getStyleSheet,
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
@@ -47,7 +47,7 @@ import {
 import { Sorted, SortType } from '../enums/pvp-team.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
-import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../../../enums/type.enum';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -129,7 +129,7 @@ const TeamPVP = () => {
       stats,
       atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
       def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
+      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === toNumber(stats.sta)),
       fMove,
       cMovePri,
       cMoveSec,
@@ -387,8 +387,7 @@ const TeamPVP = () => {
                       title="Fast Move"
                       color="white"
                       move={value.fMove}
-                      isElite={isIncludeList(value.pokemonData?.eliteQuickMoves, value.fMove?.name)}
-                      isUnavailable={!isIncludeList(getAllMoves(value.pokemonData), value.fMove?.name)}
+                      moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                     />
                     <TypeBadge
                       isGrow={true}
@@ -396,11 +395,7 @@ const TeamPVP = () => {
                       title="Primary Charged Move"
                       color="white"
                       move={value.cMovePri}
-                      isElite={isIncludeList(value.pokemonData?.eliteCinematicMoves, value.cMovePri?.name)}
-                      isShadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMovePri?.name)}
-                      isPurified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMovePri?.name)}
-                      isSpecial={isIncludeList(value.pokemonData?.specialMoves, value.cMovePri?.name)}
-                      isUnavailable={value.cMovePri && !isIncludeList(getAllMoves(value.pokemonData), value.cMovePri.name)}
+                      moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                     />
                     {value.cMoveSec && (
                       <TypeBadge
@@ -409,11 +404,7 @@ const TeamPVP = () => {
                         title="Secondary Charged Move"
                         color="white"
                         move={value.cMoveSec}
-                        isElite={isIncludeList(value.pokemonData?.eliteCinematicMoves, value.cMoveSec.name)}
-                        isShadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMoveSec.name)}
-                        isPurified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMoveSec.name)}
-                        isSpecial={isIncludeList(value.pokemonData?.specialMoves, value.cMoveSec.name)}
-                        isUnavailable={value.cMoveSec && !isIncludeList(getAllMoves(value.pokemonData), value.cMoveSec.name)}
+                        moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
                       />
                     )}
                   </div>
@@ -566,8 +557,7 @@ const TeamPVP = () => {
                                 title="Fast Move"
                                 color="white"
                                 move={value.fMove}
-                                isElite={isIncludeList(value.pokemonData?.eliteQuickMoves, value.fMove?.name)}
-                                isUnavailable={!isIncludeList(getAllMoves(value.pokemonData), value.fMove?.name)}
+                                moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                               />
                               <TypeBadge
                                 isGrow={true}
@@ -575,11 +565,7 @@ const TeamPVP = () => {
                                 title="Primary Charged Move"
                                 color="white"
                                 move={value.cMovePri}
-                                isElite={isIncludeList(value.pokemonData?.eliteCinematicMoves, value.cMovePri?.name)}
-                                isShadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMovePri?.name)}
-                                isPurified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMovePri?.name)}
-                                isSpecial={isIncludeList(value.pokemonData?.specialMoves, value.cMovePri?.name)}
-                                isUnavailable={!isIncludeList(getAllMoves(value.pokemonData), value.cMovePri?.name)}
+                                moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                               />
                               {value.cMoveSec && (
                                 <TypeBadge
@@ -588,11 +574,7 @@ const TeamPVP = () => {
                                   title="Secondary Charged Move"
                                   color="white"
                                   move={value.cMoveSec}
-                                  isElite={isIncludeList(value.pokemonData?.eliteCinematicMoves, value.cMoveSec.name)}
-                                  isShadow={isIncludeList(value.pokemonData?.shadowMoves, value.cMoveSec.name)}
-                                  isPurified={isIncludeList(value.pokemonData?.purifiedMoves, value.cMoveSec.name)}
-                                  isSpecial={isIncludeList(value.pokemonData?.specialMoves, value.cMoveSec.name)}
-                                  isUnavailable={!isIncludeList(getAllMoves(value.pokemonData), value.cMoveSec.name)}
+                                  moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
                                 />
                               )}
                             </div>

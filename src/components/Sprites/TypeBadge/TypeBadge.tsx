@@ -28,29 +28,29 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
       </span>
       <Link to={`/move/${move?.id}`} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-border position-relative')}>
-          {(props.isElite || props.isShadow || props.isPurified || props.isSpecial || props.isUnavailable) && (
+          {props.moveType && (
             <span className="type-badge-border">
-              {props.isElite && (
+              {props.moveType === MoveType.Elite && (
                 <span className="type-icon-small ic elite-ic">
                   <span>{MoveType.Elite}</span>
                 </span>
               )}
-              {props.isShadow && (
+              {props.moveType === MoveType.Shadow && (
                 <span className="type-icon-small ic shadow-ic">
                   <span>{MoveType.Shadow}</span>
                 </span>
               )}
-              {props.isPurified && (
+              {props.moveType === MoveType.Purified && (
                 <span className="type-icon-small ic purified-ic">
                   <span>{MoveType.Purified}</span>
                 </span>
               )}
-              {props.isSpecial && (
+              {props.moveType === MoveType.Special && (
                 <span className="type-icon-small ic special-ic">
                   <span>{MoveType.Special}</span>
                 </span>
               )}
-              {props.isUnavailable && (
+              {props.moveType === MoveType.Unavailable && (
                 <span className="type-icon-small ic unavailable-ic">
                   <span>Unavailable</span>
                 </span>

@@ -3,8 +3,8 @@ import { Combat, IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IStatsAtk, IStatsDef, IStatsProd, IStatsSta, IStatsBase, StatsBase } from '../../../core/models/stats.model';
+import { PokemonType } from '../../../enums/type.enum';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
-import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
 
 export enum ChargeType {

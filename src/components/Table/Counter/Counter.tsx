@@ -118,14 +118,18 @@ const Counter = (props: ICounterComponent) => {
                 'position-relative group-pokemon-sprite'
               )}
             >
-              {row.cMove.isShadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-              {row.cMove.isPurified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+              {row.cMove.moveType === MoveType.Shadow && (
+                <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+              )}
+              {row.cMove.moveType === MoveType.Purified && (
+                <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
+              )}
               <img
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data.assets, row.pokemonId, getValueOrDefault(String, row.pokemonForme))
-                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, getValueOrDefault(String, row.pokemonForme)))
+                  findAssetForm(data.assets, row.pokemonId, row.pokemonForme)
+                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, row.pokemonForme))
                     : APIService.getPokeFullSprite(row.pokemonId)
                 }
                 onError={(e) => {
@@ -157,7 +161,7 @@ const Counter = (props: ICounterComponent) => {
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.fMove.isElite && (
+            {row.fMove.moveType === MoveType.Elite && (
               <span className="type-icon-small ic elite-ic">
                 <span>{MoveType.Elite}</span>
               </span>
@@ -178,22 +182,22 @@ const Counter = (props: ICounterComponent) => {
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.cMove.isElite && (
+            {row.cMove.moveType === MoveType.Elite && (
               <span className="type-icon-small ic elite-ic">
                 <span>{MoveType.Elite}</span>
               </span>
             )}
-            {row.cMove.isShadow && (
+            {row.cMove.moveType === MoveType.Shadow && (
               <span className="type-icon-small ic shadow-ic">
                 <span>{MoveType.Shadow}</span>
               </span>
             )}
-            {row.cMove.isPurified && (
+            {row.cMove.moveType === MoveType.Purified && (
               <span className="type-icon-small ic purified-ic">
                 <span>{MoveType.Purified}</span>
               </span>
             )}
-            {row.cMove.isSpecial && (
+            {row.cMove.moveType === MoveType.Special && (
               <span className="type-icon-small ic special-ic">
                 <span>{MoveType.Special}</span>
               </span>

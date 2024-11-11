@@ -43,7 +43,7 @@ import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'history';
-import { MoveType, TypeMove } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { Elite, IPokemonData } from '../../../core/models/pokemon.model';
@@ -333,17 +333,14 @@ const DpsTdo = () => {
 
   const addCPokeData = (
     dataList: PokemonSheetData[],
-    movePoke: string[],
+    movePoke: string[] | undefined,
     pokemon: IPokemonData,
     vf: string,
-    isShadow: boolean,
-    isPurified: boolean,
-    isSpecial: boolean,
-    fElite: boolean,
-    cElite: boolean,
+    fMoveType: MoveType,
+    cMoveType: MoveType,
     specialMove: string[] = []
   ) => {
-    movePoke.forEach((vc: string) => {
+    getValueOrDefault(Array, movePoke).forEach((vc: string) => {
       const fMove = data.combat.find((item) => isEqual(item.name, vf));
       const cMove = data.combat.find((item) => isEqual(item.name, vc));
 
@@ -352,11 +349,11 @@ const DpsTdo = () => {
         const statsAttacker = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
           def: calculateStatsBattle(stats.def, ivDef, pokemonLevel),
-          hp: calculateStatsBattle(getValueOrDefault(Number, stats.sta), ivHp, pokemonLevel),
+          hp: calculateStatsBattle(toNumber(stats.sta), ivHp, pokemonLevel),
           fMove,
           cMove,
           types: pokemon.types,
-          isShadow,
+          isShadow: cMoveType === MoveType.Shadow,
           weatherBoosts: getValueOrDefault(String, options.weatherBoosts),
           isPokemonFriend: options.isTrainerFriend,
           pokemonFriendLevel: options.pokemonFriendLevel,
@@ -368,7 +365,7 @@ const DpsTdo = () => {
           const statsDefender = new BattleCalculate({
             atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
             def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
-            hp: calculateStatsBattle(getValueOrDefault(Number, statsDef.sta), ivHp, pokemonLevel),
+            hp: calculateStatsBattle(toNumber(statsDef.sta), ivHp, pokemonLevel),
             fMove: data.combat.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
             cMove: data.combat.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
             types: dataTargetPokemon.types,
@@ -381,7 +378,7 @@ const DpsTdo = () => {
 
           const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
           dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
-          tdo = dps * TimeToKill(Math.floor(getValueOrDefault(Number, statsAttacker.hp)), dpsDef);
+          tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
         } else {
           dps = calculateAvgDPS(
             data.options,
@@ -389,14 +386,14 @@ const DpsTdo = () => {
             data.weatherBoost,
             statsAttacker.fMove,
             statsAttacker.cMove,
-            getValueOrDefault(Number, statsAttacker.atk),
+            toNumber(statsAttacker.atk),
             statsAttacker.def,
-            getValueOrDefault(Number, statsAttacker.hp),
+            toNumber(statsAttacker.hp),
             statsAttacker.types,
             statsAttacker.isShadow,
             options
           );
-          tdo = calculateTDO(data.options, statsAttacker.def, getValueOrDefault(Number, statsAttacker.hp), dps, statsAttacker.isShadow);
+          tdo = calculateTDO(data.options, statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.isShadow);
         }
         dataList.push({
           pokemon,
@@ -405,88 +402,33 @@ const DpsTdo = () => {
           dps,
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
-          isShadow,
-          isPurified: isPurified && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
-          isSpecial,
-          mShadow: isShadow && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          isShadow: cMoveType === MoveType.Shadow,
+          isPurified: cMoveType === MoveType.Purified && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          isSpecial: cMoveType === MoveType.Special,
+          mShadow: cMoveType === MoveType.Shadow && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           elite: {
-            fMove: fElite,
-            cMove: cElite,
+            fMove: fMoveType === MoveType.Elite,
+            cMove: cMoveType === MoveType.Elite,
           },
-          cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, getValueOrDefault(Number, stats.sta) + ivHp, pokemonLevel),
+          cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, toNumber(stats.sta) + ivHp, pokemonLevel),
         });
       }
     });
   };
 
-  const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[], fElite: boolean, isShadow = false) => {
-    movePoke.forEach((vf) => {
-      addCPokeData(dataList, getValueOrDefault(Array, pokemon.cinematicMoves), pokemon, vf, false, false, false, fElite, false);
-      if (!pokemon.forme || isShadow) {
+  const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[] | undefined, fMoveType: MoveType) => {
+    getValueOrDefault(Array, movePoke).forEach((vf) => {
+      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.None);
+      if (!pokemon.forme || pokemon.pokemonType === PokemonType.Shadow) {
         if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(
-            dataList,
-            getValueOrDefault(Array, pokemon.cinematicMoves),
-            pokemon,
-            vf,
-            true,
-            false,
-            false,
-            fElite,
-            false,
-            pokemon.shadowMoves
-          );
-          addCPokeData(
-            dataList,
-            getValueOrDefault(Array, pokemon.eliteCinematicMoves),
-            pokemon,
-            vf,
-            true,
-            false,
-            false,
-            fElite,
-            true,
-            pokemon.shadowMoves
-          );
+          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves);
+          addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves);
         }
-        addCPokeData(
-          dataList,
-          getValueOrDefault(Array, pokemon.shadowMoves),
-          pokemon,
-          vf,
-          true,
-          false,
-          false,
-          fElite,
-          false,
-          pokemon.shadowMoves
-        );
-        addCPokeData(
-          dataList,
-          getValueOrDefault(Array, pokemon.purifiedMoves),
-          pokemon,
-          vf,
-          false,
-          true,
-          false,
-          fElite,
-          false,
-          pokemon.purifiedMoves
-        );
+        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves);
+        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, MoveType.Purified, pokemon.purifiedMoves);
       }
-      addCPokeData(
-        dataList,
-        getValueOrDefault(Array, pokemon.specialMoves),
-        pokemon,
-        vf,
-        false,
-        false,
-        true,
-        fElite,
-        false,
-        pokemon.specialMoves
-      );
-      addCPokeData(dataList, getValueOrDefault(Array, pokemon.eliteCinematicMoves), pokemon, vf, false, false, false, fElite, true);
+      addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType, MoveType.Special, pokemon.specialMoves);
+      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Elite);
     });
   };
 
@@ -494,8 +436,8 @@ const DpsTdo = () => {
     const dataList: PokemonSheetData[] = [];
     data.pokemon.forEach((pokemon) => {
       if (pokemon) {
-        addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.quickMoves), false, pokemon.isShadow);
-        addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMoves), true, pokemon.isShadow);
+        addFPokeData(dataList, pokemon, pokemon.quickMoves, MoveType.None);
+        addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves, MoveType.Elite);
       }
     });
     setShowSpinner(false);
@@ -995,7 +937,7 @@ const DpsTdo = () => {
                         ...options,
                         delay: Delay.create({
                           fTime: toFloat(e.currentTarget.value),
-                          cTime: getValueOrDefault(Number, options.delay?.cTime),
+                          cTime: toNumber(options.delay?.cTime),
                         }),
                       })
                     )
@@ -1016,7 +958,7 @@ const DpsTdo = () => {
                       OptionOtherDPS.create({
                         ...options,
                         delay: Delay.create({
-                          fTime: getValueOrDefault(Number, options.delay?.fTime),
+                          fTime: toNumber(options.delay?.fTime),
                           cTime: toFloat(e.currentTarget.value),
                         }),
                       })
@@ -1175,13 +1117,13 @@ const DpsTdo = () => {
                         setOptions(
                           OptionOtherDPS.create({
                             ...options,
-                            pokemonFriendLevel: getValueOrDefault(Number, value),
+                            pokemonFriendLevel: toNumber(value),
                           })
                         );
                       }}
                       max={4}
                       size="large"
-                      value={getValueOrDefault(Number, pokemonFriendLevel)}
+                      value={toNumber(pokemonFriendLevel)}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />

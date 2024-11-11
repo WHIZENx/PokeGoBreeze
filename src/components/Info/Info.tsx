@@ -67,7 +67,7 @@ const Info = (props: IInfoComponent) => {
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={getValueOrDefault(Array, props.currForm?.form.types)} style={{ marginLeft: 15 }} isShow={true} />
+      <TypeInfo arr={props.currForm?.form.types} style={{ marginLeft: 15 }} isShow={true} />
       <WeatherTypeEffective weatherEffective={getWeatherEffective(getValueOrDefault(Array, props.currForm?.form.types))} />
       <TypeEffective typeEffective={getTypeEffective(getValueOrDefault(Array, props.currForm?.form.types))} />
     </div>

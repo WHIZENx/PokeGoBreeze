@@ -37,9 +37,8 @@ import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, isNullOrUndefined, toNumber } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
-import { TypeAction } from '../enums/type.enum';
+import { MoveType, PokemonType, TypeAction } from '../enums/type.enum';
 import { Options } from '../core/models/options.model';
-import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
 
 class Mask {
   value: number;
@@ -524,13 +523,14 @@ export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => {
   };
 };
 
-export const getDataWithKey = <T>(data: any, key: string | number) => {
-  const result = Object.entries(data ?? new Object()).find((k) => k.at(0) === key.toString());
-  if (result) {
-    const [, data] = result;
-    return data as T;
-  }
-  return new Object() as T;
+export const getDataWithKey = <T>(data: object, findKey: string | number) => {
+  const result = Object.entries(data).find(([key]) => key === findKey.toString());
+  return result && isNotEmpty(result) ? (result[1] as T) : undefined;
+};
+
+export const getKeyEnum = <V>(enums: object, findValue: V) => {
+  const result = Object.entries(enums).find(([, value]: [string, V]) => value === findValue);
+  return result && isNotEmpty(result) ? result[0] : undefined;
 };
 
 export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
@@ -551,7 +551,7 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) => {
-  return pokemon.some((p) => p.isShadow && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
+  return pokemon.some((p) => p.pokemonType === PokemonType.Shadow && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
 };
 
 const convertNameEffort = (name: string) => {
@@ -900,4 +900,19 @@ export const getDmgMultiplyBonus = (form = PokemonType.None, options?: Options, 
     default:
       return 1;
   }
+};
+
+export const getMoveType = (pokemonData?: IPokemonData, moveName?: string) => {
+  if (isIncludeList(pokemonData?.eliteQuickMoves, moveName) || isIncludeList(pokemonData?.eliteCinematicMoves, moveName)) {
+    return MoveType.Elite;
+  } else if (isIncludeList(pokemonData?.shadowMoves, moveName)) {
+    return MoveType.Shadow;
+  } else if (isIncludeList(pokemonData?.purifiedMoves, moveName)) {
+    return MoveType.Purified;
+  } else if (isIncludeList(pokemonData?.specialMoves, moveName)) {
+    return MoveType.Special;
+  } else if (!isIncludeList(getAllMoves(pokemonData), moveName)) {
+    return MoveType.Unavailable;
+  }
+  return MoveType.None;
 };

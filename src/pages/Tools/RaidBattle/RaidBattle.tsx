@@ -60,7 +60,7 @@ import {
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -82,7 +82,6 @@ import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, Rai
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
-import { PokemonType } from '../BattleDamage/enums/damage.enum';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -355,28 +354,28 @@ const RaidBattle = () => {
     if (result) {
       const simpleFMove: ISelectMoveModel[] = [];
       result.quickMoves?.forEach((value) => {
-        simpleFMove.push(new SelectMoveModel(value, false, false, false, false));
+        simpleFMove.push(new SelectMoveModel(value, MoveType.None));
       });
       result.eliteQuickMoves?.forEach((value) => {
-        simpleFMove.push(new SelectMoveModel(value, true, false, false, false));
+        simpleFMove.push(new SelectMoveModel(value, MoveType.Elite));
       });
       setFMove(simpleFMove.at(0));
       setResultFMove(simpleFMove);
       const simpleCMove: ISelectMoveModel[] = [];
       result.cinematicMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, false, false, false, false));
+        simpleCMove.push(new SelectMoveModel(value, MoveType.None));
       });
       result.eliteCinematicMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, true, false, false, false));
+        simpleCMove.push(new SelectMoveModel(value, MoveType.Elite));
       });
       result.shadowMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, false, true, false, false));
+        simpleCMove.push(new SelectMoveModel(value, MoveType.Shadow));
       });
       result.purifiedMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, false, false, true, false));
+        simpleCMove.push(new SelectMoveModel(value, MoveType.Purified));
       });
       result.specialMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, false, false, false, true));
+        simpleCMove.push(new SelectMoveModel(value, MoveType.Special));
       });
       setCMove(simpleCMove.at(0));
       setResultCMove(simpleCMove);
@@ -390,17 +389,15 @@ const RaidBattle = () => {
 
   const addCPokeData = (
     dataList: IPokemonMoveData[],
-    movePoke: string[],
+    movePoke: string[] | undefined,
     value: IPokemonData | undefined,
     vf: string,
-    isShadow: boolean,
-    isPurified: boolean,
-    fElite: boolean,
-    cElite: boolean,
+    fMoveType: MoveType,
+    cMoveType: MoveType,
     specialMove: string[] | undefined,
     pokemonTarget: boolean
   ) => {
-    movePoke.forEach((vc) => {
+    getValueOrDefault(Array, movePoke).forEach((vc) => {
       const fMove = data.combat.find((item) => isEqual(item.name, vf));
       const cMove = data.combat.find((item) => isEqual(item.name, vc));
       if (fMove && cMove) {
@@ -408,11 +405,11 @@ const RaidBattle = () => {
         const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(getValueOrDefault(Number, stats.sta), getValueOrDefault(Number, used.iv.sta), used.level),
+          hp: calculateStatsBattle(toNumber(stats.sta), toNumber(used.iv.sta), used.level),
           fMove,
           cMove,
           types: getValueOrDefault(Array, value?.types),
-          isShadow,
+          isShadow: cMoveType === MoveType.Shadow,
         });
         let statsDefender = new BattleCalculate({
           atk: statBossATK,
@@ -436,11 +433,18 @@ const RaidBattle = () => {
         const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
         const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
-        const ttkAtk = TimeToKill(Math.floor(getValueOrDefault(Number, statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
-        const ttkDef = TimeToKill(Math.floor(getValueOrDefault(Number, statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
+        const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
+        const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
 
         const tdoAtk = dpsAtk * ttkDef;
         const tdoDef = dpsDef * ttkAtk;
+
+        let pokemonType = PokemonType.None;
+        if (cMoveType === MoveType.Shadow) {
+          pokemonType = PokemonType.Shadow;
+        } else if (cMoveType === MoveType.Purified && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name)) {
+          pokemonType = PokemonType.Purified;
+        }
 
         dataList.push({
           pokemon: value,
@@ -453,15 +457,14 @@ const RaidBattle = () => {
           multiDpsTdo: Math.pow(dpsAtk, 3) * tdoAtk,
           ttkAtk,
           ttkDef,
-          attackHpRemain: Math.floor(getValueOrDefault(Number, statsAttacker.hp)) - Math.min(timeAllow, ttkDef) * dpsDef,
-          defendHpRemain: Math.floor(getValueOrDefault(Number, statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
-          death: Math.floor(getValueOrDefault(Number, statsDefender.hp) / tdoAtk),
-          isShadow,
-          isPurified: isPurified && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
-          mShadow: isShadow && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
+          attackHpRemain: Math.floor(toNumber(statsAttacker.hp)) - Math.min(timeAllow, ttkDef) * dpsDef,
+          defendHpRemain: Math.floor(toNumber(statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
+          death: Math.floor(toNumber(statsDefender.hp) / tdoAtk),
+          pokemonType,
+          mShadow: cMoveType === MoveType.Shadow && !isUndefined(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
           elite: {
-            fMove: fElite,
-            cMove: cElite,
+            fMove: fMoveType === MoveType.Elite,
+            cMove: cMoveType === MoveType.Elite,
           },
         });
       }
@@ -471,63 +474,18 @@ const RaidBattle = () => {
   const addFPokeData = (
     dataList: IPokemonMoveData[],
     pokemon: IPokemonData,
-    movePoke: string[],
-    fElite: boolean,
-    pokemonTarget: boolean,
-    isShadow = false
+    movePoke: string[] | undefined,
+    fMoveType: MoveType,
+    pokemonTarget: boolean
   ) => {
-    movePoke.forEach((vf) => {
-      addCPokeData(
-        dataList,
-        getValueOrDefault(Array, pokemon.cinematicMoves),
-        pokemon,
-        vf,
-        false,
-        false,
-        fElite,
-        false,
-        undefined,
-        pokemonTarget
-      );
-      if (!pokemon.forme || isShadow) {
+    getValueOrDefault(Array, movePoke).forEach((vf) => {
+      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.None, undefined, pokemonTarget);
+      if (!pokemon.forme || pokemon.pokemonType === PokemonType.Shadow) {
         if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(
-            dataList,
-            getValueOrDefault(Array, pokemon.cinematicMoves),
-            pokemon,
-            vf,
-            true,
-            false,
-            fElite,
-            false,
-            getValueOrDefault(Array, pokemon.shadowMoves),
-            pokemonTarget
-          );
+          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves, pokemonTarget);
         }
-        addCPokeData(
-          dataList,
-          getValueOrDefault(Array, pokemon.shadowMoves),
-          pokemon,
-          vf,
-          true,
-          false,
-          fElite,
-          false,
-          getValueOrDefault(Array, pokemon.shadowMoves),
-          pokemonTarget
-        );
-        addCPokeData(
-          dataList,
-          getValueOrDefault(Array, pokemon.purifiedMoves),
-          pokemon,
-          vf,
-          false,
-          true,
-          fElite,
-          false,
-          getValueOrDefault(Array, pokemon.purifiedMoves),
-          pokemonTarget
-        );
+        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves, pokemonTarget);
+        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, MoveType.Purified, pokemon.purifiedMoves, pokemonTarget);
       }
       if (
         (!pokemon.forme ||
@@ -535,31 +493,9 @@ const RaidBattle = () => {
             !isInclude(pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
-        addCPokeData(
-          dataList,
-          getValueOrDefault(Array, pokemon.eliteCinematicMoves),
-          pokemon,
-          vf,
-          true,
-          false,
-          fElite,
-          true,
-          getValueOrDefault(Array, pokemon.shadowMoves),
-          pokemonTarget
-        );
+        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves, pokemonTarget);
       } else {
-        addCPokeData(
-          dataList,
-          getValueOrDefault(Array, pokemon.eliteCinematicMoves),
-          pokemon,
-          vf,
-          false,
-          false,
-          fElite,
-          true,
-          undefined,
-          pokemonTarget
-        );
+        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Elite, undefined, pokemonTarget);
       }
     });
   };
@@ -568,21 +504,21 @@ const RaidBattle = () => {
     let dataList: IPokemonMoveData[] = [];
     data.pokemon.forEach((pokemon) => {
       if (pokemon && !isEqual(pokemon.forme, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
-        addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.quickMoves), false, pokemonTarget, pokemon.isShadow);
-        addFPokeData(dataList, pokemon, getValueOrDefault(Array, pokemon.eliteQuickMoves), true, pokemonTarget, pokemon.isShadow);
+        addFPokeData(dataList, pokemon, pokemon.quickMoves, MoveType.None, pokemonTarget);
+        addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves, MoveType.Elite, pokemonTarget);
       }
     });
     if (pokemonTarget) {
       const sortedDPS = dataList.sort((a, b) => a.dpsAtk - b.dpsAtk);
       const sortedTDO = dataList.sort((a, b) => a.tdoAtk - b.tdoAtk);
-      const sortedHP = dataList.sort((a, b) => getValueOrDefault(Number, a.attackHpRemain) - getValueOrDefault(Number, b.attackHpRemain));
+      const sortedHP = dataList.sort((a, b) => toNumber(a.attackHpRemain) - toNumber(b.attackHpRemain));
       const result = {
-        minDPS: getValueOrDefault(Number, sortedDPS.at(0)?.dpsAtk),
+        minDPS: toNumber(sortedDPS.at(0)?.dpsAtk),
         maxDPS: sortedDPS[dataList.length - 1].dpsAtk,
-        minTDO: getValueOrDefault(Number, sortedTDO.at(0)?.tdoAtk),
+        minTDO: toNumber(sortedTDO.at(0)?.tdoAtk),
         maxTDO: sortedTDO[dataList.length - 1].tdoAtk,
-        minHP: getValueOrDefault(Number, sortedHP.at(0)?.attackHpRemain),
-        maxHP: getValueOrDefault(Number, sortedHP[dataList.length - 1].attackHpRemain),
+        minHP: toNumber(sortedHP.at(0)?.attackHpRemain),
+        maxHP: toNumber(sortedHP[dataList.length - 1].attackHpRemain),
       };
       setResultBoss(result);
     } else {
@@ -624,7 +560,7 @@ const RaidBattle = () => {
           statsGO.iv.def * (statsGO.isShadow ? getDmgMultiplyBonus(PokemonType.Shadow, data.options, TypeAction.DEF) : 1),
           statsGO.level
         ),
-        hp: calculateStatsBattle(getValueOrDefault(Number, stats?.sta), getValueOrDefault(Number, statsGO.iv.sta), statsGO.level),
+        hp: calculateStatsBattle(toNumber(stats?.sta), toNumber(statsGO.iv.sta), statsGO.level),
         fMove,
         cMove,
         types: getValueOrDefault(Array, pokemon.dataTargetPokemon?.types),
@@ -649,11 +585,11 @@ const RaidBattle = () => {
       const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
       const ttkAtk = enableTimeAllow
-        ? Math.min(timeAllow - timer, TimeToKill(Math.floor(getValueOrDefault(Number, statsDefender.hp)), dpsAtk))
-        : TimeToKill(Math.floor(getValueOrDefault(Number, statsDefender.hp)), dpsAtk);
+        ? Math.min(timeAllow - timer, TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk))
+        : TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk);
       const ttkDef = enableTimeAllow
-        ? Math.min(timeAllow - timer, TimeToKill(Math.floor(getValueOrDefault(Number, statsAttacker.hp)), dpsDef))
-        : TimeToKill(Math.floor(getValueOrDefault(Number, statsAttacker.hp)), dpsDef);
+        ? Math.min(timeAllow - timer, TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef))
+        : TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
 
       const timeKill = Math.min(ttkAtk, ttkDef);
 
@@ -674,7 +610,7 @@ const RaidBattle = () => {
         ttkAtk,
         ttkDef,
         timer: timeKill,
-        defHpRemain: Math.floor(getValueOrDefault(Number, statsDefender.hp)) - tdoAtk,
+        defHpRemain: Math.floor(toNumber(statsDefender.hp)) - tdoAtk,
       });
     }
   };
@@ -691,7 +627,7 @@ const RaidBattle = () => {
     const turn: IPokemonRaidModel[][] = [];
     trainer.forEach((pokemons, trainerId) => {
       pokemons.forEach((_, index) => {
-        turn[index] = getValueOrDefault(Array, turn[index]);
+        turn[index] ??= [];
         turn[index].push(PokemonRaidModel.create({ ...trainer[trainerId][index], trainerId }));
       });
     });
@@ -714,7 +650,7 @@ const RaidBattle = () => {
         if (pokemon.dataTargetPokemon) {
           const stat = calculateDPSBattle(pokemon, dataList.summary.bossHp, timer);
           if (stat) {
-            dataList.pokemon.push({ ...stat, trainerId: getValueOrDefault(Number, pokemon.trainerId) });
+            dataList.pokemon.push({ ...stat, trainerId: toNumber(pokemon.trainerId) });
           }
 
           if (enableTimeAllow) {
@@ -731,7 +667,7 @@ const RaidBattle = () => {
       dataList.summary.tdoDef = dataList.pokemon.reduce((prev, curr) => prev + curr.tdoDef, 0);
       dataList.summary.dpsDef = dataList.pokemon.reduce((prev, curr) => prev + curr.dpsDef, 0);
 
-      const sumHp = dataList.pokemon.reduce((prev, curr) => prev + getValueOrDefault(Number, curr.hp), 0);
+      const sumHp = dataList.pokemon.reduce((prev, curr) => prev + toNumber(curr.hp), 0);
 
       const ttkAtk = enableTimeAllow
         ? Math.min(timeAllow - timer, TimeToKill(Math.floor(dataList.summary.bossHp), dataList.summary.dpsAtk))
@@ -752,16 +688,8 @@ const RaidBattle = () => {
           tdoAtk,
           atkHpRemain:
             dataList.summary.tdoAtk >= Math.floor(dataList.summary.bossHp)
-              ? Math.max(
-                  0,
-                  Math.floor(getValueOrDefault(Number, pokemon.hp)) -
-                    Math.min(getValueOrDefault(Number, timeKill, pokemon.ttkDef)) * pokemon.dpsDef
-                )
-              : Math.max(
-                  0,
-                  Math.floor(getValueOrDefault(Number, pokemon.hp)) -
-                    Math.max(getValueOrDefault(Number, timeKill, pokemon.ttkDef)) * pokemon.dpsDef
-                ),
+              ? Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.min(toNumber(timeKill, pokemon.ttkDef)) * pokemon.dpsDef)
+              : Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.max(toNumber(timeKill, pokemon.ttkDef)) * pokemon.dpsDef),
         });
       });
       result.push(dataList);
@@ -1305,7 +1233,7 @@ const RaidBattle = () => {
                   const result = checkPokemonGO(
                     obj.pokemon.num,
                     getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId),
-                    getValueOrDefault(Array, data.pokemon)
+                    data.pokemon
                   );
                   return getValueOrDefault(Boolean, obj.pokemon.releasedGO, result?.releasedGO);
                 }
@@ -1321,7 +1249,7 @@ const RaidBattle = () => {
                 if (!used.onlyShadow) {
                   return true;
                 }
-                return obj.isShadow;
+                return obj.pokemonType === PokemonType.Shadow;
               })
               .slice(0, 10)
               .map((value, index) => (
@@ -1333,7 +1261,9 @@ const RaidBattle = () => {
                       }`}
                       className="sprite-raid position-relative"
                     >
-                      {value.isShadow && <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+                      {value.pokemonType === PokemonType.Shadow && (
+                        <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                      )}
                       <img
                         className="pokemon-sprite-raid"
                         alt="img-pokemon"
@@ -1369,15 +1299,8 @@ const RaidBattle = () => {
                   </span>
                   <hr />
                   <div className="container" style={{ marginBottom: 15 }}>
-                    <TypeBadge title="Fast Move" move={value.fMove} isElite={value.elite?.fMove} />
-                    <TypeBadge
-                      title="Charged Move"
-                      move={value.cMove}
-                      isElite={value.elite?.cMove}
-                      isShadow={value.mShadow}
-                      isPurified={value.isPurified}
-                      isSpecial={value.isSpecial}
-                    />
+                    <TypeBadge title="Fast Move" move={value.fMove} moveType={value?.fMove?.moveType} />
+                    <TypeBadge title="Charged Move" move={value.cMove} moveType={value?.cMove?.moveType} />
                   </div>
                 </div>
               ))}
@@ -1498,15 +1421,8 @@ const RaidBattle = () => {
               <TypeInfo arr={getValueOrDefault(Array, form?.form.types)} />
             </div>
             <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
-              <TypeBadge title="Fast Move" move={fMove} isElite={fMove?.isElite} />
-              <TypeBadge
-                title="Charged Move"
-                move={cMove}
-                isElite={cMove?.isElite}
-                isShadow={cMove?.isShadow}
-                isPurified={cMove?.isPurified}
-                isSpecial={cMove?.isSpecial}
-              />
+              <TypeBadge title="Fast Move" move={fMove} moveType={fMove?.moveType} />
+              <TypeBadge title="Charged Move" move={cMove} moveType={cMove?.moveType} />
             </div>
             {resultBoss && (
               <Fragment>
@@ -1591,7 +1507,7 @@ const RaidBattle = () => {
                           <tbody className="text-center">
                             {result.pokemon.map((data, index) => (
                               <tr key={index}>
-                                <td>#{getValueOrDefault(Number, data.trainerId) + 1}</td>
+                                <td>#{toNumber(data.trainerId) + 1}</td>
                                 <td>
                                   <div className="d-flex align-items-center table-pokemon">
                                     <img
@@ -1605,19 +1521,13 @@ const RaidBattle = () => {
                                 </td>
                                 <td>{toFloatWithPadding(data.dpsAtk, 2)}</td>
                                 <td>{Math.floor(data.tdoAtk) === 0 ? '-' : toFloatWithPadding(data.tdoAtk, 2)}</td>
-                                <td>
-                                  {Math.floor(getValueOrDefault(Number, data.atkHpRemain)) === 0 ? toFloatWithPadding(data.ttkDef, 2) : '-'}
-                                </td>
+                                <td>{Math.floor(toNumber(data.atkHpRemain)) === 0 ? toFloatWithPadding(data.ttkDef, 2) : '-'}</td>
                                 <td>
                                   <b>
-                                    <span
-                                      className={
-                                        Math.floor(getValueOrDefault(Number, data.atkHpRemain)) === 0 ? 'text-danger' : 'text-success'
-                                      }
-                                    >
-                                      {Math.max(0, Math.floor(getValueOrDefault(Number, data.atkHpRemain)))}
+                                    <span className={Math.floor(toNumber(data.atkHpRemain)) === 0 ? 'text-danger' : 'text-success'}>
+                                      {Math.max(0, Math.floor(toNumber(data.atkHpRemain)))}
                                     </span>{' '}
-                                    / {Math.floor(getValueOrDefault(Number, data.hp))}
+                                    / {Math.floor(toNumber(data.hp))}
                                   </b>
                                 </td>
                               </tr>

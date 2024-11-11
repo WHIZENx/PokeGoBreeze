@@ -5,7 +5,7 @@ import { capitalize, splitAndCapitalize } from '../../util/utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { ICardMoveComponent } from '../models/component.model';
-import { getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
+import { isEqual, isNotEmpty } from '../../util/extension';
 import { MoveType } from '../../enums/type.enum';
 
 const CardMove = (props: ICardMoveComponent) => {
@@ -24,21 +24,15 @@ const CardMove = (props: ICardMoveComponent) => {
     <Fragment>
       {data && (
         <div className="d-flex align-items-center w-100 h-100" style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}>
-          <img
-            width={64}
-            height={64}
-            alt="type-logo"
-            style={{ marginRight: 10 }}
-            src={APIService.getTypeSprite(capitalize(getValueOrDefault(String, data.type)))}
-          />
+          <img width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(capitalize(data.type))} />
           <span style={{ marginRight: 5 }}>
             <b>{splitAndCapitalize(data.name, '_', ' ')}</b>
           </span>
           <span className="d-flex">
-            {data.isElite && <span className="type-icon-small ic elite-ic">{MoveType.Elite}</span>}
-            {data.isShadow && <span className="type-icon-small ic shadow-ic">{MoveType.Shadow}</span>}
-            {data.isPurified && <span className="type-icon-small ic purified-ic">{MoveType.Purified}</span>}
-            {data.isSpecial && <span className="type-icon-small ic special-ic">{MoveType.Special}</span>}
+            {props.value?.moveType === MoveType.Elite && <span className="type-icon-small ic elite-ic">{MoveType.Elite}</span>}
+            {props.value?.moveType === MoveType.Shadow && <span className="type-icon-small ic shadow-ic">{MoveType.Shadow}</span>}
+            {props.value?.moveType === MoveType.Purified && <span className="type-icon-small ic purified-ic">{MoveType.Purified}</span>}
+            {props.value?.moveType === MoveType.Special && <span className="type-icon-small ic special-ic">{MoveType.Special}</span>}
           </span>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../../enums/type.enum';
 
 export interface ITier {
   level: number;

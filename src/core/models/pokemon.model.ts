@@ -7,6 +7,7 @@ import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 import { getValueOrDefault, isEqual, isUndefined, toNumber } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
+import { PokemonType } from '../../enums/type.enum';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -264,7 +265,7 @@ export interface IPokemonData {
   version: string | null;
   baseStatsGO?: boolean;
   stats?: IPokemonDataStats | null;
-  isShadow?: boolean;
+  pokemonType?: PokemonType;
   formChange?: IPokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
@@ -304,8 +305,7 @@ interface IPokemonDPSBattle {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  isShadow?: boolean;
-  isPurified?: boolean;
+  pokemonType?: PokemonType;
   mShadow?: boolean;
   elite?: Elite;
   atk?: number;
@@ -331,8 +331,7 @@ export class PokemonDPSBattle implements IPokemonDPSBattle {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  isShadow?: boolean;
-  isPurified?: boolean;
+  pokemonType?: PokemonType;
   mShadow?: boolean;
   elite?: Elite;
   atk?: number;
@@ -503,7 +502,7 @@ export class PokemonData implements IPokemonData {
   baseStatsGO?: boolean;
   stats?: IPokemonDataStats | null;
   encounter?: IEncounter;
-  isShadow?: boolean;
+  pokemonType?: PokemonType;
   formChange?: IPokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
@@ -555,21 +554,18 @@ export class PokemonData implements IPokemonData {
       pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
     obj.sprite = options?.sprite ?? 'unknown-pokemon';
     obj.types = types;
-    obj.genderRatio = PokemonGenderRatio.create(
-      getValueOrDefault(Number, options?.genderRatio?.M, 0.5),
-      getValueOrDefault(Number, options?.genderRatio?.F, 0.5)
-    );
+    obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
     obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options?.baseStatsGO;
     obj.baseStats = StatsPokemon.create({
-      atk: getValueOrDefault(Number, pokemon.stats?.baseAttack),
-      def: getValueOrDefault(Number, pokemon.stats?.baseDefense),
+      atk: toNumber(pokemon.stats?.baseAttack),
+      def: toNumber(pokemon.stats?.baseDefense),
       sta: pokemon.stats?.baseStamina,
     });
     obj.statsGO = StatsPokemonGO.create({
       atk: obj.baseStats.atk,
       def: obj.baseStats.def,
-      sta: getValueOrDefault(Number, obj.baseStats.sta),
-      prod: obj.baseStats.atk * obj.baseStats.def * getValueOrDefault(Number, obj.baseStats.sta),
+      sta: toNumber(obj.baseStats.sta),
+      prod: obj.baseStats.atk * obj.baseStats.def * toNumber(obj.baseStats.sta),
     });
     obj.heightm = pokemon.pokedexHeightM;
     obj.weightkg = pokemon.pokedexWeightKg;
@@ -592,7 +588,7 @@ export class PokemonData implements IPokemonData {
     obj.baseSpecies = capitalize(pokemon.pokemonId);
     obj.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
     obj.encounter = pokemon.encounter;
-    obj.isShadow = Boolean(pokemon.shadow);
+    obj.pokemonType = pokemon.shadow ? PokemonType.Shadow : PokemonType.None;
     obj.formChange = pokemon.formChange;
 
     obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move.toString()));

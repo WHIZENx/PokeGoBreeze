@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { splitAndCapitalize } from '../../util/utils';
 import { ICardPokemonComponent } from '../models/component.model';
-import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../../enums/type.enum';
 
 const CardPokemon = (props: ICardPokemonComponent) => {
   return (

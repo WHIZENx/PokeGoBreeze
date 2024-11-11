@@ -1,3 +1,4 @@
+import { PokemonType } from '../../enums/type.enum';
 import { ConditionType, ItemEvolutionRequireType, ItemLureRequireType, QuestType } from '../enums/option.enum';
 
 interface IOpponentPokemonBattle {
@@ -122,7 +123,7 @@ export interface IEvolution {
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form: string;
-  canPurified?: boolean;
+  pokemonType?: PokemonType;
   isBaby?: boolean;
 }
 
@@ -136,7 +137,7 @@ export class EvolutionModel implements IEvolution {
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
   form = '';
-  canPurified?: boolean;
+  pokemonType?: PokemonType;
   isBaby?: boolean;
 
   constructor({ ...props }: IEvolution) {

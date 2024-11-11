@@ -20,16 +20,7 @@ import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague
 import { FORM_NORMAL, leaguesDefault } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
-import {
-  combineClasses,
-  getValueOrDefault,
-  isEmpty,
-  isEqual,
-  isInclude,
-  isIncludeList,
-  isNotEmpty,
-  toNumber,
-} from '../../../util/extension';
+import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
@@ -94,14 +85,12 @@ const Leagues = () => {
             }
             let textTitle = '';
             if (isInclude(value.id, 'SEEKER') && isIncludeList(['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'], value.title)) {
-              textTitle = splitAndCapitalize(getValueOrDefault(String, value.id).replace('VS_', '').toLowerCase(), '_', ' ');
+              textTitle = splitAndCapitalize(value.id?.replace('VS_', '').toLowerCase(), '_', ' ');
             } else {
               textTitle = splitAndCapitalize(value.title.toLowerCase(), '_', ' ');
             }
             if (isInclude(value.id, 'SAFARI_ZONE')) {
-              textTitle += ` ${getValueOrDefault(String, value.id).split('_').at(3)} ${capitalize(
-                getValueOrDefault(String, value.id).split('_').at(4)
-              )}`;
+              textTitle += ` ${value.id?.split('_').at(3)} ${capitalize(value.id?.split('_').at(4))}`;
             }
             return isEmpty(search) || isInclude(textTitle, search, IncludeMode.IncludeIgnoreCaseSensitive);
           })
@@ -118,7 +107,7 @@ const Leagues = () => {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
       Object.values(dataStore.leagues.season.rewards.pokemon).forEach((value) => {
-        if (getValueOrDefault(Number, value.rank) <= rank) {
+        if (toNumber(value.rank) <= rank) {
           let tireRewards: IPokemonRewardSetLeague[] = [];
           if (isEqual(track, LeagueRewardType.Free, EqualMode.IgnoreCaseSensitive)) {
             tireRewards = value.free;
@@ -168,16 +157,14 @@ const Leagues = () => {
                 ? splitAndCapitalize(league.id?.replace('VS_', '').toLowerCase(), '_', ' ')
                 : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
                 (isInclude(league.id, BattleLeagueTag.SafariZone, IncludeMode.IncludeIgnoreCaseSensitive)
-                  ? ` ${getValueOrDefault(String, league.id).split('_').at(3)} ${capitalize(
-                      getValueOrDefault(String, league.id).split('_').at(4)
-                    )}`
+                  ? ` ${league.id?.split('_').at(3)} ${capitalize(league.id).split('_').at(4)}`
                   : '')}
             </b>
           </div>
         </Accordion.Header>
         <Accordion.Body className="league-body">
           <div className="sub-body">
-            <h4 className="title-leagues">{splitAndCapitalize(getValueOrDefault(String, league.id).toLowerCase(), '_', ' ')}</h4>
+            <h4 className="title-leagues">{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</h4>
             <div className="text-center">
               {!isEqual(league.league, league.title) &&
               !isInclude(league.title, LeagueType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
@@ -240,7 +227,7 @@ const Leagues = () => {
               {isNotEmpty(league.conditions.uniqueType) && (
                 <li style={{ fontWeight: 500 }} className="unique-type">
                   <h6 className="title-leagues">Unique Type</h6>
-                  <TypeInfo arr={getValueOrDefault(Array, league.conditions.uniqueType)} style={{ marginLeft: 15 }} />
+                  <TypeInfo arr={league.conditions.uniqueType} style={{ marginLeft: 15 }} />
                 </li>
               )}
               {isNotEmpty(league.conditions.whiteList) && (
@@ -262,7 +249,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(getValueOrDefault(Number, item.id), item.form)}
+                            src={getAssetPokeGo(toNumber(item.id), item.form)}
                           />
                         </span>
                       </div>
@@ -296,7 +283,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(getValueOrDefault(Number, item.id), item.form)}
+                            src={getAssetPokeGo(toNumber(item.id), item.form)}
                           />
                         </span>
                       </div>
@@ -727,12 +714,12 @@ const Leagues = () => {
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
                 </Link>
               ))}
-            {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && getValueOrDefault(Number, item.rank) === rank)) && (
+            {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
               <Fragment>
                 <hr />
                 <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>
                 {showData.data
-                  .filter((item) => item.guaranteedLimited && getValueOrDefault(Number, item.rank) === rank)
+                  .filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)
                   .map((item, index) => (
                     <Link
                       className="img-link text-center"

@@ -121,9 +121,14 @@ const Move = (props: IMovePage) => {
 
   const getWeatherEffective = (type: string) => {
     const result = Object.entries(data.weatherBoost)?.find(([, value]: [string, string[]]) => {
-      return isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive);
+      if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive)) {
+        return value;
+      }
     });
-    return result && result.at(0);
+    if (isNotEmpty(result)) {
+      return result?.[0];
+    }
+    return;
   };
 
   const queryMoveData = useCallback(
@@ -289,7 +294,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVE Energy</td>
                 <td colSpan={2}>
-                  {getValueOrDefault(Number, move?.pveEnergy) > 0 && '+'}
+                  {toNumber(move?.pveEnergy) > 0 && '+'}
                   {move?.pveEnergy}
                 </td>
               </tr>
@@ -327,7 +332,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVP Energy</td>
                 <td colSpan={2}>
-                  {getValueOrDefault(Number, move?.pvpEnergy) > 0 && '+'}
+                  {toNumber(move?.pvpEnergy) > 0 && '+'}
                   {move?.pvpEnergy}
                 </td>
               </tr>
@@ -363,7 +368,7 @@ const Move = (props: IMovePage) => {
                           </span>
                         </span>
                       </td>
-                      <td>{getValueOrDefault(Number, value.buffChance) * 100}%</td>
+                      <td>{toNumber(value.buffChance) * 100}%</td>
                     </tr>
                   ))}
                 </Fragment>

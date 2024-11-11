@@ -1,11 +1,11 @@
 import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
-import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
-import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from './extension';
+import { isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
 import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
@@ -93,9 +93,9 @@ export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
       data = candyData.find((item) => item.familyId === 0);
     }
   }
-  return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.secondaryColor.r))}, ${Math.round(
-    255 * getValueOrDefault(Number, data?.secondaryColor.g)
-  )}, ${Math.round(255 * getValueOrDefault(Number, data?.secondaryColor.b))}, ${data?.secondaryColor.a || 1})`;
+  return `rgb(${Math.round(255 * toNumber(data?.secondaryColor.r))}, ${Math.round(255 * toNumber(data?.secondaryColor.g))}, ${Math.round(
+    255 * toNumber(data?.secondaryColor.b)
+  )}, ${data?.secondaryColor.a || 1})`;
 };
 
 export const computeCandyColor = (candyData: ICandy[], id: number) => {
@@ -111,9 +111,9 @@ export const computeCandyColor = (candyData: ICandy[], id: number) => {
       data = candyData.find((item) => item.familyId === 0);
     }
   }
-  return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.primaryColor.r))}, ${Math.round(
-    255 * getValueOrDefault(Number, data?.primaryColor.g)
-  )}, ${Math.round(255 * getValueOrDefault(Number, data?.primaryColor.b))}, ${data?.primaryColor.a || 1})`;
+  return `rgb(${Math.round(255 * toNumber(data?.primaryColor.r))}, ${Math.round(255 * toNumber(data?.primaryColor.g))}, ${Math.round(
+    255 * toNumber(data?.primaryColor.b)
+  )}, ${data?.primaryColor.a || 1})`;
 };
 
 export const computeBgType = (
@@ -130,11 +130,11 @@ export const computeBgType = (
   const colorsPalette: string[] = [];
   if (typeof types === 'string') {
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
-    return (color || defaultBg).split(')').at(0) + `, ${getValueOrDefault(Number, opacity, 1)})` || defaultBg;
+    return (color || defaultBg).split(')').at(0) + `, ${toNumber(opacity, 1)})` || defaultBg;
   } else {
     types?.forEach((type) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
-      colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${getValueOrDefault(Number, opacity, 1)})`);
+      colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${toNumber(opacity, 1)})`);
     });
   }
   const [priColor, secColor] = colorsPalette;
@@ -158,14 +158,14 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: s
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {
     const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
-      return pokemonAssets.image.at(0);
+      return pokemonAssets.image[0];
     }
     return formNormal;
   }
   return;
 };
 
-export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, name: string | undefined) => {
+export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, name: string | null | undefined) => {
   const form = queryAssetForm(pokemonAssets, id, name);
   if (form) {
     return form.default;

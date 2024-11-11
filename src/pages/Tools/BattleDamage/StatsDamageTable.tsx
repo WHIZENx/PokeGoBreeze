@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { LevelSlider, TypeRadioGroup, capitalize, getDmgMultiplyBonus } from '../../../util/utils';
+import { LevelSlider, TypeRadioGroup, getDmgMultiplyBonus } from '../../../util/utils';
 import { calculateStatsBattle } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
@@ -13,8 +13,7 @@ import { useSelector } from 'react-redux';
 import { MAX_IV, MAX_LEVEL, MIN_LEVEL } from '../../../util/constants';
 import { StoreState } from '../../../store/models/state.model';
 import { IStatsTableComponent } from '../../models/page.model';
-import { PokemonType } from './enums/damage.enum';
-import { TypeAction } from '../../../enums/type.enum';
+import { PokemonType, TypeAction } from '../../../enums/type.enum';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
@@ -90,13 +89,13 @@ const StatsTable = (props: IStatsTableComponent) => {
             defaultValue={PokemonType.None}
             onChange={(e) => onHandleType(e.target.value as PokemonType)}
           >
-            <FormControlLabel value={PokemonType.None} control={<Radio />} label={<span>{capitalize(PokemonType.None)}</span>} />
+            <FormControlLabel value={PokemonType.None} control={<Radio />} label={<span>{PokemonType.None}</span>} />
             <FormControlLabel
               value={PokemonType.Buddy}
               control={<Radio />}
               label={
                 <span>
-                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {capitalize(PokemonType.Buddy)}
+                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {PokemonType.Buddy}
                 </span>
               }
             />
@@ -105,7 +104,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(PokemonType.Shadow)}
+                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {PokemonType.Shadow}
                 </span>
               }
             />

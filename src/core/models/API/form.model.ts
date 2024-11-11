@@ -1,4 +1,4 @@
-import { PokemonType } from '../../../pages/Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../../../enums/type.enum';
 import { FORM_NORMAL } from '../../../util/constants';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 import { IStatsPokemon } from '../stats.model';

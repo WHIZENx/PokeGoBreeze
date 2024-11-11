@@ -10,14 +10,21 @@ import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
-import { TypeMove } from '../../../enums/type.enum';
+import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from '../../../util/extension';
-import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
+import {
+  combineClasses,
+  convertColumnDataType,
+  getValueOrDefault,
+  isEqual,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -86,7 +93,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
   },
   {
     name: 'STA',
-    selector: (row) => getValueOrDefault(Number, calculateStatsByTag(row, row.baseStats, row.slug).sta),
+    selector: (row) => toNumber(calculateStatsByTag(row, row.baseStats, row.slug).sta),
     sortable: true,
     width: '100px',
   },
@@ -210,7 +217,7 @@ const SearchTypes = () => {
 
   useEffect(() => {
     if (isNotEmpty(typeList) && !currentType) {
-      setCurrentType(getValueOrDefault(String, typeList.at(0)));
+      setCurrentType(typeList[0]);
     }
   }, [typeList, currentType]);
 
@@ -314,42 +321,38 @@ const SearchTypes = () => {
               <img height={36} src={APIService.getItemSprite('pokeball_sprite')} />{' '}
               <b>{`Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
-                getValueOrDefault(Number, allData?.pokemon) > 0 &&
-                Math.round((result.pokemonList.length * 100) / getValueOrDefault(Number, allData?.pokemon))
+                toNumber(allData?.pokemon) > 0 &&
+                Math.round((result.pokemonList.length * 100) / toNumber(allData?.pokemon))
               }%)`}</b>
               <ul style={{ listStyleType: 'disc' }}>
                 <li>
                   <b>{`Legacy Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length} (${
                     isNotEmpty(result.pokemonList) &&
-                    getValueOrDefault(Number, allData?.pokemon) > 0 &&
+                    toNumber(allData?.pokemon) > 0 &&
                     Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) /
-                        getValueOrDefault(Number, allData?.pokemon)
+                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) / toNumber(allData?.pokemon)
                     )
                   }%)`}</b>
                 </li>
                 <li>
                   <b>{`Include Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length} (${
                     isNotEmpty(result.pokemonList) &&
-                    getValueOrDefault(Number, allData?.pokemon) > 0 &&
-                    Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) /
-                        getValueOrDefault(Number, allData?.pokemon)
-                    )
+                    toNumber(allData?.pokemon) > 0 &&
+                    Math.round((result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) / toNumber(allData?.pokemon))
                   }%)`}</b>
                 </li>
               </ul>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
-              <b>{`Fast Moves: ${result.fastMove.length}/${getValueOrDefault(Number, allData?.fastMoves)} (${Math.round(
-                (result.fastMove.length * 100) / getValueOrDefault(Number, allData?.fastMoves, 1)
+              <b>{`Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
+                (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charged Moves: ${result.chargedMove.length}/${getValueOrDefault(Number, allData?.chargedMoves)} (${Math.round(
-                (result.chargedMove.length * 100) / getValueOrDefault(Number, allData?.chargedMoves, 1)
+              <b>{`Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
+                (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
               )}%)`}</b>
             </span>
           </div>

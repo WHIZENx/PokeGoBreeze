@@ -51,7 +51,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
   const [typePoke, setTypePoke] = useState(props.isRaid ? TypeRaid.BOSS : TypeRaid.POKEMON);
-  const [tier, setTier] = useState(getValueOrDefault(Number, props.tier, 1));
+  const [tier, setTier] = useState(toNumber(props.tier, 1));
 
   const [data, setData] = useState<Species>();
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
@@ -101,9 +101,9 @@ const FormSelect = (props: IFormSelectComponent) => {
                 })
               )
             )
-            .sort((a, b) => getValueOrDefault(Number, a.form.id) - getValueOrDefault(Number, b.form.id))
+            .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
         )
-        .sort((a, b) => getValueOrDefault(Number, a[0]?.form.id) - getValueOrDefault(Number, b[0]?.form.id));
+        .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
       generatePokemonGoForms(props.data, dataFormList, formListResult, data.id, data.name);
 
@@ -162,7 +162,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (id > 0 && getValueOrDefault(Number, data?.id) !== id && isNotEmpty(props.data)) {
+    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(props.data)) {
       clearData();
       queryPokemon(id);
     }
@@ -174,37 +174,37 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [props.id, props.data, data?.id, queryPokemon]);
 
   useEffect(() => {
-    if (currentForm && getValueOrDefault(Number, data?.id) > 0 && getValueOrDefault(Number, props.id) > 0) {
-      let obj = props.searching ?? new ToolSearching();
-      const result = new SearchingModel({
-        id: getValueOrDefault(Number, props.id),
+    if (currentForm && toNumber(data?.id) > 0 && toNumber(props.id) > 0) {
+      const obj = ToolSearching.create(props.searching);
+      const searching = new SearchingModel({
+        id: toNumber(props.id),
         name: currentForm.defaultName,
         form: currentForm.form.formName,
         fullName: currentForm.form.name,
         timestamp: new Date(),
       });
       if (props.isObjective && (props.searching?.obj?.id !== props.id || !isEqual(props.searching?.obj?.form, currentForm.form.formName))) {
-        obj = ToolSearching.create({
+        const result = ToolSearching.create({
           ...obj,
           obj: {
-            ...result,
+            ...searching,
           },
         });
-        dispatch(SearchingActions.SetPokemonToolSearch.create(obj));
+        dispatch(SearchingActions.SetPokemonToolSearch.create(result));
       }
       if (!props.isObjective && (props.searching?.id !== props.id || !isEqual(props.searching?.form, currentForm.form.formName))) {
-        obj = ToolSearching.create({
+        const result = ToolSearching.create({
           ...obj,
-          ...result,
+          ...searching,
         });
-        dispatch(SearchingActions.SetPokemonToolSearch.create(obj));
+        dispatch(SearchingActions.SetPokemonToolSearch.create(result));
       }
     }
   }, [currentForm, dispatch]);
 
   useEffect(() => {
-    if (isNotEmpty(props.data) && getValueOrDefault(Number, props.id) > 0) {
-      const currentId = getPokemonById(props.data, getValueOrDefault(Number, props.id));
+    if (isNotEmpty(props.data) && toNumber(props.id) > 0) {
+      const currentId = getPokemonById(props.data, toNumber(props.id));
       if (currentId) {
         setDataStorePokemon({
           prev: getPokemonById(props.data, currentId.id - 1),
@@ -259,7 +259,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon.prev?.id));
+                    e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon.prev?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
                   }
@@ -286,7 +286,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         onError={(e) => {
           e.currentTarget.onerror = null;
           if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-            e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
+            e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon?.current?.id));
           } else {
             e.currentTarget.src = APIService.getPokeFullSprite(0);
           }
@@ -303,7 +303,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon.next?.id));
+                    e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon.next?.id));
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
                   }
@@ -349,12 +349,12 @@ const FormSelect = (props: IFormSelectComponent) => {
                       src={formIconAssets(value, currentForm.defaultId)}
                     />
                     <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
-                    {getValueOrDefault(Number, value.form.id) > 0 && value.form.id === currentForm.defaultId && (
+                    {toNumber(value.form.id) > 0 && value.form.id === currentForm.defaultId && (
                       <b>
                         <small>(Default)</small>
                       </b>
                     )}
-                    {getValueOrDefault(Number, value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
+                    {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
                   </button>
                 ))}
               </Fragment>

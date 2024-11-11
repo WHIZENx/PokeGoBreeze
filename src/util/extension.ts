@@ -38,7 +38,7 @@ export const combineClasses = <T>(...classes: (T | null | undefined)[]) => {
 };
 
 export const isNotEmpty = <T>(array: T[] | null | undefined = []) => {
-  return getValueOrDefault(Boolean, array && array.length > 0);
+  return Array.isArray(array) && array && array.length > 0;
 };
 
 export const isUndefined = <T>(value?: T | null): value is undefined => {
@@ -53,7 +53,7 @@ export const isNullOrUndefined = <T>(value?: T | null): value is null | undefine
   return getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
 };
 
-export const isEmpty = (value?: string | null) => {
+export const isEmpty = (value?: string | null): value is null | undefined => {
   return getValueOrDefault(Boolean, value?.isEmpty(), false);
 };
 
@@ -77,9 +77,9 @@ export const padding = (num: number, plusLength: number, mode = PaddingMode.End,
   let result = num.toString();
   const [integer, point] = result.split('.');
   if (mode === PaddingMode.Start) {
-    result = result.padStart(plusLength + (isInclude(result, '.') ? 1 + getValueOrDefault(Number, point?.length) : 0), fillString);
+    result = result.padStart(plusLength + (isInclude(result, '.') ? 1 + toNumber(point?.length) : 0), fillString);
   } else if (mode === PaddingMode.End) {
-    result = result.padEnd(plusLength + (isInclude(result, '.') ? 1 + getValueOrDefault(Number, integer?.length) : 0), fillString);
+    result = result.padEnd(plusLength + (isInclude(result, '.') ? 1 + toNumber(integer?.length) : 0), fillString);
   }
   return result;
 };

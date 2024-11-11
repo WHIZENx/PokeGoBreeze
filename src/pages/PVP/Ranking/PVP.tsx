@@ -42,7 +42,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { Sorted } from '../enums/pvp-team.enum';
 import { SortType } from '../enums/pvp-ranking-enum';
-import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../../../enums/type.enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -153,8 +153,8 @@ const RankingPVP = () => {
           stats,
           atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
           def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === getValueOrDefault(Number, stats.sta)),
-          prod: statsRanking?.statProd.ranking.find((i) => i.product === stats.atk * stats.def * getValueOrDefault(Number, stats.sta)),
+          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === toNumber(stats.sta)),
+          prod: statsRanking?.statProd.ranking.find((i) => i.product === stats.atk * stats.def * toNumber(stats.sta)),
           fMove,
           cMovePri,
           cMoveSec,

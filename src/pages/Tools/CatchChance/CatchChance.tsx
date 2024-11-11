@@ -31,16 +31,7 @@ import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import {
-  DynamicObj,
-  getValueOrDefault,
-  isEqual,
-  isIncludeList,
-  isNotEmpty,
-  isNullOrEmpty,
-  toFloatWithPadding,
-  toNumber,
-} from '../../../util/extension';
+import { DynamicObj, isEqual, isIncludeList, isNotEmpty, isNullOrEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
 import {
   Medal,
   MedalType,
@@ -171,9 +162,7 @@ const CatchChance = () => {
             (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
             (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
           const prob = calculateCatchChance(
-            data.obShadowFormBaseCaptureRate && options.isShadow
-              ? data.obShadowFormBaseCaptureRate
-              : getValueOrDefault(Number, data.baseCaptureRate),
+            data.obShadowFormBaseCaptureRate && options.isShadow ? data.obShadowFormBaseCaptureRate : toNumber(data.baseCaptureRate),
             level,
             multiplier
           );
@@ -310,7 +299,7 @@ const CatchChance = () => {
         (isRazzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
         (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
         (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
-      const prob = calculateCatchChance(getValueOrDefault(Number, data?.baseCaptureRate), level, multiplier);
+      const prob = calculateCatchChance(toNumber(data?.baseCaptureRate), level, multiplier);
       const result = Math.min(prob * 100, 100);
       return result;
     }
@@ -494,10 +483,10 @@ const CatchChance = () => {
                         `${
                           (data.obShadowFormAttackProbability && isShadow
                             ? data.obShadowFormAttackProbability
-                            : getValueOrDefault(Number, data.attackProbability)) * 100
+                            : toNumber(data.attackProbability)) * 100
                         }%`}
                     </h5>
-                    <p>{data && `Time: ${toFloatWithPadding(getValueOrDefault(Number, data.attackTimerS) / 10, 2)} sec`}</p>
+                    <p>{data && `Time: ${toFloatWithPadding(toNumber(data.attackTimerS) / 10, 2)} sec`}</p>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
@@ -508,10 +497,10 @@ const CatchChance = () => {
                       `${
                         data.obShadowFormDodgeProbability && isShadow
                           ? data.obShadowFormDodgeProbability
-                          : getValueOrDefault(Number, data.dodgeProbability) * 100
+                          : toNumber(data.dodgeProbability) * 100
                       }%`}
                   </h5>
-                  <p>{data && `Time: ${toFloatWithPadding(getValueOrDefault(Number, data.dodgeDurationS) / 10, 2)} sec`}</p>
+                  <p>{data && `Time: ${toFloatWithPadding(toNumber(data.dodgeDurationS) / 10, 2)} sec`}</p>
                 </div>
               </div>
             </div>

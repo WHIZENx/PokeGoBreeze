@@ -23,7 +23,7 @@ import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
-import { TypeAction } from '../../../enums/type.enum';
+import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   convertColumnDataType,
@@ -37,7 +37,6 @@ import {
 } from '../../../util/extension';
 import { LocationState } from '../../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -54,7 +53,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   },
   {
     name: 'Ranking',
-    selector: (row) => getValueOrDefault(Number, row.rank),
+    selector: (row) => toNumber(row.rank),
     width: '80px',
   },
   {
@@ -177,23 +176,21 @@ const StatsRanking = () => {
         releasedGO: getValueOrDefault(Boolean, details?.releasedGO),
         atk: {
           attack: statsTag.atk,
-          rank: getValueOrDefault(Number, stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank),
+          rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank),
         },
         def: {
           defense: statsTag.def,
-          rank: getValueOrDefault(Number, stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank),
+          rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank),
         },
         sta: {
-          stamina: getValueOrDefault(Number, statsTag.sta),
-          rank: getValueOrDefault(Number, stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
+          stamina: toNumber(statsTag.sta),
+          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
         },
         prod: {
-          product: statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta),
+          product: statsTag.atk * statsTag.def * toNumber(statsTag?.sta),
           rank: getValueOrDefault(
             Number,
-            stats?.statProd?.ranking?.find(
-              (stat) => stat.product === statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta)
-            )?.rank
+            stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * toNumber(statsTag?.sta))?.rank
           ),
         },
       });
@@ -266,16 +263,16 @@ const StatsRanking = () => {
 
   useEffect(() => {
     if (!select && isNotEmpty(pokemonList)) {
-      setSelect(pokemonList.at(0));
+      setSelect(pokemonList[0]);
     }
   }, [select, pokemonList]);
 
   useEffect(() => {
-    const id = searchParams.get('id');
-    if (id && isNotEmpty(pokemonFilter)) {
+    const id = toNumber(searchParams.get('id'));
+    if (id > 0 && isNotEmpty(pokemonFilter)) {
       const form = searchParams.get('form');
       const index = pokemonFilter.findIndex(
-        (row) => row.num === toNumber(id) && isEqual(row.forme, form?.replaceAll('-', '_') || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+        (row) => row.num === id && isEqual(row.forme, form?.replaceAll('-', '_') || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
       );
       if (index > -1) {
         const result = pokemonFilter[index];
@@ -319,7 +316,7 @@ const StatsRanking = () => {
       isDefault: true,
       isMega: isInclude(pokemon.slug, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
       name: pokemon.name,
-      types: getValueOrDefault(Array, pokemon.types),
+      types: pokemon.types,
       version: getValueOrDefault(String, pokemon.version),
       pokemonType: PokemonType.None,
     });
@@ -335,13 +332,13 @@ const StatsRanking = () => {
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
               src={APIService.getPokeFullSprite(
-                getValueOrDefault(Number, select?.num),
+                toNumber(select?.num),
                 convertPokemonImageName(select && isEqual(select.baseForme, select.forme) ? '' : select?.forme)
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, select?.num));
+                  e.currentTarget.src = APIService.getPokeFullAsset(toNumber(select?.num));
                 } else {
                   e.currentTarget.src = APIService.getPokeFullSprite(0);
                 }
@@ -357,8 +354,8 @@ const StatsRanking = () => {
               formName={select?.name}
               region={getValueOrDefault(String, select?.region)}
               version={getValueOrDefault(String, select?.version)}
-              weight={getValueOrDefault(Number, select?.weightkg)}
-              height={getValueOrDefault(Number, select?.heightm)}
+              weight={toNumber(select?.weightkg)}
+              height={toNumber(select?.heightm)}
               className="table-stats-ranking"
               isLoadedForms={progress.isLoadedForms}
             />

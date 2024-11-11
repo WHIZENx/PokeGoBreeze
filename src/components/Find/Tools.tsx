@@ -26,7 +26,7 @@ import {
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { isInclude, isNotEmpty, toNumber } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 
 const Tools = (props: IToolsComponent) => {
@@ -168,14 +168,14 @@ const Tools = (props: IToolsComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
-                <td className="text-center">{getValueOrDefault(Number, statsPokemon?.atk?.attack)}</td>
+                <td className="text-center">{toNumber(statsPokemon?.atk?.attack)}</td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
-                <td className="text-center">{getValueOrDefault(Number, statsPokemon?.def?.defense)}</td>
+                <td className="text-center">{toNumber(statsPokemon?.def?.defense)}</td>
               </tr>
               <tr>
                 <td>

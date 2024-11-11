@@ -32,8 +32,7 @@ import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
 import { InputType } from '../Input/enums/input-type.enum';
-import { TypeAction, TypeMove } from '../../enums/type.enum';
-import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
+import { MoveType, PokemonType, TypeAction, TypeMove } from '../../enums/type.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -72,10 +71,7 @@ export interface ICardPokemonInfoComponent {
 export interface ICardTypeComponent {
   value?: string;
   name?: string;
-  isElite?: boolean;
-  isShadow?: boolean;
-  isPurified?: boolean;
-  isSpecial?: boolean;
+  moveType?: MoveType;
 }
 
 export interface ICardWeatherComponent {
@@ -389,11 +385,7 @@ export interface ITypeBadgeComponent {
   style?: React.CSSProperties;
   color?: string;
   title?: string;
-  isElite?: boolean;
-  isShadow?: boolean;
-  isPurified?: boolean;
-  isSpecial?: boolean;
-  isUnavailable?: boolean;
+  moveType?: MoveType;
 }
 
 export interface ITypeBarComponent {

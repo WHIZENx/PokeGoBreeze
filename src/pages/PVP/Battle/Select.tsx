@@ -14,11 +14,10 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
-import { MoveType } from '../../../enums/type.enum';
-import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
+import { MoveType, PokemonType } from '../../../enums/type.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data.combat);
@@ -50,11 +49,14 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   };
 
   const selectPokemon = (value: IBattlePokemonData) => {
+    if (!isNotEmpty(value.moveset)) {
+      return;
+    }
     props.clearData(false);
-    const [fMove] = getValueOrDefault(Array, value.moveset);
-    let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
+    const [fMove] = value.moveset as string[];
+    let [, cMovePri, cMoveSec] = value.moveset as string[];
     setSearch(splitAndCapitalize(value.pokemon.name, '-', ' '));
-    setPokemonIcon(APIService.getPokeIconSprite(getValueOrDefault(String, value.pokemon.sprite)));
+    setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
     const fMoveCombat = combat.find((item) => isEqual(item.name, fMove));
@@ -77,7 +79,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         : props.league === BattleLeagueCPType.Ultra
         ? BattleLeagueCPType.Great
         : BattleLeagueCPType.Ultra;
-    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, getValueOrDefault(Number, stats.sta) + MAX_IV, MAX_LEVEL);
+    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, toNumber(stats.sta) + MAX_IV, MAX_LEVEL);
 
     if (maxPokeCP < minCP) {
       if (maxPokeCP <= BattleLeagueCPType.Little) {
@@ -90,7 +92,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         minCP = BattleLeagueCPType.Ultra;
       }
     }
-    const allStats = calStatsProd(stats.atk, stats.def, getValueOrDefault(Number, stats.sta), minCP, props.league);
+    const allStats = calStatsProd(stats.atk, stats.def, toNumber(stats.sta), minCP, props.league);
 
     if (allStats && value && value.pokemon) {
       setScore(value.score);
@@ -101,7 +103,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             ...value,
             form: getValueOrDefault(String, value.form),
             pokemonType: value.pokemonType,
-            hp: getValueOrDefault(Number, value.stats.hp),
+            hp: toNumber(value.stats.hp),
             fMove: fMoveCombat,
             cMove: cMovePriCombat,
             cMoveSec: cMoveSecCombat,

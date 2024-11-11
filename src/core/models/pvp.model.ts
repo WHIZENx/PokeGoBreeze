@@ -1,6 +1,6 @@
+import { PokemonType } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
-import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
 import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';

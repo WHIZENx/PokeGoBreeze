@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
+import { isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
 import { GlobalType } from '../../enums/type.enum';
 import { ShopType } from './enums/sticker-type.enum';
 
@@ -50,7 +50,7 @@ const Sticker = () => {
           }
           return prev;
         }, [])
-        .sort((a, b) => getValueOrDefault(Number, a.id) - getValueOrDefault(Number, b.id));
+        .sort((a, b) => toNumber(a.id) - toNumber(b.id));
       setSelectPokemon(result);
     }
   }, [pokeStickerList, selectPokemon]);
@@ -91,13 +91,9 @@ const Sticker = () => {
           <option value={GlobalType.All}>All</option>
           <option value={GlobalType.None}>None</option>
           {selectPokemon
-            .filter((value) => getValueOrDefault(Number, value.id) > 0)
+            .filter((value) => toNumber(value.id) > 0)
             .map((value, index) => (
-              <option key={index} value={getValueOrDefault(Number, value.id)}>{`#${value.id} ${splitAndCapitalize(
-                value.name,
-                '_',
-                ' '
-              )}`}</option>
+              <option key={index} value={toNumber(value.id)}>{`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}</option>
             ))}
         </Form.Select>
       </div>

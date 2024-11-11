@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { capitalize, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
+import { LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -22,12 +22,11 @@ import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isNullOrEmpty, isUndefined, toNumber } from '../../../util/extension';
+import { isNullOrEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { EvoPath } from '../../../core/models/API/species.model';
-import { PokemonType } from '../BattleDamage/enums/damage.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
-import { VariantType } from '../../../enums/type.enum';
+import { PokemonType, VariantType } from '../../../enums/type.enum';
 
 const Calculate = () => {
   useChangeTitle('Calculate CP&IV - Tool');
@@ -271,13 +270,13 @@ const Calculate = () => {
                 setTypePoke(e.target.value as PokemonType);
               }}
             >
-              <FormControlLabel value={PokemonType.None} control={<Radio />} label={<span>{capitalize(PokemonType.None)}</span>} />
+              <FormControlLabel value={PokemonType.None} control={<Radio />} label={<span>{PokemonType.None}</span>} />
               <FormControlLabel
                 value={PokemonType.Buddy}
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {capitalize(PokemonType.Buddy)}
+                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {PokemonType.Buddy}
                   </span>
                 }
               />
@@ -286,7 +285,7 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={28} alt="img-lucky" src={APIService.getPokeLucky()} /> {capitalize(PokemonType.Lucky)}
+                    <img height={28} alt="img-lucky" src={APIService.getPokeLucky()} /> {PokemonType.Lucky}
                   </span>
                 }
               />
@@ -295,7 +294,7 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(PokemonType.Shadow)}
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {PokemonType.Shadow}
                   </span>
                 }
               />
@@ -304,7 +303,7 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> {capitalize(PokemonType.Purified)}
+                    <img height={32} alt="img-purified" src={APIService.getPokePurified()} /> {PokemonType.Purified}
                   </span>
                 }
               />
@@ -375,7 +374,7 @@ const Calculate = () => {
                             statData.resultBetweenStardust > 0 ? (
                               <span>
                                 {statData.resultBetweenStardust}
-                                {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenStardustDiff) > 0 && (
+                                {!isNullOrEmpty(statData.type) && toNumber(statData.resultBetweenStardustDiff) > 0 && (
                                   <Fragment>
                                     {statData.type === PokemonType.Shadow && (
                                       <span className="shadow-text"> (+{statData.resultBetweenStardustDiff})</span>
@@ -411,7 +410,7 @@ const Calculate = () => {
                             statData.resultBetweenCandy > 0 ? (
                               <span>
                                 {statData.resultBetweenCandy}
-                                {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenCandyDiff) > 0 && (
+                                {!isNullOrEmpty(statData.type) && toNumber(statData.resultBetweenCandyDiff) > 0 && (
                                   <Fragment>
                                     {statData.type === PokemonType.Shadow && (
                                       <span className="shadow-text"> (+{statData.resultBetweenCandyDiff})</span>
@@ -452,7 +451,7 @@ const Calculate = () => {
                             statData.resultBetweenXLCandy > 0 ? (
                               <span>
                                 {statData.resultBetweenXLCandy}
-                                {!isNullOrEmpty(statData.type) && getValueOrDefault(Number, statData.resultBetweenXLCandyDiff) > 0 && (
+                                {!isNullOrEmpty(statData.type) && toNumber(statData.resultBetweenXLCandyDiff) > 0 && (
                                   <Fragment>
                                     {statData.type === PokemonType.Shadow && (
                                       <span className="shadow-text"> (+{statData.resultBetweenXLCandyDiff})</span>
@@ -487,11 +486,11 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.type !== PokemonType.Shadow ? (
-                              calculateStatsBattle(statATK, getValueOrDefault(Number, pokeStats?.IV.atk), statLevel, true)
+                              calculateStatsBattle(statATK, toNumber(pokeStats?.IV.atk), statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData.atkStat}
-                                {getValueOrDefault(Number, statData.atkStatDiff) > 0 && (
+                                {toNumber(statData.atkStatDiff) > 0 && (
                                   <span className="text-success" style={{ fontWeight: 500 }}>
                                     {' '}
                                     (+{statData.atkStatDiff})
@@ -512,11 +511,11 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.type !== PokemonType.Shadow ? (
-                              calculateStatsBattle(statDEF, getValueOrDefault(Number, pokeStats?.IV.def), statLevel, true)
+                              calculateStatsBattle(statDEF, toNumber(pokeStats?.IV.def), statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData.defStat}
-                                {getValueOrDefault(Number, statData.defStatDiff) > 0 && (
+                                {toNumber(statData.defStatDiff) > 0 && (
                                   <span className="text-danger" style={{ fontWeight: 500 }}>
                                     {' '}
                                     (-{statData?.defStatDiff})
@@ -534,9 +533,7 @@ const Calculate = () => {
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           HP
                         </td>
-                        <td>
-                          {statData ? calculateStatsBattle(statSTA, getValueOrDefault(Number, pokeStats?.IV.sta), statLevel, true) : '-'}
-                        </td>
+                        <td>{statData ? calculateStatsBattle(statSTA, toNumber(pokeStats?.IV.sta), statLevel, true) : '-'}</td>
                       </tr>
                     </tbody>
                   </table>

@@ -56,7 +56,7 @@ import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
-import { VariantType } from '../../enums/type.enum';
+import { PokemonType, VariantType } from '../../enums/type.enum';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -169,13 +169,13 @@ const Pokemon = (props: IPokemonPage) => {
                 })
               )
             )
-            .sort((a, b) => getValueOrDefault(Number, a.form.id) - getValueOrDefault(Number, b.form.id))
+            .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
         )
-        .sort((a, b) => getValueOrDefault(Number, a[0]?.form.id) - getValueOrDefault(Number, b[0]?.form.id));
+        .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
       const indexPokemonGO = generatePokemonGoForms(pokemonData, dataFormList, formListResult, data.id, data.name);
 
-      if (pokemon?.isShadow && pokemon.purified?.candy && pokemon.purified.stardust) {
+      if (pokemon?.pokemonType === PokemonType.Shadow && pokemon.purified?.candy && pokemon.purified.stardust) {
         generatePokemonGoShadowForms(dataPokeList, formListResult, data.id, data.name, indexPokemonGO);
       }
 
@@ -221,8 +221,8 @@ const Pokemon = (props: IPokemonPage) => {
       setWH((prevWH) =>
         WeightHeight.create({
           ...prevWH,
-          weight: getValueOrDefault(Number, defaultData?.weight),
-          height: getValueOrDefault(Number, defaultData?.height),
+          weight: toNumber(defaultData?.weight),
+          height: toNumber(defaultData?.height),
         })
       );
       setCurrentData(defaultData);
@@ -282,12 +282,12 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    if (id > 0 && getValueOrDefault(Number, data?.id) !== id && isNotEmpty(pokemonData)) {
+    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(pokemonData)) {
       clearData(true);
       queryPokemon(id);
     }
     return () => {
-      if (getValueOrDefault(Number, data?.id) > 0) {
+      if (toNumber(data?.id) > 0) {
         APIService.cancel(axiosSource.current);
       }
     };
@@ -344,8 +344,8 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   useEffect(() => {
-    if (currentForm && getValueOrDefault(Number, data?.id) > 0) {
-      const released = checkReleased(getValueOrDefault(Number, data?.id), getValueOrDefault(String, formName), currentForm);
+    if (currentForm && toNumber(data?.id) > 0) {
+      const released = checkReleased(toNumber(data?.id), getValueOrDefault(String, formName), currentForm);
       setReleased(released);
 
       const formParams = searchParams.get('form');
@@ -369,7 +369,7 @@ const Pokemon = (props: IPokemonPage) => {
           ? props.searching.fullName
           : currentForm.form.isDefault
           ? currentForm.form.name
-          : formParams || getValueOrDefault(Number, currentForm.form.id) < 0
+          : formParams || toNumber(currentForm.form.id) < 0
           ? currentForm.form.name
           : data?.name;
       setFormName(nameInfo?.replace(/-f$/, '-female').replace(/-m$/, '-male'));
@@ -389,7 +389,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    if (isNotEmpty(pokemonData) && id > 0) {
+    if (id > 0 && isNotEmpty(pokemonData)) {
       const currentId = getPokemonById(pokemonData, id);
       if (currentId) {
         setDataStorePokemon({
@@ -437,7 +437,7 @@ const Pokemon = (props: IPokemonPage) => {
                   style={{ verticalAlign: 'baseline' }}
                   alt="img-full-pokemon"
                   src={APIService.getPokeFullSprite(
-                    getValueOrDefault(Number, dataStorePokemon?.current?.id),
+                    toNumber(dataStorePokemon?.current?.id),
                     convertPokemonImageName(
                       currentForm && originForm && currentForm.defaultId === currentForm.form.id
                         ? ''
@@ -447,7 +447,7 @@ const Pokemon = (props: IPokemonPage) => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                      e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
+                      e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon?.current?.id));
                     } else {
                       e.currentTarget.src = APIService.getPokeFullSprite(0);
                     }
@@ -541,13 +541,13 @@ const Pokemon = (props: IPokemonPage) => {
               ratio={pokeRatio}
               setId={props.setId}
               pokemonDetail={pokemonDetails}
-              defaultId={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
+              defaultId={toNumber(dataStorePokemon?.current?.id)}
               region={region}
               setProgress={setProgress}
               isLoadedForms={progress.isLoadedForms}
             />
             <PokemonAssetComponent
-              id={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
+              id={toNumber(dataStorePokemon?.current?.id)}
               name={getValueOrDefault(String, dataStorePokemon?.current?.name)}
               originSoundCry={originSoundCry}
               isLoadedForms={progress.isLoadedForms}
