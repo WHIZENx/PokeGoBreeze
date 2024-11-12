@@ -64,7 +64,7 @@ export interface ICardPokemonInfoComponent {
   atkMaxStats: number | undefined;
   defMaxStats: number | undefined;
   staMaxStats: number | undefined;
-  icon: string;
+  icon: string | undefined;
   releasedGO: boolean;
 }
 
@@ -85,11 +85,11 @@ export interface ITypeEffectiveComponent {
 export interface ITypeEffectiveSelectComponent {
   isBlock?: boolean;
   effect: number;
-  types: string[];
+  types: string[] | undefined;
 }
 
 export interface IWeatherEffectiveComponent {
-  weatherEffective: string[];
+  weatherEffective: string[] | undefined;
 }
 
 export interface IFindComponent {
@@ -122,7 +122,7 @@ export interface IFormSelectComponent {
   setTier?: React.Dispatch<React.SetStateAction<number>>;
   onSetPrev?: () => void;
   onSetNext?: () => void;
-  name: string;
+  name: string | undefined;
   setName?: React.Dispatch<React.SetStateAction<string>>;
   isHide?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -152,7 +152,7 @@ export interface IToolsComponent {
 
 export interface IAssetPokemonModelComponent {
   id: number;
-  name: string;
+  name: string | undefined;
   originSoundCry: IFormSoundCry[];
   isLoadedForms: boolean;
 }
@@ -207,7 +207,7 @@ export interface IStatsComponent {
   statSTA?: IStatsSta;
   statProd?: IStatsProd;
   id?: number;
-  form?: string;
+  form?: string | null;
 }
 
 export interface IGenderComponent {
@@ -362,7 +362,7 @@ export interface IStatsBarComponent {
   currentStats: number;
   optionalStats?: string;
   id?: number;
-  form?: string;
+  form?: string | null;
   statType: TypeAction;
 }
 
@@ -413,7 +413,7 @@ export interface ILoadGroupComponent {
 }
 
 export interface IWeatherComponent {
-  arr: string[];
+  arr: string[] | undefined;
   style?: React.CSSProperties;
   text?: string;
 }
@@ -438,8 +438,8 @@ export interface IPokemonTableComponent {
   id: number | undefined;
   formName: string | undefined;
   gen: number | undefined;
-  region: string;
-  version: string;
+  region: string | null | undefined;
+  version: string | null | undefined;
   weight: number;
   height: number;
   className?: string;

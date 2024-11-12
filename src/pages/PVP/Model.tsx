@@ -42,12 +42,12 @@ import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/mode
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isIncludeList, toNumber } from '../../util/extension';
+import { combineClasses, isEqual, isInclude, toNumber } from '../../util/extension';
 import { EffectiveType } from './enums/type-eff.enum';
 import { ArcheType } from './enums/arche-type.enum';
 import { BattleLeagueCPType } from '../../util/enums/compute.enum';
 import { BackgroundType } from './enums/model-type.enum';
-import { PokemonType } from '../../enums/type.enum';
+import { MoveType, PokemonType } from '../../enums/type.enum';
 
 export const Header = (data: IPokemonBattleRanking | undefined) => {
   return (
@@ -182,7 +182,7 @@ export const Body = (
   );
 };
 
-export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: string) => {
+export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: string | undefined) => {
   const calculateStatsTopRank = (stats: IStatsBase | undefined, level = MAX_LEVEL) => {
     const maxCP = toNumber(cp);
 
@@ -297,7 +297,7 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
             statProd={data?.prod}
             pokemonStats={statsRanking}
             id={data?.pokemon?.num}
-            form={getValueOrDefault(String, data?.pokemon?.forme)}
+            form={data?.pokemon?.forme}
           />
         </div>
         <div>
@@ -311,7 +311,7 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
   );
 };
 
-export const TypeEffective = (types: string[]) => {
+export const TypeEffective = (types: string[] | undefined) => {
   return (
     <div className="row text-white">
       <div className="col-lg-4" style={{ marginBottom: 15 }}>
@@ -378,17 +378,7 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
 
   const findMove = (name: string, uses: number) => {
     const move = combatData.find((move) => isEqual(move.name, name));
-    let isElite = false;
-    let isSpecial = false;
-    if (isIncludeList(combatList?.eliteQuickMoves, name)) {
-      isElite = true;
-    }
-    if (isIncludeList(combatList?.eliteCinematicMoves, name)) {
-      isElite = true;
-    }
-    if (isIncludeList(combatList?.specialMoves, name)) {
-      isSpecial = true;
-    }
+    const moveType = getMoveType(combatList, name);
 
     return (
       <Link
@@ -399,15 +389,9 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
         )}
       >
         <div className="d-flex" style={{ columnGap: 10 }}>
-          <img
-            className="filter-shadow"
-            width={24}
-            height={24}
-            alt="img-pokemon"
-            src={APIService.getTypeSprite(getValueOrDefault(String, move?.type))}
-          />
+          <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move?.type)} />
           <span className="filter-shadow">
-            {splitAndCapitalize(name, '_', ' ')} {(isElite || isSpecial) && <b className="filter-shadow">*</b>}
+            {splitAndCapitalize(name, '_', ' ')} {moveType !== MoveType.None && <b className="filter-shadow">*</b>}
           </span>
         </div>
         <div className="d-flex align-items-center" style={{ columnGap: 10 }}>

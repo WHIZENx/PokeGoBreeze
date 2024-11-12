@@ -6,7 +6,7 @@ import { MoveType, TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual } from '../../util/extension';
+import { combineClasses, isEqual } from '../../util/extension';
 
 const Move = (props: IMoveComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
@@ -91,7 +91,7 @@ const Move = (props: IMoveComponent) => {
           <div className="card-select">
             {currentMove ? (
               <CardType
-                value={getValueOrDefault(String, findType(currentMove.name))}
+                value={findType(currentMove.name)}
                 name={splitAndCapitalize(currentMove.name, '_', ' ')}
                 moveType={currentMove.moveType}
               />
@@ -126,7 +126,7 @@ const Move = (props: IMoveComponent) => {
                             onMouseDown={() => changeMove(value)}
                           >
                             <CardType
-                              value={getValueOrDefault(String, findType(value.name))}
+                              value={findType(value.name)}
                               name={splitAndCapitalize(value.name, '_', ' ')}
                               moveType={value.moveType}
                             />

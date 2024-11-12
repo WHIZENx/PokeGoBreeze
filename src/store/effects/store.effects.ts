@@ -49,7 +49,7 @@ const options = {
 export const loadPokeGOLogo = (dispatch: Dispatch) => {
   try {
     APIService.getFetchUrl<APIPath[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options)
-      .then((res) => APIService.getFetchUrl<Files>(getValueOrDefault(String, res.data[0]?.url), options))
+      .then((res) => APIService.getFetchUrl<Files>(res.data[0]?.url, options))
       .then((file) => {
         dispatch(
           StoreActions.SetLogoPokeGO.create(
@@ -194,8 +194,8 @@ export const loadAssets = async (
   setStateSound: SetValue<string>
 ) => {
   await Promise.all([
-    APIService.getFetchUrl<APITree>(getValueOrDefault(String, imageRoot.at(0)?.commit.tree.url), options),
-    APIService.getFetchUrl<APITree>(getValueOrDefault(String, soundsRoot.at(0)?.commit.tree.url), options),
+    APIService.getFetchUrl<APITree>(imageRoot.at(0)?.commit.tree.url, options),
+    APIService.getFetchUrl<APITree>(soundsRoot.at(0)?.commit.tree.url, options),
   ]).then(async ([imageFolder, soundFolder]) => {
     const imageFolderPath = imageFolder.data.tree.find((item) => item.path === 'Images');
     const soundFolderPath = soundFolder.data.tree.find((item) => item.path === 'Sounds');

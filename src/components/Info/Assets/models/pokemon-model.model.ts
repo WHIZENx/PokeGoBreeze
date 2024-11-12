@@ -1,5 +1,5 @@
 import { IImage } from '../../../../core/models/asset.model';
-import { isEqual } from '../../../../util/extension';
+import { getValueOrDefault, isEqual } from '../../../../util/extension';
 
 export interface IPokemonModelComponent {
   name: string;
@@ -12,8 +12,8 @@ export class PokemonModelComponent implements IPokemonModelComponent {
   form = '';
   image: IImage[] = [];
 
-  constructor(value: string, images: IImage[]) {
-    this.form = value;
-    this.image = images.filter((item) => isEqual(value, item.form));
+  constructor(value: string | undefined, images: IImage[] | undefined) {
+    this.form = getValueOrDefault(String, value);
+    this.image = getValueOrDefault(Array, images).filter((item) => isEqual(value, item.form));
   }
 }

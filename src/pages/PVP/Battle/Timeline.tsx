@@ -9,8 +9,8 @@ import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
 import { combineClasses, isNotEmpty } from '../../../util/extension';
 
-export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, hide = false) => {
-  const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, shadow = false) => {
+export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, isHide = false) => {
+  const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShadow = false) => {
     if (!move) {
       return;
     }
@@ -24,12 +24,12 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
         >
           <div style={{ display: 'contents', width: 16 }}>
             <img
-              className={combineClasses('pokemon-sprite-small sprite-type-select', shadow ? 'filter-shadow' : '')}
+              className={combineClasses('pokemon-sprite-small sprite-type-select', isShadow ? 'filter-shadow' : '')}
               alt="img-type-pokemon"
               src={APIService.getTypeHqSprite(capitalize(move.type))}
             />
           </div>
-          <span className={combineClasses(!shadow ? 'text-black' : 'filter-shadow')} style={{ fontSize: 14 }}>
+          <span className={combineClasses(!isShadow ? 'text-black' : 'filter-shadow')} style={{ fontSize: 14 }}>
             {splitAndCapitalize(move.name, '_', ' ')}
           </span>
         </span>
@@ -159,7 +159,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
 
   return (
     <Fragment>
-      {!hide && (
+      {!isHide && (
         <div className="d-flex timeline-vertical battle-container">
           <div className="w-50">
             <div className="d-flex flex-column" style={{ gap: 10 }}>
@@ -187,7 +187,7 @@ export const TimeLine = (
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: TimelineElement<HTMLDivElement>,
   showTap: boolean,
-  hide = false
+  isHide = false
 ) => {
   const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => {
     return (
@@ -283,7 +283,7 @@ export const TimeLine = (
 
   return (
     <Fragment>
-      {!hide && move.bind && (
+      {!isHide && move.bind && (
         <div className="w-100 battle-bar d-flex justify-content-center">
           <div id="battle-bar-scroll" className="battle-bar-container" ref={elem} onScroll={scroll.bind(this)}>
             <div
@@ -311,7 +311,7 @@ export const TimeLineFit = (
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
   move: TimelineElement<HTMLDivElement>,
   showTap: boolean,
-  hide = false
+  isHide = false
 ) => {
   const calculateFitPoint = (length: number, index: number) => {
     return `${(index * 100) / (length - 2)}%`;
@@ -448,7 +448,7 @@ export const TimeLineFit = (
 
   return (
     <Fragment>
-      {!hide && (
+      {!isHide && (
         <div className="w-100 fit-timeline d-flex justify-content-center">
           <div
             className="position-relative h-100"

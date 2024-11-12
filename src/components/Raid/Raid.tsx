@@ -15,7 +15,7 @@ import { StoreState } from '../../store/models/state.model';
 import { capitalize } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getValueOrDefault, isEqual, isInclude, isNullOrEmpty, toNumber } from '../../util/extension';
+import { isEqual, isInclude, isNullOrEmpty, toNumber } from '../../util/extension';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 
 const Raid = (props: IRaidComponent) => {
@@ -160,8 +160,7 @@ const Raid = (props: IRaidComponent) => {
             alt="img-raid-egg"
             src={raidEgg(
               tier,
-              !pokemonClass &&
-                getValueOrDefault(Boolean, isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)),
+              !pokemonClass && isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
               !isNullOrEmpty(pokemonClass) && isEqual(props.currForm?.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive),
               isEqual(
                 pokemonData.find((pokemon) => pokemon.num === props.id)?.pokemonClass,

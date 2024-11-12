@@ -7,7 +7,7 @@ import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 import { getValueOrDefault, isEqual, isUndefined, toNumber } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
-import { PokemonType } from '../../enums/type.enum';
+import { MoveType, PokemonType } from '../../enums/type.enum';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -23,7 +23,7 @@ export interface PokemonGender {
 
 export interface IPokemonDataStats {
   level: number;
-  isShadow: boolean;
+  pokemonType: PokemonType;
   iv: IStatsBase;
 }
 
@@ -286,11 +286,6 @@ export interface IPokemonName {
   name: string;
 }
 
-export interface Elite {
-  fMove: boolean;
-  cMove: boolean;
-}
-
 interface IPokemonDPSBattle {
   pokemon: IPokemonData | undefined;
   fMove: ICombat | undefined;
@@ -306,15 +301,14 @@ interface IPokemonDPSBattle {
   defendHpRemain?: number;
   death?: number;
   pokemonType?: PokemonType;
-  mShadow?: boolean;
-  elite?: Elite;
+  fMoveType?: MoveType;
+  cMoveType?: MoveType;
   atk?: number;
   def?: number;
   hp?: number;
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  isSpecial?: boolean;
 }
 
 export class PokemonDPSBattle implements IPokemonDPSBattle {
@@ -332,15 +326,14 @@ export class PokemonDPSBattle implements IPokemonDPSBattle {
   defendHpRemain?: number;
   death?: number;
   pokemonType?: PokemonType;
-  mShadow?: boolean;
-  elite?: Elite;
+  fMoveType?: MoveType;
+  cMoveType?: MoveType;
   atk?: number;
   def?: number;
   hp?: number;
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  isSpecial?: boolean;
 
   static create(value: IPokemonDPSBattle) {
     const obj = new PokemonDPSBattle();
@@ -368,17 +361,15 @@ export class PokemonMoveData implements IPokemonMoveData {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  isShadow?: boolean;
-  isPurified?: boolean;
-  mShadow?: boolean;
-  elite?: Elite;
+  pokemonType?: PokemonType;
+  fMoveType?: MoveType;
+  cMoveType?: MoveType;
   atk?: number;
   def?: number;
   hp?: number;
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  isSpecial?: boolean;
 
   static create(value: IPokemonMoveData) {
     const obj = new PokemonMoveData();
@@ -529,7 +520,7 @@ export class PokemonData implements IPokemonData {
   changesFrom: string | null = null;
   cannotDynamax = true;
 
-  static create(pokemon: PokemonModel, types: string[], options?: IPokemonDataOptional) {
+  static create(pokemon: PokemonModel, types: string[] | undefined, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
     Object.entries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
@@ -553,7 +544,7 @@ export class PokemonData implements IPokemonData {
       options?.slug ??
       pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
     obj.sprite = options?.sprite ?? 'unknown-pokemon';
-    obj.types = types;
+    obj.types = getValueOrDefault(Array, types);
     obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
     obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options?.baseStatsGO;
     obj.baseStats = StatsPokemon.create({
@@ -612,7 +603,7 @@ export class PokemonModel implements IPokemonName {
   id: number;
   name: string;
 
-  constructor(id: number, name?: string, settings?: PokemonModel) {
+  constructor(id: number, name?: string | null, settings?: PokemonModel) {
     this.id = id;
     this.name = getValueOrDefault(String, name);
     if (settings) {

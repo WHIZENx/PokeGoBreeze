@@ -3,7 +3,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
 import APIService from '../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../util/utils';
+import { capitalize, getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ICardSmallComponent } from '../models/component.model';
@@ -43,10 +43,13 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(data.name, '_', ' ')}</span>
               <span className="d-flex">
-                {props.value?.moveType === MoveType.Elite && <span className="type-icon-small ic elite-ic">{MoveType.Elite}</span>}
-                {props.value?.moveType === MoveType.Shadow && <span className="type-icon-small ic shadow-ic">{MoveType.Shadow}</span>}
-                {props.value?.moveType === MoveType.Purified && <span className="type-icon-small ic purified-ic">{MoveType.Purified}</span>}
-                {props.value?.moveType === MoveType.Special && <span className="type-icon-small ic special-ic">{MoveType.Special}</span>}
+                {props.value && props.value.moveType !== MoveType.None && (
+                  <span
+                    className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.value?.moveType)?.toLowerCase()}-ic`)}
+                  >
+                    {getKeyEnum(MoveType, props.value.moveType)}
+                  </span>
+                )}
               </span>
               {props.isShow && !props.isDisable && (
                 <div className="select-down d-flex align-items-center">

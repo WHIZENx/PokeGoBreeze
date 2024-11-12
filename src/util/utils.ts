@@ -178,8 +178,8 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
   return notFull ? Moment(new Date(toNumber(value))).format('D MMMM YYYY') : Moment(new Date(toNumber(value))).format('HH:mm D MMMM YYYY');
 };
 
-export const convertModelSpritName = (text: string) => {
-  return text
+export const convertModelSpritName = (text: string | undefined) => {
+  return getValueOrDefault(String, text)
     .toLowerCase()
     .replaceAll('_', '-')
     .replaceAll('%', '')
@@ -399,7 +399,7 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
   return mSet;
 };
 
-export const checkPokemonGO = (id: number, name: string, details: IPokemonData[]) => {
+export const checkPokemonGO = (id: number, name: string | undefined, details: IPokemonData[]) => {
   return details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name));
 };
 
@@ -725,9 +725,9 @@ export const generatePokemonGoForms = (
         const pokemonGOModify = new PokemonFormModifyModel(
           id,
           name,
-          getValueOrDefault(String, pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase()),
-          getValueOrDefault(String, pokemon.forme?.replaceAll('_', '-')?.toLowerCase()),
-          getValueOrDefault(String, pokemon.fullName?.replaceAll('_', '-')?.toLowerCase()),
+          pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase(),
+          pokemon.forme?.replaceAll('_', '-')?.toLowerCase(),
+          pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
           'Pokémon-GO',
           pokemon.types,
           new PokemonSprit(),
@@ -797,7 +797,7 @@ export const generatePokemonGoShadowForms = (
 export const getFormFromForms = (
   stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined,
   id: number | undefined,
-  formName: string | undefined
+  formName: string | null | undefined
 ) => {
   const forms = stats?.filter((i) => i.id === id);
   formName = convertPokemonAPIDataName(formName);
@@ -811,11 +811,11 @@ export const getFormFromForms = (
   return filterForm;
 };
 
-export const retrieveMoves = (pokemon: IPokemonData[], id: number, form: string) => {
+export const retrieveMoves = (pokemon: IPokemonData[], id: number, form: string | null | undefined) => {
   if (isNotEmpty(pokemon)) {
     const resultFirst = pokemon.filter((item) => item.num === id);
     form =
-      form
+      getValueOrDefault(String, form)
         .toLowerCase()
         .replaceAll('-', '_')
         .replaceAll(`_${FORM_STANDARD.toLowerCase()}`, '')
@@ -826,7 +826,7 @@ export const retrieveMoves = (pokemon: IPokemonData[], id: number, form: string)
   }
 };
 
-export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form: string | null, isDefault = false) => {
+export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form: string | null | undefined, isDefault = false) => {
   let pokemonForm: IPokemonData | undefined = new PokemonData();
 
   if (form) {
@@ -880,6 +880,17 @@ export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
     getValueOrDefault(Array, pokemon?.purifiedMoves),
     getValueOrDefault(Array, pokemon?.specialMoves)
   );
+};
+
+export const moveTypeToFormType = (moveType?: MoveType) => {
+  switch (moveType) {
+    case MoveType.Shadow:
+      return PokemonType.Shadow;
+    case MoveType.Purified:
+      return PokemonType.Purified;
+    default:
+      return PokemonType.None;
+  }
 };
 
 export const getDmgMultiplyBonus = (form = PokemonType.None, options?: Options, type?: TypeAction) => {

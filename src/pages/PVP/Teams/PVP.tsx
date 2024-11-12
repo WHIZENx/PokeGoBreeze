@@ -152,9 +152,7 @@ const TeamPVP = () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
         const cp = toNumber(params.cp);
-        const file = (
-          await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', getValueOrDefault(String, params.serie), cp))
-        ).data;
+        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp))).data;
         if (params.serie === LeagueType.All) {
           document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
         } else {

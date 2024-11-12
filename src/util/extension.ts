@@ -9,7 +9,7 @@ export type DynamicObj<S, T extends string | number = string | number> = { [x in
 export const getValueOrDefault = <T>(
   i: NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor,
   value: T | undefined | null,
-  defaultValue?: T
+  defaultValue?: T | undefined | null
 ) => {
   if (isUndefined(value) || isNull(value)) {
     const type = Object.prototype.toString.call(i.prototype).slice(8, -1).toLowerCase();

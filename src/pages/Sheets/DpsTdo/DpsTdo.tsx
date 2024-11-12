@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO } from '../../../util/utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, getKeyEnum } from '../../../util/utils';
 import {
   DEFAULT_SHEET_PAGE,
   DEFAULT_SHEET_ROW,
@@ -46,7 +46,7 @@ import { Action } from 'history';
 import { MoveType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { Elite, IPokemonData } from '../../../core/models/pokemon.model';
+import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -79,11 +79,8 @@ interface PokemonSheetData {
   dps: number;
   tdo: number;
   multiDpsTdo: number;
-  isShadow: boolean;
-  isPurified: boolean;
-  isSpecial: boolean;
-  mShadow: boolean;
-  elite: Elite;
+  fMoveType: MoveType;
+  cMoveType: MoveType;
   cp: number;
 }
 
@@ -138,8 +135,10 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
-        {row.isShadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-        {row.isPurified && <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />}
+        {row.cMoveType === MoveType.Shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+        {row.cMoveType === MoveType.Purified && (
+          <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
+        )}
         <img
           height={48}
           alt="img-pokemon"
@@ -147,7 +146,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           src={APIService.getPokeIconSprite(row.pokemon.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.pokemon.baseSpecies));
+            e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon.baseSpecies);
           }}
         />
         {splitAndCapitalize(row.pokemon.name, '-', ' ')}
@@ -186,9 +185,9 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         />{' '}
         <div>
           <span className="text-b-ic">{splitAndCapitalize(row.fMove?.name, '_', ' ')}</span>
-          {row.elite?.fMove && (
-            <span className="type-icon-small ic elite-ic">
-              <span>{MoveType.Elite}</span>
+          {row.fMoveType !== MoveType.None && (
+            <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.fMoveType)?.toLowerCase()}-ic`)}>
+              {getKeyEnum(MoveType, row.fMoveType)}
             </span>
           )}
         </div>
@@ -211,24 +210,9 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         />{' '}
         <div>
           <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ')}</span>
-          {row.elite?.cMove && (
-            <span className="type-icon-small ic elite-ic">
-              <span>{MoveType.Elite}</span>
-            </span>
-          )}
-          {row.mShadow && (
-            <span className="type-icon-small ic shadow-ic">
-              <span>{MoveType.Shadow}</span>
-            </span>
-          )}
-          {row.isPurified && (
-            <span className="type-icon-small ic purified-ic">
-              <span>{MoveType.Purified}</span>
-            </span>
-          )}
-          {row.isSpecial && (
-            <span className="type-icon-small ic special-ic">
-              <span>{MoveType.Special}</span>
+          {row.cMoveType !== MoveType.None && (
+            <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.cMoveType)?.toLowerCase()}-ic`)}>
+              {getKeyEnum(MoveType, row.cMoveType)}
             </span>
           )}
         </div>
@@ -337,8 +321,7 @@ const DpsTdo = () => {
     pokemon: IPokemonData,
     vf: string,
     fMoveType: MoveType,
-    cMoveType: MoveType,
-    specialMove: string[] = []
+    cMoveType: MoveType
   ) => {
     getValueOrDefault(Array, movePoke).forEach((vc: string) => {
       const fMove = data.combat.find((item) => isEqual(item.name, vf));
@@ -353,8 +336,8 @@ const DpsTdo = () => {
           fMove,
           cMove,
           types: pokemon.types,
-          isShadow: cMoveType === MoveType.Shadow,
-          weatherBoosts: getValueOrDefault(String, options.weatherBoosts),
+          moveType: cMoveType,
+          weatherBoosts: options.weatherBoosts,
           isPokemonFriend: options.isTrainerFriend,
           pokemonFriendLevel: options.pokemonFriendLevel,
         });
@@ -369,7 +352,7 @@ const DpsTdo = () => {
             fMove: data.combat.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
             cMove: data.combat.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
             types: dataTargetPokemon.types,
-            weatherBoosts: getValueOrDefault(String, options.weatherBoosts),
+            weatherBoosts: options.weatherBoosts,
           });
 
           if (!statsDefender) {
@@ -390,10 +373,10 @@ const DpsTdo = () => {
             statsAttacker.def,
             toNumber(statsAttacker.hp),
             statsAttacker.types,
-            statsAttacker.isShadow,
+            statsAttacker.moveType,
             options
           );
-          tdo = calculateTDO(data.options, statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.isShadow);
+          tdo = calculateTDO(data.options, statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.moveType);
         }
         dataList.push({
           pokemon,
@@ -402,14 +385,8 @@ const DpsTdo = () => {
           dps,
           tdo,
           multiDpsTdo: Math.pow(dps, 3) * tdo,
-          isShadow: cMoveType === MoveType.Shadow,
-          isPurified: cMoveType === MoveType.Purified && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
-          isSpecial: cMoveType === MoveType.Special,
-          mShadow: cMoveType === MoveType.Shadow && isNotEmpty(specialMove) && isIncludeList(specialMove, statsAttacker.cMove?.name),
-          elite: {
-            fMove: fMoveType === MoveType.Elite,
-            cMove: cMoveType === MoveType.Elite,
-          },
+          cMoveType,
+          fMoveType,
           cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, toNumber(stats.sta) + ivHp, pokemonLevel),
         });
       }
@@ -421,13 +398,13 @@ const DpsTdo = () => {
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.None);
       if (!pokemon.forme || pokemon.pokemonType === PokemonType.Shadow) {
         if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves);
-          addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves);
+          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow);
+          addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow);
         }
-        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemon.shadowMoves);
-        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, MoveType.Purified, pokemon.purifiedMoves);
+        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, MoveType.Shadow);
+        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, MoveType.Purified);
       }
-      addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType, MoveType.Special, pokemon.specialMoves);
+      addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType, MoveType.Special);
       addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Elite);
     });
   };
@@ -467,8 +444,8 @@ const DpsTdo = () => {
           : isInclude(item.pokemon.name.replaceAll('-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
             isInclude(item.pokemon.num, searchTerm));
 
-      const boolShowShadow = !showShadow && item.isShadow;
-      const boolShowElite = !showEliteMove && (item.elite.fMove || item.elite.cMove);
+      const boolShowShadow = !showShadow && item.cMoveType === MoveType.Shadow;
+      const boolShowElite = !showEliteMove && (item.fMoveType === MoveType.Elite || item.cMoveType === MoveType.Elite);
       const boolShowMega = !showMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolShowGmax = !showGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolShowPrimal = !showPrimal && isInclude(item.pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive);
@@ -476,8 +453,8 @@ const DpsTdo = () => {
       const boolShowMythic = !showMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
 
-      const boolOnlyShadow = enableShadow && item.isShadow;
-      const boolOnlyElite = enableElite && (item.elite.fMove || item.elite.cMove);
+      const boolOnlyShadow = enableShadow && item.cMoveType === MoveType.Shadow;
+      const boolOnlyElite = enableElite && (item.fMoveType === MoveType.Elite || item.cMoveType === MoveType.Elite);
       const boolOnlyMega = enableMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolOnlyGmax = enableGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolOnlyPrimal = enablePrimal && isInclude(item.pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive);

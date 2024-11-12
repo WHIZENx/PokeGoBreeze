@@ -39,7 +39,7 @@ import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-h
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
 
@@ -531,7 +531,7 @@ const Home = () => {
               atkMaxStats={stats?.attack.maxStats}
               defMaxStats={stats?.defense.maxStats}
               staMaxStats={stats?.stamina.maxStats}
-              icon={getValueOrDefault(String, icon)}
+              icon={icon}
               releasedGO={row.releasedGO}
             />
           ))}

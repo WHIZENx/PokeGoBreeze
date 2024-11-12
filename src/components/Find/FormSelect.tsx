@@ -92,7 +92,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                getValueOrDefault(String, data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name),
+                data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
                 new Form({
                   ...item,
                   formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
@@ -156,7 +156,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     if (props.setName) {
-      props.setName(currentForm ? splitAndCapitalize(currentForm.form.name, '-', ' ') : props.name);
+      props.setName(currentForm ? splitAndCapitalize(currentForm.form.name, '-', ' ') : getValueOrDefault(String, props.name));
     }
   }, [props.setName, props.name, currentForm]);
 

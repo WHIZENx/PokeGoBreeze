@@ -9,7 +9,7 @@ import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEqual, isNotEmpty } from '../../util/extension';
 import { InputType } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
@@ -28,7 +28,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   };
 
   const findMove = useCallback(
-    (id: number, form: string, type: TypeMove, selected = false) => {
+    (id: number, form: string | null | undefined, type: TypeMove, selected = false) => {
       const result = retrieveMoves(pokemon, id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
@@ -68,7 +68,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   useEffect(() => {
     if (isNotEmpty(pokemon)) {
       if (props.pokemon?.num) {
-        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon.forme), props.moveType, props.isSelected);
+        findMove(props.pokemon.num, props.pokemon.forme, props.moveType, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }

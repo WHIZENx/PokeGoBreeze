@@ -77,7 +77,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           src={APIService.getPokeIconSprite(row.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
+            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
           }}
         />
         {splitAndCapitalize(row.name.replaceAll('_', '-'), '-', ' ')}
@@ -88,7 +88,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
     name: 'Type(s)',
     selector: (row) =>
-      row.types.map((value, index) => (
+      getValueOrDefault(Array, row.types).map((value, index) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -170,7 +170,7 @@ const StatsRanking = () => {
   const mappingData = (pokemon: IPokemonData[]) => {
     return pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
-      const details = getPokemonDetails(pokemon, data.num, getValueOrDefault(String, data.fullName), true);
+      const details = getPokemonDetails(pokemon, data.num, data.fullName, true);
       return new PokemonStatsRanking({
         ...data,
         releasedGO: getValueOrDefault(Boolean, details?.releasedGO),
@@ -311,13 +311,13 @@ const StatsRanking = () => {
 
   const convertToPokemonForm = (pokemon: IPokemonData | IPokemonStatsRanking) => {
     return Form.create({
-      formName: getValueOrDefault(String, pokemon.forme),
+      formName: pokemon.forme,
       id: pokemon.num,
       isDefault: true,
       isMega: isInclude(pokemon.slug, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
       name: pokemon.name,
       types: pokemon.types,
-      version: getValueOrDefault(String, pokemon.version),
+      version: pokemon.version,
       pokemonType: PokemonType.None,
     });
   };
@@ -352,8 +352,8 @@ const StatsRanking = () => {
               id={select?.num}
               gen={select?.gen}
               formName={select?.name}
-              region={getValueOrDefault(String, select?.region)}
-              version={getValueOrDefault(String, select?.version)}
+              region={select?.region}
+              version={select?.version}
               weight={toNumber(select?.weightkg)}
               height={toNumber(select?.heightm)}
               className="table-stats-ranking"
@@ -382,7 +382,7 @@ const StatsRanking = () => {
         statProd={select?.prod}
         pokemonStats={stats}
         id={select?.num}
-        form={getValueOrDefault(String, select?.forme)}
+        form={select?.forme}
       />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>

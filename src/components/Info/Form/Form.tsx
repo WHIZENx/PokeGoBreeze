@@ -29,7 +29,7 @@ import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
+import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { WeightHeight } from '../../../core/models/pokemon.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 
@@ -99,7 +99,7 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   }, [props.pokemonRouter]);
 
-  const changeForm = (name: string, form: string) => {
+  const changeForm = (name: string, form: string | null | undefined) => {
     if (params.id) {
       form = convertPokemonAPIDataName(form).toLowerCase().replaceAll('_', '-');
       searchParams.set('form', form);
@@ -242,18 +242,14 @@ const FormComponent = (props: IFormInfoComponent) => {
             data={{
               stats: convertStatsEffort(props.data?.stats),
               num: props.defaultId,
-              types: getValueOrDefault(Array, props.form?.form.types),
+              types: props.form?.form.types,
             }}
             form={props.form?.form}
             statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
             statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
             statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(convertAllStats(props.data?.stats), true)}
           />
-          <Counter
-            def={toNumber(statsPokemon?.def?.defense)}
-            types={getValueOrDefault(Array, props.form?.form.types)}
-            pokemonType={props.form?.form.pokemonType}
-          />
+          <Counter def={toNumber(statsPokemon?.def?.defense)} types={props.form?.form.types} pokemonType={props.form?.form.pokemonType} />
         </div>
       </div>
       <hr className="w-100" />

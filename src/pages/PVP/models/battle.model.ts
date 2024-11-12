@@ -17,7 +17,7 @@ export enum ChargeType {
 export interface IPokemonBattleData {
   speciesId?: string;
   name?: string;
-  form?: string;
+  form?: string | null;
   id?: number;
   pokemonType: PokemonType;
   allStats?: IBattleBaseStats[];
@@ -39,7 +39,7 @@ export interface IPokemonBattleData {
 export class PokemonBattleData implements IPokemonBattleData {
   speciesId?: string;
   name?: string;
-  form?: string;
+  form?: string | null;
   id?: number;
   pokemonType = PokemonType.None;
   allStats?: IBattleBaseStats[];
@@ -89,7 +89,6 @@ export interface IPokemonBattle {
 export class PokemonBattle implements IPokemonBattle {
   disableCMoveSec = false;
   disableCMovePri = false;
-  isShadow?: boolean;
   pokemonType = PokemonType.None;
   pokemonData?: IPokemonBattleData;
   fMove?: ICombat;

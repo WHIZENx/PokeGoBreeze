@@ -3,8 +3,8 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDataWithKey, getDmgMultiplyBonus, LevelRating, splitAndCapitalize } from '../../../util/utils';
-import { FORM_MEGA, MAX_IV } from '../../../util/constants';
+import { capitalize, getDmgMultiplyBonus, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { FORM_MEGA, MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
 import './Damage.scss';
@@ -21,12 +21,11 @@ import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { ITrainerFriendship } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, isInclude, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, isInclude, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { ChargeAbility } from './enums/damage.enum';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
@@ -147,14 +146,14 @@ const Damage = () => {
       e.preventDefault();
       if (move) {
         const eff = BattleState.create({
-          isStab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)),
+          isStab: findStabType(form?.form.types, move.type),
           isWb: battleState.isWeather,
           isDodge: battleState.isDodge,
           isMega: isInclude(form?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
           isTrainer: battleState.isTrainer,
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,
-          effective: getTypeEffective(typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, formObj?.form.types)),
+          effective: getTypeEffective(typeEff, move.type, formObj?.form.types),
         });
         setResult((r) =>
           PokemonDmgOption.create({
@@ -285,14 +284,12 @@ const Damage = () => {
                       - Move Type:{' '}
                       <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                     </p>
-                    {findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type))}
+                    {findStabType(form?.form.types, move.type)}
                     <p>
                       - Damage:{' '}
                       <b>
                         {move.pvePower}
-                        {findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)) && (
-                          <span className="caption-small text-success"> (x1.2)</span>
-                        )}
+                        {findStabType(form?.form.types, move.type) && <span className="caption-small text-success"> (x1.2)</span>}
                       </b>
                     </p>
                   </div>
@@ -341,11 +338,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x
-                      {toFloatWithPadding(
-                        getDataWithKey<ITrainerFriendship>(globalOptions.trainerFriendship, battleState.fLevel)?.atkBonus,
-                        2
-                      )}
+                      x{toFloatWithPadding(MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.fLevel), 2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>

@@ -2,7 +2,14 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, checkPokemonGO, convertPokemonDataName, getDmgMultiplyBonus, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  checkPokemonGO,
+  convertPokemonDataName,
+  getDmgMultiplyBonus,
+  getKeyEnum,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -161,9 +168,9 @@ const Counter = (props: ICounterComponent) => {
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.fMove.moveType === MoveType.Elite && (
-              <span className="type-icon-small ic elite-ic">
-                <span>{MoveType.Elite}</span>
+            {row.fMove.moveType !== MoveType.None && (
+              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyEnum(MoveType, row.fMove.moveType)}
               </span>
             )}
           </span>
@@ -182,24 +189,9 @@ const Counter = (props: ICounterComponent) => {
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.cMove.moveType === MoveType.Elite && (
-              <span className="type-icon-small ic elite-ic">
-                <span>{MoveType.Elite}</span>
-              </span>
-            )}
-            {row.cMove.moveType === MoveType.Shadow && (
-              <span className="type-icon-small ic shadow-ic">
-                <span>{MoveType.Shadow}</span>
-              </span>
-            )}
-            {row.cMove.moveType === MoveType.Purified && (
-              <span className="type-icon-small ic purified-ic">
-                <span>{MoveType.Purified}</span>
-              </span>
-            )}
-            {row.cMove.moveType === MoveType.Special && (
-              <span className="type-icon-small ic special-ic">
-                <span>{MoveType.Special}</span>
+            {row.cMove.moveType !== MoveType.None && (
+              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyEnum(MoveType, row.cMove.moveType)}
               </span>
             )}
           </span>
@@ -269,7 +261,7 @@ const Counter = (props: ICounterComponent) => {
           data.typeEff,
           data.weatherBoost,
           props.def * getDmgMultiplyBonus(props.pokemonType, data.options, TypeAction.DEF),
-          getValueOrDefault(Array, props.types),
+          props.types,
           data.combat
         );
         resolve(result);

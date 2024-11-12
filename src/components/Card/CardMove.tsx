@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../util/utils';
+import { capitalize, getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { ICardMoveComponent } from '../models/component.model';
-import { isEqual, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEqual, isNotEmpty } from '../../util/extension';
 import { MoveType } from '../../enums/type.enum';
 
 const CardMove = (props: ICardMoveComponent) => {
@@ -29,10 +29,11 @@ const CardMove = (props: ICardMoveComponent) => {
             <b>{splitAndCapitalize(data.name, '_', ' ')}</b>
           </span>
           <span className="d-flex">
-            {props.value?.moveType === MoveType.Elite && <span className="type-icon-small ic elite-ic">{MoveType.Elite}</span>}
-            {props.value?.moveType === MoveType.Shadow && <span className="type-icon-small ic shadow-ic">{MoveType.Shadow}</span>}
-            {props.value?.moveType === MoveType.Purified && <span className="type-icon-small ic purified-ic">{MoveType.Purified}</span>}
-            {props.value?.moveType === MoveType.Special && <span className="type-icon-small ic special-ic">{MoveType.Special}</span>}
+            {props.value && props.value.moveType !== MoveType.None && (
+              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.value?.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyEnum(MoveType, props.value.moveType)}
+              </span>
+            )}
           </span>
         </div>
       )}

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, getDmgMultiplyBonus, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -19,7 +19,7 @@ import { IPokemonQueryMove, IPokemonQueryRankMove, PokemonQueryRankMove } from '
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { EqualMode } from '../../../util/enums/string.enum';
 import { TableType, TypeSorted } from './enums/table-type.enum';
 import { MoveType, PokemonType, TypeAction } from '../../../enums/type.enum';
@@ -179,9 +179,9 @@ const TableMove = (props: ITableMoveComponent) => {
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-              {value.fMove.moveType === MoveType.Elite && (
-                <span className="type-icon-small ic elite-ic">
-                  <span>{MoveType.Elite}</span>
+              {value.fMove.moveType !== MoveType.None && (
+                <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.fMove.moveType)?.toLowerCase()}-ic`)}>
+                  {getKeyEnum(MoveType, value.fMove.moveType)}
                 </span>
               )}
             </span>
@@ -194,24 +194,9 @@ const TableMove = (props: ITableMoveComponent) => {
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-              {value.cMove.moveType === MoveType.Elite && (
-                <span className="type-icon-small ic elite-ic">
-                  <span>{MoveType.Elite}</span>
-                </span>
-              )}
-              {value.cMove.moveType === MoveType.Shadow && (
-                <span className="type-icon-small ic shadow-ic">
-                  <span>{MoveType.Shadow}</span>
-                </span>
-              )}
-              {value.cMove.moveType === MoveType.Purified && (
-                <span className="type-icon-small ic purified-ic">
-                  <span>{MoveType.Purified}</span>
-                </span>
-              )}
-              {value.cMove.moveType === MoveType.Special && (
-                <span className="type-icon-small ic special-ic">
-                  <span>{MoveType.Special}</span>
+              {value.cMove.moveType !== MoveType.None && (
+                <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.cMove.moveType)?.toLowerCase()}-ic`)}>
+                  {getKeyEnum(MoveType, value.cMove.moveType)}
                 </span>
               )}
             </span>
@@ -236,24 +221,9 @@ const TableMove = (props: ITableMoveComponent) => {
                 </div>
                 <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-                  {value.moveType === MoveType.Elite && (
-                    <span className="type-icon-small ic elite-ic">
-                      <span>{MoveType.Elite}</span>
-                    </span>
-                  )}
-                  {value.moveType === MoveType.Shadow && (
-                    <span className="type-icon-small ic shadow-ic">
-                      <span>{MoveType.Shadow}</span>
-                    </span>
-                  )}
-                  {value.moveType === MoveType.Purified && (
-                    <span className="type-icon-small ic purified-ic">
-                      <span>{MoveType.Purified}</span>
-                    </span>
-                  )}
-                  {value.moveType === MoveType.Special && (
-                    <span className="type-icon-small ic special-ic">
-                      <span>{MoveType.Special}</span>
+                  {value.moveType !== MoveType.None && (
+                    <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
+                      {getKeyEnum(MoveType, value.moveType)}
                     </span>
                   )}
                 </span>

@@ -107,14 +107,14 @@ interface SlotType {
 }
 
 export interface IForm {
-  formName: string;
+  formName: string | null | undefined;
   id: number | undefined;
   isDefault: boolean;
   isMega: boolean;
   pokemonType: PokemonType;
   name: string;
-  version: string;
-  types: string[];
+  version: string | null | undefined;
+  types: string[] | undefined;
   sprites?: IPokemonSprit;
 }
 
@@ -132,11 +132,11 @@ export class PokemonFormModify implements IPokemonFormModify {
   name = '';
   form = new Form();
 
-  static setForm(defaultId: number, defaultName: string, name: string, form: IForm) {
+  static setForm(defaultId: number, defaultName: string, name: string | undefined, form: IForm) {
     const obj = new PokemonFormModify();
     obj.defaultId = defaultId;
     obj.defaultName = defaultName;
-    obj.name = name;
+    obj.name = getValueOrDefault(String, name);
     obj.form = form;
     return obj;
   }
@@ -145,7 +145,7 @@ export class PokemonFormModify implements IPokemonFormModify {
 export interface PokemonDataForm {
   stats: IStatsPokemon;
   num: number;
-  types: string[];
+  types: string[] | undefined;
 }
 
 export class PokemonFormModifyModel implements IPokemonFormModify {
@@ -158,10 +158,10 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   constructor(
     id: number,
     defaultName: string,
-    name: string,
-    formName: string,
-    fullFormName: string,
-    version: string,
+    name: string | null | undefined,
+    formName: string | null | undefined,
+    fullFormName: string | null | undefined,
+    version: string | null | undefined,
     types: string[],
     sprites: IPokemonSprit | undefined,
     formId: number,
@@ -171,14 +171,14 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   ) {
     this.defaultId = id;
     this.defaultName = defaultName;
-    this.name = name;
+    this.name = getValueOrDefault(String, name);
     this.form = Form.create({
       formName,
       id: formId,
       isDefault,
       isMega,
       pokemonType,
-      name: fullFormName,
+      name: getValueOrDefault(String, fullFormName),
       version,
       types,
       sprites,
@@ -187,14 +187,14 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
 }
 
 export class Form implements IForm {
-  formName = '';
+  formName: string | null | undefined = '';
   id: number | undefined;
   isDefault = false;
   isMega = false;
   pokemonType = PokemonType.None;
   name = '';
-  version = '';
-  types: string[] = [];
+  version: string | null | undefined = '';
+  types: string[] | undefined = [];
   sprites?: IPokemonSprit;
 
   constructor(data?: IPokemonFormDetail) {

@@ -160,7 +160,7 @@ const Pokemon = (props: IPokemonPage) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                getValueOrDefault(String, data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name),
+                data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
                 new Form({
                   ...item,
                   formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
@@ -329,7 +329,7 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [params.id, props.id, spinner.isLoading, pokemonData]);
 
-  const checkReleased = (id: number, form: string, defaultForm: IPokemonFormModify) => {
+  const checkReleased = (id: number, form: string | undefined, defaultForm: IPokemonFormModify) => {
     if (!form) {
       if (defaultForm) {
         form = defaultForm.form.formName || defaultForm.defaultName;
@@ -345,11 +345,11 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     if (currentForm && toNumber(data?.id) > 0) {
-      const released = checkReleased(toNumber(data?.id), getValueOrDefault(String, formName), currentForm);
+      const released = checkReleased(toNumber(data?.id), formName, currentForm);
       setReleased(released);
 
       const formParams = searchParams.get('form');
-      setVersion(currentForm.form.version);
+      setVersion(getValueOrDefault(String, currentForm.form.version));
       const gen = data?.generation.url?.split('/').at(6);
       setGeneration(getValueOrDefault(String, gen));
       if (!params.id) {
@@ -548,7 +548,7 @@ const Pokemon = (props: IPokemonPage) => {
             />
             <PokemonAssetComponent
               id={toNumber(dataStorePokemon?.current?.id)}
-              name={getValueOrDefault(String, dataStorePokemon?.current?.name)}
+              name={dataStorePokemon?.current?.name}
               originSoundCry={originSoundCry}
               isLoadedForms={progress.isLoadedForms}
             />

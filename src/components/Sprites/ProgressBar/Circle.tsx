@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import APIService from '../../../services/API.service';
 import { ICircleBarComponent } from '../../models/component.model';
-import { getValueOrDefault, toNumber } from '../../../util/extension';
+import { toNumber } from '../../../util/extension';
 
 interface Element {
   energy?: number;
@@ -93,13 +93,8 @@ const CircleBar = (props: ICircleBarComponent) => {
             brightness={1 - index * 0.1}
           />
         ))}
-        <Icon size={props.size - 5} url={APIService.getTypeIcon(getValueOrDefault(String, props.type))} />
-        <IconFill
-          size={props.size - 5}
-          energy={energy}
-          moveEnergy={props.moveEnergy}
-          url={APIService.getTypeIcon(getValueOrDefault(String, props.type))}
-        />
+        <Icon size={props.size - 5} url={APIService.getTypeIcon(props.type)} />
+        <IconFill size={props.size - 5} energy={energy} moveEnergy={props.moveEnergy} url={APIService.getTypeIcon(props.type)} />
       </Circle>
     </div>
   );

@@ -140,11 +140,9 @@ const Battle = () => {
       return (
         (atkPoke *
           move.pvpPower *
-          (findStabType(getValueOrDefault(Array, poke.pokemon?.types), getValueOrDefault(String, move.type))
-            ? STAB_MULTIPLY(dataStore.options)
-            : 1) *
+          (findStabType(poke.pokemon?.types, move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
           getDmgMultiplyBonus(poke.pokemonType, dataStore.options, TypeAction.ATK) *
-          getTypeEffective(dataStore.typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
+          getTypeEffective(dataStore.typeEff, move.type, pokeObj.pokemon?.types)) /
         (defPokeObj * getDmgMultiplyBonus(pokeObj.pokemonType, dataStore.options, TypeAction.DEF))
       );
     }
@@ -1088,11 +1086,11 @@ const Battle = () => {
         level: toNumber(level),
         stats: StatsBaseCalculate.create({ statsATK, statsDEF, statsSTA }),
         statsProds: statsATK * statsDEF * statsSTA,
-        form: getValueOrDefault(String, pokemon.pokemonData?.pokemon?.forme),
+        form: pokemon.pokemonData?.pokemon?.forme,
         id: toNumber(pokemon.pokemonData?.pokemon?.num),
         league: '',
         maxCP: 0,
-        name: getValueOrDefault(String, pokemon.pokemonData?.pokemon?.name),
+        name: pokemon.pokemonData?.pokemon?.name,
       });
     }
 

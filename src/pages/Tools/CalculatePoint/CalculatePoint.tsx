@@ -142,8 +142,8 @@ const CalculatePoint = () => {
           statDefDEF,
           move ? (!isRaid && pvpDmg ? move.pvpPower : move.pvePower) : 0,
           BattleState.create({
-            effective: getTypeEffective(typeEff, getValueOrDefault(String, move?.type), getValueOrDefault(Array, formDef?.form.types)),
-            isStab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move?.type)),
+            effective: getTypeEffective(typeEff, move?.type, formDef?.form.types),
+            isStab: findStabType(form?.form.types, move?.type),
             isWb: (!pvpDmg || isRaid) && weatherBoosts,
           }),
           false
@@ -175,8 +175,8 @@ const CalculatePoint = () => {
           calculateStatsBattle(statDEF, j, i, true),
           moveDef ? (!isRaid && pvpDmg ? moveDef.pvpPower : moveDef.pvePower) : 0,
           BattleState.create({
-            effective: getTypeEffective(typeEff, getValueOrDefault(String, moveDef?.type), getValueOrDefault(Array, form?.form.types)),
-            isStab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef?.type)),
+            effective: getTypeEffective(typeEff, moveDef?.type, form?.form.types),
+            isStab: findStabType(formDef?.form.types, moveDef?.type),
             isWb: (!pvpDmg || isRaid) && weatherBoosts,
           }),
           false
@@ -232,8 +232,8 @@ const CalculatePoint = () => {
               calculateStatsBattle(statDEF, DEFIv, lv, true),
               toNumber(!isRaid && pvpDmg ? cMove?.pvpPower : cMove?.pvePower),
               BattleState.create({
-                effective: getTypeEffective(typeEff, getValueOrDefault(String, cMove?.type), getValueOrDefault(Array, form?.form.types)),
-                isStab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove?.type)),
+                effective: getTypeEffective(typeEff, cMove?.type, form?.form.types),
+                isStab: findStabType(formDef?.form.types, cMove?.type),
                 isWb: (!pvpDmg || isRaid) && weatherBoosts,
               }),
               false
@@ -244,8 +244,8 @@ const CalculatePoint = () => {
             calculateStatsBattle(statDEF, DEFIv, lv, true),
             toNumber(!isRaid && pvpDmg ? fMove?.pvpPower : fMove?.pvePower),
             BattleState.create({
-              effective: getTypeEffective(typeEff, getValueOrDefault(String, fMove?.type), getValueOrDefault(Array, form?.form.types)),
-              isStab: findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove?.type)),
+              effective: getTypeEffective(typeEff, fMove?.type, form?.form.types),
+              isStab: findStabType(formDef?.form.types, fMove?.type),
               isWb: (!pvpDmg || isRaid) && weatherBoosts,
             }),
             false
@@ -285,7 +285,7 @@ const CalculatePoint = () => {
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(getValueOrDefault(String, form?.form.name), true)}
+                src={APIService.getPokeIconSprite(form?.form.name, true)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
@@ -305,7 +305,7 @@ const CalculatePoint = () => {
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(getValueOrDefault(String, formDef?.form.name), true)}
+                src={APIService.getPokeIconSprite(formDef?.form.name, true)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
@@ -421,14 +421,12 @@ const CalculatePoint = () => {
                         - Move Type:{' '}
                         <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                       </p>
-                      {findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type))}
+                      {findStabType(form?.form.types, move.type)}
                       <p>
                         - Damage:{' '}
                         <b>
                           {move.pvePower}
-                          {findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)) && (
-                            <span className="caption-small text-success"> (x1.2)</span>
-                          )}
+                          {findStabType(form?.form.types, move.type) && <span className="caption-small text-success"> (x1.2)</span>}
                         </b>
                       </p>
                     </div>
@@ -549,14 +547,12 @@ const CalculatePoint = () => {
                         - Move Type:{' '}
                         <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>{capitalize(moveDef.type)}</span>
                       </p>
-                      {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef.type))}
+                      {findStabType(formDef?.form.types, moveDef.type)}
                       <p>
                         - Damage:{' '}
                         <b>
                           {moveDef.pvePower}
-                          {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, moveDef.type)) && (
-                            <span className="caption-small text-success"> (x1.2)</span>
-                          )}
+                          {findStabType(formDef?.form.types, moveDef.type) && <span className="caption-small text-success"> (x1.2)</span>}
                         </b>
                       </p>
                     </div>
@@ -705,14 +701,12 @@ const CalculatePoint = () => {
                           - Move Type:{' '}
                           <span className={combineClasses('type-icon-small', fMove.type?.toLowerCase())}>{capitalize(fMove.type)}</span>
                         </p>
-                        {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove.type))}
+                        {findStabType(formDef?.form.types, fMove.type)}
                         <p>
                           - Damage:{' '}
                           <b>
                             {fMove.pvePower}
-                            {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, fMove.type)) && (
-                              <span className="caption-small text-success"> (x1.2)</span>
-                            )}
+                            {findStabType(formDef?.form.types, fMove.type) && <span className="caption-small text-success"> (x1.2)</span>}
                           </b>
                         </p>
                       </div>
@@ -739,14 +733,12 @@ const CalculatePoint = () => {
                           - Move Type:{' '}
                           <span className={combineClasses('type-icon-small', cMove.type?.toLowerCase())}>{capitalize(cMove.type)}</span>
                         </p>
-                        {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove.type))}
+                        {findStabType(formDef?.form.types, cMove.type)}
                         <p>
                           - Damage:{' '}
                           <b>
                             {cMove.pvePower}
-                            {findStabType(getValueOrDefault(Array, formDef?.form.types), getValueOrDefault(String, cMove.type)) && (
-                              <span className="caption-small text-success"> (x1.2)</span>
-                            )}
+                            {findStabType(formDef?.form.types, cMove.type) && <span className="caption-small text-success"> (x1.2)</span>}
                           </b>
                         </p>
                       </div>

@@ -28,16 +28,7 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import {
-  combineClasses,
-  DynamicObj,
-  getValueOrDefault,
-  isEqual,
-  isInclude,
-  isIncludeList,
-  isNotEmpty,
-  toNumber,
-} from '../../../util/extension';
+import { combineClasses, DynamicObj, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { Sorted } from '../enums/pvp-team.enum';
@@ -96,11 +87,7 @@ const RankingPVP = () => {
     dispatch(SpinnerActions.ShowSpinner.create());
     try {
       const cp = toNumber(params.cp);
-      const file = (
-        await APIService.getFetchUrl<RankingsPVP[]>(
-          APIService.getRankingFile(getValueOrDefault(String, params.serie), cp, getValueOrDefault(String, params.type))
-        )
-      ).data;
+      const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))).data;
       if (!file) {
         return;
       }
@@ -127,8 +114,8 @@ const RankingPVP = () => {
 
         const [fMoveData] = item.moveset;
         let [, cMoveDataPri, cMoveDataSec] = item.moveset;
-        cMoveDataPri = replaceTempMovePvpName(getValueOrDefault(String, cMoveDataPri));
-        cMoveDataSec = replaceTempMovePvpName(getValueOrDefault(String, cMoveDataSec));
+        cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
+        cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
         const fMove = dataStore.combat.find((item) => isEqual(item.name, fMoveData));
         const cMovePri = dataStore.combat.find((item) => isEqual(item.name, cMoveDataPri));
@@ -245,10 +232,10 @@ const RankingPVP = () => {
                 <div className="container">
                   <hr />
                 </div>
-                <div className="stats-container">{OverAllStats(data, statsRanking, getValueOrDefault(String, params.cp))}</div>
+                <div className="stats-container">{OverAllStats(data, statsRanking, params.cp)}</div>
                 <div className="container">
                   <hr />
-                  {TypeEffective(getValueOrDefault(Array, data.pokemon?.types))}
+                  {TypeEffective(data.pokemon?.types)}
                 </div>
                 <div className="container">{MoveSet(data.data?.moves, data.pokemon, dataStore.combat)}</div>
               </div>

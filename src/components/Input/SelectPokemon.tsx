@@ -12,7 +12,7 @@ import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
@@ -49,10 +49,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         props.setCurrentPokemon(value);
       }
       if (props.isSelected && props.setFMovePokemon) {
-        props.setFMovePokemon(findMove(value.num, getValueOrDefault(String, value.forme), TypeMove.FAST));
+        props.setFMovePokemon(findMove(value.num, value.forme, TypeMove.FAST));
       }
       if (props.isSelected && props.setCMovePokemon) {
-        props.setCMovePokemon(findMove(value.num, getValueOrDefault(String, value.forme), TypeMove.CHARGE));
+        props.setCMovePokemon(findMove(value.num, value.forme, TypeMove.CHARGE));
       }
       if (props.clearData) {
         props.clearData();
@@ -77,7 +77,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     }
   };
 
-  const findMove = (id: number, form: string, type: TypeMove) => {
+  const findMove = (id: number, form: string | null | undefined, type: TypeMove) => {
     const result = retrieveMoves(pokemonData, id, form);
     if (result) {
       const simpleMove: ISelectMoveModel[] = [];

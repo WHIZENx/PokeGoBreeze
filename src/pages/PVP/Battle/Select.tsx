@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { getKeyEnum, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
@@ -14,7 +14,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
+import { combineClasses, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { MoveType, PokemonType } from '../../../enums/type.enum';
@@ -101,7 +101,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           ...props.pokemonBattle,
           pokemonData: PokemonBattleData.create({
             ...value,
-            form: getValueOrDefault(String, value.form),
+            form: value.form,
             pokemonType: value.pokemonType,
             hp: toNumber(value.stats.hp),
             fMove: fMoveCombat,
@@ -120,9 +120,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           cMovePri: cMovePriCombat,
           cMoveSec: cMoveSecCombat,
           audio: {
-            fMove: new Audio(APIService.getSoundMove(getValueOrDefault(String, fMoveCombat?.sound))),
-            cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMovePriCombat?.sound))),
-            cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, cMoveSecCombat?.sound))),
+            fMove: new Audio(APIService.getSoundMove(fMoveCombat?.sound)),
+            cMovePri: new Audio(APIService.getSoundMove(cMovePriCombat?.sound)),
+            cMoveSec: new Audio(APIService.getSoundMove(cMoveSecCombat?.sound)),
           },
           pokemonType: isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
             ? PokemonType.Shadow
@@ -141,7 +141,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         fMove: value,
-        audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(getValueOrDefault(String, value?.sound))) },
+        audio: { ...props.pokemonBattle.audio, fMove: new Audio(APIService.getSoundMove(value?.sound)) },
       })
     );
     setShowFMove(false);
@@ -154,7 +154,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         cMovePri: value,
-        audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(getValueOrDefault(String, value?.sound))) },
+        audio: { ...props.pokemonBattle.audio, cMovePri: new Audio(APIService.getSoundMove(value?.sound)) },
       })
     );
     setShowCMovePri(false);
@@ -167,7 +167,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       PokemonBattle.create({
         ...props.pokemonBattle,
         cMoveSec: value,
-        audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(getValueOrDefault(String, value?.sound))) },
+        audio: { ...props.pokemonBattle.audio, cMoveSec: new Audio(APIService.getSoundMove(value?.sound)) },
       })
     );
     setShowCMoveSec(false);
@@ -203,8 +203,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         {(score > 0 || !isEmpty(pokemonIcon) || pokemon) && (
           <span className="pokemon-select-right">
             {isInclude(pokemon?.speciesId, '_shadow') && (
-              <span style={{ marginRight: 5 }} className="type-icon-small ic shadow-ic">
-                {MoveType.Shadow}
+              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`)}>
+                {getKeyEnum(MoveType, MoveType.Shadow)}
               </span>
             )}
             {score > 0 && (

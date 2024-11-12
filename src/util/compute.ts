@@ -5,7 +5,7 @@ import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
-import { isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
+import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
 import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
@@ -81,39 +81,29 @@ export const raidEgg = (tier: number, isMega: boolean, isPrimal: boolean, isUltr
 };
 
 export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
-  let data = candyData.find((item) =>
-    isIncludeList(
-      item.familyGroup.map((value) => value.id),
-      id
-    )
+  const data = candyData.find(
+    (item) =>
+      isIncludeList(
+        item.familyGroup.map((value) => value.id),
+        id
+      ) || item.familyId === id
   );
-  if (!data) {
-    data = candyData.find((item) => item.familyId === id);
-    if (!data) {
-      data = candyData.find((item) => item.familyId === 0);
-    }
-  }
   return `rgb(${Math.round(255 * toNumber(data?.secondaryColor.r))}, ${Math.round(255 * toNumber(data?.secondaryColor.g))}, ${Math.round(
     255 * toNumber(data?.secondaryColor.b)
-  )}, ${data?.secondaryColor.a || 1})`;
+  )}, ${toNumber(data?.secondaryColor.a, 1)})`;
 };
 
 export const computeCandyColor = (candyData: ICandy[], id: number) => {
-  let data = candyData.find((item) =>
-    isIncludeList(
-      item.familyGroup.map((value) => value.id),
-      id
-    )
+  const data = candyData.find(
+    (item) =>
+      isIncludeList(
+        item.familyGroup.map((value) => value.id),
+        id
+      ) || item.familyId === id
   );
-  if (!data) {
-    data = candyData.find((item) => item.familyId === id);
-    if (!data) {
-      data = candyData.find((item) => item.familyId === 0);
-    }
-  }
   return `rgb(${Math.round(255 * toNumber(data?.primaryColor.r))}, ${Math.round(255 * toNumber(data?.primaryColor.g))}, ${Math.round(
     255 * toNumber(data?.primaryColor.b)
-  )}, ${data?.primaryColor.a || 1})`;
+  )}, ${toNumber(data?.primaryColor.a, 1)})`;
 };
 
 export const computeBgType = (
@@ -181,8 +171,8 @@ export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: st
   return form;
 };
 
-export const findStabType = (types: string[], findType: string) => {
-  return types.some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
+export const findStabType = (types: string[] | undefined, findType: string | undefined) => {
+  return getValueOrDefault(Array, types).some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
 };
 
 export const getPokemonBattleLeagueName = (cp = BattleLeagueCPType.Master) => {

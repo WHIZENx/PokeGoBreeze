@@ -268,7 +268,7 @@ export interface IPokemonStatsRanking {
   def: IStatsDef;
   sta: IStatsSta;
   prod: IStatsProd;
-  types: string[];
+  types: string[] | undefined;
   url?: string;
   releasedGO: boolean;
 }
@@ -291,7 +291,7 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   def = new StatsDef();
   sta = new StatsSta();
   prod = new StatsProd();
-  types: string[] = [];
+  types: string[] | undefined = [];
   url?: string;
   releasedGO = false;
 

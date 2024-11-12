@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
@@ -30,29 +30,9 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-border position-relative')}>
           {props.moveType && (
             <span className="type-badge-border">
-              {props.moveType === MoveType.Elite && (
-                <span className="type-icon-small ic elite-ic">
-                  <span>{MoveType.Elite}</span>
-                </span>
-              )}
-              {props.moveType === MoveType.Shadow && (
-                <span className="type-icon-small ic shadow-ic">
-                  <span>{MoveType.Shadow}</span>
-                </span>
-              )}
-              {props.moveType === MoveType.Purified && (
-                <span className="type-icon-small ic purified-ic">
-                  <span>{MoveType.Purified}</span>
-                </span>
-              )}
-              {props.moveType === MoveType.Special && (
-                <span className="type-icon-small ic special-ic">
-                  <span>{MoveType.Special}</span>
-                </span>
-              )}
-              {props.moveType === MoveType.Unavailable && (
-                <span className="type-icon-small ic unavailable-ic">
-                  <span>Unavailable</span>
+              {props.moveType && (
+                <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.moveType)?.toLowerCase()}-ic`)}>
+                  {getKeyEnum(MoveType, props.moveType)}
                 </span>
               )}
             </span>

@@ -70,9 +70,9 @@ class PokemonEvo implements IPokemonEvo {
   pokemonType?: PokemonType;
 
   constructor(
-    name: string,
+    name: string | undefined,
     id: number,
-    form: string,
+    form: string | null | undefined,
     sprite: string,
     prev = '',
     isGmax = false,
@@ -80,10 +80,10 @@ class PokemonEvo implements IPokemonEvo {
     pokemonType = PokemonType.None
   ) {
     this.prev = prev;
-    this.name = name;
+    this.name = getValueOrDefault(String, name);
     this.id = id;
     this.isBaby = isBaby;
-    this.form = form;
+    this.form = getValueOrDefault(String, form);
     this.isGmax = isGmax;
     this.sprite = sprite;
     this.pokemonType = pokemonType;
@@ -107,13 +107,13 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
     return new PokemonEvo(
-      getValueOrDefault(String, pokemon?.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase()),
+      pokemon?.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase(),
       toNumber(pokemon?.num),
-      getValueOrDefault(String, pokemon?.forme),
-      convertModelSpritName(getValueOrDefault(String, pokemon?.name)),
+      pokemon?.forme,
+      convertModelSpritName(pokemon?.name),
       undefined,
       false,
-      getValueOrDefault(Boolean, pokemon?.isBaby)
+      pokemon?.isBaby
     );
   };
 
@@ -126,8 +126,10 @@ const Evolution = (props: IEvolutionComponent) => {
       !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name
     );
     let form =
-      pokemon.id === 718 && isEmpty(pokemon.form) ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
-    form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
+      pokemon.id === 718 && isEmpty(pokemon.form)
+        ? 'TEN_PERCENT'
+        : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
+    form = form?.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
     let sprite = '';
     if (pokemon.id === 664 || pokemon.id === 665) {
       sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;
@@ -135,24 +137,15 @@ const Evolution = (props: IEvolutionComponent) => {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
 
-    return new PokemonEvo(
-      name,
-      pokemon.id,
-      form,
-      sprite,
-      pokemon.prev,
-      false,
-      getValueOrDefault(Boolean, pokemon.isBaby),
-      pokemon.pokemonType
-    );
+    return new PokemonEvo(name, pokemon.id, form, sprite, pokemon.prev, false, pokemon.isBaby, pokemon.pokemonType);
   };
 
-  const getPrevEvoChainJSON = (name: string, arr: IPokemonEvo[][]) => {
+  const getPrevEvoChainJSON = (name: string | null | undefined, arr: IPokemonEvo[][]) => {
     if (name) {
       const pokemon = pokemonData.find((pokemon) => isEqual(pokemon.name, name));
       if (pokemon) {
         arr.unshift([formatEvoChain(pokemon)]);
-        getPrevEvoChainJSON(getValueOrDefault(String, pokemon.prevo), arr);
+        getPrevEvoChainJSON(pokemon.prevo, arr);
       }
     }
   };
@@ -220,7 +213,7 @@ const Evolution = (props: IEvolutionComponent) => {
     if (!pokemon) {
       return;
     }
-    getPrevEvoChainJSON(getValueOrDefault(String, pokemon.prevo), prevEvo);
+    getPrevEvoChainJSON(pokemon.prevo, prevEvo);
     const prev = pokemonData.find((p) => isEqual(p.name, pokemon?.prevo));
     if (prev) {
       getCurrEvoChainJSON(prev, curr);
@@ -336,7 +329,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainStore = (id: number, forme: IForm) => {
-    const formName = getValueOrDefault(String, forme.formName.toUpperCase());
+    const formName = forme.formName?.toUpperCase();
     const form =
       isEmpty(formName) || isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
         ? FORM_NORMAL
