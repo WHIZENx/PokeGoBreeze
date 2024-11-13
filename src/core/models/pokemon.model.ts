@@ -265,7 +265,7 @@ export interface IPokemonData {
   version: string | null;
   baseStatsGO?: boolean;
   stats?: IPokemonDataStats | null;
-  pokemonType?: PokemonType;
+  hasShadowForm?: boolean;
   formChange?: IPokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
@@ -493,7 +493,7 @@ export class PokemonData implements IPokemonData {
   baseStatsGO?: boolean;
   stats?: IPokemonDataStats | null;
   encounter?: IEncounter;
-  pokemonType?: PokemonType;
+  hasShadowForm?: boolean;
   formChange?: IPokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
@@ -579,7 +579,7 @@ export class PokemonData implements IPokemonData {
     obj.baseSpecies = capitalize(pokemon.pokemonId);
     obj.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
     obj.encounter = pokemon.encounter;
-    obj.pokemonType = pokemon.shadow ? PokemonType.Shadow : PokemonType.None;
+    obj.hasShadowForm = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;
 
     obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move.toString()));

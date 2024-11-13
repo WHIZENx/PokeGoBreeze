@@ -24,7 +24,7 @@ import { ISticker, Sticker } from './models/sticker.model';
 import pokemonStoreData from '../data/pokemon.json';
 import { checkMoveSetAvailable, convertPokemonDataName, replacePokemonGoForm, replaceTempMoveName } from '../util/utils';
 import { ITypeSet, TypeSet } from './models/type.model';
-import { BuffType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
+import { BuffType, TypeAction, TypeMove } from '../enums/type.enum';
 import {
   Encounter,
   IPokemonData,
@@ -1137,11 +1137,8 @@ export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IA
     const form = assets.find((asset) => asset.id === item.num);
     const image = form?.image.find((img) => isEqual(img.form, item.num === 201 ? `${item.pokemonId}_${item.baseForme}` : item.forme));
 
-    if (form && (item.pokemonType === PokemonType.Shadow || (checkMoveSetAvailable(item) && image?.default))) {
-      item.releasedGO = getValueOrDefault(
-        Boolean,
-        item.pokemonType === PokemonType.Shadow || isInclude(image?.default, 'Addressable Assets/')
-      );
+    if (form && (item.hasShadowForm || (checkMoveSetAvailable(item) && image?.default))) {
+      item.releasedGO = getValueOrDefault(Boolean, item.hasShadowForm || isInclude(image?.default, 'Addressable Assets/'));
     }
   });
 };

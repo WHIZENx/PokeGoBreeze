@@ -56,7 +56,6 @@ interface IPokemonEvo {
   form: string;
   isGmax: boolean;
   sprite: string;
-  pokemonType?: PokemonType;
 }
 
 class PokemonEvo implements IPokemonEvo {
@@ -67,7 +66,6 @@ class PokemonEvo implements IPokemonEvo {
   form: string;
   isGmax: boolean;
   sprite: string;
-  pokemonType?: PokemonType;
 
   constructor(
     name: string | undefined,
@@ -76,8 +74,7 @@ class PokemonEvo implements IPokemonEvo {
     sprite: string,
     prev = '',
     isGmax = false,
-    isBaby = false,
-    pokemonType = PokemonType.None
+    isBaby = false
   ) {
     this.prev = prev;
     this.name = getValueOrDefault(String, name);
@@ -86,7 +83,6 @@ class PokemonEvo implements IPokemonEvo {
     this.form = getValueOrDefault(String, form);
     this.isGmax = isGmax;
     this.sprite = sprite;
-    this.pokemonType = pokemonType;
   }
 }
 
@@ -137,7 +133,7 @@ const Evolution = (props: IEvolutionComponent) => {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
 
-    return new PokemonEvo(name, pokemon.id, form, sprite, pokemon.prev, false, pokemon.isBaby, pokemon.pokemonType);
+    return new PokemonEvo(name, pokemon.id, form, sprite, pokemon.prev, false, pokemon.isBaby);
   };
 
   const getPrevEvoChainJSON = (name: string | null | undefined, arr: IPokemonEvo[][]) => {
@@ -245,7 +241,6 @@ const Evolution = (props: IEvolutionComponent) => {
               form: evo.forme ?? FORM_NORMAL,
               evoList: getValueOrDefault(Array, evo.evoList),
               tempEvo: getValueOrDefault(Array, evo.tempEvo),
-              pokemonType: evo.pokemonType,
             })
           )
         );
@@ -269,7 +264,6 @@ const Evolution = (props: IEvolutionComponent) => {
             form: poke.forme ?? FORM_NORMAL,
             evoList: getValueOrDefault(Array, poke.evoList),
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
-            pokemonType: poke.pokemonType,
           })
         )
       );
@@ -283,7 +277,6 @@ const Evolution = (props: IEvolutionComponent) => {
                 id: evo.evoToId,
                 name: evo.evoToName,
                 form: evo.evoToForm,
-                pokemonType: evo.purificationEvoCandyCost > 0 ? PokemonType.Purified : PokemonType.None,
                 evoList: [],
                 tempEvo: [],
               })
@@ -306,7 +299,6 @@ const Evolution = (props: IEvolutionComponent) => {
           name: evo.evoToName,
           form: evo.evoToForm,
           prev: poke.name,
-          pokemonType: evo.purificationEvoCandyCost > 0 ? PokemonType.Purified : PokemonType.None,
           evoList: [],
           tempEvo: [],
         })

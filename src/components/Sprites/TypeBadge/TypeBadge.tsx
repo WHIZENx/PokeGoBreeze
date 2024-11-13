@@ -28,13 +28,11 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
       </span>
       <Link to={`/move/${move?.id}`} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-border position-relative')}>
-          {props.moveType && (
+          {props.moveType !== MoveType.None && (
             <span className="type-badge-border">
-              {props.moveType && (
-                <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.moveType)?.toLowerCase()}-ic`)}>
-                  {getKeyEnum(MoveType, props.moveType)}
-                </span>
-              )}
+              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyEnum(MoveType, props.moveType)}
+              </span>
             </span>
           )}
           <span>{splitAndCapitalize(props.move?.name, '_', ' ')}</span>

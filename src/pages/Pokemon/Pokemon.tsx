@@ -56,7 +56,7 @@ import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
-import { PokemonType, VariantType } from '../../enums/type.enum';
+import { VariantType } from '../../enums/type.enum';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -175,7 +175,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       const indexPokemonGO = generatePokemonGoForms(pokemonData, dataFormList, formListResult, data.id, data.name);
 
-      if (pokemon?.pokemonType === PokemonType.Shadow && pokemon.purified?.candy && pokemon.purified.stardust) {
+      if (pokemon?.hasShadowForm && pokemon.purified?.candy && pokemon.purified.stardust) {
         generatePokemonGoShadowForms(dataPokeList, formListResult, data.id, data.name, indexPokemonGO);
       }
 

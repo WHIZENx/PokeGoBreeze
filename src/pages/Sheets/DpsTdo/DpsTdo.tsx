@@ -399,7 +399,7 @@ const DpsTdo = () => {
     getValueOrDefault(Array, movePoke).forEach((vf) => {
       const fMoveType = getMoveType(pokemon, vf);
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType);
-      if (!pokemon.forme || pokemon.pokemonType === PokemonType.Shadow) {
+      if (!pokemon.forme || pokemon.hasShadowForm) {
         if (isNotEmpty(pokemon.shadowMoves)) {
           addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
         }

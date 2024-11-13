@@ -104,7 +104,6 @@ const FindBattle = () => {
           name: getValueOrDefault(String, curr?.pokemonId),
           evoList: getValueOrDefault(Array, curr?.evoList),
           tempEvo: getValueOrDefault(Array, curr?.tempEvo),
-          pokemonType: curr?.pokemonType,
         });
       }
       currEvoChain(

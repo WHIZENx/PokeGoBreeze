@@ -548,7 +548,7 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) => {
-  return pokemon.some((p) => p.pokemonType === PokemonType.Shadow && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
+  return pokemon.some((p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
 };
 
 const convertNameEffort = (name: string) => {

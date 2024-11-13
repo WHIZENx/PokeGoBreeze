@@ -468,7 +468,7 @@ const RaidBattle = () => {
   ) => {
     getValueOrDefault(Array, movePoke).forEach((vf) => {
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
-      if (!pokemon.forme || pokemon.pokemonType === PokemonType.Shadow) {
+      if (!pokemon.forme || pokemon.hasShadowForm) {
         if (isNotEmpty(pokemon.shadowMoves)) {
           addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
         }
