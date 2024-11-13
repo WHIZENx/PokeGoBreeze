@@ -417,7 +417,6 @@ const DpsTdo = () => {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
       }
       addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType);
-      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
     });
   };
 
