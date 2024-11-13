@@ -981,7 +981,7 @@ const Battle = () => {
     scrollWidth.current = e.currentTarget.scrollLeft;
   };
 
-  const onChangeTimeline = (type: TimelineType, prevWidth: number) => {
+  const onChangeTimeline = (type: TimelineType, prevWidth: number | undefined) => {
     stopTimeLine();
     let elem = document.getElementById('play-line');
     let xCurrent = 0,
@@ -997,7 +997,7 @@ const Battle = () => {
             arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / prevWidth) * toNumber(timelineNormal.current?.clientWidth) - 2;
+        transform = (xCurrent / getValueOrDefault(Number, prevWidth)) * toNumber(timelineNormal.current?.clientWidth) - 2;
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${Math.max(0, transform)}px, -50%)`;
@@ -1011,7 +1011,7 @@ const Battle = () => {
             arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / prevWidth) * toNumber(timelineFit.current?.clientWidth);
+        transform = (xCurrent / getValueOrDefault(Number, prevWidth)) * toNumber(timelineFit.current?.clientWidth);
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
@@ -1611,10 +1611,7 @@ const Battle = () => {
                     onChange={(e) =>
                       onChangeTimeline(
                         toNumber(e.target.value),
-                        getValueOrDefault(
-                          Number,
-                          timelineType === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
-                        )
+                        timelineType === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
                       )
                     }
                   >

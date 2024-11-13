@@ -5,7 +5,7 @@ import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
 import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
-import { MoveType, PokemonType } from '../../enums/type.enum';
+import { PokemonType } from '../../enums/type.enum';
 import { getValueOrDefault, toNumber } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
@@ -16,7 +16,7 @@ export interface IBattleCalculate {
   fMove?: ICombat;
   cMove?: ICombat;
   types: string[] | undefined;
-  moveType?: MoveType;
+  pokemonType?: PokemonType;
   isStab?: boolean;
   weatherBoosts?: string;
   isPokemonFriend?: boolean;
@@ -32,7 +32,7 @@ export class BattleCalculate implements IBattleCalculate {
   fMove?: ICombat;
   cMove?: ICombat;
   types: string[] | undefined = [];
-  moveType?: MoveType;
+  pokemonType?: PokemonType;
   isStab?: boolean;
   weatherBoosts?: string;
   isPokemonFriend?: boolean;

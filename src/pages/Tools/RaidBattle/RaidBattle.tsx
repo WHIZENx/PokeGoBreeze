@@ -4,14 +4,7 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import {
-  capitalize,
-  checkPokemonGO,
-  getDmgMultiplyBonus,
-  moveTypeToFormType,
-  retrieveMoves,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, checkPokemonGO, getDmgMultiplyBonus, getMoveType, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import {
   FORM_GMAX,
@@ -398,13 +391,14 @@ const RaidBattle = () => {
     value: IPokemonData | undefined,
     vf: string,
     fMoveType: MoveType,
-    cMoveType: MoveType,
-    pokemonTarget: boolean
+    pokemonTarget: boolean,
+    pokemonType = PokemonType.None
   ) => {
     getValueOrDefault(Array, movePoke).forEach((vc) => {
       const fMove = data.combat.find((item) => isEqual(item.name, vf));
       const cMove = data.combat.find((item) => isEqual(item.name, vc));
       if (fMove && cMove) {
+        const cMoveType = getMoveType(value, vc);
         const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
         const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
@@ -413,7 +407,7 @@ const RaidBattle = () => {
           fMove,
           cMove,
           types: value?.types,
-          moveType: cMoveType,
+          pokemonType,
         });
         let statsDefender = new BattleCalculate({
           atk: statBossATK,
@@ -442,8 +436,6 @@ const RaidBattle = () => {
 
         const tdoAtk = dpsAtk * ttkDef;
         const tdoDef = dpsDef * ttkAtk;
-
-        const pokemonType = moveTypeToFormType(cMoveType);
 
         dataList.push({
           pokemon: value,
@@ -475,13 +467,13 @@ const RaidBattle = () => {
     pokemonTarget: boolean
   ) => {
     getValueOrDefault(Array, movePoke).forEach((vf) => {
-      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.None, pokemonTarget);
+      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
       if (!pokemon.forme || pokemon.pokemonType === PokemonType.Shadow) {
         if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemonTarget);
+          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
         }
-        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemonTarget);
-        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, MoveType.Purified, pokemonTarget);
+        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, pokemonTarget);
+        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, pokemonTarget);
       }
       if (
         (!pokemon.forme ||
@@ -489,10 +481,11 @@ const RaidBattle = () => {
             !isInclude(pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow, pokemonTarget);
+        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
       } else {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Elite, pokemonTarget);
+        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
       }
+      addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType, pokemonTarget);
     });
   };
 
@@ -560,7 +553,7 @@ const RaidBattle = () => {
         fMove,
         cMove,
         types: pokemon.dataTargetPokemon?.types,
-        moveType: statsGO.pokemonType === PokemonType.Shadow ? MoveType.Shadow : MoveType.None,
+        pokemonType: statsGO.pokemonType,
       });
       const statsDefender = new BattleCalculate({
         atk: statBossATK,

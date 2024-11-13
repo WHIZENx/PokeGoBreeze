@@ -540,10 +540,7 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 
   const quickMoves = getValueOrDefault(Array, pokemon.quickMoves);
   const cinematicMoves = getValueOrDefault(Array, pokemon.cinematicMoves);
-  const eliteQuickMoves = getValueOrDefault(Array, pokemon.eliteQuickMoves);
-  const eliteCinematicMoves = getValueOrDefault(Array, pokemon.eliteCinematicMoves);
-  const specialMoves = getValueOrDefault(Array, pokemon.specialMoves);
-  const allMoves = quickMoves.concat(cinematicMoves, eliteQuickMoves, eliteCinematicMoves, specialMoves);
+  const allMoves = getAllMoves(pokemon);
   if (allMoves.length <= 2 && (quickMoves[0] === 'STRUGGLE' || isInclude(quickMoves[0], 'SPLASH')) && cinematicMoves[0] === 'STRUGGLE') {
     return false;
   }

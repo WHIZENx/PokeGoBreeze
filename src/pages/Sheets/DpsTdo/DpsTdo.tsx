@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, getKeyEnum } from '../../../util/utils';
+import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, getKeyEnum, getMoveType } from '../../../util/utils';
 import {
   DEFAULT_SHEET_PAGE,
   DEFAULT_SHEET_ROW,
@@ -81,6 +81,7 @@ interface PokemonSheetData {
   multiDpsTdo: number;
   fMoveType: MoveType;
   cMoveType: MoveType;
+  pokemonType: PokemonType;
   cp: number;
 }
 
@@ -135,8 +136,10 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
-        {row.cMoveType === MoveType.Shadow && <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-        {row.cMoveType === MoveType.Purified && (
+        {row.pokemonType === PokemonType.Shadow && (
+          <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+        )}
+        {row.pokemonType === PokemonType.Purified && (
           <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
         )}
         <img
@@ -263,20 +266,20 @@ const DpsTdo = () => {
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
   const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
-  const [searchTerm, setSearchTerm] = useState(getValueOrDefault(String, optionStore?.dpsSheet?.searchTerm));
+  const [searchTerm, setSearchTerm] = useState('150');
 
   const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(optionStore?.dpsSheet?.dataTargetPokemon);
   const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.fMoveTargetPokemon);
   const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.cMoveTargetPokemon);
 
   const [defaultPage, setDefaultPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore?.dpsSheet?.defaultPage : DEFAULT_SHEET_PAGE
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore.dpsSheet.defaultPage : DEFAULT_SHEET_PAGE
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore?.dpsSheet?.defaultRowPerPage : DEFAULT_SHEET_ROW
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore.dpsSheet.defaultRowPerPage : DEFAULT_SHEET_ROW
   );
   const [defaultSorted, setDefaultSorted] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted ? optionStore?.dpsSheet?.defaultSorted : new OptionDPSSort()
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted ? optionStore.dpsSheet.defaultSorted : new OptionDPSSort()
   );
 
   const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPS());
@@ -321,13 +324,14 @@ const DpsTdo = () => {
     pokemon: IPokemonData,
     vf: string,
     fMoveType: MoveType,
-    cMoveType: MoveType
+    pokemonType = PokemonType.None
   ) => {
     getValueOrDefault(Array, movePoke).forEach((vc: string) => {
       const fMove = data.combat.find((item) => isEqual(item.name, vf));
       const cMove = data.combat.find((item) => isEqual(item.name, vc));
 
       if (fMove && cMove) {
+        const cMoveType = getMoveType(pokemon, vc);
         const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
         const statsAttacker = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
@@ -336,13 +340,14 @@ const DpsTdo = () => {
           fMove,
           cMove,
           types: pokemon.types,
-          moveType: cMoveType,
+          pokemonType,
           weatherBoosts: options.weatherBoosts,
           isPokemonFriend: options.isTrainerFriend,
           pokemonFriendLevel: options.pokemonFriendLevel,
         });
 
-        let dps, tdo;
+        let dps = 0;
+        let tdo = 0;
         if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
           const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
           const statsDefender = new BattleCalculate({
@@ -355,10 +360,6 @@ const DpsTdo = () => {
             weatherBoosts: options.weatherBoosts,
           });
 
-          if (!statsDefender) {
-            return;
-          }
-
           const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
           dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
           tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
@@ -369,14 +370,14 @@ const DpsTdo = () => {
             data.weatherBoost,
             statsAttacker.fMove,
             statsAttacker.cMove,
-            toNumber(statsAttacker.atk),
+            statsAttacker.atk,
             statsAttacker.def,
-            toNumber(statsAttacker.hp),
+            statsAttacker.hp,
             statsAttacker.types,
-            statsAttacker.moveType,
+            statsAttacker.pokemonType,
             options
           );
-          tdo = calculateTDO(data.options, statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.moveType);
+          tdo = calculateTDO(data.options, statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
         }
         dataList.push({
           pokemon,
@@ -387,35 +388,44 @@ const DpsTdo = () => {
           multiDpsTdo: Math.pow(dps, 3) * tdo,
           cMoveType,
           fMoveType,
+          pokemonType,
           cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, toNumber(stats.sta) + ivHp, pokemonLevel),
         });
       }
     });
   };
 
-  const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[] | undefined, fMoveType: MoveType) => {
+  const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[] | undefined) => {
     getValueOrDefault(Array, movePoke).forEach((vf) => {
-      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.None);
+      const fMoveType = getMoveType(pokemon, vf);
+      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType);
       if (!pokemon.forme || pokemon.pokemonType === PokemonType.Shadow) {
         if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow);
-          addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Shadow);
+          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
         }
-        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, MoveType.Shadow);
-        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, MoveType.Purified);
+        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
+        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, PokemonType.Purified);
       }
-      addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType, MoveType.Special);
-      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, MoveType.Elite);
+      if (
+        (!pokemon.forme ||
+          (!isInclude(pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
+            !isInclude(pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))) &&
+        isNotEmpty(pokemon.shadowMoves)
+      ) {
+        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
+      } else {
+        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
+      }
+      addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType);
+      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
     });
   };
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
     data.pokemon.forEach((pokemon) => {
-      if (pokemon) {
-        addFPokeData(dataList, pokemon, pokemon.quickMoves, MoveType.None);
-        addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves, MoveType.Elite);
-      }
+      addFPokeData(dataList, pokemon, pokemon.quickMoves);
+      addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves);
     });
     setShowSpinner(false);
     return dataList;
@@ -444,7 +454,7 @@ const DpsTdo = () => {
           : isInclude(item.pokemon.name.replaceAll('-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
             isInclude(item.pokemon.num, searchTerm));
 
-      const boolShowShadow = !showShadow && item.cMoveType === MoveType.Shadow;
+      const boolShowShadow = !showShadow && item.pokemonType === PokemonType.Shadow;
       const boolShowElite = !showEliteMove && (item.fMoveType === MoveType.Elite || item.cMoveType === MoveType.Elite);
       const boolShowMega = !showMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolShowGmax = !showGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
@@ -453,7 +463,7 @@ const DpsTdo = () => {
       const boolShowMythic = !showMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
 
-      const boolOnlyShadow = enableShadow && item.cMoveType === MoveType.Shadow;
+      const boolOnlyShadow = enableShadow && item.pokemonType === PokemonType.Shadow;
       const boolOnlyElite = enableElite && (item.fMoveType === MoveType.Elite || item.cMoveType === MoveType.Elite);
       const boolOnlyMega = enableMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
       const boolOnlyGmax = enableGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
