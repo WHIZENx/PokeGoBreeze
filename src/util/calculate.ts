@@ -734,7 +734,7 @@ export const calculateAvgDPS = (
       DEFAULT_DAMAGE_MULTIPLY *
       CPow *
       CMulti *
-      defBonus *
+      atkBonus *
       weatherMultiple(globalOptions, weatherBoost, options.weatherBoosts, CType) *
       multiplyLevelFriendship;
 
