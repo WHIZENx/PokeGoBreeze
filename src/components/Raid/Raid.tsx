@@ -12,11 +12,12 @@ import STA_LOGO from '../../assets/stamina.png';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
-import { capitalize } from '../../util/utils';
+import { getKeyEnum } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { isEqual, isInclude, isNullOrEmpty, toNumber } from '../../util/extension';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
+import { PokemonType } from '../../enums/type.enum';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -115,15 +116,15 @@ const Raid = (props: IRaidComponent) => {
                   <optgroup
                     label={`Legendary ${
                       isEqual(props.currForm.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
-                        ? capitalize(FORM_PRIMAL)
-                        : capitalize(FORM_MEGA)
+                        ? getKeyEnum(PokemonType, PokemonType.Primal)
+                        : getKeyEnum(PokemonType, PokemonType.Mega)
                     } Tier 6'`}
                   >
                     <option value={6}>
                       {`Tier ${
                         isEqual(props.currForm.form.formName, FORM_PRIMAL, EqualMode.IgnoreCaseSensitive)
-                          ? capitalize(FORM_PRIMAL)
-                          : capitalize(FORM_MEGA)
+                          ? getKeyEnum(PokemonType, PokemonType.Primal)
+                          : getKeyEnum(PokemonType, PokemonType.Mega)
                       }`}
                     </option>
                   </optgroup>

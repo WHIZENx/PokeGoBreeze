@@ -10,7 +10,6 @@ import {
   BRONZE_INC_CHANCE,
   CURVE_INC_CHANCE,
   EXCELLENT_THROW_INC_CHANCE,
-  FORM_SHADOW,
   GOLD_INC_CHANCE,
   GOLD_RAZZ_BERRY_INC_CHANCE,
   GREAT_BALL_INC_CHANCE,
@@ -26,7 +25,7 @@ import {
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/constants';
-import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize } from '../../../util/utils';
+import { convertPokemonAPIDataName, getKeyEnum, LevelSlider, splitAndCapitalize } from '../../../util/utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
@@ -44,6 +43,7 @@ import {
   PokeBallOption,
 } from './models/catch-chance.model';
 import { PokeBallType } from './enums/poke-ball.enum';
+import { PokemonType } from '../../../enums/type.enum';
 
 const CatchChance = () => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -518,7 +518,7 @@ const CatchChance = () => {
                 }
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(FORM_SHADOW)}
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyEnum(PokemonType, PokemonType.Shadow)}
                   </span>
                 }
               />

@@ -66,6 +66,9 @@ export enum PokemonType {
   None = 0,
   Shadow,
   Purified,
+  Mega,
+  Primal,
+  GMax,
   Buddy,
   Lucky,
 }

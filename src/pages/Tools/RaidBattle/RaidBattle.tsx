@@ -4,14 +4,13 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, getDmgMultiplyBonus, getMoveType, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
+import { checkPokemonGO, getDmgMultiplyBonus, getKeyEnum, getMoveType, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import {
   FORM_GMAX,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PRIMAL,
-  FORM_SHADOW,
   levelList,
   MAX_IV,
   MIN_IV,
@@ -459,21 +458,16 @@ const RaidBattle = () => {
     });
   };
 
-  const addFPokeData = (
-    dataList: IPokemonMoveData[],
-    pokemon: IPokemonData,
-    movePoke: string[] | undefined,
-    fMoveType: MoveType,
-    pokemonTarget: boolean
-  ) => {
+  const addFPokeData = (dataList: IPokemonMoveData[], pokemon: IPokemonData, movePoke: string[] | undefined, pokemonTarget: boolean) => {
     getValueOrDefault(Array, movePoke).forEach((vf) => {
+      const fMoveType = getMoveType(pokemon, vf);
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
       if (!pokemon.forme || pokemon.hasShadowForm) {
         if (isNotEmpty(pokemon.shadowMoves)) {
           addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
         }
-        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, pokemonTarget);
-        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, pokemonTarget);
+        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
+        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Purified);
       }
       if (
         (!pokemon.forme ||
@@ -493,8 +487,8 @@ const RaidBattle = () => {
     let dataList: IPokemonMoveData[] = [];
     data.pokemon.forEach((pokemon) => {
       if (pokemon && !isEqual(pokemon.forme, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
-        addFPokeData(dataList, pokemon, pokemon.quickMoves, MoveType.None, pokemonTarget);
-        addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves, MoveType.Elite, pokemonTarget);
+        addFPokeData(dataList, pokemon, pokemon.quickMoves, pokemonTarget);
+        addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves, pokemonTarget);
       }
     });
     if (pokemonTarget) {
@@ -502,8 +496,8 @@ const RaidBattle = () => {
       const sortedTDO = dataList.sort((a, b) => a.tdoAtk - b.tdoAtk);
       const sortedHP = dataList.sort((a, b) => toNumber(a.attackHpRemain) - toNumber(b.attackHpRemain));
       const result = {
-        minDPS: toNumber(sortedDPS.at(0)?.dpsAtk),
-        maxDPS: sortedDPS[dataList.length - 1].dpsAtk,
+        minDPS: sortedDPS[dataList.length - 1].dpsAtk,
+        maxDPS: toNumber(sortedDPS.at(0)?.dpsAtk),
         minTDO: toNumber(sortedTDO.at(0)?.tdoAtk),
         maxTDO: sortedTDO[dataList.length - 1].tdoAtk,
         minHP: toNumber(sortedHP.at(0)?.attackHpRemain),
@@ -823,7 +817,7 @@ const RaidBattle = () => {
                 }
               />
             }
-            label={capitalize(FORM_SHADOW)}
+            label={getKeyEnum(PokemonType, PokemonType.Shadow)}
           />
           <FormControlLabel
             control={
@@ -948,7 +942,7 @@ const RaidBattle = () => {
                   src={APIService.getPokeShadow()}
                 />
                 <span style={{ color: showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? 'black' : 'lightgray' }}>
-                  {capitalize(FORM_SHADOW)}
+                  {getKeyEnum(PokemonType, PokemonType.Shadow)}
                 </span>
               </span>
             }

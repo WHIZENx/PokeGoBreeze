@@ -8,7 +8,6 @@ import {
   FORM_GMAX,
   FORM_MEGA,
   FORM_PRIMAL,
-  FORM_SHADOW,
   levelList,
   MAX_IV,
   MIN_IV,
@@ -682,19 +681,19 @@ const DpsTdo = () => {
               <span className="input-group-text">Filter show</span>
               <FormControlLabel
                 control={<Checkbox checked={showShadow} onChange={(_, check) => setFilters({ ...filters, showShadow: check })} />}
-                label={capitalize(FORM_SHADOW)}
+                label={getKeyEnum(PokemonType, PokemonType.Shadow)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showMega} onChange={(_, check) => setFilters({ ...filters, showMega: check })} />}
-                label={capitalize(FORM_MEGA)}
+                label={getKeyEnum(PokemonType, PokemonType.Mega)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showGmax} onChange={(_, check) => setFilters({ ...filters, showGmax: check })} />}
-                label={capitalize(FORM_GMAX)}
+                label={getKeyEnum(PokemonType, PokemonType.GMax)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showPrimal} onChange={(_, check) => setFilters({ ...filters, showPrimal: check })} />}
-                label={capitalize(FORM_PRIMAL)}
+                label={getKeyEnum(PokemonType, PokemonType.Primal)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showLegendary} onChange={(_, check) => setFilters({ ...filters, showLegendary: check })} />}
@@ -723,7 +722,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableShadow: check })}
                   />
                 }
-                label={capitalize(FORM_SHADOW)}
+                label={getKeyEnum(PokemonType, PokemonType.Shadow)}
               />
               <FormControlLabel
                 control={
@@ -733,7 +732,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableMega: check })}
                   />
                 }
-                label={capitalize(FORM_MEGA)}
+                label={getKeyEnum(PokemonType, PokemonType.Mega)}
               />
               <FormControlLabel
                 control={
@@ -743,7 +742,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableGmax: check })}
                   />
                 }
-                label={capitalize(FORM_GMAX)}
+                label={getKeyEnum(PokemonType, PokemonType.GMax)}
               />
               <FormControlLabel
                 control={
@@ -753,7 +752,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enablePrimal: check })}
                   />
                 }
-                label={capitalize(FORM_PRIMAL)}
+                label={getKeyEnum(PokemonType, PokemonType.Primal)}
               />
               <FormControlLabel
                 control={

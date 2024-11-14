@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { splitAndCapitalize } from '../../util/utils';
+import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
 import {
@@ -37,7 +37,7 @@ import {
 import { StoreState, StatsState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { TypeTheme } from '../../enums/type.enum';
+import { PokemonType, TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
@@ -426,7 +426,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label="Mega"
+                    label={getKeyEnum(PokemonType, PokemonType.Mega)}
                   />
                   <FormControlLabel
                     control={
@@ -442,7 +442,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label="Gmax"
+                    label={getKeyEnum(PokemonType, PokemonType.GMax)}
                   />
                   <FormControlLabel
                     control={
@@ -458,7 +458,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label="Primal"
+                    label={getKeyEnum(PokemonType, PokemonType.Primal)}
                   />
                   <FormControlLabel
                     control={
