@@ -1,6 +1,7 @@
 import { PokemonType } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
+import { getPokemonType } from '../../util/utils';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
 import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';
@@ -70,7 +71,7 @@ export class Performers implements IPerformers {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
   games = 0;
   individualScore = 0;
   pokemon = '';
@@ -79,6 +80,7 @@ export class Performers implements IPerformers {
   usageTrend: string[] = [];
 
   constructor({ ...props }: IPerformers) {
+    props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
 }
@@ -189,10 +191,11 @@ export class BattlePokemonData implements IBattlePokemonData {
   pokemon = new PokemonData();
   id = 0;
   form: string | undefined | null;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
 
   static create(value: IBattlePokemonData) {
     const obj = new BattlePokemonData();
+    obj.pokemonType = getPokemonType(obj.form);
     Object.assign(obj, value);
     return obj;
   }

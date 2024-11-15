@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
-import { getValueOrDefault, isIncludeList, isNotEmpty } from '../../util/extension';
+import { isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 
 const Info = (props: IInfoComponent) => {
@@ -17,7 +17,7 @@ const Info = (props: IInfoComponent) => {
   const getWeatherEffective = (types: string[] | undefined) => {
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: [string, string[]]) => {
-      getValueOrDefault(Array, types).forEach((type) => {
+      types?.forEach((type) => {
         if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive) && !isIncludeList(data, key)) {
           data.push(key);
         }
@@ -38,7 +38,7 @@ const Info = (props: IInfoComponent) => {
     Object.entries(typeEffective).forEach(([key, value]) => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;
-        getValueOrDefault(Array, types).forEach((type) => {
+        types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
         });
         if (valueEffective >= 2.56) {

@@ -64,6 +64,7 @@ export enum MoveType {
 
 export enum PokemonType {
   None = 0,
+  Normal,
   Shadow,
   Purified,
   Mega,

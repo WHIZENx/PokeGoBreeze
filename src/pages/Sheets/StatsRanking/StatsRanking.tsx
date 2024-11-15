@@ -23,7 +23,7 @@ import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_MEGA, FORM_NORMAL } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
-import { PokemonType, TypeAction } from '../../../enums/type.enum';
+import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   convertColumnDataType,
@@ -318,7 +318,6 @@ const StatsRanking = () => {
       name: pokemon.name,
       types: pokemon.types,
       version: pokemon.version,
-      pokemonType: PokemonType.None,
     });
   };
 

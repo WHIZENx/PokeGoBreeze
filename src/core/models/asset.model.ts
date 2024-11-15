@@ -1,3 +1,5 @@
+import { PokemonType } from '../../enums/type.enum';
+import { getPokemonType } from '../../util/utils';
 import { GenderType } from '../enums/asset.enum';
 
 export interface IImage {
@@ -6,6 +8,7 @@ export interface IImage {
   form?: string;
   default: string;
   shiny: string | undefined;
+  pokemonType: PokemonType;
 }
 
 export class ImageModel implements IImage {
@@ -14,8 +17,10 @@ export class ImageModel implements IImage {
   form?: string;
   default = '';
   shiny = '';
+  pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IImage) {
+    props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
 }

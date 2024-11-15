@@ -20,7 +20,7 @@ import { Body, Header, MoveSet, OverAllStats, TypeEffective } from '../Model';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
-import { FORM_NORMAL, FORM_SHADOW, scoreType } from '../../../util/constants';
+import { FORM_SHADOW, scoreType } from '../../../util/constants';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -104,7 +104,7 @@ const RankingPVP = () => {
         const name = convertNameRankingToOri(item.speciesId, item.speciesName);
         const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -124,7 +124,7 @@ const RankingPVP = () => {
           cMoveSec = dataStore.combat.find((item) => isEqual(item.name, cMoveDataSec));
         }
 
-        let pokemonType = PokemonType.None;
+        let pokemonType = PokemonType.Normal;
         if (isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;
         } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec)) {

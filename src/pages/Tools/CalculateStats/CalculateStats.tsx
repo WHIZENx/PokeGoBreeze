@@ -46,7 +46,7 @@ const Calculate = () => {
   const [statDEF, setStatDEF] = useState(0);
   const [statSTA, setStatSTA] = useState(0);
 
-  const [typePoke, setTypePoke] = useState(PokemonType.None);
+  const [typePoke, setTypePoke] = useState(PokemonType.Normal);
 
   const [pokeStats, setPokeStats] = useState<IStatsCalculate>();
   const [statLevel, setStatLevel] = useState(1);
@@ -258,7 +258,7 @@ const Calculate = () => {
               row={true}
               aria-labelledby="row-types-group-label"
               name="row-types-group"
-              defaultValue={PokemonType.None}
+              defaultValue={PokemonType.Normal}
               onChange={(e) => {
                 setPokeStats(undefined);
                 setStatData(undefined);
@@ -271,9 +271,9 @@ const Calculate = () => {
               }}
             >
               <FormControlLabel
-                value={PokemonType.None}
+                value={PokemonType.Normal}
                 control={<Radio />}
-                label={<span>{getKeyEnum(PokemonType, PokemonType.None)}</span>}
+                label={<span>{getKeyEnum(PokemonType, PokemonType.Normal)}</span>}
               />
               <FormControlLabel
                 value={PokemonType.Buddy}

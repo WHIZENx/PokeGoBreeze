@@ -5,9 +5,6 @@ import {
   DEFAULT_SHEET_PAGE,
   DEFAULT_SHEET_ROW,
   DEFAULT_TYPES,
-  FORM_GMAX,
-  FORM_MEGA,
-  FORM_PRIMAL,
   levelList,
   MAX_IV,
   MIN_IV,
@@ -323,9 +320,9 @@ const DpsTdo = () => {
     pokemon: IPokemonData,
     vf: string,
     fMoveType: MoveType,
-    pokemonType = PokemonType.None
+    pokemonType = PokemonType.Normal
   ) => {
-    getValueOrDefault(Array, movePoke).forEach((vc: string) => {
+    movePoke?.forEach((vc: string) => {
       const fMove = data.combat.find((item) => isEqual(item.name, vf));
       const cMove = data.combat.find((item) => isEqual(item.name, vc));
 
@@ -395,7 +392,7 @@ const DpsTdo = () => {
   };
 
   const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[] | undefined) => {
-    getValueOrDefault(Array, movePoke).forEach((vf) => {
+    movePoke?.forEach((vf) => {
       const fMoveType = getMoveType(pokemon, vf);
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType);
       if (!pokemon.forme || pokemon.hasShadowForm) {
@@ -406,9 +403,7 @@ const DpsTdo = () => {
         addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, PokemonType.Purified);
       }
       if (
-        (!pokemon.forme ||
-          (!isInclude(pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
-            !isInclude(pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))) &&
+        (!pokemon.forme || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
@@ -454,18 +449,18 @@ const DpsTdo = () => {
 
       const boolShowShadow = !showShadow && item.pokemonType === PokemonType.Shadow;
       const boolShowElite = !showEliteMove && (item.fMoveType === MoveType.Elite || item.cMoveType === MoveType.Elite);
-      const boolShowMega = !showMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
-      const boolShowGmax = !showGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
-      const boolShowPrimal = !showPrimal && isInclude(item.pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolShowMega = !showMega && item.pokemon.pokemonType === PokemonType.Mega;
+      const boolShowGmax = !showGmax && item.pokemon.pokemonType === PokemonType.GMax;
+      const boolShowPrimal = !showPrimal && item.pokemon.pokemonType === PokemonType.Primal;
       const boolShowLegend = !showLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
       const boolShowMythic = !showMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
 
       const boolOnlyShadow = enableShadow && item.pokemonType === PokemonType.Shadow;
       const boolOnlyElite = enableElite && (item.fMoveType === MoveType.Elite || item.cMoveType === MoveType.Elite);
-      const boolOnlyMega = enableMega && isInclude(item.pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
-      const boolOnlyGmax = enableGmax && isInclude(item.pokemon.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive);
-      const boolOnlyPrimal = enablePrimal && isInclude(item.pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive);
+      const boolOnlyMega = enableMega && item.pokemon.pokemonType === PokemonType.Mega;
+      const boolOnlyGmax = enableGmax && item.pokemon.pokemonType === PokemonType.GMax;
+      const boolOnlyPrimal = enablePrimal && item.pokemon.pokemonType === PokemonType.Primal;
       const boolOnlyLegend = enableLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
       const boolOnlyMythic = enableMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
       const boolOnlyUltra = enableUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;

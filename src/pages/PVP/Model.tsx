@@ -37,7 +37,7 @@ import { IStatsRank, IStatsBase, HexagonStats } from '../../core/models/stats.mo
 import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ICombat } from '../../core/models/combat.model';
-import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/constants';
+import { MAX_IV, MAX_LEVEL } from '../../util/constants';
 import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/models/pvp.model';
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
@@ -108,14 +108,14 @@ export const Body = (
     const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
     const pokemon = pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
-    const form = findAssetForm(assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+    const form = findAssetForm(assets, pokemon?.num, pokemon?.forme);
 
     return (
       <Link
         to={`/pvp/${cp}/${type}/${data.opponent.replaceAll('_', '-')}`}
         className="list-item-ranking"
         style={{
-          backgroundImage: computeBgType(pokemon?.types, isInclude(data.opponent, '_shadow') ? PokemonType.Shadow : PokemonType.None),
+          backgroundImage: computeBgType(pokemon?.types, isInclude(data.opponent, '_shadow') ? PokemonType.Shadow : PokemonType.Normal),
         }}
       >
         <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>

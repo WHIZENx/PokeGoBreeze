@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { getKeyEnum, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { getKeyEnum, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
@@ -9,7 +9,7 @@ import CardPokemon from '../../../components/Card/CardPokemon';
 import { useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_PURIFIED, FORM_SHADOW, MAX_IV, MAX_LEVEL } from '../../../util/constants';
+import { MAX_IV, MAX_LEVEL } from '../../../util/constants';
 import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
@@ -17,7 +17,7 @@ import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.m
 import { combineClasses, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
-import { MoveType, PokemonType } from '../../../enums/type.enum';
+import { MoveType } from '../../../enums/type.enum';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data.combat);
@@ -124,11 +124,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             cMovePri: new Audio(APIService.getSoundMove(cMovePriCombat?.sound)),
             cMoveSec: new Audio(APIService.getSoundMove(cMoveSecCombat?.sound)),
           },
-          pokemonType: isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
-            ? PokemonType.Shadow
-            : isInclude(value.speciesId, `_${FORM_PURIFIED}`, IncludeMode.IncludeIgnoreCaseSensitive)
-            ? PokemonType.Purified
-            : PokemonType.None,
+          pokemonType: getPokemonType(value.speciesId),
         })
       );
     }
@@ -247,17 +243,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             .slice(0, firstInit.current + eachCounter.current * startIndex)
             .map((value, index) => (
               <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
-                <CardPokemon
-                  value={value.pokemon}
-                  score={value.score}
-                  pokemonType={
-                    isInclude(value.speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
-                      ? PokemonType.Shadow
-                      : isInclude(value.speciesId, `_${FORM_PURIFIED}`, IncludeMode.IncludeIgnoreCaseSensitive)
-                      ? PokemonType.Purified
-                      : PokemonType.None
-                  }
-                />
+                <CardPokemon value={value.pokemon} score={value.score} pokemonType={getPokemonType(value.speciesId)} />
               </div>
             ))}
         </div>

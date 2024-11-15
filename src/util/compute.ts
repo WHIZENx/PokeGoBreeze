@@ -108,7 +108,7 @@ export const computeCandyColor = (candyData: ICandy[], id: number) => {
 
 export const computeBgType = (
   types: string[] | string | undefined,
-  pokemonType = PokemonType.None,
+  pokemonType = PokemonType.Normal,
   opacity = 1,
   styleSheet?: CSSStyleSheet,
   defaultColor?: string
@@ -137,12 +137,12 @@ export const computeBgType = (
   return `linear-gradient(to bottom right, ${priColor}, ${secColor ?? priColor})`;
 };
 
-export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {
+export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets || isEqual(name, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+  if (!pokemonAssets || isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
     return;
   }
-  const asset = pokemonAssets.image.find((img) => isEqual(img.form, name));
+  const asset = pokemonAssets.image.find((img) => isEqual(img.form, formName));
   if (asset) {
     return asset;
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {
@@ -155,16 +155,16 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: s
   return;
 };
 
-export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, name: string | null | undefined) => {
-  const form = queryAssetForm(pokemonAssets, id, name);
+export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
+  const form = queryAssetForm(pokemonAssets, id, formName);
   if (form) {
     return form.default;
   }
   return form;
 };
 
-export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: string) => {
-  const form = queryAssetForm(pokemonAssets, id, name);
+export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formName: string | null = FORM_NORMAL) => {
+  const form = queryAssetForm(pokemonAssets, id, formName);
   if (form) {
     return form.shiny;
   }

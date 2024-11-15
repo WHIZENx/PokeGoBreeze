@@ -6,7 +6,7 @@ import APIService from '../../../services/API.service';
 import { capitalize, convertNameRankingToOri, getDmgMultiplyBonus, getMoveType, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
-import { FORM_NORMAL, MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
+import { MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -697,7 +697,7 @@ const Battle = () => {
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.forme ?? FORM_NORMAL);
+            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.forme);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -708,7 +708,7 @@ const Battle = () => {
               id,
               form,
               stats,
-              pokemonType: PokemonType.None,
+              pokemonType: PokemonType.Normal,
             });
           })
           .filter((pokemon) => pokemon.id > 0);

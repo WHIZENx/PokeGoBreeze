@@ -20,7 +20,7 @@ const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
-  const [currStatType, setCurrStatType] = useState(PokemonType.None);
+  const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
 
   const onHandleLevel = useCallback(
     (v: number) => {
@@ -87,13 +87,13 @@ const StatsTable = (props: IStatsTableComponent) => {
             row={true}
             aria-labelledby="row-types-group-label"
             name="row-types-group"
-            defaultValue={PokemonType.None}
+            defaultValue={PokemonType.Normal}
             onChange={(e) => onHandleType(toNumber(e.target.value))}
           >
             <FormControlLabel
-              value={PokemonType.None}
+              value={PokemonType.Normal}
               control={<Radio />}
-              label={<span>{getKeyEnum(PokemonType, PokemonType.None)}</span>}
+              label={<span>{getKeyEnum(PokemonType, PokemonType.Normal)}</span>}
             />
             <FormControlLabel
               value={PokemonType.Buddy}

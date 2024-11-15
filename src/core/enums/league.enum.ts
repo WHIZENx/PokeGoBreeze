@@ -19,4 +19,5 @@ export enum LeagueType {
   Great = 'great',
   Ultra = 'ultra',
   Master = 'master',
+  Mega = 'mega',
 }

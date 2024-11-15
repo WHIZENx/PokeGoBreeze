@@ -4,8 +4,7 @@ import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/co
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault, isEqual, isUndefined, toNumber } from '../../util/extension';
-import { EqualMode } from '../../util/enums/string.enum';
+import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 import { MoveType, PokemonType } from '../../enums/type.enum';
 
@@ -202,6 +201,7 @@ export interface PokemonModel {
   id: number;
   name: string;
   isForceReleaseGO?: boolean;
+  pokemonType: PokemonType;
 }
 
 export interface IPokemonGenderRatio {
@@ -279,6 +279,7 @@ export interface IPokemonData {
   purified?: IPokemonTypeCost;
   thirdMove?: IPokemonTypeCost;
   encounter?: IEncounter;
+  pokemonType?: PokemonType;
 }
 
 export interface IPokemonName {
@@ -519,6 +520,7 @@ export class PokemonData implements IPokemonData {
   canGigantamax: string | null = null;
   changesFrom: string | null = null;
   cannotDynamax = true;
+  pokemonType = PokemonType.Normal;
 
   static create(pokemon: PokemonModel, types: string[] | undefined, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
@@ -534,9 +536,7 @@ export class PokemonData implements IPokemonData {
     obj.name = capitalize(pokemon.name.replaceAll('_', '-'));
     if (pokemon.id !== 201) {
       obj.fullName =
-        pokemon.form && !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-          ? `${pokemon.pokemonId}_${pokemon.form}`
-          : pokemon.pokemonId;
+        pokemon.form && pokemon.pokemonType !== PokemonType.Normal ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
     } else {
       obj.fullName = getValueOrDefault(String, pokemon.form?.toString());
     }
@@ -595,6 +595,7 @@ export class PokemonData implements IPokemonData {
     obj.purified = options?.purified;
     obj.thirdMove = options?.thirdMove;
 
+    obj.pokemonType = pokemon.pokemonType;
     return obj;
   }
 }

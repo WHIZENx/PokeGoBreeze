@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize } from '../../../util/utils';
+import { getTime, splitAndCapitalize, capitalize, getPokemonType } from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -17,14 +17,14 @@ import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
 import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
-import { FORM_NORMAL, leaguesDefault } from '../../../util/constants';
+import { leaguesDefault } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
-import { VariantType } from '../../../enums/type.enum';
+import { PokemonType, VariantType } from '../../../enums/type.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -121,6 +121,7 @@ const Leagues = () => {
                   return PokemonRewardSetLeague.create({
                     ...item,
                     rank: value.rank,
+                    pokemonType: getPokemonType(item.form),
                   });
                 }
                 return item;
@@ -238,9 +239,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-                          ? ''
-                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -255,9 +254,7 @@ const Leagues = () => {
                       </div>
                       <span className="caption">
                         {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                          isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-                            ? ''
-                            : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                          item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
                         }`}
                       </span>
                     </Link>
@@ -272,9 +269,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-                          ? ''
-                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
@@ -289,9 +284,7 @@ const Leagues = () => {
                       </div>
                       <span className="caption">
                         {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                          isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-                            ? ''
-                            : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                          item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
                         }`}
                       </span>
                     </Link>
@@ -696,9 +689,7 @@ const Leagues = () => {
                   className="img-link text-center"
                   key={index}
                   to={`/pokemon/${item.id}${
-                    isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-                      ? ''
-                      : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                    item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                   }`}
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
@@ -725,9 +716,7 @@ const Leagues = () => {
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${
-                        isEqual(item.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-                          ? ''
-                          : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
+                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
                       }`}
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >

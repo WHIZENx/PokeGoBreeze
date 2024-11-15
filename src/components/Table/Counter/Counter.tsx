@@ -17,10 +17,9 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { FORM_MEGA, FORM_PRIMAL } from '../../../util/constants';
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { MoveType, TypeAction, TypeTheme } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeAction, TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
@@ -125,10 +124,10 @@ const Counter = (props: ICounterComponent) => {
                 'position-relative group-pokemon-sprite'
               )}
             >
-              {row.cMove.moveType === MoveType.Shadow && (
+              {row.pokemonType === PokemonType.Shadow && (
                 <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
               )}
-              {row.cMove.moveType === MoveType.Purified && (
+              {row.pokemonType === PokemonType.Purified && (
                 <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
               )}
               <img
@@ -319,7 +318,7 @@ const Counter = (props: ICounterComponent) => {
             if (showMega) {
               return true;
             }
-            return !isInclude(pokemon.pokemonForme, FORM_MEGA) && !isInclude(pokemon.pokemonForme, FORM_PRIMAL);
+            return pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal;
           })
           .filter((pokemon) => {
             if (!releasedGO) {

@@ -29,41 +29,25 @@ export const getValueOrDefault = <T>(
   return value as T;
 };
 
-export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => {
-  return columns as TableColumn<T>[];
-};
+export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => columns as TableColumn<T>[];
 
-export const combineClasses = <T>(...classes: (T | null | undefined)[]) => {
-  return classes.filter((c) => c).join(' ');
-};
+export const combineClasses = <T>(...classes: (T | null | undefined)[]) => classes.filter((c) => c).join(' ');
 
-export const isNotEmpty = <T>(array: T[] | null | undefined = []) => {
-  return Array.isArray(array) && array && array.length > 0;
-};
+export const isNotEmpty = <T>(array: T[] | null | undefined = []) => Array.isArray(array) && array && array.length > 0;
 
-export const isUndefined = <T>(value?: T | null): value is undefined => {
-  return typeof value === 'undefined' && value === undefined;
-};
+export const isUndefined = <T>(value?: T | null): value is undefined => typeof value === 'undefined' && value === undefined;
 
-export const isNull = <T>(value?: T | null): value is null => {
-  return typeof value !== 'undefined' && value === null;
-};
+export const isNull = <T>(value?: T | null): value is null => typeof value !== 'undefined' && value === null;
 
-export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined => {
-  return getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
-};
+export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined =>
+  getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
 
-export const isEmpty = (value?: string | null): value is null | undefined => {
-  return getValueOrDefault(Boolean, value?.isEmpty(), false);
-};
+export const isEmpty = (value?: string | null): value is null | undefined => getValueOrDefault(Boolean, value?.isEmpty(), false);
 
-export const isNullOrEmpty = (value?: string | null): value is string | null => {
-  return getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
-};
+export const isNullOrEmpty = (value?: string | null): value is string | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
 
-export const toNumber = (value: string | number | null | undefined, defaultValue = 0) => {
-  return parseFloat((value || defaultValue).toString()) || defaultValue;
-};
+export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>
+  parseFloat((value || defaultValue).toString()) || defaultValue;
 
 export const toFloat = (value: string | number | null | undefined, fixedRounding = -1, defaultValue = 0) => {
   const result = parseFloat((value || defaultValue).toString());

@@ -284,8 +284,7 @@ const FindBattle = () => {
   );
 
   const getImageList = (id: number) => {
-    const isForm = form?.form.formName ? form.form.formName.replaceAll('-', '_').toUpperCase() : FORM_NORMAL;
-    let img = dataStore.assets.find((item) => item.id === id)?.image.find((item) => isInclude(item.form, isForm ?? FORM_NORMAL));
+    let img = dataStore.assets.find((item) => item.id === id)?.image.find((item) => item.pokemonType === form?.form.pokemonType);
     if (!img) {
       img = dataStore.assets.find((item) => item.id === id)?.image.at(0);
     }

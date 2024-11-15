@@ -5,6 +5,7 @@ import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IStatsAtk, IStatsDef, IStatsProd, IStatsSta, IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
+import { getPokemonType } from '../../../util/utils';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
 
 export enum ChargeType {
@@ -41,7 +42,7 @@ export class PokemonBattleData implements IPokemonBattleData {
   name?: string;
   form?: string | null;
   id?: number;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
   allStats?: IBattleBaseStats[];
   hp = 0;
   stats: IStatsBase | undefined;
@@ -59,6 +60,7 @@ export class PokemonBattleData implements IPokemonBattleData {
 
   static create(value: IPokemonBattleData) {
     const obj = new PokemonBattleData();
+    obj.pokemonType = getPokemonType(obj.form);
     Object.assign(obj, value);
     return obj;
   }
@@ -89,7 +91,7 @@ export interface IPokemonBattle {
 export class PokemonBattle implements IPokemonBattle {
   disableCMoveSec = false;
   disableCMovePri = false;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
   pokemonData?: IPokemonBattleData;
   fMove?: ICombat;
   cMovePri?: ICombat;
@@ -102,6 +104,7 @@ export class PokemonBattle implements IPokemonBattle {
 
   static create(value: IPokemonBattle) {
     const obj = new PokemonBattle();
+    obj.pokemonType = obj.pokemonData?.pokemonType ?? PokemonType.Normal;
     Object.assign(obj, value);
     return obj;
   }
@@ -168,9 +171,10 @@ export class PokemonTeamData implements IPokemonTeamData {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonTeamData) {
+    props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
 }
@@ -208,9 +212,10 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonBattleRanking) {
+    props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
 }

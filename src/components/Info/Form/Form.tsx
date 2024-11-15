@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/constants';
+import { FORM_NORMAL } from '../../../util/constants';
 import {
   capitalize,
   convertPokemonAPIDataName,
@@ -253,7 +253,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       </div>
       <hr className="w-100" />
-      {!isInclude(props.form?.form.formName, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive) ? (
+      {props.form?.form.pokemonType !== PokemonType.GMax ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
@@ -269,17 +269,13 @@ const FormComponent = (props: IFormInfoComponent) => {
             />
           </div>
           {isNotEmpty(props.formList) &&
-            props.formList?.some((item) =>
-              item.some((pokemon) => isInclude(pokemon.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive))
-            ) && (
+            props.formList?.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Mega)) && (
               <div className="col-xl" style={{ padding: 0 }}>
                 <Mega formList={props.formList} id={props.defaultId} />
               </div>
             )}
           {isNotEmpty(props.formList) &&
-            props.formList?.some((item) =>
-              item.some((pokemon) => isInclude(pokemon.form.formName, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))
-            ) && (
+            props.formList?.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal)) && (
               <div className="col-xl" style={{ padding: 0 }}>
                 <Primal formList={props.formList} id={props.defaultId} />
               </div>

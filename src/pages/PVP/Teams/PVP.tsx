@@ -28,7 +28,7 @@ import { StatsState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
-import { FORM_NORMAL, FORM_SHADOW } from '../../../util/constants';
+import { FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
@@ -74,7 +74,7 @@ const TeamPVP = () => {
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
     const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
-    const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+    const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -113,7 +113,7 @@ const TeamPVP = () => {
       cMoveSec = undefined;
     }
 
-    let pokemonType = PokemonType.None;
+    let pokemonType = PokemonType.Normal;
     if (isInclude(speciesId, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive)) {
       pokemonType = PokemonType.Shadow;
     } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {

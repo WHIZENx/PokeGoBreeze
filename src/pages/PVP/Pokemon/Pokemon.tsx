@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { FORM_MEGA, FORM_NORMAL, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/constants';
+import { FORM_MEGA, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/constants';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -56,7 +56,7 @@ const PokemonPVP = () => {
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
           APIService.getRankingFile(
-            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? FORM_MEGA.toLowerCase() : LeagueType.All,
+            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? LeagueType.Mega : LeagueType.All,
             cp,
             params.type
           )
@@ -71,7 +71,7 @@ const PokemonPVP = () => {
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
       const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
       const id = pokemon?.num;
-      const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+      const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
       document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(params.type)})`;
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
@@ -117,7 +117,7 @@ const PokemonPVP = () => {
         bestStats = allStats[allStats.length - 1];
       }
 
-      let pokemonType = PokemonType.None;
+      let pokemonType = PokemonType.Normal;
       if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
         pokemonType = PokemonType.Shadow;
       } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {

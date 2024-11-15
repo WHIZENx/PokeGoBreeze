@@ -183,10 +183,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainJSON = (id: number, forme: IForm) => {
-    let form =
-      isEmpty(forme.formName) || isInclude(forme.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
-        ? FORM_NORMAL
-        : forme.formName;
+    let form = isEmpty(forme.formName) || forme.pokemonType !== PokemonType.Mega ? FORM_NORMAL : forme.formName;
     if (forme.formName === '10') {
       form += '%';
     }
@@ -200,7 +197,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
     let pokemon = pokemonData.find((pokemon) => pokemon.num === id && isEqual(pokemon.forme, form));
     if (!pokemon) {
-      pokemon = pokemonData.find((pokemon) => pokemon.num === id && isEqual(pokemon.forme, FORM_NORMAL));
+      pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.pokemonType === PokemonType.Normal);
     }
 
     const prevEvo: IPokemonEvo[][] = [],
@@ -230,7 +227,7 @@ const Evolution = (props: IEvolutionComponent) => {
       return;
     }
     pokemon
-      .filter((p) => !(p.num === 718 && isEqual(p.forme, FORM_NORMAL)))
+      .filter((p) => !(p.num === 718 && p.pokemonType === PokemonType.Normal))
       .forEach((evo) => {
         evoList.unshift(
           modelEvoChain(
@@ -323,7 +320,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const getEvoChainStore = (id: number, forme: IForm) => {
     const formName = forme.formName?.toUpperCase();
     const form =
-      isEmpty(formName) || isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
+      isEmpty(formName) || forme.pokemonType === PokemonType.Mega
         ? FORM_NORMAL
         : forme.pokemonType === PokemonType.Purified || forme.pokemonType === PokemonType.Shadow
         ? isEqual(formName, FORM_SHADOW) || isEqual(formName, FORM_PURIFIED)
@@ -373,7 +370,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   useEffect(() => {
     if (props.id && props.forme) {
-      if (!isEqual(props.forme.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+      if (props.forme.pokemonType !== PokemonType.GMax) {
         getEvoChainStore(props.id, props.forme);
       } else {
         getGmaxChain(props.id, props.forme);

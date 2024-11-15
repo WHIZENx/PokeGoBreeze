@@ -51,7 +51,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   return (
     <li
       className="position-relative pokemon-container border-types h-100"
-      style={{ backgroundImage: computeBgType(props.types, PokemonType.None, 0.3) }}
+      style={{ backgroundImage: computeBgType(props.types, PokemonType.Normal, 0.3) }}
     >
       {!props.releasedGO && (
         <div className="no-released-pokemon">

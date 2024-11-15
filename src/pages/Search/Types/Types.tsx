@@ -294,7 +294,7 @@ const SearchTypes = () => {
         <div className="col-xl-4 element-top">
           <div
             className={combineClasses('d-flex flex-column align-items-center type-info-container', `${currentType.toLowerCase()}-border`)}
-            style={{ background: computeBgType(currentType, PokemonType.None, 1) }}
+            style={{ background: computeBgType(currentType, PokemonType.Normal, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img

@@ -9,9 +9,6 @@ import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
 import {
   DEFAULT_TYPES,
-  FORM_GMAX,
-  FORM_MEGA,
-  FORM_PRIMAL,
   genList,
   regionList,
   TRANSITION_TIME,
@@ -177,9 +174,9 @@ const Home = () => {
                 : isInclude(splitAndCapitalize(item.name, '-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
                   isInclude(item.id, searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = isMega ? isInclude(item.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) : true;
-            const boolGmax = isGmax ? isInclude(item.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive) : true;
-            const boolPrimal = isPrimal ? isInclude(item.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive) : true;
+            const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
+            const boolGmax = isGmax ? item.pokemonType === PokemonType.GMax : true;
+            const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
             const boolLegend = isLegendary ? item.class === TYPE_LEGENDARY : true;
             const boolMythic = isMythic ? item.class === TYPE_MYTHIC : true;
             const boolUltra = isUltraBeast ? item.class === TYPE_ULTRA_BEAST : true;

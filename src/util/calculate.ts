@@ -110,7 +110,7 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
   if (!typeEffective) {
     return valueEffective;
   }
-  getValueOrDefault(Array, typesObj).forEach((type) => {
+  typesObj?.forEach((type) => {
     valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[getValueOrDefault(String, typeMove).toUpperCase()][
       type.toUpperCase()
     ];
@@ -635,8 +635,8 @@ export const calculateStatsByTag = (
     if (pokemon?.baseStatsGO) {
       return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, toNumber(pokemon.baseStats.sta));
     }
-    const from = tag?.toLowerCase();
-    const checkNerf = !isInclude(from, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+    const form = tag?.toLowerCase();
+    const checkNerf = !isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || pokemon?.pokemonType !== PokemonType.Mega;
 
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
@@ -694,7 +694,7 @@ export const calculateAvgDPS = (
   def: number,
   hp: number | undefined,
   typePoke: string[] | undefined,
-  pokemonType = PokemonType.None,
+  pokemonType = PokemonType.Normal,
   options?: IOptionOtherDPS
 ) => {
   pokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : pokemonType;
@@ -780,7 +780,13 @@ export const calculateAvgDPS = (
   return Math.max(FDPS, DPS);
 };
 
-export const calculateTDO = (globalOptions: IOptions | undefined, def: number, hp: number, dps: number, pokemonType = PokemonType.None) => {
+export const calculateTDO = (
+  globalOptions: IOptions | undefined,
+  def: number,
+  hp: number,
+  dps: number,
+  pokemonType = PokemonType.Normal
+) => {
   pokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : pokemonType;
   const defBonus = getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.DEF);
   const y = 900 / (def * defBonus);
@@ -1004,7 +1010,7 @@ export const queryTopMove = (
 };
 
 const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[] | undefined, fMoveType: MoveType, cMoveType: MoveType) => {
-  getValueOrDefault(Array, cMove).forEach((vc: string) => {
+  cMove?.forEach((vc) => {
     const mf = data.combat.find((item) => isEqual(item.name, vf));
     const mc = data.combat.find((item) => isEqual(item.name, vc));
 
@@ -1270,7 +1276,7 @@ const queryMoveCounter = (
   fMoveType: MoveType,
   cMoveType: MoveType
 ) => {
-  getValueOrDefault(Array, cMove).forEach((vc) => {
+  cMove?.forEach((vc) => {
     const mf = data.combat.find((item) => isEqual(item.name, vf));
     const mc = data.combat.find((item) => isEqual(item.name, vc));
 

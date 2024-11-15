@@ -21,6 +21,7 @@ import {
   FORM_HISUIAN,
   FORM_MEGA,
   FORM_NORMAL,
+  FORM_PRIMAL,
   FORM_PURIFIED,
   FORM_SHADOW,
   FORM_STANDARD,
@@ -457,9 +458,8 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: IS
   return data;
 };
 
-export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, rank: number) => {
-  return ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
-};
+export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, rank: number) =>
+  ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
 
 export const mappingPokemonName = (pokemonData: IPokemonData[]) => {
   return pokemonData
@@ -729,7 +729,7 @@ export const generatePokemonGoForms = (
           pokemon.types,
           new PokemonSprit(),
           index,
-          PokemonType.None,
+          PokemonType.Normal,
           false
         );
         formListResult.push([pokemonGOModify]);
@@ -886,11 +886,11 @@ export const moveTypeToFormType = (moveType?: MoveType) => {
     case MoveType.Purified:
       return PokemonType.Purified;
     default:
-      return PokemonType.None;
+      return PokemonType.Normal;
   }
 };
 
-export const getDmgMultiplyBonus = (form = PokemonType.None, options?: Options, type?: TypeAction) => {
+export const getDmgMultiplyBonus = (form = PokemonType.Normal, options?: Options, type?: TypeAction) => {
   switch (type) {
     case TypeAction.ATK: {
       return form === PokemonType.Shadow ? SHADOW_ATK_BONUS(options) : form === PokemonType.Purified ? PURIFIED_ATK_BONUS(options) : 1;
@@ -923,4 +923,21 @@ export const getMoveType = (pokemonData?: IPokemonData, moveName?: string) => {
     return MoveType.Unavailable;
   }
   return MoveType.None;
+};
+
+export const getPokemonType = (formName?: string | number | null, isMega = false, isShadow = true) => {
+  if (isInclude(formName, FORM_NORMAL, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return PokemonType.Normal;
+  } else if (isInclude(formName, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive) && isShadow) {
+    return PokemonType.Shadow;
+  } else if (isInclude(formName, FORM_PURIFIED, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return PokemonType.Purified;
+  } else if (isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || isMega) {
+    return PokemonType.Mega;
+  } else if (isInclude(formName, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return PokemonType.Primal;
+  } else if (isInclude(formName, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return PokemonType.GMax;
+  }
+  return PokemonType.None;
 };

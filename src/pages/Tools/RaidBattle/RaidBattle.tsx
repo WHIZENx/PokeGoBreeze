@@ -6,17 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { checkPokemonGO, getDmgMultiplyBonus, getKeyEnum, getMoveType, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
-import {
-  FORM_GMAX,
-  FORM_MEGA,
-  FORM_NORMAL,
-  FORM_PRIMAL,
-  levelList,
-  MAX_IV,
-  MIN_IV,
-  MIN_LEVEL,
-  RAID_BOSS_TIER,
-} from '../../../util/constants';
+import { levelList, MAX_IV, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -69,7 +59,6 @@ import {
   DynamicObj,
   getValueOrDefault,
   isEqual,
-  isInclude,
   isNotEmpty,
   toFloat,
   toFloatWithPadding,
@@ -77,7 +66,6 @@ import {
 } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, RaidSummary, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
 
 interface IOption {
@@ -111,7 +99,7 @@ interface IFilterGroup {
 
 class FilterGroup implements IFilterGroup {
   level = MIN_LEVEL;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
   iv = new StatsBase();
   onlyShadow = false;
   onlyMega = false;
@@ -177,7 +165,7 @@ const RaidBattle = () => {
 
   const initFilter = FilterGroup.create({
     level: 40,
-    pokemonType: PokemonType.None,
+    pokemonType: PokemonType.Normal,
     iv: StatsBase.setValue(MAX_IV, MAX_IV, MAX_IV),
     onlyShadow: false,
     onlyMega: false,
@@ -391,9 +379,9 @@ const RaidBattle = () => {
     vf: string,
     fMoveType: MoveType,
     pokemonTarget: boolean,
-    pokemonType = PokemonType.None
+    pokemonType = PokemonType.Normal
   ) => {
-    getValueOrDefault(Array, movePoke).forEach((vc) => {
+    movePoke?.forEach((vc) => {
       const fMove = data.combat.find((item) => isEqual(item.name, vf));
       const cMove = data.combat.find((item) => isEqual(item.name, vc));
       if (fMove && cMove) {
@@ -459,7 +447,7 @@ const RaidBattle = () => {
   };
 
   const addFPokeData = (dataList: IPokemonMoveData[], pokemon: IPokemonData, movePoke: string[] | undefined, pokemonTarget: boolean) => {
-    getValueOrDefault(Array, movePoke).forEach((vf) => {
+    movePoke?.forEach((vf) => {
       const fMoveType = getMoveType(pokemon, vf);
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
       if (!pokemon.forme || pokemon.hasShadowForm) {
@@ -470,9 +458,7 @@ const RaidBattle = () => {
         addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Purified);
       }
       if (
-        (!pokemon.forme ||
-          (!isInclude(pokemon.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
-            !isInclude(pokemon.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))) &&
+        (!pokemon.forme || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
@@ -486,7 +472,7 @@ const RaidBattle = () => {
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: IPokemonMoveData[] = [];
     data.pokemon.forEach((pokemon) => {
-      if (pokemon && !isEqual(pokemon.forme, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+      if (pokemon && pokemon.pokemonType !== PokemonType.GMax) {
         addFPokeData(dataList, pokemon, pokemon.quickMoves, pokemonTarget);
         addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves, pokemonTarget);
       }
@@ -506,10 +492,8 @@ const RaidBattle = () => {
       setResultBoss(result);
     } else {
       const group = dataList.reduce((result: DynamicObj<IPokemonMoveData[]>, obj) => {
-        (result[getValueOrDefault(String, obj.pokemon?.name)] = getValueOrDefault(
-          Array,
-          result[getValueOrDefault(String, obj.pokemon?.name)]
-        )).push(obj);
+        const name = getValueOrDefault(String, obj.pokemon?.name);
+        (result[name] = getValueOrDefault(Array, result[name])).push(obj);
         return result;
       }, {});
       dataList = Object.values(group)
@@ -923,7 +907,7 @@ const RaidBattle = () => {
                           ...showSettingPokemon.pokemon,
                           stats: {
                             ...showSettingPokemon.pokemon.stats,
-                            pokemonType: check ? PokemonType.Shadow : PokemonType.None,
+                            pokemonType: check ? PokemonType.Shadow : PokemonType.Normal,
                           },
                         },
                       })
@@ -1226,7 +1210,7 @@ const RaidBattle = () => {
                 if (!used.onlyMega) {
                   return true;
                 }
-                return isInclude(splitAndCapitalize(obj.pokemon?.name, '-', ' '), ` ${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive);
+                return obj.pokemon?.pokemonType === PokemonType.Mega;
               })
               .filter((obj) => {
                 if (!used.onlyShadow) {
@@ -1251,10 +1235,8 @@ const RaidBattle = () => {
                         className="pokemon-sprite-raid"
                         alt="img-pokemon"
                         src={
-                          findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme ?? FORM_NORMAL)
-                            ? APIService.getPokemonModel(
-                                findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme ?? FORM_NORMAL)
-                              )
+                          findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme)
+                            ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme))
                             : APIService.getPokeFullSprite(value.pokemon?.num)
                         }
                       />
@@ -1567,7 +1549,7 @@ const RaidBattle = () => {
                   setData={setPokemonBattle}
                   defaultSetting={{
                     level: filters.selected.level,
-                    pokemonType: PokemonType.None,
+                    pokemonType: PokemonType.Normal,
                     iv: {
                       atk: filters.selected.iv.atk,
                       def: filters.selected.iv.def,

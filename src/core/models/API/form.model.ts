@@ -1,6 +1,7 @@
 import { PokemonType } from '../../../enums/type.enum';
 import { FORM_NORMAL } from '../../../util/constants';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
+import { getPokemonType } from '../../../util/utils';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 
@@ -111,7 +112,7 @@ export interface IForm {
   id: number | undefined;
   isDefault: boolean;
   isMega: boolean;
-  pokemonType: PokemonType;
+  pokemonType?: PokemonType;
   name: string;
   version: string | null | undefined;
   types: string[] | undefined;
@@ -132,7 +133,7 @@ export class PokemonFormModify implements IPokemonFormModify {
   name = '';
   form = new Form();
 
-  static setForm(defaultId: number, defaultName: string, name: string | undefined, form: IForm) {
+  static setForm(defaultId: number, defaultName: string, name: string | undefined, form: Form) {
     const obj = new PokemonFormModify();
     obj.defaultId = defaultId;
     obj.defaultName = defaultName;
@@ -165,7 +166,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
     types: string[],
     sprites: IPokemonSprit | undefined,
     formId: number,
-    pokemonType = PokemonType.None,
+    pokemonType = PokemonType.Normal,
     isDefault = true,
     isMega = false
   ) {
@@ -191,7 +192,7 @@ export class Form implements IForm {
   id: number | undefined;
   isDefault = false;
   isMega = false;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
   name = '';
   version: string | null | undefined = '';
   types: string[] | undefined = [];
@@ -207,11 +208,13 @@ export class Form implements IForm {
       this.version = data.version;
       this.types = data.types;
       this.sprites = data.sprites;
+      this.pokemonType = getPokemonType(data.formName);
     }
   }
 
   static create(value: IForm) {
     const obj = new Form();
+    obj.pokemonType = getPokemonType(value.formName);
     Object.assign(obj, value);
     return obj;
   }

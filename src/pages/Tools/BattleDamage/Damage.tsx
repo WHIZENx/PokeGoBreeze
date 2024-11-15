@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, LevelRating, splitAndCapitalize } from '../../../util/utils';
-import { FORM_MEGA, MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../util/constants';
+import { MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
 import './Damage.scss';
@@ -25,9 +25,8 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, isInclude, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { ChargeAbility } from './enums/damage.enum';
-import { IncludeMode } from '../../../util/enums/string.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
@@ -89,7 +88,7 @@ const Damage = () => {
   const [statLvATK, setStatLvATK] = useState(0);
 
   const [statLevel, setStatLevel] = useState(1);
-  const [statType, setStatType] = useState(PokemonType.None);
+  const [statType, setStatType] = useState(PokemonType.Normal);
 
   const [formObj, setFormObj] = useState<IPokemonFormModify>();
 
@@ -101,7 +100,7 @@ const Damage = () => {
   const [statLvSTAObj, setStatLvSTAObj] = useState(0);
 
   const [statLevelObj, setStatLevelObj] = useState(1);
-  const [statTypeObj, setStatTypeObj] = useState(PokemonType.None);
+  const [statTypeObj, setStatTypeObj] = useState(PokemonType.Normal);
 
   const [enableFriend, setEnableFriend] = useState(false);
   const [battleState, setBattleState] = useState(new Filter());
@@ -149,7 +148,7 @@ const Damage = () => {
           isStab: findStabType(form?.form.types, move.type),
           isWb: battleState.isWeather,
           isDodge: battleState.isDodge,
-          isMega: isInclude(form?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
+          isMega: form?.form.pokemonType === PokemonType.Mega,
           isTrainer: battleState.isTrainer,
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,

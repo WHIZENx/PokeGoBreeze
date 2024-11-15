@@ -1,4 +1,6 @@
+import { PokemonType } from '../../enums/type.enum';
 import { DynamicObj } from '../../util/extension';
+import { getPokemonType } from '../../util/utils';
 import { ConditionType, LeagueConditionType, QuestType } from '../enums/option.enum';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
@@ -320,6 +322,7 @@ export interface IPokemonPermission {
   form: string;
   forms?: string;
   name: string | undefined;
+  pokemonType: PokemonType;
 }
 
 export class PokemonPermission implements IPokemonPermission {
@@ -327,8 +330,10 @@ export class PokemonPermission implements IPokemonPermission {
   form = '';
   forms?: string;
   name: string | undefined;
+  pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonPermission) {
+    props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
 }
