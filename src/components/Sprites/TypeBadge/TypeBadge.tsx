@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
@@ -28,33 +28,11 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
       </span>
       <Link to={`/move/${move?.id}`} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-border position-relative')}>
-          {(props.isElite || props.isShadow || props.isPurified || props.isSpecial || props.isUnavailable) && (
+          {props.moveType !== MoveType.None && (
             <span className="type-badge-border">
-              {props.isElite && (
-                <span className="type-icon-small ic elite-ic">
-                  <span>{MoveType.Elite}</span>
-                </span>
-              )}
-              {props.isShadow && (
-                <span className="type-icon-small ic shadow-ic">
-                  <span>{MoveType.Shadow}</span>
-                </span>
-              )}
-              {props.isPurified && (
-                <span className="type-icon-small ic purified-ic">
-                  <span>{MoveType.Purified}</span>
-                </span>
-              )}
-              {props.isSpecial && (
-                <span className="type-icon-small ic special-ic">
-                  <span>{MoveType.Special}</span>
-                </span>
-              )}
-              {props.isUnavailable && (
-                <span className="type-icon-small ic unavailable-ic">
-                  <span>Unavailable</span>
-                </span>
-              )}
+              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyEnum(MoveType, props.moveType)}
+              </span>
             </span>
           )}
           <span>{splitAndCapitalize(props.move?.name, '_', ' ')}</span>

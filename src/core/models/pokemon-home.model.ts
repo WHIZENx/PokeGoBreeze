@@ -1,7 +1,8 @@
+import { PokemonType } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
 import { FORM_NORMAL, versionList } from '../../util/constants';
-import { getValueOrDefault } from '../../util/extension';
-import { convertPokemonImageName, splitAndCapitalize } from '../../util/utils';
+import { getValueOrDefault, toNumber } from '../../util/extension';
+import { convertPokemonImageName, getPokemonType, splitAndCapitalize } from '../../util/utils';
 import { IImage } from './asset.model';
 import { IPokemonData } from './pokemon.model';
 import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
@@ -22,6 +23,7 @@ export interface IPokemonHomeModel {
   class: string | undefined | null;
   releasedGO: boolean;
   image: IImage;
+  pokemonType: PokemonType;
 }
 
 export class PokemonHomeModel implements IPokemonHomeModel {
@@ -40,9 +42,10 @@ export class PokemonHomeModel implements IPokemonHomeModel {
   class: string | undefined | null;
   releasedGO: boolean;
   image: IImage;
+  pokemonType = PokemonType.Normal;
 
   constructor(item: IPokemonData, assetForm: IImage | undefined | null) {
-    this.id = getValueOrDefault(Number, item.num);
+    this.id = toNumber(item.num);
     this.name = item.name;
     this.forme = assetForm?.default
       ? getValueOrDefault(String, item.forme, FORM_NORMAL)
@@ -58,8 +61,8 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.goStats = StatsPokemonGO.create({
       atk: item.baseStats.atk,
       def: item.baseStats.def,
-      sta: getValueOrDefault(Number, item.baseStats.sta),
-      prod: item.baseStats.atk * item.baseStats.def * getValueOrDefault(Number, item.baseStats.sta),
+      sta: toNumber(item.baseStats.sta),
+      prod: item.baseStats.atk * item.baseStats.def * toNumber(item.baseStats.sta),
     });
     this.class = item.pokemonClass;
     this.releasedGO = item.releasedGO;
@@ -68,6 +71,8 @@ export class PokemonHomeModel implements IPokemonHomeModel {
         ? APIService.getPokemonModel(assetForm.default)
         : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.forme, '_', '-'))),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : undefined,
+      pokemonType: getPokemonType(this.forme),
     };
+    this.pokemonType = getPokemonType(this.forme);
   }
 }

@@ -12,13 +12,13 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { combineClasses, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
-  const a = toFloat(getValueOrDefault(Number, rowA.statsProds) / 1000);
-  const b = toFloat(getValueOrDefault(Number, rowB.statsProds) / 1000);
+  const a = toFloat(toNumber(rowA.statsProds) / 1000);
+  const b = toFloat(toNumber(rowB.statsProds) / 1000);
   return a - b;
 };
 
@@ -31,37 +31,37 @@ const numSortStatsProdsPercent = (rowA: IBattleBaseStats, rowB: IBattleBaseStats
 export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
     name: 'Rank',
-    selector: (row) => getValueOrDefault(Number, row.rank),
+    selector: (row) => toNumber(row.rank),
     sortable: true,
   },
   {
     name: 'Level',
-    selector: (row) => getValueOrDefault(Number, row.level),
+    selector: (row) => toNumber(row.level),
     sortable: true,
   },
   {
     name: 'IV ATK',
-    selector: (row) => getValueOrDefault(Number, row.IV?.atk),
+    selector: (row) => toNumber(row.IV?.atk),
     sortable: true,
   },
   {
     name: 'IV DEF',
-    selector: (row) => getValueOrDefault(Number, row.IV?.def),
+    selector: (row) => toNumber(row.IV?.def),
     sortable: true,
   },
   {
     name: 'IV STA',
-    selector: (row) => getValueOrDefault(Number, row.IV?.sta),
+    selector: (row) => toNumber(row.IV?.sta),
     sortable: true,
   },
   {
     name: 'CP',
-    selector: (row) => getValueOrDefault(Number, row.CP),
+    selector: (row) => toNumber(row.CP),
     sortable: true,
   },
   {
     name: 'Stat Prod (*1000)',
-    selector: (row) => toFloatWithPadding(getValueOrDefault(Number, row.statsProds) / 1000, 2),
+    selector: (row) => toFloatWithPadding(toNumber(row.statsProds) / 1000, 2),
     sortable: true,
     sortFunction: numSortStatsProd,
   },

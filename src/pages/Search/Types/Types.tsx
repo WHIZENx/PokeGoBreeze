@@ -10,13 +10,21 @@ import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { FormControlLabel, Switch, useTheme } from '@mui/material';
-import { TypeMove } from '../../../enums/type.enum';
+import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
-import { combineClasses, convertColumnDataType, getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from '../../../util/extension';
+import {
+  combineClasses,
+  convertColumnDataType,
+  getValueOrDefault,
+  isEqual,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -42,10 +50,10 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(getValueOrDefault(String, row.sprite), true)}
+          src={APIService.getPokeIconSprite(row.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
+            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
           }}
         />
         {splitAndCapitalize(row.name, '-', ' ')}
@@ -85,7 +93,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
   },
   {
     name: 'STA',
-    selector: (row) => getValueOrDefault(Number, calculateStatsByTag(row, row.baseStats, row.slug).sta),
+    selector: (row) => toNumber(calculateStatsByTag(row, row.baseStats, row.slug).sta),
     sortable: true,
     width: '100px',
   },
@@ -135,19 +143,19 @@ const columnMove: TableColumnModify<ICombat>[] = [
   },
 ];
 
-interface IPokemonType {
+interface IPokemonTypeMove {
   pokemonList: IPokemonData[];
   fastMove: ICombat[];
   chargedMove: ICombat[];
 }
 
-class PokemonType implements IPokemonType {
+class PokemonTypeMove implements IPokemonTypeMove {
   pokemonList: IPokemonData[] = [];
   fastMove: ICombat[] = [];
   chargedMove: ICombat[] = [];
 
-  static create(value: IPokemonType) {
-    const obj = new PokemonType();
+  static create(value: IPokemonTypeMove) {
+    const obj = new PokemonTypeMove();
     Object.assign(obj, value);
     return obj;
   }
@@ -180,7 +188,7 @@ const SearchTypes = () => {
   const [releasedGO, setReleaseGO] = useState(true);
 
   const [currentType, setCurrentType] = useState('');
-  const [result, setResult] = useState(new PokemonType());
+  const [result, setResult] = useState(new PokemonTypeMove());
   const [allData, setAllData] = useState<IPokemonTypeData>();
 
   const [showType, setShowType] = useState(false);
@@ -209,14 +217,14 @@ const SearchTypes = () => {
 
   useEffect(() => {
     if (isNotEmpty(typeList) && !currentType) {
-      setCurrentType(getValueOrDefault(String, typeList.at(0)));
+      setCurrentType(typeList[0]);
     }
   }, [typeList, currentType]);
 
   useEffect(() => {
     if (isNotEmpty(data.pokemon) && isNotEmpty(data.combat)) {
       setResult(
-        PokemonType.create({
+        PokemonTypeMove.create({
           pokemonList: data.pokemon
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
@@ -286,7 +294,7 @@ const SearchTypes = () => {
         <div className="col-xl-4 element-top">
           <div
             className={combineClasses('d-flex flex-column align-items-center type-info-container', `${currentType.toLowerCase()}-border`)}
-            style={{ background: computeBgType(currentType, false, false, 1) }}
+            style={{ background: computeBgType(currentType, PokemonType.Normal, 1) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img
@@ -313,42 +321,38 @@ const SearchTypes = () => {
               <img height={36} src={APIService.getItemSprite('pokeball_sprite')} />{' '}
               <b>{`Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
-                getValueOrDefault(Number, allData?.pokemon) > 0 &&
-                Math.round((result.pokemonList.length * 100) / getValueOrDefault(Number, allData?.pokemon))
+                toNumber(allData?.pokemon) > 0 &&
+                Math.round((result.pokemonList.length * 100) / toNumber(allData?.pokemon))
               }%)`}</b>
               <ul style={{ listStyleType: 'disc' }}>
                 <li>
                   <b>{`Legacy Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length} (${
                     isNotEmpty(result.pokemonList) &&
-                    getValueOrDefault(Number, allData?.pokemon) > 0 &&
+                    toNumber(allData?.pokemon) > 0 &&
                     Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) /
-                        getValueOrDefault(Number, allData?.pokemon)
+                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) / toNumber(allData?.pokemon)
                     )
                   }%)`}</b>
                 </li>
                 <li>
                   <b>{`Include Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length} (${
                     isNotEmpty(result.pokemonList) &&
-                    getValueOrDefault(Number, allData?.pokemon) > 0 &&
-                    Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) /
-                        getValueOrDefault(Number, allData?.pokemon)
-                    )
+                    toNumber(allData?.pokemon) > 0 &&
+                    Math.round((result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) / toNumber(allData?.pokemon))
                   }%)`}</b>
                 </li>
               </ul>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
-              <b>{`Fast Moves: ${result.fastMove.length}/${getValueOrDefault(Number, allData?.fastMoves)} (${Math.round(
-                (result.fastMove.length * 100) / getValueOrDefault(Number, allData?.fastMoves, 1)
+              <b>{`Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
+                (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
               <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charged Moves: ${result.chargedMove.length}/${getValueOrDefault(Number, allData?.chargedMoves)} (${Math.round(
-                (result.chargedMove.length * 100) / getValueOrDefault(Number, allData?.chargedMoves, 1)
+              <b>{`Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
+                (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
               )}%)`}</b>
             </span>
           </div>

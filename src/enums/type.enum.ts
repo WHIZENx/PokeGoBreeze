@@ -54,8 +54,22 @@ export enum VariantType {
 }
 
 export enum MoveType {
-  Elite = 'Elite',
-  Shadow = 'Shadow',
-  Purified = 'Purified',
-  Special = 'Special',
+  None = 0,
+  Shadow,
+  Purified,
+  Elite,
+  Special,
+  Unavailable,
+}
+
+export enum PokemonType {
+  None = 0,
+  Normal,
+  Shadow,
+  Purified,
+  Mega,
+  Primal,
+  GMax,
+  Buddy,
+  Lucky,
 }

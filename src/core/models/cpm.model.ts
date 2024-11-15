@@ -1,4 +1,4 @@
-import { getValueOrDefault } from '../../util/extension';
+import { toNumber } from '../../util/extension';
 
 export interface ICPM {
   level: number;
@@ -55,12 +55,12 @@ export class CPMDetail implements ICPMDetail {
     if (value) {
       obj.level = value.level;
       obj.multiplier = value.multiplier;
-      obj.stardust = getValueOrDefault(Number, value.stadust);
-      obj.sumStardust = getValueOrDefault(Number, value.sum_stadust);
-      obj.candy = getValueOrDefault(Number, value.candy);
-      obj.sumCandy = getValueOrDefault(Number, value.sum_candy);
-      obj.xlCandy = getValueOrDefault(Number, value.xl_candy);
-      obj.sumXlCandy = getValueOrDefault(Number, value.sum_xl_candy);
+      obj.stardust = toNumber(value.stadust);
+      obj.sumStardust = toNumber(value.sum_stadust);
+      obj.candy = toNumber(value.candy);
+      obj.sumCandy = toNumber(value.sum_candy);
+      obj.xlCandy = toNumber(value.xl_candy);
+      obj.sumXlCandy = toNumber(value.sum_xl_candy);
     }
     return obj;
   }

@@ -3,7 +3,7 @@ import Stats from '../Info/Stats/Stats';
 import { calculateRaidStat } from '../../util/calculate';
 
 import { Form } from 'react-bootstrap';
-import { FORM_MEGA, RAID_BOSS_TIER } from '../../util/constants';
+import { RAID_BOSS_TIER } from '../../util/constants';
 
 import ATK_LOGO from '../../assets/attack.png';
 import DEF_LOGO from '../../assets/defense.png';
@@ -25,9 +25,8 @@ import {
   StatsSta,
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
-import { TypeAction } from '../../enums/type.enum';
-import { getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
-import { IncludeMode } from '../../util/enums/string.enum';
+import { PokemonType, TypeAction } from '../../enums/type.enum';
+import { isNotEmpty, toNumber } from '../../util/extension';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -43,14 +42,14 @@ const Tools = (props: IToolsComponent) => {
   );
 
   useEffect(() => {
-    if (props.tier > 5 && !isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    if (props.tier > 5 && props.currForm?.form.pokemonType !== PokemonType.Mega) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
     } else if (
       props.tier === 5 &&
-      isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) &&
+      props.currForm?.form.pokemonType === PokemonType.Mega &&
       pokemonData.find((item) => item.num === props.id)?.pokemonClass
     ) {
       setCurrTier(6);
@@ -133,15 +132,13 @@ const Tools = (props: IToolsComponent) => {
             <optgroup label="Normal Tiers">
               <option value={1}>Tier 1</option>
               <option value={3}>Tier 3</option>
-              {!isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) && (
-                <option value={5}>Tier 5</option>
-              )}
+              {props.currForm?.form.pokemonType !== PokemonType.Mega && <option value={5}>Tier 5</option>}
             </optgroup>
             <optgroup label="Legacy Tiers">
               <option value={2}>Tier 2</option>
               <option value={4}>Tier 4</option>
             </optgroup>
-            {isInclude(props.currForm?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) && (
+            {props.currForm?.form.pokemonType === PokemonType.Mega && (
               <Fragment>
                 {pokemonData.find((item) => item.num === props.id)?.pokemonClass ? (
                   <optgroup label="Legendary Mega Tiers">
@@ -168,14 +165,14 @@ const Tools = (props: IToolsComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
-                <td className="text-center">{getValueOrDefault(Number, statsPokemon?.atk?.attack)}</td>
+                <td className="text-center">{toNumber(statsPokemon?.atk?.attack)}</td>
               </tr>
               <tr>
                 <td>
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
-                <td className="text-center">{getValueOrDefault(Number, statsPokemon?.def?.defense)}</td>
+                <td className="text-center">{toNumber(statsPokemon?.def?.defense)}</td>
               </tr>
               <tr>
                 <td>

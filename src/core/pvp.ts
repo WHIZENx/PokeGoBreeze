@@ -38,7 +38,7 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
       result.name = splitAndCapitalize(league?.replaceAll('-', '_'), '_', ' ');
     }
     result.cp = data
-      .filter((item) => item.startsWith(getValueOrDefault(String, league)) && isInclude(item, `${league}/overall/`))
+      .filter((item) => item.startsWith(result.id) && isInclude(item, `${league}/overall/`))
       .map((item) => toNumber(item.replace(`${league}/overall/rankings-`, '')))
       .sort((a, b) => a - b);
     result.logo = item?.iconUrl;
@@ -65,7 +65,7 @@ export const convertPVPTrain = (data: string[], leagues: ILeague[]) => {
       result.name = splitAndCapitalize(league, '_', ' ');
     }
     result.cp = data
-      .filter((item) => item.startsWith(getValueOrDefault(String, league)) && isInclude(item, `${league}/`))
+      .filter((item) => item.startsWith(result.id) && isInclude(item, `${league}/`))
       .map((item) => toNumber(item.replace(`${league}/`, '')))
       .sort((a, b) => a - b);
     result.logo = item?.iconUrl;

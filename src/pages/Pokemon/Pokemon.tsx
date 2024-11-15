@@ -160,7 +160,7 @@ const Pokemon = (props: IPokemonPage) => {
               PokemonFormModify.setForm(
                 data.id,
                 data.name,
-                getValueOrDefault(String, data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name),
+                data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
                 new Form({
                   ...item,
                   formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
@@ -169,13 +169,13 @@ const Pokemon = (props: IPokemonPage) => {
                 })
               )
             )
-            .sort((a, b) => getValueOrDefault(Number, a.form.id) - getValueOrDefault(Number, b.form.id))
+            .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
         )
-        .sort((a, b) => getValueOrDefault(Number, a[0]?.form.id) - getValueOrDefault(Number, b[0]?.form.id));
+        .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
       const indexPokemonGO = generatePokemonGoForms(pokemonData, dataFormList, formListResult, data.id, data.name);
 
-      if (pokemon?.isShadow && pokemon.purified?.candy && pokemon.purified.stardust) {
+      if (pokemon?.hasShadowForm && pokemon.purified?.candy && pokemon.purified.stardust) {
         generatePokemonGoShadowForms(dataPokeList, formListResult, data.id, data.name, indexPokemonGO);
       }
 
@@ -221,8 +221,8 @@ const Pokemon = (props: IPokemonPage) => {
       setWH((prevWH) =>
         WeightHeight.create({
           ...prevWH,
-          weight: getValueOrDefault(Number, defaultData?.weight),
-          height: getValueOrDefault(Number, defaultData?.height),
+          weight: toNumber(defaultData?.weight),
+          height: toNumber(defaultData?.height),
         })
       );
       setCurrentData(defaultData);
@@ -235,7 +235,7 @@ const Pokemon = (props: IPokemonPage) => {
   );
 
   const queryPokemon = useCallback(
-    (id: string) => {
+    (id: number) => {
       axiosSource.current = APIService.reNewCancelToken();
       const cancelToken = axiosSource.current.token;
 
@@ -281,13 +281,13 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   useEffect(() => {
-    const id = params.id?.toLowerCase() ?? props.id;
-    if (id && getValueOrDefault(Number, data?.id) !== toNumber(id) && isNotEmpty(pokemonData)) {
+    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(pokemonData)) {
       clearData(true);
       queryPokemon(id);
     }
     return () => {
-      if (getValueOrDefault(Number, data?.id) > 0) {
+      if (toNumber(data?.id) > 0) {
         APIService.cancel(axiosSource.current);
       }
     };
@@ -304,8 +304,8 @@ const Pokemon = (props: IPokemonPage) => {
   }, [data]);
 
   useEffect(() => {
-    const id = params.id ? params.id.toLowerCase() : props.id;
-    if (id && isNotEmpty(pokemonData)) {
+    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (id > 0 && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.isLoading) {
           const currentId = getPokemonById(pokemonData, toNumber(id));
@@ -329,7 +329,7 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [params.id, props.id, spinner.isLoading, pokemonData]);
 
-  const checkReleased = (id: number, form: string, defaultForm: IPokemonFormModify) => {
+  const checkReleased = (id: number, form: string | undefined, defaultForm: IPokemonFormModify) => {
     if (!form) {
       if (defaultForm) {
         form = defaultForm.form.formName || defaultForm.defaultName;
@@ -344,16 +344,16 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   useEffect(() => {
-    if (currentForm && getValueOrDefault(Number, data?.id) > 0) {
-      const released = checkReleased(getValueOrDefault(Number, data?.id), getValueOrDefault(String, formName), currentForm);
+    if (currentForm && toNumber(data?.id) > 0) {
+      const released = checkReleased(toNumber(data?.id), formName, currentForm);
       setReleased(released);
 
       const formParams = searchParams.get('form');
-      setVersion(currentForm.form.version);
+      setVersion(getValueOrDefault(String, currentForm.form.version));
       const gen = data?.generation.url?.split('/').at(6);
       setGeneration(getValueOrDefault(String, gen));
       if (!params.id) {
-        setRegion(regionList[toNumber(getValueOrDefault(String, gen))]);
+        setRegion(regionList[toNumber(gen)]);
       } else {
         const currentRegion = Object.values(regionList).find((item) =>
           isInclude(currentForm.form.formName, item, IncludeMode.IncludeIgnoreCaseSensitive)
@@ -361,7 +361,7 @@ const Pokemon = (props: IPokemonPage) => {
         if (!isEmpty(currentForm.form.formName) && currentRegion) {
           setRegion(!region || !isEqual(region, currentRegion) ? currentRegion : region);
         } else {
-          setRegion(regionList[toNumber(getValueOrDefault(String, gen))]);
+          setRegion(regionList[toNumber(gen)]);
         }
       }
       const nameInfo =
@@ -369,7 +369,7 @@ const Pokemon = (props: IPokemonPage) => {
           ? props.searching.fullName
           : currentForm.form.isDefault
           ? currentForm.form.name
-          : formParams || getValueOrDefault(Number, currentForm.form.id) < 0
+          : formParams || toNumber(currentForm.form.id) < 0
           ? currentForm.form.name
           : data?.name;
       setFormName(nameInfo?.replace(/-f$/, '-female').replace(/-m$/, '-male'));
@@ -388,9 +388,9 @@ const Pokemon = (props: IPokemonPage) => {
   }, [data?.id, props.id, params.id, formName, currentForm]);
 
   useEffect(() => {
-    const id = params.id?.toLowerCase() ?? props.id;
-    if (isNotEmpty(pokemonData) && id && toNumber(id) > 0) {
-      const currentId = getPokemonById(pokemonData, toNumber(id));
+    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (id > 0 && isNotEmpty(pokemonData)) {
+      const currentId = getPokemonById(pokemonData, id);
       if (currentId) {
         setDataStorePokemon({
           prev: getPokemonById(pokemonData, currentId.id - 1),
@@ -437,7 +437,7 @@ const Pokemon = (props: IPokemonPage) => {
                   style={{ verticalAlign: 'baseline' }}
                   alt="img-full-pokemon"
                   src={APIService.getPokeFullSprite(
-                    getValueOrDefault(Number, dataStorePokemon?.current?.id),
+                    toNumber(dataStorePokemon?.current?.id),
                     convertPokemonImageName(
                       currentForm && originForm && currentForm.defaultId === currentForm.form.id
                         ? ''
@@ -447,7 +447,7 @@ const Pokemon = (props: IPokemonPage) => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                      e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, dataStorePokemon?.current?.id));
+                      e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon?.current?.id));
                     } else {
                       e.currentTarget.src = APIService.getPokeFullSprite(0);
                     }
@@ -541,14 +541,14 @@ const Pokemon = (props: IPokemonPage) => {
               ratio={pokeRatio}
               setId={props.setId}
               pokemonDetail={pokemonDetails}
-              defaultId={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
+              defaultId={toNumber(dataStorePokemon?.current?.id)}
               region={region}
               setProgress={setProgress}
               isLoadedForms={progress.isLoadedForms}
             />
             <PokemonAssetComponent
-              id={getValueOrDefault(Number, dataStorePokemon?.current?.id)}
-              name={getValueOrDefault(String, dataStorePokemon?.current?.name)}
+              id={toNumber(dataStorePokemon?.current?.id)}
+              name={dataStorePokemon?.current?.name}
               originSoundCry={originSoundCry}
               isLoadedForms={progress.isLoadedForms}
             />

@@ -1,10 +1,11 @@
 import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
+import { PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
-import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty } from './extension';
+import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
 import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
@@ -80,45 +81,34 @@ export const raidEgg = (tier: number, isMega: boolean, isPrimal: boolean, isUltr
 };
 
 export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
-  let data = candyData.find((item) =>
-    isIncludeList(
-      item.familyGroup.map((value) => value.id),
-      id
-    )
+  const data = candyData.find(
+    (item) =>
+      isIncludeList(
+        item.familyGroup.map((value) => value.id),
+        id
+      ) || item.familyId === id
   );
-  if (!data) {
-    data = candyData.find((item) => item.familyId === id);
-    if (!data) {
-      data = candyData.find((item) => item.familyId === 0);
-    }
-  }
-  return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.secondaryColor.r))}, ${Math.round(
-    255 * getValueOrDefault(Number, data?.secondaryColor.g)
-  )}, ${Math.round(255 * getValueOrDefault(Number, data?.secondaryColor.b))}, ${data?.secondaryColor.a || 1})`;
+  return `rgb(${Math.round(255 * toNumber(data?.secondaryColor.r))}, ${Math.round(255 * toNumber(data?.secondaryColor.g))}, ${Math.round(
+    255 * toNumber(data?.secondaryColor.b)
+  )}, ${toNumber(data?.secondaryColor.a, 1)})`;
 };
 
 export const computeCandyColor = (candyData: ICandy[], id: number) => {
-  let data = candyData.find((item) =>
-    isIncludeList(
-      item.familyGroup.map((value) => value.id),
-      id
-    )
+  const data = candyData.find(
+    (item) =>
+      isIncludeList(
+        item.familyGroup.map((value) => value.id),
+        id
+      ) || item.familyId === id
   );
-  if (!data) {
-    data = candyData.find((item) => item.familyId === id);
-    if (!data) {
-      data = candyData.find((item) => item.familyId === 0);
-    }
-  }
-  return `rgb(${Math.round(255 * getValueOrDefault(Number, data?.primaryColor.r))}, ${Math.round(
-    255 * getValueOrDefault(Number, data?.primaryColor.g)
-  )}, ${Math.round(255 * getValueOrDefault(Number, data?.primaryColor.b))}, ${data?.primaryColor.a || 1})`;
+  return `rgb(${Math.round(255 * toNumber(data?.primaryColor.r))}, ${Math.round(255 * toNumber(data?.primaryColor.g))}, ${Math.round(
+    255 * toNumber(data?.primaryColor.b)
+  )}, ${toNumber(data?.primaryColor.a, 1)})`;
 };
 
 export const computeBgType = (
   types: string[] | string | undefined,
-  shadow = false,
-  purified = false,
+  pokemonType = PokemonType.Normal,
   opacity = 1,
   styleSheet?: CSSStyleSheet,
   defaultColor?: string
@@ -130,59 +120,59 @@ export const computeBgType = (
   const colorsPalette: string[] = [];
   if (typeof types === 'string') {
     const color = getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet);
-    return (color || defaultBg).split(')').at(0) + `, ${getValueOrDefault(Number, opacity, 1)})` || defaultBg;
+    return (color || defaultBg).split(')').at(0) + `, ${toNumber(opacity, 1)})` || defaultBg;
   } else {
     types?.forEach((type) => {
       const color = getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet);
-      colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${getValueOrDefault(Number, opacity, 1)})`);
+      colorsPalette.push((color || defaultBg).split(')').at(0) + `, ${toNumber(opacity, 1)})`);
     });
   }
   const [priColor, secColor] = colorsPalette;
-  if (shadow) {
+  if (pokemonType === PokemonType.Shadow) {
     return `linear-gradient(to bottom right, ${priColor}, rgb(202, 156, 236), ${secColor ?? priColor})`;
   }
-  if (purified) {
+  if (pokemonType === PokemonType.Purified) {
     return `linear-gradient(to bottom right, ${priColor}, white, ${secColor ?? priColor})`;
   }
   return `linear-gradient(to bottom right, ${priColor}, ${secColor ?? priColor})`;
 };
 
-export const queryAssetForm = (assets: IAsset[], id: number | undefined, name: string | undefined | null) => {
+export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets || isEqual(name, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+  if (!pokemonAssets || isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
     return;
   }
-  const asset = pokemonAssets.image.find((img) => isEqual(img.form, name));
+  const asset = pokemonAssets.image.find((img) => isEqual(img.form, formName));
   if (asset) {
     return asset;
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {
     const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
-      return pokemonAssets.image.at(0);
+      return pokemonAssets.image[0];
     }
     return formNormal;
   }
   return;
 };
 
-export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, name: string | undefined) => {
-  const form = queryAssetForm(pokemonAssets, id, name);
+export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
+  const form = queryAssetForm(pokemonAssets, id, formName);
   if (form) {
     return form.default;
   }
   return form;
 };
 
-export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, name: string) => {
-  const form = queryAssetForm(pokemonAssets, id, name);
+export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formName: string | null = FORM_NORMAL) => {
+  const form = queryAssetForm(pokemonAssets, id, formName);
   if (form) {
     return form.shiny;
   }
   return form;
 };
 
-export const findStabType = (types: string[], findType: string) => {
-  return types.some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
+export const findStabType = (types: string[] | undefined, findType: string | undefined) => {
+  return getValueOrDefault(Array, types).some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
 };
 
 export const getPokemonBattleLeagueName = (cp = BattleLeagueCPType.Master) => {

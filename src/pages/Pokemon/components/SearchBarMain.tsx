@@ -6,7 +6,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Link } from 'react-router-dom';
 import { ISearchBarMainComponent } from '../../models/page.model';
-import { combineClasses, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, toNumber } from '../../../util/extension';
 
 const SearchBarMain = (props: ISearchBarMainComponent) => {
   return (
@@ -35,7 +35,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 src={APIService.getPokeFullSprite(props.data.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, props.data?.prev?.id));
+                  e.currentTarget.src = APIService.getPokeFullAsset(toNumber(props.data?.prev?.id));
                 }}
               />
             </div>
@@ -73,7 +73,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 src={APIService.getPokeFullSprite(props.data.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, props.data?.next?.id));
+                  e.currentTarget.src = APIService.getPokeFullAsset(toNumber(props.data?.next?.id));
                 }}
               />
             </div>

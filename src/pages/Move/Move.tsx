@@ -18,7 +18,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
+import { MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -76,7 +76,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
           src={APIService.getPokeIconSprite(row.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
+            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
           }}
         />
         {row.name}
@@ -88,7 +88,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
   },
   {
     name: 'Elite',
-    selector: (row) => (row.isElite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
+    selector: (row) => (row.moveType === MoveType.Elite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
     width: '64px',
   },
   {
@@ -119,11 +119,16 @@ const Move = (props: IMovePage) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const getWeatherEffective = (type: string) => {
+  const getWeatherEffective = (type: string | undefined) => {
     const result = Object.entries(data.weatherBoost)?.find(([, value]: [string, string[]]) => {
-      return isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive);
+      if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive)) {
+        return value;
+      }
     });
-    return result && result.at(0);
+    if (isNotEmpty(result)) {
+      return result?.[0];
+    }
+    return;
   };
 
   const queryMoveData = useCallback(
@@ -254,11 +259,9 @@ const Move = (props: IMovePage) => {
                         className="img-type-icon"
                         height={25}
                         alt="img-type"
-                        src={APIService.getWeatherIconSprite(getWeatherEffective(getValueOrDefault(String, move.type)))}
+                        src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
                       />
-                      <span className="d-inline-block caption">
-                        {splitAndCapitalize(getWeatherEffective(getValueOrDefault(String, move.type)), '_', ' ')}
-                      </span>
+                      <span className="d-inline-block caption">{splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}</span>
                     </>
                   )}
                 </td>
@@ -289,7 +292,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVE Energy</td>
                 <td colSpan={2}>
-                  {getValueOrDefault(Number, move?.pveEnergy) > 0 && '+'}
+                  {toNumber(move?.pveEnergy) > 0 && '+'}
                   {move?.pveEnergy}
                 </td>
               </tr>
@@ -327,7 +330,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>PVP Energy</td>
                 <td colSpan={2}>
-                  {getValueOrDefault(Number, move?.pvpEnergy) > 0 && '+'}
+                  {toNumber(move?.pvpEnergy) > 0 && '+'}
                   {move?.pvpEnergy}
                 </td>
               </tr>
@@ -339,7 +342,7 @@ const Move = (props: IMovePage) => {
                   </td>
                 </tr>
               )}
-              {getValueOrDefault(Array, move?.buffs).length > 0 && (
+              {isNotEmpty(move?.buffs) && (
                 <Fragment>
                   <tr className="text-center">
                     <td className="table-sub-header" colSpan={3}>
@@ -363,7 +366,7 @@ const Move = (props: IMovePage) => {
                           </span>
                         </span>
                       </td>
-                      <td>{getValueOrDefault(Number, value.buffChance) * 100}%</td>
+                      <td>{toNumber(value.buffChance) * 100}%</td>
                     </tr>
                   ))}
                 </Fragment>

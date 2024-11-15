@@ -12,8 +12,8 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { IDamageTableComponent } from '../../models/page.model';
 import { ILabelDamage, LabelDamage } from '../../../core/models/damage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, toFloatWithPadding } from '../../../util/extension';
-import { PokemonType } from './enums/damage.enum';
+import { combineClasses, DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { PokemonType } from '../../../enums/type.enum';
 
 const eff: DynamicObj<ILabelDamage> = {
   0.244140625: LabelDamage.create({
@@ -166,7 +166,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize(Object.keys(globalOptions.throwCharge).at(getValueOrDefault(Number, props.result.battleState.cLevel)))
+                  ? capitalize(Object.keys(globalOptions.throwCharge).at(toNumber(props.result.battleState.cLevel)))
                   : '-'}
               </td>
             </tr>
@@ -197,11 +197,10 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.damage ? (
                   <Fragment>
-                    {props.result.damage < getValueOrDefault(Number, props.result.move?.pvePower) ? (
+                    {props.result.damage < toNumber(props.result.move?.pvePower) ? (
                       <b className="text-success">
                         {toFloatWithPadding(
-                          ((getValueOrDefault(Number, props.result.move?.pvePower) - props.result.damage) * 100) /
-                            getValueOrDefault(Number, props.result.move?.pvePower),
+                          ((toNumber(props.result.move?.pvePower) - props.result.damage) * 100) / toNumber(props.result.move?.pvePower),
                           2
                         )}
                         %
@@ -223,8 +222,8 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>
                 {props.result.hp ? (
                   <b>
-                    {Math.floor(props.result.hp - getValueOrDefault(Number, props.result.damage))}
-                    {Math.floor(props.result.hp - getValueOrDefault(Number, props.result.damage)) > 0 ? (
+                    {Math.floor(props.result.hp - toNumber(props.result.damage))}
+                    {Math.floor(props.result.hp - toNumber(props.result.damage)) > 0 ? (
                       <span className="caption-small text-success"> (Alive)</span>
                     ) : (
                       <span className="caption-small text-danger"> (Dead)</span>

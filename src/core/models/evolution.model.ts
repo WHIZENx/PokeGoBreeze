@@ -121,8 +121,7 @@ export interface IEvolution {
   tempEvo: ITempEvo[];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
-  form: string;
-  canPurified?: boolean;
+  form: string | null | undefined;
   isBaby?: boolean;
 }
 
@@ -135,8 +134,7 @@ export class EvolutionModel implements IEvolution {
   tempEvo: ITempEvo[] = [];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
-  form = '';
-  canPurified?: boolean;
+  form: string | null | undefined = '';
   isBaby?: boolean;
 
   constructor({ ...props }: IEvolution) {

@@ -15,7 +15,7 @@ import { IPokemonSearching } from '../../../core/models/pokemon-searching.model'
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 
 const Search = () => {
@@ -77,14 +77,14 @@ const Search = () => {
   const decId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getValueOrDefault(Number, getPokemonById(pokemonName, currentId.id - 1)?.id));
+      setId(toNumber(getPokemonById(pokemonName, currentId.id - 1)?.id));
     }
   };
 
   const incId = () => {
     const currentId = getPokemonById(pokemonName, selectId);
     if (currentId) {
-      setId(getValueOrDefault(Number, getPokemonById(pokemonName, currentId.id + 1)?.id));
+      setId(toNumber(getPokemonById(pokemonName, currentId.id + 1)?.id));
     }
   };
 

@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
-import { capitalize, convertNameRankingToOri, getAllMoves, getDmgMultiplyBonus, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertNameRankingToOri, getDmgMultiplyBonus, getMoveType, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
 import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
-import { FORM_NORMAL, MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
+import { MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -52,14 +52,13 @@ import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { StatsBase } from '../../../core/models/stats.model';
-import { BuffType, TypeAction, VariantType } from '../../../enums/type.enum';
+import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
-import { PokemonType } from '../../Tools/BattleDamage/enums/damage.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -127,25 +126,23 @@ const Battle = () => {
   ) => {
     if (poke && pokeObj && move) {
       const atkPoke = calculateStatsBattle(
-        getValueOrDefault(Number, poke.stats?.atk),
-        getValueOrDefault(Number, poke.currentStats?.IV?.atk),
+        toNumber(poke.stats?.atk),
+        toNumber(poke.currentStats?.IV?.atk),
         poke.currentStats?.level ?? MIN_LEVEL,
         true
       );
       const defPokeObj = calculateStatsBattle(
-        getValueOrDefault(Number, pokeObj.stats?.def),
-        getValueOrDefault(Number, pokeObj.currentStats?.IV?.def),
+        toNumber(pokeObj.stats?.def),
+        toNumber(pokeObj.currentStats?.IV?.def),
         pokeObj.currentStats?.level ?? MIN_LEVEL,
         true
       );
       return (
         (atkPoke *
           move.pvpPower *
-          (findStabType(getValueOrDefault(Array, poke.pokemon?.types), getValueOrDefault(String, move.type))
-            ? STAB_MULTIPLY(dataStore.options)
-            : 1) *
+          (findStabType(poke.pokemon?.types, move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
           getDmgMultiplyBonus(poke.pokemonType, dataStore.options, TypeAction.ATK) *
-          getTypeEffective(dataStore.typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, pokeObj.pokemon?.types))) /
+          getTypeEffective(dataStore.typeEff, move.type, pokeObj.pokemon?.types)) /
         (defPokeObj * getDmgMultiplyBonus(pokeObj.pokemonType, dataStore.options, TypeAction.DEF))
       );
     }
@@ -155,7 +152,7 @@ const Battle = () => {
   const Pokemon = (poke: IPokemonBattle) => {
     return PokemonBattleData.create({
       ...poke,
-      hp: getValueOrDefault(Number, poke.pokemonData?.currentStats?.stats?.statsSTA),
+      hp: toNumber(poke.pokemonData?.currentStats?.stats?.statsSTA),
       stats: poke.pokemonData?.stats,
       currentStats: poke.pokemonData?.currentStats,
       bestStats: poke.pokemonData?.bestStats,
@@ -163,9 +160,9 @@ const Battle = () => {
       fMove: poke.fMove,
       cMove: poke.cMovePri,
       cMoveSec: poke.cMoveSec,
-      energy: getValueOrDefault(Number, poke.energy),
+      energy: toNumber(poke.energy),
       block: poke.block ?? DEFAULT_BLOCK,
-      turn: Math.ceil(getValueOrDefault(Number, poke.fMove?.durationMs) / 500),
+      turn: Math.ceil(toNumber(poke.fMove?.durationMs) / 500),
       pokemonType: poke.pokemonType,
       disableCMovePri: poke.disableCMovePri,
       disableCMoveSec: poke.disableCMoveSec,
@@ -267,12 +264,12 @@ const Battle = () => {
             chargeSlotPlayer1 = getRandomInt(ChargeType.Primary, ChargeType.Secondary);
           }
           if (
-            player1.energy >= Math.abs(getValueOrDefault(Number, player1.cMove.pvpEnergy)) &&
+            player1.energy >= Math.abs(toNumber(player1.cMove.pvpEnergy)) &&
             ((!preRandomPlayer1 && chargeSlotPlayer1 !== ChargeType.Secondary) ||
               (postRandomPlayer1 && chargeSlotPlayer1 === ChargeType.Primary))
           ) {
             chargeType = ChargeType.Primary;
-            player1.energy += getValueOrDefault(Number, player1.cMove.pvpEnergy);
+            player1.energy += toNumber(player1.cMove.pvpEnergy);
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
@@ -287,12 +284,12 @@ const Battle = () => {
             chargedPriCount = DEFAULT_AMOUNT;
           }
           if (
-            player1.energy >= Math.abs(getValueOrDefault(Number, player1.cMoveSec.pvpEnergy)) &&
+            player1.energy >= Math.abs(toNumber(player1.cMoveSec.pvpEnergy)) &&
             ((!preRandomPlayer1 && chargeSlotPlayer1 !== ChargeType.Primary) ||
               (postRandomPlayer1 && chargeSlotPlayer1 === ChargeType.Secondary))
           ) {
             chargeType = ChargeType.Secondary;
-            player1.energy += getValueOrDefault(Number, player1.cMoveSec.pvpEnergy);
+            player1.energy += toNumber(player1.cMoveSec.pvpEnergy);
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
@@ -314,12 +311,12 @@ const Battle = () => {
             chargeSlotPlayer2 = getRandomInt(ChargeType.Primary, ChargeType.Secondary);
           }
           if (
-            player2.energy >= Math.abs(getValueOrDefault(Number, player2.cMove.pvpEnergy)) &&
+            player2.energy >= Math.abs(toNumber(player2.cMove.pvpEnergy)) &&
             ((!preRandomPlayer2 && !postRandomPlayer2 && chargeSlotPlayer2 !== ChargeType.Secondary) ||
               (postRandomPlayer2 && chargeSlotPlayer2 === ChargeType.Primary))
           ) {
             chargeType = ChargeType.Primary;
-            player2.energy += getValueOrDefault(Number, player2.cMove.pvpEnergy);
+            player2.energy += toNumber(player2.cMove.pvpEnergy);
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
@@ -334,12 +331,12 @@ const Battle = () => {
             chargedSecCount = DEFAULT_AMOUNT;
           }
           if (
-            player2.energy >= Math.abs(getValueOrDefault(Number, player2.cMoveSec.pvpEnergy)) &&
+            player2.energy >= Math.abs(toNumber(player2.cMoveSec.pvpEnergy)) &&
             ((!preRandomPlayer2 && !postRandomPlayer2 && chargeSlotPlayer2 !== ChargeType.Primary) ||
               (postRandomPlayer2 && chargeSlotPlayer2 === ChargeType.Secondary))
           ) {
             chargeType = ChargeType.Secondary;
-            player2.energy += getValueOrDefault(Number, player2.cMoveSec.pvpEnergy);
+            player2.energy += toNumber(player2.cMoveSec.pvpEnergy);
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
@@ -375,7 +372,7 @@ const Battle = () => {
             if (!preChargeSec) {
               player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
             }
-            player1.energy += getValueOrDefault(Number, player1.fMove.pvpEnergy);
+            player1.energy += toNumber(player1.fMove.pvpEnergy);
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Fast,
@@ -414,7 +411,7 @@ const Battle = () => {
             } else {
               immuneSec = true;
             }
-            player2.energy += getValueOrDefault(Number, player2.fMove.pvpEnergy);
+            player2.energy += toNumber(player2.fMove.pvpEnergy);
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Fast,
@@ -519,21 +516,15 @@ const Battle = () => {
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = toFloat(Math.random(), 3);
-            if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
+            if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= toNumber(moveType.buffs[0].buffChance)) {
               moveType.buffs.forEach((value) => {
                 if (value.target === BuffType.Target) {
                   player2 = PokemonBattleData.create({
                     ...player2,
                     stats: {
                       ...player2.stats,
-                      atk:
-                        value.type === TypeAction.ATK
-                          ? getValueOrDefault(Number, player2.stats?.atk) + value.power
-                          : getValueOrDefault(Number, player2.stats?.atk),
-                      def:
-                        value.type === TypeAction.DEF
-                          ? getValueOrDefault(Number, player2.stats?.def) + value.power
-                          : getValueOrDefault(Number, player2.stats?.def),
+                      atk: value.type === TypeAction.ATK ? toNumber(player2.stats?.atk) + value.power : toNumber(player2.stats?.atk),
+                      def: value.type === TypeAction.DEF ? toNumber(player2.stats?.def) + value.power : toNumber(player2.stats?.def),
                     },
                   });
                   arrBufTarget.push(value);
@@ -542,14 +533,8 @@ const Battle = () => {
                     ...player1,
                     stats: {
                       ...player1.stats,
-                      atk:
-                        value.type === TypeAction.ATK
-                          ? getValueOrDefault(Number, player1.stats?.atk) + value.power
-                          : getValueOrDefault(Number, player1.stats?.atk),
-                      def:
-                        value.type === TypeAction.DEF
-                          ? getValueOrDefault(Number, player1.stats?.def) + value.power
-                          : getValueOrDefault(Number, player1.stats?.def),
+                      atk: value.type === TypeAction.ATK ? toNumber(player1.stats?.atk) + value.power : toNumber(player1.stats?.atk),
+                      def: value.type === TypeAction.DEF ? toNumber(player1.stats?.def) + value.power : toNumber(player1.stats?.def),
                     },
                   });
                   arrBufAtk.push(value);
@@ -585,21 +570,15 @@ const Battle = () => {
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = toFloat(Math.random(), 3);
-            if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= getValueOrDefault(Number, moveType.buffs.at(0)?.buffChance)) {
+            if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= toNumber(moveType.buffs[0].buffChance)) {
               moveType.buffs.forEach((value) => {
                 if (value.target === BuffType.Target) {
                   player1 = PokemonBattleData.create({
                     ...player1,
                     stats: {
                       ...player1.stats,
-                      atk:
-                        value.type === TypeAction.ATK
-                          ? getValueOrDefault(Number, player1.stats?.atk) + value.power
-                          : getValueOrDefault(Number, player1.stats?.atk),
-                      def:
-                        value.type === TypeAction.DEF
-                          ? getValueOrDefault(Number, player1.stats?.def) + value.power
-                          : getValueOrDefault(Number, player1.stats?.def),
+                      atk: value.type === TypeAction.ATK ? toNumber(player1.stats?.atk) + value.power : toNumber(player1.stats?.atk),
+                      def: value.type === TypeAction.DEF ? toNumber(player1.stats?.def) + value.power : toNumber(player1.stats?.def),
                     },
                   });
                   arrBufTarget.push(value);
@@ -608,14 +587,8 @@ const Battle = () => {
                     ...player2,
                     stats: {
                       ...player2.stats,
-                      atk:
-                        value.type === TypeAction.ATK
-                          ? getValueOrDefault(Number, player2.stats?.atk) + value.power
-                          : getValueOrDefault(Number, player2.stats?.atk),
-                      def:
-                        value.type === TypeAction.DEF
-                          ? getValueOrDefault(Number, player2.stats?.def) + value.power
-                          : getValueOrDefault(Number, player2.stats?.def),
+                      atk: value.type === TypeAction.ATK ? toNumber(player2.stats?.atk) + value.power : toNumber(player2.stats?.atk),
+                      def: value.type === TypeAction.DEF ? toNumber(player2.stats?.def) + value.power : toNumber(player2.stats?.def),
                     },
                   });
                   arrBufAtk.push(value);
@@ -724,7 +697,7 @@ const Battle = () => {
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.forme ?? FORM_NORMAL);
+            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.forme);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -735,7 +708,7 @@ const Battle = () => {
               id,
               form,
               stats,
-              pokemonType: PokemonType.None,
+              pokemonType: PokemonType.Normal,
             });
           })
           .filter((pokemon) => pokemon.id > 0);
@@ -809,7 +782,7 @@ const Battle = () => {
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
-    if (elem && x <= getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2) {
+    if (elem && x <= toNumber(timelineNormal.current?.clientWidth) - 2) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
     if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline) && arrBound.current.length < pokemonCurr.timeline.length) {
@@ -824,7 +797,7 @@ const Battle = () => {
         xNormal.current = rect.left;
       }
     }
-    overlappingPos(arrBound.current, x + getValueOrDefault(Number, xNormal.current));
+    overlappingPos(arrBound.current, x + toNumber(xNormal.current));
   };
 
   const onPlayLineFitMove = (e: TimelineEvent<HTMLDivElement>) => {
@@ -832,7 +805,7 @@ const Battle = () => {
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
-    if (elem && x <= getValueOrDefault(Number, timelineFit.current?.clientWidth)) {
+    if (elem && x <= toNumber(timelineFit.current?.clientWidth)) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
     if (
@@ -856,7 +829,7 @@ const Battle = () => {
     if (elem) {
       if (timelineType === TimelineType.Normal) {
         xCurrent = elem.style.transform
-          ? getTranslation(elem) >= getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2
+          ? getTranslation(elem) >= toNumber(timelineNormal.current?.clientWidth) - 2
             ? 0
             : getTranslation(elem)
           : 0;
@@ -877,11 +850,11 @@ const Battle = () => {
         }
       } else {
         xCurrent = elem.style.transform
-          ? getTranslation(elem) >= getValueOrDefault(Number, timelineFit.current?.clientWidth) - 1
+          ? getTranslation(elem) >= toNumber(timelineFit.current?.clientWidth) - 1
             ? 0
             : getTranslation(elem)
           : 0;
-        xFit.current = getValueOrDefault(Number, timelineFit.current?.clientWidth);
+        xFit.current = toNumber(timelineFit.current?.clientWidth);
         if (!isNotEmpty(arrStore.current)) {
           for (let i = 0; i < range; i++) {
             arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
@@ -896,41 +869,41 @@ const Battle = () => {
       if (timelineType === TimelineType.Normal) {
         const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
         const width = Math.min(
-          getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2,
-          xCurrent + durationFactor * (getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2)
+          toNumber(timelineNormal.current?.clientWidth) - 2,
+          xCurrent + durationFactor * (toNumber(timelineNormal.current?.clientWidth) - 2)
         );
-        if (width >= getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2) {
+        if (width >= toNumber(timelineNormal.current?.clientWidth) - 2) {
           if (elem) {
-            elem.style.transform = `translate(${getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2}px, -50%)`;
+            elem.style.transform = `translate(${toNumber(timelineNormal.current?.clientWidth) - 2}px, -50%)`;
           }
           return stopTimeLine();
         }
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          overlappingPos(arrBound.current, width + getValueOrDefault(Number, xNormal.current), true);
+          overlappingPos(arrBound.current, width + toNumber(xNormal.current), true);
         }
         if (
-          Math.min(width, getValueOrDefault(Number, timelineNormalContainer.current?.clientWidth) / 2) ===
-          getValueOrDefault(Number, timelineNormalContainer.current?.clientWidth) / 2
+          Math.min(width, toNumber(timelineNormalContainer.current?.clientWidth) / 2) ===
+          toNumber(timelineNormalContainer.current?.clientWidth) / 2
         ) {
           timelineNormalContainer.current?.scrollTo({
             left: width - timelineNormalContainer.current?.clientWidth / 2,
           });
         }
-        if (width < getValueOrDefault(Number, timelineNormal.current?.clientWidth)) {
+        if (width < toNumber(timelineNormal.current?.clientWidth)) {
           timelinePlay.current = requestAnimationFrame(animate);
         }
       } else {
         const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
         const width = Math.min(
-          getValueOrDefault(Number, timelineFit.current?.clientWidth),
-          xCurrent + durationFactor * getValueOrDefault(Number, timelineFit.current?.clientWidth)
+          toNumber(timelineFit.current?.clientWidth),
+          xCurrent + durationFactor * toNumber(timelineFit.current?.clientWidth)
         );
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
           overlappingPos(arrStore.current, elem.getBoundingClientRect().left, true);
         }
-        if (width < getValueOrDefault(Number, timelineFit.current?.clientWidth)) {
+        if (width < toNumber(timelineFit.current?.clientWidth)) {
           timelinePlay.current = requestAnimationFrame(animate);
         } else {
           if (elem) {
@@ -944,7 +917,7 @@ const Battle = () => {
 
   const stopTimeLine = () => {
     setPlayState(false);
-    cancelAnimationFrame(getValueOrDefault(Number, timelinePlay.current));
+    cancelAnimationFrame(toNumber(timelinePlay.current));
     timelinePlay.current = null;
     start.current = 0;
     return;
@@ -964,17 +937,17 @@ const Battle = () => {
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(
         pokemonCurr.energy,
-        Math.floor(getValueOrDefault(Number, pokemonCurr.pokemonData?.currentStats?.stats?.statsSTA))
+        Math.floor(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statsSTA))
       ),
       pokemonObj: PokemonBattleData.setValue(
         pokemonObj.energy,
-        Math.floor(getValueOrDefault(Number, pokemonObj.pokemonData?.currentStats?.stats?.statsSTA))
+        Math.floor(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statsSTA))
       ),
     });
   };
 
   const overlappingPos = (arr: (DOMRect | undefined)[], pos = 0, sound = false) => {
-    const index = arr.filter((dom) => getValueOrDefault(Number, dom?.left) <= pos).length;
+    const index = arr.filter((dom) => toNumber(dom?.left) <= pos).length;
     if (index >= 0 && index < arr.length) {
       updateTimeline(index, sound);
     }
@@ -999,8 +972,8 @@ const Battle = () => {
     //   }
     // }
     setPlayTimeline({
-      pokemonCurr: PokemonBattleData.setValue(getValueOrDefault(Number, pokeCurrData?.energy), getValueOrDefault(Number, pokeCurrData?.hp)),
-      pokemonObj: PokemonBattleData.setValue(getValueOrDefault(Number, pokeObjData?.energy), getValueOrDefault(Number, pokeObjData?.hp)),
+      pokemonCurr: PokemonBattleData.setValue(toNumber(pokeCurrData?.energy), toNumber(pokeCurrData?.hp)),
+      pokemonObj: PokemonBattleData.setValue(toNumber(pokeObjData?.energy), toNumber(pokeObjData?.hp)),
     });
   };
 
@@ -1008,7 +981,7 @@ const Battle = () => {
     scrollWidth.current = e.currentTarget.scrollLeft;
   };
 
-  const onChangeTimeline = (type: TimelineType, prevWidth: number) => {
+  const onChangeTimeline = (type: TimelineType, prevWidth: number | undefined) => {
     stopTimeLine();
     let elem = document.getElementById('play-line');
     let xCurrent = 0,
@@ -1024,7 +997,7 @@ const Battle = () => {
             arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / prevWidth) * getValueOrDefault(Number, timelineNormal.current?.clientWidth) - 2;
+        transform = (xCurrent / getValueOrDefault(Number, prevWidth)) * toNumber(timelineNormal.current?.clientWidth) - 2;
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${Math.max(0, transform)}px, -50%)`;
@@ -1038,7 +1011,7 @@ const Battle = () => {
             arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / prevWidth) * getValueOrDefault(Number, timelineFit.current?.clientWidth);
+        transform = (xCurrent / getValueOrDefault(Number, prevWidth)) * toNumber(timelineFit.current?.clientWidth);
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
@@ -1065,7 +1038,7 @@ const Battle = () => {
                 {value.power}
               </span>
             </div>
-            <b style={{ fontSize: 12 }}>{getValueOrDefault(Number, value.buffChance) * 100}%</b>
+            <b style={{ fontSize: 12 }}>{toNumber(value.buffChance) * 100}%</b>
           </div>
         ))}
       </div>
@@ -1086,7 +1059,7 @@ const Battle = () => {
 
     const cp = calculateCP(atk, def, sta, level);
 
-    if (cp > toNumber(getValueOrDefault(String, params?.cp))) {
+    if (cp > toNumber(params?.cp)) {
       enqueueSnackbar(`This stats Pokémon CP is greater than ${params.cp}, which is not permitted by the league.`, {
         variant: VariantType.Error,
       });
@@ -1106,18 +1079,18 @@ const Battle = () => {
 
       const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
       const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
-      const statsSTA = calculateStatsBattle(getValueOrDefault(Number, statsBattle.sta), sta, level);
+      const statsSTA = calculateStatsBattle(toNumber(statsBattle.sta), sta, level);
       stats = BattleBaseStats.create({
         IV: StatsBase.setValue(atk, def, sta),
-        CP: getValueOrDefault(Number, cp),
-        level: getValueOrDefault(Number, level),
+        CP: toNumber(cp),
+        level: toNumber(level),
         stats: StatsBaseCalculate.create({ statsATK, statsDEF, statsSTA }),
         statsProds: statsATK * statsDEF * statsSTA,
-        form: getValueOrDefault(String, pokemon.pokemonData?.pokemon?.forme),
-        id: getValueOrDefault(Number, pokemon.pokemonData?.pokemon?.num),
+        form: pokemon.pokemonData?.pokemon?.forme,
+        id: toNumber(pokemon.pokemonData?.pokemon?.num),
         league: '',
         maxCP: 0,
-        name: getValueOrDefault(String, pokemon.pokemonData?.pokemon?.name),
+        name: pokemon.pokemonData?.pokemon?.name,
       });
     }
 
@@ -1202,21 +1175,20 @@ const Battle = () => {
             <h6>
               <b>Stats</b>
             </h6>
-            CP: <b>{Math.floor(getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.CP))}</b> | Level:{' '}
+            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | Level:{' '}
             <b>{pokemon.pokemonData?.currentStats?.level ?? MIN_LEVEL}</b>
             <br />
             IV:{' '}
             <b>
-              {getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.IV?.atk)}/
-              {getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.IV?.def)}/
-              {getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.IV?.sta)}
+              {toNumber(pokemon.pokemonData?.currentStats?.IV?.atk)}/{toNumber(pokemon.pokemonData?.currentStats?.IV?.def)}/
+              {toNumber(pokemon.pokemonData?.currentStats?.IV?.sta)}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
             Attack:{' '}
             <b>
               {Math.floor(
-                getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsATK) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsATK) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.ATK)
               )}
             </b>
@@ -1225,21 +1197,20 @@ const Battle = () => {
             Defense:{' '}
             <b>
               {Math.floor(
-                getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.DEF)
               )}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
-            HP:{' '}
-            <b>{getValueOrDefault(Number, Math.floor(getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsSTA)))}</b>
+            HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statsSTA)))}</b>
             <br />
             Stats Prod:{' '}
             <b>
               {Math.round(
-                getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsATK) *
-                  getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
-                  getValueOrDefault(Number, pokemon.pokemonData?.currentStats?.stats?.statsSTA) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsATK) *
+                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
+                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statsSTA) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.PROD)
               )}
             </b>
@@ -1318,18 +1289,14 @@ const Battle = () => {
               isFind={true}
               title="Fast Move"
               move={pokemon.fMove}
-              isElite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteQuickMoves, pokemon.fMove?.name)}
+              moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
                 isFind={true}
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
-                isElite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMoves, pokemon.cMovePri?.name)}
-                isShadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMovePri?.name)}
-                isPurified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMovePri?.name)}
-                isSpecial={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMovePri?.name)}
-                isUnavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMovePri?.name)}
+                moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMovePri?.name)}
               />
               {findBuff(pokemon.cMovePri)}
             </div>
@@ -1339,11 +1306,7 @@ const Battle = () => {
                   isFind={true}
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
-                  isElite={isIncludeList(pokemon.pokemonData?.pokemon?.eliteCinematicMoves, pokemon.cMoveSec.name)}
-                  isShadow={isIncludeList(pokemon.pokemonData?.pokemon?.shadowMoves, pokemon.cMoveSec.name)}
-                  isPurified={isIncludeList(pokemon.pokemonData?.pokemon?.purifiedMoves, pokemon.cMoveSec.name)}
-                  isSpecial={isIncludeList(pokemon.pokemonData?.pokemon?.specialMoves, pokemon.cMoveSec.name)}
-                  isUnavailable={!isIncludeList(getAllMoves(pokemon.pokemonData?.pokemon), pokemon.cMoveSec.name)}
+                  moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMoveSec.name)}
                 />
                 {findBuff(pokemon.cMoveSec)}
               </div>
@@ -1471,7 +1434,7 @@ const Battle = () => {
                     type={pokemon.cMovePri?.type}
                     size={80}
                     maxEnergy={MAX_ENERGY(dataStore.options)}
-                    moveEnergy={getValueOrDefault(Number, Math.abs(getValueOrDefault(Number, pokemon.cMovePri?.pvpEnergy)))}
+                    moveEnergy={toNumber(Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy)))}
                     energy={getValueOrDefault(
                       Number,
                       (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type]?.energy,
@@ -1501,7 +1464,7 @@ const Battle = () => {
                       text="HP"
                       height={15}
                       hp={Math.floor((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type].hp)}
-                      maxHp={Math.floor(getValueOrDefault(Number, pokemon.pokemonData.currentStats?.stats?.statsSTA))}
+                      maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statsSTA))}
                     />
                   </Fragment>
                 )}
@@ -1648,10 +1611,7 @@ const Battle = () => {
                     onChange={(e) =>
                       onChangeTimeline(
                         toNumber(e.target.value),
-                        getValueOrDefault(
-                          Number,
-                          timelineType === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
-                        )
+                        timelineType === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
                       )
                     }
                   >

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, getDmgMultiplyBonus, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -19,11 +19,10 @@ import { IPokemonQueryMove, IPokemonQueryRankMove, PokemonQueryRankMove } from '
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isNotEmpty, isUndefined, toNumber } from '../../../util/extension';
 import { EqualMode } from '../../../util/enums/string.enum';
 import { TableType, TypeSorted } from './enums/table-type.enum';
-import { MoveType, TypeAction } from '../../../enums/type.enum';
-import { PokemonType } from '../../../pages/Tools/BattleDamage/enums/damage.enum';
+import { MoveType, PokemonType, TypeAction } from '../../../enums/type.enum';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -113,7 +112,7 @@ const TableMove = (props: ITableMoveComponent) => {
   const findMove = useCallback(() => {
     const combatPoke = data.pokemon.filter((item) =>
       props.form?.id || props.form?.pokemonType === PokemonType.Shadow || props.form?.pokemonType === PokemonType.Purified
-        ? item.num === getValueOrDefault(Number, props.data?.num)
+        ? item.num === toNumber(props.data?.num)
         : isEqual(
             item.fullName,
             (typeof props.form === 'string' ? props.form : props.form?.name)?.replaceAll('-', '_'),
@@ -128,9 +127,7 @@ const TableMove = (props: ITableMoveComponent) => {
         filterMoveType(combatPoke?.at(0));
         return setMove(setRankMove(combatPoke?.at(0)));
       } else if (!isNotEmpty(combatPoke) && props.id) {
-        const combatPoke = data.pokemon.filter(
-          (item) => item.num === getValueOrDefault(Number, props.id) && isEqual(item.baseSpecies, item.name)
-        );
+        const combatPoke = data.pokemon.filter((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name));
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
       }
@@ -182,9 +179,9 @@ const TableMove = (props: ITableMoveComponent) => {
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-              {value.fMove.isElite && (
-                <span className="type-icon-small ic elite-ic">
-                  <span>{MoveType.Elite}</span>
+              {value.fMove.moveType !== MoveType.None && (
+                <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.fMove.moveType)?.toLowerCase()}-ic`)}>
+                  {getKeyEnum(MoveType, value.fMove.moveType)}
                 </span>
               )}
             </span>
@@ -197,24 +194,9 @@ const TableMove = (props: ITableMoveComponent) => {
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-              {value.cMove.isElite && (
-                <span className="type-icon-small ic elite-ic">
-                  <span>{MoveType.Elite}</span>
-                </span>
-              )}
-              {value.cMove.isShadow && (
-                <span className="type-icon-small ic shadow-ic">
-                  <span>{MoveType.Shadow}</span>
-                </span>
-              )}
-              {value.cMove.isPurified && (
-                <span className="type-icon-small ic purified-ic">
-                  <span>{MoveType.Purified}</span>
-                </span>
-              )}
-              {value.cMove.isSpecial && (
-                <span className="type-icon-small ic special-ic">
-                  <span>{MoveType.Special}</span>
+              {value.cMove.moveType !== MoveType.None && (
+                <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.cMove.moveType)?.toLowerCase()}-ic`)}>
+                  {getKeyEnum(MoveType, value.cMove.moveType)}
                 </span>
               )}
             </span>
@@ -239,24 +221,9 @@ const TableMove = (props: ITableMoveComponent) => {
                 </div>
                 <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-                  {value.isElite && (
-                    <span className="type-icon-small ic elite-ic">
-                      <span>{MoveType.Elite}</span>
-                    </span>
-                  )}
-                  {value.isShadow && (
-                    <span className="type-icon-small ic shadow-ic">
-                      <span>{MoveType.Shadow}</span>
-                    </span>
-                  )}
-                  {value.isPurified && (
-                    <span className="type-icon-small ic purified-ic">
-                      <span>{MoveType.Purified}</span>
-                    </span>
-                  )}
-                  {value.isSpecial && (
-                    <span className="type-icon-small ic special-ic">
-                      <span>{MoveType.Special}</span>
+                  {value.moveType !== MoveType.None && (
+                    <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
+                      {getKeyEnum(MoveType, value.moveType)}
                     </span>
                   )}
                 </span>
@@ -382,9 +349,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 {move.data
                   .sort((a, b) => sortFunc(a, b, TableType.Offensive))
                   .map((value, index) => (
-                    <Fragment key={index}>
-                      {renderBestMovesetTable(value, getValueOrDefault(Number, move.maxOff), TableType.Offensive)}
-                    </Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, toNumber(move.maxOff), TableType.Offensive)}</Fragment>
                   ))}
               </tbody>
             </table>
@@ -430,9 +395,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 {move.data
                   .sort((a, b) => sortFunc(a, b, TableType.Defensive))
                   .map((value, index) => (
-                    <Fragment key={index}>
-                      {renderBestMovesetTable(value, getValueOrDefault(Number, move.maxDef), TableType.Defensive)}
-                    </Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, toNumber(move.maxDef), TableType.Defensive)}</Fragment>
                   ))}
               </tbody>
             </table>

@@ -4,9 +4,10 @@ import { getOption } from '../core/options';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
 import { DynamicObj, getPropertyName } from './extension';
 import { LeagueType } from '../core/enums/league.enum';
-import { ChargeAbility, PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
+import { ChargeAbility } from '../pages/Tools/BattleDamage/enums/damage.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
+import { PokemonType } from '../enums/type.enum';
 
 // KeyCode
 export const KEY_ENTER = 13;
@@ -170,7 +171,7 @@ export const MULTIPLY_LEVEL_FRIENDSHIP = (
 
 export const MULTIPLY_THROW_CHARGE = (
   options: IOptions | undefined,
-  type: ChargeAbility,
+  type = ChargeAbility.NORMAL,
   settings = [
     getPropertyName(options, (o) => o.throwCharge),
     getPropertyName(options?.throwCharge, (o) =>

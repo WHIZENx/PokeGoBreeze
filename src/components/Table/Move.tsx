@@ -2,11 +2,11 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
 import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
-import { TypeMove } from '../../enums/type.enum';
+import { MoveType, TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual } from '../../util/extension';
+import { combineClasses, isEqual } from '../../util/extension';
 
 const Move = (props: IMoveComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
@@ -30,28 +30,28 @@ const Move = (props: IMoveComponent) => {
         const simpleMove: ISelectMoveModel[] = [];
         if (!props.type || isEqual(props.type, TypeMove.FAST)) {
           result.quickMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.None));
           });
           result.eliteQuickMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Elite));
           });
           setCountFM(simpleMove.length);
         }
         if (!props.type || isEqual(props.type, TypeMove.CHARGE)) {
           result.cinematicMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.None));
           });
           result.eliteCinematicMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Elite));
           });
           result.shadowMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Shadow));
           });
           result.purifiedMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Purified));
           });
           result.specialMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Special));
           });
         }
         return setResultMove(simpleMove);
@@ -91,12 +91,9 @@ const Move = (props: IMoveComponent) => {
           <div className="card-select">
             {currentMove ? (
               <CardType
-                value={getValueOrDefault(String, findType(currentMove.name))}
+                value={findType(currentMove.name)}
                 name={splitAndCapitalize(currentMove.name, '_', ' ')}
-                isElite={currentMove.isElite}
-                isShadow={currentMove.isShadow}
-                isPurified={currentMove.isPurified}
-                isSpecial={currentMove.isSpecial}
+                moveType={currentMove.moveType}
               />
             ) : (
               <CardType />
@@ -129,12 +126,9 @@ const Move = (props: IMoveComponent) => {
                             onMouseDown={() => changeMove(value)}
                           >
                             <CardType
-                              value={getValueOrDefault(String, findType(value.name))}
+                              value={findType(value.name)}
                               name={splitAndCapitalize(value.name, '_', ' ')}
-                              isElite={value.isElite}
-                              isShadow={value.isShadow}
-                              isPurified={value.isPurified}
-                              isSpecial={value.isSpecial}
+                              moveType={value.moveType}
                             />
                           </li>
                         </Fragment>

@@ -1,4 +1,6 @@
+import { PokemonType } from '../../enums/type.enum';
 import { DynamicObj } from '../../util/extension';
+import { getPokemonType } from '../../util/utils';
 import { IPokemonPermission } from './options.model';
 
 interface ILeaguePVP {
@@ -66,6 +68,7 @@ export interface IPokemonRewardSetLeague {
   name: string;
   form: string;
   rank?: number;
+  pokemonType: PokemonType;
 }
 
 export interface IRankRewardLeague {
@@ -186,9 +189,11 @@ export class PokemonRewardSetLeague implements IPokemonRewardSetLeague {
   id = 0;
   name = '';
   form = '';
+  pokemonType = PokemonType.Normal;
 
   static create(value: IPokemonRewardSetLeague) {
     const obj = new PokemonRewardSetLeague();
+    obj.pokemonType = getPokemonType(obj.form);
     Object.assign(obj, value);
     return obj;
   }

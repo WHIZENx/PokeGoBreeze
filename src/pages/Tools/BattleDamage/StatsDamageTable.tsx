@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { LevelSlider, TypeRadioGroup, capitalize, getDmgMultiplyBonus } from '../../../util/utils';
+import { LevelSlider, TypeRadioGroup, getDmgMultiplyBonus, getKeyEnum } from '../../../util/utils';
 import { calculateStatsBattle } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
@@ -13,14 +13,14 @@ import { useSelector } from 'react-redux';
 import { MAX_IV, MAX_LEVEL, MIN_LEVEL } from '../../../util/constants';
 import { StoreState } from '../../../store/models/state.model';
 import { IStatsTableComponent } from '../../models/page.model';
-import { PokemonType } from './enums/damage.enum';
-import { TypeAction } from '../../../enums/type.enum';
+import { PokemonType, TypeAction } from '../../../enums/type.enum';
+import { toNumber } from '../../../util/extension';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
-  const [currStatType, setCurrStatType] = useState(PokemonType.None);
+  const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
 
   const onHandleLevel = useCallback(
     (v: number) => {
@@ -87,16 +87,20 @@ const StatsTable = (props: IStatsTableComponent) => {
             row={true}
             aria-labelledby="row-types-group-label"
             name="row-types-group"
-            defaultValue={PokemonType.None}
-            onChange={(e) => onHandleType(e.target.value as PokemonType)}
+            defaultValue={PokemonType.Normal}
+            onChange={(e) => onHandleType(toNumber(e.target.value))}
           >
-            <FormControlLabel value={PokemonType.None} control={<Radio />} label={<span>{capitalize(PokemonType.None)}</span>} />
+            <FormControlLabel
+              value={PokemonType.Normal}
+              control={<Radio />}
+              label={<span>{getKeyEnum(PokemonType, PokemonType.Normal)}</span>}
+            />
             <FormControlLabel
               value={PokemonType.Buddy}
               control={<Radio />}
               label={
                 <span>
-                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {capitalize(PokemonType.Buddy)}
+                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {getKeyEnum(PokemonType, PokemonType.Buddy)}
                 </span>
               }
             />
@@ -105,7 +109,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(PokemonType.Shadow)}
+                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyEnum(PokemonType, PokemonType.Shadow)}
                 </span>
               }
             />

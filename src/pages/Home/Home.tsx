@@ -4,14 +4,11 @@ import { useSelector } from 'react-redux';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { splitAndCapitalize } from '../../util/utils';
+import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
 import {
   DEFAULT_TYPES,
-  FORM_GMAX,
-  FORM_MEGA,
-  FORM_PRIMAL,
   genList,
   regionList,
   TRANSITION_TIME,
@@ -37,9 +34,9 @@ import {
 import { StoreState, StatsState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { TypeTheme } from '../../enums/type.enum';
+import { PokemonType, TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
 
@@ -177,9 +174,9 @@ const Home = () => {
                 : isInclude(splitAndCapitalize(item.name, '-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
                   isInclude(item.id, searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = isMega ? isInclude(item.forme, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) : true;
-            const boolGmax = isGmax ? isInclude(item.forme, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive) : true;
-            const boolPrimal = isPrimal ? isInclude(item.forme, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive) : true;
+            const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
+            const boolGmax = isGmax ? item.pokemonType === PokemonType.GMax : true;
+            const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
             const boolLegend = isLegendary ? item.class === TYPE_LEGENDARY : true;
             const boolMythic = isMythic ? item.class === TYPE_MYTHIC : true;
             const boolUltra = isUltraBeast ? item.class === TYPE_ULTRA_BEAST : true;
@@ -426,7 +423,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label="Mega"
+                    label={getKeyEnum(PokemonType, PokemonType.Mega)}
                   />
                   <FormControlLabel
                     control={
@@ -442,7 +439,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label="Gmax"
+                    label={getKeyEnum(PokemonType, PokemonType.GMax)}
                   />
                   <FormControlLabel
                     control={
@@ -458,7 +455,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label="Primal"
+                    label={getKeyEnum(PokemonType, PokemonType.Primal)}
                   />
                   <FormControlLabel
                     control={
@@ -531,7 +528,7 @@ const Home = () => {
               atkMaxStats={stats?.attack.maxStats}
               defMaxStats={stats?.defense.maxStats}
               staMaxStats={stats?.stamina.maxStats}
-              icon={getValueOrDefault(String, icon)}
+              icon={icon}
               releasedGO={row.releasedGO}
             />
           ))}

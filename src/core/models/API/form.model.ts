@@ -1,6 +1,7 @@
-import { PokemonType } from '../../../pages/Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../../../enums/type.enum';
 import { FORM_NORMAL } from '../../../util/constants';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
+import { getPokemonType } from '../../../util/utils';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 
@@ -107,14 +108,14 @@ interface SlotType {
 }
 
 export interface IForm {
-  formName: string;
+  formName: string | null | undefined;
   id: number | undefined;
   isDefault: boolean;
   isMega: boolean;
-  pokemonType: PokemonType;
+  pokemonType?: PokemonType;
   name: string;
-  version: string;
-  types: string[];
+  version: string | null | undefined;
+  types: string[] | undefined;
   sprites?: IPokemonSprit;
 }
 
@@ -132,11 +133,11 @@ export class PokemonFormModify implements IPokemonFormModify {
   name = '';
   form = new Form();
 
-  static setForm(defaultId: number, defaultName: string, name: string, form: IForm) {
+  static setForm(defaultId: number, defaultName: string, name: string | undefined, form: Form) {
     const obj = new PokemonFormModify();
     obj.defaultId = defaultId;
     obj.defaultName = defaultName;
-    obj.name = name;
+    obj.name = getValueOrDefault(String, name);
     obj.form = form;
     return obj;
   }
@@ -145,7 +146,7 @@ export class PokemonFormModify implements IPokemonFormModify {
 export interface PokemonDataForm {
   stats: IStatsPokemon;
   num: number;
-  types: string[];
+  types: string[] | undefined;
 }
 
 export class PokemonFormModifyModel implements IPokemonFormModify {
@@ -158,27 +159,27 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   constructor(
     id: number,
     defaultName: string,
-    name: string,
-    formName: string,
-    fullFormName: string,
-    version: string,
+    name: string | null | undefined,
+    formName: string | null | undefined,
+    fullFormName: string | null | undefined,
+    version: string | null | undefined,
     types: string[],
     sprites: IPokemonSprit | undefined,
     formId: number,
-    pokemonType = PokemonType.None,
+    pokemonType = PokemonType.Normal,
     isDefault = true,
     isMega = false
   ) {
     this.defaultId = id;
     this.defaultName = defaultName;
-    this.name = name;
+    this.name = getValueOrDefault(String, name);
     this.form = Form.create({
       formName,
       id: formId,
       isDefault,
       isMega,
       pokemonType,
-      name: fullFormName,
+      name: getValueOrDefault(String, fullFormName),
       version,
       types,
       sprites,
@@ -187,14 +188,14 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
 }
 
 export class Form implements IForm {
-  formName = '';
+  formName: string | null | undefined = '';
   id: number | undefined;
   isDefault = false;
   isMega = false;
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
   name = '';
-  version = '';
-  types: string[] = [];
+  version: string | null | undefined = '';
+  types: string[] | undefined = [];
   sprites?: IPokemonSprit;
 
   constructor(data?: IPokemonFormDetail) {
@@ -207,11 +208,13 @@ export class Form implements IForm {
       this.version = data.version;
       this.types = data.types;
       this.sprites = data.sprites;
+      this.pokemonType = getPokemonType(data.formName);
     }
   }
 
   static create(value: IForm) {
     const obj = new Form();
+    obj.pokemonType = getPokemonType(value.formName);
     Object.assign(obj, value);
     return obj;
   }

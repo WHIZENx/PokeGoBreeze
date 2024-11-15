@@ -8,7 +8,8 @@ import './CardPokemonInfo.scss';
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
 import { ICardPokemonInfoComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault } from '../../util/extension';
+import { combineClasses, toNumber } from '../../util/extension';
+import { PokemonType } from '../../enums/type.enum';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
@@ -50,7 +51,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   return (
     <li
       className="position-relative pokemon-container border-types h-100"
-      style={{ backgroundImage: computeBgType(props.types, false, false, 0.3) }}
+      style={{ backgroundImage: computeBgType(props.types, PokemonType.Normal, 0.3) }}
     >
       {!props.releasedGO && (
         <div className="no-released-pokemon">
@@ -97,7 +98,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3 }}
               height={10}
               value={props.pokemonStat.atk}
-              maxValue={getValueOrDefault(Number, props.atkMaxStats)}
+              maxValue={toNumber(props.atkMaxStats)}
               bgColor="#ececec"
               color="var(--bs-danger)"
             />
@@ -108,7 +109,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
               value={props.pokemonStat.def}
-              maxValue={getValueOrDefault(Number, props.defMaxStats)}
+              maxValue={toNumber(props.defMaxStats)}
               bgColor="#ececec"
               color="var(--bs-success)"
             />
@@ -119,7 +120,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
               value={props.pokemonStat.sta}
-              maxValue={getValueOrDefault(Number, props.staMaxStats)}
+              maxValue={toNumber(props.staMaxStats)}
               bgColor="#ececec"
               color="var(--bs-info)"
             />

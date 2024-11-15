@@ -14,7 +14,7 @@ import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault, isNotEmpty } from '../../../util/extension';
+import { isNotEmpty } from '../../../util/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
@@ -35,9 +35,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       femalePercent: detail?.genderRatio.F,
       genderlessPercent: Number(detail?.genderRatio.M === 0 && detail?.genderRatio.F === 0),
     };
-    return [...new Set(model?.image.map((item) => item.form))].map(
-      (value) => new PokemonModelComponent(getValueOrDefault(String, value), getValueOrDefault(Array, model?.image))
-    );
+    return [...new Set(model?.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model?.image));
   };
 
   useEffect(() => {

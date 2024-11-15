@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios
 import { APIUrl } from './constants';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
-import { isEqual, isInclude } from '../util/extension';
+import { getValueOrDefault, isEqual, isInclude } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
 
@@ -41,11 +41,11 @@ class APIService {
     return this.axios;
   }
 
-  getFetchUrl<T>(url: string, options?: AxiosRequestConfig<any> | undefined) {
-    return this.axios.get<T>(url, options);
+  getFetchUrl<T>(url: string | null | undefined, options?: AxiosRequestConfig<any> | undefined) {
+    return this.axios.get<T>(getValueOrDefault(String, url), options);
   }
 
-  getPokeSpices(value: string, options?: AxiosRequestConfig<any> | undefined) {
+  getPokeSpices(value: number, options?: AxiosRequestConfig<any> | undefined) {
     return this.getFetchUrl<Species>(this.getPokeAPI('pokemon-species', value), options);
   }
 
@@ -53,7 +53,7 @@ class APIService {
     return this.getFetchUrl(`${APIUrl.POGO_API_URL}${path}`, options);
   }
 
-  getPokeAPI(path: string, value: string) {
+  getPokeAPI(path: string, value: number) {
     return `${APIUrl.POKE_API_URL}${path}/${value}`;
   }
 
@@ -110,8 +110,8 @@ class APIService {
     return `${APIUrl.POGO_ASSET_API_URL}Pokedex/ic_shiny.png`;
   }
 
-  getTypeSprite(type: string) {
-    if (isEqual(type, 'unknown', EqualMode.IgnoreCaseSensitive)) {
+  getTypeSprite(type: string | undefined) {
+    if (!type || isEqual(type, 'unknown', EqualMode.IgnoreCaseSensitive)) {
       return this.getPokeSprite(0);
     }
     return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
@@ -167,7 +167,7 @@ class APIService {
     return this.getPokeFullAsset(0);
   }
 
-  getPokeIconSprite(name: string, noFix = false) {
+  getPokeIconSprite(name: string | null | undefined, noFix = false) {
     if (!noFix) {
       if (isInclude(name, 'necrozma-dawn')) {
         name += '-wings';
@@ -182,7 +182,7 @@ class APIService {
       } else if (isInclude(name, '-antique')) {
         name = 'unknown-pokemon';
       }
-      name = name
+      name = getValueOrDefault(String, name)
         .replace('-incarnate', '')
         .replace(`-${FORM_NORMAL.toLowerCase()}`, '')
         .replace('-plant', '')
@@ -280,8 +280,8 @@ class APIService {
     return `${APIUrl.POGO_SOUND_API_URL}Pokemon Cries/${path}.wav`;
   }
 
-  getSoundMove(sound: string) {
-    return `${APIUrl.POGO_SOUND_API_URL}Pokemon Moves/${sound}.wav`;
+  getSoundMove(sound: string | undefined) {
+    return `${APIUrl.POGO_SOUND_API_URL}Pokemon Moves/${getValueOrDefault(String, sound)}.wav`;
   }
 
   getAssetPokeGo(image?: string) {
@@ -298,16 +298,19 @@ class APIService {
     return `${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}Stickers/${sticker}`;
   }
 
-  getRankingFile(serie: string, cp: number, type: string) {
-    return `${APIUrl.POKE_PV_API_URL}rankings/${serie}/${type.toLowerCase()}/rankings-${cp}.json`;
+  getRankingFile(serie: string | undefined, cp: number, type: string | undefined) {
+    return `${APIUrl.POKE_PV_API_URL}rankings/${getValueOrDefault(String, serie)}/${getValueOrDefault(
+      String,
+      type
+    ).toLowerCase()}/rankings-${cp}.json`;
   }
 
-  getTeamFile(type: string, serie: string, cp: number) {
-    return `${APIUrl.POKE_PV_API_URL}training/${type}/${serie}/${cp}.json`;
+  getTeamFile(type: string, serie: string | undefined, cp: number) {
+    return `${APIUrl.POKE_PV_API_URL}training/${type}/${getValueOrDefault(String, serie)}/${cp}.json`;
   }
 
-  getTypeIcon(type: string) {
-    return `${APIUrl.POKE_TYPES_API_URL}${type.toLowerCase()}.png`;
+  getTypeIcon(type: string | null | undefined) {
+    return `${APIUrl.POKE_TYPES_API_URL}${getValueOrDefault(String, type).toLowerCase()}.png`;
   }
 
   getPokemonAsset(type: string, gen: number | string, name: string | undefined, file: string) {

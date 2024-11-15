@@ -100,11 +100,10 @@ const FindBattle = () => {
         arr.push({
           ...curr,
           form,
-          id: getValueOrDefault(Number, curr?.num),
+          id: toNumber(curr?.num),
           name: getValueOrDefault(String, curr?.pokemonId),
           evoList: getValueOrDefault(Array, curr?.evoList),
           tempEvo: getValueOrDefault(Array, curr?.tempEvo),
-          canPurified: getValueOrDefault(Boolean, curr?.isShadow),
         });
       }
       currEvoChain(
@@ -194,9 +193,7 @@ const FindBattle = () => {
           if (value.id !== id) {
             evoBaseStats.push(
               BattleBaseStats.create({
-                ...Object.values(value.battleLeague).reduce((a, b) =>
-                  !a ? b : !b ? a : getValueOrDefault(Number, a.ratio) > getValueOrDefault(Number, b.ratio) ? a : b
-                ),
+                ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b)),
                 id: value.id,
                 name: value.name,
                 form: value.form,
@@ -206,8 +203,8 @@ const FindBattle = () => {
                     ? b
                     : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
                     ? a
-                    : getValueOrDefault(Number, (value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
-                      getValueOrDefault(Number, (value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
+                    : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
+                      toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
                     ? a
                     : b
                 ),
@@ -215,9 +212,7 @@ const FindBattle = () => {
             );
           } else {
             currBastStats = BattleBaseStats.create({
-              ...Object.values(value.battleLeague).reduce((a, b) =>
-                !a ? b : !b ? a : getValueOrDefault(Number, a.ratio) > getValueOrDefault(Number, b.ratio) ? a : b
-              ),
+              ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b)),
               id: value.id,
               name: value.name,
               form: value.form,
@@ -227,8 +222,8 @@ const FindBattle = () => {
                   ? b
                   : !(value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]
                   ? a
-                  : getValueOrDefault(Number, (value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
-                    getValueOrDefault(Number, (value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
+                  : toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[a]?.ratio) >
+                    toNumber((value.battleLeague as unknown as DynamicObj<IBattleBaseStats>)[b]?.ratio)
                   ? a
                   : b
               ),
@@ -237,28 +232,24 @@ const FindBattle = () => {
         });
       });
       if (currBastStats) {
-        let bestLeague = evoBaseStats.filter(
-          (item) => getValueOrDefault(Number, item.ratio) > getValueOrDefault(Number, currBastStats?.ratio)
-        );
+        let bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > toNumber(currBastStats?.ratio));
         bestLeague = bestLeague.filter(
           (item) =>
-            (item.league === LeagueType.Master && getValueOrDefault(Number, item.CP) > BattleLeagueCPType.Ultra) ||
-            (item.league === LeagueType.Ultra && getValueOrDefault(Number, item.CP) > BattleLeagueCPType.Great) ||
-            (item.league === LeagueType.Great && getValueOrDefault(Number, item.CP) > BattleLeagueCPType.Little)
+            (item.league === LeagueType.Master && toNumber(item.CP) > BattleLeagueCPType.Ultra) ||
+            (item.league === LeagueType.Ultra && toNumber(item.CP) > BattleLeagueCPType.Great) ||
+            (item.league === LeagueType.Great && toNumber(item.CP) > BattleLeagueCPType.Little)
         );
         if (!isNotEmpty(bestLeague)) {
-          bestLeague = evoBaseStats.filter(
-            (item) => getValueOrDefault(Number, item.ratio) > getValueOrDefault(Number, currBastStats?.ratio)
-          );
+          bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > toNumber(currBastStats?.ratio));
         }
         if (!isNotEmpty(bestLeague)) {
           dispatch(SpinnerActions.HideSpinner.create());
           return setBestInLeague([currBastStats]);
         }
-        if (getValueOrDefault(Number, currBastStats.ratio) >= 90) {
+        if (toNumber(currBastStats.ratio) >= 90) {
           bestLeague.push(currBastStats);
         }
-        setBestInLeague(bestLeague.sort((a, b) => getValueOrDefault(Number, a.maxCP) - getValueOrDefault(Number, b.maxCP)));
+        setBestInLeague(bestLeague.sort((a, b) => toNumber(a.maxCP) - toNumber(b.maxCP)));
         dispatch(SpinnerActions.HideSpinner.create());
       }
     },
@@ -293,8 +284,7 @@ const FindBattle = () => {
   );
 
   const getImageList = (id: number) => {
-    const isForm = form?.form.formName ? form.form.formName.replaceAll('-', '_').toUpperCase() : FORM_NORMAL;
-    let img = dataStore.assets.find((item) => item.id === id)?.image.find((item) => isInclude(item.form, isForm ?? FORM_NORMAL));
+    let img = dataStore.assets.find((item) => item.id === id)?.image.find((item) => item.pokemonType === form?.form.pokemonType);
     if (!img) {
       img = dataStore.assets.find((item) => item.id === id)?.image.at(0);
     }
@@ -462,7 +452,7 @@ const FindBattle = () => {
                         </b>
                       </span>
                     </div>
-                    <div className={combineClasses('border-best-poke', getTextColorRatio(getValueOrDefault(Number, value.ratio)))}>
+                    <div className={combineClasses('border-best-poke', getTextColorRatio(toNumber(value.ratio)))}>
                       <div className="best-poke-desc border-best-poke">
                         <img
                           alt="pokemon-model"
@@ -552,7 +542,7 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.little.ratio))}
+                                          className={getTextColorRatio(toNumber(item.battleLeague.little.ratio))}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.little.ratio, 2)}</b>
                                         </span>
@@ -561,8 +551,7 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center" style={{ marginRight: 5 }}>
-                                            {getValueOrDefault(Number, item.battleLeague.little.resultBetweenCandy) +
-                                              getCandyEvo(value, item.id)}
+                                            {toNumber(item.battleLeague.little.resultBetweenCandy) + getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
@@ -607,7 +596,7 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.great.ratio))}
+                                          className={getTextColorRatio(toNumber(item.battleLeague.great.ratio))}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.great.ratio, 2)}</b>
                                         </span>
@@ -616,8 +605,7 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {getValueOrDefault(Number, item.battleLeague.great.resultBetweenCandy) +
-                                              getCandyEvo(value, item.id)}
+                                            {toNumber(item.battleLeague.great.resultBetweenCandy) + getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
@@ -662,7 +650,7 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.ultra.ratio))}
+                                          className={getTextColorRatio(toNumber(item.battleLeague.ultra.ratio))}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.ultra.ratio, 2)}</b>
                                         </span>
@@ -671,8 +659,7 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {getValueOrDefault(Number, item.battleLeague.ultra.resultBetweenCandy) +
-                                              getCandyEvo(value, item.id)}
+                                            {toNumber(item.battleLeague.ultra.resultBetweenCandy) + getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />
@@ -717,7 +704,7 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(getValueOrDefault(Number, item.battleLeague.master.ratio))}
+                                          className={getTextColorRatio(toNumber(item.battleLeague.master.ratio))}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.master.ratio, 2)}</b>
                                         </span>
@@ -726,8 +713,7 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {getValueOrDefault(Number, item.battleLeague.master.resultBetweenCandy) +
-                                              getCandyEvo(value, item.id)}
+                                            {toNumber(item.battleLeague.master.resultBetweenCandy) + getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
                                           </span>
                                           <CandyXL id={id} />

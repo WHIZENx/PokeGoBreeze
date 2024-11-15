@@ -112,7 +112,7 @@ function App() {
 
 export default function Main() {
   const [stateMode] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.LIGHT);
-  const [mode, setMode] = useState(stateMode ?? TypeTheme.LIGHT);
+  const [mode, setMode] = useState(stateMode);
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {

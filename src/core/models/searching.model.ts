@@ -8,7 +8,7 @@ export interface SearchingOptionsModel {
 export interface IToolSearching {
   id: number;
   name?: string;
-  form?: string;
+  form?: string | null;
   fullName?: string;
   timestamp: Date;
   obj?: ISearchingModel;
@@ -17,14 +17,16 @@ export interface IToolSearching {
 export class ToolSearching implements IToolSearching {
   id = 0;
   name?: string;
-  form?: string;
+  form?: string | null;
   fullName?: string;
   timestamp = new Date();
   obj?: ISearchingModel;
 
-  static create(value: IToolSearching) {
+  static create(value: IToolSearching | null) {
     const obj = new ToolSearching();
-    Object.assign(obj, value);
+    if (value) {
+      Object.assign(obj, value);
+    }
     return obj;
   }
 }
