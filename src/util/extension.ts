@@ -63,6 +63,9 @@ export const padding = (num: number, plusLength: number, mode = PaddingMode.End,
   if (mode === PaddingMode.Start) {
     result = result.padStart(plusLength + (isInclude(result, '.') ? 1 + toNumber(point?.length) : 0), fillString);
   } else if (mode === PaddingMode.End) {
+    if (!isInclude(result, '.')) {
+      result += '.';
+    }
     result = result.padEnd(plusLength + (isInclude(result, '.') ? 1 + toNumber(integer?.length) : 0), fillString);
   }
   return result;

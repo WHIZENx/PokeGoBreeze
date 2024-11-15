@@ -62,7 +62,11 @@ export const getOption = <T>(options: any, args: string[], defaultValue?: T): T 
   }
 
   args.forEach((arg) => {
-    options = options[arg];
+    try {
+      options = options[arg];
+    } catch {
+      return defaultValue;
+    }
   });
   return options || defaultValue;
 };

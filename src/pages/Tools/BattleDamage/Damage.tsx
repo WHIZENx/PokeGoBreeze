@@ -25,7 +25,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, padding, toNumber } from '../../../util/extension';
 import { ChargeAbility } from './enums/damage.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 
@@ -337,7 +337,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{toFloatWithPadding(MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.fLevel), 2)}
+                      x{padding(MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.fLevel), 2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
