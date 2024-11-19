@@ -45,8 +45,8 @@ const Leagues = () => {
   const [setting, setSetting] = useState<SettingLeague>();
   const [showData, setShowData] = useState<LeagueData>();
 
-  const getAssetPokeGo = (id: number | undefined, formType: PokemonType) => {
-    const asset = queryAssetForm(dataStore.assets, id, formType);
+  const getAssetPokeGo = (id: number | undefined, formName: string) => {
+    const asset = queryAssetForm(dataStore.assets, id, formName);
     if (asset) {
       return APIService.getPokemonModel(asset.default);
     } else {
@@ -248,7 +248,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.pokemonType)}
+                            src={getAssetPokeGo(item.id, item.form)}
                           />
                         </span>
                       </div>
@@ -278,7 +278,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.pokemonType)}
+                            src={getAssetPokeGo(item.id, item.form)}
                           />
                         </span>
                       </div>
@@ -698,7 +698,7 @@ const Leagues = () => {
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="img-pokemon"
-                        src={getAssetPokeGo(item.id, item.pokemonType)}
+                        src={getAssetPokeGo(item.id, item.form)}
                       />
                     </span>
                   </div>
@@ -725,7 +725,7 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.pokemonType)}
+                            src={getAssetPokeGo(item.id, item.form)}
                           />
                         </span>
                       </div>

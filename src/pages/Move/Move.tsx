@@ -15,7 +15,7 @@ import './Move.scss';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { FormControlLabel, Switch } from '@mui/material';
+import { CircularProgress, FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import { BuffType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
@@ -541,6 +541,12 @@ const Move = (props: IMovePage) => {
                     striped={true}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="35vh"
+                    progressPending={!isNotEmpty(topList)}
+                    progressComponent={
+                      <div style={{ margin: 10 }}>
+                        <CircularProgress />
+                      </div>
+                    }
                   />
                 </td>
               </tr>

@@ -135,8 +135,8 @@ const Counter = (props: ICounterComponent) => {
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data.assets, row.pokemonId, row.pokemonType)
-                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, row.pokemonType))
+                  findAssetForm(data.assets, row.pokemonId, row.pokemonForme)
+                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, row.pokemonForme))
                     : APIService.getPokeFullSprite(row.pokemonId)
                 }
                 onError={(e) => {

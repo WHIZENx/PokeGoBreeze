@@ -108,7 +108,7 @@ export const Body = (
     const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
     const pokemon = pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
-    const form = findAssetForm(assets, pokemon?.num, pokemon?.pokemonType);
+    const form = findAssetForm(assets, pokemon?.num, pokemon?.forme);
 
     return (
       <Link

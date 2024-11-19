@@ -2,6 +2,7 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import { PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
+import { FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
@@ -136,16 +137,16 @@ export const computeBgType = (
   return `linear-gradient(to bottom right, ${priColor}, ${secColor ?? priColor})`;
 };
 
-export const queryAssetForm = (assets: IAsset[], id: number | undefined, formType: PokemonType = PokemonType.Normal) => {
+export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets || formType === PokemonType.GMax) {
+  if (!pokemonAssets || isEqual(formName, PokemonType.GMax, EqualMode.IgnoreCaseSensitive)) {
     return;
   }
-  const asset = pokemonAssets.image.find((img) => img.pokemonType === formType);
+  const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
   if (asset) {
     return asset;
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {
-    const formNormal = pokemonAssets.image.find((img) => img.pokemonType === PokemonType.Normal);
+    const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
       return pokemonAssets.image[0];
     }
@@ -154,16 +155,16 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formTyp
   return;
 };
 
-export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formType: PokemonType = PokemonType.Normal) => {
-  const form = queryAssetForm(pokemonAssets, id, formType);
+export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
+  const form = queryAssetForm(pokemonAssets, id, formName);
   if (form) {
     return form.default;
   }
   return form;
 };
 
-export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formType: PokemonType = PokemonType.Normal) => {
-  const form = queryAssetForm(pokemonAssets, id, formType);
+export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formName: string | null = FORM_NORMAL) => {
+  const form = queryAssetForm(pokemonAssets, id, formName);
   if (form) {
     return form.shiny;
   }

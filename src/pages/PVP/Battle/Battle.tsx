@@ -703,7 +703,7 @@ const Battle = () => {
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.pokemonType);
+            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.forme);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 

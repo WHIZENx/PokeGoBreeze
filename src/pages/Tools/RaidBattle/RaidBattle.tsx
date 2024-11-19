@@ -1237,8 +1237,8 @@ const RaidBattle = () => {
                         className="pokemon-sprite-raid"
                         alt="img-pokemon"
                         src={
-                          findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.pokemonType)
-                            ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.pokemonType))
+                          findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme)
+                            ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme))
                             : APIService.getPokeFullSprite(value.pokemon?.num)
                         }
                       />

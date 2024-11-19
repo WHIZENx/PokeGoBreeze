@@ -149,7 +149,7 @@ const Home = () => {
       setDataList(
         data.pokemon
           .map((item) => {
-            const assetForm = queryAssetForm(data.assets, item.num, item.pokemonType);
+            const assetForm = queryAssetForm(data.assets, item.num, item.forme);
             return new PokemonHomeModel(item, assetForm);
           })
           .sort((a, b) => a.id - b.id)
