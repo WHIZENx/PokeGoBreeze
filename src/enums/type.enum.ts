@@ -1,35 +1,35 @@
 /* eslint-disable no-unused-vars */
 export enum TypeMove {
-  FAST = 'FAST',
-  CHARGE = 'CHARGE',
+  Fast = 'FAST',
+  Charge = 'CHARGE',
 }
 
 export enum TypeTheme {
-  LIGHT = 'light',
-  DARK = 'dark',
+  Light = 'light',
+  Dark = 'dark',
 }
 
 export enum TypeRaid {
-  POKEMON = 'pokemon',
-  BOSS = 'boss',
+  Pokemon = 0,
+  Boss,
 }
 
 export enum TypeSex {
-  MALE = 'male',
-  FEMALE = 'female',
-  GENDERLESS = 'genderless',
+  Genderless = 0,
+  Male,
+  Female,
 }
 
 export enum TypeAction {
-  ATK = 'atk',
-  DEF = 'def',
-  STA = 'sta',
-  PROD = 'prod',
+  Atk = 0,
+  Def,
+  Sta,
+  Prod,
 }
 
 export enum BuffType {
-  Target = 'target',
-  Attacker = 'attacker',
+  Target = 0,
+  Attacker,
 }
 
 export enum GlobalType {
@@ -54,8 +54,22 @@ export enum VariantType {
 }
 
 export enum MoveType {
-  Elite = 'Elite',
-  Shadow = 'Shadow',
-  Purified = 'Purified',
-  Special = 'Special',
+  None = 0,
+  Shadow,
+  Purified,
+  Elite,
+  Special,
+  Unavailable,
+}
+
+export enum PokemonType {
+  None = 0,
+  Normal,
+  Shadow,
+  Purified,
+  Mega,
+  Primal,
+  GMax,
+  Buddy,
+  Lucky,
 }

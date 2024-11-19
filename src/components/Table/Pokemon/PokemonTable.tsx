@@ -2,7 +2,7 @@ import React from 'react';
 import { splitAndCapitalize } from '../../../util/utils';
 import { genRoman } from '../../../util/constants';
 import { IPokemonTableComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isUndefined, toFloatWithPadding } from '../../../util/extension';
+import { combineClasses, isUndefined, toFloatWithPadding, toNumber } from '../../../util/extension';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
   const reload = (element: JSX.Element, color = '#f5f5f5') => {
@@ -49,13 +49,13 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           <td colSpan={2}>
             {reload(
               <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                {isUndefined(props.gen) || props.gen < 0 ? (
+                {isUndefined(props.gen) || toNumber(props.gen, -1) < 0 ? (
                   <></>
                 ) : props.gen === 0 ? (
                   <b>Unknown</b>
                 ) : (
                   <>
-                    <b>{genRoman(props.gen)}</b> <span className="text-gen">{`Gen ${getValueOrDefault(Number, props.gen)}`}</span>
+                    <b>{genRoman(props.gen)}</b> <span className="text-gen">{`Gen ${toNumber(props.gen)}`}</span>
                   </>
                 )}
               </h5>,

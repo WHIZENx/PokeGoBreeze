@@ -14,7 +14,7 @@ import { SpinnerActions } from '../../store/actions';
 import { LocalStorageConfig } from '../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../store/models/local-storage.model';
 import { getTime } from '../../util/utils';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../util/extension';
+import { isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 import { LeagueType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../util/enums/compute.enum';
@@ -71,7 +71,7 @@ const PVPHome = () => {
     }
   }, [rank, team, pvp.rankings, pvp.trains]);
 
-  const renderLeagueLogo = (logo: string, cp: number) => {
+  const renderLeagueLogo = (logo: string | undefined, cp: number) => {
     if (
       !logo ||
       (logo && isInclude(logo, BattleLeagueIconType.Little)) ||
@@ -133,7 +133,7 @@ const PVPHome = () => {
           {rank.cp.map((value, index) => (
             <Link key={index} to={`/pvp/rankings/${rank.id}/${value}/overall`}>
               <Button className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(getValueOrDefault(String, rank.logo), value)} />
+                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
                 <div>
                   <b>{renderLeagueName(rank.name, value)}</b>
                 </div>
@@ -182,7 +182,7 @@ const PVPHome = () => {
           {team.cp.map((value, index) => (
             <Link key={index} to={`/pvp/teams/${team.id}/${value}`}>
               <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(getValueOrDefault(String, team.logo), value)} />
+                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(team.logo, value)} />
                 <div>
                   <b>{renderLeagueName(team.name, value)}</b>
                 </div>

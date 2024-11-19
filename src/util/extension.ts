@@ -9,7 +9,7 @@ export type DynamicObj<S, T extends string | number = string | number> = { [x in
 export const getValueOrDefault = <T>(
   i: NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor,
   value: T | undefined | null,
-  defaultValue?: T
+  defaultValue?: T | undefined | null
 ) => {
   if (isUndefined(value) || isNull(value)) {
     const type = Object.prototype.toString.call(i.prototype).slice(8, -1).toLowerCase();
@@ -29,41 +29,25 @@ export const getValueOrDefault = <T>(
   return value as T;
 };
 
-export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => {
-  return columns as TableColumn<T>[];
-};
+export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => columns as TableColumn<T>[];
 
-export const combineClasses = <T>(...classes: (T | null | undefined)[]) => {
-  return classes.filter((c) => c).join(' ');
-};
+export const combineClasses = <T>(...classes: (T | null | undefined)[]) => classes.filter((c) => c).join(' ');
 
-export const isNotEmpty = <T>(array: T[] | null | undefined = []) => {
-  return getValueOrDefault(Boolean, array && array.length > 0);
-};
+export const isNotEmpty = <T>(array: T[] | null | undefined = []) => Array.isArray(array) && array && array.length > 0;
 
-export const isUndefined = <T>(value?: T | null): value is undefined => {
-  return typeof value === 'undefined' && value === undefined;
-};
+export const isUndefined = <T>(value?: T | null): value is undefined => typeof value === 'undefined' && value === undefined;
 
-export const isNull = <T>(value?: T | null): value is null => {
-  return typeof value !== 'undefined' && value === null;
-};
+export const isNull = <T>(value?: T | null): value is null => typeof value !== 'undefined' && value === null;
 
-export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined => {
-  return getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
-};
+export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined =>
+  getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
 
-export const isEmpty = (value?: string | null) => {
-  return getValueOrDefault(Boolean, value?.isEmpty(), false);
-};
+export const isEmpty = (value?: string | null): value is null | undefined => getValueOrDefault(Boolean, value?.isEmpty(), false);
 
-export const isNullOrEmpty = (value?: string | null): value is string | null => {
-  return getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
-};
+export const isNullOrEmpty = (value?: string | null): value is string | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
 
-export const toNumber = (value: string | number | null | undefined, defaultValue = 0) => {
-  return parseInt((value || defaultValue).toString());
-};
+export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>
+  parseFloat((value || defaultValue).toString()) || defaultValue;
 
 export const toFloat = (value: string | number | null | undefined, fixedRounding = -1, defaultValue = 0) => {
   const result = parseFloat((value || defaultValue).toString());
@@ -77,9 +61,12 @@ export const padding = (num: number, plusLength: number, mode = PaddingMode.End,
   let result = num.toString();
   const [integer, point] = result.split('.');
   if (mode === PaddingMode.Start) {
-    result = result.padStart(plusLength + (isInclude(result, '.') ? 1 + getValueOrDefault(Number, point?.length) : 0), fillString);
+    result = result.padStart(plusLength + (isInclude(result, '.') ? 1 + toNumber(point?.length) : 0), fillString);
   } else if (mode === PaddingMode.End) {
-    result = result.padEnd(plusLength + (isInclude(result, '.') ? 1 + getValueOrDefault(Number, integer?.length) : 0), fillString);
+    if (!isInclude(result, '.')) {
+      result += '.';
+    }
+    result = result.padEnd(plusLength + (isInclude(result, '.') ? 1 + toNumber(integer?.length) : 0), fillString);
   }
   return result;
 };
@@ -154,4 +141,16 @@ export const isIncludeList = (
 export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) => {
   return array.filter((item) => isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode))
     .length;
+};
+
+export const getPropertyName = <T extends object>(
+  obj: T | null | undefined,
+  expression: (x: { [Property in keyof T]: string }) => string
+) => {
+  if (!obj) {
+    return '';
+  }
+  const res = {} as { [Property in keyof T]: string };
+  Object.keys(obj).map((k) => (res[k as keyof T] = k));
+  return expression(res);
 };

@@ -7,7 +7,7 @@ import { IPokemonBattle } from '../PVP/models/battle.model';
 import { IPokemonDmgOption } from '../../core/models/damage.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
-import { PokemonType } from '../Tools/BattleDamage/enums/damage.enum';
+import { PokemonType } from '../../enums/type.enum';
 
 export interface IMovePage {
   id?: number;

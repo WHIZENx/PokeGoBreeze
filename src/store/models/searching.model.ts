@@ -1,7 +1,7 @@
 export interface ISearchingModel {
   id: number;
   name?: string;
-  form?: string;
+  form?: string | null;
   fullName?: string;
   timestamp: Date;
 }
@@ -9,7 +9,7 @@ export interface ISearchingModel {
 export class SearchingModel implements ISearchingModel {
   id = 0;
   name?: string;
-  form?: string;
+  form?: string | null;
   fullName?: string;
   timestamp = new Date();
 

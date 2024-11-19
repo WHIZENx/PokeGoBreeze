@@ -4,9 +4,9 @@ import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/co
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault, isEqual, isUndefined, toNumber } from '../../util/extension';
-import { EqualMode } from '../../util/enums/string.enum';
+import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
+import { MoveType, PokemonType } from '../../enums/type.enum';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -22,7 +22,7 @@ export interface PokemonGender {
 
 export interface IPokemonDataStats {
   level: number;
-  isShadow: boolean;
+  pokemonType: PokemonType;
   iv: IStatsBase;
 }
 
@@ -160,7 +160,7 @@ export interface PokemonModel {
   obSpecialAttackMoves?: (string | number)[];
   eliteQuickMove?: (string | number)[];
   eliteCinematicMove?: (string | number)[];
-  form?: string | null;
+  form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | null | undefined;
   formChange?: IPokemonFormChange[];
@@ -201,6 +201,7 @@ export interface PokemonModel {
   id: number;
   name: string;
   isForceReleaseGO?: boolean;
+  pokemonType: PokemonType;
 }
 
 export interface IPokemonGenderRatio {
@@ -212,10 +213,10 @@ export class PokemonGenderRatio implements IPokemonGenderRatio {
   M = 0;
   F = 0;
 
-  static create(male: number, female: number) {
+  static create(male: number | undefined, female: number | undefined) {
     const obj = new PokemonGenderRatio();
-    obj.M = male;
-    obj.F = female;
+    obj.M = toNumber(male);
+    obj.F = toNumber(female);
     return obj;
   }
 }
@@ -264,7 +265,7 @@ export interface IPokemonData {
   version: string | null;
   baseStatsGO?: boolean;
   stats?: IPokemonDataStats | null;
-  isShadow?: boolean;
+  hasShadowForm?: boolean;
   formChange?: IPokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
@@ -278,16 +279,12 @@ export interface IPokemonData {
   purified?: IPokemonTypeCost;
   thirdMove?: IPokemonTypeCost;
   encounter?: IEncounter;
+  pokemonType?: PokemonType;
 }
 
 export interface IPokemonName {
   id: number;
   name: string;
-}
-
-export interface Elite {
-  fMove: boolean;
-  cMove: boolean;
 }
 
 interface IPokemonDPSBattle {
@@ -304,17 +301,15 @@ interface IPokemonDPSBattle {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  isShadow?: boolean;
-  isPurified?: boolean;
-  mShadow?: boolean;
-  elite?: Elite;
+  pokemonType?: PokemonType;
+  fMoveType?: MoveType;
+  cMoveType?: MoveType;
   atk?: number;
   def?: number;
   hp?: number;
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  isSpecial?: boolean;
 }
 
 export class PokemonDPSBattle implements IPokemonDPSBattle {
@@ -331,17 +326,15 @@ export class PokemonDPSBattle implements IPokemonDPSBattle {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  isShadow?: boolean;
-  isPurified?: boolean;
-  mShadow?: boolean;
-  elite?: Elite;
+  pokemonType?: PokemonType;
+  fMoveType?: MoveType;
+  cMoveType?: MoveType;
   atk?: number;
   def?: number;
   hp?: number;
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  isSpecial?: boolean;
 
   static create(value: IPokemonDPSBattle) {
     const obj = new PokemonDPSBattle();
@@ -369,17 +362,15 @@ export class PokemonMoveData implements IPokemonMoveData {
   attackHpRemain?: number;
   defendHpRemain?: number;
   death?: number;
-  isShadow?: boolean;
-  isPurified?: boolean;
-  mShadow?: boolean;
-  elite?: Elite;
+  pokemonType?: PokemonType;
+  fMoveType?: MoveType;
+  cMoveType?: MoveType;
   atk?: number;
   def?: number;
   hp?: number;
   timer?: number;
   defHpRemain?: number;
   atkHpRemain?: number;
-  isSpecial?: boolean;
 
   static create(value: IPokemonMoveData) {
     const obj = new PokemonMoveData();
@@ -503,7 +494,7 @@ export class PokemonData implements IPokemonData {
   baseStatsGO?: boolean;
   stats?: IPokemonDataStats | null;
   encounter?: IEncounter;
-  isShadow?: boolean;
+  hasShadowForm?: boolean;
   formChange?: IPokemonFormChange[];
   quickMoves?: string[];
   cinematicMoves?: string[];
@@ -529,8 +520,9 @@ export class PokemonData implements IPokemonData {
   canGigantamax: string | null = null;
   changesFrom: string | null = null;
   cannotDynamax = true;
+  pokemonType = PokemonType.Normal;
 
-  static create(pokemon: PokemonModel, types: string[], options?: IPokemonDataOptional) {
+  static create(pokemon: PokemonModel, types: string[] | undefined, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
     Object.entries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
@@ -544,32 +536,28 @@ export class PokemonData implements IPokemonData {
     obj.name = capitalize(pokemon.name.replaceAll('_', '-'));
     if (pokemon.id !== 201) {
       obj.fullName =
-        pokemon.form && !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-          ? `${pokemon.pokemonId}_${pokemon.form}`
-          : pokemon.pokemonId;
+        pokemon.form && pokemon.pokemonType !== PokemonType.Normal ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
     } else {
-      obj.fullName = getValueOrDefault(String, pokemon.form);
+      obj.fullName = getValueOrDefault(String, pokemon.form?.toString());
     }
     obj.slug =
       options?.slug ??
       pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
     obj.sprite = options?.sprite ?? 'unknown-pokemon';
-    obj.types = types;
-    obj.genderRatio = PokemonGenderRatio.create(
-      getValueOrDefault(Number, options?.genderRatio?.M, 0.5),
-      getValueOrDefault(Number, options?.genderRatio?.F, 0.5)
-    );
+    obj.types = getValueOrDefault(Array, types);
+    obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
     obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options?.baseStatsGO;
     obj.baseStats = StatsPokemon.create({
-      atk: getValueOrDefault(Number, pokemon.stats?.baseAttack),
-      def: getValueOrDefault(Number, pokemon.stats?.baseDefense),
+      atk: toNumber(pokemon.stats?.baseAttack),
+      def: toNumber(pokemon.stats?.baseDefense),
       sta: pokemon.stats?.baseStamina,
     });
+    const sta = toNumber(obj.baseStats.sta);
     obj.statsGO = StatsPokemonGO.create({
       atk: obj.baseStats.atk,
       def: obj.baseStats.def,
-      sta: getValueOrDefault(Number, obj.baseStats.sta),
-      prod: obj.baseStats.atk * obj.baseStats.def * getValueOrDefault(Number, obj.baseStats.sta),
+      sta,
+      prod: obj.baseStats.atk * obj.baseStats.def * sta,
     });
     obj.heightm = pokemon.pokedexHeightM;
     obj.weightkg = pokemon.pokedexWeightKg;
@@ -590,9 +578,9 @@ export class PokemonData implements IPokemonData {
     obj.region = options?.region ?? 'Unknown';
     obj.version = options?.version ?? 'scarlet-violet';
     obj.baseSpecies = capitalize(pokemon.pokemonId);
-    obj.forme = pokemon.form ? pokemon.form : FORM_NORMAL;
+    obj.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
     obj.encounter = pokemon.encounter;
-    obj.isShadow = Boolean(pokemon.shadow);
+    obj.hasShadowForm = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;
 
     obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move.toString()));
@@ -608,6 +596,7 @@ export class PokemonData implements IPokemonData {
     obj.purified = options?.purified;
     obj.thirdMove = options?.thirdMove;
 
+    obj.pokemonType = pokemon.pokemonType;
     return obj;
   }
 }
@@ -616,8 +605,8 @@ export class PokemonModel implements IPokemonName {
   id: number;
   name: string;
 
-  constructor(id: number, name?: string, settings?: PokemonModel) {
-    this.id = id;
+  constructor(id: string | number | undefined, name?: string | null, settings?: PokemonModel) {
+    this.id = toNumber(id);
     this.name = getValueOrDefault(String, name);
     if (settings) {
       Object.assign(this, { ...settings });

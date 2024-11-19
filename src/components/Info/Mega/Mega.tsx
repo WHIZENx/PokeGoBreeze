@@ -5,12 +5,11 @@ import { splitAndCapitalize } from '../../../util/utils';
 
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_MEGA } from '../../../util/constants';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { isEqual, isInclude, isUndefined } from '../../../util/extension';
+import { isEqual, isUndefined } from '../../../util/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { PokemonType } from '../../../enums/type.enum';
 
 const Mega = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -18,7 +17,7 @@ const Mega = (props: IFormSpecialComponent) => {
 
   useEffect(() => {
     const result = props.formList
-      .filter((item) => isInclude(item.at(0)?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive))
+      .filter((item) => item[0]?.form.pokemonType === PokemonType.Mega)
       .map((item) => {
         const form = item.at(0);
         if (!form) {

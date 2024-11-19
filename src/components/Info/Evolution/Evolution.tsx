@@ -20,7 +20,14 @@ import APIService from '../../../services/API.service';
 import './Evolution.scss';
 import { useTheme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { capitalize, convertFormGif, convertModelSpritName, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  convertFormGif,
+  convertModelSpritName,
+  convertPokemonAPIDataName,
+  getDataWithKey,
+  splitAndCapitalize,
+} from '../../../util/utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
@@ -41,10 +48,10 @@ import {
 } from '../../../util/constants';
 import { IForm } from '../../../core/models/API/form.model';
 import { IEvolutionComponent } from '../../models/component.model';
-import { TypeSex } from '../../../enums/type.enum';
+import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 
@@ -56,7 +63,6 @@ interface IPokemonEvo {
   form: string;
   isGmax: boolean;
   sprite: string;
-  isPurified?: boolean;
 }
 
 class PokemonEvo implements IPokemonEvo {
@@ -67,17 +73,23 @@ class PokemonEvo implements IPokemonEvo {
   form: string;
   isGmax: boolean;
   sprite: string;
-  isPurified?: boolean;
 
-  constructor(name: string, id: number, form: string, sprite: string, prev = '', isGmax = false, isBaby = false, isPurified = false) {
+  constructor(
+    name: string | undefined,
+    id: number | undefined,
+    form: string | null | undefined,
+    sprite: string,
+    prev = '',
+    isGmax = false,
+    isBaby = false
+  ) {
     this.prev = prev;
-    this.name = name;
-    this.id = id;
+    this.name = getValueOrDefault(String, name);
+    this.id = toNumber(id);
     this.isBaby = isBaby;
-    this.form = form;
+    this.form = getValueOrDefault(String, form);
     this.isGmax = isGmax;
     this.sprite = sprite;
-    this.isPurified = isPurified;
   }
 }
 
@@ -98,13 +110,13 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
     return new PokemonEvo(
-      getValueOrDefault(String, pokemon?.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase()),
-      getValueOrDefault(Number, pokemon?.num),
-      getValueOrDefault(String, pokemon?.forme),
-      convertModelSpritName(getValueOrDefault(String, pokemon?.name)),
+      pokemon?.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase(),
+      pokemon?.num,
+      pokemon?.forme,
+      convertModelSpritName(pokemon?.name),
       undefined,
       false,
-      getValueOrDefault(Boolean, pokemon?.isBaby)
+      pokemon?.isBaby
     );
   };
 
@@ -117,8 +129,10 @@ const Evolution = (props: IEvolutionComponent) => {
       !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name
     );
     let form =
-      pokemon.id === 718 && isEmpty(pokemon.form) ? 'TEN_PERCENT' : pokemon.form.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
-    form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
+      pokemon.id === 718 && isEmpty(pokemon.form)
+        ? 'TEN_PERCENT'
+        : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
+    form = form?.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
     let sprite = '';
     if (pokemon.id === 664 || pokemon.id === 665) {
       sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;
@@ -126,24 +140,15 @@ const Evolution = (props: IEvolutionComponent) => {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
 
-    return new PokemonEvo(
-      name,
-      pokemon.id,
-      form,
-      sprite,
-      pokemon.prev,
-      false,
-      getValueOrDefault(Boolean, pokemon.isBaby),
-      getValueOrDefault(Boolean, pokemon.canPurified)
-    );
+    return new PokemonEvo(name, pokemon.id, form, sprite, pokemon.prev, false, pokemon.isBaby);
   };
 
-  const getPrevEvoChainJSON = (name: string, arr: IPokemonEvo[][]) => {
+  const getPrevEvoChainJSON = (name: string | null | undefined, arr: IPokemonEvo[][]) => {
     if (name) {
       const pokemon = pokemonData.find((pokemon) => isEqual(pokemon.name, name));
       if (pokemon) {
         arr.unshift([formatEvoChain(pokemon)]);
-        getPrevEvoChainJSON(getValueOrDefault(String, pokemon.prevo), arr);
+        getPrevEvoChainJSON(pokemon.prevo, arr);
       }
     }
   };
@@ -185,10 +190,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainJSON = (id: number, forme: IForm) => {
-    let form =
-      isEmpty(forme.formName) || isInclude(forme.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
-        ? FORM_NORMAL
-        : forme.formName;
+    let form = isEmpty(forme.formName) || forme.pokemonType !== PokemonType.Mega ? FORM_NORMAL : forme.formName;
     if (forme.formName === '10') {
       form += '%';
     }
@@ -202,7 +204,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
     let pokemon = pokemonData.find((pokemon) => pokemon.num === id && isEqual(pokemon.forme, form));
     if (!pokemon) {
-      pokemon = pokemonData.find((pokemon) => pokemon.num === id && isEqual(pokemon.forme, FORM_NORMAL));
+      pokemon = pokemonData.find((pokemon) => pokemon.num === id && pokemon.pokemonType === PokemonType.Normal);
     }
 
     const prevEvo: IPokemonEvo[][] = [],
@@ -211,7 +213,7 @@ const Evolution = (props: IEvolutionComponent) => {
     if (!pokemon) {
       return;
     }
-    getPrevEvoChainJSON(getValueOrDefault(String, pokemon.prevo), prevEvo);
+    getPrevEvoChainJSON(pokemon.prevo, prevEvo);
     const prev = pokemonData.find((p) => isEqual(p.name, pokemon?.prevo));
     if (prev) {
       getCurrEvoChainJSON(prev, curr);
@@ -232,7 +234,7 @@ const Evolution = (props: IEvolutionComponent) => {
       return;
     }
     pokemon
-      .filter((p) => !(p.num === 718 && isEqual(p.forme, FORM_NORMAL)))
+      .filter((p) => !(p.num === 718 && p.pokemonType === PokemonType.Normal))
       .forEach((evo) => {
         evoList.unshift(
           modelEvoChain(
@@ -243,7 +245,6 @@ const Evolution = (props: IEvolutionComponent) => {
               form: evo.forme ?? FORM_NORMAL,
               evoList: getValueOrDefault(Array, evo.evoList),
               tempEvo: getValueOrDefault(Array, evo.tempEvo),
-              canPurified: getValueOrDefault(Boolean, evo.isShadow),
             })
           )
         );
@@ -267,7 +268,6 @@ const Evolution = (props: IEvolutionComponent) => {
             form: poke.forme ?? FORM_NORMAL,
             evoList: getValueOrDefault(Array, poke.evoList),
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
-            canPurified: getValueOrDefault(Boolean, poke.isShadow),
           })
         )
       );
@@ -281,7 +281,6 @@ const Evolution = (props: IEvolutionComponent) => {
                 id: evo.evoToId,
                 name: evo.evoToName,
                 form: evo.evoToForm,
-                canPurified: evo.purificationEvoCandyCost > 0,
                 evoList: [],
                 tempEvo: [],
               })
@@ -304,7 +303,6 @@ const Evolution = (props: IEvolutionComponent) => {
           name: evo.evoToName,
           form: evo.evoToForm,
           prev: poke.name,
-          canPurified: evo.purificationEvoCandyCost > 0,
           evoList: [],
           tempEvo: [],
         })
@@ -327,11 +325,11 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainStore = (id: number, forme: IForm) => {
-    const formName = getValueOrDefault(String, forme.formName.toUpperCase());
+    const formName = forme.formName?.toUpperCase();
     const form =
-      isEmpty(formName) || isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
+      isEmpty(formName) || forme.pokemonType === PokemonType.Mega
         ? FORM_NORMAL
-        : forme.isPurified || forme.isShadow
+        : forme.pokemonType === PokemonType.Purified || forme.pokemonType === PokemonType.Shadow
         ? isEqual(formName, FORM_SHADOW) || isEqual(formName, FORM_PURIFIED)
           ? FORM_NORMAL
           : formName.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
@@ -379,7 +377,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   useEffect(() => {
     if (props.id && props.forme) {
-      if (!isEqual(props.forme.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+      if (props.forme.pokemonType !== PokemonType.GMax) {
         getEvoChainStore(props.id, props.forme);
       } else {
         getGmaxChain(props.id, props.forme);
@@ -399,8 +397,12 @@ const Evolution = (props: IEvolutionComponent) => {
   const renderImgGif = (value: IPokemonEvo) => {
     return (
       <>
-        {props.isPurified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
-        {props.isShadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
+        {props.pokemonType === PokemonType.Purified && (
+          <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
+        )}
+        {props.pokemonType === PokemonType.Shadow && (
+          <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+        )}
         <img
           className="pokemon-sprite"
           id="img-pokemon"
@@ -417,6 +419,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
     const form = getValueOrDefault(String, value.form, props.forme?.formName);
+    const sex = getDataWithKey<TypeSex>(TypeSex, form);
     let offsetY = 35;
     offsetY += value.isBaby ? 20 : 0;
     offsetY += arrEvoList.length === 1 ? 20 : 0;
@@ -448,10 +451,12 @@ const Evolution = (props: IEvolutionComponent) => {
                             style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                           >
                             <Candy id={value.id} />
-                            <span style={{ marginLeft: 2 }}>{`x${props.isPurified ? data.purificationEvoCandyCost : data.candyCost}`}</span>
+                            <span style={{ marginLeft: 2 }}>{`x${
+                              props.pokemonType === PokemonType.Purified ? data.purificationEvoCandyCost : data.candyCost
+                            }`}</span>
                           </span>
                         )}
-                        {props.isPurified && data?.candyCost && data?.purificationEvoCandyCost && (
+                        {props.pokemonType === PokemonType.Purified && data?.candyCost && data?.purificationEvoCandyCost && (
                           <span className="d-block text-end caption text-danger">{`-${
                             data.candyCost - data.purificationEvoCandyCost
                           }`}</span>
@@ -467,15 +472,19 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.genderRequirement && (
                           <span className="caption">
-                            {form === TypeSex.MALE ? (
+                            {sex === TypeSex.Male ? (
                               <MaleIcon fontSize="small" />
                             ) : (
                               <Fragment>
-                                {form === TypeSex.FEMALE ? (
+                                {sex === TypeSex.Female ? (
                                   <FemaleIcon fontSize="small" />
                                 ) : (
                                   <Fragment>
-                                    {isEqual(data.quest.genderRequirement, TypeSex.MALE, EqualMode.IgnoreCaseSensitive) ? (
+                                    {isEqual(
+                                      getDataWithKey<TypeSex>(TypeSex, data.quest.genderRequirement),
+                                      TypeSex.Male,
+                                      EqualMode.IgnoreCaseSensitive
+                                    ) ? (
                                       <MaleIcon fontSize="small" />
                                     ) : (
                                       <FemaleIcon fontSize="small" />
@@ -516,7 +525,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               <span
                                 className="d-flex align-items-center caption"
                                 style={{ color: theme.palette.customText.caption, width: 'max-content', marginLeft: 2 }}
-                              >{`x${getValueOrDefault(Number, data.itemCost)}`}</span>
+                              >{`x${data.itemCost}`}</span>
                             )}
                           </Fragment>
                         )}

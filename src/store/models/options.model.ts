@@ -1,6 +1,6 @@
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { ColumnSelectType, SortDirectionType } from '../../pages/Sheets/DpsTdo/enums/column-select-type.enum';
+import { BestOptionType, ColumnSelectType, SortDirectionType } from '../../pages/Sheets/DpsTdo/enums/column-select-type.enum';
 import { DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_LEVEL, MAX_IV } from '../../util/constants';
 
 interface IOptionDPSSort {
@@ -10,7 +10,7 @@ interface IOptionDPSSort {
 
 export class OptionDPSSort implements IOptionDPSSort {
   selectedColumn = ColumnSelectType.Total;
-  sortDirection = SortDirectionType.DESC.toString();
+  sortDirection = SortDirectionType.DESC;
 
   static create(value: IOptionDPSSort) {
     const obj = new OptionDPSSort();
@@ -53,7 +53,7 @@ interface IOptionFiltersDPS {
   enableBest: boolean;
   enableDelay: boolean;
   releasedGO: boolean;
-  bestOf: number;
+  bestOf: BestOptionType;
   ivAtk: number;
   ivDef: number;
   ivHp: number;
@@ -81,11 +81,11 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
   enableBest = false;
   enableDelay = false;
   releasedGO = true;
-  bestOf = 3;
+  bestOf = BestOptionType.multiDpsTdo;
   ivAtk = MAX_IV;
   ivDef = MAX_IV;
   ivHp = MAX_IV;
-  pokemonLevel = 40;
+  pokemonLevel = DEFAULT_POKEMON_LEVEL;
 }
 
 interface IDelay {

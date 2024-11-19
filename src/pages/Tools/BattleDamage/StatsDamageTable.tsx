@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { LevelSlider, TypeRadioGroup, capitalize } from '../../../util/utils';
+import { LevelSlider, TypeRadioGroup, getDmgMultiplyBonus, getKeyEnum } from '../../../util/utils';
 import { calculateStatsBattle } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
@@ -10,17 +10,17 @@ import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import { useSelector } from 'react-redux';
-import { MAX_IV, MAX_LEVEL, MIN_LEVEL, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { MAX_IV, MAX_LEVEL, MIN_LEVEL } from '../../../util/constants';
 import { StoreState } from '../../../store/models/state.model';
 import { IStatsTableComponent } from '../../models/page.model';
+import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { toNumber } from '../../../util/extension';
-import { PokemonType } from './enums/damage.enum';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
-  const [currStatType, setCurrStatType] = useState(PokemonType.None.toString());
+  const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
 
   const onHandleLevel = useCallback(
     (v: number) => {
@@ -34,7 +34,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             MAX_IV,
             currStatLevel,
             false,
-            currStatType === PokemonType.Shadow ? SHADOW_ATK_BONUS(globalOptions) : 1
+            getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Atk)
           )
         );
       }
@@ -45,7 +45,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             MAX_IV,
             currStatLevel,
             false,
-            currStatType === PokemonType.Shadow ? SHADOW_DEF_BONUS(globalOptions) : 1
+            getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Def)
           )
         );
       }
@@ -69,10 +69,7 @@ const StatsTable = (props: IStatsTableComponent) => {
   );
 
   const onHandleType = useCallback(
-    (v: string) => {
-      if (props.setStatLevel) {
-        props.setStatLevel(toNumber(v));
-      }
+    (v: PokemonType) => {
       setCurrStatType(v);
       if (props.setStatLevel) {
         props.setStatLevel(1);
@@ -90,16 +87,20 @@ const StatsTable = (props: IStatsTableComponent) => {
             row={true}
             aria-labelledby="row-types-group-label"
             name="row-types-group"
-            defaultValue={PokemonType.None}
-            onChange={(e) => onHandleType(e.target.value)}
+            defaultValue={PokemonType.Normal}
+            onChange={(e) => onHandleType(toNumber(e.target.value))}
           >
-            <FormControlLabel value={PokemonType.None} control={<Radio />} label={<span>{capitalize(PokemonType.None)}</span>} />
+            <FormControlLabel
+              value={PokemonType.Normal}
+              control={<Radio />}
+              label={<span>{getKeyEnum(PokemonType, PokemonType.Normal)}</span>}
+            />
             <FormControlLabel
               value={PokemonType.Buddy}
               control={<Radio />}
               label={
                 <span>
-                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {capitalize(PokemonType.Buddy)}
+                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {getKeyEnum(PokemonType, PokemonType.Buddy)}
                 </span>
               }
             />
@@ -108,7 +109,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(PokemonType.Shadow)}
+                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyEnum(PokemonType, PokemonType.Shadow)}
                 </span>
               }
             />
@@ -152,7 +153,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                     MAX_IV,
                     currStatLevel,
                     true,
-                    currStatType === PokemonType.Shadow ? SHADOW_ATK_BONUS(globalOptions) : 1
+                    getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Atk)
                   )}
                 </td>
               </tr>
@@ -167,7 +168,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                     MAX_IV,
                     currStatLevel,
                     true,
-                    currStatType === PokemonType.Shadow ? SHADOW_DEF_BONUS(globalOptions) : 1
+                    getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Def)
                   )}
                 </td>
               </tr>

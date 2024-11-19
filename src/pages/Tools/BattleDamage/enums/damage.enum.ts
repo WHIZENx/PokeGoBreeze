@@ -5,11 +5,3 @@ export enum ChargeAbility {
   GREAT,
   EXCELLENT,
 }
-
-export enum PokemonType {
-  None = 'none',
-  Buddy = 'buddy',
-  Shadow = 'shadow',
-  Purified = 'purified',
-  Lucky = 'lucky',
-}

@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL } from '../../../util/constants';
+import { FORM_NORMAL } from '../../../util/constants';
 import {
   capitalize,
   convertPokemonAPIDataName,
@@ -28,8 +28,8 @@ import Primal from '../Primal/Primal';
 import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
-import { TypeSex } from '../../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { PokemonType, TypeSex } from '../../../enums/type.enum';
+import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { WeightHeight } from '../../../core/models/pokemon.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 
@@ -65,13 +65,17 @@ const FormComponent = (props: IFormInfoComponent) => {
     const originForm = splitAndCapitalize(currentForm?.form.formName, '-', '-');
     props.setOriginForm(originForm);
 
-    let weight = getValueOrDefault(Number, props.pokeData.at(0)?.weight),
-      height = getValueOrDefault(Number, props.pokeData.at(0)?.height);
+    if (!isNotEmpty(props.pokeData)) {
+      return;
+    }
+
+    let weight = toNumber(props.pokeData[0].weight),
+      height = toNumber(props.pokeData[0].height);
     if (currentData) {
       weight = currentData.weight;
       height = currentData.height;
     } else if (currentForm) {
-      const oriForm = props.pokeData.at(0);
+      const oriForm = props.pokeData[0];
       if (oriForm) {
         weight = oriForm.weight;
         height = oriForm.height;
@@ -95,7 +99,7 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   }, [props.pokemonRouter]);
 
-  const changeForm = (name: string, form: string) => {
+  const changeForm = (name: string, form: string | null | undefined) => {
     if (params.id) {
       form = convertPokemonAPIDataName(form).toLowerCase().replaceAll('_', '-');
       searchParams.set('form', form);
@@ -120,7 +124,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                       key={index}
                       className={combineClasses(
                         'btn btn-form',
-                        (props.defaultId === props.form?.form.id && value.form.id === props.form.form.id) ||
+                        (props.defaultId === props.form?.form.id && value.form.id === props.form?.form.id) ||
                           (props.defaultId !== props.form?.form.id && value.form.id === props.form?.form.id)
                           ? 'form-selected'
                           : ''
@@ -129,10 +133,10 @@ const FormComponent = (props: IFormInfoComponent) => {
                     >
                       <div className="d-flex w-100 justify-content-center">
                         <div className="position-relative" style={{ width: 64 }}>
-                          {value.form.isShadow && (
+                          {value.form.pokemonType === PokemonType.Shadow && (
                             <img height={24} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                           )}
-                          {value.form.isPurified && (
+                          {value.form.pokemonType === PokemonType.Purified && (
                             <img height={24} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
                           )}
                           <img
@@ -147,12 +151,12 @@ const FormComponent = (props: IFormInfoComponent) => {
                         </div>
                       </div>
                       <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
-                      {getValueOrDefault(Number, value.form.id) > 0 && value.form.id === props.defaultId && (
+                      {toNumber(value.form.id) > 0 && value.form.id === props.defaultId && (
                         <b>
                           <small>(Default)</small>
                         </b>
                       )}
-                      {getValueOrDefault(Number, value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
+                      {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
                     </button>
                   ))}
                 </Fragment>
@@ -176,7 +180,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           {props.ratio?.M !== 0 && (
             <Gender
               ratio={props.ratio}
-              sex={capitalize(TypeSex.MALE)}
+              sex={TypeSex.Male}
               defaultM={props.form?.form.sprites?.frontDefault}
               shinyM={props.form?.form.sprites?.frontShiny}
               defaultF={props.form?.form.sprites?.frontFemale}
@@ -186,7 +190,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           {props.ratio?.F !== 0 && (
             <Gender
               ratio={props.ratio}
-              sex={capitalize(TypeSex.FEMALE)}
+              sex={TypeSex.Female}
               defaultM={props.form?.form.sprites?.frontDefault}
               shinyM={props.form?.form.sprites?.frontShiny}
               defaultF={props.form?.form.sprites?.frontFemale}
@@ -196,7 +200,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       ) : (
         <Gender
-          sex={capitalize(TypeSex.GENDERLESS)}
+          sex={TypeSex.Genderless}
           defaultM={props.form?.form.sprites?.frontDefault}
           shinyM={props.form?.form.sprites?.frontShiny}
           defaultF={props.form?.form.sprites?.frontFemale}
@@ -204,7 +208,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         />
       )}
       <Stats
-        isShadow={props.form?.form.isShadow}
+        pokemonType={props.form?.form.pokemonType}
         statATK={statsPokemon?.atk}
         statDEF={statsPokemon?.def}
         statSTA={statsPokemon?.sta}
@@ -218,7 +222,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
           <Info currForm={props.form} />
-          {!props.form?.form.isShadow && !props.form?.form.isPurified && (
+          {props.form?.form.pokemonType !== PokemonType.Shadow && props.form?.form.pokemonType !== PokemonType.Purified && (
             <Fragment>
               <h5>
                 <li>Raid</li>
@@ -237,23 +241,19 @@ const FormComponent = (props: IFormInfoComponent) => {
           <TableMove
             data={{
               stats: convertStatsEffort(props.data?.stats),
-              num: props.defaultId,
-              types: getValueOrDefault(Array, props.form?.form.types),
+              num: toNumber(props.defaultId),
+              types: props.form?.form.types,
             }}
             form={props.form?.form}
             statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
             statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
             statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(convertAllStats(props.data?.stats), true)}
           />
-          <Counter
-            def={getValueOrDefault(Number, statsPokemon?.def?.defense)}
-            types={getValueOrDefault(Array, props.form?.form.types)}
-            isShadow={props.form?.form.isShadow}
-          />
+          <Counter def={statsPokemon?.def?.defense} types={props.form?.form.types} pokemonType={props.form?.form.pokemonType} />
         </div>
       </div>
       <hr className="w-100" />
-      {!isInclude(props.form?.form.formName, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive) ? (
+      {props.form?.form.pokemonType !== PokemonType.GMax ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl" style={{ padding: 0 }}>
             <Evolution
@@ -263,26 +263,23 @@ const FormComponent = (props: IFormInfoComponent) => {
               isFormDefault={props.defaultId === props.form?.form.id}
               region={props.region}
               pokemonRouter={props.pokemonRouter}
-              isPurified={props.form?.form.isPurified}
-              isShadow={props.form?.form.isShadow}
+              pokemonType={props.form?.form.pokemonType}
               setProgress={props.setProgress}
               isLoadedForms={props.isLoadedForms}
             />
           </div>
-          {props.formList?.some((item) =>
-            item.some((pokemon) => isInclude(pokemon.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive))
-          ) && (
-            <div className="col-xl" style={{ padding: 0 }}>
-              <Mega formList={getValueOrDefault(Array, props.formList)} id={props.defaultId} />
-            </div>
-          )}
-          {props.formList?.some((item) =>
-            item.some((pokemon) => isInclude(pokemon.form.formName, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))
-          ) && (
-            <div className="col-xl" style={{ padding: 0 }}>
-              <Primal formList={getValueOrDefault(Array, props.formList)} id={props.defaultId} />
-            </div>
-          )}
+          {isNotEmpty(props.formList) &&
+            props.formList?.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Mega)) && (
+              <div className="col-xl" style={{ padding: 0 }}>
+                <Mega formList={props.formList} id={props.defaultId} />
+              </div>
+            )}
+          {isNotEmpty(props.formList) &&
+            props.formList?.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal)) && (
+              <div className="col-xl" style={{ padding: 0 }}>
+                <Primal formList={props.formList} id={props.defaultId} />
+              </div>
+            )}
         </div>
       ) : (
         <Evolution
@@ -292,8 +289,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           isFormDefault={props.defaultId === props.form?.form.id}
           region={props.region}
           pokemonRouter={props.pokemonRouter}
-          isPurified={props.form?.form.isPurified}
-          isShadow={props.form?.form.isShadow}
+          pokemonType={props.form?.form.pokemonType}
           setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
         />

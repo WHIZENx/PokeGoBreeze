@@ -2,7 +2,14 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  checkPokemonGO,
+  convertPokemonDataName,
+  getDmgMultiplyBonus,
+  getKeyEnum,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -10,21 +17,20 @@ import './Counter.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { FORM_MEGA, FORM_PRIMAL, SHADOW_DEF_BONUS } from '../../../util/constants';
 import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { MoveType, TypeTheme } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeAction, TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
   convertColumnDataType,
-  getValueOrDefault,
   isInclude,
   isNotEmpty,
   isUndefined,
   toFloat,
   toFloatWithPadding,
+  toNumber,
 } from '../../../util/extension';
 import { APIUrl } from '../../../services/constants';
 
@@ -102,6 +108,7 @@ const Counter = (props: ICounterComponent) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
+  const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [frame, setFrame] = useState(true);
   const [releasedGO, setReleaseGO] = useState(true);
   const [showMega, setShowMega] = useState(false);
@@ -114,18 +121,22 @@ const Counter = (props: ICounterComponent) => {
           <div className="d-flex justify-content-center">
             <div
               className={combineClasses(
-                theme.palette.mode === TypeTheme.LIGHT ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
+                theme.palette.mode === TypeTheme.Light ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
                 'position-relative group-pokemon-sprite'
               )}
             >
-              {row.cMove.isShadow && <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />}
-              {row.cMove.isPurified && <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />}
+              {row.pokemonType === PokemonType.Shadow && (
+                <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+              )}
+              {row.pokemonType === PokemonType.Purified && (
+                <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
+              )}
               <img
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data.assets, row.pokemonId, getValueOrDefault(String, row.pokemonForme))
-                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, getValueOrDefault(String, row.pokemonForme)))
+                  findAssetForm(data.assets, row.pokemonId, row.pokemonForme)
+                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, row.pokemonForme))
                     : APIService.getPokeFullSprite(row.pokemonId)
                 }
                 onError={(e) => {
@@ -157,9 +168,9 @@ const Counter = (props: ICounterComponent) => {
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.fMove.isElite && (
-              <span className="type-icon-small ic elite-ic">
-                <span>{MoveType.Elite}</span>
+            {row.fMove.moveType !== MoveType.None && (
+              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyEnum(MoveType, row.fMove.moveType)}
               </span>
             )}
           </span>
@@ -178,24 +189,9 @@ const Counter = (props: ICounterComponent) => {
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
-            {row.cMove.isElite && (
-              <span className="type-icon-small ic elite-ic">
-                <span>{MoveType.Elite}</span>
-              </span>
-            )}
-            {row.cMove.isShadow && (
-              <span className="type-icon-small ic shadow-ic">
-                <span>{MoveType.Shadow}</span>
-              </span>
-            )}
-            {row.cMove.isPurified && (
-              <span className="type-icon-small ic purified-ic">
-                <span>{MoveType.Purified}</span>
-              </span>
-            )}
-            {row.cMove.isSpecial && (
-              <span className="type-icon-small ic special-ic">
-                <span>{MoveType.Special}</span>
+            {row.cMove.moveType !== MoveType.None && (
+              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyEnum(MoveType, row.cMove.moveType)}
               </span>
             )}
           </span>
@@ -232,19 +228,18 @@ const Counter = (props: ICounterComponent) => {
   useEffect(() => {
     const controller = new AbortController();
     if (isNotEmpty(counterList)) {
-      setCounterList([]);
+      setCounterFilter([]);
       setFrame(true);
     }
-    if (!isUndefined(props.isShadow) && isNotEmpty(props.types)) {
+    if (!isUndefined(props.pokemonType) && isNotEmpty(props.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
-          setFrame(false);
         })
         .catch(() => setFrame(true));
     }
     return () => controller.abort();
-  }, [props.def, props.isShadow, props.types]);
+  }, [props.def, props.pokemonType, props.types]);
 
   const calculateCounter = (signal: AbortSignal, delay = 3000) => {
     return new Promise<ICounterModel[]>((resolve, reject) => {
@@ -264,8 +259,8 @@ const Counter = (props: ICounterComponent) => {
           data.pokemon,
           data.typeEff,
           data.weatherBoost,
-          props.def * (props.isShadow ? SHADOW_DEF_BONUS(data.options) : 1),
-          getValueOrDefault(Array, props.types),
+          toNumber(props.def) * getDmgMultiplyBonus(props.pokemonType, data.options, TypeAction.Def),
+          props.types,
           data.combat
         );
         resolve(result);
@@ -278,6 +273,31 @@ const Counter = (props: ICounterComponent) => {
       }
     });
   };
+
+  useEffect(() => {
+    if (isNotEmpty(counterList)) {
+      setCounterFilter(
+        counterList
+          .filter((pokemon) => {
+            if (showMega) {
+              return true;
+            }
+            return pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal;
+          })
+          .filter((pokemon) => {
+            if (!releasedGO) {
+              return true;
+            }
+            if (!pokemon.releasedGO) {
+              const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemon);
+              return result?.releasedGO;
+            }
+            return pokemon.releasedGO;
+          })
+      );
+      setFrame(false);
+    }
+  }, [counterList, showMega, releasedGO]);
 
   return (
     <div className="table-info">
@@ -318,20 +338,7 @@ const Counter = (props: ICounterComponent) => {
         paginationPerPage={100}
         progressPending={frame}
         progressComponent={<CounterLoader />}
-        data={counterList
-          .filter((pokemon) => {
-            if (showMega) {
-              return true;
-            }
-            return !isInclude(pokemon.pokemonForme, FORM_MEGA) && !isInclude(pokemon.pokemonForme, FORM_PRIMAL);
-          })
-          .filter((pokemon) => {
-            if (!releasedGO) {
-              return true;
-            }
-            const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemon);
-            return getValueOrDefault(Boolean, pokemon.releasedGO, result?.releasedGO);
-          })}
+        data={counterFilter}
       />
     </div>
   );

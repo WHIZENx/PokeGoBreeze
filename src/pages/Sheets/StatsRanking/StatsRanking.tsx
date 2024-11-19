@@ -28,6 +28,7 @@ import { TableColumnModify } from '../../../util/models/overrides/data-table.mod
 import {
   convertColumnDataType,
   DynamicObj,
+  getPropertyName,
   getValueOrDefault,
   isEmpty,
   isEqual,
@@ -53,7 +54,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   },
   {
     name: 'Ranking',
-    selector: (row) => getValueOrDefault(Number, row.rank),
+    selector: (row) => toNumber(row.rank),
     width: '80px',
   },
   {
@@ -77,7 +78,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           src={APIService.getPokeIconSprite(row.sprite, true)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(getValueOrDefault(String, row.baseSpecies));
+            e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
           }}
         />
         {splitAndCapitalize(row.name.replaceAll('_', '-'), '-', ' ')}
@@ -88,7 +89,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
     name: 'Type(s)',
     selector: (row) =>
-      row.types.map((value, index) => (
+      getValueOrDefault(Array, row.types).map((value, index) => (
         <img
           key={index}
           style={{ marginRight: 10 }}
@@ -170,33 +171,46 @@ const StatsRanking = () => {
   const mappingData = (pokemon: IPokemonData[]) => {
     return pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
-      const details = getPokemonDetails(pokemon, data.num, getValueOrDefault(String, data.fullName), true);
-      return new PokemonStatsRanking({
+      const details = getPokemonDetails(pokemon, data.num, data.fullName, true);
+      return PokemonStatsRanking.create({
         ...data,
         releasedGO: getValueOrDefault(Boolean, details?.releasedGO),
         atk: {
           attack: statsTag.atk,
-          rank: getValueOrDefault(Number, stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank),
+          rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank),
         },
         def: {
           defense: statsTag.def,
-          rank: getValueOrDefault(Number, stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank),
+          rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank),
         },
         sta: {
-          stamina: getValueOrDefault(Number, statsTag.sta),
-          rank: getValueOrDefault(Number, stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
+          stamina: statsTag.sta,
+          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
         },
         prod: {
-          product: statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta),
+          product: statsTag.atk * statsTag.def * statsTag.sta,
           rank: getValueOrDefault(
             Number,
-            stats?.statProd?.ranking?.find(
-              (stat) => stat.product === statsTag.atk * statsTag.def * getValueOrDefault(Number, statsTag?.sta)
-            )?.rank
+            stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * statsTag.sta)?.rank
           ),
         },
       });
     });
+  };
+
+  const setSortBy = (id: ColumnType) => {
+    let sortBy: string[] = [];
+    const stats = new PokemonStatsRanking();
+    if (id === ColumnType.Atk) {
+      sortBy = [getPropertyName(stats, (o) => o.atk), getPropertyName(stats.atk, (o) => o.attack)];
+    } else if (id === ColumnType.Def) {
+      sortBy = [getPropertyName(stats, (o) => o.def), getPropertyName(stats.def, (o) => o.defense)];
+    } else if (id === ColumnType.Sta) {
+      sortBy = [getPropertyName(stats, (o) => o.sta), getPropertyName(stats.sta, (o) => o.stamina)];
+    } else if (id === ColumnType.Prod) {
+      sortBy = [getPropertyName(stats, (o) => o.prod), getPropertyName(stats.prod, (o) => o.product)];
+    }
+    return sortBy;
   };
 
   const setSortedPokemonRanking = (primary: IPokemonStatsRanking, secondary: IPokemonStatsRanking, sortBy: string[]) => {
@@ -205,22 +219,13 @@ const StatsRanking = () => {
     return b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]];
   };
 
-  const sortRanking = (pokemon: IPokemonStatsRanking[], id: number) => {
-    let sortBy: string[] = [];
-    if (id === ColumnType.Atk) {
-      sortBy = [TypeAction.ATK, 'attack'];
-    } else if (id === ColumnType.Def) {
-      sortBy = [TypeAction.DEF, 'defense'];
-    } else if (id === ColumnType.Sta) {
-      sortBy = [TypeAction.STA, 'stamina'];
-    } else if (id === ColumnType.Prod) {
-      sortBy = [TypeAction.PROD, 'product'];
-    }
+  const sortRanking = (pokemon: IPokemonStatsRanking[], id: ColumnType) => {
+    const sortBy = setSortBy(id);
     return pokemon
       .sort((a, b) => setSortedPokemonRanking(a, b, sortBy))
       .map((data) => {
         const result = data as unknown as DynamicObj<IPokemonStatsRanking>;
-        return new PokemonStatsRanking({
+        return PokemonStatsRanking.create({
           ...data,
           rank: result[sortBy[0]]?.rank,
         });
@@ -229,15 +234,13 @@ const StatsRanking = () => {
 
   const getSortId = () => {
     let idSort = ColumnType.Prod;
-    const statsBy = location.state?.stats as TypeAction;
-    if (statsBy) {
-      if (statsBy === TypeAction.ATK) {
-        idSort = ColumnType.Atk;
-      } else if (statsBy === TypeAction.DEF) {
-        idSort = ColumnType.Def;
-      } else if (statsBy === TypeAction.STA) {
-        idSort = ColumnType.Sta;
-      }
+    const statsBy = location.state?.stats as unknown as TypeAction;
+    if (statsBy === TypeAction.Atk) {
+      idSort = ColumnType.Atk;
+    } else if (statsBy === TypeAction.Def) {
+      idSort = ColumnType.Def;
+    } else if (statsBy === TypeAction.Sta) {
+      idSort = ColumnType.Sta;
     }
     return idSort;
   };
@@ -265,16 +268,16 @@ const StatsRanking = () => {
 
   useEffect(() => {
     if (!select && isNotEmpty(pokemonList)) {
-      setSelect(pokemonList.at(0));
+      setSelect(pokemonList[0]);
     }
   }, [select, pokemonList]);
 
   useEffect(() => {
-    const id = searchParams.get('id');
-    if (id && isNotEmpty(pokemonFilter)) {
+    const id = toNumber(searchParams.get('id'));
+    if (id > 0 && isNotEmpty(pokemonFilter)) {
       const form = searchParams.get('form');
       const index = pokemonFilter.findIndex(
-        (row) => row.num === toNumber(id) && isEqual(row.forme, form?.replaceAll('-', '_') || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+        (row) => row.num === id && isEqual(row.forme, form?.replaceAll('-', '_') || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
       );
       if (index > -1) {
         const result = pokemonFilter[index];
@@ -313,15 +316,13 @@ const StatsRanking = () => {
 
   const convertToPokemonForm = (pokemon: IPokemonData | IPokemonStatsRanking) => {
     return Form.create({
-      formName: getValueOrDefault(String, pokemon.forme),
+      formName: pokemon.forme,
       id: pokemon.num,
       isDefault: true,
       isMega: isInclude(pokemon.slug, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
       name: pokemon.name,
-      types: getValueOrDefault(Array, pokemon.types),
-      version: getValueOrDefault(String, pokemon.version),
-      isShadow: false,
-      isPurified: false,
+      types: pokemon.types,
+      version: pokemon.version,
     });
   };
 
@@ -335,13 +336,13 @@ const StatsRanking = () => {
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
               src={APIService.getPokeFullSprite(
-                getValueOrDefault(Number, select?.num),
+                select?.num,
                 convertPokemonImageName(select && isEqual(select.baseForme, select.forme) ? '' : select?.forme)
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                  e.currentTarget.src = APIService.getPokeFullAsset(getValueOrDefault(Number, select?.num));
+                  e.currentTarget.src = APIService.getPokeFullAsset(select?.num);
                 } else {
                   e.currentTarget.src = APIService.getPokeFullSprite(0);
                 }
@@ -355,10 +356,10 @@ const StatsRanking = () => {
               id={select?.num}
               gen={select?.gen}
               formName={select?.name}
-              region={getValueOrDefault(String, select?.region)}
-              version={getValueOrDefault(String, select?.version)}
-              weight={getValueOrDefault(Number, select?.weightkg)}
-              height={getValueOrDefault(Number, select?.heightm)}
+              region={select?.region}
+              version={select?.version}
+              weight={toNumber(select?.weightkg)}
+              height={toNumber(select?.heightm)}
               className="table-stats-ranking"
               isLoadedForms={progress.isLoadedForms}
             />
@@ -385,7 +386,7 @@ const StatsRanking = () => {
         statProd={select?.prod}
         pokemonStats={stats}
         id={select?.num}
-        form={getValueOrDefault(String, select?.forme)}
+        form={select?.forme}
       />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
@@ -433,8 +434,8 @@ const StatsRanking = () => {
         }}
         onSort={(rows) => {
           if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonFilter, toNumber(getValueOrDefault(String, rows.id?.toString()))));
-            setSortId(toNumber(getValueOrDefault(String, rows.id?.toString())));
+            setPokemonFilter(sortRanking(pokemonFilter, toNumber(rows.id)));
+            setSortId(toNumber(rows.id));
           }
         }}
         conditionalRowStyles={conditionalRowStyles}

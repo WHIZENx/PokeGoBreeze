@@ -1,4 +1,4 @@
-import { BuffType, TypeAction } from '../../enums/type.enum';
+import { BuffType, MoveType, TypeAction } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { MoveSetting } from './options.model';
 
@@ -85,10 +85,7 @@ export interface ICombat {
   archetype: ArcheType | undefined;
   abbreviation: string | undefined;
   isMultipleWithType: boolean;
-  isElite?: boolean;
-  isShadow?: boolean;
-  isPurified?: boolean;
-  isSpecial?: boolean;
+  moveType?: MoveType;
 }
 
 export class Combat implements ICombat {
@@ -112,10 +109,7 @@ export class Combat implements ICombat {
   archetype: ArcheType | undefined;
   abbreviation: string | undefined;
   isMultipleWithType = false;
-  isElite?: boolean;
-  isShadow?: boolean;
-  isPurified?: boolean;
-  isSpecial?: boolean;
+  moveType?: MoveType;
 
   static create(value: ICombat) {
     const obj = new Combat();

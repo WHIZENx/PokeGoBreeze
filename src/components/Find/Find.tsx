@@ -9,7 +9,7 @@ import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isInclude, isNotEmpty } from '../../util/extension';
+import { combineClasses, isInclude, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 
@@ -75,11 +75,11 @@ const Find = (props: IFindComponent) => {
   };
 
   const handleSetStats = (type: TypeAction, value: number) => {
-    if (type === TypeAction.ATK && props.setStatATK) {
+    if (type === TypeAction.Atk && props.setStatATK) {
       props.setStatATK(value);
-    } else if (type === TypeAction.DEF && props.setStatDEF) {
+    } else if (type === TypeAction.Def && props.setStatDEF) {
       props.setStatDEF(value);
-    } else if (type === TypeAction.STA && props.setStatSTA) {
+    } else if (type === TypeAction.Sta && props.setStatSTA) {
       props.setStatSTA(value);
     }
   };
@@ -189,7 +189,7 @@ const Find = (props: IFindComponent) => {
               setForm={props.setForm}
               id={id}
               setName={props.setName}
-              name={getValueOrDefault(String, pokemonList.find((item) => item.id === id)?.name)}
+              name={pokemonList.find((item) => item.id === id)?.name}
               data={pokemonData}
               stats={stats}
               onHandleSetStats={handleSetStats}

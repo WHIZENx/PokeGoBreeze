@@ -1,5 +1,5 @@
 import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Find/Find';
@@ -10,7 +10,6 @@ import {
   BRONZE_INC_CHANCE,
   CURVE_INC_CHANCE,
   EXCELLENT_THROW_INC_CHANCE,
-  FORM_SHADOW,
   GOLD_INC_CHANCE,
   GOLD_RAZZ_BERRY_INC_CHANCE,
   GREAT_BALL_INC_CHANCE,
@@ -26,21 +25,12 @@ import {
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/constants';
-import { capitalize, convertPokemonAPIDataName, LevelSlider, splitAndCapitalize } from '../../../util/utils';
+import { convertPokemonAPIDataName, getKeyEnum, LevelSlider, splitAndCapitalize } from '../../../util/utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import {
-  DynamicObj,
-  getValueOrDefault,
-  isEqual,
-  isIncludeList,
-  isNotEmpty,
-  isNullOrEmpty,
-  toFloatWithPadding,
-  toNumber,
-} from '../../../util/extension';
+import { DynamicObj, isEqual, isIncludeList, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
 import {
   Medal,
   MedalType,
@@ -53,12 +43,13 @@ import {
   PokeBallOption,
 } from './models/catch-chance.model';
 import { PokeBallType } from './enums/poke-ball.enum';
+import { PokemonType } from '../../../enums/type.enum';
 
 const CatchChance = () => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const CIRCLE_DISTANCE = 200;
+  const circleDistance = useRef(200);
 
   const [id, setId] = useState(searching ? searching.id : 1);
   const [form, setForm] = useState<IPokemonFormModify>();
@@ -71,7 +62,7 @@ const CatchChance = () => {
   const [dataAdv, setDataAdv] = useState(new DataAdvance());
   const [medal, setMedal] = useState(new Medal());
   const [level, setLevel] = useState(MIN_LEVEL);
-  const [radius, setRadius] = useState(CIRCLE_DISTANCE / 2);
+  const [radius, setRadius] = useState(circleDistance.current / 2);
   const [throwTitle, setThrowTitle] = useState(
     new TitleThrow({
       title: 'Nice!',
@@ -171,9 +162,7 @@ const CatchChance = () => {
             (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
             (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
           const prob = calculateCatchChance(
-            data.obShadowFormBaseCaptureRate && options.isShadow
-              ? data.obShadowFormBaseCaptureRate
-              : getValueOrDefault(Number, data.baseCaptureRate),
+            data.obShadowFormBaseCaptureRate && options.isShadow ? data.obShadowFormBaseCaptureRate : data.baseCaptureRate,
             level,
             multiplier
           );
@@ -205,7 +194,7 @@ const CatchChance = () => {
           priority: medal && medal.typePri ? medal.typePri.priority : 0,
         }),
       });
-      if (!isNullOrEmpty(typeSec)) {
+      if (!typeSec) {
         medalType = Medal.create({
           ...medalType,
           typeSec: MedalType.create({
@@ -310,7 +299,7 @@ const CatchChance = () => {
         (isRazzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
         (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
         (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
-      const prob = calculateCatchChance(getValueOrDefault(Number, data?.baseCaptureRate), level, multiplier);
+      const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
       const result = Math.min(prob * 100, 100);
       return result;
     }
@@ -494,10 +483,10 @@ const CatchChance = () => {
                         `${
                           (data.obShadowFormAttackProbability && isShadow
                             ? data.obShadowFormAttackProbability
-                            : getValueOrDefault(Number, data.attackProbability)) * 100
+                            : toNumber(data.attackProbability)) * 100
                         }%`}
                     </h5>
-                    <p>{data && `Time: ${toFloatWithPadding(getValueOrDefault(Number, data.attackTimerS) / 10, 2)} sec`}</p>
+                    <p>{data && `Time: ${toFloatWithPadding(toNumber(data.attackTimerS) / 10, 2)} sec`}</p>
                   </div>
                 )}
                 <div className="w-25 text-center d-inline-block">
@@ -508,10 +497,10 @@ const CatchChance = () => {
                       `${
                         data.obShadowFormDodgeProbability && isShadow
                           ? data.obShadowFormDodgeProbability
-                          : getValueOrDefault(Number, data.dodgeProbability) * 100
+                          : toNumber(data.dodgeProbability) * 100
                       }%`}
                   </h5>
-                  <p>{data && `Time: ${toFloatWithPadding(getValueOrDefault(Number, data.dodgeDurationS) / 10, 2)} sec`}</p>
+                  <p>{data && `Time: ${toFloatWithPadding(toNumber(data.dodgeDurationS) / 10, 2)} sec`}</p>
                 </div>
               </div>
             </div>
@@ -529,7 +518,7 @@ const CatchChance = () => {
                 }
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {capitalize(FORM_SHADOW)}
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyEnum(PokemonType, PokemonType.Shadow)}
                   </span>
                 }
               />
@@ -610,9 +599,13 @@ const CatchChance = () => {
                 <div className="col-md-6 d-flex flex-column justify-content-center align-items-center" style={{ padding: 0 }}>
                   <h5 className="text-center">{throwTitle.title}</h5>
                   <div className="d-flex justify-content-center position-relative">
-                    <Circle line={2} color="lightgray" size={CIRCLE_DISTANCE} />
+                    <Circle line={2} color="lightgray" size={circleDistance.current} />
                     <div className="position-absolute circle-ring">
-                      <Circle line={2} color={colorCircle} size={CIRCLE_DISTANCE - ((100 - radius) * CIRCLE_DISTANCE) / 100} />
+                      <Circle
+                        line={2}
+                        color={colorCircle}
+                        size={circleDistance.current - ((100 - radius) * circleDistance.current) / 100}
+                      />
                     </div>
                   </div>
                 </div>

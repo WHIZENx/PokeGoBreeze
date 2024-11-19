@@ -4,12 +4,12 @@ import CardMoveSmall from '../Card/CardMoveSmall';
 import './Select.scss';
 import CardMove from '../Card/CardMove';
 import { useSelector } from 'react-redux';
-import { TypeMove } from '../../enums/type.enum';
+import { MoveType, TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEqual, isNotEmpty } from '../../util/extension';
 import { InputType } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
@@ -28,32 +28,32 @@ const SelectMove = (props: ISelectMoveComponent) => {
   };
 
   const findMove = useCallback(
-    (id: number, form: string, type: TypeMove, selected = false) => {
+    (id: number, form: string | null | undefined, type: TypeMove, selected = false) => {
       const result = retrieveMoves(pokemon, id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
-        if (type === TypeMove.FAST) {
+        if (type === TypeMove.Fast) {
           result.quickMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.None));
           });
           result.eliteQuickMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Elite));
           });
         } else {
           result.cinematicMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.None));
           });
           result.eliteCinematicMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, true, false, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Elite));
           });
           result.shadowMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, true, false, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Shadow));
           });
           result.purifiedMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, true, false));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Purified));
           });
           result.specialMoves?.forEach((value) => {
-            simpleMove.push(new SelectMoveModel(value, false, false, false, true));
+            simpleMove.push(new SelectMoveModel(value, MoveType.Special));
           });
         }
         if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
@@ -68,7 +68,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   useEffect(() => {
     if (isNotEmpty(pokemon)) {
       if (props.pokemon?.num) {
-        findMove(props.pokemon.num, getValueOrDefault(String, props.pokemon.forme), props.moveType, props.isSelected);
+        findMove(props.pokemon.num, props.pokemon.forme, props.moveType, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
@@ -93,9 +93,9 @@ const SelectMove = (props: ISelectMoveComponent) => {
               value={props.move}
               isShow={Boolean(props.pokemon)}
               isDisable={props.isDisable}
-              isSelect={resultMove?.length > 1}
+              isSelect={resultMove.length > 1}
             />
-            {showMove && resultMove && (
+            {showMove && (
               <div className="result-move-select">
                 <div>
                   {resultMove

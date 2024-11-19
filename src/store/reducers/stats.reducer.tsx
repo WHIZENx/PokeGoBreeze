@@ -1,7 +1,7 @@
 import { IStatsRank } from '../../core/models/stats.model';
 import { sortStatsPokemon } from '../../util/calculate';
 import { FORM_NORMAL } from '../../util/constants';
-import { getValueOrDefault } from '../../util/extension';
+import { toNumber } from '../../util/extension';
 import { ArrayStats, BaseStatsPokeGo } from '../../util/models/util.model';
 import { StatsActions } from '../actions';
 import { StatsActionsUnion } from '../actions/stats.action';
@@ -13,6 +13,7 @@ const StoreReducer = (state: IStatsRank | null = null, action: StatsActionsUnion
         action.payload
           .filter((pokemon) => pokemon.num > 0)
           .map((value) => {
+            const sta = toNumber(value.baseStats.sta);
             return new ArrayStats({
               id: value.num,
               name: value.slug,
@@ -21,9 +22,9 @@ const StoreReducer = (state: IStatsRank | null = null, action: StatsActionsUnion
               baseStatsPokeGo: new BaseStatsPokeGo({
                 attack: value.baseStats.atk,
                 defense: value.baseStats.def,
-                stamina: getValueOrDefault(Number, value.baseStats.sta),
+                stamina: sta,
               }),
-              baseStatsProd: value.baseStats.atk * value.baseStats.def * getValueOrDefault(Number, value.baseStats.sta),
+              baseStatsProd: value.baseStats.atk * value.baseStats.def * sta,
             });
           })
       );

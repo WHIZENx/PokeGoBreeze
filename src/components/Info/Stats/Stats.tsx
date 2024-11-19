@@ -1,18 +1,17 @@
 import { useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/calculate';
-import { checkRankAllAvailable } from '../../../util/utils';
+import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../util/utils';
 
 import './Stats.scss';
 import { IStatsPokemonGO, StatsPokemonGO, StatsRankPokemonGO } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
-import { SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault, toFloatWithPadding } from '../../../util/extension';
+import { toFloatWithPadding, toNumber } from '../../../util/extension';
 
 interface ICurrentStats {
   stats: IStatsPokemonGO;
@@ -44,21 +43,22 @@ const Stats = (props: IStatsComponent) => {
   const [currentStats, setCurrentStats] = useState(new CurrentStats());
 
   useEffect(() => {
-    const atk = setShadowStats(
+    const atk = setStats(
       props.stats || props.statATK ? (props.statATK ? props.statATK.attack : calBaseATK(props.stats, true)) : 0,
-      TypeAction.ATK
+      TypeAction.Atk
     );
-    const def = setShadowStats(
+    const def = setStats(
       props.stats || props.statDEF ? (props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats, true)) : 0,
-      TypeAction.DEF
+      TypeAction.Def
     );
     const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats, true)) : 0;
-    const prod = setShadowStats(
+    const prod = setStats(
       props.stats || props.statProd
         ? props.statProd
           ? props.statProd.product
           : calBaseATK(props.stats, true) * calBaseDEF(props.stats, true) * calBaseSTA(props.stats, true)
-        : 0
+        : 0,
+      TypeAction.Prod
     );
     setIsAvailable(
       checkRankAllAvailable(props.pokemonStats, {
@@ -75,25 +75,15 @@ const Stats = (props: IStatsComponent) => {
         sta,
         prod,
       },
-      atk: (atk * 100) / getValueOrDefault(Number, props.pokemonStats?.attack.maxStats, 1),
-      def: (def * 100) / getValueOrDefault(Number, props.pokemonStats?.defense.maxStats, 1),
-      sta: (sta * 100) / getValueOrDefault(Number, props.pokemonStats?.stamina.maxStats, 1),
-      prod: (prod * 100) / getValueOrDefault(Number, props.pokemonStats?.statProd.maxStats, 1),
+      atk: (atk * 100) / toNumber(props.pokemonStats?.attack.maxStats, 1),
+      def: (def * 100) / toNumber(props.pokemonStats?.defense.maxStats, 1),
+      sta: (sta * 100) / toNumber(props.pokemonStats?.stamina.maxStats, 1),
+      prod: (prod * 100) / toNumber(props.pokemonStats?.statProd.maxStats, 1),
     });
-  }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.isShadow]);
+  }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType]);
 
-  const setShadowStats = (stats: number, type?: TypeAction) => {
-    if (props.isShadow) {
-      return Math.round(
-        stats *
-          (type === TypeAction.ATK
-            ? SHADOW_ATK_BONUS(data.options)
-            : type === TypeAction.DEF
-            ? SHADOW_DEF_BONUS(data.options)
-            : SHADOW_ATK_BONUS(data.options) * SHADOW_DEF_BONUS(data.options))
-      );
-    }
-    return stats;
+  const setStats = (stats: number, type: TypeAction) => {
+    return Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
   };
 
   return (
@@ -107,7 +97,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.atk}
         id={props.id}
         form={props.form}
-        statType={TypeAction.ATK}
+        statType={TypeAction.Atk}
       />
       <StatsBar
         tag="DEF"
@@ -118,7 +108,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.def}
         id={props.id}
         form={props.form}
-        statType={TypeAction.DEF}
+        statType={TypeAction.Def}
       />
       <StatsBar
         tag="STA"
@@ -129,7 +119,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.sta}
         id={props.id}
         form={props.form}
-        statType={TypeAction.STA}
+        statType={TypeAction.Sta}
       />
       <StatsBar
         tag="Stat Prod"
@@ -141,7 +131,7 @@ const Stats = (props: IStatsComponent) => {
         optionalStats={`${toFloatWithPadding(currentStats.stats.prod / Math.pow(10, 6), 2)} MM`}
         id={props.id}
         form={props.form}
-        statType={TypeAction.PROD}
+        statType={TypeAction.Prod}
       />
     </div>
   );

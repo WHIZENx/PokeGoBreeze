@@ -3,7 +3,10 @@ import { Combat, IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IStatsAtk, IStatsDef, IStatsProd, IStatsSta, IStatsBase, StatsBase } from '../../../core/models/stats.model';
+import { PokemonType } from '../../../enums/type.enum';
+import { toNumber } from '../../../util/extension';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
+import { getPokemonType } from '../../../util/utils';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
 
 export enum ChargeType {
@@ -16,9 +19,9 @@ export enum ChargeType {
 export interface IPokemonBattleData {
   speciesId?: string;
   name?: string;
-  form?: string;
+  form?: string | null;
   id?: number;
-  isShadow: boolean;
+  pokemonType: PokemonType;
   allStats?: IBattleBaseStats[];
   hp: number;
   stats: IStatsBase | undefined;
@@ -38,9 +41,9 @@ export interface IPokemonBattleData {
 export class PokemonBattleData implements IPokemonBattleData {
   speciesId?: string;
   name?: string;
-  form?: string;
+  form?: string | null;
   id?: number;
-  isShadow = false;
+  pokemonType = PokemonType.Normal;
   allStats?: IBattleBaseStats[];
   hp = 0;
   stats: IStatsBase | undefined;
@@ -58,14 +61,15 @@ export class PokemonBattleData implements IPokemonBattleData {
 
   static create(value: IPokemonBattleData) {
     const obj = new PokemonBattleData();
+    obj.pokemonType = getPokemonType(obj.form);
     Object.assign(obj, value);
     return obj;
   }
 
-  static setValue(energy: number, hp: number) {
+  static setValue(energy: number | undefined, hp: number | undefined) {
     const obj = new PokemonBattleData();
-    obj.energy = energy;
-    obj.hp = hp;
+    obj.energy = toNumber(energy);
+    obj.hp = toNumber(hp);
     return obj;
   }
 }
@@ -73,7 +77,7 @@ export class PokemonBattleData implements IPokemonBattleData {
 export interface IPokemonBattle {
   disableCMoveSec: boolean;
   disableCMovePri: boolean;
-  isShadow?: boolean;
+  pokemonType: PokemonType;
   pokemonData?: IPokemonBattleData;
   fMove?: ICombat;
   cMovePri?: ICombat;
@@ -88,7 +92,7 @@ export interface IPokemonBattle {
 export class PokemonBattle implements IPokemonBattle {
   disableCMoveSec = false;
   disableCMovePri = false;
-  isShadow?: boolean;
+  pokemonType = PokemonType.Normal;
   pokemonData?: IPokemonBattleData;
   fMove?: ICombat;
   cMovePri?: ICombat;
@@ -101,6 +105,7 @@ export class PokemonBattle implements IPokemonBattle {
 
   static create(value: IPokemonBattle) {
     const obj = new PokemonBattle();
+    obj.pokemonType = obj.pokemonData?.pokemonType ?? PokemonType.Normal;
     Object.assign(obj, value);
     return obj;
   }
@@ -151,8 +156,7 @@ export interface IPokemonTeamData {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  isShadow: boolean;
-  isPurified: boolean;
+  pokemonType: PokemonType;
 }
 
 export class PokemonTeamData implements IPokemonTeamData {
@@ -168,10 +172,10 @@ export class PokemonTeamData implements IPokemonTeamData {
   fMove: ICombat | undefined;
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
-  isShadow = false;
-  isPurified = false;
+  pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonTeamData) {
+    props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
 }
@@ -191,8 +195,7 @@ export interface IPokemonBattleRanking {
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
-  isShadow: boolean;
-  isPurified: boolean;
+  pokemonType: PokemonType;
 }
 
 export class PokemonBattleRanking implements IPokemonBattleRanking {
@@ -210,10 +213,10 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   cMovePri: ICombat | undefined;
   cMoveSec: ICombat | undefined;
   bestStats?: IBattleBaseStats;
-  isShadow = false;
-  isPurified = false;
+  pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonBattleRanking) {
+    props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
 }

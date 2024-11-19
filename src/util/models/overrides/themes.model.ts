@@ -43,7 +43,7 @@ export const getDesignThemes = (mode: TypeTheme) =>
     palette: {
       constant,
       mode,
-      ...(mode === TypeTheme.LIGHT
+      ...(mode === TypeTheme.Light
         ? {
             // palette values for light mode
             text: {

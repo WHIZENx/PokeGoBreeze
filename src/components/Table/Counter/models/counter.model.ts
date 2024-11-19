@@ -1,4 +1,6 @@
 import { Combat, ICombat } from '../../../../core/models/combat.model';
+import { MoveType, PokemonType } from '../../../../enums/type.enum';
+import { getPokemonType } from '../../../../util/utils';
 
 export interface ICounterModel {
   cMove: ICombat;
@@ -7,6 +9,7 @@ export interface ICounterModel {
   pokemonForme: string | null;
   pokemonId: number;
   pokemonName: string;
+  pokemonType?: PokemonType;
   ratio: number;
   releasedGO: boolean;
 }
@@ -18,10 +21,18 @@ export class CounterModel implements ICounterModel {
   pokemonForme = '';
   pokemonId = 0;
   pokemonName = '';
+  pokemonType = PokemonType.Normal;
   ratio = 0;
   releasedGO = false;
 
   constructor({ ...props }: ICounterModel) {
+    if (props.cMove.moveType === MoveType.Shadow) {
+      props.pokemonType = PokemonType.Shadow;
+    } else if (props.cMove.moveType === MoveType.Purified) {
+      props.pokemonType = PokemonType.Purified;
+    } else {
+      props.pokemonType = getPokemonType(props.pokemonForme, false, false);
+    }
     Object.assign(this, props);
   }
 }

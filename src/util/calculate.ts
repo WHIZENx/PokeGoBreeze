@@ -22,7 +22,7 @@ import {
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
-import { TypeMove } from '../enums/type.enum';
+import { MoveType, PokemonType, TypeAction } from '../enums/type.enum';
 import { Delay, IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
 import { findStabType } from './compute';
 import {
@@ -46,12 +46,18 @@ import {
   MULTIPLY_LEVEL_FRIENDSHIP,
   MULTIPLY_THROW_CHARGE,
   RAID_BOSS_TIER,
-  SHADOW_ATK_BONUS,
-  SHADOW_DEF_BONUS,
   STAB_MULTIPLY,
   typeCostPowerUp,
 } from './constants';
-import { capitalize, splitAndCapitalize, checkMoveSetAvailable } from './utils';
+import {
+  capitalize,
+  splitAndCapitalize,
+  checkMoveSetAvailable,
+  getDmgMultiplyBonus,
+  getMoveType,
+  getAllMoves,
+  moveTypeToFormType,
+} from './utils';
 import {
   BattleLeagueCalculate,
   PredictCPCalculate,
@@ -84,7 +90,6 @@ import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeLi
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 import { EqualMode, IncludeMode } from './enums/string.enum';
-import { PokemonType } from '../pages/Tools/BattleDamage/enums/damage.enum';
 import { BattleLeagueCPType } from './enums/compute.enum';
 
 const weatherMultiple = (
@@ -100,19 +105,21 @@ const weatherMultiple = (
     : 1) as unknown as number;
 };
 
-export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: string, typesObj: string[]) => {
+export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: string | undefined, typesObj: string[] | undefined) => {
   let valueEffective = 1;
   if (!typeEffective) {
     return valueEffective;
   }
-  typesObj.forEach((type) => {
-    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[typeMove.toUpperCase()][type.toUpperCase()];
+  typesObj?.forEach((type) => {
+    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[getValueOrDefault(String, typeMove).toUpperCase()][
+      type.toUpperCase()
+    ];
   });
   return valueEffective;
 };
 
 const convertStatsArray = (stats: Stats[] | undefined, name: string) => {
-  return getValueOrDefault(Number, stats?.find((item) => isEqual(item.stat.name, name))?.base_stat);
+  return toNumber(stats?.find((item) => isEqual(item.stat.name, name))?.base_stat);
 };
 
 export const convertAllStats = (stats: Stats[] | undefined) => {
@@ -137,13 +144,13 @@ export const calBaseATK = (stats: IStatsPokemon | null | undefined, nerf: boolea
   if (!stats) {
     stats = new StatsPokemon();
   }
-  const atk = getValueOrDefault(Number, stats.atk);
-  const spa = getValueOrDefault(Number, stats.spa);
+  const atk = toNumber(stats.atk);
+  const spa = toNumber(stats.spa);
 
   const lower = Math.min(atk, spa);
   const higher = Math.max(atk, spa);
 
-  const speed = getValueOrDefault(Number, stats.spe);
+  const speed = toNumber(stats.spe);
 
   const scaleATK = Math.round(2 * ((7 / 8) * higher + (1 / 8) * lower));
   const speedMod = 1 + (speed - 75) / 500;
@@ -162,13 +169,13 @@ export const calBaseDEF = (stats: IStatsPokemon | null | undefined, nerf: boolea
   if (!stats) {
     stats = new StatsPokemon();
   }
-  const def = getValueOrDefault(Number, stats.def);
-  const spd = getValueOrDefault(Number, stats.spd);
+  const def = toNumber(stats.def);
+  const spd = toNumber(stats.spd);
 
   const lower = Math.min(def, spd);
   const higher = Math.max(def, spd);
 
-  const speed = getValueOrDefault(Number, stats.spe);
+  const speed = toNumber(stats.spe);
 
   const scaleDEF = Math.round(2 * ((5 / 8) * higher + (3 / 8) * lower));
   const speedMod = 1 + (speed - 75) / 500;
@@ -187,7 +194,7 @@ export const calBaseSTA = (stats: IStatsPokemon | null | undefined, nerf: boolea
   if (!stats) {
     stats = new StatsPokemon();
   }
-  const hp = getValueOrDefault(Number, stats.hp);
+  const hp = toNumber(stats.hp);
 
   const baseSTA = hp > 0 ? Math.floor(hp * 1.75 + 50) : hp;
   if (!nerf) {
@@ -204,8 +211,8 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
   const attackRanking = [
     ...new Set(
       stats
-        .sort((a, b) => getValueOrDefault(Number, a.baseStatsPokeGo?.attack) - getValueOrDefault(Number, b.baseStatsPokeGo?.attack))
-        .map((item) => getValueOrDefault(Number, item.baseStatsPokeGo?.attack))
+        .sort((a, b) => toNumber(a.baseStatsPokeGo?.attack) - toNumber(b.baseStatsPokeGo?.attack))
+        .map((item) => toNumber(item.baseStatsPokeGo?.attack))
     ),
   ];
 
@@ -215,16 +222,16 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     StatsAtk.create({
       id: item.id,
       form: item.form,
-      attack: getValueOrDefault(Number, item.baseStatsPokeGo?.attack),
-      rank: attackRanking.length - attackRanking.indexOf(getValueOrDefault(Number, item.baseStatsPokeGo?.attack)),
+      attack: toNumber(item.baseStatsPokeGo?.attack),
+      rank: attackRanking.length - attackRanking.indexOf(toNumber(item.baseStatsPokeGo?.attack)),
     })
   );
 
   const defenseRanking = [
     ...new Set(
       stats
-        .sort((a, b) => getValueOrDefault(Number, a.baseStatsPokeGo?.defense) - getValueOrDefault(Number, b.baseStatsPokeGo?.defense))
-        .map((item) => getValueOrDefault(Number, item.baseStatsPokeGo?.defense))
+        .sort((a, b) => toNumber(a.baseStatsPokeGo?.defense) - toNumber(b.baseStatsPokeGo?.defense))
+        .map((item) => toNumber(item.baseStatsPokeGo?.defense))
     ),
   ];
 
@@ -234,16 +241,16 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     StatsDef.create({
       id: item.id,
       form: item.form,
-      defense: getValueOrDefault(Number, item.baseStatsPokeGo?.defense),
-      rank: defenseRanking.length - defenseRanking.indexOf(getValueOrDefault(Number, item.baseStatsPokeGo?.defense)),
+      defense: toNumber(item.baseStatsPokeGo?.defense),
+      rank: defenseRanking.length - defenseRanking.indexOf(toNumber(item.baseStatsPokeGo?.defense)),
     })
   );
 
   const staminaRanking = [
     ...new Set(
       stats
-        .sort((a, b) => getValueOrDefault(Number, a.baseStatsPokeGo?.stamina) - getValueOrDefault(Number, b.baseStatsPokeGo?.stamina))
-        .map((item) => getValueOrDefault(Number, item.baseStatsPokeGo?.stamina))
+        .sort((a, b) => toNumber(a.baseStatsPokeGo?.stamina) - toNumber(b.baseStatsPokeGo?.stamina))
+        .map((item) => toNumber(item.baseStatsPokeGo?.stamina))
     ),
   ];
 
@@ -253,8 +260,8 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     StatsSta.create({
       id: item.id,
       form: item.form,
-      stamina: getValueOrDefault(Number, item.baseStatsPokeGo?.stamina),
-      rank: staminaRanking.length - staminaRanking.indexOf(getValueOrDefault(Number, item.baseStatsPokeGo?.stamina)),
+      stamina: toNumber(item.baseStatsPokeGo?.stamina),
+      rank: staminaRanking.length - staminaRanking.indexOf(toNumber(item.baseStatsPokeGo?.stamina)),
     })
   );
 
@@ -305,10 +312,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) => {
   return Math.floor(
-    Math.max(
-      10,
-      (atk * def ** 0.5 * sta ** 0.5 * getValueOrDefault(Number, data.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10
-    )
+    Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * toNumber(data.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
   );
 };
 
@@ -332,11 +336,11 @@ export const calculateDuelAbility = (dmgOutput: number, tankiness: number) => {
   return dmgOutput * tankiness;
 };
 
-export const calculateCatchChance = (baseCaptureRate: number, level: number, multiplier: number) => {
+export const calculateCatchChance = (baseCaptureRate: number | undefined, level: number, multiplier: number) => {
   return (
     1 -
     Math.pow(
-      Math.max(0, 1 - baseCaptureRate / (2 * getValueOrDefault(Number, data?.find((data: ICPM) => data.level === level)?.multiplier))),
+      Math.max(0, 1 - toNumber(baseCaptureRate) / (2 * toNumber(data?.find((data: ICPM) => data.level === level)?.multiplier))),
       multiplier
     )
   );
@@ -399,7 +403,6 @@ export const predictCPList = (atk: number, def: number, sta: number, IVatk: numb
 
 export const calculateStats = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number, cp: string) => {
   const maxCP = toNumber(cp);
-
   const dataStat = new StatsCalculate(IVatk, IVdef, IVsta, maxCP, 0);
 
   for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
@@ -411,8 +414,9 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
   return dataStat;
 };
 
-export const calculateStatsBattle = (base: number, iv: number, level: number, floor = false, addition = 1) => {
-  const result = (base + iv) * getValueOrDefault(Number, data.find((item: ICPM) => item.level === level)?.multiplier) * addition;
+export const calculateStatsBattle = (base?: number, iv?: number, level?: number, floor = false, addition = 1) => {
+  const result =
+    (toNumber(base) + toNumber(iv)) * toNumber(data.find((item: ICPM) => item.level === toNumber(level))?.multiplier) * addition;
   if (floor) {
     return Math.floor(result);
   }
@@ -428,9 +432,10 @@ export const calculateBetweenLevel = (
   IVdef: number,
   IVsta: number,
   fromLV: number,
-  toLV: number,
-  type?: PokemonType
+  toLV: number | undefined,
+  pokemonType?: PokemonType
 ) => {
+  toLV = toNumber(toLV);
   // from_lv -= 0.5;
   toLV -= 0.5;
 
@@ -439,58 +444,51 @@ export const calculateBetweenLevel = (
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
-      resultBetweenStadust: 0,
+      resultBetweenStardust: 0,
       resultBetweenCandy: 0,
       resultBetweenXLCandy: 0,
       powerUpCount: 0,
     });
   } else {
-    let betweenStadust = 0;
+    let betweenStardust = 0;
     let betweenCandy = 0;
     let betweenXlCandy = 0;
 
-    let betweenStadustDiff = 0;
+    let betweenStardustDiff = 0;
     let betweenCandyDiff = 0;
     let betweenXlCandyDiff = 0;
 
-    let atkStat = 0;
-    let defStat = 0;
-    let atkStatDiff = 0;
-    let defStatDiff = 0;
+    const atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Atk));
+    const defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def));
 
-    if (type === PokemonType.Shadow) {
-      atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, SHADOW_ATK_BONUS(globalOptions));
-      defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, SHADOW_DEF_BONUS(globalOptions));
-
-      atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
-      defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
-    }
+    const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
+    const defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
 
     data.forEach((ele: CPMData) => {
       const result = CPMDetail.mapping(ele);
-      if (ele.level >= fromLV && ele.level <= toLV) {
-        betweenStadust += Math.ceil(result.stardust * typeCostPowerUp(type).stardust);
-        betweenCandy += Math.ceil(result.candy * typeCostPowerUp(type).candy);
-        betweenXlCandy += Math.ceil(result.xlCandy * typeCostPowerUp(type).candy);
-        betweenStadustDiff += Math.abs(result.stardust - Math.ceil(result.stardust * typeCostPowerUp(type).stardust));
-        betweenCandyDiff += Math.abs(result.candy - Math.ceil(result.candy * typeCostPowerUp(type).candy));
-        betweenXlCandyDiff += Math.abs(result.xlCandy - Math.ceil(result.xlCandy * typeCostPowerUp(type).candy));
+      if (ele.level >= fromLV && ele.level <= toNumber(toLV)) {
+        betweenStardust += Math.ceil(result.stardust * typeCostPowerUp(pokemonType).stardust);
+        betweenCandy += Math.ceil(result.candy * typeCostPowerUp(pokemonType).candy);
+        betweenXlCandy += Math.ceil(result.xlCandy * typeCostPowerUp(pokemonType).candy);
+        betweenStardustDiff += Math.abs(result.stardust - Math.ceil(result.stardust * typeCostPowerUp(pokemonType).stardust));
+        betweenCandyDiff += Math.abs(result.candy - Math.ceil(result.candy * typeCostPowerUp(pokemonType).candy));
+        betweenXlCandyDiff += Math.abs(result.xlCandy - Math.ceil(result.xlCandy * typeCostPowerUp(pokemonType).candy));
       }
     });
 
     const dataList = new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
-      resultBetweenStadust: betweenStadust,
-      resultBetweenStadustDiff: betweenStadustDiff,
+      resultBetweenStardust: betweenStardust,
+      resultBetweenStardustDiff: betweenStardustDiff,
       resultBetweenCandy: betweenCandy,
       resultBetweenCandyDiff: betweenCandyDiff,
       resultBetweenXLCandy: betweenXlCandy,
       resultBetweenXLCandyDiff: betweenXlCandyDiff,
       powerUpCount,
-      type,
+      pokemonType,
     });
 
-    if (type === PokemonType.Shadow) {
+    if (pokemonType === PokemonType.Shadow) {
       dataList.atkStat = atkStat;
       dataList.defStat = defStat;
       dataList.atkStatDiff = atkStatDiff;
@@ -540,14 +538,8 @@ export const calculateBattleLeague = (
       }
     }
 
-    const atkStat =
-      type === PokemonType.Shadow
-        ? calculateStatsBattle(atk, IVatk, dataBattle.level, true, SHADOW_ATK_BONUS(globalOptions))
-        : calculateStatsBattle(atk, IVatk, dataBattle.level, true);
-    const defStat =
-      type === PokemonType.Shadow
-        ? calculateStatsBattle(def, IVdef, dataBattle.level, true, SHADOW_DEF_BONUS(globalOptions))
-        : calculateStatsBattle(def, IVdef, dataBattle.level, true);
+    const atkStat = calculateStatsBattle(atk, IVatk, dataBattle.level, true, getDmgMultiplyBonus(type, globalOptions, TypeAction.Atk));
+    const defStat = calculateStatsBattle(def, IVdef, dataBattle.level, true, getDmgMultiplyBonus(type, globalOptions, TypeAction.Def));
 
     dataBattle.rangeValue = calculateBetweenLevel(globalOptions, atk, def, sta, IVatk, IVdef, IVsta, fromLV, dataBattle.level, type);
     dataBattle.stats = {
@@ -585,11 +577,11 @@ export const findCPforLeague = (
 };
 
 export const sortStatsProd = (data: IBattleBaseStats[]) => {
-  data = data.sort((a, b) => getValueOrDefault(Number, a.statsProds) - getValueOrDefault(Number, b.statsProds));
+  data = data.sort((a, b) => toNumber(a.statsProds) - toNumber(b.statsProds));
   return data.map((item, index) =>
     BattleBaseStats.create({
       ...item,
-      ratio: (getValueOrDefault(Number, item.statsProds) * 100) / getValueOrDefault(Number, data[data.length - 1]?.statsProds, 1),
+      ratio: (toNumber(item.statsProds) * 100) / toNumber(data[data.length - 1]?.statsProds, 1),
       rank: data.length - index,
     })
   );
@@ -645,10 +637,10 @@ export const calculateStatsByTag = (
 
   if (pokemon || (baseStats && tag)) {
     if (pokemon?.baseStatsGO) {
-      return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, getValueOrDefault(Number, pokemon.baseStats.sta));
+      return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, pokemon.baseStats.sta);
     }
-    const from = tag?.toLowerCase();
-    const checkNerf = !isInclude(from, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+    const form = tag?.toLowerCase();
+    const checkNerf = !isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || pokemon?.pokemonType !== PokemonType.Mega;
 
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
@@ -667,23 +659,16 @@ export const calculateDamagePVE = (
   isStab?: boolean
 ) => {
   const stabMultiply = STAB_MULTIPLY(globalOptions);
-  let modifier;
+  let modifier = 0;
   if (eff) {
     const isStab = eff.isStab ? stabMultiply : 1;
     const isWb = eff.isWb ? stabMultiply : 1;
     const isDodge = eff.isDodge ? 1 - DODGE_REDUCE(globalOptions) : 1;
-    const isMega = eff.isMega ? (eff.isStab ? STAB_MULTIPLY(globalOptions) : DEFAULT_MEGA_MULTIPLY) : 1;
+    const isMega = eff.isMega ? (eff.isStab ? stabMultiply : DEFAULT_MEGA_MULTIPLY) : 1;
     const isTrainer = eff.isTrainer ? DEFAULT_TRAINER_MULTIPLY : 1;
-    const isFriend = eff.fLevel ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.fLevel) : 1;
-    let isCharge = eff.cLevel ? MULTIPLY_THROW_CHARGE(globalOptions, 'normal') : 1;
-    if (eff.cLevel === 1) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'nice');
-    } else if (eff.cLevel === 2) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'great');
-    } else if (eff.cLevel === 3) {
-      isCharge = MULTIPLY_THROW_CHARGE(globalOptions, 'excellent');
-    }
-    modifier = isStab * isWb * isFriend * isDodge * isCharge * isMega * isTrainer * eff.effective;
+    const multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.fLevel);
+    const multiplyThrowCharge = MULTIPLY_THROW_CHARGE(globalOptions, eff.cLevel);
+    modifier = isStab * isWb * multiplyLevelFriendship * isDodge * multiplyThrowCharge * isMega * isTrainer * eff.effective;
   } else {
     modifier = isStab ? stabMultiply : 1;
   }
@@ -711,28 +696,30 @@ export const calculateAvgDPS = (
   cMove: ICombat | undefined,
   atk: number,
   def: number,
-  hp: number,
-  typePoke: string[],
-  isShadow = false,
+  hp: number | undefined,
+  typePoke: string[] | undefined,
+  pokemonType = PokemonType.Normal,
   options?: IOptionOtherDPS
 ) => {
-  const stabMultiply = STAB_MULTIPLY(globalOptions),
-    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
-    multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, options?.pokemonFriendLevel);
+  pokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : pokemonType;
+  const stabMultiply = STAB_MULTIPLY(globalOptions);
+  const atkBonus = getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Atk);
+  const defBonus = getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def);
+  const multiplyLevelFriendship =
+    DEFAULT_TRAINER_FRIEND || options?.isTrainerFriend ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, options?.pokemonFriendLevel) : 1;
 
-  const FPow = getValueOrDefault(Number, fMove?.pvePower);
-  const CPow = getValueOrDefault(Number, cMove?.pvePower);
-  const FE = Math.abs(getValueOrDefault(Number, fMove?.pveEnergy));
-  const CE = Math.abs(getValueOrDefault(Number, cMove?.pveEnergy));
-  const FDur = getValueOrDefault(Number, fMove?.durationMs) / 1000;
-  const CDur = getValueOrDefault(Number, cMove?.durationMs) / 1000;
+  const FPow = toNumber(fMove?.pvePower);
+  const CPow = toNumber(cMove?.pvePower);
+  const FE = Math.abs(toNumber(fMove?.pveEnergy));
+  const CE = Math.abs(toNumber(cMove?.pveEnergy));
+  const FDur = toNumber(fMove?.durationMs) / 1000;
+  const CDur = toNumber(cMove?.durationMs) / 1000;
   const FType = capitalize(fMove?.type);
   const CType = capitalize(cMove?.type);
-  const CDWS = getValueOrDefault(Number, cMove?.damageWindowStartMs) / 1000;
+  const CDWS = toNumber(cMove?.damageWindowStartMs) / 1000;
 
-  const FMulti = (findStabType(typePoke, FType) ? stabMultiply : 1) * getValueOrDefault(Number, fMove?.accuracyChance);
-  const CMulti = (findStabType(typePoke, CType) ? stabMultiply : 1) * getValueOrDefault(Number, cMove?.accuracyChance);
+  const FMulti = (findStabType(typePoke, FType) ? stabMultiply : 1) * toNumber(fMove?.accuracyChance);
+  const CMulti = (findStabType(typePoke, CType) ? stabMultiply : 1) * toNumber(cMove?.accuracyChance);
 
   let y = 0,
     FDmg = 0,
@@ -744,52 +731,43 @@ export const calculateAvgDPS = (
       DEFAULT_DAMAGE_MULTIPLY *
       FPow *
       FMulti *
-      (isShadow ? shadowAtkBonus : 1) *
+      atkBonus *
       weatherMultiple(globalOptions, weatherBoost, options.weatherBoosts, FType) *
-      (options.isTrainerFriend ? multiplyLevelFriendship : 1);
+      multiplyLevelFriendship;
     CDmgBase =
       DEFAULT_DAMAGE_MULTIPLY *
       CPow *
       CMulti *
-      (isShadow ? shadowAtkBonus : 1) *
+      atkBonus *
       weatherMultiple(globalOptions, weatherBoost, options.weatherBoosts, CType) *
-      (options.isTrainerFriend ? multiplyLevelFriendship : 1);
+      multiplyLevelFriendship;
 
-    const FTypeEff = getTypeEffective(typeEff, FType, getValueOrDefault(Array, options.objTypes));
-    const CTypeEff = getTypeEffective(typeEff, CType, getValueOrDefault(Array, options.objTypes));
+    const FTypeEff = getTypeEffective(typeEff, FType, options.objTypes);
+    const CTypeEff = getTypeEffective(typeEff, CType, options.objTypes);
 
     FDmg = Math.floor((FDmgBase * atk * FTypeEff) / options.pokemonDefObj) + DEFAULT_DAMAGE_CONST;
     CDmg = Math.floor((CDmgBase * atk * CTypeEff) / options.pokemonDefObj) + DEFAULT_DAMAGE_CONST;
 
-    y = 900 / ((def / (FTypeEff * CTypeEff)) * (isShadow ? shadowDefBonus : 1));
+    y = 900 / ((def / (FTypeEff * CTypeEff)) * defBonus);
   } else {
-    FDmgBase =
-      DEFAULT_DAMAGE_MULTIPLY *
-      FPow *
-      FMulti *
-      (DEFAULT_POKEMON_SHADOW ? shadowAtkBonus : 1) *
-      (DEFAULT_WEATHER_BOOSTS ? stabMultiply : 1) *
-      (DEFAULT_TRAINER_FRIEND ? multiplyLevelFriendship : 1);
-    CDmgBase =
-      DEFAULT_DAMAGE_MULTIPLY *
-      CPow *
-      CMulti *
-      (DEFAULT_POKEMON_SHADOW ? shadowAtkBonus : 1) *
-      (DEFAULT_WEATHER_BOOSTS ? stabMultiply : 1) *
-      (DEFAULT_TRAINER_FRIEND ? multiplyLevelFriendship : 1);
+    FDmgBase = DEFAULT_DAMAGE_MULTIPLY * FPow * FMulti * atkBonus * (DEFAULT_WEATHER_BOOSTS ? stabMultiply : 1) * multiplyLevelFriendship;
+    CDmgBase = DEFAULT_DAMAGE_MULTIPLY * CPow * CMulti * atkBonus * (DEFAULT_WEATHER_BOOSTS ? stabMultiply : 1) * multiplyLevelFriendship;
 
     FDmg = Math.floor((FDmgBase * atk) / DEFAULT_POKEMON_DEF_OBJ) + DEFAULT_DAMAGE_CONST;
     CDmg = Math.floor((CDmgBase * atk) / DEFAULT_POKEMON_DEF_OBJ) + DEFAULT_DAMAGE_CONST;
 
-    y = 900 / (def * (DEFAULT_POKEMON_SHADOW ? shadowDefBonus : 1));
+    y = 900 / (def * defBonus);
   }
 
-  const FDPS = FDmg / (FDur + getValueOrDefault(Number, options?.delay?.fTime));
-  const CDPS = CDmg / (CDur + getValueOrDefault(Number, options?.delay?.cTime));
+  const fDelay = toNumber(options?.delay?.fTime);
+  const cDelay = toNumber(options?.delay?.cTime);
+
+  const FDPS = FDmg / (FDur + fDelay);
+  const CDPS = CDmg / (CDur + cDelay);
 
   const CEPSM = CE === 100 ? 0.5 * FE + 0.5 * y * CDWS : 0;
-  const FEPS = FE / (FDur + getValueOrDefault(Number, options?.delay?.fTime));
-  const CEPS = (CE + CEPSM) / (CDur + getValueOrDefault(Number, options?.delay?.cTime));
+  const FEPS = FE / (FDur + fDelay);
+  const CEPS = (CE + CEPSM) / (CDur + cDelay);
 
   let x = 0.5 * CE + 0.5 * FE;
   if (options?.specific) {
@@ -804,14 +782,21 @@ export const calculateAvgDPS = (
   if (FDPS > CDPS) {
     DPS = DPS0;
   } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / hp) * y);
+    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / toNumber(hp, 1)) * y);
   }
   return Math.max(FDPS, DPS);
 };
 
-export const calculateTDO = (globalOptions: IOptions | undefined, def: number, hp: number, dps: number, isShadow = false) => {
-  const shadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
-  const y = 900 / (def * (isShadow ?? DEFAULT_POKEMON_SHADOW ? shadowDefBonus : 1));
+export const calculateTDO = (
+  globalOptions: IOptions | undefined,
+  def: number,
+  hp: number,
+  dps: number,
+  pokemonType = PokemonType.Normal
+) => {
+  pokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : pokemonType;
+  const defBonus = getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def);
+  const y = 900 / (def * defBonus);
   return (hp / y) * dps;
 };
 
@@ -822,20 +807,22 @@ export const calculateBattleDPSDefender = (
   attacker: IBattleCalculate,
   defender: IBattleCalculate
 ) => {
-  const stabMultiply = STAB_MULTIPLY(globalOptions),
-    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions);
+  const defPokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : defender.pokemonType;
+  const atkPokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : attacker.pokemonType;
+  const stabMultiply = STAB_MULTIPLY(globalOptions);
+  const atkBonus = getDmgMultiplyBonus(defPokemonType, globalOptions, TypeAction.Atk);
+  const defBonus = getDmgMultiplyBonus(atkPokemonType, globalOptions, TypeAction.Def);
 
-  const FPowDef = getValueOrDefault(Number, defender.fMove?.pvePower);
-  const CPowDef = getValueOrDefault(Number, defender.cMove?.pvePower);
-  const CEDef = Math.abs(getValueOrDefault(Number, defender.cMove?.pveEnergy));
-  const FDurDef = getValueOrDefault(Number, defender.fMove?.durationMs) / 1000;
-  const CDurDef = getValueOrDefault(Number, defender.cMove?.durationMs) / 1000;
+  const FPowDef = toNumber(defender.fMove?.pvePower);
+  const CPowDef = toNumber(defender.cMove?.pvePower);
+  const CEDef = Math.abs(toNumber(defender.cMove?.pveEnergy));
+  const FDurDef = toNumber(defender.fMove?.durationMs) / 1000;
+  const CDurDef = toNumber(defender.cMove?.durationMs) / 1000;
   const FTypeDef = capitalize(defender.fMove?.type);
   const CTypeDef = capitalize(defender.cMove?.type);
 
-  const FMultiDef = (findStabType(defender.types, FTypeDef) ? stabMultiply : 1) * getValueOrDefault(Number, defender.fMove?.accuracyChance);
-  const CMultiDef = (findStabType(defender.types, CTypeDef) ? stabMultiply : 1) * getValueOrDefault(Number, defender.cMove?.accuracyChance);
+  const FMultiDef = (findStabType(defender.types, FTypeDef) ? stabMultiply : 1) * toNumber(defender.fMove?.accuracyChance);
+  const CMultiDef = (findStabType(defender.types, CTypeDef) ? stabMultiply : 1) * toNumber(defender.cMove?.accuracyChance);
 
   const lambdaMod = (CEDef / 100) * 3;
   const defDuration = lambdaMod * (FDurDef + DEFAULT_ENEMY_ATK_DELAY) + (CDurDef + DEFAULT_ENEMY_ATK_DELAY);
@@ -844,26 +831,20 @@ export const calculateBattleDPSDefender = (
     DEFAULT_DAMAGE_MULTIPLY *
     FPowDef *
     FMultiDef *
-    (defender.isShadow ? shadowAtkBonus : 1) *
+    atkBonus *
     (defender.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, defender.weatherBoosts, FTypeDef));
   const CDmgBaseDef =
     DEFAULT_DAMAGE_MULTIPLY *
     CPowDef *
     CMultiDef *
-    (defender.isShadow ? shadowAtkBonus : 1) *
+    atkBonus *
     (defender.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, defender.weatherBoosts, CTypeDef));
 
   const FTypeEff = getTypeEffective(typeEff, FTypeDef, attacker.types);
   const CTypeEff = getTypeEffective(typeEff, CTypeDef, attacker.types);
 
-  const FDmgDef =
-    Math.floor(
-      (FDmgBaseDef * getValueOrDefault(Number, defender.atk) * FTypeEff) / (attacker.def * (attacker.isShadow ? shadowDefBonus : 1))
-    ) + DEFAULT_DAMAGE_CONST;
-  const CDmgDef =
-    Math.floor(
-      (CDmgBaseDef * getValueOrDefault(Number, defender.atk) * CTypeEff) / (attacker.def * (attacker.isShadow ? shadowDefBonus : 1))
-    ) + DEFAULT_DAMAGE_CONST;
+  const FDmgDef = Math.floor((FDmgBaseDef * toNumber(defender.atk) * FTypeEff) / (attacker.def * defBonus)) + DEFAULT_DAMAGE_CONST;
+  const CDmgDef = Math.floor((CDmgBaseDef * toNumber(defender.atk) * CTypeEff) / (attacker.def * defBonus)) + DEFAULT_DAMAGE_CONST;
 
   const DefDmg = lambdaMod * FDmgDef + CDmgDef;
   return DefDmg / defDuration;
@@ -877,50 +858,46 @@ export const calculateBattleDPS = (
   defender: IBattleCalculate,
   DPSDef: number
 ) => {
-  const stabMultiply = STAB_MULTIPLY(globalOptions),
-    shadowAtkBonus = SHADOW_ATK_BONUS(globalOptions),
-    shadowDefBonus = SHADOW_DEF_BONUS(globalOptions),
-    multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.pokemonFriendLevel);
+  const atkPokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : attacker.pokemonType;
+  const defPokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : defender.pokemonType;
+  const stabMultiply = STAB_MULTIPLY(globalOptions);
+  const atkBonus = getDmgMultiplyBonus(atkPokemonType, globalOptions, TypeAction.Atk);
+  const defBonus = getDmgMultiplyBonus(defPokemonType, globalOptions, TypeAction.Def);
+  const multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.pokemonFriendLevel);
 
-  const FPow = getValueOrDefault(Number, attacker.fMove?.pvePower);
-  const CPow = getValueOrDefault(Number, attacker.cMove?.pvePower);
-  const FE = Math.abs(getValueOrDefault(Number, attacker.fMove?.pveEnergy));
-  const CE = Math.abs(getValueOrDefault(Number, attacker.cMove?.pveEnergy));
-  const FDur = getValueOrDefault(Number, attacker.fMove?.durationMs) / 1000;
-  const CDur = getValueOrDefault(Number, attacker.cMove?.durationMs) / 1000;
+  const FPow = toNumber(attacker.fMove?.pvePower);
+  const CPow = toNumber(attacker.cMove?.pvePower);
+  const FE = Math.abs(toNumber(attacker.fMove?.pveEnergy));
+  const CE = Math.abs(toNumber(attacker.cMove?.pveEnergy));
+  const FDur = toNumber(attacker.fMove?.durationMs) / 1000;
+  const CDur = toNumber(attacker.cMove?.durationMs) / 1000;
   const FType = capitalize(attacker.fMove?.type?.toLowerCase());
   const CType = capitalize(attacker.cMove?.type?.toLowerCase());
-  const CDWS = getValueOrDefault(Number, attacker.cMove?.damageWindowStartMs) / 1000;
+  const CDWS = toNumber(attacker.cMove?.damageWindowStartMs) / 1000;
 
-  const FMulti = (findStabType(attacker.types, FType) ? stabMultiply : 1) * getValueOrDefault(Number, attacker.fMove?.accuracyChance);
-  const CMulti = (findStabType(attacker.types, CType) ? stabMultiply : 1) * getValueOrDefault(Number, attacker.cMove?.accuracyChance);
+  const FMulti = (findStabType(attacker.types, FType) ? stabMultiply : 1) * toNumber(attacker.fMove?.accuracyChance);
+  const CMulti = (findStabType(attacker.types, CType) ? stabMultiply : 1) * toNumber(attacker.cMove?.accuracyChance);
 
   const FDmgBase =
     DEFAULT_DAMAGE_MULTIPLY *
     FPow *
     FMulti *
-    (attacker.isShadow ? shadowAtkBonus : 1) *
+    atkBonus *
     (attacker.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, attacker.weatherBoosts, FType)) *
     (attacker.isPokemonFriend ? multiplyLevelFriendship : 1);
   const CDmgBase =
     DEFAULT_DAMAGE_MULTIPLY *
     CPow *
     CMulti *
-    (attacker.isShadow ? shadowAtkBonus : 1) *
+    atkBonus *
     (attacker.isStab ? stabMultiply : weatherMultiple(globalOptions, weatherBoost, attacker.weatherBoosts, CType)) *
     (attacker.isPokemonFriend ? multiplyLevelFriendship : 1);
 
   const FTypeEff = getTypeEffective(typeEff, FType, defender.types);
   const CTypeEff = getTypeEffective(typeEff, CType, defender.types);
 
-  const FDmg =
-    Math.floor(
-      (FDmgBase * getValueOrDefault(Number, attacker.atk) * FTypeEff) / (defender.def * (defender.isShadow ? shadowDefBonus : 1))
-    ) + DEFAULT_DAMAGE_CONST;
-  const CDmg =
-    Math.floor(
-      (CDmgBase * getValueOrDefault(Number, attacker.atk) * CTypeEff) / (defender.def * (defender.isShadow ? shadowDefBonus : 1))
-    ) + DEFAULT_DAMAGE_CONST;
+  const FDmg = Math.floor((FDmgBase * toNumber(attacker.atk) * FTypeEff) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
+  const CDmg = Math.floor((CDmgBase * toNumber(attacker.atk) * CTypeEff) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
 
   const FDPS = FDmg / FDur;
   const CDPS = CDmg / CDur;
@@ -937,40 +914,34 @@ export const calculateBattleDPS = (
   if (FDPS > CDPS) {
     DPS = DPS0;
   } else {
-    DPS = Math.max(
-      0,
-      DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / getValueOrDefault(Number, attacker.hp)) * DPSDef
-    );
+    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / toNumber(attacker.hp, 1)) * DPSDef);
   }
   DPS = Math.max(FDPS, DPS);
 
   let DPSSec = 0;
   if (attacker.isDoubleCharge) {
-    const moveSec = getValueOrDefault(Number, attacker.cMoveSec);
-    const CPowSec = getValueOrDefault(Number, moveSec.pvePower);
-    const CESec = Math.abs(getValueOrDefault(Number, moveSec.pveEnergy));
-    const CTypeSec = capitalize(moveSec.type);
-    const CDurSec = getValueOrDefault(Number, moveSec.durationMs) / 1000;
-    const CDWSSec = getValueOrDefault(Number, moveSec.damageWindowStartMs) / 1000;
+    const moveSec = attacker.cMoveSec;
+    const CPowSec = toNumber(moveSec?.pvePower);
+    const CESec = Math.abs(toNumber(moveSec?.pveEnergy));
+    const CTypeSec = capitalize(moveSec?.type);
+    const CDurSec = toNumber(moveSec?.durationMs) / 1000;
+    const CDWSSec = toNumber(moveSec?.damageWindowStartMs) / 1000;
 
     const CMultiSec =
       (isIncludeList(attacker.types, CTypeSec, IncludeMode.IncludeIgnoreCaseSensitive) ? stabMultiply : 1) *
-      getValueOrDefault(Number, moveSec?.accuracyChance);
+      toNumber(moveSec?.accuracyChance);
 
     const CDmgBaseSec =
       DEFAULT_DAMAGE_MULTIPLY *
       CPowSec *
       CMultiSec *
-      (attacker.isShadow ? shadowAtkBonus : 1) *
+      atkBonus *
       weatherMultiple(globalOptions, weatherBoost, attacker.weatherBoosts, CTypeSec) *
       (attacker.isPokemonFriend ? multiplyLevelFriendship : 1);
 
     const CTypeEffSec = getTypeEffective(typeEff, CTypeSec, defender.types);
 
-    const CDmgSec =
-      Math.floor(
-        (CDmgBaseSec * getValueOrDefault(Number, attacker.atk) * CTypeEffSec) / (defender.def * (defender.isShadow ? shadowDefBonus : 1))
-      ) + DEFAULT_DAMAGE_CONST;
+    const CDmgSec = Math.floor((CDmgBaseSec * toNumber(attacker.atk) * CTypeEffSec) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
     const CDPSSec = CDmgSec / CDurSec;
 
     const CEPSMSec = CESec === 100 ? 0.5 * FE + 0.5 * DPSDef * CDWSSec : 0;
@@ -985,8 +956,7 @@ export const calculateBattleDPS = (
     } else {
       DPSSec = Math.max(
         0,
-        DPS0Sec +
-          ((CDPSSec - FDPS) / (CEPSSec + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - xSec / getValueOrDefault(Number, attacker.hp)) * DPSDef
+        DPS0Sec + ((CDPSSec - FDPS) / (CEPSSec + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - xSec / toNumber(attacker.hp, 1)) * DPSDef
       );
     }
     DPSSec = Math.max(FDPS, DPSSec);
@@ -1008,32 +978,7 @@ export const queryTopMove = (
   const dataPri: IPokemonTopMove[] = [];
   pokemonList?.forEach((value) => {
     if (value) {
-      let isInclude = false;
-      let isElite = false;
-      let isSpecial = false;
-      if (move?.typeMove === TypeMove.FAST) {
-        isInclude = isIncludeList(value.quickMoves, move.name);
-        if (!isInclude) {
-          isInclude = isIncludeList(value.eliteQuickMoves, move.name);
-          isElite = isInclude;
-        }
-      } else if (move?.typeMove === TypeMove.CHARGE) {
-        isInclude = isIncludeList(value.cinematicMoves, move.name);
-        if (!isInclude) {
-          isInclude = isIncludeList(value.shadowMoves, move.name);
-        }
-        if (!isInclude) {
-          isInclude = isIncludeList(value.purifiedMoves, move.name);
-        }
-        if (!isInclude) {
-          isInclude = isIncludeList(value.eliteCinematicMoves, move.name);
-          isElite = isInclude;
-        }
-        if (!isInclude) {
-          isInclude = isIncludeList(value.specialMoves, move.name);
-          isSpecial = isInclude;
-        }
-      }
+      const isInclude = isIncludeList(getAllMoves(value), move?.name);
       if (isInclude) {
         const stats = calculateStatsByTag(value, value.baseStats, value.slug);
         const statsAtkBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);
@@ -1051,6 +996,7 @@ export const queryTopMove = (
           value.types
         );
         const tdo = calculateTDO(globalOptions, statsDefBattle, statsStaBattle, dps);
+        const moveType = getMoveType(value, move?.name);
         dataPri.push(
           new PokemonTopMove({
             num: value.num,
@@ -1059,8 +1005,7 @@ export const queryTopMove = (
             baseSpecies: value.baseSpecies,
             sprite: value.sprite,
             releasedGO: value.releasedGO,
-            isElite,
-            isSpecial,
+            moveType,
             dps,
             tdo,
           })
@@ -1071,26 +1016,14 @@ export const queryTopMove = (
   return dataPri;
 };
 
-const queryMove = (
-  data: QueryMovesPokemon,
-  vf: string,
-  cMove: string[],
-  fElite: boolean,
-  cElite: boolean,
-  isShadow: boolean,
-  isPurified: boolean,
-  isSpecial: boolean
-) => {
-  cMove.forEach((vc: string) => {
+const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[] | undefined, fMoveType: MoveType, cMoveType: MoveType) => {
+  cMove?.forEach((vc) => {
     const mf = data.combat.find((item) => isEqual(item.name, vf));
     const mc = data.combat.find((item) => isEqual(item.name, vc));
 
     if (mf && mc) {
-      mf.isElite = fElite;
-      mc.isElite = cElite;
-      mc.isShadow = isShadow;
-      mc.isPurified = isPurified;
-      mc.isSpecial = isSpecial;
+      mf.moveType = fMoveType;
+      mc.moveType = cMoveType;
 
       const options = OptionOtherDPS.create({
         delay: Delay.create({
@@ -1108,6 +1041,8 @@ const queryMove = (
       const statsDefBattle = calculateStatsBattle(data.atk, options.ivDef, options.pokemonLevel, true);
       const statsStaBattle = calculateStatsBattle(data.atk, options.ivHp, options.pokemonLevel, true);
 
+      const pokemonType = moveTypeToFormType(cMoveType);
+
       const offensive = calculateAvgDPS(
         data.globalOptions,
         data.typeEff,
@@ -1118,7 +1053,7 @@ const queryMove = (
         statsDefBattle,
         statsStaBattle,
         data.types,
-        isShadow
+        pokemonType
       );
       const defensive = calculateAvgDPS(
         data.globalOptions,
@@ -1130,7 +1065,7 @@ const queryMove = (
         statsDefBattle,
         statsStaBattle,
         data.types,
-        isShadow,
+        pokemonType,
         options
       );
 
@@ -1148,14 +1083,14 @@ export const rankMove = (
   atk: number,
   def: number,
   sta: number,
-  types: string[]
+  types: string[] | undefined
 ) => {
   if (!move) {
     return new PokemonQueryRankMove();
   }
   const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, atk, def, sta, types);
-  move.quickMoves?.forEach((vf) => setQueryMove(data, vf, move, false));
-  move.eliteQuickMoves?.forEach((vf) => setQueryMove(data, vf, move, true));
+  move.quickMoves?.forEach((vf) => setQueryMove(data, vf, move, MoveType.None));
+  move.eliteQuickMoves?.forEach((vf) => setQueryMove(data, vf, move, MoveType.Elite));
 
   return PokemonQueryRankMove.create({
     data: data.dataList,
@@ -1164,12 +1099,12 @@ export const rankMove = (
   });
 };
 
-const setQueryMove = (data: QueryMovesPokemon, vf: string, value: IPokemonData, isEliteQuick: boolean) => {
-  queryMove(data, vf, getValueOrDefault(Array, value.cinematicMoves), isEliteQuick, false, false, false, false);
-  queryMove(data, vf, getValueOrDefault(Array, value.eliteCinematicMoves), isEliteQuick, true, false, false, false);
-  queryMove(data, vf, getValueOrDefault(Array, value.shadowMoves), isEliteQuick, false, true, false, false);
-  queryMove(data, vf, getValueOrDefault(Array, value.purifiedMoves), isEliteQuick, false, false, true, false);
-  queryMove(data, vf, getValueOrDefault(Array, value.specialMoves), isEliteQuick, false, false, false, true);
+const setQueryMove = (data: QueryMovesPokemon, vf: string, value: IPokemonData, quickMoveType: MoveType) => {
+  queryMove(data, vf, value.cinematicMoves, quickMoveType, MoveType.None);
+  queryMove(data, vf, value.eliteCinematicMoves, quickMoveType, MoveType.Elite);
+  queryMove(data, vf, value.shadowMoves, quickMoveType, MoveType.Shadow);
+  queryMove(data, vf, value.purifiedMoves, quickMoveType, MoveType.Purified);
+  queryMove(data, vf, value.specialMoves, quickMoveType, MoveType.Special);
 };
 
 export const queryStatesEvoChain = (
@@ -1196,7 +1131,7 @@ export const queryStatesEvoChain = (
   const dataLittle = findCPforLeague(
     pokemonStats.atk,
     pokemonStats.def,
-    getValueOrDefault(Number, pokemonStats.sta),
+    pokemonStats.sta,
     atkIV,
     defIV,
     staIV,
@@ -1206,7 +1141,7 @@ export const queryStatesEvoChain = (
   const dataGreat = findCPforLeague(
     pokemonStats.atk,
     pokemonStats.def,
-    getValueOrDefault(Number, pokemonStats.sta),
+    pokemonStats.sta,
     atkIV,
     defIV,
     staIV,
@@ -1216,34 +1151,19 @@ export const queryStatesEvoChain = (
   const dataUltra = findCPforLeague(
     pokemonStats.atk,
     pokemonStats.def,
-    getValueOrDefault(Number, pokemonStats.sta),
+    pokemonStats.sta,
     atkIV,
     defIV,
     staIV,
     level,
     BattleLeagueCPType.Ultra
   );
-  const dataMaster = findCPforLeague(
-    pokemonStats.atk,
-    pokemonStats.def,
-    getValueOrDefault(Number, pokemonStats.sta),
-    atkIV,
-    defIV,
-    staIV,
-    level
-  );
+  const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level);
 
-  const statsProd = calStatsProd(
-    pokemonStats.atk,
-    pokemonStats.def,
-    getValueOrDefault(Number, pokemonStats.sta),
-    undefined,
-    undefined,
-    true
-  );
-  const ultraStatsProd = sortStatsProd(statsProd.filter((item) => getValueOrDefault(Number, item.CP) <= BattleLeagueCPType.Ultra));
-  const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => getValueOrDefault(Number, item.CP) <= BattleLeagueCPType.Great));
-  const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => getValueOrDefault(Number, item.CP) <= BattleLeagueCPType.Little));
+  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, undefined, undefined, true);
+  const ultraStatsProd = sortStatsProd(statsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Ultra));
+  const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Great));
+  const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Little));
 
   const little = littleStatsProd.find(
     (item) =>
@@ -1291,12 +1211,12 @@ export const queryStatesEvoChain = (
         globalOptions,
         pokemonStats.atk,
         pokemonStats.def,
-        getValueOrDefault(Number, pokemonStats.sta),
+        pokemonStats.sta,
         atkIV,
         defIV,
         staIV,
         level,
-        getValueOrDefault(Number, little.level)
+        little.level
       ),
     });
   }
@@ -1307,12 +1227,12 @@ export const queryStatesEvoChain = (
         globalOptions,
         pokemonStats.atk,
         pokemonStats.def,
-        getValueOrDefault(Number, pokemonStats.sta),
+        pokemonStats.sta,
         atkIV,
         defIV,
         staIV,
         level,
-        getValueOrDefault(Number, great.level)
+        great.level
       ),
     });
   }
@@ -1323,12 +1243,12 @@ export const queryStatesEvoChain = (
         globalOptions,
         pokemonStats.atk,
         pokemonStats.def,
-        getValueOrDefault(Number, pokemonStats.sta),
+        pokemonStats.sta,
         atkIV,
         defIV,
         staIV,
         level,
-        getValueOrDefault(Number, ultra.level)
+        ultra.level
       ),
     });
   }
@@ -1339,34 +1259,31 @@ export const queryStatesEvoChain = (
         globalOptions,
         pokemonStats.atk,
         pokemonStats.def,
-        getValueOrDefault(Number, pokemonStats.sta),
+        pokemonStats.sta,
         atkIV,
         defIV,
         staIV,
         level,
-        getValueOrDefault(Number, master.level)
+        master.level
       ),
     });
   }
   return new QueryStatesEvoChain({
     ...item,
     battleLeague,
-    maxCP: getValueOrDefault(Number, battleLeague.master.CP),
-    form: getValueOrDefault(String, pokemon?.forme),
+    maxCP: battleLeague.master.CP,
+    form: pokemon?.forme,
   });
 };
 
 const queryMoveCounter = (
   data: QueryMovesCounterPokemon,
   vf: string,
-  cMove: string[],
-  fElite: boolean,
-  cElite: boolean,
-  isShadow: boolean,
-  isPurified: boolean,
-  isSpecial: boolean
+  cMove: string[] | undefined,
+  fMoveType: MoveType,
+  cMoveType: MoveType
 ) => {
-  cMove.forEach((vc) => {
+  cMove?.forEach((vc) => {
     const mf = data.combat.find((item) => isEqual(item.name, vf));
     const mc = data.combat.find((item) => isEqual(item.name, vc));
 
@@ -1380,6 +1297,8 @@ const queryMoveCounter = (
         pokemonLevel: DEFAULT_POKEMON_LEVEL,
       });
 
+      const pokemonType = moveTypeToFormType(cMoveType);
+
       const dpsOff = calculateAvgDPS(
         data.globalOptions,
         data.typeEff,
@@ -1388,9 +1307,9 @@ const queryMoveCounter = (
         mc,
         calculateStatsBattle(data.pokemon.baseStats.atk, options.ivAtk, options.pokemonLevel, true),
         calculateStatsBattle(data.pokemon.baseStats.def, options.ivDef, options.pokemonLevel, true),
-        calculateStatsBattle(getValueOrDefault(Number, data.pokemon.baseStats.sta), options.ivHp, options.pokemonLevel, true),
+        calculateStatsBattle(data.pokemon.baseStats.sta, options.ivHp, options.pokemonLevel, true),
         data.pokemon.types,
-        isShadow,
+        pokemonType,
         options
       );
 
@@ -1401,8 +1320,8 @@ const queryMoveCounter = (
           pokemonForme: data.pokemon.forme,
           releasedGO: data.pokemon.releasedGO,
           dps: dpsOff,
-          fMove: Combat.create({ ...mf, isElite: fElite }),
-          cMove: Combat.create({ ...mc, isElite: cElite, isShadow, isPurified, isSpecial }),
+          fMove: Combat.create({ ...mf, moveType: fMoveType }),
+          cMove: Combat.create({ ...mc, moveType: cMoveType }),
         })
       );
     }
@@ -1415,26 +1334,26 @@ export const counterPokemon = (
   typeEff: ITypeEff | undefined,
   weatherBoost: IWeatherBoost | undefined,
   def: number,
-  types: string[],
+  types: string[] | undefined,
   combat: ICombat[]
 ) => {
   const dataList: IPokemonQueryCounter[] = [];
   pokemonList.forEach((pokemon) => {
     if (pokemon && checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE')) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
-      pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, false));
-      pokemon.eliteQuickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, true));
+      pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, MoveType.None));
+      pokemon.eliteQuickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, MoveType.Elite));
     }
   });
   return dataList
     .sort((a, b) => b.dps - a.dps)
-    .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / getValueOrDefault(Number, dataList.at(0)?.dps, 1) }));
+    .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / toNumber(dataList.at(0)?.dps, 1) }));
 };
 
-const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: IPokemonData, isEliteQuick: boolean) => {
-  queryMoveCounter(data, vf, getValueOrDefault(Array, value.cinematicMoves), isEliteQuick, false, false, false, false);
-  queryMoveCounter(data, vf, getValueOrDefault(Array, value.eliteCinematicMoves), isEliteQuick, true, false, false, false);
-  queryMoveCounter(data, vf, getValueOrDefault(Array, value.shadowMoves), isEliteQuick, false, true, false, false);
-  queryMoveCounter(data, vf, getValueOrDefault(Array, value.purifiedMoves), isEliteQuick, false, false, true, false);
-  queryMoveCounter(data, vf, getValueOrDefault(Array, value.specialMoves), isEliteQuick, false, false, false, true);
+const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: IPokemonData, fMoveType: MoveType) => {
+  queryMoveCounter(data, vf, value.cinematicMoves, fMoveType, MoveType.None);
+  queryMoveCounter(data, vf, value.eliteCinematicMoves, fMoveType, MoveType.Elite);
+  queryMoveCounter(data, vf, value.shadowMoves, fMoveType, MoveType.Shadow);
+  queryMoveCounter(data, vf, value.purifiedMoves, fMoveType, MoveType.Purified);
+  queryMoveCounter(data, vf, value.specialMoves, fMoveType, MoveType.Special);
 };

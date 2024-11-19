@@ -5,12 +5,11 @@ import { splitAndCapitalize } from '../../../util/utils';
 
 import '../Mega/Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
-import { FORM_PRIMAL } from '../../../util/constants';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { isEqual, isInclude, isUndefined } from '../../../util/extension';
+import { isEqual, isUndefined } from '../../../util/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { PokemonType } from '../../../enums/type.enum';
 
 const Primal = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -18,7 +17,7 @@ const Primal = (props: IFormSpecialComponent) => {
 
   useEffect(() => {
     const result = props.formList
-      .filter((item) => isInclude(item.at(0)?.form.formName, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive))
+      .filter((item) => item[0]?.form.pokemonType === PokemonType.Primal)
       .map((item) => {
         const form = item.at(0);
         if (!form) {
@@ -72,7 +71,7 @@ const Primal = (props: IFormSpecialComponent) => {
                 <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
               </div>
               <span className="caption">
-                First primal evolution:{' '}
+                {'First primal evolution: '}
                 <img
                   alt="img-primal"
                   width={25}
@@ -84,7 +83,7 @@ const Primal = (props: IFormSpecialComponent) => {
                 <b>x{getQuestEvo(value.name)?.firstTempEvolution}</b>
               </span>
               <span className="caption">
-                Primal evolution:{' '}
+                {'Primal evolution: '}
                 <img
                   alt="img-primal"
                   width={25}

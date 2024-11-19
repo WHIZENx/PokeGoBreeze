@@ -3,8 +3,8 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDataWithKey, LevelRating, splitAndCapitalize } from '../../../util/utils';
-import { FORM_MEGA, FORM_SHADOW, MAX_IV, SHADOW_ATK_BONUS, SHADOW_DEF_BONUS } from '../../../util/constants';
+import { capitalize, getDmgMultiplyBonus, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
 import './Damage.scss';
@@ -21,15 +21,13 @@ import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { ITrainerFriendship } from '../../../core/models/options.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, isEqual, isInclude, toFloatWithPadding } from '../../../util/extension';
-import { ChargeAbility, PokemonType } from './enums/damage.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { VariantType } from '../../../enums/type.enum';
+import { combineClasses, DynamicObj, padding, toNumber } from '../../../util/extension';
+import { ChargeAbility } from './enums/damage.enum';
+import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -90,7 +88,7 @@ const Damage = () => {
   const [statLvATK, setStatLvATK] = useState(0);
 
   const [statLevel, setStatLevel] = useState(1);
-  const [statType, setStatType] = useState(PokemonType.None);
+  const [statType, setStatType] = useState(PokemonType.Normal);
 
   const [formObj, setFormObj] = useState<IPokemonFormModify>();
 
@@ -102,7 +100,7 @@ const Damage = () => {
   const [statLvSTAObj, setStatLvSTAObj] = useState(0);
 
   const [statLevelObj, setStatLevelObj] = useState(1);
-  const [statTypeObj, setStatTypeObj] = useState(PokemonType.None);
+  const [statTypeObj, setStatTypeObj] = useState(PokemonType.Normal);
 
   const [enableFriend, setEnableFriend] = useState(false);
   const [battleState, setBattleState] = useState(new Filter());
@@ -113,25 +111,11 @@ const Damage = () => {
 
   useEffect(() => {
     if (statATK !== 0) {
-      setStatLvATK(
-        calculateStatsBattle(
-          statATK,
-          MAX_IV,
-          statLevel,
-          false,
-          isEqual(statType, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) ? SHADOW_ATK_BONUS(globalOptions) : 1
-        )
-      );
+      setStatLvATK(calculateStatsBattle(statATK, MAX_IV, statLevel, false, getDmgMultiplyBonus(statType, globalOptions, TypeAction.Atk)));
     }
     if (statDEFObj !== 0) {
       setStatLvDEFObj(
-        calculateStatsBattle(
-          statDEFObj,
-          MAX_IV,
-          statLevelObj,
-          false,
-          isEqual(statTypeObj, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) ? SHADOW_DEF_BONUS(globalOptions) : 1
-        )
+        calculateStatsBattle(statDEFObj, MAX_IV, statLevelObj, false, getDmgMultiplyBonus(statType, globalOptions, TypeAction.Def))
       );
     }
     if (statSTAObj !== 0) {
@@ -161,14 +145,14 @@ const Damage = () => {
       e.preventDefault();
       if (move) {
         const eff = BattleState.create({
-          isStab: findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)),
+          isStab: findStabType(form?.form.types, move.type),
           isWb: battleState.isWeather,
           isDodge: battleState.isDodge,
-          isMega: isInclude(form?.form.formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive),
+          isMega: form?.form.pokemonType === PokemonType.Mega,
           isTrainer: battleState.isTrainer,
           fLevel: enableFriend ? battleState.fLevel : 0,
           cLevel: battleState.cLevel,
-          effective: getTypeEffective(typeEff, getValueOrDefault(String, move.type), getValueOrDefault(Array, formObj?.form.types)),
+          effective: getTypeEffective(typeEff, move.type, formObj?.form.types),
         });
         setResult((r) =>
           PokemonDmgOption.create({
@@ -299,14 +283,12 @@ const Damage = () => {
                       - Move Type:{' '}
                       <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                     </p>
-                    {findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type))}
+                    {findStabType(form?.form.types, move.type)}
                     <p>
                       - Damage:{' '}
                       <b>
                         {move.pvePower}
-                        {findStabType(getValueOrDefault(Array, form?.form.types), getValueOrDefault(String, move.type)) && (
-                          <span className="caption-small text-success"> (x1.2)</span>
-                        )}
+                        {findStabType(form?.form.types, move.type) && <span className="caption-small text-success"> (x1.2)</span>}
                       </b>
                     </p>
                   </div>
@@ -343,7 +325,7 @@ const Damage = () => {
                         setBattleState(
                           Filter.create({
                             ...battleState,
-                            fLevel: getValueOrDefault(Number, value),
+                            fLevel: toNumber(value),
                           })
                         );
                       }}
@@ -355,11 +337,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x
-                      {toFloatWithPadding(
-                        getDataWithKey<ITrainerFriendship>(globalOptions.trainerFriendship, battleState.fLevel).atkBonus,
-                        2
-                      )}
+                      x{padding(MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.fLevel), 2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>

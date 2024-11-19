@@ -5,8 +5,9 @@ import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
 import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
-import { PokemonType } from '../../pages/Tools/BattleDamage/enums/damage.enum';
-import { getValueOrDefault } from '../extension';
+import { PokemonType } from '../../enums/type.enum';
+import { MIN_IV } from '../constants';
+import { getValueOrDefault, toNumber } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
 export interface IBattleCalculate {
@@ -15,8 +16,8 @@ export interface IBattleCalculate {
   hp?: number;
   fMove?: ICombat;
   cMove?: ICombat;
-  types: string[];
-  isShadow?: boolean;
+  types: string[] | undefined;
+  pokemonType?: PokemonType;
   isStab?: boolean;
   weatherBoosts?: string;
   isPokemonFriend?: boolean;
@@ -31,8 +32,8 @@ export class BattleCalculate implements IBattleCalculate {
   hp?: number;
   fMove?: ICombat;
   cMove?: ICombat;
-  types: string[] = [];
-  isShadow?: boolean;
+  types: string[] | undefined = [];
+  pokemonType?: PokemonType;
   isStab?: boolean;
   weatherBoosts?: string;
   isPokemonFriend?: boolean;
@@ -67,14 +68,14 @@ export interface IStatsCalculate {
 
 export interface IBetweenLevelCalculate {
   CP: number;
-  resultBetweenStadust: number;
-  resultBetweenStadustDiff?: number;
+  resultBetweenStardust: number;
+  resultBetweenStardustDiff?: number;
   resultBetweenCandy: number;
   resultBetweenCandyDiff?: number;
   resultBetweenXLCandy: number;
   resultBetweenXLCandyDiff?: number;
   powerUpCount?: number;
-  type?: PokemonType;
+  pokemonType?: PokemonType;
   atkStat?: number;
   defStat?: number;
   atkStatDiff?: number;
@@ -83,14 +84,14 @@ export interface IBetweenLevelCalculate {
 
 export class BetweenLevelCalculate implements IBetweenLevelCalculate {
   CP = 0;
-  resultBetweenStadust = 0;
-  resultBetweenStadustDiff?: number;
+  resultBetweenStardust = 0;
+  resultBetweenStardustDiff?: number;
   resultBetweenCandy = 0;
   resultBetweenCandyDiff?: number;
   resultBetweenXLCandy = 0;
   resultBetweenXLCandyDiff?: number;
   powerUpCount?: number;
-  type?: PokemonType;
+  pokemonType?: PokemonType;
   atkStat?: number;
   defStat?: number;
   atkStatDiff?: number;
@@ -206,8 +207,8 @@ export class StatsProdCalculate implements IStatsProdCalculate {
 
 export interface IQueryStatesEvoChain {
   battleLeague: IBattleLeague;
-  maxCP: number;
-  form: string;
+  maxCP: number | undefined;
+  form: string | null | undefined;
   id: number;
   name: string;
   prev?: string;
@@ -215,13 +216,13 @@ export interface IQueryStatesEvoChain {
   tempEvo: ITempEvo[];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
-  canPurified?: boolean;
+  pokemonType?: PokemonType;
 }
 
 export class QueryStatesEvoChain implements IQueryStatesEvoChain {
   battleLeague = new BattleLeague();
   maxCP = 0;
-  form = '';
+  form: string | null | undefined = '';
   id = 0;
   name = '';
   prev?: string;
@@ -229,7 +230,7 @@ export class QueryStatesEvoChain implements IQueryStatesEvoChain {
   tempEvo: ITempEvo[] = [];
   purified?: PokemonTypeCost;
   thirdMove?: PokemonTypeCost;
-  canPurified?: boolean;
+  pokemonType?: PokemonType;
 
   constructor({ ...props }: IQueryStatesEvoChain) {
     Object.assign(this, props);
@@ -239,7 +240,7 @@ export class QueryStatesEvoChain implements IQueryStatesEvoChain {
 export interface IBattleBaseStats {
   CP?: number;
   IV?: IStatsBase;
-  form?: string;
+  form?: string | null;
   id: number;
   league?: string;
   level?: number;
@@ -250,19 +251,19 @@ export interface IBattleBaseStats {
   ratio?: number;
   resultBetweenCandy?: number;
   resultBetweenCandyDiff?: number;
-  resultBetweenStadust?: number;
-  resultBetweenStadustDiff?: number;
+  resultBetweenStardust?: number;
+  resultBetweenStardustDiff?: number;
   resultBetweenXLCandy?: number;
   resultBetweenXLCandyDiff?: number;
   stats?: IStatsBaseCalculate;
   statsProds?: number;
-  type?: string;
+  pokemonType?: PokemonType;
 }
 
 export class BattleBaseStats implements IBattleBaseStats {
   CP?: number;
   IV?: IStatsBase;
-  form?: string;
+  form?: string | null;
   id = 0;
   league?: string;
   level?: number;
@@ -273,13 +274,13 @@ export class BattleBaseStats implements IBattleBaseStats {
   ratio?: number;
   resultBetweenCandy?: number;
   resultBetweenCandyDiff?: number;
-  resultBetweenStadust?: number;
-  resultBetweenStadustDiff?: number;
+  resultBetweenStardust?: number;
+  resultBetweenStardustDiff?: number;
   resultBetweenXLCandy?: number;
   resultBetweenXLCandyDiff?: number;
   stats?: IStatsBaseCalculate;
   statsProds?: number;
-  type?: string;
+  pokemonType?: PokemonType;
 
   static create(value: IBattleBaseStats) {
     const obj = new BattleBaseStats();
@@ -309,7 +310,7 @@ export class QueryMovesCounterPokemon {
   combat: ICombat[] = [];
   pokemon: IPokemonData;
   def: number;
-  types: string[] = [];
+  types: string[] | undefined = [];
   dataList: IPokemonQueryCounter[];
 
   constructor(
@@ -319,7 +320,7 @@ export class QueryMovesCounterPokemon {
     combat: ICombat[],
     pokemon: IPokemonData,
     def: number,
-    types: string[],
+    types: string[] | undefined,
     dataList: IPokemonQueryCounter[] = []
   ) {
     this.globalOptions = globalOptions;
@@ -328,7 +329,7 @@ export class QueryMovesCounterPokemon {
     this.combat = combat;
     this.pokemon = pokemon;
     this.def = def;
-    this.types = types;
+    this.types = getValueOrDefault(Array, types);
     this.dataList = dataList;
   }
 }
@@ -353,7 +354,7 @@ export class QueryMovesPokemon {
     atk: number,
     def: number,
     sta: number,
-    types: string[],
+    types: string[] | undefined,
     dataList: IPokemonQueryMove[] = []
   ) {
     this.globalOptions = globalOptions;
@@ -363,7 +364,7 @@ export class QueryMovesPokemon {
     this.atk = atk;
     this.def = def;
     this.sta = sta;
-    this.types = types;
+    this.types = getValueOrDefault(Array, types);
     this.dataList = dataList;
   }
 }
@@ -396,11 +397,11 @@ export class BattleLeagueCalculate implements IBattleLeagueCalculate {
     this.isElidge = isElidge;
     this.maxCP = maxCP;
     this.IV = new StatsPokemonGO();
-    this.IV.atk = getValueOrDefault(Number, atk);
-    this.IV.def = getValueOrDefault(Number, def);
-    this.IV.sta = getValueOrDefault(Number, sta);
-    this.CP = getValueOrDefault(Number, CP);
-    this.level = getValueOrDefault(Number, level);
+    this.IV.atk = toNumber(atk, MIN_IV);
+    this.IV.def = toNumber(def, MIN_IV);
+    this.IV.sta = toNumber(sta, MIN_IV);
+    this.CP = toNumber(CP);
+    this.level = toNumber(level);
     this.isLimit = getValueOrDefault(Boolean, isLimit);
   }
 }

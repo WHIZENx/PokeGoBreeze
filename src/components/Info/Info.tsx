@@ -7,17 +7,17 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
-import { getValueOrDefault, isIncludeList, isNotEmpty } from '../../util/extension';
+import { isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 
 const Info = (props: IInfoComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
   const weatherEffective = useSelector((state: StoreState) => state.store.data.weatherBoost);
 
-  const getWeatherEffective = (types: string[]) => {
+  const getWeatherEffective = (types: string[] | undefined) => {
     const data: string[] = [];
     Object.entries(weatherEffective).forEach(([key, value]: [string, string[]]) => {
-      types.forEach((type) => {
+      types?.forEach((type) => {
         if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive) && !isIncludeList(data, key)) {
           data.push(key);
         }
@@ -26,7 +26,7 @@ const Info = (props: IInfoComponent) => {
     return data;
   };
 
-  const getTypeEffective = (types: string[]) => {
+  const getTypeEffective = (types: string[] | undefined) => {
     const data = TypeEffChart.create({
       veryWeak: [],
       weak: [],
@@ -38,7 +38,7 @@ const Info = (props: IInfoComponent) => {
     Object.entries(typeEffective).forEach(([key, value]) => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;
-        types.forEach((type) => {
+        types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
         });
         if (valueEffective >= 2.56) {
@@ -67,9 +67,9 @@ const Info = (props: IInfoComponent) => {
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={getValueOrDefault(Array, props.currForm?.form.types)} style={{ marginLeft: 15 }} isShow={true} />
-      <WeatherTypeEffective weatherEffective={getWeatherEffective(getValueOrDefault(Array, props.currForm?.form.types))} />
-      <TypeEffective typeEffective={getTypeEffective(getValueOrDefault(Array, props.currForm?.form.types))} />
+      <TypeInfo arr={props.currForm?.form.types} style={{ marginLeft: 15 }} isShow={true} />
+      <WeatherTypeEffective weatherEffective={getWeatherEffective(props.currForm?.form.types)} />
+      <TypeEffective typeEffective={getTypeEffective(props.currForm?.form.types)} />
     </div>
   );
 };

@@ -11,7 +11,7 @@ import { computeBgType, findAssetForm } from '../../util/compute';
 import {
   convertNameRankingToForm,
   convertNameRankingToOri,
-  getAllMoves,
+  getMoveType,
   replaceTempMovePvpName,
   splitAndCapitalize,
 } from '../../util/utils';
@@ -37,16 +37,17 @@ import { IStatsRank, IStatsBase, HexagonStats } from '../../core/models/stats.mo
 import { IAsset } from '../../core/models/asset.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ICombat } from '../../core/models/combat.model';
-import { FORM_NORMAL, MAX_IV, MAX_LEVEL } from '../../util/constants';
+import { MAX_IV, MAX_LEVEL } from '../../util/constants';
 import { IMovePokemonRanking, PokemonVersus, RankingsPVP } from '../../core/models/pvp.model';
 import { IPokemonBattleRanking } from './models/battle.model';
 import { BattleBaseStats } from '../../util/models/calculate.model';
 import TypeBadge from '../../components/Sprites/TypeBadge/TypeBadge';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isIncludeList, toNumber } from '../../util/extension';
+import { combineClasses, isEqual, isInclude, toNumber } from '../../util/extension';
 import { EffectiveType } from './enums/type-eff.enum';
 import { ArcheType } from './enums/arche-type.enum';
 import { BattleLeagueCPType } from '../../util/enums/compute.enum';
 import { BackgroundType } from './enums/model-type.enum';
+import { MoveType, PokemonType } from '../../enums/type.enum';
 
 export const Header = (data: IPokemonBattleRanking | undefined) => {
   return (
@@ -71,8 +72,7 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
           title="Fast Move"
           color="white"
           move={data?.fMove}
-          isElite={isIncludeList(data?.pokemon?.cinematicMoves, data?.fMove?.name)}
-          isUnavailable={data?.fMove && !isIncludeList(getAllMoves(data.pokemon), data.fMove.name)}
+          moveType={getMoveType(data?.pokemon, data?.fMove?.name)}
         />
         <TypeBadge
           isGrow={true}
@@ -80,11 +80,7 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
           title="Primary Charged Move"
           color="white"
           move={data?.cMovePri}
-          isElite={isIncludeList(data?.pokemon?.eliteCinematicMoves, data?.cMovePri?.name)}
-          isShadow={isIncludeList(data?.pokemon?.shadowMoves, data?.cMovePri?.name)}
-          isPurified={isIncludeList(data?.pokemon?.purifiedMoves, data?.cMovePri?.name)}
-          isSpecial={isIncludeList(data?.pokemon?.specialMoves, data?.cMovePri?.name)}
-          isUnavailable={data?.cMovePri && !isIncludeList(getAllMoves(data.pokemon), data.cMovePri.name)}
+          moveType={getMoveType(data?.pokemon, data?.cMovePri?.name)}
         />
         {data?.cMoveSec && (
           <TypeBadge
@@ -93,11 +89,7 @@ export const Header = (data: IPokemonBattleRanking | undefined) => {
             title="Secondary Charged Move"
             color="white"
             move={data.cMoveSec}
-            isElite={isIncludeList(data.pokemon?.eliteCinematicMoves, data.cMoveSec.name)}
-            isShadow={isIncludeList(data.pokemon?.shadowMoves, data.cMoveSec.name)}
-            isPurified={isIncludeList(data.pokemon?.purifiedMoves, data.cMoveSec.name)}
-            isSpecial={isIncludeList(data.pokemon?.specialMoves, data.cMoveSec.name)}
-            isUnavailable={!isIncludeList(getAllMoves(data.pokemon), data.cMoveSec.name)}
+            moveType={getMoveType(data.pokemon, data.cMoveSec.name)}
           />
         )}
       </div>
@@ -116,13 +108,15 @@ export const Body = (
     const name = convertNameRankingToOri(data.opponent, convertNameRankingToForm(data.opponent));
     const pokemon = pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
-    const form = findAssetForm(assets, pokemon?.num, pokemon?.forme ?? FORM_NORMAL);
+    const form = findAssetForm(assets, pokemon?.num, pokemon?.forme);
 
     return (
       <Link
         to={`/pvp/${cp}/${type}/${data.opponent.replaceAll('_', '-')}`}
         className="list-item-ranking"
-        style={{ backgroundImage: computeBgType(pokemon?.types, isInclude(data.opponent, '_shadow')) }}
+        style={{
+          backgroundImage: computeBgType(pokemon?.types, isInclude(data.opponent, '_shadow') ? PokemonType.Shadow : PokemonType.Normal),
+        }}
       >
         <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
           <div className="d-flex justify-content-center">
@@ -188,20 +182,18 @@ export const Body = (
   );
 };
 
-export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: string) => {
+export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanking: IStatsRank | null, cp: string | undefined) => {
   const calculateStatsTopRank = (stats: IStatsBase | undefined, level = MAX_LEVEL) => {
     const maxCP = toNumber(cp);
 
-    let calcCP = calculateCP(
-      getValueOrDefault(Number, stats?.atk) + MAX_IV,
-      getValueOrDefault(Number, stats?.def) + MAX_IV,
-      getValueOrDefault(Number, stats?.sta) + MAX_IV,
-      level
-    );
+    const atk = toNumber(stats?.atk);
+    const def = toNumber(stats?.def);
+    const sta = toNumber(stats?.sta);
+    let calcCP = calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level);
     if (maxCP === BattleLeagueCPType.InsMaster) {
       return BattleBaseStats.create({
         CP: isNaN(calcCP) ? BattleLeagueCPType.Master : calcCP,
-        id: getValueOrDefault(Number, data?.id),
+        id: toNumber(data?.id),
       });
     } else {
       let minCP =
@@ -227,20 +219,15 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           minCP = BattleLeagueCPType.Ultra;
         }
       }
-      const allStats = calStatsProd(
-        getValueOrDefault(Number, stats?.atk),
-        getValueOrDefault(Number, stats?.def),
-        getValueOrDefault(Number, stats?.sta),
-        minCP,
-        maxCP
-      );
+      const allStats = calStatsProd(atk, def, sta, minCP, maxCP);
       return allStats[allStats.length - 1];
     }
   };
 
-  const renderTopStats = (stats: IStatsBase | undefined, id: number) => {
+  const renderTopStats = (stats: IStatsBase | undefined, id: number | undefined) => {
     const maxCP = toNumber(cp);
     const currStats = calculateStatsTopRank(stats);
+    const level = toNumber(currStats?.level);
     return (
       <ul className="element-top">
         <li className="element-top">
@@ -248,15 +235,12 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           <b>
             {maxCP === BattleLeagueCPType.InsMaster
               ? `${calculateStatsTopRank(stats, MAX_LEVEL - 1)?.CP}-${currStats?.CP}`
-              : `${getValueOrDefault(Number, currStats?.CP)}`}
+              : `${toNumber(currStats?.CP)}`}
           </b>
         </li>
-        <li className={getValueOrDefault(Number, currStats?.level) <= 40 ? 'element-top' : ''}>
-          Level:{' '}
-          <b>
-            {maxCP === BattleLeagueCPType.InsMaster ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${getValueOrDefault(Number, currStats?.level)}`}{' '}
-          </b>
-          {(getValueOrDefault(Number, currStats?.level) > 40 || maxCP === BattleLeagueCPType.InsMaster) && (
+        <li className={level <= 40 ? 'element-top' : ''}>
+          Level: <b>{maxCP === BattleLeagueCPType.InsMaster ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${level}`} </b>
+          {(level > 40 || maxCP === BattleLeagueCPType.InsMaster) && (
             <b>
               (
               <CandyXL id={id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
@@ -265,21 +249,9 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
           )}
         </li>
         <li className="element-top">
-          <IVBar
-            title="Attack"
-            iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.atk)}
-            style={{ maxWidth: 500 }}
-          />
-          <IVBar
-            title="Defense"
-            iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.def)}
-            style={{ maxWidth: 500 }}
-          />
-          <IVBar
-            title="HP"
-            iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : getValueOrDefault(Number, currStats?.IV?.sta)}
-            style={{ maxWidth: 500 }}
-          />
+          <IVBar title="Attack" iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : currStats?.IV?.atk} style={{ maxWidth: 500 }} />
+          <IVBar title="Defense" iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : currStats?.IV?.def} style={{ maxWidth: 500 }} />
+          <IVBar title="HP" iv={maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : currStats?.IV?.sta} style={{ maxWidth: 500 }} />
         </li>
       </ul>
     );
@@ -298,12 +270,12 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
               borderSize={320}
               size={180}
               stats={HexagonStats.create({
-                lead: getValueOrDefault(Number, data.data.scores.at(0)),
-                atk: getValueOrDefault(Number, data.data.scores.at(4)),
-                cons: getValueOrDefault(Number, data.data.scores.at(5)),
-                closer: getValueOrDefault(Number, data.data.scores.at(1)),
-                charger: getValueOrDefault(Number, data.data.scores.at(3)),
-                switching: getValueOrDefault(Number, data.data.scores.at(2)),
+                lead: toNumber(data.data.scores.at(0)),
+                atk: toNumber(data.data.scores.at(4)),
+                cons: toNumber(data.data.scores.at(5)),
+                closer: toNumber(data.data.scores.at(1)),
+                charger: toNumber(data.data.scores.at(3)),
+                switching: toNumber(data.data.scores.at(2)),
               })}
             />
           </div>
@@ -321,21 +293,21 @@ export const OverAllStats = (data: IPokemonBattleRanking | undefined, statsRanki
             statProd={data?.prod}
             pokemonStats={statsRanking}
             id={data?.pokemon?.num}
-            form={getValueOrDefault(String, data?.pokemon?.forme)}
+            form={data?.pokemon?.forme}
           />
         </div>
         <div>
           <h5>
             <b>Top Rank League</b>
           </h5>
-          {renderTopStats(data?.stats, getValueOrDefault(Number, data?.id))}
+          {renderTopStats(data?.stats, data?.id)}
         </div>
       </div>
     </div>
   );
 };
 
-export const TypeEffective = (types: string[]) => {
+export const TypeEffective = (types: string[] | undefined) => {
   return (
     <div className="row text-white">
       <div className="col-lg-4" style={{ marginBottom: 15 }}>
@@ -400,19 +372,9 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
     ));
   };
 
-  const findMove = (name: string, uses: number) => {
+  const findMove = (name: string, uses: number | null | undefined) => {
     const move = combatData.find((move) => isEqual(move.name, name));
-    let isElite = false;
-    let isSpecial = false;
-    if (isIncludeList(combatList?.eliteQuickMoves, name)) {
-      isElite = true;
-    }
-    if (isIncludeList(combatList?.eliteCinematicMoves, name)) {
-      isElite = true;
-    }
-    if (isIncludeList(combatList?.specialMoves, name)) {
-      isSpecial = true;
-    }
+    const moveType = getMoveType(combatList, name);
 
     return (
       <Link
@@ -423,20 +385,14 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
         )}
       >
         <div className="d-flex" style={{ columnGap: 10 }}>
-          <img
-            className="filter-shadow"
-            width={24}
-            height={24}
-            alt="img-pokemon"
-            src={APIService.getTypeSprite(getValueOrDefault(String, move?.type))}
-          />
+          <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move?.type)} />
           <span className="filter-shadow">
-            {splitAndCapitalize(name, '_', ' ')} {(isElite || isSpecial) && <b className="filter-shadow">*</b>}
+            {splitAndCapitalize(name, '_', ' ')} {moveType !== MoveType.None && <b className="filter-shadow">*</b>}
           </span>
         </div>
         <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
           {move?.archetype && findArchetype(move.archetype)}
-          <span className="ranking-score score-ic filter-shadow">{uses}</span>
+          <span className="ranking-score score-ic filter-shadow">{toNumber(uses)}</span>
         </div>
       </Link>
     );
@@ -512,9 +468,9 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
               move.uses ??= 0;
               return move;
             })
-            .sort((a, b) => getValueOrDefault(Number, b.uses) - getValueOrDefault(Number, a.uses))
+            .sort((a, b) => toNumber(b.uses) - toNumber(a.uses))
             .map((value, index) => (
-              <Fragment key={index}>{findMove(value.moveId, getValueOrDefault(Number, value.uses))}</Fragment>
+              <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
             ))}
         </div>
       </div>
@@ -529,9 +485,9 @@ export const MoveSet = (moves: IMovePokemonRanking | undefined, combatList: IPok
               }
               return move;
             })
-            .sort((a, b) => getValueOrDefault(Number, b.uses) - getValueOrDefault(Number, a.uses))
+            .sort((a, b) => toNumber(b.uses) - toNumber(a.uses))
             .map((value, index) => (
-              <Fragment key={index}>{findMove(value.moveId, getValueOrDefault(Number, value.uses))}</Fragment>
+              <Fragment key={index}>{findMove(value.moveId, value.uses)}</Fragment>
             ))}
         </div>
       </div>

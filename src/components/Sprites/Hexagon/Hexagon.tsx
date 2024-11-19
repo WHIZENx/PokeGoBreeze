@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
-import { DynamicObj, getValueOrDefault, toFloatWithPadding } from '../../../util/extension';
+import { DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
 
 interface IPointer {
   x: number;
@@ -228,8 +228,8 @@ const Hexagon = (props: IHexagonComponent) => {
       <canvas
         onClick={() => onPlayAnimation()}
         ref={canvasHex as React.LegacyRef<HTMLCanvasElement> | undefined}
-        width={getValueOrDefault(Number, props.size)}
-        height={getValueOrDefault(Number, props.size) + 4}
+        width={toNumber(props.size)}
+        height={toNumber(props.size) + 4}
       />
     </div>
   );

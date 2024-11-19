@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { IHpBarComponent } from '../../models/component.model';
-import { getValueOrDefault } from '../../../util/extension';
+import { toNumber } from '../../../util/extension';
 
 interface Element {
   hp?: number;
@@ -21,7 +21,7 @@ const Bar = styled.div<Element>`
 
 const Fill = styled.div<Element>`
   position: absolute;
-  width: ${(props) => (getValueOrDefault(Number, props.hp) * 100) / getValueOrDefault(Number, props.maxHp)}%;
+  width: ${(props) => (toNumber(props.hp) * 100) / toNumber(props.maxHp, 1)}%;
   height: ${(props) => props.height - 4}px;
   background: ${(props) => props.color};
   transition: 0.1s;
@@ -33,10 +33,10 @@ const anim = keyframes`
 
 const FillDmg = styled.div<Element>`
   position: absolute;
-  width: ${(props) => (getValueOrDefault(Number, props.dmg) * 100) / getValueOrDefault(Number, props.maxHp)}%;
+  width: ${(props) => (toNumber(props.dmg) * 100) / toNumber(props.maxHp, 1)}%;
   height: ${(props) => props.height - 4}px;
   background: ${(props) => props.color};
-  left: ${(props) => (getValueOrDefault(Number, props.hp) * 100) / getValueOrDefault(Number, props.maxHp)}%;
+  left: ${(props) => (toNumber(props.hp) * 100) / toNumber(props.maxHp, 1)}%;
   animation: 1s ${anim};
   animation-fill-mode: forwards;
 `;

@@ -5,7 +5,7 @@ import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../.
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
-import { FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
 import { TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -88,9 +88,9 @@ interface IFilter {
 }
 
 class Filter implements IFilter {
-  fMoveType = SelectType.All.toString();
+  fMoveType = SelectType.All;
   fMoveName = '';
-  cMoveType = SelectType.All.toString();
+  cMoveType = SelectType.All;
   cMoveName = '';
 
   static create(value: IFilter) {
@@ -111,12 +111,15 @@ const Search = () => {
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
   const [resultFMove, setResultFMove] = useState<ICombat[]>([]);
+  const [fMoveIsLoad, setFMoveIsLoad] = useState(false);
   const [resultCMove, setResultCMove] = useState<ICombat[]>([]);
+  const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
 
   useEffect(() => {
     if (isNotEmpty(combat)) {
       const timeOutId = setTimeout(() => {
-        setResultFMove(searchMove(TypeMove.FAST, fMoveType, fMoveName));
+        setResultFMove(searchMove(TypeMove.Fast, fMoveType, fMoveName));
+        setFMoveIsLoad(true);
       });
       return () => clearTimeout(timeOutId);
     }
@@ -125,7 +128,8 @@ const Search = () => {
   useEffect(() => {
     if (isNotEmpty(combat)) {
       const timeOutId = setTimeout(() => {
-        setResultCMove(searchMove(TypeMove.CHARGE, cMoveType, cMoveName));
+        setResultCMove(searchMove(TypeMove.Charge, cMoveType, cMoveName));
+        setCMoveIsLoad(true);
       });
       return () => clearTimeout(timeOutId);
     }
@@ -198,6 +202,12 @@ const Search = () => {
                     fixedHeader={true}
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable(theme)}
+                    progressPending={!fMoveIsLoad}
+                    progressComponent={
+                      <div style={{ margin: 10 }}>
+                        <CircularProgress />
+                      </div>
+                    }
                   />
                 </td>
               </tr>
@@ -254,6 +264,12 @@ const Search = () => {
                     fixedHeader={true}
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable(theme)}
+                    progressPending={!cMoveIsLoad}
+                    progressComponent={
+                      <div style={{ margin: 10 }}>
+                        <CircularProgress />
+                      </div>
+                    }
                   />
                 </td>
               </tr>
