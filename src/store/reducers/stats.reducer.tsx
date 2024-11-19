@@ -13,6 +13,7 @@ const StoreReducer = (state: IStatsRank | null = null, action: StatsActionsUnion
         action.payload
           .filter((pokemon) => pokemon.num > 0)
           .map((value) => {
+            const sta = toNumber(value.baseStats.sta);
             return new ArrayStats({
               id: value.num,
               name: value.slug,
@@ -21,9 +22,9 @@ const StoreReducer = (state: IStatsRank | null = null, action: StatsActionsUnion
               baseStatsPokeGo: new BaseStatsPokeGo({
                 attack: value.baseStats.atk,
                 defense: value.baseStats.def,
-                stamina: toNumber(value.baseStats.sta),
+                stamina: sta,
               }),
-              baseStatsProd: value.baseStats.atk * value.baseStats.def * toNumber(value.baseStats.sta),
+              baseStatsProd: value.baseStats.atk * value.baseStats.def * sta,
             });
           })
       );

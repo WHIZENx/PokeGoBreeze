@@ -6,6 +6,7 @@ import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.m
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { PokemonType } from '../../enums/type.enum';
+import { MIN_IV } from '../constants';
 import { getValueOrDefault, toNumber } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
@@ -206,7 +207,7 @@ export class StatsProdCalculate implements IStatsProdCalculate {
 
 export interface IQueryStatesEvoChain {
   battleLeague: IBattleLeague;
-  maxCP: number;
+  maxCP: number | undefined;
   form: string | null | undefined;
   id: number;
   name: string;
@@ -353,7 +354,7 @@ export class QueryMovesPokemon {
     atk: number,
     def: number,
     sta: number,
-    types: string[],
+    types: string[] | undefined,
     dataList: IPokemonQueryMove[] = []
   ) {
     this.globalOptions = globalOptions;
@@ -363,7 +364,7 @@ export class QueryMovesPokemon {
     this.atk = atk;
     this.def = def;
     this.sta = sta;
-    this.types = types;
+    this.types = getValueOrDefault(Array, types);
     this.dataList = dataList;
   }
 }
@@ -396,9 +397,9 @@ export class BattleLeagueCalculate implements IBattleLeagueCalculate {
     this.isElidge = isElidge;
     this.maxCP = maxCP;
     this.IV = new StatsPokemonGO();
-    this.IV.atk = toNumber(atk);
-    this.IV.def = toNumber(def);
-    this.IV.sta = toNumber(sta);
+    this.IV.atk = toNumber(atk, MIN_IV);
+    this.IV.def = toNumber(def, MIN_IV);
+    this.IV.sta = toNumber(sta, MIN_IV);
     this.CP = toNumber(CP);
     this.level = toNumber(level);
     this.isLimit = getValueOrDefault(Boolean, isLimit);

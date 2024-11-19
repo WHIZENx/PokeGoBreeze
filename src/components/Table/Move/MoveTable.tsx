@@ -122,14 +122,16 @@ const TableMove = (props: ITableMoveComponent) => {
     if (isNotEmpty(combatPoke)) {
       if (
         combatPoke?.length === 1 ||
-        isEqual(typeof props.form === 'string' ? props.form : props.form?.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
+        (typeof props.form === 'string'
+          ? isEqual(props.form, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
+          : props.form?.pokemonType === PokemonType.GMax)
       ) {
-        filterMoveType(combatPoke?.at(0));
-        return setMove(setRankMove(combatPoke?.at(0)));
-      } else if (!isNotEmpty(combatPoke) && props.id) {
-        const combatPoke = data.pokemon.filter((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name));
         filterMoveType(combatPoke.at(0));
         return setMove(setRankMove(combatPoke.at(0)));
+      } else if (!isNotEmpty(combatPoke) && props.id) {
+        const combatPoke = data.pokemon.filter((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name)).at(0);
+        filterMoveType(combatPoke);
+        return setMove(setRankMove(combatPoke));
       }
 
       const formName = convertPokemonAPIDataName(props.form?.name);
@@ -151,13 +153,10 @@ const TableMove = (props: ITableMoveComponent) => {
       data.weatherBoost,
       data.combat,
       result,
-      props.statATK * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.ATK),
-      props.statDEF * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.DEF),
+      props.statATK * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.Atk),
+      props.statDEF * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.Def),
       props.statSTA,
-      getValueOrDefault(
-        Array,
-        props.data?.types?.map((type) => capitalize(type))
-      )
+      props.data?.types?.map((type) => capitalize(type))
     );
   };
 
@@ -169,7 +168,7 @@ const TableMove = (props: ITableMoveComponent) => {
     }
   }, [findMove, props.form]);
 
-  const renderBestMovesetTable = (value: IPokemonQueryMove, max: number, type: TableType) => {
+  const renderBestMovesetTable = (value: IPokemonQueryMove, max: number | undefined, type: TableType) => {
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
@@ -203,7 +202,7 @@ const TableMove = (props: ITableMoveComponent) => {
           </Link>
         </td>
         <td className="text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          {Math.round(((type === TableType.Offensive ? value.eDPS.offensive : value.eDPS.defensive) * 100) / max)}
+          {Math.round(((type === TableType.Offensive ? value.eDPS.offensive : value.eDPS.defensive) * 100) / toNumber(max, 1))}
         </td>
       </tr>
     );
@@ -349,7 +348,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 {move.data
                   .sort((a, b) => sortFunc(a, b, TableType.Offensive))
                   .map((value, index) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, toNumber(move.maxOff), TableType.Offensive)}</Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff, TableType.Offensive)}</Fragment>
                   ))}
               </tbody>
             </table>
@@ -395,7 +394,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 {move.data
                   .sort((a, b) => sortFunc(a, b, TableType.Defensive))
                   .map((value, index) => (
-                    <Fragment key={index}>{renderBestMovesetTable(value, toNumber(move.maxDef), TableType.Defensive)}</Fragment>
+                    <Fragment key={index}>{renderBestMovesetTable(value, move.maxDef, TableType.Defensive)}</Fragment>
                   ))}
               </tbody>
             </table>

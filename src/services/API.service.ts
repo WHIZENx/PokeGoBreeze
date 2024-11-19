@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios
 import { APIUrl } from './constants';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
-import { getValueOrDefault, isEqual, isInclude } from '../util/extension';
+import { getValueOrDefault, isEqual, isInclude, toNumber } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
 
@@ -102,8 +102,8 @@ class APIService {
     return `${APIUrl.POGO_ASSET_API_URL}Raids/${name}.png`;
   }
 
-  getGenderSprite(sex: string) {
-    return `${APIUrl.POGO_ASSET_API_URL}Pokedex/${sex.toLowerCase()}_l.png`;
+  getGenderSprite(sex: string | undefined) {
+    return `${APIUrl.POGO_ASSET_API_URL}Pokedex/${sex?.toLowerCase()}_l.png`;
   }
 
   getShinyIcon() {
@@ -156,8 +156,8 @@ class APIService {
     return `${APIUrl.POKE_SPRITES_API_URL}${id}.png`;
   }
 
-  getPokeFullAsset(id: number | string) {
-    return `${APIUrl.POKE_ASSETS}${id}.png`;
+  getPokeFullAsset(id: number | undefined) {
+    return `${APIUrl.POKE_ASSETS}${toNumber(id)}.png`;
   }
 
   getPokeFullSprite(id: number | string | undefined, form?: string) {

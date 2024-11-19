@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, convertPokemonDataName, splitAndCapitalize } from '../../util/utils';
+import { capitalize, checkPokemonGO, convertPokemonDataName, getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import { STAB_MULTIPLY } from '../../util/constants';
 import { getBarCharge, queryTopMove } from '../../util/calculate';
 
@@ -15,13 +15,11 @@ import './Move.scss';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { FormControlLabel, Switch } from '@mui/material';
+import { CircularProgress, FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import { MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
+import { BuffType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
-import DoneIcon from '@mui/icons-material/Done';
-import CloseIcon from '@mui/icons-material/Close';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
@@ -87,9 +85,17 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     sortFunction: nameSort,
   },
   {
-    name: 'Elite',
-    selector: (row) => (row.moveType === MoveType.Elite ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />),
-    width: '64px',
+    name: 'Type',
+    selector: (row) => (
+      <>
+        {row.moveType !== MoveType.None && (
+          <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.moveType)?.toLowerCase()}-ic`)}>
+            {getKeyEnum(MoveType, row.moveType)}
+          </span>
+        )}
+      </>
+    ),
+    minWidth: '96px',
   },
   {
     name: 'DPS',
@@ -116,6 +122,7 @@ const Move = (props: IMovePage) => {
   const [move, setMove] = useState<ICombat>();
   const [releasedGO, setReleaseGO] = useState(true);
   const [topList, setTopList] = useState<IPokemonTopMove[]>([]);
+  const [topListFilter, setTopListFilter] = useState<IPokemonTopMove[]>([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -170,6 +177,25 @@ const Move = (props: IMovePage) => {
       setTopList(result);
     }
   }, [move, data.options, data.pokemon, data.typeEff, data.weatherBoost]);
+
+  useEffect(() => {
+    setTopListFilter(
+      topList.filter((pokemon) => {
+        if (!releasedGO) {
+          return true;
+        }
+        if (!pokemon.releasedGO) {
+          const result = checkPokemonGO(
+            pokemon.num,
+            convertPokemonDataName(pokemon.sprite ?? pokemon.name.replaceAll(' ', '_')),
+            data.pokemon
+          );
+          return result?.releasedGO;
+        }
+        return pokemon.releasedGO;
+      })
+    );
+  }, [topList, releasedGO]);
 
   return (
     <div className={combineClasses('element-bottom poke-container', props.id ? '' : 'container')}>
@@ -296,7 +322,7 @@ const Move = (props: IMovePage) => {
                   {move?.pveEnergy}
                 </td>
               </tr>
-              {move?.typeMove === TypeMove.CHARGE && (
+              {move?.typeMove === TypeMove.Charge && (
                 <tr>
                   <td>PVE Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
@@ -334,7 +360,7 @@ const Move = (props: IMovePage) => {
                   {move?.pvpEnergy}
                 </td>
               </tr>
-              {move?.typeMove === TypeMove.CHARGE && (
+              {move?.typeMove === TypeMove.Charge && (
                 <tr>
                   <td>PVP Bar Charged</td>
                   <td colSpan={2} style={{ border: 'none' }}>
@@ -352,12 +378,12 @@ const Move = (props: IMovePage) => {
                   {move?.buffs.map((value, index) => (
                     <tr key={index}>
                       <td className="target-buff">
-                        <CircleIcon sx={{ fontSize: '5px' }} /> {capitalize(value.target)}
+                        <CircleIcon sx={{ fontSize: '5px' }} /> {getKeyEnum(BuffType, value.target)}
                       </td>
                       <td>
                         {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}
                         <span className="d-inline-block caption">
-                          {value.type === TypeAction.ATK ? 'Attack ' : 'Defense '}
+                          {value.type === TypeAction.Atk ? 'Attack ' : 'Defense '}
                           <span className={combineClasses('buff-power', value.power > 0 ? 'text-success' : 'text-danger')}>
                             <b>
                               {value.power > 0 && '+'}
@@ -401,11 +427,13 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Sound</td>
                 <td colSpan={2}>
-                  {move?.sound && (
+                  {move?.sound ? (
                     <audio className="d-flex w-100" controls={true} style={{ height: 30 }}>
                       <source src={APIService.getSoundMove(move.sound)} type="audio/wav" />
                       Your browser does not support the audio element.
                     </audio>
+                  ) : (
+                    <span>Unavailable</span>
                   )}
                 </td>
               </tr>
@@ -456,7 +484,7 @@ const Move = (props: IMovePage) => {
                     `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 3)) / (move.durationMs / 1000), 2)}`}
                 </td>
               </tr>
-              {move?.typeMove === TypeMove.FAST && (
+              {move?.typeMove === TypeMove.Fast && (
                 <tr>
                   <td>EPS</td>
                   <td>{move && `${toFloatWithPadding(move.pveEnergy / (move.durationMs / 1000), 2)}`}</td>
@@ -505,17 +533,7 @@ const Move = (props: IMovePage) => {
                 <td className="table-top-of-move" colSpan={2} style={{ padding: 0 }}>
                   <DataTable
                     columns={convertColumnDataType(columns)}
-                    data={topList.filter((pokemon) => {
-                      if (!releasedGO) {
-                        return true;
-                      }
-                      const result = checkPokemonGO(
-                        pokemon.num,
-                        convertPokemonDataName(pokemon.sprite ?? pokemon.name.replaceAll(' ', '_')),
-                        data.pokemon
-                      );
-                      return getValueOrDefault(Boolean, pokemon.releasedGO, result?.releasedGO);
-                    })}
+                    data={topListFilter}
                     pagination={true}
                     defaultSortFieldId={4}
                     defaultSortAsc={false}
@@ -523,6 +541,12 @@ const Move = (props: IMovePage) => {
                     striped={true}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="35vh"
+                    progressPending={!isNotEmpty(topList)}
+                    progressComponent={
+                      <div style={{ margin: 10 }}>
+                        <CircularProgress />
+                      </div>
+                    }
                   />
                 </td>
               </tr>

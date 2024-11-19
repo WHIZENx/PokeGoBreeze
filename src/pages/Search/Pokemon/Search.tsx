@@ -114,13 +114,13 @@ const Search = () => {
         </h1>
         <div className="input-group mb-12 element-top">
           <div className="input-group-prepend">
-            <span className={combineClasses('input-group-text', theme.palette.mode === TypeTheme.DARK ? 'input-group-dark' : '')}>
+            <span className={combineClasses('input-group-text', theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : '')}>
               Search
             </span>
           </div>
           <input
             type="text"
-            className={combineClasses('form-control', `input-search${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}`)}
+            className={combineClasses('form-control', `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
             style={{ backgroundColor: theme.palette.background.input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}

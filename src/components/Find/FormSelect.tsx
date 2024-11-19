@@ -50,7 +50,8 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
-  const [typePoke, setTypePoke] = useState(props.isRaid ? TypeRaid.BOSS : TypeRaid.POKEMON);
+  const [typePoke, setTypePoke] = useState(props.isRaid ? TypeRaid.Boss : TypeRaid.Pokemon);
+  const [isRaid, setIsRaid] = useState(props.isRaid);
   const [tier, setTier] = useState(toNumber(props.tier, 1));
 
   const [data, setData] = useState<Species>();
@@ -174,10 +175,11 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [props.id, props.data, data?.id, queryPokemon]);
 
   useEffect(() => {
-    if (currentForm && toNumber(data?.id) > 0 && toNumber(props.id) > 0) {
+    const id = toNumber(props.id);
+    if (currentForm && toNumber(data?.id) > 0 && id > 0) {
       const obj = ToolSearching.create(props.searching);
       const searching = new SearchingModel({
-        id: toNumber(props.id),
+        id,
         name: currentForm.defaultName,
         form: currentForm.form.formName,
         fullName: currentForm.form.name,
@@ -203,8 +205,9 @@ const FormSelect = (props: IFormSelectComponent) => {
   }, [currentForm, dispatch]);
 
   useEffect(() => {
-    if (isNotEmpty(props.data) && toNumber(props.id) > 0) {
-      const currentId = getPokemonById(props.data, toNumber(props.id));
+    const id = toNumber(props.id);
+    if (isNotEmpty(props.data) && id > 0) {
+      const currentId = getPokemonById(props.data, id);
       if (currentId) {
         setDataStorePokemon({
           prev: getPokemonById(props.data, currentId.id - 1),
@@ -246,6 +249,20 @@ const FormSelect = (props: IFormSelectComponent) => {
     setTier(tier);
   };
 
+  const onHandleType = useCallback(
+    (v: TypeRaid) => {
+      setTypePoke(v);
+      setIsRaid(v !== TypeRaid.Pokemon);
+      if (props.setRaid) {
+        props.setRaid(v !== TypeRaid.Pokemon);
+      }
+      if (props.onClearStats) {
+        props.onClearStats(true);
+      }
+    },
+    [props.setRaid, props.onClearStats]
+  );
+
   return (
     <Fragment>
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
@@ -259,7 +276,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon.prev?.id));
+                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon.prev?.id);
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
                   }
@@ -286,7 +303,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         onError={(e) => {
           e.currentTarget.onerror = null;
           if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-            e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon?.current?.id));
+            e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id);
           } else {
             e.currentTarget.src = APIService.getPokeFullSprite(0);
           }
@@ -303,7 +320,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon.next?.id));
+                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon.next?.id);
                   } else {
                     e.currentTarget.src = APIService.getPokeFullSprite(0);
                   }
@@ -323,7 +340,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <h4>
         <b>
-          #{dataStorePokemon?.current?.id}{' '}
+          {`#${dataStorePokemon?.current?.id} `}
           {currentForm ? splitAndCapitalize(currentForm.form.name.replace('-f', '-female').replace('-m', '-male'), '-', ' ') : props.name}
         </b>
       </h4>
@@ -371,18 +388,10 @@ const FormSelect = (props: IFormSelectComponent) => {
             aria-labelledby="row-types-group-label"
             name="row-types-group"
             value={typePoke}
-            onChange={(e) => {
-              setTypePoke(e.target.value as TypeRaid);
-              if (props.setRaid) {
-                props.setRaid(!isEqual(e.target.value, TypeRaid.POKEMON));
-              }
-              if (props.onClearStats) {
-                props.onClearStats(true);
-              }
-            }}
+            onChange={(e) => onHandleType(toNumber(e.target.value))}
           >
             <FormControlLabel
-              value={TypeRaid.POKEMON}
+              value={TypeRaid.Pokemon}
               control={<Radio />}
               label={
                 <span>
@@ -391,7 +400,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               }
             />
             <FormControlLabel
-              value={TypeRaid.BOSS}
+              value={TypeRaid.Boss}
               control={<Radio />}
               label={
                 <span>
@@ -408,7 +417,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <Tools
         isHide={props.isHide}
-        isRaid={!isEqual(typePoke, TypeRaid.POKEMON)}
+        isRaid={isRaid}
         tier={tier}
         setTier={onSetTier}
         setForm={props.setForm}

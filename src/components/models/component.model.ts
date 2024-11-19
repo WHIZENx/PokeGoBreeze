@@ -31,8 +31,8 @@ import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
-import { InputType } from '../Input/enums/input-type.enum';
-import { MoveType, PokemonType, TypeAction, TypeMove } from '../../enums/type.enum';
+import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
+import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -144,14 +144,14 @@ export interface IToolsComponent {
   setForm: ((form: IPokemonFormModify | undefined) => void) | undefined;
   onSetStats: ((type: TypeAction, value: number) => void) | undefined;
   onClearStats: ((reset?: boolean) => void) | undefined;
-  isRaid: boolean;
+  isRaid: boolean | undefined;
   tier: number;
   setTier: (tier: number) => void;
   isHide?: boolean;
 }
 
 export interface IAssetPokemonModelComponent {
-  id: number;
+  id: number | undefined;
   name: string | undefined;
   originSoundCry: IFormSoundCry[];
   isLoadedForms: boolean;
@@ -182,7 +182,7 @@ export interface IFormInfoComponent {
   ratio: IPokemonGenderRatio | undefined;
   setId?: (id: number) => void;
   pokemonDetail: IPokemonData | undefined;
-  defaultId: number;
+  defaultId: number | undefined;
   region: string;
   setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
   isLoadedForms: boolean;
@@ -195,7 +195,7 @@ export interface IFromChangeComponent {
 
 export interface IFormSpecialComponent {
   formList: IPokemonFormModify[][];
-  id: number;
+  id: number | undefined;
 }
 
 export interface IStatsComponent {
@@ -211,7 +211,7 @@ export interface IStatsComponent {
 }
 
 export interface IGenderComponent {
-  sex: string;
+  sex: TypeSex;
   ratio?: IPokemonGenderRatio;
   defaultM?: string;
   defaultF?: string;
@@ -264,6 +264,7 @@ export interface ISelectPokemonComponent {
   isDisable?: boolean;
   defaultSetting?: IPokemonDataStats;
   maxHeight?: number;
+  position?: SelectPosition;
 }
 
 export interface IPokemonRaidComponent {
@@ -321,7 +322,7 @@ export interface IHexagonComponent {
 }
 
 export interface IIVBarComponent {
-  iv: number;
+  iv: number | undefined;
   style: React.CSSProperties;
   title: string;
 }
@@ -347,7 +348,7 @@ export interface IHpBarComponent {
 export interface IProgressBarComponent {
   height: number;
   value: number | undefined;
-  maxValue: number;
+  maxValue: number | undefined;
   bgColor: string;
   color: string;
   style?: React.CSSProperties;
@@ -385,7 +386,7 @@ export interface ITypeBadgeComponent {
   style?: React.CSSProperties;
   color?: string;
   title?: string;
-  moveType?: MoveType;
+  moveType: MoveType;
 }
 
 export interface ITypeBarComponent {
@@ -419,7 +420,7 @@ export interface IWeatherComponent {
 }
 
 export interface ICounterComponent {
-  def: number;
+  def: number | undefined;
   types?: string[];
   pokemonType?: PokemonType;
 }
@@ -437,7 +438,7 @@ export interface ITableMoveComponent {
 export interface IPokemonTableComponent {
   id: number | undefined;
   formName: string | undefined;
-  gen: number | undefined;
+  gen: number | string | undefined;
   region: string | null | undefined;
   version: string | null | undefined;
   weight: number;

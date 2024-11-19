@@ -2,7 +2,7 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import { PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
-import { FORM_GMAX, FORM_NORMAL } from './constants';
+import { FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
@@ -80,26 +80,26 @@ export const raidEgg = (tier: number, isMega: boolean, isPrimal: boolean, isUltr
   }
 };
 
-export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
+export const computeCandyBgColor = (candyData: ICandy[], id: number | undefined) => {
   const data = candyData.find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
         id
-      ) || item.familyId === id
+      ) || item.familyId === toNumber(id)
   );
   return `rgb(${Math.round(255 * toNumber(data?.secondaryColor.r))}, ${Math.round(255 * toNumber(data?.secondaryColor.g))}, ${Math.round(
     255 * toNumber(data?.secondaryColor.b)
   )}, ${toNumber(data?.secondaryColor.a, 1)})`;
 };
 
-export const computeCandyColor = (candyData: ICandy[], id: number) => {
+export const computeCandyColor = (candyData: ICandy[], id: number | undefined) => {
   const data = candyData.find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
         id
-      ) || item.familyId === id
+      ) || item.familyId === toNumber(id)
   );
   return `rgb(${Math.round(255 * toNumber(data?.primaryColor.r))}, ${Math.round(255 * toNumber(data?.primaryColor.g))}, ${Math.round(
     255 * toNumber(data?.primaryColor.b)
@@ -139,10 +139,10 @@ export const computeBgType = (
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets || isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+  if (!pokemonAssets || isEqual(formName, PokemonType.GMax, EqualMode.IgnoreCaseSensitive)) {
     return;
   }
-  const asset = pokemonAssets.image.find((img) => isEqual(img.form, formName));
+  const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
   if (asset) {
     return asset;
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {

@@ -28,6 +28,7 @@ import { TableColumnModify } from '../../../util/models/overrides/data-table.mod
 import {
   convertColumnDataType,
   DynamicObj,
+  getPropertyName,
   getValueOrDefault,
   isEmpty,
   isEqual,
@@ -171,7 +172,7 @@ const StatsRanking = () => {
     return pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
       const details = getPokemonDetails(pokemon, data.num, data.fullName, true);
-      return new PokemonStatsRanking({
+      return PokemonStatsRanking.create({
         ...data,
         releasedGO: getValueOrDefault(Boolean, details?.releasedGO),
         atk: {
@@ -183,18 +184,33 @@ const StatsRanking = () => {
           rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank),
         },
         sta: {
-          stamina: toNumber(statsTag.sta),
+          stamina: statsTag.sta,
           rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
         },
         prod: {
-          product: statsTag.atk * statsTag.def * toNumber(statsTag?.sta),
+          product: statsTag.atk * statsTag.def * statsTag.sta,
           rank: getValueOrDefault(
             Number,
-            stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * toNumber(statsTag?.sta))?.rank
+            stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * statsTag.sta)?.rank
           ),
         },
       });
     });
+  };
+
+  const setSortBy = (id: ColumnType) => {
+    let sortBy: string[] = [];
+    const stats = new PokemonStatsRanking();
+    if (id === ColumnType.Atk) {
+      sortBy = [getPropertyName(stats, (o) => o.atk), getPropertyName(stats.atk, (o) => o.attack)];
+    } else if (id === ColumnType.Def) {
+      sortBy = [getPropertyName(stats, (o) => o.def), getPropertyName(stats.def, (o) => o.defense)];
+    } else if (id === ColumnType.Sta) {
+      sortBy = [getPropertyName(stats, (o) => o.sta), getPropertyName(stats.sta, (o) => o.stamina)];
+    } else if (id === ColumnType.Prod) {
+      sortBy = [getPropertyName(stats, (o) => o.prod), getPropertyName(stats.prod, (o) => o.product)];
+    }
+    return sortBy;
   };
 
   const setSortedPokemonRanking = (primary: IPokemonStatsRanking, secondary: IPokemonStatsRanking, sortBy: string[]) => {
@@ -203,22 +219,13 @@ const StatsRanking = () => {
     return b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]];
   };
 
-  const sortRanking = (pokemon: IPokemonStatsRanking[], id: number) => {
-    let sortBy: string[] = [];
-    if (id === ColumnType.Atk) {
-      sortBy = [TypeAction.ATK, 'attack'];
-    } else if (id === ColumnType.Def) {
-      sortBy = [TypeAction.DEF, 'defense'];
-    } else if (id === ColumnType.Sta) {
-      sortBy = [TypeAction.STA, 'stamina'];
-    } else if (id === ColumnType.Prod) {
-      sortBy = [TypeAction.PROD, 'product'];
-    }
+  const sortRanking = (pokemon: IPokemonStatsRanking[], id: ColumnType) => {
+    const sortBy = setSortBy(id);
     return pokemon
       .sort((a, b) => setSortedPokemonRanking(a, b, sortBy))
       .map((data) => {
         const result = data as unknown as DynamicObj<IPokemonStatsRanking>;
-        return new PokemonStatsRanking({
+        return PokemonStatsRanking.create({
           ...data,
           rank: result[sortBy[0]]?.rank,
         });
@@ -227,15 +234,13 @@ const StatsRanking = () => {
 
   const getSortId = () => {
     let idSort = ColumnType.Prod;
-    const statsBy = location.state?.stats as TypeAction;
-    if (statsBy) {
-      if (statsBy === TypeAction.ATK) {
-        idSort = ColumnType.Atk;
-      } else if (statsBy === TypeAction.DEF) {
-        idSort = ColumnType.Def;
-      } else if (statsBy === TypeAction.STA) {
-        idSort = ColumnType.Sta;
-      }
+    const statsBy = location.state?.stats as unknown as TypeAction;
+    if (statsBy === TypeAction.Atk) {
+      idSort = ColumnType.Atk;
+    } else if (statsBy === TypeAction.Def) {
+      idSort = ColumnType.Def;
+    } else if (statsBy === TypeAction.Sta) {
+      idSort = ColumnType.Sta;
     }
     return idSort;
   };
@@ -331,13 +336,13 @@ const StatsRanking = () => {
               style={{ verticalAlign: 'baseline' }}
               alt="img-full-pokemon"
               src={APIService.getPokeFullSprite(
-                toNumber(select?.num),
+                select?.num,
                 convertPokemonImageName(select && isEqual(select.baseForme, select.forme) ? '' : select?.forme)
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                  e.currentTarget.src = APIService.getPokeFullAsset(toNumber(select?.num));
+                  e.currentTarget.src = APIService.getPokeFullAsset(select?.num);
                 } else {
                   e.currentTarget.src = APIService.getPokeFullSprite(0);
                 }

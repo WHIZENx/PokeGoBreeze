@@ -58,11 +58,12 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.gen = item.gen;
     this.region = item.region;
     this.version = versionList.indexOf(splitAndCapitalize(item.version, '-', ' ').replace(/GO$/i, 'GO'));
+    const sta = toNumber(item.baseStats.sta);
     this.goStats = StatsPokemonGO.create({
       atk: item.baseStats.atk,
       def: item.baseStats.def,
-      sta: toNumber(item.baseStats.sta),
-      prod: item.baseStats.atk * item.baseStats.def * toNumber(item.baseStats.sta),
+      sta,
+      prod: item.baseStats.atk * item.baseStats.def * sta,
     });
     this.class = item.pokemonClass;
     this.releasedGO = item.releasedGO;

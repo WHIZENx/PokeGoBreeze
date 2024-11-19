@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { checkPokemonGO, getDmgMultiplyBonus, getKeyEnum, getMoveType, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
-import { levelList, MAX_IV, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/constants';
+import { DEFAULT_POKEMON_LEVEL, levelList, MAX_IV, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -57,6 +57,7 @@ import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
   DynamicObj,
+  getPropertyName,
   getValueOrDefault,
   isEqual,
   isNotEmpty,
@@ -164,7 +165,7 @@ const RaidBattle = () => {
   );
 
   const initFilter = FilterGroup.create({
-    level: 40,
+    level: DEFAULT_POKEMON_LEVEL,
     pokemonType: PokemonType.Normal,
     iv: StatsBase.setValue(MAX_IV, MAX_IV, MAX_IV),
     onlyShadow: false,
@@ -221,12 +222,18 @@ const RaidBattle = () => {
     return !value || value < MIN_IV || value > MAX_IV;
   };
 
-  const setSortedResult = (primary: IPokemonMoveData, secondary: IPokemonMoveData, sortIndex: string[]) => {
+  const setSortedResult = (primary: IPokemonMoveData, secondary: IPokemonMoveData) => {
+    let type = getPropertyName(primary || secondary, (r) => r.dpsAtk);
+    if (filters.selected.sortBy === SortType.TDO) {
+      type = getPropertyName(primary || secondary, (r) => r.tdoAtk);
+    } else if (filters.selected.sortBy === SortType.TTK) {
+      type = getPropertyName(primary || secondary, (r) => r.ttkAtk);
+    } else if (filters.selected.sortBy === SortType.TANK) {
+      type = getPropertyName(primary || secondary, (r) => r.ttkDef);
+    }
     const a = primary as unknown as DynamicObj<SortType>;
     const b = secondary as unknown as DynamicObj<SortType>;
-    return filters.selected.sorted
-      ? a[sortIndex[filters.selected.sortBy]] - b[sortIndex[filters.selected.sortBy]]
-      : b[sortIndex[filters.selected.sortBy]] - a[sortIndex[filters.selected.sortBy]];
+    return filters.selected.sorted ? a[type] - b[type] : b[type] - a[type];
   };
 
   const handleSaveOption = () => {
@@ -247,8 +254,7 @@ const RaidBattle = () => {
     if (changeResult) {
       handleCalculate();
     }
-    const sortIndex = ['dpsAtk', 'tdoAtk', 'ttkAtk', 'ttkDef'];
-    setResult(result.sort((a, b) => setSortedResult(a, b, sortIndex)));
+    setResult(result.sort((a, b) => setSortedResult(a, b)));
   };
 
   const handleCloseOption = () => {
@@ -390,7 +396,7 @@ const RaidBattle = () => {
         const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(toNumber(stats.sta), toNumber(used.iv.sta), used.level),
+          hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
           fMove,
           cMove,
           types: value?.types,
@@ -519,15 +525,15 @@ const RaidBattle = () => {
       const statsAttacker = new BattleCalculate({
         atk: calculateStatsBattle(
           stats.atk,
-          statsGO.iv.atk * getDmgMultiplyBonus(statsGO.pokemonType, data.options, TypeAction.ATK),
+          statsGO.iv.atk * getDmgMultiplyBonus(statsGO.pokemonType, data.options, TypeAction.Atk),
           statsGO.level
         ),
         def: calculateStatsBattle(
           stats.def,
-          statsGO.iv.def * getDmgMultiplyBonus(statsGO.pokemonType, data.options, TypeAction.DEF),
+          statsGO.iv.def * getDmgMultiplyBonus(statsGO.pokemonType, data.options, TypeAction.Def),
           statsGO.level
         ),
-        hp: calculateStatsBattle(toNumber(stats?.sta), toNumber(statsGO.iv.sta), statsGO.level),
+        hp: calculateStatsBattle(stats?.sta, statsGO.iv.sta, statsGO.level),
         fMove,
         cMove,
         types: pokemon.dataTargetPokemon?.types,
@@ -542,11 +548,6 @@ const RaidBattle = () => {
         types: form?.form.types,
         isStab: isWeatherBoss,
       });
-
-      if (!statsDefender) {
-        enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
-        return;
-      }
 
       const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
       const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
@@ -650,13 +651,14 @@ const RaidBattle = () => {
 
       dataList.pokemon = dataList.pokemon.map((pokemon) => {
         const tdoAtk = (dataList.summary.tdoAtk / dataList.summary.dpsAtk) * pokemon.dpsAtk;
+        const ttkDef = toNumber(timeKill, pokemon.ttkDef);
         return PokemonMoveData.create({
           ...pokemon,
           tdoAtk,
           atkHpRemain:
             dataList.summary.tdoAtk >= Math.floor(dataList.summary.bossHp)
-              ? Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.min(toNumber(timeKill, pokemon.ttkDef)) * pokemon.dpsDef)
-              : Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.max(toNumber(timeKill, pokemon.ttkDef)) * pokemon.dpsDef),
+              ? Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.min(ttkDef) * pokemon.dpsDef)
+              : Math.max(0, Math.floor(toNumber(pokemon.hp)) - Math.max(ttkDef) * pokemon.dpsDef),
         });
       });
       result.push(dataList);
@@ -1081,7 +1083,7 @@ const RaidBattle = () => {
                     clearData={clearData}
                     move={fMove}
                     setMovePokemon={setFMove}
-                    moveType={TypeMove.FAST}
+                    moveType={TypeMove.Fast}
                   />
                 </div>
               </div>
@@ -1095,7 +1097,7 @@ const RaidBattle = () => {
                     clearData={clearData}
                     move={cMove}
                     setMovePokemon={setCMove}
-                    moveType={TypeMove.CHARGE}
+                    moveType={TypeMove.Charge}
                   />
                 </div>
               </div>
@@ -1264,8 +1266,8 @@ const RaidBattle = () => {
                   </span>
                   <hr />
                   <div className="container" style={{ marginBottom: 15 }}>
-                    <TypeBadge title="Fast Move" move={value.fMove} moveType={value?.fMove?.moveType} />
-                    <TypeBadge title="Charged Move" move={value.cMove} moveType={value?.cMove?.moveType} />
+                    <TypeBadge title="Fast Move" move={value.fMove} moveType={value.fMoveType ?? MoveType.None} />
+                    <TypeBadge title="Charged Move" move={value.cMove} moveType={value.cMoveType ?? MoveType.None} />
                   </div>
                 </div>
               ))}
@@ -1386,8 +1388,8 @@ const RaidBattle = () => {
               <TypeInfo arr={form?.form.types} />
             </div>
             <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
-              <TypeBadge title="Fast Move" move={fMove} moveType={fMove?.moveType} />
-              <TypeBadge title="Charged Move" move={cMove} moveType={cMove?.moveType} />
+              <TypeBadge title="Fast Move" move={fMove} moveType={fMove?.moveType ?? MoveType.None} />
+              <TypeBadge title="Charged Move" move={cMove} moveType={cMove?.moveType ?? MoveType.None} />
             </div>
             {resultBoss && (
               <Fragment>
@@ -1395,7 +1397,7 @@ const RaidBattle = () => {
                 <div className="row" style={{ margin: 0 }}>
                   <div className="col-lg-6" style={{ marginBottom: 20 }}>
                     <span className="d-block element-top">
-                      DPS:{' '}
+                      {`DPS: `}
                       <b>
                         {toFloatWithPadding(resultBoss.minDPS, 2)} - {toFloatWithPadding(resultBoss.maxDPS, 2)}
                       </b>

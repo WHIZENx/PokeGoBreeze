@@ -183,7 +183,7 @@ const FindBattle = () => {
           }
           tempArr.push(data);
         });
-        arr.push(tempArr.sort((a, b) => a.maxCP - b.maxCP));
+        arr.push(tempArr.sort((a, b) => toNumber(a.maxCP) - toNumber(b.maxCP)));
       });
       setEvoChain(arr);
       let currBastStats: IBattleBaseStats | undefined;
@@ -193,7 +193,9 @@ const FindBattle = () => {
           if (value.id !== id) {
             evoBaseStats.push(
               BattleBaseStats.create({
-                ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b)),
+                ...Object.values(value.battleLeague).reduce((a: IBattleBaseStats, b: IBattleBaseStats) =>
+                  !a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b
+                ),
                 id: value.id,
                 name: value.name,
                 form: value.form,
@@ -232,7 +234,8 @@ const FindBattle = () => {
         });
       });
       if (currBastStats) {
-        let bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > toNumber(currBastStats?.ratio));
+        const ratio = toNumber(currBastStats.ratio);
+        let bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
         bestLeague = bestLeague.filter(
           (item) =>
             (item.league === LeagueType.Master && toNumber(item.CP) > BattleLeagueCPType.Ultra) ||
@@ -240,13 +243,13 @@ const FindBattle = () => {
             (item.league === LeagueType.Great && toNumber(item.CP) > BattleLeagueCPType.Little)
         );
         if (!isNotEmpty(bestLeague)) {
-          bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > toNumber(currBastStats?.ratio));
+          bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
         }
         if (!isNotEmpty(bestLeague)) {
           dispatch(SpinnerActions.HideSpinner.create());
           return setBestInLeague([currBastStats]);
         }
-        if (toNumber(currBastStats.ratio) >= 90) {
+        if (ratio >= 90) {
           bestLeague.push(currBastStats);
         }
         setBestInLeague(bestLeague.sort((a, b) => toNumber(a.maxCP) - toNumber(b.maxCP)));
@@ -307,7 +310,8 @@ const FindBattle = () => {
     return getCandyEvo(item, data.id, candy);
   };
 
-  const getTextColorRatio = (value: number) => {
+  const getTextColorRatio = (value: number | undefined) => {
+    value = toNumber(value);
     return `rank-${value === 100 ? 'max' : value >= 90 ? 'excellent' : value >= 80 ? 'great' : value >= 70 ? 'nice' : 'normal'}`;
   };
 
@@ -452,7 +456,7 @@ const FindBattle = () => {
                         </b>
                       </span>
                     </div>
-                    <div className={combineClasses('border-best-poke', getTextColorRatio(toNumber(value.ratio)))}>
+                    <div className={combineClasses('border-best-poke', getTextColorRatio(value.ratio))}>
                       <div className="best-poke-desc border-best-poke">
                         <img
                           alt="pokemon-model"
@@ -517,7 +521,7 @@ const FindBattle = () => {
                                 </b>
                               </div>
                             </Link>
-                            {item.maxCP < maxCP ? (
+                            {toNumber(item.maxCP) < maxCP ? (
                               <div className="text-danger">
                                 <b>
                                   <CloseIcon sx={{ color: 'red' }} /> Not Elidge
@@ -542,7 +546,7 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(toNumber(item.battleLeague.little.ratio))}
+                                          className={getTextColorRatio(item.battleLeague.little.ratio)}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.little.ratio, 2)}</b>
                                         </span>
@@ -596,7 +600,7 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(toNumber(item.battleLeague.great.ratio))}
+                                          className={getTextColorRatio(item.battleLeague.great.ratio)}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.great.ratio, 2)}</b>
                                         </span>
@@ -650,7 +654,7 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(toNumber(item.battleLeague.ultra.ratio))}
+                                          className={getTextColorRatio(item.battleLeague.ultra.ratio)}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.ultra.ratio, 2)}</b>
                                         </span>
@@ -704,7 +708,7 @@ const FindBattle = () => {
                                         Stats Prod (%):{' '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(toNumber(item.battleLeague.master.ratio))}
+                                          className={getTextColorRatio(item.battleLeague.master.ratio)}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.master.ratio, 2)}</b>
                                         </span>

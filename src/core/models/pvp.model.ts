@@ -138,6 +138,7 @@ interface IPokemonRankingStats {
   product?: number;
   atk: number;
   def: number;
+  sta: number;
   hp?: number;
 }
 
@@ -145,6 +146,7 @@ export class PokemonRankingStats implements IPokemonRankingStats {
   product?: number;
   atk = 0;
   def = 0;
+  sta = 0;
   hp?: number;
 }
 

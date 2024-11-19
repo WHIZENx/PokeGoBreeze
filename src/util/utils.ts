@@ -582,7 +582,7 @@ export const replacePokemonGoForm = (form: string) => {
   return form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
 };
 
-export const formIconAssets = (value: IPokemonFormModify, id: number) => {
+export const formIconAssets = (value: IPokemonFormModify, id: number | undefined) => {
   return isInclude(value.form.name, '-totem') ||
     isInclude(value.form.name, '-hisui') ||
     isInclude(value.form.name, 'power-construct') ||
@@ -597,7 +597,7 @@ export const formIconAssets = (value: IPokemonFormModify, id: number) => {
     value.form.name === 'basculin-white-striped' ||
     value.form.name === 'greninja-battle-bond' ||
     value.form.name === 'urshifu-rapid-strike' ||
-    id >= 899
+    toNumber(id) >= 899
     ? APIService.getPokeIconSprite('unknown-pokemon')
     : isInclude(value.form.name, `-${FORM_SHADOW.toLowerCase()}`) || isInclude(value.form.name, `-${FORM_PURIFIED.toLowerCase()}`)
     ? APIService.getPokeIconSprite(value.name)
@@ -892,13 +892,13 @@ export const moveTypeToFormType = (moveType?: MoveType) => {
 
 export const getDmgMultiplyBonus = (form = PokemonType.Normal, options?: Options, type?: TypeAction) => {
   switch (type) {
-    case TypeAction.ATK: {
+    case TypeAction.Atk: {
       return form === PokemonType.Shadow ? SHADOW_ATK_BONUS(options) : form === PokemonType.Purified ? PURIFIED_ATK_BONUS(options) : 1;
     }
-    case TypeAction.DEF: {
+    case TypeAction.Def: {
       return form === PokemonType.Shadow ? SHADOW_DEF_BONUS(options) : form === PokemonType.Purified ? PURIFIED_DEF_BONUS(options) : 1;
     }
-    case TypeAction.PROD: {
+    case TypeAction.Prod: {
       return form === PokemonType.Shadow
         ? SHADOW_ATK_BONUS(options) * SHADOW_DEF_BONUS(options)
         : form === PokemonType.Purified
@@ -940,4 +940,8 @@ export const getPokemonType = (formName?: string | number | null, isMega = false
     return PokemonType.GMax;
   }
   return PokemonType.None;
+};
+
+export const getArrayBySeq = (length: number, startNumber = 0) => {
+  return Array.from({ length }, (_, i) => i + startNumber);
 };

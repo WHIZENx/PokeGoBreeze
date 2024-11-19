@@ -54,6 +54,7 @@ import {
   combineClasses,
   convertColumnDataType,
   DynamicObj,
+  getPropertyName,
   getValueOrDefault,
   isEmpty,
   isEqual,
@@ -64,7 +65,7 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { InputType } from '../../../components/Input/enums/input-type.enum';
+import { InputType, SelectPosition } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 
@@ -332,7 +333,7 @@ const DpsTdo = () => {
         const statsAttacker = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
           def: calculateStatsBattle(stats.def, ivDef, pokemonLevel),
-          hp: calculateStatsBattle(toNumber(stats.sta), ivHp, pokemonLevel),
+          hp: calculateStatsBattle(stats.sta, ivHp, pokemonLevel),
           fMove,
           cMove,
           types: pokemon.types,
@@ -349,7 +350,7 @@ const DpsTdo = () => {
           const statsDefender = new BattleCalculate({
             atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
             def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
-            hp: calculateStatsBattle(toNumber(statsDef.sta), ivHp, pokemonLevel),
+            hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
             fMove: data.combat.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
             cMove: data.combat.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
             types: dataTargetPokemon.types,
@@ -424,8 +425,13 @@ const DpsTdo = () => {
     return dataList;
   };
 
-  const filterBestOptions = (result: PokemonSheetData[], best: number) => {
-    const bestType = BestOptionType[best] as 'dps' | 'tdo' | 'multiDpsTdo';
+  const filterBestOptions = (result: PokemonSheetData[], best: BestOptionType) => {
+    let bestType = getPropertyName(result?.[0], (r) => r.multiDpsTdo) as 'multiDpsTdo' | 'dps' | 'tdo';
+    if (best === BestOptionType.dps) {
+      bestType = getPropertyName(result?.[0], (r) => r.dps) as 'dps';
+    } else if (best === BestOptionType.tdo) {
+      bestType = getPropertyName(result?.[0], (r) => r.tdo) as 'tdo';
+    }
     const group = result.reduce((result: DynamicObj<PokemonSheetData[]>, obj) => {
       (result[obj.pokemon.name] = getValueOrDefault(Array, result[obj.pokemon.name])).push(obj);
       return result;
@@ -848,6 +854,7 @@ const DpsTdo = () => {
                       setFMovePokemon={setFMoveTargetPokemon}
                       setCMovePokemon={setCMoveTargetPokemon}
                       isDisable={showSpinner}
+                      position={SelectPosition.Up}
                     />
                   </div>
                 </Box>
@@ -859,7 +866,7 @@ const DpsTdo = () => {
                       pokemon={dataTargetPokemon}
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
-                      moveType={TypeMove.FAST}
+                      moveType={TypeMove.Fast}
                       isDisable={showSpinner}
                     />
                   </div>
@@ -872,7 +879,7 @@ const DpsTdo = () => {
                       pokemon={dataTargetPokemon}
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}
-                      moveType={TypeMove.CHARGE}
+                      moveType={TypeMove.Charge}
                       isDisable={showSpinner}
                     />
                   </div>

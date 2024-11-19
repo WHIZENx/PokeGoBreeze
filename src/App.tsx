@@ -53,7 +53,7 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 function App() {
   const dispatch = useDispatch();
 
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.LIGHT);
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.Light);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
   const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.ASSETS, '');
   const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.SOUNDS, '');
@@ -111,12 +111,12 @@ function App() {
 }
 
 export default function Main() {
-  const [stateMode] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.LIGHT);
+  const [stateMode] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.Light);
   const [mode, setMode] = useState(stateMode);
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === TypeTheme.LIGHT ? TypeTheme.DARK : TypeTheme.LIGHT));
+        setMode((prevMode) => (prevMode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light));
       },
     }),
     []

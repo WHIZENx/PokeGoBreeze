@@ -14,7 +14,7 @@ import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { isNotEmpty } from '../../../util/extension';
+import { isNotEmpty, toNumber } from '../../../util/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
@@ -39,8 +39,9 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (props.id > 0 && isNotEmpty(data.assets) && isNotEmpty(data.pokemon)) {
-      setPokeAssets(getImageList(props.id));
+    const id = toNumber(props.id);
+    if (id > 0 && isNotEmpty(data.assets) && isNotEmpty(data.pokemon)) {
+      setPokeAssets(getImageList(id));
     }
   }, [data.assets, data.pokemon, props.id]);
 

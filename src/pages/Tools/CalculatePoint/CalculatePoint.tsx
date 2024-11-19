@@ -279,9 +279,9 @@ const CalculatePoint = () => {
     return (
       <div className="d-flex">
         <div className="border-type-stat text-center">
-          <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === TypeAction.DEF ? `Tier ${tier}` : undefined}>
+          <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === TypeAction.Def ? `Tier ${tier}` : undefined}>
             <span className="position-relative" style={{ width: 96 }}>
-              <img className="position-absolute" alt="img-logo" height={36} src={pri === TypeAction.ATK ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
+              <img className="position-absolute" alt="img-logo" height={36} src={pri === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
@@ -295,13 +295,13 @@ const CalculatePoint = () => {
           </Badge>
           <span className="caption">{splitAndCapitalize(form?.form.name, '-', ' ')}</span>
           <span className="caption">
-            <b>{pri === TypeAction.ATK ? 'Attacker' : 'Defender'}</b>
+            <b>{pri === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
           </span>
         </div>
         <div className="border-type-stat text-center">
-          <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === TypeAction.DEF ? `Tier ${tier}` : undefined}>
+          <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === TypeAction.Def ? `Tier ${tier}` : undefined}>
             <span className="position-relative" style={{ width: 96 }}>
-              <img className="position-absolute" alt="img-logo" height={36} src={sec === TypeAction.ATK ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
+              <img className="position-absolute" alt="img-logo" height={36} src={sec === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
               <img
                 alt="img-pokemon"
                 className="pokemon-sprite-large"
@@ -315,7 +315,7 @@ const CalculatePoint = () => {
           </Badge>
           <span className="caption">{splitAndCapitalize(formDef?.form.name, '-', ' ')}</span>
           <span className="caption">
-            <b>{sec === TypeAction.ATK ? 'Attacker' : 'Defender'}</b>
+            <b>{sec === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
           </span>
         </div>
       </div>
@@ -442,7 +442,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8">
                   <h3>Attacker Breakpoint</h3>
-                  {resultBreakPointAtk && setIconBattle(TypeAction.ATK, TypeAction.DEF)}
+                  {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
@@ -568,7 +568,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8">
                   <h3>Defender Breakpoint</h3>
-                  {resultBreakPointDef && setIconBattle(TypeAction.ATK, TypeAction.DEF)}
+                  {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
@@ -688,7 +688,7 @@ const CalculatePoint = () => {
                       form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                       setMove={setFMove}
                       move={fMove}
-                      type={TypeMove.FAST}
+                      type={TypeMove.Fast}
                       clearData={clearDataBulk}
                       isHighlight={true}
                     />
@@ -720,7 +720,7 @@ const CalculatePoint = () => {
                       form={formDef ? formDef.form.name : nameDef.toLowerCase()}
                       setMove={setCMove}
                       move={cMove}
-                      type={TypeMove.CHARGE}
+                      type={TypeMove.Charge}
                       clearData={clearDataBulk}
                       isHighlight={true}
                     />
@@ -815,7 +815,7 @@ const CalculatePoint = () => {
                 </div>
                 <div className="col-lg-8" style={{ overflowX: 'auto' }}>
                   <h3>BulkPoint</h3>
-                  {resultBulkPointDef && setIconBattle(TypeAction.ATK, TypeAction.DEF)}
+                  {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">

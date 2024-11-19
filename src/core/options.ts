@@ -168,7 +168,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
     const regId = getValueOrDefault(Array, item.templateId.match(/\d{4}/g)) as string[];
-    const pokemon = new PokemonModel(toNumber(regId[0]), undefined, pokemonSettings);
+    const pokemon = new PokemonModel(regId[0], undefined, pokemonSettings);
 
     if (!pokemonSettings.form) {
       pokemon.form = FORM_NORMAL;
@@ -230,8 +230,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     const gender = data.find((item) => item.templateId === `SPAWN_V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${goForm}`);
 
     optional.genderRatio = PokemonGenderRatio.create(
-      toNumber(gender?.data.genderSettings.gender?.malePercent),
-      toNumber(gender?.data.genderSettings.gender?.femalePercent)
+      gender?.data.genderSettings.gender?.malePercent,
+      gender?.data.genderSettings.gender?.femalePercent
     );
 
     const pokemonBaseData = findPokemonData(
@@ -255,7 +255,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
         pokemon.stats = {
           baseAttack: stats.atk,
           baseDefense: stats.def,
-          baseStamina: toNumber(stats.sta),
+          baseStamina: stats.sta,
         };
       }
     } else if (pokemonSettings.isForceReleaseGO) {
@@ -841,10 +841,10 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         result.name = item.templateId.replace(/^COMBAT_V\d{4}_MOVE_/, '');
       }
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-      if (item.templateId.endsWith(TypeMove.FAST) || isInclude(item.templateId, '_FAST_')) {
-        result.typeMove = TypeMove.FAST;
+      if (item.templateId.endsWith(TypeMove.Fast) || isInclude(item.templateId, '_FAST_')) {
+        result.typeMove = TypeMove.Fast;
       } else {
-        result.typeMove = TypeMove.CHARGE;
+        result.typeMove = TypeMove.Charge;
       }
       result.pvpPower = toNumber(item.data.combatMove.power);
       result.pvpEnergy = toNumber(item.data.combatMove.energyDelta);
@@ -856,7 +856,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         if (buffs.attackerAttackStatStageChange) {
           buffsResult.push(
             Buff.create({
-              type: TypeAction.ATK,
+              type: TypeAction.Atk,
               target: BuffType.Attacker,
               power: buffs.attackerAttackStatStageChange,
               buffChance: buffs.buffActivationChance,
@@ -866,7 +866,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         if (buffs.attackerDefenseStatStageChange) {
           buffsResult.push(
             Buff.create({
-              type: TypeAction.DEF,
+              type: TypeAction.Def,
               target: BuffType.Attacker,
               power: buffs.attackerDefenseStatStageChange,
               buffChance: buffs.buffActivationChance,
@@ -876,7 +876,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         if (buffs.targetAttackStatStageChange) {
           buffsResult.push(
             Buff.create({
-              type: TypeAction.ATK,
+              type: TypeAction.Atk,
               target: BuffType.Target,
               power: buffs.targetAttackStatStageChange,
               buffChance: buffs.buffActivationChance,
@@ -886,7 +886,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         if (buffs.targetDefenseStatStageChange) {
           buffsResult.push(
             Buff.create({
-              type: TypeAction.DEF,
+              type: TypeAction.Def,
               target: BuffType.Target,
               power: buffs.targetDefenseStatStageChange,
               buffChance: buffs.buffActivationChance,
@@ -896,21 +896,24 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         result.buffs = buffsResult;
       }
       const move = moves.find((move) => isEqual(move.name, result.name));
-      result.id = toNumber(move?.id);
-      result.track = toNumber(move?.id);
       result.name = replaceTempMoveName(result.name);
-      result.pvePower = toNumber(move?.power);
       if (result.name === 'STRUGGLE') {
         result.pveEnergy = -33;
-      } else {
-        result.pveEnergy = toNumber(move?.energyDelta);
       }
-      result.durationMs = toNumber(move?.durationMs);
-      result.damageWindowStartMs = toNumber(move?.damageWindowStartMs);
-      result.damageWindowEndMs = toNumber(move?.damageWindowEndMs);
-      result.accuracyChance = toNumber(move?.accuracyChance);
-      result.criticalChance = toNumber(move?.criticalChance);
-      result.staminaLossScalar = toNumber(move?.staminaLossScalar);
+      if (move) {
+        result.id = move.id;
+        result.track = move.id;
+        result.pvePower = move.power;
+        if (result.name !== 'STRUGGLE') {
+          result.pveEnergy = move.energyDelta;
+        }
+        result.durationMs = move.durationMs;
+        result.damageWindowStartMs = move.damageWindowStartMs;
+        result.damageWindowEndMs = move.damageWindowEndMs;
+        result.accuracyChance = move.accuracyChance;
+        result.criticalChance = move.criticalChance;
+        result.staminaLossScalar = move.staminaLossScalar;
+      }
       return result;
     });
 
@@ -978,7 +981,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
             con.pokemonWhiteList?.pokemon.map((poke) => {
               const item = pokemon.find((item) => isEqual(item.pokemonId, poke.id));
               return new PokemonPermission({
-                id: toNumber(item?.num),
+                id: item?.num,
                 name: item?.pokemonId,
                 form: poke.forms ?? FORM_NORMAL,
                 pokemonType: getPokemonType(poke.forms ?? FORM_NORMAL),
@@ -1006,7 +1009,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
             con.pokemonBanList?.pokemon.map((poke) => {
               const item = pokemon.find((item) => isEqual(item.pokemonId, poke.id));
               return new PokemonPermission({
-                id: toNumber(item?.num),
+                id: item?.num,
                 name: item?.pokemonId,
                 form: poke.forms ?? FORM_NORMAL,
                 pokemonType: getPokemonType(poke.forms ?? FORM_NORMAL),
@@ -1039,7 +1042,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           item.data.combatLeague.bannedPokemon.map((poke) => {
             const item = pokemon.find((item) => isEqual(item.pokemonId, poke));
             return new PokemonPermission({
-              id: toNumber(item?.num),
+              id: item?.num,
               name: item?.pokemonId,
               form: FORM_NORMAL,
               pokemonType: PokemonType.Normal,

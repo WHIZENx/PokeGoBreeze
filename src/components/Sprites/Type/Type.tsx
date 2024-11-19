@@ -60,7 +60,7 @@ const TypeInfo = (props: ITypeComponent) => {
                         <span
                           className={combineClasses(
                             'caption',
-                            props.isShadow ? `text-shadow${theme.palette.mode === TypeTheme.DARK ? '-white' : ''}` : ''
+                            props.isShadow ? `text-shadow${theme.palette.mode === TypeTheme.Dark ? '-white' : ''}` : ''
                           )}
                           style={{ color: props.color ?? theme.palette.text.primary }}
                         >

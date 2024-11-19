@@ -14,6 +14,7 @@ import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { ISelectPokemonComponent } from '../models/component.model';
 import { combineClasses, isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
+import { SelectPosition } from './enums/input-type.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -49,10 +50,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         props.setCurrentPokemon(value);
       }
       if (props.isSelected && props.setFMovePokemon) {
-        props.setFMovePokemon(findMove(value.num, value.forme, TypeMove.FAST));
+        props.setFMovePokemon(findMove(value.num, value.forme, TypeMove.Fast));
       }
       if (props.isSelected && props.setCMovePokemon) {
-        props.setCMovePokemon(findMove(value.num, value.forme, TypeMove.CHARGE));
+        props.setCMovePokemon(findMove(value.num, value.forme, TypeMove.Charge));
       }
       if (props.clearData) {
         props.clearData();
@@ -81,7 +82,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     const result = retrieveMoves(pokemonData, id, form);
     if (result) {
       const simpleMove: ISelectMoveModel[] = [];
-      if (type === TypeMove.FAST) {
+      if (type === TypeMove.Fast) {
         result.quickMoves?.forEach((value) => {
           simpleMove.push(new SelectMoveModel(value, MoveType.None));
         });
@@ -116,53 +117,74 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     }
   }, [props.pokemon, pokemonData]);
 
+  const setPos = (position = SelectPosition.Down) => {
+    return (
+      <div
+        className={combineClasses('result-pokemon', position === SelectPosition.Up ? 'pos-up' : '')}
+        onScroll={listenScrollEvent.bind(this)}
+        style={{ display: showPokemon ? 'block' : 'none', maxHeight: props.maxHeight ?? 274 }}
+      >
+        <div>
+          {pokemonData
+            .filter(
+              (item) =>
+                item.num > 0 &&
+                (isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+                  isInclude(item.num, search))
+            )
+            .slice(0, firstInit.current + eachCounter.current * startIndex)
+            .map((value, index) => (
+              <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
+                <CardPokemon value={value} />
+              </div>
+            ))}
+        </div>
+      </div>
+    );
+  };
+
+  const inputPos = () => {
+    return (
+      <div className="d-flex align-items-center border-box">
+        {pokemonIcon && (
+          <span onClick={() => removePokemon()} className="remove-pokemon-select">
+            <CloseIcon sx={{ color: 'red' }} />
+          </span>
+        )}
+        <input
+          className="input-pokemon-select form-control shadow-none"
+          onClick={() => setShowPokemon(true)}
+          onBlur={() => setShowPokemon(false)}
+          value={search}
+          type="text"
+          onInput={(e) => setSearch(e.currentTarget.value)}
+          placeholder="Enter Name or ID"
+          style={{
+            background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
+            paddingLeft: pokemonIcon ? 56 : '',
+          }}
+        />
+      </div>
+    );
+  };
+
   return (
     <div
       className={combineClasses('position-relative d-flex align-items-center form-control', props.isDisable ? 'card-select-disabled' : '')}
       style={{ padding: 0, borderRadius: 0 }}
     >
       <div className="card-pokemon-input">
-        <div className="d-flex align-items-center border-box">
-          {pokemonIcon && (
-            <span onClick={() => removePokemon()} className="remove-pokemon-select">
-              <CloseIcon sx={{ color: 'red' }} />
-            </span>
-          )}
-          <input
-            className="input-pokemon-select form-control shadow-none"
-            onClick={() => setShowPokemon(true)}
-            onBlur={() => setShowPokemon(false)}
-            value={search}
-            type="text"
-            onInput={(e) => setSearch(e.currentTarget.value)}
-            placeholder="Enter Name or ID"
-            style={{
-              background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
-              paddingLeft: pokemonIcon ? 56 : '',
-            }}
-          />
-        </div>
-        <div
-          className="result-pokemon"
-          onScroll={listenScrollEvent.bind(this)}
-          style={{ display: showPokemon ? 'block' : 'none', maxHeight: props.maxHeight ?? 274 }}
-        >
-          <div>
-            {pokemonData
-              .filter(
-                (item) =>
-                  item.num > 0 &&
-                  (isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
-                    isInclude(item.num, search))
-              )
-              .slice(0, firstInit.current + eachCounter.current * startIndex)
-              .map((value, index) => (
-                <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
-                  <CardPokemon value={value} />
-                </div>
-              ))}
-          </div>
-        </div>
+        {!props.position || props.position === SelectPosition.Down ? (
+          <>
+            {inputPos()}
+            {setPos(props.position)}
+          </>
+        ) : (
+          <>
+            {setPos(props.position)}
+            {inputPos()}
+          </>
+        )}
       </div>
     </div>
   );

@@ -71,7 +71,7 @@ const Primal = (props: IFormSpecialComponent) => {
                 <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
               </div>
               <span className="caption">
-                First primal evolution:{' '}
+                {'First primal evolution: '}
                 <img
                   alt="img-primal"
                   width={25}
@@ -83,7 +83,7 @@ const Primal = (props: IFormSpecialComponent) => {
                 <b>x{getQuestEvo(value.name)?.firstTempEvolution}</b>
               </span>
               <span className="caption">
-                Primal evolution:{' '}
+                {'Primal evolution: '}
                 <img
                   alt="img-primal"
                   width={25}

@@ -28,7 +28,7 @@ const Move = (props: IMoveComponent) => {
       const result = retrieveMoves(data.pokemon, id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
-        if (!props.type || isEqual(props.type, TypeMove.FAST)) {
+        if (!props.type || props.type === TypeMove.Fast) {
           result.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, MoveType.None));
           });
@@ -37,7 +37,7 @@ const Move = (props: IMoveComponent) => {
           });
           setCountFM(simpleMove.length);
         }
-        if (!props.type || isEqual(props.type, TypeMove.CHARGE)) {
+        if (!props.type || props.type === TypeMove.Charge) {
           result.cinematicMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, MoveType.None));
           });

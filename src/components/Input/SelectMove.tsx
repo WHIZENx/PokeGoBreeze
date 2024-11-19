@@ -32,7 +32,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
       const result = retrieveMoves(pokemon, id, form);
       if (result) {
         const simpleMove: ISelectMoveModel[] = [];
-        if (type === TypeMove.FAST) {
+        if (type === TypeMove.Fast) {
           result.quickMoves?.forEach((value) => {
             simpleMove.push(new SelectMoveModel(value, MoveType.None));
           });
