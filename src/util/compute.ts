@@ -2,7 +2,6 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import { PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
-import { FORM_GMAX, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
@@ -80,26 +79,26 @@ export const raidEgg = (tier: number, isMega: boolean, isPrimal: boolean, isUltr
   }
 };
 
-export const computeCandyBgColor = (candyData: ICandy[], id: number) => {
+export const computeCandyBgColor = (candyData: ICandy[], id: number | undefined) => {
   const data = candyData.find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
         id
-      ) || item.familyId === id
+      ) || item.familyId === toNumber(id)
   );
   return `rgb(${Math.round(255 * toNumber(data?.secondaryColor.r))}, ${Math.round(255 * toNumber(data?.secondaryColor.g))}, ${Math.round(
     255 * toNumber(data?.secondaryColor.b)
   )}, ${toNumber(data?.secondaryColor.a, 1)})`;
 };
 
-export const computeCandyColor = (candyData: ICandy[], id: number) => {
+export const computeCandyColor = (candyData: ICandy[], id: number | undefined) => {
   const data = candyData.find(
     (item) =>
       isIncludeList(
         item.familyGroup.map((value) => value.id),
         id
-      ) || item.familyId === id
+      ) || item.familyId === toNumber(id)
   );
   return `rgb(${Math.round(255 * toNumber(data?.primaryColor.r))}, ${Math.round(255 * toNumber(data?.primaryColor.g))}, ${Math.round(
     255 * toNumber(data?.primaryColor.b)
@@ -137,16 +136,16 @@ export const computeBgType = (
   return `linear-gradient(to bottom right, ${priColor}, ${secColor ?? priColor})`;
 };
 
-export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
+export const queryAssetForm = (assets: IAsset[], id: number | undefined, formType: PokemonType = PokemonType.Normal) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets || isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+  if (!pokemonAssets || formType === PokemonType.GMax) {
     return;
   }
-  const asset = pokemonAssets.image.find((img) => isEqual(img.form, formName));
+  const asset = pokemonAssets.image.find((img) => img.pokemonType === formType);
   if (asset) {
     return asset;
   } else if (!asset && isNotEmpty(pokemonAssets.image)) {
-    const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
+    const formNormal = pokemonAssets.image.find((img) => img.pokemonType === PokemonType.Normal);
     if (!formNormal) {
       return pokemonAssets.image[0];
     }
@@ -155,16 +154,16 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
   return;
 };
 
-export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
-  const form = queryAssetForm(pokemonAssets, id, formName);
+export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formType: PokemonType = PokemonType.Normal) => {
+  const form = queryAssetForm(pokemonAssets, id, formType);
   if (form) {
     return form.default;
   }
   return form;
 };
 
-export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formName: string | null = FORM_NORMAL) => {
-  const form = queryAssetForm(pokemonAssets, id, formName);
+export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formType: PokemonType = PokemonType.Normal) => {
+  const form = queryAssetForm(pokemonAssets, id, formType);
   if (form) {
     return form.shiny;
   }

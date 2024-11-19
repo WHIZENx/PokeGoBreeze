@@ -335,7 +335,7 @@ export const leaguesTeamBattle: PVPInfo[] = [
   },
 ];
 
-export const genRoman = (gen: number) => {
+export const genRoman = (gen: number | string) => {
   switch (gen) {
     case 1:
       return 'I';

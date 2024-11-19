@@ -104,7 +104,7 @@ const RankingPVP = () => {
         const name = convertNameRankingToOri(item.speciesId, item.speciesName);
         const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
+        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.pokemonType);
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 

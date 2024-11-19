@@ -116,7 +116,7 @@ const Search = () => {
   useEffect(() => {
     if (isNotEmpty(combat)) {
       const timeOutId = setTimeout(() => {
-        setResultFMove(searchMove(TypeMove.FAST, fMoveType, fMoveName));
+        setResultFMove(searchMove(TypeMove.Fast, fMoveType, fMoveName));
       });
       return () => clearTimeout(timeOutId);
     }
@@ -125,7 +125,7 @@ const Search = () => {
   useEffect(() => {
     if (isNotEmpty(combat)) {
       const timeOutId = setTimeout(() => {
-        setResultCMove(searchMove(TypeMove.CHARGE, cMoveType, cMoveName));
+        setResultCMove(searchMove(TypeMove.Charge, cMoveType, cMoveName));
       });
       return () => clearTimeout(timeOutId);
     }

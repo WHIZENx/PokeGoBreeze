@@ -282,12 +282,13 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(pokemonData)) {
+    const dataId = toNumber(data?.id);
+    if (id > 0 && dataId !== id && isNotEmpty(pokemonData)) {
       clearData(true);
       queryPokemon(id);
     }
     return () => {
-      if (toNumber(data?.id) > 0) {
+      if (dataId > 0) {
         APIService.cancel(axiosSource.current);
       }
     };
@@ -308,7 +309,7 @@ const Pokemon = (props: IPokemonPage) => {
     if (id > 0 && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.isLoading) {
-          const currentId = getPokemonById(pokemonData, toNumber(id));
+          const currentId = getPokemonById(pokemonData, id);
           if (currentId) {
             const prev = getPokemonById(pokemonData, currentId.id - 1);
             const next = getPokemonById(pokemonData, currentId.id + 1);
@@ -344,8 +345,9 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   useEffect(() => {
-    if (currentForm && toNumber(data?.id) > 0) {
-      const released = checkReleased(toNumber(data?.id), formName, currentForm);
+    const id = toNumber(data?.id);
+    if (currentForm && id > 0) {
+      const released = checkReleased(id, formName, currentForm);
       setReleased(released);
 
       const formParams = searchParams.get('form');
@@ -437,7 +439,7 @@ const Pokemon = (props: IPokemonPage) => {
                   style={{ verticalAlign: 'baseline' }}
                   alt="img-full-pokemon"
                   src={APIService.getPokeFullSprite(
-                    toNumber(dataStorePokemon?.current?.id),
+                    dataStorePokemon?.current?.id,
                     convertPokemonImageName(
                       currentForm && originForm && currentForm.defaultId === currentForm.form.id
                         ? ''
@@ -447,7 +449,7 @@ const Pokemon = (props: IPokemonPage) => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                      e.currentTarget.src = APIService.getPokeFullAsset(toNumber(dataStorePokemon?.current?.id));
+                      e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id);
                     } else {
                       e.currentTarget.src = APIService.getPokeFullSprite(0);
                     }
@@ -457,7 +459,7 @@ const Pokemon = (props: IPokemonPage) => {
               <div className="d-inline-block">
                 <PokemonTable
                   id={dataStorePokemon?.current?.id}
-                  gen={toNumber(generation, -1)}
+                  gen={generation}
                   formName={formName}
                   region={region}
                   version={version}
@@ -541,13 +543,13 @@ const Pokemon = (props: IPokemonPage) => {
               ratio={pokeRatio}
               setId={props.setId}
               pokemonDetail={pokemonDetails}
-              defaultId={toNumber(dataStorePokemon?.current?.id)}
+              defaultId={dataStorePokemon?.current?.id}
               region={region}
               setProgress={setProgress}
               isLoadedForms={progress.isLoadedForms}
             />
             <PokemonAssetComponent
-              id={toNumber(dataStorePokemon?.current?.id)}
+              id={dataStorePokemon?.current?.id}
               name={dataStorePokemon?.current?.name}
               originSoundCry={originSoundCry}
               isLoadedForms={progress.isLoadedForms}

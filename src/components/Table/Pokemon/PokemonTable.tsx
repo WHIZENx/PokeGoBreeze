@@ -49,7 +49,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           <td colSpan={2}>
             {reload(
               <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
-                {isUndefined(props.gen) || props.gen < 0 ? (
+                {isUndefined(props.gen) || toNumber(props.gen, -1) < 0 ? (
                   <></>
                 ) : props.gen === 0 ? (
                   <b>Unknown</b>

@@ -11,7 +11,7 @@ const CardType = (props: ICardTypeComponent) => {
       {props.value ? (
         <Fragment>
           <img width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(props.value)} />
-          <b>{props.name ?? props.value}</b>{' '}
+          <b>{`${props.name ?? props.value} `}</b>
           {props.moveType !== MoveType.None && (
             <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.moveType)?.toLowerCase()}-ic`)}>
               {getKeyEnum(MoveType, props.moveType)}

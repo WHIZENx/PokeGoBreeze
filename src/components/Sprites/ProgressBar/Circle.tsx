@@ -27,7 +27,7 @@ const Fill = styled.div<Element>`
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
   clip: rect(
-    ${(props) => props.size - (toNumber(props.energy) * props.size) / toNumber(props.moveEnergy)}px,
+    ${(props) => props.size - (toNumber(props.energy) * props.size) / toNumber(props.moveEnergy, 1)}px,
     ${(props) => props.size}px,
     ${(props) => props.size}px,
     0px
@@ -58,7 +58,7 @@ const IconFill = styled.div<Element>`
     ${(props) =>
       props.size / 2 +
       (props.size - props.size / 2) / 2 -
-      (toNumber(props.energy) * (props.size / 2 + (props.size - props.size / 2))) / toNumber(props.moveEnergy)}px,
+      (toNumber(props.energy) * (props.size / 2 + (props.size - props.size / 2))) / toNumber(props.moveEnergy, 1)}px,
     ${(props) => props.size / 2}px,
     ${(props) => props.size / 2}px,
     0px

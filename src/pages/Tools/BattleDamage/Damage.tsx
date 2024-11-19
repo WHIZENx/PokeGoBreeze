@@ -111,11 +111,11 @@ const Damage = () => {
 
   useEffect(() => {
     if (statATK !== 0) {
-      setStatLvATK(calculateStatsBattle(statATK, MAX_IV, statLevel, false, getDmgMultiplyBonus(statType, globalOptions, TypeAction.ATK)));
+      setStatLvATK(calculateStatsBattle(statATK, MAX_IV, statLevel, false, getDmgMultiplyBonus(statType, globalOptions, TypeAction.Atk)));
     }
     if (statDEFObj !== 0) {
       setStatLvDEFObj(
-        calculateStatsBattle(statDEFObj, MAX_IV, statLevelObj, false, getDmgMultiplyBonus(statType, globalOptions, TypeAction.DEF))
+        calculateStatsBattle(statDEFObj, MAX_IV, statLevelObj, false, getDmgMultiplyBonus(statType, globalOptions, TypeAction.Def))
       );
     }
     if (statSTAObj !== 0) {

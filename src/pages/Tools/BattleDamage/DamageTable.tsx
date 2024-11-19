@@ -200,7 +200,7 @@ const DamageTable = (props: IDamageTableComponent) => {
                     {props.result.damage < toNumber(props.result.move?.pvePower) ? (
                       <b className="text-success">
                         {toFloatWithPadding(
-                          ((toNumber(props.result.move?.pvePower) - props.result.damage) * 100) / toNumber(props.result.move?.pvePower),
+                          ((toNumber(props.result.move?.pvePower) - props.result.damage) * 100) / toNumber(props.result.move?.pvePower, 1),
                           2
                         )}
                         %

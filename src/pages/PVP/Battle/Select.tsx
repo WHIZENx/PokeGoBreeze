@@ -79,7 +79,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         : props.league === BattleLeagueCPType.Ultra
         ? BattleLeagueCPType.Great
         : BattleLeagueCPType.Ultra;
-    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, toNumber(stats.sta) + MAX_IV, MAX_LEVEL);
+    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, stats.sta + MAX_IV, MAX_LEVEL);
 
     if (maxPokeCP < minCP) {
       if (maxPokeCP <= BattleLeagueCPType.Little) {
@@ -92,7 +92,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         minCP = BattleLeagueCPType.Ultra;
       }
     }
-    const allStats = calStatsProd(stats.atk, stats.def, toNumber(stats.sta), minCP, props.league);
+    const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, props.league);
 
     if (allStats && value && value.pokemon) {
       setScore(value.score);

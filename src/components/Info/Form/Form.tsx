@@ -124,7 +124,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                       key={index}
                       className={combineClasses(
                         'btn btn-form',
-                        (props.defaultId === props.form?.form.id && value.form.id === props.form.form.id) ||
+                        (props.defaultId === props.form?.form.id && value.form.id === props.form?.form.id) ||
                           (props.defaultId !== props.form?.form.id && value.form.id === props.form?.form.id)
                           ? 'form-selected'
                           : ''
@@ -180,7 +180,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           {props.ratio?.M !== 0 && (
             <Gender
               ratio={props.ratio}
-              sex={capitalize(TypeSex.MALE)}
+              sex={TypeSex.Male}
               defaultM={props.form?.form.sprites?.frontDefault}
               shinyM={props.form?.form.sprites?.frontShiny}
               defaultF={props.form?.form.sprites?.frontFemale}
@@ -190,7 +190,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           {props.ratio?.F !== 0 && (
             <Gender
               ratio={props.ratio}
-              sex={capitalize(TypeSex.FEMALE)}
+              sex={TypeSex.Female}
               defaultM={props.form?.form.sprites?.frontDefault}
               shinyM={props.form?.form.sprites?.frontShiny}
               defaultF={props.form?.form.sprites?.frontFemale}
@@ -200,7 +200,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       ) : (
         <Gender
-          sex={capitalize(TypeSex.GENDERLESS)}
+          sex={TypeSex.Genderless}
           defaultM={props.form?.form.sprites?.frontDefault}
           shinyM={props.form?.form.sprites?.frontShiny}
           defaultF={props.form?.form.sprites?.frontFemale}
@@ -241,7 +241,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           <TableMove
             data={{
               stats: convertStatsEffort(props.data?.stats),
-              num: props.defaultId,
+              num: toNumber(props.defaultId),
               types: props.form?.form.types,
             }}
             form={props.form?.form}
@@ -249,7 +249,7 @@ const FormComponent = (props: IFormInfoComponent) => {
             statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
             statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(convertAllStats(props.data?.stats), true)}
           />
-          <Counter def={toNumber(statsPokemon?.def?.defense)} types={props.form?.form.types} pokemonType={props.form?.form.pokemonType} />
+          <Counter def={statsPokemon?.def?.defense} types={props.form?.form.types} pokemonType={props.form?.form.pokemonType} />
         </div>
       </div>
       <hr className="w-100" />

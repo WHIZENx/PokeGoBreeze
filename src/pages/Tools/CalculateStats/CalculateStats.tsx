@@ -491,7 +491,7 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(statATK, toNumber(pokeStats?.IV.atk), statLevel, true)
+                              calculateStatsBattle(statATK, pokeStats?.IV.atk, statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData.atkStat}
@@ -516,7 +516,7 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(statDEF, toNumber(pokeStats?.IV.def), statLevel, true)
+                              calculateStatsBattle(statDEF, pokeStats?.IV.def, statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData.defStat}
@@ -538,7 +538,7 @@ const Calculate = () => {
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           HP
                         </td>
-                        <td>{statData ? calculateStatsBattle(statSTA, toNumber(pokeStats?.IV.sta), statLevel, true) : '-'}</td>
+                        <td>{statData ? calculateStatsBattle(statSTA, pokeStats?.IV.sta, statLevel, true) : '-'}</td>
                       </tr>
                     </tbody>
                   </table>

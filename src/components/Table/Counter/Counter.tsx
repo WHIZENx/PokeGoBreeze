@@ -25,12 +25,12 @@ import { TableColumnModify } from '../../../util/models/overrides/data-table.mod
 import {
   combineClasses,
   convertColumnDataType,
-  getValueOrDefault,
   isInclude,
   isNotEmpty,
   isUndefined,
   toFloat,
   toFloatWithPadding,
+  toNumber,
 } from '../../../util/extension';
 import { APIUrl } from '../../../services/constants';
 
@@ -108,6 +108,7 @@ const Counter = (props: ICounterComponent) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
+  const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [frame, setFrame] = useState(true);
   const [releasedGO, setReleaseGO] = useState(true);
   const [showMega, setShowMega] = useState(false);
@@ -120,7 +121,7 @@ const Counter = (props: ICounterComponent) => {
           <div className="d-flex justify-content-center">
             <div
               className={combineClasses(
-                theme.palette.mode === TypeTheme.LIGHT ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
+                theme.palette.mode === TypeTheme.Light ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
                 'position-relative group-pokemon-sprite'
               )}
             >
@@ -134,8 +135,8 @@ const Counter = (props: ICounterComponent) => {
                 className="pokemon-sprite-counter"
                 alt="img-pokemon"
                 src={
-                  findAssetForm(data.assets, row.pokemonId, row.pokemonForme)
-                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, row.pokemonForme))
+                  findAssetForm(data.assets, row.pokemonId, row.pokemonType)
+                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, row.pokemonType))
                     : APIService.getPokeFullSprite(row.pokemonId)
                 }
                 onError={(e) => {
@@ -227,14 +228,13 @@ const Counter = (props: ICounterComponent) => {
   useEffect(() => {
     const controller = new AbortController();
     if (isNotEmpty(counterList)) {
-      setCounterList([]);
+      setCounterFilter([]);
       setFrame(true);
     }
     if (!isUndefined(props.pokemonType) && isNotEmpty(props.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
-          setFrame(false);
         })
         .catch(() => setFrame(true));
     }
@@ -259,7 +259,7 @@ const Counter = (props: ICounterComponent) => {
           data.pokemon,
           data.typeEff,
           data.weatherBoost,
-          props.def * getDmgMultiplyBonus(props.pokemonType, data.options, TypeAction.DEF),
+          toNumber(props.def) * getDmgMultiplyBonus(props.pokemonType, data.options, TypeAction.Def),
           props.types,
           data.combat
         );
@@ -273,6 +273,31 @@ const Counter = (props: ICounterComponent) => {
       }
     });
   };
+
+  useEffect(() => {
+    if (isNotEmpty(counterList)) {
+      setCounterFilter(
+        counterList
+          .filter((pokemon) => {
+            if (showMega) {
+              return true;
+            }
+            return pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal;
+          })
+          .filter((pokemon) => {
+            if (!releasedGO) {
+              return true;
+            }
+            if (!pokemon.releasedGO) {
+              const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemon);
+              return result?.releasedGO;
+            }
+            return pokemon.releasedGO;
+          })
+      );
+      setFrame(false);
+    }
+  }, [counterList, showMega, releasedGO]);
 
   return (
     <div className="table-info">
@@ -313,20 +338,7 @@ const Counter = (props: ICounterComponent) => {
         paginationPerPage={100}
         progressPending={frame}
         progressComponent={<CounterLoader />}
-        data={counterList
-          .filter((pokemon) => {
-            if (showMega) {
-              return true;
-            }
-            return pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal;
-          })
-          .filter((pokemon) => {
-            if (!releasedGO) {
-              return true;
-            }
-            const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemon);
-            return getValueOrDefault(Boolean, pokemon.releasedGO, result?.releasedGO);
-          })}
+        data={counterFilter}
       />
     </div>
   );

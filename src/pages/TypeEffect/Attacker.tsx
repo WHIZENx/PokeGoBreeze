@@ -74,7 +74,7 @@ const Attacker = (prop: ITypeEffComponent) => {
               <ul>
                 {types.map((value, index) => (
                   <li
-                    className={combineClasses('container', `card-pokemon${theme.palette.mode === TypeTheme.DARK ? '-dark' : ''}`)}
+                    className={combineClasses('container', `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
                     style={{ backgroundColor: theme.palette.background.default }}
                     key={index}
                     onMouseDown={() => changeType(value)}

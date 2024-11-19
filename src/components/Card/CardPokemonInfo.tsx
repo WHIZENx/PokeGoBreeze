@@ -8,7 +8,7 @@ import './CardPokemonInfo.scss';
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
 import { ICardPokemonInfoComponent } from '../models/component.model';
-import { combineClasses, toNumber } from '../../util/extension';
+import { combineClasses } from '../../util/extension';
 import { PokemonType } from '../../enums/type.enum';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
@@ -98,7 +98,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3 }}
               height={10}
               value={props.pokemonStat.atk}
-              maxValue={toNumber(props.atkMaxStats)}
+              maxValue={props.atkMaxStats}
               bgColor="#ececec"
               color="var(--bs-danger)"
             />
@@ -109,7 +109,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
               value={props.pokemonStat.def}
-              maxValue={toNumber(props.defMaxStats)}
+              maxValue={props.defMaxStats}
               bgColor="#ececec"
               color="var(--bs-success)"
             />
@@ -120,7 +120,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               style={{ marginLeft: 3, marginTop: 5 }}
               height={10}
               value={props.pokemonStat.sta}
-              maxValue={toNumber(props.staMaxStats)}
+              maxValue={props.staMaxStats}
               bgColor="#ececec"
               color="var(--bs-info)"
             />

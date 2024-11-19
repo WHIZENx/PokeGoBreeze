@@ -34,7 +34,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             MAX_IV,
             currStatLevel,
             false,
-            getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.ATK)
+            getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Atk)
           )
         );
       }
@@ -45,7 +45,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             MAX_IV,
             currStatLevel,
             false,
-            getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.DEF)
+            getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Def)
           )
         );
       }
@@ -153,7 +153,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                     MAX_IV,
                     currStatLevel,
                     true,
-                    getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.ATK)
+                    getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Atk)
                   )}
                 </td>
               </tr>
@@ -168,7 +168,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                     MAX_IV,
                     currStatLevel,
                     true,
-                    getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.DEF)
+                    getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Def)
                   )}
                 </td>
               </tr>

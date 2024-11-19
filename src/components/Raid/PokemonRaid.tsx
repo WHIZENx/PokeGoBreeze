@@ -102,7 +102,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         setCurrentPokemon={setDataTargetPokemon}
         setFMovePokemon={setFMoveTargetPokemon}
         setCMovePokemon={setCMoveTargetPokemon}
-        maxHeight={148}
+        maxHeight={120}
       />
       <span className="input-group-text justify-content-center">
         <b>Fast Move</b>
@@ -115,7 +115,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           pokemon={dataTargetPokemon}
           move={fMoveTargetPokemon}
           setMovePokemon={setFMoveTargetPokemon}
-          moveType={TypeMove.FAST}
+          moveType={TypeMove.Fast}
         />
       ) : (
         <div
@@ -136,7 +136,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           pokemon={dataTargetPokemon}
           move={cMoveTargetPokemon}
           setMovePokemon={setCMoveTargetPokemon}
-          moveType={TypeMove.CHARGE}
+          moveType={TypeMove.Charge}
         />
       ) : (
         <div

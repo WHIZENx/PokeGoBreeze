@@ -98,15 +98,15 @@ export class StatsRank implements IStatsRank {
 export interface IStatsBase {
   atk: number;
   def: number;
-  sta?: number;
+  sta: number;
 }
 
 export class StatsBase implements IStatsBase {
   atk = 0;
   def = 0;
-  sta?: number;
+  sta = 0;
 
-  static setValue(atk = 1, def = 1, sta?: number) {
+  static setValue(atk = 0, def = 0, sta = 0) {
     const obj = new StatsBase();
     obj.atk = atk;
     obj.def = def;
@@ -295,8 +295,10 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   url?: string;
   releasedGO = false;
 
-  constructor({ ...props }: IPokemonStatsRanking) {
-    Object.assign(this, props);
+  static create(value: IPokemonStatsRanking) {
+    const obj = new PokemonStatsRanking();
+    Object.assign(obj, value);
+    return obj;
   }
 }
 

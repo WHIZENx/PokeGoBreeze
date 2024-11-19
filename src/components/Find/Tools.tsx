@@ -85,14 +85,14 @@ const Tools = (props: IToolsComponent) => {
 
       if (props.onSetStats && formATK && formDEF && formSTA) {
         props.onSetStats(
-          TypeAction.ATK,
+          TypeAction.Atk,
           props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack
         );
         props.onSetStats(
-          TypeAction.DEF,
+          TypeAction.Def,
           props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formDEF.defense, props.tier) : formDEF.defense
         );
-        props.onSetStats(TypeAction.STA, props.isRaid && props.tier && !props.isHide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
+        props.onSetStats(TypeAction.Sta, props.isRaid && props.tier && !props.isHide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
         if (props.setForm) {
           props.setForm(props.currForm);
         }
@@ -119,9 +119,10 @@ const Tools = (props: IToolsComponent) => {
           <Form.Select
             className="w-100"
             onChange={(e) => {
-              setCurrTier(toNumber(e.target.value));
+              const tier = toNumber(e.target.value);
+              setCurrTier(tier);
               if (props.setTier) {
-                props.setTier(toNumber(e.target.value));
+                props.setTier(tier);
               }
               if (props.onClearStats) {
                 props.onClearStats(true);

@@ -4,6 +4,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IStatsAtk, IStatsDef, IStatsProd, IStatsSta, IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { PokemonType } from '../../../enums/type.enum';
+import { toNumber } from '../../../util/extension';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import { getPokemonType } from '../../../util/utils';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
@@ -65,10 +66,10 @@ export class PokemonBattleData implements IPokemonBattleData {
     return obj;
   }
 
-  static setValue(energy: number, hp: number) {
+  static setValue(energy: number | undefined, hp: number | undefined) {
     const obj = new PokemonBattleData();
-    obj.energy = energy;
-    obj.hp = hp;
+    obj.energy = toNumber(energy);
+    obj.hp = toNumber(hp);
     return obj;
   }
 }

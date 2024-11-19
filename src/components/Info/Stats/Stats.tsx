@@ -45,11 +45,11 @@ const Stats = (props: IStatsComponent) => {
   useEffect(() => {
     const atk = setStats(
       props.stats || props.statATK ? (props.statATK ? props.statATK.attack : calBaseATK(props.stats, true)) : 0,
-      TypeAction.ATK
+      TypeAction.Atk
     );
     const def = setStats(
       props.stats || props.statDEF ? (props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats, true)) : 0,
-      TypeAction.DEF
+      TypeAction.Def
     );
     const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats, true)) : 0;
     const prod = setStats(
@@ -58,7 +58,7 @@ const Stats = (props: IStatsComponent) => {
           ? props.statProd.product
           : calBaseATK(props.stats, true) * calBaseDEF(props.stats, true) * calBaseSTA(props.stats, true)
         : 0,
-      TypeAction.PROD
+      TypeAction.Prod
     );
     setIsAvailable(
       checkRankAllAvailable(props.pokemonStats, {
@@ -97,7 +97,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.atk}
         id={props.id}
         form={props.form}
-        statType={TypeAction.ATK}
+        statType={TypeAction.Atk}
       />
       <StatsBar
         tag="DEF"
@@ -108,7 +108,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.def}
         id={props.id}
         form={props.form}
-        statType={TypeAction.DEF}
+        statType={TypeAction.Def}
       />
       <StatsBar
         tag="STA"
@@ -119,7 +119,7 @@ const Stats = (props: IStatsComponent) => {
         currentStats={currentStats.stats.sta}
         id={props.id}
         form={props.form}
-        statType={TypeAction.STA}
+        statType={TypeAction.Sta}
       />
       <StatsBar
         tag="Stat Prod"
@@ -131,7 +131,7 @@ const Stats = (props: IStatsComponent) => {
         optionalStats={`${toFloatWithPadding(currentStats.stats.prod / Math.pow(10, 6), 2)} MM`}
         id={props.id}
         form={props.form}
-        statType={TypeAction.PROD}
+        statType={TypeAction.Prod}
       />
     </div>
   );

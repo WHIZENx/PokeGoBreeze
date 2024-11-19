@@ -20,7 +20,14 @@ import APIService from '../../../services/API.service';
 import './Evolution.scss';
 import { useTheme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { capitalize, convertFormGif, convertModelSpritName, convertPokemonAPIDataName, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  convertFormGif,
+  convertModelSpritName,
+  convertPokemonAPIDataName,
+  getDataWithKey,
+  splitAndCapitalize,
+} from '../../../util/utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
@@ -69,7 +76,7 @@ class PokemonEvo implements IPokemonEvo {
 
   constructor(
     name: string | undefined,
-    id: number,
+    id: number | undefined,
     form: string | null | undefined,
     sprite: string,
     prev = '',
@@ -78,7 +85,7 @@ class PokemonEvo implements IPokemonEvo {
   ) {
     this.prev = prev;
     this.name = getValueOrDefault(String, name);
-    this.id = id;
+    this.id = toNumber(id);
     this.isBaby = isBaby;
     this.form = getValueOrDefault(String, form);
     this.isGmax = isGmax;
@@ -104,7 +111,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
     return new PokemonEvo(
       pokemon?.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase(),
-      toNumber(pokemon?.num),
+      pokemon?.num,
       pokemon?.forme,
       convertModelSpritName(pokemon?.name),
       undefined,
@@ -412,6 +419,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
     const form = getValueOrDefault(String, value.form, props.forme?.formName);
+    const sex = getDataWithKey<TypeSex>(TypeSex, form);
     let offsetY = 35;
     offsetY += value.isBaby ? 20 : 0;
     offsetY += arrEvoList.length === 1 ? 20 : 0;
@@ -464,15 +472,19 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.genderRequirement && (
                           <span className="caption">
-                            {form === TypeSex.MALE ? (
+                            {sex === TypeSex.Male ? (
                               <MaleIcon fontSize="small" />
                             ) : (
                               <Fragment>
-                                {form === TypeSex.FEMALE ? (
+                                {sex === TypeSex.Female ? (
                                   <FemaleIcon fontSize="small" />
                                 ) : (
                                   <Fragment>
-                                    {isEqual(data.quest.genderRequirement, TypeSex.MALE, EqualMode.IgnoreCaseSensitive) ? (
+                                    {isEqual(
+                                      getDataWithKey<TypeSex>(TypeSex, data.quest.genderRequirement),
+                                      TypeSex.Male,
+                                      EqualMode.IgnoreCaseSensitive
+                                    ) ? (
                                       <MaleIcon fontSize="small" />
                                     ) : (
                                       <FemaleIcon fontSize="small" />
@@ -513,7 +525,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               <span
                                 className="d-flex align-items-center caption"
                                 style={{ color: theme.palette.customText.caption, width: 'max-content', marginLeft: 2 }}
-                              >{`x${toNumber(data.itemCost)}`}</span>
+                              >{`x${data.itemCost}`}</span>
                             )}
                           </Fragment>
                         )}

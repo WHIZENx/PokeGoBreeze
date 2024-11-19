@@ -204,8 +204,8 @@ const SearchTypes = () => {
       setAllData(
         PokemonTypeData.create({
           pokemon: data.pokemon.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-          fastMoves: data.combat.filter((type) => type.typeMove === TypeMove.FAST).length,
-          chargedMoves: data.combat.filter((type) => type.typeMove === TypeMove.CHARGE).length,
+          fastMoves: data.combat.filter((type) => type.typeMove === TypeMove.Fast).length,
+          chargedMoves: data.combat.filter((type) => type.typeMove === TypeMove.Charge).length,
         })
       );
     }
@@ -228,8 +228,8 @@ const SearchTypes = () => {
           pokemonList: data.pokemon
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
-          fastMove: data.combat.filter((type) => type.typeMove === TypeMove.FAST && isEqual(type.type, currentType)),
-          chargedMove: data.combat.filter((type) => type.typeMove === TypeMove.CHARGE && isEqual(type.type, currentType)),
+          fastMove: data.combat.filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
+          chargedMove: data.combat.filter((type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)),
         })
       );
     }
@@ -322,7 +322,7 @@ const SearchTypes = () => {
               <b>{`Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
                 toNumber(allData?.pokemon) > 0 &&
-                Math.round((result.pokemonList.length * 100) / toNumber(allData?.pokemon))
+                Math.round((result.pokemonList.length * 100) / toNumber(allData?.pokemon, 1))
               }%)`}</b>
               <ul style={{ listStyleType: 'disc' }}>
                 <li>
@@ -330,7 +330,7 @@ const SearchTypes = () => {
                     isNotEmpty(result.pokemonList) &&
                     toNumber(allData?.pokemon) > 0 &&
                     Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) / toNumber(allData?.pokemon)
+                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) / toNumber(allData?.pokemon, 1)
                     )
                   }%)`}</b>
                 </li>
@@ -338,7 +338,9 @@ const SearchTypes = () => {
                   <b>{`Include Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length} (${
                     isNotEmpty(result.pokemonList) &&
                     toNumber(allData?.pokemon) > 0 &&
-                    Math.round((result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) / toNumber(allData?.pokemon))
+                    Math.round(
+                      (result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) / toNumber(allData?.pokemon, 1)
+                    )
                   }%)`}</b>
                 </li>
               </ul>

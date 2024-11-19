@@ -213,10 +213,10 @@ export class PokemonGenderRatio implements IPokemonGenderRatio {
   M = 0;
   F = 0;
 
-  static create(male: number, female: number) {
+  static create(male: number | undefined, female: number | undefined) {
     const obj = new PokemonGenderRatio();
-    obj.M = male;
-    obj.F = female;
+    obj.M = toNumber(male);
+    obj.F = toNumber(female);
     return obj;
   }
 }
@@ -552,11 +552,12 @@ export class PokemonData implements IPokemonData {
       def: toNumber(pokemon.stats?.baseDefense),
       sta: pokemon.stats?.baseStamina,
     });
+    const sta = toNumber(obj.baseStats.sta);
     obj.statsGO = StatsPokemonGO.create({
       atk: obj.baseStats.atk,
       def: obj.baseStats.def,
-      sta: toNumber(obj.baseStats.sta),
-      prod: obj.baseStats.atk * obj.baseStats.def * toNumber(obj.baseStats.sta),
+      sta,
+      prod: obj.baseStats.atk * obj.baseStats.def * sta,
     });
     obj.heightm = pokemon.pokedexHeightM;
     obj.weightkg = pokemon.pokedexWeightKg;
@@ -604,8 +605,8 @@ export class PokemonModel implements IPokemonName {
   id: number;
   name: string;
 
-  constructor(id: number, name?: string | null, settings?: PokemonModel) {
-    this.id = id;
+  constructor(id: string | number | undefined, name?: string | null, settings?: PokemonModel) {
+    this.id = toNumber(id);
     this.name = getValueOrDefault(String, name);
     if (settings) {
       Object.assign(this, { ...settings });
