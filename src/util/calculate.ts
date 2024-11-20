@@ -1105,6 +1105,7 @@ const setQueryMove = (data: QueryMovesPokemon, vf: string, value: IPokemonData, 
   queryMove(data, vf, value.shadowMoves, quickMoveType, MoveType.Shadow);
   queryMove(data, vf, value.purifiedMoves, quickMoveType, MoveType.Purified);
   queryMove(data, vf, value.specialMoves, quickMoveType, MoveType.Special);
+  queryMove(data, vf, value.exclusiveMoves, quickMoveType, MoveType.Exclusive);
 };
 
 export const queryStatesEvoChain = (
@@ -1356,4 +1357,5 @@ const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: 
   queryMoveCounter(data, vf, value.shadowMoves, fMoveType, MoveType.Shadow);
   queryMoveCounter(data, vf, value.purifiedMoves, fMoveType, MoveType.Purified);
   queryMoveCounter(data, vf, value.specialMoves, fMoveType, MoveType.Special);
+  queryMoveCounter(data, vf, value.exclusiveMoves, fMoveType, MoveType.Exclusive);
 };

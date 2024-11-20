@@ -109,9 +109,10 @@ export const FORM_ARMOR = 'ARMOR';
 export const FORM_MEGA_X = 'MEGA_X';
 export const FORM_MEGA_Y = 'MEGA_Y';
 
-export const TYPE_LEGENDARY = 'LEGENDARY';
-export const TYPE_MYTHIC = 'MYTHIC';
-export const TYPE_ULTRA_BEAST = 'ULTRA_BEAST';
+// Pokémon Class
+export const CLASS_LEGENDARY = 'LEGENDARY';
+export const CLASS_MYTHIC = 'MYTHIC';
+export const CLASS_ULTRA_BEAST = 'ULTRA_BEAST';
 
 export const DEFAULT_SHEET_PAGE = 1;
 export const DEFAULT_SHEET_ROW = 10;

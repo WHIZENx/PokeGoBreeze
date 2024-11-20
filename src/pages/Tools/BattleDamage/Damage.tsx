@@ -296,11 +296,14 @@ const Damage = () => {
                 <div className="text-center">
                   <FormGroup>
                     <FormControlLabel
-                      control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="weather" />}
+                      control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="isWeather" />}
                       label="Weather Boosts"
                     />
-                    <FormControlLabel control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="dodge" />} label="Dodge" />
-                    <FormControlLabel control={<Checkbox checked={isTrainer} onChange={handleCheckbox} name="trainer" />} label="Trainer" />
+                    <FormControlLabel control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="isDodge" />} label="Dodge" />
+                    <FormControlLabel
+                      control={<Checkbox checked={isTrainer} onChange={handleCheckbox} name="isTrainer" />}
+                      label="Trainer"
+                    />
                   </FormGroup>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <FormControlLabel
@@ -351,7 +354,7 @@ const Damage = () => {
                           setBattleState(
                             Filter.create({
                               ...battleState,
-                              [event.target.name]: event.target.value,
+                              cLevel: toNumber(event.target.value),
                             })
                           );
                         }}

@@ -34,18 +34,18 @@ export interface OptionDPSModel {
 
 interface IOptionFiltersDPS {
   isMatch: boolean;
-  showEliteMove: boolean;
+  showSpecialMove: boolean;
   showShadow: boolean;
   showMega: boolean;
-  showGmax: boolean;
+  showGMax: boolean;
   showPrimal: boolean;
   showLegendary: boolean;
   showMythic: boolean;
   showUltraBeast: boolean;
   enableShadow: boolean;
-  enableElite: boolean;
+  enableSpecial: boolean;
   enableMega: boolean;
-  enableGmax: boolean;
+  enableGMax: boolean;
   enablePrimal: boolean;
   enableLegendary: boolean;
   enableMythic: boolean;
@@ -62,18 +62,18 @@ interface IOptionFiltersDPS {
 
 export class OptionFiltersDPS implements IOptionFiltersDPS {
   isMatch = false;
-  showEliteMove = true;
+  showSpecialMove = true;
   showShadow = true;
   showMega = true;
-  showGmax = true;
+  showGMax = true;
   showPrimal = true;
   showLegendary = true;
   showMythic = true;
   showUltraBeast = true;
   enableShadow = false;
-  enableElite = false;
+  enableSpecial = false;
   enableMega = false;
-  enableGmax = false;
+  enableGMax = false;
   enablePrimal = false;
   enableLegendary = false;
   enableMythic = false;

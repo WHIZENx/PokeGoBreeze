@@ -7,16 +7,7 @@ import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
-import {
-  DEFAULT_TYPES,
-  genList,
-  regionList,
-  TRANSITION_TIME,
-  TYPE_LEGENDARY,
-  TYPE_MYTHIC,
-  TYPE_ULTRA_BEAST,
-  versionList,
-} from '../../util/constants';
+import { DEFAULT_TYPES, genList, regionList, TRANSITION_TIME, versionList } from '../../util/constants';
 import {
   Checkbox,
   FormControl,
@@ -34,7 +25,7 @@ import {
 import { StoreState, StatsState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { PokemonType, TypeTheme } from '../../enums/type.enum';
+import { PokemonClass, PokemonType, TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
@@ -55,7 +46,7 @@ interface IFilter {
   gen: number[];
   version: number[];
   isMega: boolean;
-  isGmax: boolean;
+  isGMax: boolean;
   isPrimal: boolean;
   isLegendary: boolean;
   isMythic: boolean;
@@ -69,7 +60,7 @@ class Filter implements IFilter {
   gen: number[] = [];
   version: number[] = [];
   isMega = false;
-  isGmax = false;
+  isGMax = false;
   isPrimal = false;
   isLegendary = false;
   isMythic = false;
@@ -121,7 +112,7 @@ const Home = () => {
     )
   );
 
-  const { isMatch, releasedGO, allShiny, gen, version, isMega, isGmax, isPrimal, isLegendary, isMythic, isUltraBeast } = filters;
+  const { isMatch, releasedGO, allShiny, gen, version, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast } = filters;
 
   const [btnSelected, setBtnSelected] = useState(
     new BtnSelect({
@@ -175,11 +166,11 @@ const Home = () => {
                   isInclude(item.id, searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
             const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
-            const boolGmax = isGmax ? item.pokemonType === PokemonType.GMax : true;
+            const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
             const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
-            const boolLegend = isLegendary ? item.class === TYPE_LEGENDARY : true;
-            const boolMythic = isMythic ? item.class === TYPE_MYTHIC : true;
-            const boolUltra = isUltraBeast ? item.class === TYPE_ULTRA_BEAST : true;
+            const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
+            const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
+            const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
 
             const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
             const findVersion = item.version === -1 || isIncludeList(version, item.version);
@@ -190,7 +181,7 @@ const Home = () => {
               findGen &&
               findVersion &&
               boolMega &&
-              boolGmax &&
+              boolGMax &&
               boolPrimal &&
               boolLegend &&
               boolMythic &&
@@ -206,7 +197,7 @@ const Home = () => {
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [dataList, searchTerm, selectTypes, isMatch, releasedGO, isMega, isGmax, isPrimal, isLegendary, isMythic, isUltraBeast, gen, version]);
+  }, [dataList, searchTerm, selectTypes, isMatch, releasedGO, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast, gen, version]);
 
   useEffect(() => {
     const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
@@ -417,7 +408,7 @@ const Home = () => {
                           setFilters({
                             ...filters,
                             isMega: check,
-                            isGmax: check ? false : filters.isGmax,
+                            isGMax: check ? false : filters.isGMax,
                             isPrimal: check ? false : filters.isPrimal,
                           })
                         }
@@ -428,11 +419,11 @@ const Home = () => {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={isGmax}
+                        checked={isGMax}
                         onChange={(_, check) =>
                           setFilters({
                             ...filters,
-                            isGmax: check,
+                            isGMax: check,
                             isMega: check ? false : filters.isMega,
                             isPrimal: check ? false : filters.isPrimal,
                           })
@@ -450,7 +441,7 @@ const Home = () => {
                             ...filters,
                             isPrimal: check,
                             isMega: check ? false : filters.isMega,
-                            isGmax: check ? false : filters.isGmax,
+                            isGMax: check ? false : filters.isGMax,
                           })
                         }
                       />

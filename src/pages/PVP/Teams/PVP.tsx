@@ -97,7 +97,8 @@ const TeamPVP = () => {
         getValueOrDefault(Array, pokemon.eliteCinematicMoves),
         getValueOrDefault(Array, pokemon.shadowMoves),
         getValueOrDefault(Array, pokemon.purifiedMoves),
-        getValueOrDefault(Array, pokemon.specialMoves)
+        getValueOrDefault(Array, pokemon.specialMoves),
+        getValueOrDefault(Array, pokemon.exclusiveMoves)
       )
     );
 
