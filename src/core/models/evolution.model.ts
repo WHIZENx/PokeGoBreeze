@@ -85,8 +85,8 @@ export interface ITempEvo {
 
 export class TempEvo implements ITempEvo {
   tempEvolutionName?: string;
-  firstTempEvolution = '';
-  tempEvolution = '';
+  firstTempEvolution: string | number = '';
+  tempEvolution: string | number = '';
   requireMove?: string;
 
   static create(value: ITempEvo) {

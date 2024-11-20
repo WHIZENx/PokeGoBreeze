@@ -36,15 +36,14 @@ const Mega = (props: IFormSpecialComponent) => {
       .map((text) => text.toUpperCase())
       .join('_');
 
-    const pokemon = evoData.find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)));
-    if (pokemon) {
-      return pokemon.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
-    } else {
-      return TempEvo.create({
-        firstTempEvolution: 'Unavailable',
-        tempEvolution: 'Unavailable',
-      });
-    }
+    const pokemonEvo = evoData
+      .find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)))
+      ?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
+    return TempEvo.create({
+      ...pokemonEvo,
+      firstTempEvolution: pokemonEvo?.firstTempEvolution ? `x${pokemonEvo.firstTempEvolution}` : 'Unavailable',
+      tempEvolution: pokemonEvo?.tempEvolution ? `x${pokemonEvo.tempEvolution}` : 'Unavailable',
+    });
   };
 
   const getCombatMove = (moveName: string | undefined) => {
@@ -79,11 +78,11 @@ const Mega = (props: IFormSpecialComponent) => {
               </div>
               <span className="caption">
                 First mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.firstTempEvolution}` : 'Unavailable'}</b>
+                <b>{getQuestEvo(value.name).firstTempEvolution}</b>
               </span>
               <span className="caption">
                 Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
-                <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.tempEvolution}` : 'Unavailable'}</b>
+                <b>{getQuestEvo(value.name).tempEvolution}</b>
               </span>
               {getQuestEvo(value.name)?.requireMove && (
                 <span className="caption">
@@ -93,9 +92,9 @@ const Mega = (props: IFormSpecialComponent) => {
                     width={25}
                     height={25}
                     alt="img-pokemon"
-                    src={APIService.getTypeSprite(capitalize(getCombatMove(getQuestEvo(value.name)?.requireMove)?.type))}
+                    src={APIService.getTypeSprite(capitalize(getCombatMove(getQuestEvo(value.name).requireMove)?.type))}
                   />
-                  <b>{splitAndCapitalize(getQuestEvo(value.name)?.requireMove, '_', ' ')}</b>
+                  <b>{splitAndCapitalize(getQuestEvo(value.name).requireMove, '_', ' ')}</b>
                 </span>
               )}
             </li>
