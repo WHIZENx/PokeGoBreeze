@@ -276,7 +276,7 @@ const DpsTdo = () => {
     showShadow,
     enableShadow,
     showMega,
-    showGmax,
+    showGMax,
     showPrimal,
     showLegendary,
     showMythic,
@@ -285,7 +285,7 @@ const DpsTdo = () => {
     enableMega,
     enableBest,
     enableDelay,
-    enableGmax,
+    enableGMax,
     enablePrimal,
     enableLegendary,
     enableMythic,
@@ -446,7 +446,7 @@ const DpsTdo = () => {
       const boolShowShadow = !showShadow && item.pokemonType === PokemonType.Shadow;
       const boolShowElite = !showSpecialMove && (item.fMoveType !== MoveType.None || item.cMoveType !== MoveType.None);
       const boolShowMega = !showMega && item.pokemon.pokemonType === PokemonType.Mega;
-      const boolShowGmax = !showGmax && item.pokemon.pokemonType === PokemonType.GMax;
+      const boolShowGMax = !showGMax && item.pokemon.pokemonType === PokemonType.GMax;
       const boolShowPrimal = !showPrimal && item.pokemon.pokemonType === PokemonType.Primal;
       const boolShowLegend = !showLegendary && item.pokemon.pokemonClass === PokemonClass.Legendary;
       const boolShowMythic = !showMythic && item.pokemon.pokemonClass === PokemonClass.Mythic;
@@ -455,7 +455,7 @@ const DpsTdo = () => {
       const boolOnlyShadow = enableShadow && item.pokemonType === PokemonType.Shadow;
       const boolOnlyElite = enableSpecial && (item.fMoveType !== MoveType.None || item.cMoveType !== MoveType.None);
       const boolOnlyMega = enableMega && item.pokemon.pokemonType === PokemonType.Mega;
-      const boolOnlyGmax = enableGmax && item.pokemon.pokemonType === PokemonType.GMax;
+      const boolOnlyGMax = enableGMax && item.pokemon.pokemonType === PokemonType.GMax;
       const boolOnlyPrimal = enablePrimal && item.pokemon.pokemonType === PokemonType.Primal;
       const boolOnlyLegend = enableLegendary && item.pokemon.pokemonClass === PokemonClass.Legendary;
       const boolOnlyMythic = enableMythic && item.pokemon.pokemonClass === PokemonClass.Mythic;
@@ -474,7 +474,7 @@ const DpsTdo = () => {
         enableShadow ||
         enableSpecial ||
         enableMega ||
-        enableGmax ||
+        enableGMax ||
         enablePrimal ||
         enableLegendary ||
         enableMythic ||
@@ -488,7 +488,7 @@ const DpsTdo = () => {
             boolShowShadow ||
             boolShowElite ||
             boolShowMega ||
-            boolShowGmax ||
+            boolShowGMax ||
             boolShowPrimal ||
             boolShowLegend ||
             boolShowMythic ||
@@ -498,7 +498,7 @@ const DpsTdo = () => {
           (boolOnlyShadow ||
             boolOnlyElite ||
             boolOnlyMega ||
-            boolOnlyGmax ||
+            boolOnlyGMax ||
             boolOnlyPrimal ||
             boolOnlyLegend ||
             boolOnlyMythic ||
@@ -513,7 +513,7 @@ const DpsTdo = () => {
             boolShowShadow ||
             boolShowElite ||
             boolShowMega ||
-            boolShowGmax ||
+            boolShowGMax ||
             boolShowPrimal ||
             boolShowLegend ||
             boolShowMythic ||
@@ -570,7 +570,7 @@ const DpsTdo = () => {
     showShadow,
     showSpecialMove,
     showMega,
-    showGmax,
+    showGMax,
     showPrimal,
     showLegendary,
     showMythic,
@@ -578,7 +578,7 @@ const DpsTdo = () => {
     enableSpecial,
     enableShadow,
     enableMega,
-    enableGmax,
+    enableGMax,
     enablePrimal,
     enableLegendary,
     enableMythic,
@@ -688,7 +688,7 @@ const DpsTdo = () => {
                 label={getKeyEnum(PokemonType, PokemonType.Mega)}
               />
               <FormControlLabel
-                control={<Checkbox checked={showGmax} onChange={(_, check) => setFilters({ ...filters, showGmax: check })} />}
+                control={<Checkbox checked={showGMax} onChange={(_, check) => setFilters({ ...filters, showGMax: check })} />}
                 label={getKeyEnum(PokemonType, PokemonType.GMax)}
               />
               <FormControlLabel
@@ -737,9 +737,9 @@ const DpsTdo = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={enableGmax}
-                    disabled={!showGmax}
-                    onChange={(_, check) => setFilters({ ...filters, enableGmax: check })}
+                    checked={enableGMax}
+                    disabled={!showGMax}
+                    onChange={(_, check) => setFilters({ ...filters, enableGMax: check })}
                   />
                 }
                 label={getKeyEnum(PokemonType, PokemonType.GMax)}

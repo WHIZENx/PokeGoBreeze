@@ -37,7 +37,7 @@ interface IOptionFiltersDPS {
   showSpecialMove: boolean;
   showShadow: boolean;
   showMega: boolean;
-  showGmax: boolean;
+  showGMax: boolean;
   showPrimal: boolean;
   showLegendary: boolean;
   showMythic: boolean;
@@ -45,7 +45,7 @@ interface IOptionFiltersDPS {
   enableShadow: boolean;
   enableSpecial: boolean;
   enableMega: boolean;
-  enableGmax: boolean;
+  enableGMax: boolean;
   enablePrimal: boolean;
   enableLegendary: boolean;
   enableMythic: boolean;
@@ -65,7 +65,7 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
   showSpecialMove = true;
   showShadow = true;
   showMega = true;
-  showGmax = true;
+  showGMax = true;
   showPrimal = true;
   showLegendary = true;
   showMythic = true;
@@ -73,7 +73,7 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
   enableShadow = false;
   enableSpecial = false;
   enableMega = false;
-  enableGmax = false;
+  enableGMax = false;
   enablePrimal = false;
   enableLegendary = false;
   enableMythic = false;

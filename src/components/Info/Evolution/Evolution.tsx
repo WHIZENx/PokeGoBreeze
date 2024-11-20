@@ -61,7 +61,7 @@ interface IPokemonEvo {
   id: number;
   isBaby: boolean;
   form: string;
-  isGmax: boolean;
+  isGMax: boolean;
   sprite: string;
 }
 
@@ -71,7 +71,7 @@ class PokemonEvo implements IPokemonEvo {
   id: number;
   isBaby: boolean;
   form: string;
-  isGmax: boolean;
+  isGMax: boolean;
   sprite: string;
 
   constructor(
@@ -80,7 +80,7 @@ class PokemonEvo implements IPokemonEvo {
     form: string | null | undefined,
     sprite: string,
     prev = '',
-    isGmax = false,
+    isGMax = false,
     isBaby = false
   ) {
     this.prev = prev;
@@ -88,7 +88,7 @@ class PokemonEvo implements IPokemonEvo {
     this.id = toNumber(id);
     this.isBaby = isBaby;
     this.form = getValueOrDefault(String, form);
-    this.isGmax = isGmax;
+    this.isGMax = isGMax;
     this.sprite = sprite;
   }
 }
@@ -350,7 +350,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
   };
 
-  const getGmaxChain = (id: number, form: IForm) => {
+  const getGMaxChain = (id: number, form: IForm) => {
     return setArrEvoList([
       [
         new PokemonEvo(
@@ -380,7 +380,7 @@ const Evolution = (props: IEvolutionComponent) => {
       if (props.forme.pokemonType !== PokemonType.GMax) {
         getEvoChainStore(props.id, props.forme);
       } else {
-        getGmaxChain(props.id, props.forme);
+        getGMaxChain(props.id, props.forme);
       }
     }
   }, [props.forme, props.id]);
@@ -443,7 +443,7 @@ const Evolution = (props: IEvolutionComponent) => {
               labels={{
                 end: (
                   <div className="position-absolute" style={{ left: -40 }}>
-                    {!value.isGmax && (
+                    {!value.isGMax && (
                       <div>
                         {!data?.itemCost && (data?.candyCost || data?.purificationEvoCandyCost) && (
                           <span
