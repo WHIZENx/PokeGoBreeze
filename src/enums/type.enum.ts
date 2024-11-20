@@ -59,6 +59,7 @@ export enum MoveType {
   Purified,
   Elite,
   Special,
+  Exclusive,
   Unavailable,
 }
 
@@ -72,4 +73,11 @@ export enum PokemonType {
   GMax,
   Buddy,
   Lucky,
+}
+
+export enum PokemonClass {
+  None = 0,
+  Legendary,
+  Mythic,
+  UltraBeast,
 }

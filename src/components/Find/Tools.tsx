@@ -25,13 +25,14 @@ import {
   StatsSta,
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
-import { PokemonType, TypeAction } from '../../enums/type.enum';
+import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
 import { isNotEmpty, toNumber } from '../../util/extension';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const [currDataPoke, setCurrDataPoke] = useState<IStatsPokemon>();
   const [currTier, setCurrTier] = useState(props.tier);
+  const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
@@ -42,22 +43,25 @@ const Tools = (props: IToolsComponent) => {
   );
 
   useEffect(() => {
+    const pokemonClass = pokemonData.find((item) => item.num === props.id)?.pokemonClass;
+    if (pokemonClass) {
+      setPokemonClass(pokemonClass);
+    }
+  }, [props.id]);
+
+  useEffect(() => {
     if (props.tier > 5 && props.currForm?.form.pokemonType !== PokemonType.Mega) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
-    } else if (
-      props.tier === 5 &&
-      props.currForm?.form.pokemonType === PokemonType.Mega &&
-      pokemonData.find((item) => item.num === props.id)?.pokemonClass
-    ) {
+    } else if (props.tier === 5 && props.currForm?.form.pokemonType === PokemonType.Mega && pokemonClass !== PokemonClass.None) {
       setCurrTier(6);
       if (props.setTier) {
         props.setTier(6);
       }
     }
-  }, [props.currForm?.form.formName, props.id, props.setTier, props.tier]);
+  }, [props.currForm?.form.formName, props.id, props.setTier, props.tier, pokemonClass]);
 
   useEffect(() => {
     const formATK = filterFormList(props.stats?.attack.ranking) as IStatsAtk | undefined;
@@ -141,7 +145,7 @@ const Tools = (props: IToolsComponent) => {
             </optgroup>
             {props.currForm?.form.pokemonType === PokemonType.Mega && (
               <Fragment>
-                {pokemonData.find((item) => item.num === props.id)?.pokemonClass ? (
+                {pokemonClass !== PokemonClass.None ? (
                   <optgroup label="Legendary Mega Tiers">
                     <option value={6}>Tier Mega</option>
                   </optgroup>

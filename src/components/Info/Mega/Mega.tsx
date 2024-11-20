@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../../util/utils';
+import { capitalize, splitAndCapitalize } from '../../../util/utils';
 
 import './Mega.scss';
 import { StoreState } from '../../../store/models/state.model';
@@ -13,6 +13,7 @@ import { PokemonType } from '../../../enums/type.enum';
 
 const Mega = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => state.store.data.pokemon);
+  const combat = useSelector((state: StoreState) => state.store.data.combat);
   const [arrEvoList, setArrEvoList] = useState<IForm[]>([]);
 
   useEffect(() => {
@@ -44,6 +45,11 @@ const Mega = (props: IFormSpecialComponent) => {
         tempEvolution: 'Unavailable',
       });
     }
+  };
+
+  const getCombatMove = (moveName: string | undefined) => {
+    const move = combat.find((item) => isEqual(item.name, moveName));
+    return move;
   };
 
   return (
@@ -79,6 +85,19 @@ const Mega = (props: IFormSpecialComponent) => {
                 Mega evolution: <img alt="img-mega" width={25} height={25} src={APIService.getIconSprite('ic_mega')} />
                 <b>{getQuestEvo(value.name) ? `x${getQuestEvo(value.name)?.tempEvolution}` : 'Unavailable'}</b>
               </span>
+              {getQuestEvo(value.name)?.requireMove && (
+                <span className="caption">
+                  {`Require move: `}
+                  <img
+                    style={{ marginRight: 5 }}
+                    width={25}
+                    height={25}
+                    alt="img-pokemon"
+                    src={APIService.getTypeSprite(capitalize(getCombatMove(getQuestEvo(value.name)?.requireMove)?.type))}
+                  />
+                  <b>{splitAndCapitalize(getQuestEvo(value.name)?.requireMove, '_', ' ')}</b>
+                </span>
+              )}
             </li>
           ))}
         </ul>

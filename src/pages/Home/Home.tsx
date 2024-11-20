@@ -7,16 +7,7 @@ import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
-import {
-  DEFAULT_TYPES,
-  genList,
-  regionList,
-  TRANSITION_TIME,
-  TYPE_LEGENDARY,
-  TYPE_MYTHIC,
-  TYPE_ULTRA_BEAST,
-  versionList,
-} from '../../util/constants';
+import { DEFAULT_TYPES, genList, regionList, TRANSITION_TIME, versionList } from '../../util/constants';
 import {
   Checkbox,
   FormControl,
@@ -34,7 +25,7 @@ import {
 import { StoreState, StatsState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { PokemonType, TypeTheme } from '../../enums/type.enum';
+import { PokemonClass, PokemonType, TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
@@ -177,9 +168,9 @@ const Home = () => {
             const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
             const boolGmax = isGmax ? item.pokemonType === PokemonType.GMax : true;
             const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
-            const boolLegend = isLegendary ? item.class === TYPE_LEGENDARY : true;
-            const boolMythic = isMythic ? item.class === TYPE_MYTHIC : true;
-            const boolUltra = isUltraBeast ? item.class === TYPE_ULTRA_BEAST : true;
+            const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
+            const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
+            const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
 
             const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
             const findVersion = item.version === -1 || isIncludeList(version, item.version);

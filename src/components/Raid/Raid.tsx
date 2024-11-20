@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 import { raidEgg } from '../../util/compute';
-import { RAID_BOSS_TIER, TYPE_ULTRA_BEAST } from '../../util/constants';
+import { RAID_BOSS_TIER } from '../../util/constants';
 import { calculateRaidCP, calculateRaidStat } from '../../util/calculate';
 
 import ATK_LOGO from '../../assets/attack.png';
@@ -15,22 +15,23 @@ import { StoreState } from '../../store/models/state.model';
 import { getKeyEnum } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { isEqual, isNullOrEmpty, toNumber } from '../../util/extension';
-import { EqualMode } from '../../util/enums/string.enum';
-import { PokemonType } from '../../enums/type.enum';
+import { toNumber } from '../../util/extension';
+import { PokemonClass, PokemonType } from '../../enums/type.enum';
 
 const Raid = (props: IRaidComponent) => {
   const theme = useTheme<ThemeModify>();
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const [tier, setTier] = useState(1);
-  const [pokemonClass, setPokemonClass] = useState<string | null>();
-
-  useEffect(() => {
-    setPokemonClass(pokemonData.find((item) => item.num === props.id)?.pokemonClass);
-  }, [props.id]);
+  const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
 
   useEffect(() => {
     const pokemonClass = pokemonData.find((item) => item.num === props.id)?.pokemonClass;
+    if (pokemonClass) {
+      setPokemonClass(pokemonClass);
+    }
+  }, [props.id]);
+
+  useEffect(() => {
     if (
       tier > 5 &&
       props.currForm &&
@@ -42,7 +43,7 @@ const Raid = (props: IRaidComponent) => {
       tier === 5 &&
       props.currForm &&
       (props.currForm.form.pokemonType === PokemonType.Mega || props.currForm.form.pokemonType === PokemonType.Primal) &&
-      pokemonClass
+      pokemonClass !== PokemonClass.None
     ) {
       setTier(6);
     }
@@ -59,6 +60,7 @@ const Raid = (props: IRaidComponent) => {
     }
   }, [
     tier,
+    pokemonClass,
     props.currForm,
     props.id,
     props.setTierBoss,
@@ -97,22 +99,26 @@ const Raid = (props: IRaidComponent) => {
           <optgroup label="Normal Tiers">
             <option value={1}>Tier 1</option>
             <option value={3}>Tier 3</option>
-            {(props.currForm?.form.pokemonType !== PokemonType.Mega || !pokemonClass) && <option value={5}>Tier 5</option>}
+            {(props.currForm?.form.pokemonType !== PokemonType.Mega || pokemonClass === PokemonClass.None) && (
+              <option value={5}>Tier 5</option>
+            )}
           </optgroup>
           <optgroup label="Legacy Tiers">
             <option value={2}>Tier 2</option>
-            {(props.currForm?.form.pokemonType !== PokemonType.Mega || pokemonClass) && <option value={4}>Tier 4</option>}
+            {(props.currForm?.form.pokemonType !== PokemonType.Mega || pokemonClass !== PokemonClass.None) && (
+              <option value={4}>Tier 4</option>
+            )}
           </optgroup>
           {props.currForm &&
             (props.currForm.form.pokemonType === PokemonType.Mega || props.currForm.form.pokemonType === PokemonType.Primal) && (
               <Fragment>
-                {pokemonClass ? (
+                {pokemonClass !== PokemonClass.None ? (
                   <optgroup
                     label={`Legendary ${
                       props.currForm.form.pokemonType === PokemonType.Primal
                         ? getKeyEnum(PokemonType, PokemonType.Primal)
                         : getKeyEnum(PokemonType, PokemonType.Mega)
-                    } Tier 6'`}
+                    } Tier 6`}
                   >
                     <option value={6}>
                       {`Tier ${
@@ -155,13 +161,9 @@ const Raid = (props: IRaidComponent) => {
             alt="img-raid-egg"
             src={raidEgg(
               tier,
-              !pokemonClass && props.currForm?.form.pokemonType === PokemonType.Mega,
-              !isNullOrEmpty(pokemonClass) && props.currForm?.form.pokemonType === PokemonType.Primal,
-              isEqual(
-                pokemonData.find((pokemon) => pokemon.num === props.id)?.pokemonClass,
-                TYPE_ULTRA_BEAST,
-                EqualMode.IgnoreCaseSensitive
-              )
+              props.currForm?.form.pokemonType === PokemonType.Mega,
+              props.currForm?.form.pokemonType === PokemonType.Primal,
+              pokemonClass === PokemonClass.UltraBeast
             )}
           />
         </div>

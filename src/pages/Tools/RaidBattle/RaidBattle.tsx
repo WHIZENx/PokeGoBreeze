@@ -4,7 +4,15 @@ import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
 import { Link } from 'react-router-dom';
 
-import { checkPokemonGO, getDmgMultiplyBonus, getKeyEnum, getMoveType, retrieveMoves, splitAndCapitalize } from '../../../util/utils';
+import {
+  addSelectMovesByType,
+  checkPokemonGO,
+  getDmgMultiplyBonus,
+  getKeyEnum,
+  getMoveType,
+  retrieveMoves,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { DEFAULT_POKEMON_LEVEL, levelList, MAX_IV, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/constants';
 import {
@@ -48,7 +56,7 @@ import {
   PokemonMoveData,
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
-import { ISelectMoveModel, SelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
 import { MoveType, PokemonType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -343,31 +351,10 @@ const RaidBattle = () => {
   const findMove = (id: number, form: string) => {
     const result = retrieveMoves(data.pokemon, id, form);
     if (result) {
-      const simpleFMove: ISelectMoveModel[] = [];
-      result.quickMoves?.forEach((value) => {
-        simpleFMove.push(new SelectMoveModel(value, MoveType.None));
-      });
-      result.eliteQuickMoves?.forEach((value) => {
-        simpleFMove.push(new SelectMoveModel(value, MoveType.Elite));
-      });
+      const simpleFMove = addSelectMovesByType(result, TypeMove.Fast);
       setFMove(simpleFMove.at(0));
       setResultFMove(simpleFMove);
-      const simpleCMove: ISelectMoveModel[] = [];
-      result.cinematicMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, MoveType.None));
-      });
-      result.eliteCinematicMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, MoveType.Elite));
-      });
-      result.shadowMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, MoveType.Shadow));
-      });
-      result.purifiedMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, MoveType.Purified));
-      });
-      result.specialMoves?.forEach((value) => {
-        simpleCMove.push(new SelectMoveModel(value, MoveType.Special));
-      });
+      const simpleCMove = addSelectMovesByType(result, TypeMove.Charge);
       setCMove(simpleCMove.at(0));
       setResultCMove(simpleCMove);
     } else {
@@ -472,6 +459,7 @@ const RaidBattle = () => {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
       }
       addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType, pokemonTarget);
+      addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, vf, fMoveType, pokemonTarget);
     });
   };
 

@@ -148,11 +148,11 @@ const optionFormNoneSpecial = (data: PokemonDataGM[]) => {
   return result;
 };
 
-const findPokemonData = (id: number, name: string, isDefault = false): IPokemonData | undefined => {
+const findPokemonData = (id: number, name: string, isDefault = false) => {
   return Object.values(pokemonStoreData).find(
-    (pokemon: IPokemonData) =>
+    (pokemon) =>
       pokemon.num === id && isEqual(name, convertPokemonDataName(isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug))
-  );
+  ) as IPokemonData | undefined;
 };
 
 const convertAndReplaceNameGO = (name: string, defaultName = '') => {
@@ -393,7 +393,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
           tempEvolutionName: name + evo.temporaryEvolution.split('TEMP_EVOLUTION').at(1),
           firstTempEvolution: evo.temporaryEvolutionEnergyCost,
           tempEvolution: evo.temporaryEvolutionEnergyCostSubsequent,
-          requireMove: evo.obEvolutionBranchRequiredMove,
+          requireMove: evo.obEvolutionBranchRequiredMove ?? evo.evolutionMoveRequirement,
         };
         if (isNotEmpty(optional.tempEvo)) {
           optional.tempEvo?.push(tempEvo);
@@ -442,10 +442,10 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
 const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
   Object.values(pokemonStoreData)
     .filter(
-      (pokemon: IPokemonData) =>
+      (pokemon) =>
         pokemon.num > 0 && !result.some((item) => isEqual(item.fullName, convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug)))
     )
-    .forEach((item: IPokemonData) => {
+    .forEach((item) => {
       const pokemon = new PokemonModel(item.num, convertPokemonDataName(item.name));
 
       pokemon.pokemonId = convertPokemonDataName(item.baseSpecies ?? item.name);
@@ -490,6 +490,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
           pokemon.eliteQuickMove = pokemonSettings.eliteQuickMove;
           pokemon.eliteCinematicMove = pokemonSettings.eliteCinematicMove;
           pokemon.obSpecialAttackMoves = pokemonSettings.obSpecialAttackMoves;
+          pokemon.nonTmCinematicMoves = pokemonSettings.nonTmCinematicMoves;
         }
 
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
@@ -1170,6 +1171,7 @@ export const mappingMoveSetPokemonGO = (pokemonData: IPokemonData[], combat: ICo
     pokemon.eliteQuickMoves = convertMoveName(combat, pokemon.eliteQuickMoves);
     pokemon.eliteCinematicMoves = convertMoveName(combat, pokemon.eliteCinematicMoves);
     pokemon.specialMoves = convertMoveName(combat, pokemon.specialMoves);
+    pokemon.exclusiveMoves = convertMoveName(combat, pokemon.exclusiveMoves);
     pokemon.purifiedMoves = convertMoveName(combat, pokemon.purifiedMoves);
     pokemon.shadowMoves = convertMoveName(combat, pokemon.shadowMoves);
   });

@@ -32,6 +32,7 @@ interface PokemonMoves {
   purifiedMoves: ICombat[];
   shadowMoves: ICombat[];
   specialMoves: ICombat[];
+  exclusiveMoves: ICombat[];
 }
 
 interface ISortModel {
@@ -106,6 +107,7 @@ const TableMove = (props: ITableMoveComponent) => {
       purifiedMoves: props.form?.pokemonType === PokemonType.Shadow ? [] : filterUnknownMove(combat.purifiedMoves),
       shadowMoves: props.form?.pokemonType === PokemonType.Purified ? [] : filterUnknownMove(combat.shadowMoves),
       specialMoves: filterUnknownMove(combat.specialMoves),
+      exclusiveMoves: filterUnknownMove(combat.exclusiveMoves),
     });
   };
 
@@ -297,7 +299,8 @@ const TableMove = (props: ITableMoveComponent) => {
                       moveOrigin.eliteChargedMoves,
                       moveOrigin.purifiedMoves,
                       moveOrigin.shadowMoves,
-                      moveOrigin.specialMoves
+                      moveOrigin.specialMoves,
+                      moveOrigin.exclusiveMoves
                     )
                   )}
               </tbody>

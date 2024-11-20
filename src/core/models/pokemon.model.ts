@@ -1,4 +1,4 @@
-import { capitalize, replaceTempMoveName } from '../../util/utils';
+import { capitalize, getPokemonClass, replaceTempMoveName } from '../../util/utils';
 import { ICombat } from './combat.model';
 import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
@@ -6,7 +6,7 @@ import { ISelectMoveModel } from '../../components/Input/models/select-move.mode
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
-import { MoveType, PokemonType } from '../../enums/type.enum';
+import { MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -64,6 +64,7 @@ interface EvolutionBranch {
   temporaryEvolutionEnergyCost: number;
   temporaryEvolutionEnergyCostSubsequent: number;
   obEvolutionBranchRequiredMove?: string;
+  evolutionMoveRequirement?: string;
 }
 
 interface IEncounter {
@@ -157,9 +158,6 @@ interface ShadowSetting {
 }
 
 export interface PokemonModel {
-  obSpecialAttackMoves?: (string | number)[];
-  eliteQuickMove?: (string | number)[];
-  eliteCinematicMove?: (string | number)[];
   form?: string | number | null;
   disableTransferToPokemonHome?: boolean;
   pokemonClass: string | null | undefined;
@@ -198,6 +196,10 @@ export interface PokemonModel {
   shadow?: ShadowSetting;
   buddyGroupNumber: number;
   buddyWalkedMegaEnergyAward: number;
+  nonTmCinematicMoves?: (string | number)[];
+  obSpecialAttackMoves?: (string | number)[];
+  eliteQuickMove?: (string | number)[];
+  eliteCinematicMove?: (string | number)[];
   id: number;
   name: string;
   isForceReleaseGO?: boolean;
@@ -257,7 +259,7 @@ export interface IPokemonData {
   isTransferable?: boolean | null;
   isDeployable: boolean | null;
   isTradable: boolean | null;
-  pokemonClass: string | undefined | null;
+  pokemonClass: PokemonClass;
   disableTransferToPokemonHome: boolean | null;
   isBaby: boolean;
   gen: number;
@@ -270,6 +272,7 @@ export interface IPokemonData {
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
+  exclusiveMoves?: string[];
   eliteQuickMoves?: string[];
   eliteCinematicMoves?: string[];
   shadowMoves?: string[];
@@ -279,7 +282,7 @@ export interface IPokemonData {
   purified?: IPokemonTypeCost;
   thirdMove?: IPokemonTypeCost;
   encounter?: IEncounter;
-  pokemonType?: PokemonType;
+  pokemonType: PokemonType;
 }
 
 export interface IPokemonName {
@@ -485,7 +488,7 @@ export class PokemonData implements IPokemonData {
   isTransferable?: boolean | null;
   isDeployable = false;
   isTradable = false;
-  pokemonClass: string | undefined | null;
+  pokemonClass = PokemonClass.None;
   disableTransferToPokemonHome = false;
   isBaby = false;
   gen = 0;
@@ -499,6 +502,7 @@ export class PokemonData implements IPokemonData {
   quickMoves?: string[];
   cinematicMoves?: string[];
   specialMoves?: string[];
+  exclusiveMoves?: string[];
   eliteQuickMoves?: string[];
   eliteCinematicMoves?: string[];
   shadowMoves?: string[];
@@ -572,7 +576,7 @@ export class PokemonData implements IPokemonData {
     obj.isTransferable = pokemon.isTransferable;
     obj.isDeployable = pokemon.isDeployable;
     obj.isTradable = pokemon.isTradable;
-    obj.pokemonClass = pokemon.pokemonClass?.replace('POKEMON_CLASS_', '');
+    obj.pokemonClass = getPokemonClass(pokemon.pokemonClass?.replace('POKEMON_CLASS_', ''));
     obj.disableTransferToPokemonHome = getValueOrDefault(Boolean, pokemon.disableTransferToPokemonHome);
     obj.isBaby = getValueOrDefault(Boolean, options?.isBaby);
     obj.region = options?.region ?? 'Unknown';
@@ -583,13 +587,14 @@ export class PokemonData implements IPokemonData {
     obj.hasShadowForm = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;
 
-    obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move.toString()));
-    obj.cinematicMoves = pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move.toString()));
-    obj.eliteQuickMoves = pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move.toString()));
-    obj.eliteCinematicMoves = pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move.toString()));
-    obj.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move.toString()));
-    obj.shadowMoves = options?.shadowMoves?.map((move) => replaceTempMoveName(move.toString()));
-    obj.purifiedMoves = options?.purifiedMoves?.map((move) => replaceTempMoveName(move.toString()));
+    obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move));
+    obj.cinematicMoves = pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move));
+    obj.eliteQuickMoves = pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move));
+    obj.eliteCinematicMoves = pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move));
+    obj.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move));
+    obj.exclusiveMoves = pokemon.nonTmCinematicMoves?.map((move) => replaceTempMoveName(move));
+    obj.shadowMoves = options?.shadowMoves?.map((move) => replaceTempMoveName(move));
+    obj.purifiedMoves = options?.purifiedMoves?.map((move) => replaceTempMoveName(move));
 
     obj.evoList = options?.evoList;
     obj.tempEvo = options?.tempEvo;
