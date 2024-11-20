@@ -24,7 +24,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
 
   const timestamp = useSelector((state: StoreState) => state.store.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.LIGHT);
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.Light);
 
   const [version, setVersion] = useState<string>();
 
@@ -37,7 +37,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
   const onChangeTheme = () => {
     if (!isDelay) {
       setIsDelay(true);
-      loadTheme(dispatch, props.mode === TypeTheme.LIGHT ? TypeTheme.DARK : TypeTheme.LIGHT, setStateTheme);
+      loadTheme(dispatch, props.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
       setTimeout(() => {
         setIsDelay(false);
         props.toggleColorMode();
@@ -144,7 +144,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
             style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
             color="inherit"
           >
-            {props.mode === TypeTheme.LIGHT ? (
+            {props.mode === TypeTheme.Light ? (
               <LightModeIcon fontSize="large" style={{ color: 'white' }} />
             ) : (
               <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
