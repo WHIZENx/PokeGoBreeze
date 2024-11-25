@@ -96,25 +96,25 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
   {
     when: (row) => row.percent === 100,
     style: {
-      backgroundColor: 'rgb(236, 200, 200)',
+      backgroundColor: '#ecc8c8',
     },
   },
   {
     when: (row) => row.percent > 80 && row.percent < 100,
     style: {
-      backgroundColor: 'rgb(236, 200, 236)',
+      backgroundColor: '#ecc8ec',
     },
   },
   {
     when: (row) => row.percent > 64 && row.percent <= 80,
     style: {
-      backgroundColor: 'rgb(200, 236, 200)',
+      backgroundColor: '#c8ecc8',
     },
   },
   {
     when: (row) => row.percent > 51 && row.percent <= 64,
     style: {
-      backgroundColor: 'rgb(236, 236, 200)',
+      backgroundColor: '#ececc8',
     },
   },
 ];

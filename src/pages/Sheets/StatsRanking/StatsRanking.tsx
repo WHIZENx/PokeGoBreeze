@@ -97,7 +97,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           height={25}
           alt="img-pokemon"
           title={capitalize(value)}
-          src={APIService.getTypeSprite(capitalize(value))}
+          src={APIService.getTypeSprite(value)}
         />
       )),
     width: '150px',

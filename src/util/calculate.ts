@@ -49,15 +49,7 @@ import {
   STAB_MULTIPLY,
   typeCostPowerUp,
 } from './constants';
-import {
-  capitalize,
-  splitAndCapitalize,
-  checkMoveSetAvailable,
-  getDmgMultiplyBonus,
-  getMoveType,
-  getAllMoves,
-  moveTypeToFormType,
-} from './utils';
+import { splitAndCapitalize, checkMoveSetAvailable, getDmgMultiplyBonus, getMoveType, getAllMoves, moveTypeToFormType } from './utils';
 import {
   BattleLeagueCalculate,
   PredictCPCalculate,
@@ -96,13 +88,13 @@ const weatherMultiple = (
   globalOptions: IOptions | undefined,
   weatherBoost: IWeatherBoost | undefined,
   weather: string | undefined,
-  type: string
+  type: string | undefined
 ) => {
-  return ((weatherBoost as unknown as DynamicObj<string[]>)[getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))]?.find(
-    (item) => isEqual(item, type.replaceAll(' ', '_'), EqualMode.IgnoreCaseSensitive)
+  return (weatherBoost as unknown as DynamicObj<string[]>)[getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))]?.find(
+    (item) => isEqual(item, type?.replaceAll(' ', '_'), EqualMode.IgnoreCaseSensitive)
   )
     ? STAB_MULTIPLY(globalOptions)
-    : 1) as unknown as number;
+    : 1;
 };
 
 export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: string | undefined, typesObj: string[] | undefined) => {
@@ -110,10 +102,10 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
   if (!typeEffective) {
     return valueEffective;
   }
+  const moveType = getValueOrDefault(String, typeMove).toUpperCase();
   typesObj?.forEach((type) => {
-    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[getValueOrDefault(String, typeMove).toUpperCase()][
-      type.toUpperCase()
-    ];
+    type = getValueOrDefault(String, type).toUpperCase();
+    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[moveType][type] || 1;
   });
   return valueEffective;
 };
@@ -714,8 +706,8 @@ export const calculateAvgDPS = (
   const CE = Math.abs(toNumber(cMove?.pveEnergy));
   const FDur = toNumber(fMove?.durationMs) / 1000;
   const CDur = toNumber(cMove?.durationMs) / 1000;
-  const FType = capitalize(fMove?.type);
-  const CType = capitalize(cMove?.type);
+  const FType = fMove?.type;
+  const CType = cMove?.type;
   const CDWS = toNumber(cMove?.damageWindowStartMs) / 1000;
 
   const FMulti = (findStabType(typePoke, FType) ? stabMultiply : 1) * toNumber(fMove?.accuracyChance);
@@ -818,8 +810,8 @@ export const calculateBattleDPSDefender = (
   const CEDef = Math.abs(toNumber(defender.cMove?.pveEnergy));
   const FDurDef = toNumber(defender.fMove?.durationMs) / 1000;
   const CDurDef = toNumber(defender.cMove?.durationMs) / 1000;
-  const FTypeDef = capitalize(defender.fMove?.type);
-  const CTypeDef = capitalize(defender.cMove?.type);
+  const FTypeDef = defender.fMove?.type;
+  const CTypeDef = defender.cMove?.type;
 
   const FMultiDef = (findStabType(defender.types, FTypeDef) ? stabMultiply : 1) * toNumber(defender.fMove?.accuracyChance);
   const CMultiDef = (findStabType(defender.types, CTypeDef) ? stabMultiply : 1) * toNumber(defender.cMove?.accuracyChance);
@@ -871,8 +863,8 @@ export const calculateBattleDPS = (
   const CE = Math.abs(toNumber(attacker.cMove?.pveEnergy));
   const FDur = toNumber(attacker.fMove?.durationMs) / 1000;
   const CDur = toNumber(attacker.cMove?.durationMs) / 1000;
-  const FType = capitalize(attacker.fMove?.type?.toLowerCase());
-  const CType = capitalize(attacker.cMove?.type?.toLowerCase());
+  const FType = attacker.fMove?.type;
+  const CType = attacker.cMove?.type;
   const CDWS = toNumber(attacker.cMove?.damageWindowStartMs) / 1000;
 
   const FMulti = (findStabType(attacker.types, FType) ? stabMultiply : 1) * toNumber(attacker.fMove?.accuracyChance);
@@ -923,7 +915,7 @@ export const calculateBattleDPS = (
     const moveSec = attacker.cMoveSec;
     const CPowSec = toNumber(moveSec?.pvePower);
     const CESec = Math.abs(toNumber(moveSec?.pveEnergy));
-    const CTypeSec = capitalize(moveSec?.type);
+    const CTypeSec = moveSec?.type;
     const CDurSec = toNumber(moveSec?.durationMs) / 1000;
     const CDWSSec = toNumber(moveSec?.damageWindowStartMs) / 1000;
 
@@ -1016,12 +1008,13 @@ export const queryTopMove = (
   return dataPri;
 };
 
-const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[] | undefined, fMoveType: MoveType, cMoveType: MoveType) => {
+const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[] | undefined, fMoveType: MoveType) => {
   cMove?.forEach((vc) => {
     const mf = data.combat.find((item) => isEqual(item.name, vf));
     const mc = data.combat.find((item) => isEqual(item.name, vc));
 
     if (mf && mc) {
+      const cMoveType = getMoveType(data.pokemon, vc);
       mf.moveType = fMoveType;
       mc.moveType = cMoveType;
 
@@ -1079,18 +1072,18 @@ export const rankMove = (
   typeEff: ITypeEff | undefined,
   weatherBoost: IWeatherBoost | undefined,
   combat: ICombat[],
-  move: IPokemonData | undefined,
+  pokemon: IPokemonData | undefined,
   atk: number,
   def: number,
   sta: number,
   types: string[] | undefined
 ) => {
-  if (!move) {
+  if (!pokemon) {
     return new PokemonQueryRankMove();
   }
-  const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, atk, def, sta, types);
-  move.quickMoves?.forEach((vf) => setQueryMove(data, vf, move, MoveType.None));
-  move.eliteQuickMoves?.forEach((vf) => setQueryMove(data, vf, move, MoveType.Elite));
+  const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, atk, def, sta, types);
+  pokemon.quickMoves?.forEach((vf) => setQueryMove(data, vf));
+  pokemon.eliteQuickMoves?.forEach((vf) => setQueryMove(data, vf));
 
   return PokemonQueryRankMove.create({
     data: data.dataList,
@@ -1099,13 +1092,14 @@ export const rankMove = (
   });
 };
 
-const setQueryMove = (data: QueryMovesPokemon, vf: string, value: IPokemonData, quickMoveType: MoveType) => {
-  queryMove(data, vf, value.cinematicMoves, quickMoveType, MoveType.None);
-  queryMove(data, vf, value.eliteCinematicMoves, quickMoveType, MoveType.Elite);
-  queryMove(data, vf, value.shadowMoves, quickMoveType, MoveType.Shadow);
-  queryMove(data, vf, value.purifiedMoves, quickMoveType, MoveType.Purified);
-  queryMove(data, vf, value.specialMoves, quickMoveType, MoveType.Special);
-  queryMove(data, vf, value.exclusiveMoves, quickMoveType, MoveType.Exclusive);
+const setQueryMove = (data: QueryMovesPokemon, vf: string) => {
+  const quickMoveType = getMoveType(data.pokemon, vf);
+  queryMove(data, vf, data.pokemon.cinematicMoves, quickMoveType);
+  queryMove(data, vf, data.pokemon.eliteCinematicMoves, quickMoveType);
+  queryMove(data, vf, data.pokemon.shadowMoves, quickMoveType);
+  queryMove(data, vf, data.pokemon.purifiedMoves, quickMoveType);
+  queryMove(data, vf, data.pokemon.specialMoves, quickMoveType);
+  queryMove(data, vf, data.pokemon.exclusiveMoves, quickMoveType);
 };
 
 export const queryStatesEvoChain = (
@@ -1277,18 +1271,13 @@ export const queryStatesEvoChain = (
   });
 };
 
-const queryMoveCounter = (
-  data: QueryMovesCounterPokemon,
-  vf: string,
-  cMove: string[] | undefined,
-  fMoveType: MoveType,
-  cMoveType: MoveType
-) => {
+const queryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, cMove: string[] | undefined, fMoveType: MoveType) => {
   cMove?.forEach((vc) => {
     const mf = data.combat.find((item) => isEqual(item.name, vf));
     const mc = data.combat.find((item) => isEqual(item.name, vc));
 
     if (mf && mc) {
+      const cMoveType = getMoveType(data.pokemon, vc);
       const options = OptionOtherDPS.create({
         objTypes: data.types,
         pokemonDefObj: calculateStatsBattle(data.def, MAX_IV, DEFAULT_POKEMON_LEVEL, true),
@@ -1342,8 +1331,8 @@ export const counterPokemon = (
   pokemonList.forEach((pokemon) => {
     if (pokemon && checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE')) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
-      pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, MoveType.None));
-      pokemon.eliteQuickMoves?.forEach((vf) => setQueryMoveCounter(data, vf, pokemon, MoveType.Elite));
+      pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf));
+      pokemon.eliteQuickMoves?.forEach((vf) => setQueryMoveCounter(data, vf));
     }
   });
   return dataList
@@ -1351,11 +1340,12 @@ export const counterPokemon = (
     .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / toNumber(dataList.at(0)?.dps, 1) }));
 };
 
-const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, value: IPokemonData, fMoveType: MoveType) => {
-  queryMoveCounter(data, vf, value.cinematicMoves, fMoveType, MoveType.None);
-  queryMoveCounter(data, vf, value.eliteCinematicMoves, fMoveType, MoveType.Elite);
-  queryMoveCounter(data, vf, value.shadowMoves, fMoveType, MoveType.Shadow);
-  queryMoveCounter(data, vf, value.purifiedMoves, fMoveType, MoveType.Purified);
-  queryMoveCounter(data, vf, value.specialMoves, fMoveType, MoveType.Special);
-  queryMoveCounter(data, vf, value.exclusiveMoves, fMoveType, MoveType.Exclusive);
+const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string) => {
+  const fMoveType = getMoveType(data.pokemon, vf);
+  queryMoveCounter(data, vf, data.pokemon.cinematicMoves, fMoveType);
+  queryMoveCounter(data, vf, data.pokemon.eliteCinematicMoves, fMoveType);
+  queryMoveCounter(data, vf, data.pokemon.shadowMoves, fMoveType);
+  queryMoveCounter(data, vf, data.pokemon.purifiedMoves, fMoveType);
+  queryMoveCounter(data, vf, data.pokemon.specialMoves, fMoveType);
+  queryMoveCounter(data, vf, data.pokemon.exclusiveMoves, fMoveType);
 };

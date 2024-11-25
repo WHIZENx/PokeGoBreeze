@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { capitalize, getKeyEnum, splitAndCapitalize } from '../../util/utils';
+import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { ICardMoveComponent } from '../models/component.model';
@@ -24,7 +24,7 @@ const CardMove = (props: ICardMoveComponent) => {
     <Fragment>
       {data && (
         <div className="d-flex align-items-center w-100 h-100" style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}>
-          <img width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(capitalize(data.type))} />
+          <img width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(data.type)} />
           <span style={{ marginRight: 5 }}>
             <b>{splitAndCapitalize(data.name, '_', ' ')}</b>
           </span>

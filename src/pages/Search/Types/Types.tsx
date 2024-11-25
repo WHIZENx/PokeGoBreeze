@@ -74,7 +74,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           height={25}
           alt="img-pokemon"
           title={capitalize(value)}
-          src={APIService.getTypeSprite(capitalize(value))}
+          src={APIService.getTypeSprite(value)}
         />
       )),
     width: '150px',
@@ -301,7 +301,7 @@ const SearchTypes = () => {
                 style={{ padding: 15, backgroundColor: 'black', borderRadius: '50%' }}
                 className="sprite-type-large"
                 alt="img-type-pokemon"
-                src={APIService.getTypeHqSprite(capitalize(currentType))}
+                src={APIService.getTypeHqSprite(currentType)}
               />
             </div>
             <span
@@ -312,7 +312,7 @@ const SearchTypes = () => {
                 <img
                   className="pokemon-sprite-small sprite-type-select filter-shadow"
                   alt="img-type-pokemon"
-                  src={APIService.getTypeHqSprite(capitalize(currentType))}
+                  src={APIService.getTypeHqSprite(currentType)}
                 />
               </div>
               <span className="filter-shadow">{capitalize(currentType)}</span>

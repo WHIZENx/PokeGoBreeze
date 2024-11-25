@@ -1,15 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../util/compute';
 import { splitAndCapitalize } from '../../util/utils';
-import ProgressBar from '../Sprites/ProgressBar/ProgressBar';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
 import { ICardPokemonInfoComponent } from '../models/component.model';
-import { combineClasses } from '../../util/extension';
+import { combineClasses, isInclude } from '../../util/extension';
 import { PokemonType } from '../../enums/type.enum';
+import { APIUrl } from '../../services/constants';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
@@ -80,6 +80,14 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               className="pokemon-sprite-large"
               alt="pokemon-img"
               src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                  e.currentTarget.src = APIService.getPokeFullAsset(props.id);
+                } else {
+                  e.currentTarget.src = APIService.getPokeFullSprite(0);
+                }
+              }}
             />
           </span>
         </div>
@@ -92,38 +100,20 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           )}`}</span>
         </b>
         <div className="element-top">
-          <div className="d-flex align-items-center w-100">
-            <span className="caption text-black">ATK</span>
-            <ProgressBar
-              style={{ marginLeft: 3 }}
-              height={10}
-              value={props.pokemonStat.atk}
-              maxValue={props.atkMaxStats}
-              bgColor="#ececec"
-              color="var(--bs-danger)"
-            />
+          <div className="d-flex align-items-center justify-content-center w-100">
+            <b>
+              <span className="caption text-light-shadow" style={{ color: 'var(--bs-danger)' }}>{`ATK ${props.pokemonStat.atk}`}</span>
+            </b>
           </div>
-          <div className="d-flex align-items-center w-100">
-            <span className="caption text-black">DEF</span>
-            <ProgressBar
-              style={{ marginLeft: 3, marginTop: 5 }}
-              height={10}
-              value={props.pokemonStat.def}
-              maxValue={props.defMaxStats}
-              bgColor="#ececec"
-              color="var(--bs-success)"
-            />
+          <div className="d-flex align-items-center justify-content-center w-100">
+            <b>
+              <span className="caption text-light-shadow" style={{ color: 'var(--bs-success)' }}>{`DEF ${props.pokemonStat.def}`}</span>
+            </b>
           </div>
-          <div className="d-flex align-items-center w-100">
-            <span className="caption text-black">STA</span>
-            <ProgressBar
-              style={{ marginLeft: 3, marginTop: 5 }}
-              height={10}
-              value={props.pokemonStat.sta}
-              maxValue={props.staMaxStats}
-              bgColor="#ececec"
-              color="var(--bs-info)"
-            />
+          <div className="d-flex align-items-center justify-content-center w-100">
+            <b>
+              <span className="caption text-light-shadow" style={{ color: 'var(--bs-info)' }}>{`STA ${props.pokemonStat.sta}`}</span>
+            </b>
           </div>
         </div>
       </Link>
