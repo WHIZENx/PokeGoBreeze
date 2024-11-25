@@ -51,7 +51,7 @@ import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../util/extension';
 import { GenderType } from './enums/asset.enum';
-import { EqualMode, IncludeMode } from '../util/enums/string.enum';
+import { EqualMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
 import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType, LeagueConditionType } from './enums/option.enum';
 import { StatsBase } from './models/stats.model';
@@ -669,7 +669,8 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       }
       let gender = GenderType.GenderLess;
       const isShiny = isIncludeList(formSet, `${formSet[count].replace('.icon', '')}.s.icon`);
-      isMega = isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+      const pokemonType = getPokemonType(form);
+      isMega = pokemonType === PokemonType.Mega;
       if (!isInclude(formSet[count], '.g2.') && isIncludeList(formSet, `${formSet[count].replace('.icon', '')}.g2.icon`)) {
         gender = GenderType.Male;
       } else if (isInclude(formSet[count], '.g2.')) {
@@ -766,7 +767,8 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       } else {
         form = form.replace(/[a-z]/g, '');
       }
-      isMega = isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+      const pokemonType = getPokemonType(form);
+      isMega = pokemonType === PokemonType.Mega;
       return new CryPath({
         form,
         path: sound,
