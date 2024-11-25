@@ -39,7 +39,7 @@ const Info = (props: IInfoComponent) => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= value[type.toUpperCase()];
+          valueEffective *= value[type.toUpperCase()] || 1;
         });
         if (valueEffective >= 2.56) {
           data.veryWeak?.push(key);

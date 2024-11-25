@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import { getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 
 import './SpecialForm.scss';
 import { StoreState } from '../../../store/models/state.model';
@@ -10,6 +10,7 @@ import { IFormSpecialComponent } from '../../models/component.model';
 import { isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
+import { Link } from 'react-router-dom';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -39,6 +40,8 @@ const SpecialForm = (props: IFormSpecialComponent) => {
         })
         .filter((item) => !isUndefined(item.id));
       setArrEvoList(result);
+    } else {
+      setArrEvoList([]);
     }
   }, [pokemonType, props.formList]);
 
@@ -129,9 +132,11 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                         width={25}
                         height={25}
                         alt="img-pokemon"
-                        src={APIService.getTypeSprite(capitalize(getCombatMove(getQuestEvo(value.name).requireMove)?.type))}
+                        src={APIService.getTypeSprite(getCombatMove(getQuestEvo(value.name).requireMove)?.type)}
                       />
-                      <b>{splitAndCapitalize(getQuestEvo(value.name).requireMove, '_', ' ')}</b>
+                      <Link to={`../move/${getCombatMove(getQuestEvo(value.name).requireMove)?.id}`}>
+                        <b>{splitAndCapitalize(getQuestEvo(value.name).requireMove, '_', ' ')}</b>
+                      </Link>
                     </span>
                   )}
                 </li>

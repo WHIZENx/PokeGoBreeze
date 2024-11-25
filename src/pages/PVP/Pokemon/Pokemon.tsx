@@ -206,7 +206,7 @@ const PokemonPVP = () => {
               rankingPoke?.pokemonType,
               0.8,
               undefined,
-              rankingPoke ? undefined : 'rgb(100, 100, 100)'
+              rankingPoke ? undefined : '#646464'
             ),
             paddingTop: 15,
             paddingBottom: 15,

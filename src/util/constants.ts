@@ -2,7 +2,7 @@ import { IOptions } from '../core/models/options.model';
 import { PVPInfo } from '../core/models/pvp.model';
 import { getOption } from '../core/options';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
-import { DynamicObj, getPropertyName } from './extension';
+import { DynamicObj, getPropertyName, toNumber } from './extension';
 import { LeagueType } from '../core/enums/league.enum';
 import { ChargeAbility } from '../pages/Tools/BattleDamage/enums/damage.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
@@ -337,7 +337,7 @@ export const leaguesTeamBattle: PVPInfo[] = [
 ];
 
 export const genRoman = (gen: number | string) => {
-  switch (gen) {
+  switch (toNumber(gen)) {
     case 1:
       return 'I';
     case 2:

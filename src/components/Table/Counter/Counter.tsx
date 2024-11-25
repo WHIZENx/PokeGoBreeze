@@ -2,14 +2,7 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import {
-  capitalize,
-  checkPokemonGO,
-  convertPokemonDataName,
-  getDmgMultiplyBonus,
-  getKeyEnum,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { checkPokemonGO, convertPokemonDataName, getDmgMultiplyBonus, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -162,7 +155,7 @@ const Counter = (props: ICounterComponent) => {
       selector: (row) => (
         <Link to={`../move/${row.fMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.fMove.type))} />
+            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove.type)} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
@@ -183,7 +176,7 @@ const Counter = (props: ICounterComponent) => {
       selector: (row) => (
         <Link to={`../move/${row.cMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(row.cMove.type))} />
+            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove.type)} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}

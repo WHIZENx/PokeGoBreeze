@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { capitalize, convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import { convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -128,7 +128,7 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const findMove = useCallback(() => {
-    const pokemon = data.pokemon.filter((item) =>
+    const pokemonFilter = data.pokemon.filter((item) =>
       props.form?.id || props.form?.pokemonType === PokemonType.Shadow || props.form?.pokemonType === PokemonType.Purified
         ? item.num === toNumber(props.data?.num)
         : isEqual(
@@ -137,30 +137,27 @@ const TableMove = (props: ITableMoveComponent) => {
             EqualMode.IgnoreCaseSensitive
           )
     );
-    if (isNotEmpty(pokemon)) {
+    if (isNotEmpty(pokemonFilter)) {
+      let pokemon: IPokemonData | undefined;
       if (
-        pokemon?.length === 1 ||
+        pokemonFilter.length === 1 ||
         (typeof props.form === 'string'
           ? isEqual(props.form, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
           : props.form?.pokemonType === PokemonType.GMax)
       ) {
-        filterMoveType(pokemon.at(0));
-        return setMove(setRankMove(pokemon.at(0)));
-      } else if (!isNotEmpty(pokemon) && props.id) {
-        const pokemon = data.pokemon.filter((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name)).at(0);
-        filterMoveType(pokemon);
-        setMove(setRankMove(pokemon));
+        pokemon = pokemonFilter.at(0);
+      } else if (!isNotEmpty(pokemonFilter) && props.id) {
+        pokemon = data.pokemon.filter((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name)).at(0);
       } else {
-        const formName = convertPokemonAPIDataName(props.form?.name);
-        const result = pokemon?.find((item) => props.form && isEqual(item.fullName, formName));
+        const result = pokemonFilter.find((item) => props.form && isEqual(item.fullName, convertPokemonAPIDataName(props.form?.name)));
         if (isUndefined(result)) {
-          filterMoveType(pokemon?.find((item) => isEqual(item.name, item.baseSpecies)));
-          setMove(setRankMove(pokemon?.at(0)));
+          pokemon = pokemonFilter.find((item) => isEqual(item.name, item.baseSpecies));
         } else {
-          filterMoveType(result);
-          setMove(setRankMove(result));
+          pokemon = result;
         }
       }
+      filterMoveType(pokemon);
+      setMove(setRankMove(pokemon));
     }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA]);
 
@@ -174,7 +171,7 @@ const TableMove = (props: ITableMoveComponent) => {
       props.statATK * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.Atk),
       props.statDEF * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.Def),
       props.statSTA,
-      props.data?.types?.map((type) => capitalize(type))
+      props.data?.types
     );
   };
 
@@ -251,7 +248,7 @@ const TableMove = (props: ITableMoveComponent) => {
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
           <Link to={`../move/${value.fMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.fMove.type))} />
+              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.fMove.type)} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
@@ -266,7 +263,7 @@ const TableMove = (props: ITableMoveComponent) => {
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
           <Link to={`../move/${value.cMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.cMove.type))} />
+              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.cMove.type)} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
@@ -293,7 +290,7 @@ const TableMove = (props: ITableMoveComponent) => {
             <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
               <Link to={`../move/${value.id}`} className="d-block">
                 <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(capitalize(value.type))} />
+                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.type)} />
                 </div>
                 <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>

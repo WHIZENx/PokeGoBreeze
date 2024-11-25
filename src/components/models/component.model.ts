@@ -165,7 +165,6 @@ export interface IEvolutionComponent {
   setId?: (id: number) => void;
   pokemonRouter: ReduxRouterState;
   pokemonType?: PokemonType;
-  setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
   isLoadedForms: boolean;
 }
 

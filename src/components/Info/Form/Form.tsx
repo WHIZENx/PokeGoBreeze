@@ -263,7 +263,6 @@ const FormComponent = (props: IFormInfoComponent) => {
               region={props.region}
               pokemonRouter={props.pokemonRouter}
               pokemonType={props.form?.form.pokemonType}
-              setProgress={props.setProgress}
               isLoadedForms={props.isLoadedForms}
             />
           </div>
@@ -278,7 +277,6 @@ const FormComponent = (props: IFormInfoComponent) => {
           region={props.region}
           pokemonRouter={props.pokemonRouter}
           pokemonType={props.form?.form.pokemonType}
-          setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
         />
       )}

@@ -1,7 +1,7 @@
 import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IOptions } from '../../core/models/options.model';
-import { IPokemonData, PokemonData } from '../../core/models/pokemon.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
 import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
@@ -339,7 +339,7 @@ export class QueryMovesPokemon {
   typeEff: ITypeEff | undefined;
   weatherBoost: IWeatherBoost | undefined;
   combat: ICombat[] = [];
-  pokemon = new PokemonData();
+  pokemon: IPokemonData;
   atk: number;
   def: number;
   sta: number;
@@ -351,6 +351,7 @@ export class QueryMovesPokemon {
     typeEff: ITypeEff | undefined,
     weatherBoost: IWeatherBoost | undefined,
     combat: ICombat[],
+    pokemon: IPokemonData,
     atk: number,
     def: number,
     sta: number,
@@ -361,6 +362,7 @@ export class QueryMovesPokemon {
     this.typeEff = typeEff;
     this.weatherBoost = weatherBoost;
     this.combat = combat;
+    this.pokemon = pokemon;
     this.atk = atk;
     this.def = def;
     this.sta = sta;
