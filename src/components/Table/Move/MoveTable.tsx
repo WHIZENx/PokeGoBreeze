@@ -188,8 +188,10 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const renderTable = (table: TableType) => {
     let tableType = getPropertyName(stateSorted, (o) => o.defensive) as 'defensive' | 'offensive';
+    let max = move.maxDef;
     if (table === TableType.Offensive) {
       tableType = getPropertyName(stateSorted, (o) => o.offensive) as 'offensive';
+      max = move.maxOff;
     }
     return (
       <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
@@ -231,7 +233,7 @@ const TableMove = (props: ITableMoveComponent) => {
             {move.data
               .sort((a, b) => sortFunc(a, b, table))
               .map((value, index) => (
-                <Fragment key={index}>{renderBestMovesetTable(value, move.maxOff, table)}</Fragment>
+                <Fragment key={index}>{renderBestMovesetTable(value, max, table)}</Fragment>
               ))}
           </tbody>
         </table>
