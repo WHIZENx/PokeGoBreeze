@@ -165,7 +165,6 @@ export interface IEvolutionComponent {
   setId?: (id: number) => void;
   pokemonRouter: ReduxRouterState;
   pokemonType?: PokemonType;
-  setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
   isLoadedForms: boolean;
 }
 
@@ -194,8 +193,10 @@ export interface IFromChangeComponent {
 }
 
 export interface IFormSpecialComponent {
-  formList: IPokemonFormModify[][];
+  formList: IPokemonFormModify[][] | undefined;
   id: number | undefined;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export interface IStatsComponent {

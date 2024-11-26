@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { capitalize, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import { getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
@@ -43,7 +43,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
               style={{ padding: 5, backgroundColor: 'black' }}
               className="sprite-type"
               alt="img-type-pokemon"
-              src={APIService.getTypeHqSprite(capitalize(move?.type))}
+              src={APIService.getTypeHqSprite(move?.type)}
             />
           </div>
         </span>

@@ -51,7 +51,7 @@ import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../util/extension';
 import { GenderType } from './enums/asset.enum';
-import { EqualMode, IncludeMode } from '../util/enums/string.enum';
+import { EqualMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
 import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType, LeagueConditionType } from './enums/option.enum';
 import { StatsBase } from './models/stats.model';
@@ -148,11 +148,11 @@ const optionFormNoneSpecial = (data: PokemonDataGM[]) => {
   return result;
 };
 
-const findPokemonData = (id: number, name: string, isDefault = false): IPokemonData | undefined => {
+const findPokemonData = (id: number, name: string, isDefault = false) => {
   return Object.values(pokemonStoreData).find(
-    (pokemon: IPokemonData) =>
+    (pokemon) =>
       pokemon.num === id && isEqual(name, convertPokemonDataName(isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug))
-  );
+  ) as IPokemonData | undefined;
 };
 
 const convertAndReplaceNameGO = (name: string, defaultName = '') => {
@@ -393,7 +393,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
           tempEvolutionName: name + evo.temporaryEvolution.split('TEMP_EVOLUTION').at(1),
           firstTempEvolution: evo.temporaryEvolutionEnergyCost,
           tempEvolution: evo.temporaryEvolutionEnergyCostSubsequent,
-          requireMove: evo.obEvolutionBranchRequiredMove,
+          requireMove: evo.obEvolutionBranchRequiredMove ?? evo.evolutionMoveRequirement,
         };
         if (isNotEmpty(optional.tempEvo)) {
           optional.tempEvo?.push(tempEvo);
@@ -442,10 +442,10 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
 const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
   Object.values(pokemonStoreData)
     .filter(
-      (pokemon: IPokemonData) =>
+      (pokemon) =>
         pokemon.num > 0 && !result.some((item) => isEqual(item.fullName, convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug)))
     )
-    .forEach((item: IPokemonData) => {
+    .forEach((item) => {
       const pokemon = new PokemonModel(item.num, convertPokemonDataName(item.name));
 
       pokemon.pokemonId = convertPokemonDataName(item.baseSpecies ?? item.name);
@@ -490,6 +490,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
           pokemon.eliteQuickMove = pokemonSettings.eliteQuickMove;
           pokemon.eliteCinematicMove = pokemonSettings.eliteCinematicMove;
           pokemon.obSpecialAttackMoves = pokemonSettings.obSpecialAttackMoves;
+          pokemon.nonTmCinematicMoves = pokemonSettings.nonTmCinematicMoves;
         }
 
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
@@ -668,7 +669,8 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       }
       let gender = GenderType.GenderLess;
       const isShiny = isIncludeList(formSet, `${formSet[count].replace('.icon', '')}.s.icon`);
-      isMega = isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+      const pokemonType = getPokemonType(form);
+      isMega = pokemonType === PokemonType.Mega;
       if (!isInclude(formSet[count], '.g2.') && isIncludeList(formSet, `${formSet[count].replace('.icon', '')}.g2.icon`)) {
         gender = GenderType.Male;
       } else if (isInclude(formSet[count], '.g2.')) {
@@ -765,7 +767,8 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       } else {
         form = form.replace(/[a-z]/g, '');
       }
-      isMega = isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive);
+      const pokemonType = getPokemonType(form);
+      isMega = pokemonType === PokemonType.Mega;
       return new CryPath({
         form,
         path: sound,
@@ -1170,6 +1173,7 @@ export const mappingMoveSetPokemonGO = (pokemonData: IPokemonData[], combat: ICo
     pokemon.eliteQuickMoves = convertMoveName(combat, pokemon.eliteQuickMoves);
     pokemon.eliteCinematicMoves = convertMoveName(combat, pokemon.eliteCinematicMoves);
     pokemon.specialMoves = convertMoveName(combat, pokemon.specialMoves);
+    pokemon.exclusiveMoves = convertMoveName(combat, pokemon.exclusiveMoves);
     pokemon.purifiedMoves = convertMoveName(combat, pokemon.purifiedMoves);
     pokemon.shadowMoves = convertMoveName(combat, pokemon.shadowMoves);
   });

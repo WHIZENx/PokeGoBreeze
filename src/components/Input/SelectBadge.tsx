@@ -22,7 +22,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
           </span>
           {priorityNumber > 0 && (
             <span className="position-badge" style={{ width: 20 }}>
-              <img alt="badge-type" className="badge-type-sprit" src={APIService.getTypeHqSprite(capitalize(props.type))} />
+              <img alt="badge-type" className="badge-type-sprit" src={APIService.getTypeHqSprite(props.type)} />
             </span>
           )}
         </div>

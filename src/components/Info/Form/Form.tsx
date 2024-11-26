@@ -23,8 +23,6 @@ import TableMove from '../../Table/Move/MoveTable';
 import Info from '../Info';
 import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
-import Mega from '../Mega/Mega';
-import Primal from '../Primal/Primal';
 import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
@@ -32,6 +30,7 @@ import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { WeightHeight } from '../../../core/models/pokemon.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import SpecialForm from '../SpecialForm/SpecialForm';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -264,22 +263,10 @@ const FormComponent = (props: IFormInfoComponent) => {
               region={props.region}
               pokemonRouter={props.pokemonRouter}
               pokemonType={props.form?.form.pokemonType}
-              setProgress={props.setProgress}
               isLoadedForms={props.isLoadedForms}
             />
           </div>
-          {isNotEmpty(props.formList) &&
-            props.formList?.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Mega)) && (
-              <div className="col-xl" style={{ padding: 0 }}>
-                <Mega formList={props.formList} id={props.defaultId} />
-              </div>
-            )}
-          {isNotEmpty(props.formList) &&
-            props.formList?.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal)) && (
-              <div className="col-xl" style={{ padding: 0 }}>
-                <Primal formList={props.formList} id={props.defaultId} />
-              </div>
-            )}
+          <SpecialForm className={'col-xl'} style={{ padding: 0 }} formList={props.formList} id={props.defaultId} />
         </div>
       ) : (
         <Evolution
@@ -290,7 +277,6 @@ const FormComponent = (props: IFormInfoComponent) => {
           region={props.region}
           pokemonRouter={props.pokemonRouter}
           pokemonType={props.form?.form.pokemonType}
-          setProgress={props.setProgress}
           isLoadedForms={props.isLoadedForms}
         />
       )}

@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 export enum TableType {
-  Defensive = 'defensive',
-  Offensive = 'offensive',
+  Defensive = 0,
+  Offensive,
 }
 
 export enum TypeSorted {
-  Eff = 'eff',
-  Fast = 'fast',
-  Charge = 'charged',
+  Effective = 0,
+  Fast,
+  Charge,
 }

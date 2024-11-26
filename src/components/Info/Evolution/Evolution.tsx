@@ -26,6 +26,7 @@ import {
   convertModelSpritName,
   convertPokemonAPIDataName,
   getDataWithKey,
+  getPokemonType,
   splitAndCapitalize,
 } from '../../../util/utils';
 
@@ -61,7 +62,7 @@ interface IPokemonEvo {
   id: number;
   isBaby: boolean;
   form: string;
-  isGmax: boolean;
+  pokemonType: PokemonType;
   sprite: string;
 }
 
@@ -71,7 +72,7 @@ class PokemonEvo implements IPokemonEvo {
   id: number;
   isBaby: boolean;
   form: string;
-  isGmax: boolean;
+  pokemonType: PokemonType;
   sprite: string;
 
   constructor(
@@ -79,8 +80,8 @@ class PokemonEvo implements IPokemonEvo {
     id: number | undefined,
     form: string | null | undefined,
     sprite: string,
+    pokemonType = PokemonType.None,
     prev = '',
-    isGmax = false,
     isBaby = false
   ) {
     this.prev = prev;
@@ -88,7 +89,7 @@ class PokemonEvo implements IPokemonEvo {
     this.id = toNumber(id);
     this.isBaby = isBaby;
     this.form = getValueOrDefault(String, form);
-    this.isGmax = isGmax;
+    this.pokemonType = pokemonType;
     this.sprite = sprite;
   }
 }
@@ -114,8 +115,8 @@ const Evolution = (props: IEvolutionComponent) => {
       pokemon?.num,
       pokemon?.forme,
       convertModelSpritName(pokemon?.name),
+      pokemon?.pokemonType,
       undefined,
-      false,
       pokemon?.isBaby
     );
   };
@@ -140,7 +141,8 @@ const Evolution = (props: IEvolutionComponent) => {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
 
-    return new PokemonEvo(name, pokemon.id, form, sprite, pokemon.prev, false, pokemon.isBaby);
+    const pokemonType = getPokemonType(form);
+    return new PokemonEvo(name, pokemon.id, form, sprite, pokemonType, pokemon.prev, pokemon.isBaby);
   };
 
   const getPrevEvoChainJSON = (name: string | null | undefined, arr: IPokemonEvo[][]) => {
@@ -350,7 +352,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
   };
 
-  const getGmaxChain = (id: number, form: IForm) => {
+  const getGMaxChain = (id: number, form: IForm) => {
     return setArrEvoList([
       [
         new PokemonEvo(
@@ -358,8 +360,7 @@ const Evolution = (props: IEvolutionComponent) => {
           id,
           FORM_NORMAL.toLowerCase(),
           convertModelSpritName(form.name.replace(`-${FORM_GMAX.toLowerCase()}`, '')),
-          undefined,
-          true
+          PokemonType.GMax
         ),
       ],
       [
@@ -368,8 +369,7 @@ const Evolution = (props: IEvolutionComponent) => {
           id,
           FORM_GMAX.toLowerCase(),
           convertModelSpritName(form.name.replace(`-${FORM_GMAX.toLowerCase()}`, '-gigantamax').replace('-low-key', '')),
-          undefined,
-          true
+          PokemonType.GMax
         ),
       ],
     ]);
@@ -380,7 +380,7 @@ const Evolution = (props: IEvolutionComponent) => {
       if (props.forme.pokemonType !== PokemonType.GMax) {
         getEvoChainStore(props.id, props.forme);
       } else {
-        getGmaxChain(props.id, props.forme);
+        getGMaxChain(props.id, props.forme);
       }
     }
   }, [props.forme, props.id]);
@@ -443,7 +443,7 @@ const Evolution = (props: IEvolutionComponent) => {
               labels={{
                 end: (
                   <div className="position-absolute" style={{ left: -40 }}>
-                    {!value.isGmax && (
+                    {value.pokemonType !== PokemonType.GMax && (
                       <div>
                         {!data?.itemCost && (data?.candyCost || data?.purificationEvoCandyCost) && (
                           <span

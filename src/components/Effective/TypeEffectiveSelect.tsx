@@ -28,7 +28,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
                     <img
                       className="pokemon-sprite-small sprite-type-select filter-shadow"
                       alt="img-type-pokemon"
-                      src={APIService.getTypeHqSprite(capitalize(value))}
+                      src={APIService.getTypeHqSprite(value)}
                     />
                   </div>
                   <span className="filter-shadow">{capitalize(value)}</span>

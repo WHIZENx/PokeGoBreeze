@@ -2,6 +2,11 @@
   min-width: 350px;
   height: 30px;
   margin: 10px 0;
+  cursor: pointer;
+}
+
+.progress:hover {
+  filter: drop-shadow(2px 2px 2px rgb(10 10 10 / 50%));
 }
 
 .stats-text {

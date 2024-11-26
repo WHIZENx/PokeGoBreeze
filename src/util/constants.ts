@@ -2,7 +2,7 @@ import { IOptions } from '../core/models/options.model';
 import { PVPInfo } from '../core/models/pvp.model';
 import { getOption } from '../core/options';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
-import { DynamicObj, getPropertyName } from './extension';
+import { DynamicObj, getPropertyName, toNumber } from './extension';
 import { LeagueType } from '../core/enums/league.enum';
 import { ChargeAbility } from '../pages/Tools/BattleDamage/enums/damage.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
@@ -109,9 +109,10 @@ export const FORM_ARMOR = 'ARMOR';
 export const FORM_MEGA_X = 'MEGA_X';
 export const FORM_MEGA_Y = 'MEGA_Y';
 
-export const TYPE_LEGENDARY = 'LEGENDARY';
-export const TYPE_MYTHIC = 'MYTHIC';
-export const TYPE_ULTRA_BEAST = 'ULTRA_BEAST';
+// Pokémon Class
+export const CLASS_LEGENDARY = 'LEGENDARY';
+export const CLASS_MYTHIC = 'MYTHIC';
+export const CLASS_ULTRA_BEAST = 'ULTRA_BEAST';
 
 export const DEFAULT_SHEET_PAGE = 1;
 export const DEFAULT_SHEET_ROW = 10;
@@ -336,7 +337,7 @@ export const leaguesTeamBattle: PVPInfo[] = [
 ];
 
 export const genRoman = (gen: number | string) => {
-  switch (gen) {
+  switch (toNumber(gen)) {
     case 1:
       return 'I';
     case 2:

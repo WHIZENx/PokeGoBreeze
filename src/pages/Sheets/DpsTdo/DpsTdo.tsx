@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, getKeyEnum, getMoveType } from '../../../util/utils';
-import {
-  DEFAULT_SHEET_PAGE,
-  DEFAULT_SHEET_ROW,
-  DEFAULT_TYPES,
-  levelList,
-  MAX_IV,
-  MIN_IV,
-  MIN_LEVEL,
-  TYPE_LEGENDARY,
-  TYPE_MYTHIC,
-  TYPE_ULTRA_BEAST,
-} from '../../../util/constants';
+import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, DEFAULT_TYPES, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -39,7 +28,7 @@ import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'history';
-import { MoveType, PokemonType, TypeMove } from '../../../enums/type.enum';
+import { MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -167,7 +156,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           height={25}
           alt="img-pokemon"
           title={capitalize(value)}
-          src={APIService.getTypeSprite(capitalize(value))}
+          src={APIService.getTypeSprite(value)}
         />
       )),
     width: '150px',
@@ -176,13 +165,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Fast Move',
     selector: (row) => (
       <Link className="d-flex align-items-center" to={`/move/${row.fMove?.id}`} title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}>
-        <img
-          style={{ marginRight: 10 }}
-          width={25}
-          height={25}
-          alt="img-pokemon"
-          src={APIService.getTypeSprite(capitalize(row.fMove?.type))}
-        />{' '}
+        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove?.type)} />{' '}
         <div>
           <span className="text-b-ic">{splitAndCapitalize(row.fMove?.name, '_', ' ')}</span>
           {row.fMoveType !== MoveType.None && (
@@ -201,13 +184,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Charged Move',
     selector: (row) => (
       <Link className="d-flex align-items-center" to={`/move/${row.cMove?.id}`} title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}>
-        <img
-          style={{ marginRight: 10 }}
-          width={25}
-          height={25}
-          alt="img-pokemon"
-          src={APIService.getTypeSprite(capitalize(row.cMove?.type))}
-        />{' '}
+        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove?.type)} />{' '}
         <div>
           <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ')}</span>
           {row.cMoveType !== MoveType.None && (
@@ -283,20 +260,20 @@ const DpsTdo = () => {
 
   const {
     isMatch,
-    showEliteMove,
+    showSpecialMove,
     showShadow,
     enableShadow,
     showMega,
-    showGmax,
+    showGMax,
     showPrimal,
     showLegendary,
     showMythic,
     showUltraBeast,
-    enableElite,
+    enableSpecial,
     enableMega,
     enableBest,
     enableDelay,
-    enableGmax,
+    enableGMax,
     enablePrimal,
     enableLegendary,
     enableMythic,
@@ -412,6 +389,7 @@ const DpsTdo = () => {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
       }
       addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType);
+      addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, vf, fMoveType);
     });
   };
 
@@ -454,22 +432,22 @@ const DpsTdo = () => {
             isInclude(item.pokemon.num, searchTerm));
 
       const boolShowShadow = !showShadow && item.pokemonType === PokemonType.Shadow;
-      const boolShowElite = !showEliteMove && (item.fMoveType === MoveType.Elite || item.cMoveType === MoveType.Elite);
+      const boolShowElite = !showSpecialMove && (item.fMoveType !== MoveType.None || item.cMoveType !== MoveType.None);
       const boolShowMega = !showMega && item.pokemon.pokemonType === PokemonType.Mega;
-      const boolShowGmax = !showGmax && item.pokemon.pokemonType === PokemonType.GMax;
+      const boolShowGMax = !showGMax && item.pokemon.pokemonType === PokemonType.GMax;
       const boolShowPrimal = !showPrimal && item.pokemon.pokemonType === PokemonType.Primal;
-      const boolShowLegend = !showLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
-      const boolShowMythic = !showMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
-      const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
+      const boolShowLegend = !showLegendary && item.pokemon.pokemonClass === PokemonClass.Legendary;
+      const boolShowMythic = !showMythic && item.pokemon.pokemonClass === PokemonClass.Mythic;
+      const boolShowUltra = !showUltraBeast && item.pokemon.pokemonClass === PokemonClass.UltraBeast;
 
       const boolOnlyShadow = enableShadow && item.pokemonType === PokemonType.Shadow;
-      const boolOnlyElite = enableElite && (item.fMoveType === MoveType.Elite || item.cMoveType === MoveType.Elite);
+      const boolOnlyElite = enableSpecial && (item.fMoveType !== MoveType.None || item.cMoveType !== MoveType.None);
       const boolOnlyMega = enableMega && item.pokemon.pokemonType === PokemonType.Mega;
-      const boolOnlyGmax = enableGmax && item.pokemon.pokemonType === PokemonType.GMax;
+      const boolOnlyGMax = enableGMax && item.pokemon.pokemonType === PokemonType.GMax;
       const boolOnlyPrimal = enablePrimal && item.pokemon.pokemonType === PokemonType.Primal;
-      const boolOnlyLegend = enableLegendary && item.pokemon.pokemonClass === TYPE_LEGENDARY;
-      const boolOnlyMythic = enableMythic && item.pokemon.pokemonClass === TYPE_MYTHIC;
-      const boolOnlyUltra = enableUltraBeast && item.pokemon.pokemonClass === TYPE_ULTRA_BEAST;
+      const boolOnlyLegend = enableLegendary && item.pokemon.pokemonClass === PokemonClass.Legendary;
+      const boolOnlyMythic = enableMythic && item.pokemon.pokemonClass === PokemonClass.Mythic;
+      const boolOnlyUltra = enableUltraBeast && item.pokemon.pokemonClass === PokemonClass.UltraBeast;
 
       let boolReleaseGO = true;
       if (releasedGO) {
@@ -480,7 +458,16 @@ const DpsTdo = () => {
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, result?.releasedGO);
       }
-      if (enableShadow || enableElite || enableMega || enableGmax || enablePrimal || enableLegendary || enableMythic || enableUltraBeast) {
+      if (
+        enableShadow ||
+        enableSpecial ||
+        enableMega ||
+        enableGMax ||
+        enablePrimal ||
+        enableLegendary ||
+        enableMythic ||
+        enableUltraBeast
+      ) {
         return (
           boolFilterType &&
           boolFilterPoke &&
@@ -489,7 +476,7 @@ const DpsTdo = () => {
             boolShowShadow ||
             boolShowElite ||
             boolShowMega ||
-            boolShowGmax ||
+            boolShowGMax ||
             boolShowPrimal ||
             boolShowLegend ||
             boolShowMythic ||
@@ -499,7 +486,7 @@ const DpsTdo = () => {
           (boolOnlyShadow ||
             boolOnlyElite ||
             boolOnlyMega ||
-            boolOnlyGmax ||
+            boolOnlyGMax ||
             boolOnlyPrimal ||
             boolOnlyLegend ||
             boolOnlyMythic ||
@@ -514,7 +501,7 @@ const DpsTdo = () => {
             boolShowShadow ||
             boolShowElite ||
             boolShowMega ||
-            boolShowGmax ||
+            boolShowGMax ||
             boolShowPrimal ||
             boolShowLegend ||
             boolShowMythic ||
@@ -569,17 +556,17 @@ const DpsTdo = () => {
     isMatch,
     selectTypes,
     showShadow,
-    showEliteMove,
+    showSpecialMove,
     showMega,
-    showGmax,
+    showGMax,
     showPrimal,
     showLegendary,
     showMythic,
     showUltraBeast,
-    enableElite,
+    enableSpecial,
     enableShadow,
     enableMega,
-    enableGmax,
+    enableGMax,
     enablePrimal,
     enableLegendary,
     enableMythic,
@@ -689,7 +676,7 @@ const DpsTdo = () => {
                 label={getKeyEnum(PokemonType, PokemonType.Mega)}
               />
               <FormControlLabel
-                control={<Checkbox checked={showGmax} onChange={(_, check) => setFilters({ ...filters, showGmax: check })} />}
+                control={<Checkbox checked={showGMax} onChange={(_, check) => setFilters({ ...filters, showGMax: check })} />}
                 label={getKeyEnum(PokemonType, PokemonType.GMax)}
               />
               <FormControlLabel
@@ -709,8 +696,8 @@ const DpsTdo = () => {
                 label="Ultra Beast"
               />
               <FormControlLabel
-                control={<Checkbox checked={showEliteMove} onChange={(_, check) => setFilters({ ...filters, showEliteMove: check })} />}
-                label="Elite Move"
+                control={<Checkbox checked={showSpecialMove} onChange={(_, check) => setFilters({ ...filters, showSpecialMove: check })} />}
+                label="Special Moves"
               />
             </div>
             <div className="input-group border-input">
@@ -738,9 +725,9 @@ const DpsTdo = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={enableGmax}
-                    disabled={!showGmax}
-                    onChange={(_, check) => setFilters({ ...filters, enableGmax: check })}
+                    checked={enableGMax}
+                    disabled={!showGMax}
+                    onChange={(_, check) => setFilters({ ...filters, enableGMax: check })}
                   />
                 }
                 label={getKeyEnum(PokemonType, PokemonType.GMax)}
@@ -788,12 +775,12 @@ const DpsTdo = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={enableElite}
-                    disabled={!showEliteMove}
-                    onChange={(_, check) => setFilters({ ...filters, enableElite: check })}
+                    checked={enableSpecial}
+                    disabled={!showSpecialMove}
+                    onChange={(_, check) => setFilters({ ...filters, enableSpecial: check })}
                   />
                 }
-                label="Elite Moves"
+                label="Special Moves"
               />
             </div>
             <div className="input-group">

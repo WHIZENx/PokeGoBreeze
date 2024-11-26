@@ -1,8 +1,8 @@
-import { PokemonType } from '../../enums/type.enum';
+import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
 import { FORM_NORMAL, versionList } from '../../util/constants';
 import { getValueOrDefault, toNumber } from '../../util/extension';
-import { convertPokemonImageName, getPokemonType, splitAndCapitalize } from '../../util/utils';
+import { convertPokemonImageName, splitAndCapitalize } from '../../util/utils';
 import { IImage } from './asset.model';
 import { IPokemonData } from './pokemon.model';
 import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
@@ -20,7 +20,7 @@ export interface IPokemonHomeModel {
   region: string | null;
   version: number;
   goStats: IStatsPokemonGO;
-  class: string | undefined | null;
+  pokemonClass: PokemonClass;
   releasedGO: boolean;
   image: IImage;
   pokemonType: PokemonType;
@@ -39,7 +39,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
   region: string | null;
   version: number;
   goStats = new StatsPokemonGO();
-  class: string | undefined | null;
+  pokemonClass = PokemonClass.None;
   releasedGO: boolean;
   image: IImage;
   pokemonType = PokemonType.Normal;
@@ -65,15 +65,15 @@ export class PokemonHomeModel implements IPokemonHomeModel {
       sta,
       prod: item.baseStats.atk * item.baseStats.def * sta,
     });
-    this.class = item.pokemonClass;
+    this.pokemonClass = item.pokemonClass;
     this.releasedGO = item.releasedGO;
     this.image = {
       default: assetForm?.default
         ? APIService.getPokemonModel(assetForm.default)
         : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.forme, '_', '-'))),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : undefined,
-      pokemonType: getPokemonType(this.forme),
+      pokemonType: item.pokemonType,
     };
-    this.pokemonType = getPokemonType(this.forme);
+    this.pokemonType = item.pokemonType;
   }
 }

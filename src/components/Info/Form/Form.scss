@@ -24,12 +24,12 @@
   height: 142px;
   margin: 2px 0;
   border: 1px solid gray;
-  background-color: rgb(225 225 225);
+  background-color: #e1e1e1;
   color: black;
 }
 
 .form-selected {
-  background-color: rgb(150 150 150) !important;
+  background-color: #969696 !important;
 }
 
 .btn-form:focus {
@@ -41,7 +41,7 @@
 
 .btn-form:hover:not(.form-selected) {
   border: 1px solid black !important;
-  background-color: rgb(200 200 200) !important;
+  background-color: #c8c8c8 !important;
   color: black;
 }
 

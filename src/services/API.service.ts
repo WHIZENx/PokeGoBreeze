@@ -5,6 +5,7 @@ import { Species } from '../core/models/API/species.model';
 import { getValueOrDefault, isEqual, isInclude, toNumber } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
+import { capitalize } from '../util/utils';
 
 class APIService {
   date: Date;
@@ -117,10 +118,11 @@ class APIService {
     return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
   }
 
-  getTypeHqSprite(type: string) {
+  getTypeHqSprite(type: string | undefined) {
     if (!type) {
       return this.getPokeSprite(0);
     }
+    type = capitalize(type);
     if (type === 'Fighting') {
       type = 'Fight';
     }

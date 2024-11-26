@@ -3,7 +3,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
 import APIService from '../../services/API.service';
-import { capitalize, getKeyEnum, splitAndCapitalize } from '../../util/utils';
+import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ICardSmallComponent } from '../models/component.model';
@@ -34,13 +34,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               className={combineClasses('d-flex align-items-center w-100 h-100', props.isDisable ? 'disable-card-move' : '')}
               style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
             >
-              <img
-                width={18}
-                height={18}
-                alt="type-logo"
-                style={{ marginRight: 10 }}
-                src={APIService.getTypeSprite(capitalize(data.type))}
-              />
+              <img width={18} height={18} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(data.type)} />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(data.name, '_', ' ')}</span>
               <span className="d-flex">
                 {props.value && props.value.moveType !== MoveType.None && (

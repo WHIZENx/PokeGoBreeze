@@ -1,6 +1,6 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/utils';
+import { splitAndCapitalize } from '../../../util/utils';
 import './TypeBar.scss';
 import { ITypeBarComponent } from '../../models/component.model';
 import { combineClasses } from '../../../util/extension';
@@ -13,7 +13,7 @@ const TypeBar = (props: ITypeBarComponent) => {
           style={{ padding: 5, backgroundColor: 'black' }}
           className="sprite-type"
           alt="img-type-pokemon"
-          src={APIService.getTypeHqSprite(capitalize(props.type))}
+          src={APIService.getTypeHqSprite(props.type)}
         />
       </span>
       <h3>{splitAndCapitalize(props.type?.toLowerCase(), '_', ' ')}</h3>

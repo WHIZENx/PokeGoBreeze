@@ -2,7 +2,7 @@ import { Badge } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { capitalize, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import { getKeyEnum, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle, TimelineElement } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -27,7 +27,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             <img
               className={combineClasses('pokemon-sprite-small sprite-type-select', isShadow ? 'filter-shadow' : '')}
               alt="img-type-pokemon"
-              src={APIService.getTypeHqSprite(capitalize(move.type))}
+              src={APIService.getTypeHqSprite(move.type)}
             />
           </div>
           <span className={combineClasses(!isShadow ? 'text-black' : 'filter-shadow')} style={{ fontSize: 14 }}>

@@ -15,6 +15,9 @@ import {
 } from '../core/models/stats.model';
 import { IPokemonDetail, Stats } from '../core/models/API/info.model';
 import {
+  CLASS_LEGENDARY,
+  CLASS_MYTHIC,
+  CLASS_ULTRA_BEAST,
   FORM_ALOLA,
   FORM_GALARIAN,
   FORM_GMAX,
@@ -38,8 +41,9 @@ import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, isNullOrUndefined, toNumber } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
-import { MoveType, PokemonType, TypeAction } from '../enums/type.enum';
+import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import { Options } from '../core/models/options.model';
+import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
 
 class Mask {
   value: number;
@@ -839,7 +843,8 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
   return pokemonForm;
 };
 
-export const replaceTempMoveName = (name: string) => {
+export const replaceTempMoveName = (name: string | number) => {
+  name = name.toString();
   if (name.endsWith('_FAST') || isInclude(name, '_FAST_')) {
     name = name.replace('_FAST', '');
   } else if (name.endsWith('_PLUS')) {
@@ -875,7 +880,8 @@ export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
     getValueOrDefault(Array, pokemon?.eliteCinematicMoves),
     getValueOrDefault(Array, pokemon?.shadowMoves),
     getValueOrDefault(Array, pokemon?.purifiedMoves),
-    getValueOrDefault(Array, pokemon?.specialMoves)
+    getValueOrDefault(Array, pokemon?.specialMoves),
+    getValueOrDefault(Array, pokemon?.exclusiveMoves)
   );
 };
 
@@ -910,6 +916,38 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, options?: Options
   }
 };
 
+export const addSelectMovesByType = (pokemonData: IPokemonData, moveType: TypeMove, selectMoves: ISelectMoveModel[] = []) => {
+  if (moveType === TypeMove.Fast) {
+    pokemonData.quickMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.None));
+    });
+    pokemonData.eliteQuickMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.Elite));
+    });
+  }
+  if (moveType === TypeMove.Charge) {
+    pokemonData.cinematicMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.None));
+    });
+    pokemonData.eliteCinematicMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.Elite));
+    });
+    pokemonData.shadowMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.Shadow));
+    });
+    pokemonData.purifiedMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.Purified));
+    });
+    pokemonData.specialMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.Special));
+    });
+    pokemonData.exclusiveMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.Exclusive));
+    });
+  }
+  return selectMoves;
+};
+
 export const getMoveType = (pokemonData?: IPokemonData, moveName?: string) => {
   if (isIncludeList(pokemonData?.eliteQuickMoves, moveName) || isIncludeList(pokemonData?.eliteCinematicMoves, moveName)) {
     return MoveType.Elite;
@@ -919,6 +957,8 @@ export const getMoveType = (pokemonData?: IPokemonData, moveName?: string) => {
     return MoveType.Purified;
   } else if (isIncludeList(pokemonData?.specialMoves, moveName)) {
     return MoveType.Special;
+  } else if (isIncludeList(pokemonData?.exclusiveMoves, moveName)) {
+    return MoveType.Exclusive;
   } else if (!isIncludeList(getAllMoves(pokemonData), moveName)) {
     return MoveType.Unavailable;
   }
@@ -940,6 +980,17 @@ export const getPokemonType = (formName?: string | number | null, isMega = false
     return PokemonType.GMax;
   }
   return PokemonType.None;
+};
+
+export const getPokemonClass = (className?: string | number | null) => {
+  if (isInclude(className, CLASS_LEGENDARY, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return PokemonClass.Legendary;
+  } else if (isInclude(className, CLASS_MYTHIC, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return PokemonClass.Mythic;
+  } else if (isInclude(className, CLASS_ULTRA_BEAST, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return PokemonClass.UltraBeast;
+  }
+  return PokemonClass.None;
 };
 
 export const getArrayBySeq = (length: number, startNumber = 0) => {

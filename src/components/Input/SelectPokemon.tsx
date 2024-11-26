@@ -4,13 +4,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useRef, useState } from 'react';
 
 import './Select.scss';
-import { retrieveMoves, splitAndCapitalize } from '../../util/utils';
+import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
-import { MoveType, TypeMove } from '../../enums/type.enum';
+import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { ISelectMoveModel, SelectMoveModel } from './models/select-move.model';
 import { ISelectPokemonComponent } from '../models/component.model';
 import { combineClasses, isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
@@ -81,31 +80,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   const findMove = (id: number, form: string | null | undefined, type: TypeMove) => {
     const result = retrieveMoves(pokemonData, id, form);
     if (result) {
-      const simpleMove: ISelectMoveModel[] = [];
-      if (type === TypeMove.Fast) {
-        result.quickMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, MoveType.None));
-        });
-        result.eliteQuickMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, MoveType.Elite));
-        });
-      } else {
-        result.cinematicMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, MoveType.None));
-        });
-        result.eliteCinematicMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, MoveType.Elite));
-        });
-        result.shadowMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, MoveType.Shadow));
-        });
-        result.purifiedMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, MoveType.Purified));
-        });
-        result.specialMoves?.forEach((value) => {
-          simpleMove.push(new SelectMoveModel(value, MoveType.Special));
-        });
-      }
+      const simpleMove = addSelectMovesByType(result, type);
       return simpleMove[0];
     }
   };
