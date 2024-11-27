@@ -136,7 +136,7 @@ const Sticker = () => {
                         src={value.stickerUrl ?? APIService.getSticker(value.id.toLowerCase())}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
-                          e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
+                          e.currentTarget.src = APIService.getPokeIconSprite();
                         }}
                       />
                     </Badge>

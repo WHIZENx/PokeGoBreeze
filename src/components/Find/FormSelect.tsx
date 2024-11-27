@@ -360,7 +360,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                       height={64}
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
+                        e.currentTarget.src = APIService.getPokeIconSprite();
                       }}
                       alt="img-icon-form"
                       src={formIconAssets(value, currentForm.defaultId)}

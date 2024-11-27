@@ -98,6 +98,7 @@ const Stats = (props: IStatsComponent) => {
         id={props.id}
         form={props.form}
         statType={TypeAction.Atk}
+        isDisabled={props.isDisabled}
       />
       <StatsBar
         tag="DEF"
@@ -109,6 +110,7 @@ const Stats = (props: IStatsComponent) => {
         id={props.id}
         form={props.form}
         statType={TypeAction.Def}
+        isDisabled={props.isDisabled}
       />
       <StatsBar
         tag="STA"
@@ -120,6 +122,7 @@ const Stats = (props: IStatsComponent) => {
         id={props.id}
         form={props.form}
         statType={TypeAction.Sta}
+        isDisabled={props.isDisabled}
       />
       <StatsBar
         tag="Stat Prod"
@@ -132,6 +135,7 @@ const Stats = (props: IStatsComponent) => {
         id={props.id}
         form={props.form}
         statType={TypeAction.Prod}
+        isDisabled={props.isDisabled}
       />
     </div>
   );

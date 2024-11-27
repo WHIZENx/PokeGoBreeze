@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { capitalize, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, generateParamForm, splitAndCapitalize } from '../../../util/utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -433,7 +433,7 @@ const FindBattle = () => {
               <h4 className="text-decoration-underline">Recommend Battle League</h4>
               {bestInLeague.map((value, index) => (
                 <Link
-                  to={`/pokemon/${value.id}${value.form ? `?form=${value.form.toLowerCase().replaceAll('_', '-')}` : ''}`}
+                  to={`/pokemon/${value.id}${generateParamForm(value.form)}`}
                   className="d-inline-block contain-poke-best-league border-best-poke"
                   key={index}
                   title={`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}
@@ -500,7 +500,7 @@ const FindBattle = () => {
                         {value.map((item, index) => (
                           <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{ padding: 0 }}>
                             <Link
-                              to={`/pokemon/${item.id}${item.form ? `?form=${item.form.toLowerCase().replaceAll('_', '-')}` : ''}`}
+                              to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                               title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
                             >
                               <Badge color="primary" overlap="circular" badgeContent={index + 1}>

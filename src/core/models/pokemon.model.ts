@@ -1,6 +1,6 @@
 import { capitalize, getPokemonClass, replaceTempMoveName } from '../../util/utils';
 import { ICombat } from './combat.model';
-import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
+import { DEFAULT_SPRITE_NAME, FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
@@ -547,7 +547,7 @@ export class PokemonData implements IPokemonData {
     obj.slug =
       options?.slug ??
       pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
-    obj.sprite = options?.sprite ?? 'unknown-pokemon';
+    obj.sprite = options?.sprite ?? DEFAULT_SPRITE_NAME;
     obj.types = getValueOrDefault(Array, types);
     obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
     obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options?.baseStatsGO;

@@ -9,6 +9,13 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './comput
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType } from '../enums/type.enum';
 
+// Parameters
+export class Params {
+  public static Id = 'id';
+  public static Form = 'form';
+  public static StatsType = 'statsType';
+}
+
 // KeyCode
 export const KEY_ENTER = 13;
 export const KEY_LEFT = 37;
@@ -17,6 +24,8 @@ export const KEY_RIGHT = 39;
 export const KEY_DOWN = 40;
 
 export const SYNC_MSG = 'Waiting to sync current data';
+export const PATH_ASSET_POKEGO = 'Addressable Assets';
+export const DEFAULT_SPRITE_NAME = 'unknown-pokemon';
 
 export const TRANSITION_TIME = '0.3s';
 
