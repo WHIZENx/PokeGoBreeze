@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, getPokemonType } from '../../../util/utils';
+import { getTime, splitAndCapitalize, capitalize, getPokemonType, generateParamForm } from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -238,9 +238,7 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={`/pokemon/${item.id}${
-                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
-                      }`}
+                      to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
@@ -268,9 +266,7 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={`/pokemon/${item.id}${
-                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
-                      }`}
+                      to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
@@ -636,7 +632,9 @@ const Leagues = () => {
           onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>
-      <Accordion alwaysOpen={true}>{leagueFilter.map((value, index) => showAccording(value, index))}</Accordion>
+      <Accordion className="accordion-league" alwaysOpen={true}>
+        {leagueFilter.map((value, index) => showAccording(value, index))}
+      </Accordion>
 
       {showData && (
         <Modal size="lg" show={show} onHide={handleClose} centered={true}>
@@ -688,9 +686,7 @@ const Leagues = () => {
                 <Link
                   className="img-link text-center"
                   key={index}
-                  to={`/pokemon/${item.id}${
-                    item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
-                  }`}
+                  to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
                   <div className="d-flex justify-content-center">
@@ -715,9 +711,7 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={`/pokemon/${item.id}${
-                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
-                      }`}
+                      to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">

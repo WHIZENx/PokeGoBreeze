@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD } from '../util/constants';
+import { DEFAULT_SPRITE_NAME, FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD, PATH_ASSET_POKEGO } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
 import { getValueOrDefault, isEqual, isInclude, toNumber } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
@@ -66,6 +66,9 @@ class APIService {
       item += '-wings';
     } else if (isInclude(item, 'necrozma-dusk')) {
       item += '-mane';
+    }
+    if (isEqual(item[0], '/')) {
+      item = `${PATH_ASSET_POKEGO}${item}`;
     }
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon/${item}.png`;
   }
@@ -169,7 +172,10 @@ class APIService {
     return this.getPokeFullAsset(0);
   }
 
-  getPokeIconSprite(name: string | null | undefined, noFix = false) {
+  getPokeIconSprite(name?: string | null, noFix = false) {
+    if (!name) {
+      name = DEFAULT_SPRITE_NAME;
+    }
     if (!noFix) {
       if (isInclude(name, 'necrozma-dawn')) {
         name += '-wings';
@@ -179,10 +185,10 @@ class APIService {
         if (isInclude(name, '-vanilla-cream')) {
           name = 'alcremie';
         } else {
-          name = 'unknown-pokemon';
+          name = DEFAULT_SPRITE_NAME;
         }
       } else if (isInclude(name, '-antique')) {
-        name = 'unknown-pokemon';
+        name = DEFAULT_SPRITE_NAME;
       }
       name = getValueOrDefault(String, name)
         .replace('-incarnate', '')
@@ -279,6 +285,9 @@ class APIService {
   }
 
   getSoundPokemonGO(path: string) {
+    if (isEqual(path[0], '/')) {
+      path = `${PATH_ASSET_POKEGO}${path}`;
+    }
     return `${APIUrl.POGO_SOUND_API_URL}Pokemon Cries/${path}.wav`;
   }
 

@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import { LevelRating, splitAndCapitalize, capitalize, checkPokemonGO, getKeyEnum, getMoveType } from '../../../util/utils';
+import {
+  LevelRating,
+  splitAndCapitalize,
+  capitalize,
+  checkPokemonGO,
+  getKeyEnum,
+  getMoveType,
+  generateParamForm,
+} from '../../../util/utils';
 import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, DEFAULT_TYPES, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import {
   calculateAvgDPS,
@@ -119,7 +127,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Pokémon Name',
     selector: (row) => (
       <Link
-        to={`/pokemon/${row.pokemon.num}${row.pokemon.forme ? `?form=${row.pokemon.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
+        to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
         {row.pokemonType === PokemonType.Shadow && (

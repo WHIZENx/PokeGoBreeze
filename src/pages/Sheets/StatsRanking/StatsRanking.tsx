@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails, getPokemonType } from '../../../util/utils';
+import {
+  splitAndCapitalize,
+  capitalize,
+  convertPokemonImageName,
+  getPokemonDetails,
+  getPokemonType,
+  generateParamForm,
+} from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/calculate';
@@ -13,7 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Link, Location, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
@@ -21,7 +28,7 @@ import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
-import { FORM_NORMAL } from '../../../util/constants';
+import { FORM_NORMAL, Params } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
@@ -36,17 +43,13 @@ import {
   isNotEmpty,
   toNumber,
 } from '../../../util/extension';
-import { LocationState } from '../../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
     name: '',
     selector: (row) => (
-      <Link
-        to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
-        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
-      >
+      <Link to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
         <VisibilityIcon className="view-pokemon" fontSize="small" sx={{ color: 'black' }} />
       </Link>
     ),
@@ -155,7 +158,6 @@ class Filter implements IFilter {
 const StatsRanking = () => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   useChangeTitle('Stats Ranking');
-  const location = useLocation() as unknown as Location<LocationState>;
   const [searchParams, setSearchParams] = useSearchParams();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
@@ -234,7 +236,7 @@ const StatsRanking = () => {
 
   const getSortId = () => {
     let idSort = ColumnType.Prod;
-    const statsBy = location.state?.stats as unknown as TypeAction;
+    const statsBy = toNumber(searchParams.get(Params.StatsType));
     if (statsBy === TypeAction.Atk) {
       idSort = ColumnType.Atk;
     } else if (statsBy === TypeAction.Def) {
@@ -273,11 +275,11 @@ const StatsRanking = () => {
   }, [select, pokemonList]);
 
   useEffect(() => {
-    const id = toNumber(searchParams.get('id'));
+    const id = toNumber(searchParams.get(Params.Id));
     if (id > 0 && isNotEmpty(pokemonFilter)) {
-      const form = searchParams.get('form');
+      const form = searchParams.get(Params.Form)?.replaceAll('_', '-');
       const index = pokemonFilter.findIndex(
-        (row) => row.num === id && isEqual(row.forme, form?.replaceAll('-', '_') || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+        (row) => row.num === id && isEqual(row.forme, form || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
       );
       if (index > -1) {
         const result = pokemonFilter[index];
@@ -288,8 +290,9 @@ const StatsRanking = () => {
   }, [searchParams, pokemonFilter]);
 
   const setFilterParams = (select: IPokemonStatsRanking) => {
-    searchParams.set('id', select.num.toString());
-    searchParams.set('form', getValueOrDefault(String, select.forme?.replace(FORM_NORMAL, '').replaceAll('_', '-').toLowerCase()));
+    searchParams.set(Params.Id, select.num.toString());
+    const form = select.forme?.replace(FORM_NORMAL, '').toLowerCase().replaceAll('_', '-');
+    searchParams.set(Params.Form, getValueOrDefault(String, form));
     setSearchParams(searchParams);
   };
 

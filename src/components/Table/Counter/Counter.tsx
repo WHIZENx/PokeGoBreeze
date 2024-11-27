@@ -2,7 +2,14 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { checkPokemonGO, convertPokemonDataName, getDmgMultiplyBonus, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import {
+  checkPokemonGO,
+  convertPokemonDataName,
+  generateParamForm,
+  getDmgMultiplyBonus,
+  getKeyEnum,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -110,7 +117,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Pokémon',
       selector: (row) => (
-        <Link to={`/pokemon/${row.pokemonId}${row.pokemonForme ? `?form=${row.pokemonForme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
+        <Link to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme)}`}>
           <div className="d-flex justify-content-center">
             <div
               className={combineClasses(

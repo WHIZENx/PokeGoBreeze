@@ -29,6 +29,7 @@ import {
   FORM_SHADOW,
   FORM_STANDARD,
   MAX_IV,
+  Params,
   PURIFIED_ATK_BONUS,
   PURIFIED_DEF_BONUS,
   SHADOW_ATK_BONUS,
@@ -602,7 +603,7 @@ export const formIconAssets = (value: IPokemonFormModify, id: number | undefined
     value.form.name === 'greninja-battle-bond' ||
     value.form.name === 'urshifu-rapid-strike' ||
     toNumber(id) >= 899
-    ? APIService.getPokeIconSprite('unknown-pokemon')
+    ? APIService.getPokeIconSprite()
     : isInclude(value.form.name, `-${FORM_SHADOW.toLowerCase()}`) || isInclude(value.form.name, `-${FORM_PURIFIED.toLowerCase()}`)
     ? APIService.getPokeIconSprite(value.name)
     : APIService.getPokeIconSprite(value.form.name);
@@ -995,4 +996,10 @@ export const getPokemonClass = (className?: string | number | null) => {
 
 export const getArrayBySeq = (length: number, startNumber = 0) => {
   return Array.from({ length }, (_, i) => i + startNumber);
+};
+
+export const generateParamForm = (form: string | null | undefined, prefix = '?') => {
+  return form && !isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+    ? `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`
+    : '';
 };

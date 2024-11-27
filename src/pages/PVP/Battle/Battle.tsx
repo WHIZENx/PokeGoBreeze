@@ -1176,14 +1176,14 @@ const Battle = () => {
             CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | Level:{' '}
             <b>{pokemon.pokemonData?.currentStats?.level ?? MIN_LEVEL}</b>
             <br />
-            IV:{' '}
+            {'IV: '}
             <b>
               {toNumber(pokemon.pokemonData?.currentStats?.IV?.atk)}/{toNumber(pokemon.pokemonData?.currentStats?.IV?.def)}/
               {toNumber(pokemon.pokemonData?.currentStats?.IV?.sta)}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
-            Attack:{' '}
+            {'Attack: '}
             <b>
               {Math.floor(
                 toNumber(pokemon.pokemonData?.currentStats?.stats?.statsATK) *
@@ -1192,7 +1192,7 @@ const Battle = () => {
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
-            Defense:{' '}
+            {'Defense: '}
             <b>
               {Math.floor(
                 toNumber(pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
@@ -1203,7 +1203,7 @@ const Battle = () => {
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
             HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statsSTA)))}</b>
             <br />
-            {`Stats Prod: `}
+            {'Stats Prod: '}
             <b>
               {Math.round(
                 toNumber(pokemon.pokemonData?.currentStats?.stats?.statsATK) *

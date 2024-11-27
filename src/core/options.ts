@@ -36,7 +36,17 @@ import {
   StatsGO,
 } from './models/pokemon.model';
 import { ITypeEff } from './models/type-eff.model';
-import { FORM_ARMOR, FORM_GALARIAN, FORM_MEGA, FORM_MEGA_X, FORM_MEGA_Y, FORM_NORMAL, FORM_SHADOW, FORM_SPECIAL } from '../util/constants';
+import {
+  FORM_ARMOR,
+  FORM_GALARIAN,
+  FORM_MEGA,
+  FORM_MEGA_X,
+  FORM_MEGA_Y,
+  FORM_NORMAL,
+  FORM_SHADOW,
+  FORM_SPECIAL,
+  PATH_ASSET_POKEGO,
+} from '../util/constants';
 import { APIUrl } from '../services/constants';
 import {
   BuddyFriendship,
@@ -112,11 +122,15 @@ export const optionSettings = (data: PokemonDataGM[]) => {
 };
 
 export const optionPokeImg = (data: APITree) => {
-  return data.tree.map((item) => item.path.replace('.png', ''));
+  return data.tree
+    .filter((item) => !isEqual(item.path, PATH_ASSET_POKEGO))
+    .map((item) => item.path.replace('.png', '').replace(PATH_ASSET_POKEGO, ''));
 };
 
 export const optionPokeSound = (data: APITree) => {
-  return data.tree.map((item) => item.path.replace('.wav', ''));
+  return data.tree
+    .filter((item) => !isEqual(item.path, PATH_ASSET_POKEGO))
+    .map((item) => item.path.replace('.wav', '').replace(PATH_ASSET_POKEGO, ''));
 };
 
 export const optionPokemonTypes = (data: PokemonDataGM[]) => {
@@ -260,6 +274,13 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       }
     } else if (pokemonSettings.isForceReleaseGO) {
       optional.version = 'pokémon-go';
+    }
+
+    if (!optional.baseForme && pokemon.pokemonType !== PokemonType.Normal) {
+      const defaultForm = result.find((pk) => pk.num === pokemon.id && pk.pokemonType === PokemonType.Normal);
+      if (defaultForm) {
+        optional.baseForme = defaultForm.baseForme;
+      }
     }
 
     pokemonSettings.evolutionBranch?.forEach((evo) => {
@@ -526,48 +547,29 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       optional.baseForme = item.baseForme?.toUpperCase();
       optional.baseStatsGO = true;
 
+      if (!optional.baseForme && pokemon.pokemonType !== PokemonType.Normal) {
+        const defaultForm = result.find((pk) => pk.num === pokemon.id && pk.pokemonType === PokemonType.Normal);
+        if (defaultForm) {
+          optional.baseForme = defaultForm.baseForme;
+        }
+      }
+
       const pokemonData = PokemonData.create(pokemon, types, optional);
       result.push(pokemonData);
     });
 };
 
 const cleanPokemonDupForm = (result: IPokemonData[]) => {
-  const filterPokemon = result.filter((pokemon, _, r) => {
-    const normalForm = r.filter(
-      (p) =>
-        pokemon.pokemonType === PokemonType.Normal &&
-        p.num === pokemon.num &&
-        p.baseForme &&
-        r.some((pr) => isEqual(pr.baseForme, p.baseForme))
-    );
-    if (isNotEmpty(normalForm)) {
-      return pokemon.baseForme && pokemon.pokemonType === PokemonType.Normal;
+  return result.filter((pokemon, _, r) => {
+    const hasOriginForm = r.filter((p) => p.num === pokemon.num).some((f) => isEqual(f.baseForme, f.forme));
+    if (hasOriginForm) {
+      return (
+        pokemon.pokemonType !== PokemonType.Normal ||
+        (pokemon.pokemonType === PokemonType.Normal && isEqual(pokemon.forme, pokemon.baseForme))
+      );
     }
-    return !r.some(
-      (p) =>
-        pokemon.pokemonType === PokemonType.Normal &&
-        p.num === pokemon.num &&
-        p.pokemonType !== PokemonType.Normal &&
-        p.baseForme &&
-        isEqual(p.baseForme, p.forme)
-    );
+    return true;
   });
-  const idConcat = [744];
-
-  result = filterPokemon.filter((p) => !isIncludeList(idConcat, p.num));
-  idConcat.forEach((id) => {
-    const concatPokemon = filterPokemon.filter((p) => p.num === id);
-    if (concatPokemon.length > 1) {
-      const tempPokemon = concatPokemon.find((p) => p.pokemonType === PokemonType.Normal);
-      if (tempPokemon) {
-        concatPokemon
-          .filter((p) => p.pokemonType !== PokemonType.Normal)
-          .forEach((p) => tempPokemon.evoList?.concat(getValueOrDefault(Array, p.evoList)));
-        result.push(tempPokemon);
-      }
-    }
-  });
-  return result;
 };
 
 export const optionPokemonWeather = (data: PokemonDataGM[]) => {
@@ -657,7 +659,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     result.id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, item))?.num);
     result.name = item;
 
-    let formSet = imgs.filter((img) => isInclude(img, `Addressable Assets/pm${result.id}.`) && !isInclude(img, 'cry'));
+    let formSet = imgs.filter((img) => isInclude(img, `/pm${result.id}.`) && !isInclude(img, 'cry'));
     let count = 0;
     let isMega = false;
     while (formSet.length > count) {
@@ -692,7 +694,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
 
     formSet = imgs.filter(
       (img) =>
-        !isInclude(img, `Addressable Assets/`) &&
+        !isInclude(img, '/') &&
         (isInclude(img, `pokemon_icon_${result.id.toString().padStart(3, '0')}_51`) ||
           isInclude(img, `pokemon_icon_${result.id.toString().padStart(3, '0')}_52`))
     );
@@ -713,9 +715,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     }
 
     const formList = result.image.map((img) => img.form?.replaceAll('_', ''));
-    formSet = imgs.filter(
-      (img) => !isInclude(img, `Addressable Assets/`) && isInclude(img, `pokemon_icon_pm${result.id.toString().padStart(4, '0')}`)
-    );
+    formSet = imgs.filter((img) => !isInclude(img, '/') && isInclude(img, `pokemon_icon_pm${result.id.toString().padStart(4, '0')}`));
     for (let index = 0; index < formSet.length; index += 2) {
       const subForm = formSet[index].replace('_shiny', '').split('_');
       let form = subForm[subForm.length - 1].toUpperCase();
@@ -736,9 +736,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     }
 
     if (!isNotEmpty(result.image)) {
-      formSet = imgs.filter(
-        (img) => !isInclude(img, `Addressable Assets/`) && isInclude(img, `pokemon_icon_${result.id.toString().padStart(3, '0')}`)
-      );
+      formSet = imgs.filter((img) => !isInclude(img, '/') && isInclude(img, `pokemon_icon_${result.id.toString().padStart(3, '0')}`));
       for (let index = 0; index < formSet.length; index += 2) {
         let form = FORM_NORMAL;
         form = result.id !== 201 ? convertAndReplaceNameGO(form, result.name) : form;
@@ -759,7 +757,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     }
 
     isMega = false;
-    let soundForm = sounds.filter((sound) => isInclude(sound, `Addressable Assets/pm${result.id}.`) && isInclude(sound, 'cry'));
+    let soundForm = sounds.filter((sound) => isInclude(sound, `/pm${result.id}.`) && isInclude(sound, 'cry'));
     result.sound.cry = soundForm.map((sound) => {
       let [, form] = sound.split('.');
       if (form === 'cry') {
@@ -777,7 +775,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
 
     soundForm = sounds.filter(
       (sound) =>
-        !isInclude(sound, `Addressable Assets/`) &&
+        !isInclude(sound, '/') &&
         (isInclude(sound, `pv${result.id.toString().padStart(3, '0')}_51`) ||
           isInclude(sound, `pv${result.id.toString().padStart(3, '0')}_52`))
     );
@@ -791,9 +789,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
         );
       });
     }
-    soundForm = sounds.filter(
-      (sound) => !isInclude(sound, `Addressable Assets/`) && isInclude(sound, `pv${result.id.toString().padStart(3, '0')}`)
-    );
+    soundForm = sounds.filter((sound) => !isInclude(sound, '/') && isInclude(sound, `pv${result.id.toString().padStart(3, '0')}`));
     if (!isNotEmpty(result.sound.cry)) {
       soundForm.forEach((sound) => {
         result.sound.cry.push(
@@ -1148,7 +1144,7 @@ export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IA
     const image = form?.image.find((img) => isEqual(img.form, item.num === 201 ? `${item.pokemonId}_${item.baseForme}` : item.forme));
 
     if (form && (item.hasShadowForm || (checkMoveSetAvailable(item) && image?.default))) {
-      item.releasedGO = getValueOrDefault(Boolean, item.hasShadowForm || isInclude(image?.default, 'Addressable Assets/'));
+      item.releasedGO = getValueOrDefault(Boolean, item.hasShadowForm || isInclude(image?.default, '/'));
     }
   });
 };

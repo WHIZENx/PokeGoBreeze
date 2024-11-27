@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, generateParamForm, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
@@ -42,10 +42,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
   {
     name: 'Pokémon Name',
     selector: (row) => (
-      <Link
-        to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
-        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
-      >
+      <Link to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
         <img
           height={48}
           alt="img-pokemon"

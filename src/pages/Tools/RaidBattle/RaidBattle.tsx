@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import {
   addSelectMovesByType,
   checkPokemonGO,
+  generateParamForm,
   getDmgMultiplyBonus,
   getKeyEnum,
   getMoveType,
@@ -875,7 +876,7 @@ const RaidBattle = () => {
               src={APIService.getPokeIconSprite(pokemon.sprite)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
+                e.currentTarget.src = APIService.getPokeIconSprite();
               }}
             />
           </div>
@@ -1213,9 +1214,7 @@ const RaidBattle = () => {
                 <div className="top-raid-pokemon" key={index}>
                   <div className="d-flex justify-content-center w-100">
                     <Link
-                      to={`/pokemon/${value.pokemon?.num}${
-                        value.pokemon?.forme ? `?form=${value.pokemon?.forme.toLowerCase().replaceAll('_', '-')}` : ''
-                      }`}
+                      to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme)}`}
                       className="sprite-raid position-relative"
                     >
                       {value.pokemonType === PokemonType.Shadow && (

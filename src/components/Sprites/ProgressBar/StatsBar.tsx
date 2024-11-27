@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { FORM_NORMAL } from '../../../util/constants';
 import { IStatsBarComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault } from '../../../util/extension';
+import { combineClasses } from '../../../util/extension';
+import { generateParamForm } from '../../../util/utils';
+import { Params } from '../../../util/constants';
 
 interface Element {
   isRank?: boolean;
@@ -35,15 +36,7 @@ const StatsBar = (props: IStatsBarComponent) => {
     <ComponentBar
       className="progress"
       onClick={() =>
-        navigate(
-          `/stats-ranking?id=${props.id}&form=${getValueOrDefault(String, props.form)
-            .replace(FORM_NORMAL, '')
-            .replaceAll('_', '-')
-            .toLowerCase()}`,
-          {
-            state: { stats: props.statType },
-          }
-        )
+        navigate(`/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, '&')}&${Params.StatsType}=${props.statType}`)
       }
     >
       <BoxText className="box-text stats-text" isRank={false}>
