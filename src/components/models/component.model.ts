@@ -209,6 +209,7 @@ export interface IStatsComponent {
   statProd?: IStatsProd;
   id?: number;
   form?: string | null;
+  isDisabled?: boolean;
 }
 
 export interface IGenderComponent {
@@ -366,6 +367,7 @@ export interface IStatsBarComponent {
   id?: number;
   form?: string | null;
   statType: TypeAction;
+  isDisabled?: boolean;
 }
 
 export interface ITypeComponent {

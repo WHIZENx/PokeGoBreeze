@@ -18,7 +18,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import './StatsRanking.scss';
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { FormControlLabel, Checkbox, CircularProgress } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link, useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
@@ -276,7 +276,7 @@ const StatsRanking = () => {
 
   useEffect(() => {
     const id = toNumber(searchParams.get(Params.Id));
-    if (id > 0 && isNotEmpty(pokemonFilter)) {
+    if (!isNaN(id) && isNotEmpty(pokemonFilter)) {
       const form = searchParams.get(Params.Form)?.replaceAll('_', '-');
       const index = pokemonFilter.findIndex(
         (row) => row.num === id && isEqual(row.forme, form || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
@@ -285,6 +285,7 @@ const StatsRanking = () => {
         const result = pokemonFilter[index];
         setPage(Math.ceil((index + 1) / 25));
         setSelect(result);
+        setSortId(getSortId());
       }
     }
   }, [searchParams, pokemonFilter]);
@@ -391,6 +392,7 @@ const StatsRanking = () => {
         pokemonStats={stats}
         id={select?.num}
         form={select?.forme}
+        isDisabled={true}
       />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
@@ -447,6 +449,12 @@ const StatsRanking = () => {
         paginationDefaultPage={page}
         paginationPerPage={25}
         paginationRowsPerPageOptions={[25, 50, 100]}
+        progressPending={!isNotEmpty(pokemonList)}
+        progressComponent={
+          <div style={{ margin: 10 }}>
+            <CircularProgress />
+          </div>
+        }
       />
     </div>
   );

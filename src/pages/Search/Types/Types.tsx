@@ -9,7 +9,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/calculate';
-import { FormControlLabel, Switch, useTheme } from '@mui/material';
+import { CircularProgress, FormControlLabel, Switch, useTheme } from '@mui/material';
 import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -367,6 +367,12 @@ const SearchTypes = () => {
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
+                progressPending={!isNotEmpty(result.pokemonList)}
+                progressComponent={
+                  <div style={{ margin: 10 }}>
+                    <CircularProgress />
+                  </div>
+                }
               />
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
@@ -378,6 +384,12 @@ const SearchTypes = () => {
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
+                progressPending={!isNotEmpty(result.pokemonList)}
+                progressComponent={
+                  <div style={{ margin: 10 }}>
+                    <CircularProgress />
+                  </div>
+                }
               />
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
@@ -389,6 +401,12 @@ const SearchTypes = () => {
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
+                progressPending={!isNotEmpty(result.pokemonList)}
+                progressComponent={
+                  <div style={{ margin: 10 }}>
+                    <CircularProgress />
+                  </div>
+                }
               />
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
@@ -400,6 +418,12 @@ const SearchTypes = () => {
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
+                progressPending={!isNotEmpty(result.pokemonList)}
+                progressComponent={
+                  <div style={{ margin: 10 }}>
+                    <CircularProgress />
+                  </div>
+                }
               />
             </Tab>
           </Tabs>

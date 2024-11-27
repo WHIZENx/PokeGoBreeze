@@ -34,8 +34,9 @@ const StatsBar = (props: IStatsBarComponent) => {
   const navigate = useNavigate();
   return (
     <ComponentBar
-      className="progress"
+      className={combineClasses('progress', props.isDisabled ? '' : 'progress-hover')}
       onClick={() =>
+        !props.isDisabled &&
         navigate(`/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, '&')}&${Params.StatsType}=${props.statType}`)
       }
     >
