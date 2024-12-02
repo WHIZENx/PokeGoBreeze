@@ -1,4 +1,4 @@
-import { BuffType, MoveType, TypeAction } from '../../enums/type.enum';
+import { BuffType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { MoveSetting } from './options.model';
 
@@ -61,7 +61,7 @@ export class Sequence implements ISequence {
 export interface ICombat {
   name: string;
   type: string | undefined;
-  typeMove: string | undefined;
+  typeMove: TypeMove | undefined;
   pvpPower: number;
   pvpEnergy: number;
   sound: string | undefined;
@@ -85,7 +85,7 @@ export interface ICombat {
 export class Combat implements ICombat {
   name = '';
   type: string | undefined;
-  typeMove: string | undefined;
+  typeMove: TypeMove | undefined;
   pvpPower = 0;
   pvpEnergy = 0;
   sound: string | undefined;

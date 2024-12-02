@@ -184,11 +184,11 @@ export const MULTIPLY_LEVEL_FRIENDSHIP = (
 
 export const MULTIPLY_THROW_CHARGE = (
   options: IOptions | undefined,
-  type = ChargeAbility.NORMAL,
+  type = ChargeAbility.Normal,
   settings = [
     getPropertyName(options, (o) => o.throwCharge),
     getPropertyName(options?.throwCharge, (o) =>
-      type === ChargeAbility.NORMAL ? o.normal : type === ChargeAbility.NICE ? o.nice : type === ChargeAbility.GREAT ? o.great : o.excellent
+      type === ChargeAbility.Normal ? o.normal : type === ChargeAbility.Nice ? o.nice : type === ChargeAbility.Great ? o.great : o.excellent
     ),
   ]
 ) => getOption<number>(options, settings, 1);

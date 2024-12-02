@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDmgMultiplyBonus, LevelRating, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating, splitAndCapitalize } from '../../../util/utils';
 import { MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
 
@@ -27,7 +27,7 @@ import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { combineClasses, DynamicObj, padding, toNumber } from '../../../util/extension';
 import { ChargeAbility } from './enums/damage.enum';
-import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
+import { PokemonType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -61,7 +61,7 @@ class Filter implements IFilter {
   isDodge = false;
   isTrainer = false;
   fLevel = 0;
-  cLevel = ChargeAbility.EXCELLENT;
+  cLevel = ChargeAbility.Excellent;
 
   static create(value: IFilter) {
     const obj = new Filter();
@@ -277,7 +277,7 @@ const Damage = () => {
                 {move && (
                   <div style={{ width: 300, margin: 'auto' }}>
                     <p>
-                      - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
+                      - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                     </p>
                     <p>
                       - Move Type:{' '}

@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { findStabType } from '../../../util/compute';
 import { levelList, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
@@ -375,7 +375,7 @@ const CalculatePoint = () => {
                   {move && (
                     <div style={{ width: 300, margin: 'auto' }}>
                       <p>
-                        - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
+                        - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                       </p>
                       <p>
                         - Move Type:{' '}
@@ -501,7 +501,7 @@ const CalculatePoint = () => {
                   {moveDef && (
                     <div style={{ width: 300, margin: 'auto' }}>
                       <p>
-                        - Move Ability Type: <b>{capitalize(moveDef.typeMove)}</b>
+                        - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
                       </p>
                       <p>
                         - Move Type:{' '}
@@ -655,7 +655,7 @@ const CalculatePoint = () => {
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
                         <p>
-                          - Move Ability Type: <b>{capitalize(fMove.typeMove)}</b>
+                          - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                         </p>
                         <p>
                           - Move Type:{' '}
@@ -687,7 +687,7 @@ const CalculatePoint = () => {
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
                         <p>
-                          - Move Ability Type: <b>{capitalize(cMove.typeMove)}</b>
+                          - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                         </p>
                         <p>
                           - Move Type:{' '}

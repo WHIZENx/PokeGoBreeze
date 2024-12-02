@@ -22,7 +22,14 @@ import {
 import { ISticker, Sticker } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
-import { checkMoveSetAvailable, convertPokemonDataName, getPokemonType, replacePokemonGoForm, replaceTempMoveName } from '../util/utils';
+import {
+  checkMoveSetAvailable,
+  convertPokemonDataName,
+  getKeyWithData,
+  getPokemonType,
+  replacePokemonGoForm,
+  replaceTempMoveName,
+} from '../util/utils';
 import { ITypeSet, TypeSet } from './models/type.model';
 import { BuffType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import {
@@ -61,7 +68,7 @@ import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../util/extension';
 import { GenderType } from './enums/asset.enum';
-import { EqualMode } from '../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
 import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType, LeagueConditionType } from './enums/option.enum';
 import { StatsBase } from './models/stats.model';
@@ -686,7 +693,6 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
           form,
           default: formSet[count],
           shiny: isShiny ? formSet[count + 1] : undefined,
-          pokemonType: getPokemonType(form),
         })
       );
       count += Number(isShiny) + 1;
@@ -708,7 +714,6 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
             form,
             default: formSet[index],
             shiny: formSet[index + 1],
-            pokemonType: getPokemonType(form),
           })
         );
       }
@@ -729,7 +734,6 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
             form,
             default: formSet[index],
             shiny: formSet[index + 1],
-            pokemonType: getPokemonType(form),
           })
         );
       }
@@ -749,7 +753,6 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
               form,
               default: formSet[index],
               shiny: formSet[index + 1],
-              pokemonType: getPokemonType(form),
             })
           );
         }
@@ -840,7 +843,8 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         result.name = item.templateId.replace(/^COMBAT_V\d{4}_MOVE_/, '');
       }
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
-      if (item.templateId.endsWith(TypeMove.Fast) || isInclude(item.templateId, '_FAST_')) {
+      const fastMoveType = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
+      if (item.templateId.endsWith(fastMoveType) || isInclude(item.templateId, `_${fastMoveType}_`)) {
         result.typeMove = TypeMove.Fast;
       } else {
         result.typeMove = TypeMove.Charge;
@@ -1092,7 +1096,6 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     .filter((item) => /VS_SEEKER_POKEMON_REWARDS_/.test(item.templateId))
     .forEach((item) => {
       const data = item.data.vsSeekerPokemonRewards;
-      const track = isInclude(item.templateId, LeagueRewardType.Free) ? LeagueRewardType.Free : LeagueRewardType.Premium;
       data.availablePokemon.forEach((value) => {
         if (!rewards.pokemon[value.unlockedAtRank]) {
           rewards.pokemon[value.unlockedAtRank] = PokemonRewardLeague.create(value.unlockedAtRank);
@@ -1112,7 +1115,8 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         } else {
           result.form = FORM_NORMAL;
         }
-        if (track === LeagueRewardType.Free) {
+        const rewardType = getKeyWithData(LeagueRewardType, LeagueRewardType.Free);
+        if (isInclude(item.templateId, rewardType, IncludeMode.IncludeIgnoreCaseSensitive)) {
           rewards.pokemon[value.unlockedAtRank].free?.push(result);
         } else {
           rewards.pokemon[value.unlockedAtRank].premium?.push(result);

@@ -8,12 +8,13 @@ import { toNumber } from '../../../util/extension';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import { getPokemonType } from '../../../util/utils';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
+import { AttackType } from '../Battle/enums/attack-type.enum';
 
 export enum ChargeType {
   None = -1,
-  Random = 0,
-  Primary = 1,
-  Secondary = 2,
+  Random,
+  Primary,
+  Secondary,
 }
 
 interface MoveAudio {
@@ -117,7 +118,7 @@ export class PokemonBattle implements IPokemonBattle {
 
 export interface ITimeline {
   timer: number;
-  type?: string;
+  type?: AttackType;
   color?: string;
   size: number;
   isTap?: boolean;
@@ -131,7 +132,7 @@ export interface ITimeline {
 
 export class TimelineModel implements ITimeline {
   timer = 0;
-  type?: string;
+  type?: AttackType;
   color?: string;
   size = 0;
   isTap?: boolean;

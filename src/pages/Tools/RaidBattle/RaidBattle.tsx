@@ -76,7 +76,8 @@ import {
 } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, RaidSummary, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
-import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
+import { RaidState, SortType } from './enums/raid-state.enum';
+import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 
 interface IOption {
   isWeatherBoss: boolean;

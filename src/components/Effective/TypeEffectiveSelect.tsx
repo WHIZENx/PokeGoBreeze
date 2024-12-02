@@ -41,7 +41,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
     );
   };
 
-  const getTypeEffect = (effect: number, types: string[] | undefined) => {
+  const getTypeEffect = (effect: EffectiveType, types: string[] | undefined) => {
     const data = TypeEffChart.create({
       veryWeak: [],
       weak: [],
@@ -50,7 +50,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       resist: [],
       neutral: [],
     });
-    if (effect === EffectiveType.WEAK) {
+    if (effect === EffectiveType.Weak) {
       Object.entries(typeEffective).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
@@ -69,7 +69,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           {renderEffective('1.6', data.weak)}
         </div>
       );
-    } else if (effect === EffectiveType.NEUTRAL) {
+    } else if (effect === EffectiveType.Neutral) {
       Object.entries(typeEffective).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
@@ -84,7 +84,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           {renderEffective('1', data.neutral)}
         </div>
       );
-    } else if (effect === EffectiveType.RESISTANCE) {
+    } else if (effect === EffectiveType.Resistance) {
       Object.entries(typeEffective).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {

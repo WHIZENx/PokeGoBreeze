@@ -11,8 +11,3 @@ export enum SortType {
   TTK,
   TANK,
 }
-
-export enum SortDirectionType {
-  ASC,
-  DESC,
-}

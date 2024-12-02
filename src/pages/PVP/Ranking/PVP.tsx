@@ -35,10 +35,18 @@ import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
-import { combineClasses, DynamicObj, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getPropertyName,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
-import { Sorted } from '../enums/pvp-team.enum';
 import { SortType } from '../enums/pvp-ranking-enum';
 import { PokemonType } from '../../../enums/type.enum';
 import HeaderPVP from '../components/HeaderPVP';
@@ -47,6 +55,7 @@ import MoveSet from '../components/MoveSet';
 import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../util/enums/constants.enum';
+import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -61,7 +70,7 @@ const RankingPVP = () => {
   const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
   const [storeStats, setStoreStats] = useState<boolean[]>();
   const sortedBy = useRef(SortType.Score);
-  const [sorted, setSorted] = useState(Sorted.DESC);
+  const [sorted, setSorted] = useState(SortDirectionType.DESC);
 
   const styleSheet = useRef<CSSStyleSheet>();
 
@@ -274,9 +283,11 @@ const RankingPVP = () => {
   };
 
   const setSortedPokemonBattle = (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
-    const a = primary as unknown as DynamicObj<number>;
-    const b = secondary as unknown as DynamicObj<number>;
-    return sorted ? b[sortedBy.current] - a[sortedBy.current] : a[sortedBy.current] - b[sortedBy.current];
+    const modelColumn = primary.data || secondary.data;
+    const sortedColumn = getPropertyName(modelColumn, (o) => o.score) as 'score';
+    const a = primary.data as unknown as DynamicObj<number>;
+    const b = secondary.data as unknown as DynamicObj<number>;
+    return sorted === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
   };
 
   const renderLeague = () => {
@@ -338,7 +349,7 @@ const RankingPVP = () => {
                 className="text-center"
                 style={{ width: 'max-content' }}
                 onClick={() => {
-                  setSorted(sorted ? Sorted.ASC : Sorted.DESC);
+                  setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC);
                 }}
               >
                 <span

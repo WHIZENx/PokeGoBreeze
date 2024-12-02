@@ -8,3 +8,8 @@ type TableColumnOverride<T> = Omit<TableColumn<T>, 'selector'> & { selector?: Se
 export interface TableColumnModify<T> extends TableColumnOverride<T> {
   selector?: Selector<T>;
 }
+
+export enum SortOrderType {
+  ASC = 'asc',
+  DESC = 'desc',
+}

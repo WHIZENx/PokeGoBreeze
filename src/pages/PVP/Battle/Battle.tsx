@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
 import {
-  capitalize,
   convertNameRankingToOri,
   getArrayBySeq,
   getDmgMultiplyBonus,
@@ -122,7 +121,7 @@ const Battle = () => {
 
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
-  const State = (timer: number, block: number, energy: number, hp: number, type?: string) => {
+  const State = (timer: number, block: number, energy: number, hp: number, type?: AttackType) => {
     return new TimelineModel({
       timer,
       type,
@@ -1059,7 +1058,7 @@ const Battle = () => {
 
   const calculateStatPokemon = (
     e: React.FormEvent<HTMLFormElement>,
-    type: string,
+    type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
   ) => {
@@ -1070,13 +1069,14 @@ const Battle = () => {
       });
       return;
     }
+    const battleType = getKeyWithData(BattleType, type);
     const atk = toNumber(pokemon.pokemonData.stats?.atk);
     const def = toNumber(pokemon.pokemonData.stats?.def);
     const sta = toNumber(pokemon.pokemonData.stats?.sta);
-    const atkIV = toNumber((document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value);
-    const defIV = toNumber((document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value);
-    const staIV = toNumber((document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value);
-    const level = toNumber((document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value);
+    const atkIV = toNumber((document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value);
+    const defIV = toNumber((document.getElementById(`defIV${battleType}`) as HTMLInputElement).value);
+    const staIV = toNumber((document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value);
+    const level = toNumber((document.getElementById(`level${battleType}`) as HTMLInputElement).value);
     const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
 
     if (cp > toNumber(params?.cp)) {
@@ -1101,7 +1101,7 @@ const Battle = () => {
   };
 
   const onSetStats = (
-    type: string,
+    type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
     isRandom = false
@@ -1130,10 +1130,11 @@ const Battle = () => {
       stats = pokemon.pokemonData.bestStats;
     }
 
-    (document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.level?.toString());
-    (document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.atk.toString());
-    (document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.def.toString());
-    (document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.sta?.toString());
+    const battleType = getKeyWithData(BattleType, type);
+    (document.getElementById(`level${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.level?.toString());
+    (document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.atk.toString());
+    (document.getElementById(`defIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.def.toString());
+    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.sta?.toString());
 
     setPokemon(
       PokemonBattle.create({
@@ -1147,7 +1148,12 @@ const Battle = () => {
     );
   };
 
-  const renderInfoPokemon = (type: string, pokemon: IPokemonBattle, setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>) => {
+  const renderInfoPokemon = (
+    type: BattleType,
+    pokemon: IPokemonBattle,
+    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
+  ) => {
+    const battleType = getKeyWithData(BattleType, type);
     return (
       <Accordion defaultActiveKey={[]} alwaysOpen={true}>
         <Accordion.Item eventKey="0">
@@ -1233,7 +1239,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.level}
-                  id={`level${capitalize(type)}`}
+                  id={`level${battleType}`}
                   type="number"
                   step={0.5}
                   min={MIN_LEVEL}
@@ -1245,7 +1251,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.atk}
-                  id={`atkIV${capitalize(type)}`}
+                  id={`atkIV${battleType}`}
                   type="number"
                   step={1}
                   min={MIN_IV}
@@ -1257,7 +1263,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.def}
-                  id={`defIV${capitalize(type)}`}
+                  id={`defIV${battleType}`}
                   type="number"
                   step={1}
                   min={MIN_IV}
@@ -1269,7 +1275,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.sta}
-                  id={`hpIV${capitalize(type)}`}
+                  id={`hpIV${battleType}`}
                   type="number"
                   step={1}
                   min={MIN_IV}

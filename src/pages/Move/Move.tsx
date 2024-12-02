@@ -279,7 +279,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td>Move Type</td>
                 <td colSpan={2}>
-                  <b>{move && `${capitalize(move.typeMove)} Move`}</b>
+                  <b>{move && `${getKeyWithData(TypeMove, move.typeMove)} Move`}</b>
                 </td>
               </tr>
               <tr>

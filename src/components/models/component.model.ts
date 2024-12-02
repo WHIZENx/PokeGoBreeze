@@ -33,6 +33,7 @@ import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
 import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
+import { EffectiveType } from '../../pages/PVP/enums/type-eff.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -84,7 +85,7 @@ export interface ITypeEffectiveComponent {
 
 export interface ITypeEffectiveSelectComponent {
   isBlock?: boolean;
-  effect: number;
+  effect: EffectiveType;
   types: string[] | undefined;
 }
 

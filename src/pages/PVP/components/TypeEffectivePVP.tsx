@@ -12,7 +12,7 @@ const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
             <b>Weakness</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={EffectiveType.WEAK} types={props.types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.Weak} types={props.types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>
@@ -22,7 +22,7 @@ const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
             <b>Neutral</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={EffectiveType.NEUTRAL} types={props.types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.Neutral} types={props.types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>
@@ -32,7 +32,7 @@ const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
             <b>Resistance</b>
           </h6>
           <hr className="w-100" />
-          {<TypeEffectiveSelect effect={EffectiveType.RESISTANCE} types={props.types} />}
+          {<TypeEffectiveSelect effect={EffectiveType.Resistance} types={props.types} />}
         </div>
         <hr className="w-100" style={{ margin: 0 }} />
       </div>

@@ -46,7 +46,7 @@ import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
 import { OptionsActions } from '../../../store/actions';
-import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { SortOrderType, TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
   convertColumnDataType,
@@ -1143,7 +1143,7 @@ const DpsTdo = () => {
             setDefaultSorted(
               OptionDPSSort.create({
                 selectedColumn: toNumber(selectedColumn.id, 1),
-                sortDirection,
+                sortDirection: isEqual(sortDirection, SortOrderType.ASC) ? SortDirectionType.ASC : SortDirectionType.DESC,
               })
             );
           }}

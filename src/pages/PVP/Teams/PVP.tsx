@@ -36,6 +36,7 @@ import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import {
   combineClasses,
   DynamicObj,
+  getPropertyName,
   getValueOrDefault,
   isEqual,
   isInclude,
@@ -45,11 +46,12 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { Sorted, SortType } from '../enums/pvp-team.enum';
+import { SortType } from '../enums/pvp-team.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { PokemonType } from '../../../enums/type.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
+import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -64,10 +66,10 @@ const TeamPVP = () => {
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [sortedBy, setSortedBy] = useState(SortType.TeamScore);
-  const [sorted, setSorted] = useState(Sorted.DESC);
+  const [sorted, setSorted] = useState(SortDirectionType.DESC);
 
   const [sortedTeamBy, setSortedTeamBy] = useState(SortType.TeamScore);
-  const [sortedTeam, setSortedTeam] = useState(Sorted.DESC);
+  const [sortedTeam, setSortedTeam] = useState(SortDirectionType.DESC);
 
   const styleSheet = useRef<CSSStyleSheet>();
 
@@ -236,15 +238,27 @@ const TeamPVP = () => {
   };
 
   const setSortedPokemonPerformers = (primary: IPerformers, secondary: IPerformers) => {
+    const modelColumn = primary || secondary;
+    let sortedColumn = getPropertyName(modelColumn, (o) => o.teamScore) as 'teamScore' | 'individualScore' | 'games';
+    if (sortedBy === SortType.IndividualScore) {
+      sortedColumn = getPropertyName(modelColumn, (o) => o.individualScore) as 'individualScore';
+    } else if (sortedBy === SortType.Games) {
+      sortedColumn = getPropertyName(modelColumn, (o) => o.games) as 'games';
+    }
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
-    return sorted ? b[sortedBy] - a[sortedBy] : a[sortedBy] - b[sortedBy];
+    return sorted === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
   };
 
   const setSortedPokemonTeam = (primary: ITeams, secondary: ITeams) => {
+    const modelColumn = primary || secondary;
+    let sortedColumn = getPropertyName(modelColumn, (o) => o.teamScore) as 'teamScore' | 'games';
+    if (sortedTeamBy === SortType.Games) {
+      sortedColumn = getPropertyName(modelColumn, (o) => o.games) as 'games';
+    }
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
-    return sortedTeam ? b[sortedTeamBy] - a[sortedTeamBy] : a[sortedTeamBy] - b[sortedTeamBy];
+    return sortedTeam === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
   };
 
   const findMoveByTag = (nameSet: string[], tag: string) => {
@@ -298,7 +312,7 @@ const TeamPVP = () => {
               onClick={() => {
                 setSortedBy(SortType.TeamScore);
                 if (sortedBy === SortType.TeamScore) {
-                  setSorted(sorted ? Sorted.ASC : Sorted.DESC);
+                  setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC);
                 }
               }}
             >
@@ -313,7 +327,7 @@ const TeamPVP = () => {
               onClick={() => {
                 setSortedBy(SortType.IndividualScore);
                 if (sortedBy === SortType.IndividualScore) {
-                  setSorted(sorted ? Sorted.ASC : Sorted.DESC);
+                  setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC);
                 }
               }}
             >
@@ -330,7 +344,7 @@ const TeamPVP = () => {
               onClick={() => {
                 setSortedBy(SortType.Games);
                 if (sortedBy === SortType.Games) {
-                  setSorted(sorted ? Sorted.ASC : Sorted.DESC);
+                  setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC);
                 }
               }}
             >
@@ -444,7 +458,7 @@ const TeamPVP = () => {
               onClick={() => {
                 setSortedTeamBy(SortType.TeamScore);
                 if (sortedTeamBy === SortType.TeamScore) {
-                  setSortedTeam(sortedTeam ? Sorted.ASC : Sorted.DESC);
+                  setSortedTeam(sortedTeam === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC);
                 }
               }}
             >
@@ -459,7 +473,7 @@ const TeamPVP = () => {
               onClick={() => {
                 setSortedTeamBy(SortType.Games);
                 if (sortedTeamBy === SortType.Games) {
-                  setSortedTeam(sortedTeam ? Sorted.ASC : Sorted.DESC);
+                  setSortedTeam(sortedTeam === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC);
                 }
               }}
             >

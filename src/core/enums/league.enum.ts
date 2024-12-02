@@ -8,8 +8,8 @@ export enum RewardType {
 }
 
 export enum LeagueRewardType {
-  Free = 'FREE',
-  Premium = 'PREMIUM',
+  Free,
+  Premium,
 }
 
 export enum LeagueType {
