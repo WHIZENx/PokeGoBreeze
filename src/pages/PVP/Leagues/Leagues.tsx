@@ -22,14 +22,14 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
   step: number;
-  track: string;
+  track: LeagueRewardType;
   type: string | undefined;
 }
 
@@ -102,16 +102,16 @@ const Leagues = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleShow = (type: string | undefined, track: string, step: number) => {
+  const handleShow = (type: string | undefined, track: LeagueRewardType, step: number) => {
     if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
       Object.values(dataStore.leagues.season.rewards.pokemon).forEach((value) => {
         if (toNumber(value.rank) <= rank) {
           let tireRewards: IPokemonRewardSetLeague[] = [];
-          if (isEqual(track, LeagueRewardType.Free, EqualMode.IgnoreCaseSensitive)) {
+          if (track === LeagueRewardType.Free) {
             tireRewards = value.free;
-          } else if (isEqual(track, LeagueRewardType.Premium, EqualMode.IgnoreCaseSensitive)) {
+          } else if (track === LeagueRewardType.Premium) {
             tireRewards = value.premium;
           }
           if (isNotEmpty(tireRewards)) {
@@ -133,7 +133,7 @@ const Leagues = () => {
       setShowData({
         data: result.sort((a, b) => a.id - b.id),
         step,
-        track: track.toLowerCase(),
+        track,
         type,
       });
     } else {
@@ -654,7 +654,7 @@ const Leagues = () => {
                 Rank {rank} {rank > 20 && `(${rankName(rank)})`}
               </div>
               <div className="reward-info">
-                {isEqual(showData.track, LeagueRewardType.Free, EqualMode.IgnoreCaseSensitive) ? (
+                {showData.track === LeagueRewardType.Free ? (
                   <div className="d-flex" style={{ columnGap: 8 }}>
                     <img
                       className="pokemon-sprite-small filter-shadow"

@@ -5,7 +5,7 @@ import {
   splitAndCapitalize,
   capitalize,
   checkPokemonGO,
-  getKeyEnum,
+  getKeyWithData,
   getMoveType,
   generateParamForm,
 } from '../../../util/utils';
@@ -46,7 +46,7 @@ import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
 import { OptionsActions } from '../../../store/actions';
-import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { SortOrderType, TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
   convertColumnDataType,
@@ -177,8 +177,8 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         <div>
           <span className="text-b-ic">{splitAndCapitalize(row.fMove?.name, '_', ' ')}</span>
           {row.fMoveType !== MoveType.None && (
-            <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.fMoveType)?.toLowerCase()}-ic`)}>
-              {getKeyEnum(MoveType, row.fMoveType)}
+            <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.fMoveType)?.toLowerCase()}-ic`)}>
+              {getKeyWithData(MoveType, row.fMoveType)}
             </span>
           )}
         </div>
@@ -196,8 +196,8 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         <div>
           <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ')}</span>
           {row.cMoveType !== MoveType.None && (
-            <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.cMoveType)?.toLowerCase()}-ic`)}>
-              {getKeyEnum(MoveType, row.cMoveType)}
+            <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.cMoveType)?.toLowerCase()}-ic`)}>
+              {getKeyWithData(MoveType, row.cMoveType)}
             </span>
           )}
         </div>
@@ -677,19 +677,19 @@ const DpsTdo = () => {
               <span className="input-group-text">Filter show</span>
               <FormControlLabel
                 control={<Checkbox checked={showShadow} onChange={(_, check) => setFilters({ ...filters, showShadow: check })} />}
-                label={getKeyEnum(PokemonType, PokemonType.Shadow)}
+                label={getKeyWithData(PokemonType, PokemonType.Shadow)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showMega} onChange={(_, check) => setFilters({ ...filters, showMega: check })} />}
-                label={getKeyEnum(PokemonType, PokemonType.Mega)}
+                label={getKeyWithData(PokemonType, PokemonType.Mega)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showGMax} onChange={(_, check) => setFilters({ ...filters, showGMax: check })} />}
-                label={getKeyEnum(PokemonType, PokemonType.GMax)}
+                label={getKeyWithData(PokemonType, PokemonType.GMax)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showPrimal} onChange={(_, check) => setFilters({ ...filters, showPrimal: check })} />}
-                label={getKeyEnum(PokemonType, PokemonType.Primal)}
+                label={getKeyWithData(PokemonType, PokemonType.Primal)}
               />
               <FormControlLabel
                 control={<Checkbox checked={showLegendary} onChange={(_, check) => setFilters({ ...filters, showLegendary: check })} />}
@@ -718,7 +718,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableShadow: check })}
                   />
                 }
-                label={getKeyEnum(PokemonType, PokemonType.Shadow)}
+                label={getKeyWithData(PokemonType, PokemonType.Shadow)}
               />
               <FormControlLabel
                 control={
@@ -728,7 +728,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableMega: check })}
                   />
                 }
-                label={getKeyEnum(PokemonType, PokemonType.Mega)}
+                label={getKeyWithData(PokemonType, PokemonType.Mega)}
               />
               <FormControlLabel
                 control={
@@ -738,7 +738,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableGMax: check })}
                   />
                 }
-                label={getKeyEnum(PokemonType, PokemonType.GMax)}
+                label={getKeyWithData(PokemonType, PokemonType.GMax)}
               />
               <FormControlLabel
                 control={
@@ -748,7 +748,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enablePrimal: check })}
                   />
                 }
-                label={getKeyEnum(PokemonType, PokemonType.Primal)}
+                label={getKeyWithData(PokemonType, PokemonType.Primal)}
               />
               <FormControlLabel
                 control={
@@ -1143,7 +1143,7 @@ const DpsTdo = () => {
             setDefaultSorted(
               OptionDPSSort.create({
                 selectedColumn: toNumber(selectedColumn.id, 1),
-                sortDirection,
+                sortDirection: isEqual(sortDirection, SortOrderType.ASC) ? SortDirectionType.ASC : SortDirectionType.DESC,
               })
             );
           }}

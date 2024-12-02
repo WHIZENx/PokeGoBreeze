@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 export enum BattleType {
-  Current = 'pokemonCurr',
-  Object = 'pokemonObj',
+  Current,
+  Object,
 }
 
 export enum TimelineType {
-  Fit = 0,
+  Fit,
   Normal,
 }

@@ -12,8 +12,8 @@ export enum ColumnSelectType {
 }
 
 export enum SortDirectionType {
-  ASC = 'asc',
-  DESC = 'desc',
+  ASC,
+  DESC,
 }
 
 export enum BestOptionType {

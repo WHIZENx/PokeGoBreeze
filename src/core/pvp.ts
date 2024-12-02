@@ -1,7 +1,8 @@
 import { APIPath, APITree } from '../services/models/api.model';
+import { ScoreType } from '../util/enums/constants.enum';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { getValueOrDefault, isEqual, isInclude, toNumber } from '../util/extension';
-import { splitAndCapitalize } from '../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../util/utils';
 import { LeagueType } from './enums/league.enum';
 import { ILeague } from './models/league.model';
 import { PVPInfo } from './models/pvp.model';
@@ -38,8 +39,10 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
       result.name = splitAndCapitalize(league?.replaceAll('-', '_'), '_', ' ');
     }
     result.cp = data
-      .filter((item) => item.startsWith(result.id) && isInclude(item, `${league}/overall/`))
-      .map((item) => toNumber(item.replace(`${league}/overall/rankings-`, '')))
+      .filter(
+        (item) => item.startsWith(result.id) && isInclude(item, `${league}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/`)
+      )
+      .map((item) => toNumber(item.replace(`${league}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/rankings-`, '')))
       .sort((a, b) => a - b);
     result.logo = item?.iconUrl;
     return result;

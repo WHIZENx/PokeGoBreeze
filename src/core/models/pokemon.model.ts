@@ -346,34 +346,28 @@ export class PokemonDPSBattle implements IPokemonDPSBattle {
   }
 }
 
-export interface IPokemonMoveData extends IPokemonDPSBattle {
+export interface IPokemonMoveData extends Partial<IPokemonDPSBattle> {
   trainerId?: number;
+  ttkAtk: number;
+  ttkDef: number;
+  tdoAtk: number;
+  tdoDef: number;
+  dpsAtk: number;
+  dpsDef: number;
 }
 
 export class PokemonMoveData implements IPokemonMoveData {
   trainerId?: number;
   pokemon: IPokemonData | undefined;
-  fMove: ICombat | undefined;
-  cMove: ICombat | undefined;
-  dpsDef = 0;
-  dpsAtk = 0;
-  tdoAtk = 0;
-  tdoDef = 0;
-  multiDpsTdo?: number;
+  hp?: number;
+  atkHpRemain?: number;
+  defHpRemain?: number;
   ttkAtk = 0;
   ttkDef = 0;
-  attackHpRemain?: number;
-  defendHpRemain?: number;
-  death?: number;
-  pokemonType?: PokemonType;
-  fMoveType?: MoveType;
-  cMoveType?: MoveType;
-  atk?: number;
-  def?: number;
-  hp?: number;
-  timer?: number;
-  defHpRemain?: number;
-  atkHpRemain?: number;
+  tdoAtk = 0;
+  tdoDef = 0;
+  dpsAtk = 0;
+  dpsDef = 0;
 
   static create(value: IPokemonMoveData) {
     const obj = new PokemonMoveData();

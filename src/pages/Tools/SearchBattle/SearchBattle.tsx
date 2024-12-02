@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN } from '../../../util/constants';
+import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN, MIN_CP } from '../../../util/constants';
 import { IEvolution } from '../../../core/models/evolution.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain } from '../../../util/models/calculate.model';
@@ -262,8 +262,8 @@ const FindBattle = () => {
   const onSearchStatsPoke = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (toNumber(searchCP) < 10) {
-        return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
+      if (toNumber(searchCP) < MIN_CP) {
+        return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
       }
       const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
       if (!result.level) {

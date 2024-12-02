@@ -1,23 +1,21 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertNameRankingToOri, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, convertNameRankingToOri, getKeysObj, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
+import { calculateStatsByTag } from '../../../util/calculate';
 import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 
 import Error from '../../Error/Error';
-import { Body, Header, MoveSet, OverAllStats, TypeEffective } from '../Model';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
-import { FORM_MEGA, FORM_SHADOW, MAX_IV, MAX_LEVEL, scoreType } from '../../../util/constants';
+import { FORM_MEGA, FORM_SHADOW } from '../../../util/constants';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
-import { BattleBaseStats } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
 import { LocalStorageConfig } from '../../../store/constants/localStorage';
@@ -25,8 +23,13 @@ import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { PokemonType } from '../../../enums/type.enum';
+import HeaderPVP from '../components/HeaderPVP';
+import BodyPVP from '../components/BodyPVP';
+import MoveSet from '../components/MoveSet';
+import TypeEffectivePVP from '../components/TypeEffectivePVP';
+import OverAllStats from '../components/OverAllStats';
+import { ScoreType } from '../../../util/enums/constants.enum';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -46,7 +49,7 @@ const PokemonPVP = () => {
     if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
-  }, [pvp]);
+  }, [pvp.rankings, pvp.trains]);
 
   const fetchPokemonInfo = useCallback(async () => {
     dispatch(SpinnerActions.ShowSpinner.create());
@@ -88,35 +91,6 @@ const PokemonPVP = () => {
         cMoveSec = dataStore.combat.find((item) => isEqual(item.name, cMoveDataSec));
       }
 
-      const maxCP = toNumber(params.cp);
-
-      let bestStats = new BattleBaseStats();
-      if (maxCP < BattleLeagueCPType.InsMaster) {
-        let minCP =
-          maxCP === BattleLeagueCPType.Little
-            ? BattleLeagueCPType.Master
-            : maxCP === BattleLeagueCPType.Great
-            ? BattleLeagueCPType.Little
-            : maxCP === BattleLeagueCPType.Ultra
-            ? BattleLeagueCPType.Great
-            : BattleLeagueCPType.Ultra;
-        const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, toNumber(stats?.sta) + MAX_IV, MAX_LEVEL);
-
-        if (maxPokeCP < minCP) {
-          if (maxPokeCP <= BattleLeagueCPType.Little) {
-            minCP = 0;
-          } else if (maxPokeCP <= BattleLeagueCPType.Great) {
-            minCP = BattleLeagueCPType.Little;
-          } else if (maxPokeCP <= BattleLeagueCPType.Ultra) {
-            minCP = BattleLeagueCPType.Great;
-          } else {
-            minCP = BattleLeagueCPType.Ultra;
-          }
-        }
-        const allStats = calStatsProd(stats.atk, stats.def, toNumber(stats?.sta), minCP, maxCP);
-        bestStats = allStats[allStats.length - 1];
-      }
-
       let pokemonType = PokemonType.Normal;
       if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
         pokemonType = PokemonType.Shadow;
@@ -139,7 +113,6 @@ const PokemonPVP = () => {
           fMove,
           cMovePri,
           cMoveSec,
-          bestStats,
           pokemonType,
         })
       );
@@ -216,7 +189,7 @@ const PokemonPVP = () => {
             {renderLeague()}
             <hr />
             <div className="ranking-link-group" style={{ paddingTop: 10 }}>
-              {scoreType.map((type, index) => (
+              {getKeysObj(ScoreType).map((type, index) => (
                 <Button
                   key={index}
                   className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
@@ -241,20 +214,32 @@ const PokemonPVP = () => {
                     src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
                   />
                 </div>
-                <div>{Header(rankingPoke)}</div>
+                <div>
+                  <HeaderPVP data={rankingPoke} />
+                </div>
               </div>
               <hr />
-              {Body(dataStore.assets, dataStore.pokemon, rankingPoke?.data, params.cp, params.type)}
+              <BodyPVP
+                assets={dataStore.assets}
+                pokemonData={dataStore.pokemon}
+                data={rankingPoke?.data}
+                cp={params.cp}
+                type={params.type}
+              />
             </div>
             <div className="container">
               <hr />
             </div>
-            <div className="stats-container">{OverAllStats(rankingPoke, statsRanking, params.cp)}</div>
+            <div className="stats-container">
+              <OverAllStats data={rankingPoke} statsRanking={statsRanking} cp={params.cp} type={params.type} />
+            </div>
             <div className="container">
               <hr />
-              {TypeEffective(rankingPoke?.pokemon?.types)}
+              <TypeEffectivePVP types={rankingPoke?.pokemon?.types} />
             </div>
-            <div className="container">{MoveSet(rankingPoke?.data?.moves, rankingPoke?.pokemon, dataStore.combat)}</div>
+            <div className="container">
+              <MoveSet moves={rankingPoke?.data?.moves} pokemon={rankingPoke?.pokemon} combatData={dataStore.combat} />
+            </div>
           </div>
         </div>
       )}

@@ -533,10 +533,20 @@ export const getDataWithKey = <T>(data: object, findKey: string | number) => {
   return result && isNotEmpty(result) ? (result[1] as T) : undefined;
 };
 
-export const getKeyEnum = <V>(enums: object, findValue: V) => {
-  const result = Object.entries(enums).find(([, value]: [string, V]) => value === findValue);
+export const getKeyWithData = <V>(data: object, findValue: V) => {
+  const result = Object.entries(data).find(([, value]: [string, V]) => value === findValue);
   return result && isNotEmpty(result) ? result[0] : undefined;
 };
+
+export const getKeysObj = (data: object) =>
+  Object.values(data)
+    .map((v) => v.toString() as string)
+    .filter((_, i) => i < Object.values(data).length / 2);
+
+export const getValuesObj = <T extends object>(data: T) =>
+  Object.keys(data)
+    .map((v) => v as unknown as T)
+    .filter((_, i) => i < Object.keys(data).length / 2);
 
 export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   if (!pokemon) {
@@ -766,10 +776,7 @@ export const generatePokemonGoShadowForms = (
         `${form}${FORM_SHADOW.toLowerCase()}`,
         `${p.name}-${FORM_SHADOW.toLowerCase()}`,
         'Pokémon-GO',
-        getValueOrDefault(
-          Array,
-          p.types.map((item) => item.type.name)
-        ),
+        p.types.map((item) => item.type.name),
         new PokemonSprit(),
         index,
         PokemonType.Shadow
@@ -782,10 +789,7 @@ export const generatePokemonGoShadowForms = (
         `${form}${FORM_PURIFIED.toLowerCase()}`,
         `${p.name}-${FORM_PURIFIED.toLowerCase()}`,
         'Pokémon-GO',
-        getValueOrDefault(
-          Array,
-          p.types.map((item) => item.type.name)
-        ),
+        p.types.map((item) => item.type.name),
         new PokemonSprit(),
         index,
         PokemonType.Purified

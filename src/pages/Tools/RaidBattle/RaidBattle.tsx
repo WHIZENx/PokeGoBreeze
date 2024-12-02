@@ -9,7 +9,7 @@ import {
   checkPokemonGO,
   generateParamForm,
   getDmgMultiplyBonus,
-  getKeyEnum,
+  getKeyWithData,
   getMoveType,
   retrieveMoves,
   splitAndCapitalize,
@@ -76,7 +76,8 @@ import {
 } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, RaidSummary, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
-import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
+import { RaidState, SortType } from './enums/raid-state.enum';
+import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -792,7 +793,7 @@ const RaidBattle = () => {
                 }
               />
             }
-            label={getKeyEnum(PokemonType, PokemonType.Shadow)}
+            label={getKeyWithData(PokemonType, PokemonType.Shadow)}
           />
           <FormControlLabel
             control={
@@ -917,7 +918,7 @@ const RaidBattle = () => {
                   src={APIService.getPokeShadow()}
                 />
                 <span style={{ color: showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? 'black' : 'lightgray' }}>
-                  {getKeyEnum(PokemonType, PokemonType.Shadow)}
+                  {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               </span>
             }

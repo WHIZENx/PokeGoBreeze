@@ -41,6 +41,7 @@ import {
   FORM_MEGA,
   MAX_IV,
   MAX_LEVEL,
+  MIN_CP,
   MIN_IV,
   MIN_LEVEL,
   MULTIPLY_LEVEL_FRIENDSHIP,
@@ -553,18 +554,18 @@ export const findCPforLeague = (
   level: number,
   maxCPLeague?: number
 ) => {
-  let CP = 10;
-  let l = level;
-  for (let i = level; i <= MAX_LEVEL; i += 0.5) {
-    if (!isUndefined(maxCPLeague) && calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i) > maxCPLeague) {
+  let CP = MIN_CP;
+  let currentLevel = level;
+  for (let l = level; l <= MAX_LEVEL; l += 0.5) {
+    if (!isUndefined(maxCPLeague) && calculateCP(atk + IVatk, def + IVdef, sta + IVsta, l) > maxCPLeague) {
       break;
     }
-    CP = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, i);
-    l = i;
+    CP = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, l);
+    currentLevel = l;
   }
   return new StatsLeagueCalculate({
     CP,
-    level: l,
+    level: currentLevel,
   });
 };
 
@@ -579,7 +580,31 @@ export const sortStatsProd = (data: IBattleBaseStats[]) => {
   );
 };
 
-export const calStatsProd = (atk: number, def: number, sta: number, minCP?: number, maxCP?: number, pure = false) => {
+export const getBaseStatsByIVandLevel = (
+  atk: number,
+  def: number,
+  sta: number,
+  CP: number,
+  id = 0,
+  level = MAX_LEVEL,
+  atkIV = MAX_IV,
+  defIV = MAX_IV,
+  staIV = MAX_IV
+) => {
+  const statsATK = calculateStatsBattle(atk, atkIV, level);
+  const statsDEF = calculateStatsBattle(def, defIV, level);
+  const statsSTA = calculateStatsBattle(sta, staIV, level);
+  return BattleBaseStats.create({
+    IV: { atk: atkIV, def: defIV, sta: staIV },
+    CP,
+    level,
+    stats: { statsATK, statsDEF, statsSTA },
+    statsProds: statsATK * statsDEF * statsSTA,
+    id,
+  });
+};
+
+export const calStatsProd = (atk: number, def: number, sta: number, minCP: number, maxCP: number, pure = false) => {
   const dataList: IBattleBaseStats[] = [];
   if (atk === 0 || def === 0 || sta === 0) {
     return dataList;
@@ -590,20 +615,8 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP?: numb
       for (let defIV = MIN_IV; defIV <= MAX_IV; ++defIV) {
         for (let staIV = MIN_IV; staIV <= MAX_IV; ++staIV) {
           const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
-          if ((!minCP || minCP <= cp) && (!maxCP || cp <= maxCP)) {
-            const statsATK = calculateStatsBattle(atk, atkIV, level);
-            const statsDEF = calculateStatsBattle(def, defIV, level);
-            const statsSTA = calculateStatsBattle(sta, staIV, level);
-            dataList.push(
-              BattleBaseStats.create({
-                IV: { atk: atkIV, def: defIV, sta: staIV },
-                CP: cp,
-                level,
-                stats: { statsATK, statsDEF, statsSTA },
-                statsProds: statsATK * statsDEF * statsSTA,
-                id: seqId,
-              })
-            );
+          if ((minCP === 0 || minCP <= cp) && (maxCP === 0 || cp <= maxCP)) {
+            dataList.push(getBaseStatsByIVandLevel(atk, def, sta, cp, seqId, level, atkIV, defIV, staIV));
             seqId++;
           }
         }
@@ -646,21 +659,21 @@ export const calculateDamagePVE = (
   atk: number,
   defObj: number,
   power: number,
-  eff: IBattleState,
+  battleState: IBattleState,
   notPure?: boolean,
   isStab?: boolean
 ) => {
   const stabMultiply = STAB_MULTIPLY(globalOptions);
   let modifier = 0;
-  if (eff) {
-    const isStab = eff.isStab ? stabMultiply : 1;
-    const isWb = eff.isWb ? stabMultiply : 1;
-    const isDodge = eff.isDodge ? 1 - DODGE_REDUCE(globalOptions) : 1;
-    const isMega = eff.isMega ? (eff.isStab ? stabMultiply : DEFAULT_MEGA_MULTIPLY) : 1;
-    const isTrainer = eff.isTrainer ? DEFAULT_TRAINER_MULTIPLY : 1;
-    const multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, eff.fLevel);
-    const multiplyThrowCharge = MULTIPLY_THROW_CHARGE(globalOptions, eff.cLevel);
-    modifier = isStab * isWb * multiplyLevelFriendship * isDodge * multiplyThrowCharge * isMega * isTrainer * eff.effective;
+  if (battleState) {
+    const isStab = battleState.isStab ? stabMultiply : 1;
+    const isWb = battleState.isWb ? stabMultiply : 1;
+    const isDodge = battleState.isDodge ? 1 - DODGE_REDUCE(globalOptions) : 1;
+    const isMega = battleState.isMega ? (battleState.isStab ? stabMultiply : DEFAULT_MEGA_MULTIPLY) : 1;
+    const isTrainer = battleState.isTrainer ? DEFAULT_TRAINER_MULTIPLY : 1;
+    const multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.fLevel);
+    const multiplyThrowCharge = MULTIPLY_THROW_CHARGE(globalOptions, battleState.cLevel);
+    modifier = isStab * isWb * multiplyLevelFriendship * isDodge * multiplyThrowCharge * isMega * isTrainer * battleState.effective;
   } else {
     modifier = isStab ? stabMultiply : 1;
   }
@@ -1155,7 +1168,7 @@ export const queryStatesEvoChain = (
   );
   const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level);
 
-  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, undefined, undefined, true);
+  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, MIN_CP, 0, true);
   const ultraStatsProd = sortStatsProd(statsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Ultra));
   const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Great));
   const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Little));

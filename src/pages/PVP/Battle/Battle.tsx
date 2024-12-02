@@ -4,16 +4,22 @@ import ReactDOM from 'react-dom';
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
 import {
-  capitalize,
   convertNameRankingToOri,
   getArrayBySeq,
   getDmgMultiplyBonus,
+  getKeyWithData,
   getMoveType,
   splitAndCapitalize,
 } from '../../../util/utils';
 import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
-import { calculateCP, calculateStatsBattle, calculateStatsByTag, getTypeEffective } from '../../../util/calculate';
-import { MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
+import {
+  calculateCP,
+  calculateStatsBattle,
+  calculateStatsByTag,
+  getBaseStatsByIVandLevel,
+  getTypeEffective,
+} from '../../../util/calculate';
+import { MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -55,10 +61,9 @@ import {
   ChargeType,
   TimelineEvent,
 } from '../models/battle.model';
-import { BattleBaseStats, IBattleBaseStats, StatsBaseCalculate } from '../../../util/models/calculate.model';
+import { BattleBaseStats, IBattleBaseStats } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
-import { StatsBase } from '../../../core/models/stats.model';
 import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
@@ -66,6 +71,7 @@ import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat,
 import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { ScoreType } from '../../../util/enums/constants.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -115,7 +121,7 @@ const Battle = () => {
 
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
-  const State = (timer: number, block: number, energy: number, hp: number, type?: string) => {
+  const State = (timer: number, block: number, energy: number, hp: number, type?: AttackType) => {
     return new TimelineModel({
       timer,
       type,
@@ -687,7 +693,11 @@ const Battle = () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
         clearData();
-        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(LeagueType.All, league, 'overall'))).data;
+        const file = (
+          await APIService.getFetchUrl<RankingsPVP[]>(
+            APIService.getRankingFile(LeagueType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
+          )
+        ).data;
         if (!file) {
           return;
         }
@@ -883,7 +893,7 @@ const Battle = () => {
         }
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          overlappingPos(arrBound.current, width + toNumber(xNormal.current), true);
+          overlappingPos(arrBound.current, width + toNumber(xNormal.current));
         }
         if (Math.min(width, clientWidthContainer / 2) === clientWidthContainer / 2) {
           timelineNormalContainer.current?.scrollTo({
@@ -899,7 +909,7 @@ const Battle = () => {
         const width = Math.min(clientWidth, xCurrent + durationFactor * clientWidth);
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          overlappingPos(arrStore.current, elem.getBoundingClientRect().left, true);
+          overlappingPos(arrStore.current, elem.getBoundingClientRect().left);
         }
         if (width < clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
@@ -951,24 +961,27 @@ const Battle = () => {
     }
   };
 
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  const isPlaySound = (sound: HTMLAudioElement | undefined) => {
+    return sound && sound.currentTime > 0 && !sound.paused && !sound.ended && sound.readyState > sound.HAVE_CURRENT_DATA;
+  };
+
   const updateTimeline = (index: number, sound = false) => {
     const pokeCurrData = pokemonCurr.timeline.at(index);
     const pokeObjData = pokemonObj.timeline.at(index);
-    // if (sound) {
-    //   if (pokemonCurr.audio.fMove.paused && pokeCurrData.type === AttackType.Fast) {
-    //     pokemonCurr.audio.fMove.currentTime = 0;
-    //     pokemonCurr.audio.fMove.play();
-    //   } else if (!pokemonCurr.audio.fMove.paused && pokeCurrData.type === AttackType.Fast) {
-    //     pokemonCurr.audio.fMove.pause();
-    //   }
-    //   if (pokemonObj.audio.fMove.paused && pokeObjData.type === AttackType.Fast) {
-    //     pokemonObj.audio.fMove.currentTime = 0;
-    //     pokemonObj.audio.fMove.play();
-    //   } else if (!pokemonObj.audio.fMove.paused && pokeObjData.type === AttackType.Fast) {
-    //     pokemonObj.audio.fMove.pause();
-    //   }
-    // }
+    if (sound && pokemonCurr.audio?.fMove && pokemonObj.audio?.fMove) {
+      if (!isPlaySound(pokemonCurr.audio.fMove) && pokeCurrData?.type === AttackType.Fast) {
+        pokemonCurr.audio.fMove.currentTime = 0;
+        pokemonCurr.audio.fMove.play();
+      } else if (isPlaySound(pokemonCurr.audio.fMove) && pokeCurrData?.type === AttackType.Fast) {
+        pokemonCurr.audio.fMove.pause();
+      }
+      if (!isPlaySound(pokemonObj.audio.fMove) && pokeObjData?.type === AttackType.Fast) {
+        pokemonObj.audio.fMove.currentTime = 0;
+        pokemonObj.audio.fMove.play();
+      } else if (isPlaySound(pokemonObj.audio.fMove) && pokeObjData?.type === AttackType.Fast) {
+        pokemonObj.audio.fMove.pause();
+      }
+    }
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(pokeCurrData?.energy, pokeCurrData?.hp),
       pokemonObj: PokemonBattleData.setValue(pokeObjData?.energy, pokeObjData?.hp),
@@ -1045,17 +1058,26 @@ const Battle = () => {
 
   const calculateStatPokemon = (
     e: React.FormEvent<HTMLFormElement>,
-    type: string,
+    type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
   ) => {
     e.preventDefault();
-    const level = toNumber((document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value);
-    const atk = toNumber((document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value);
-    const def = toNumber((document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value);
-    const sta = toNumber((document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value);
-
-    const cp = calculateCP(atk, def, sta, level);
+    if (!pokemon.pokemonData) {
+      enqueueSnackbar(`Pokémon not found.`, {
+        variant: VariantType.Error,
+      });
+      return;
+    }
+    const battleType = getKeyWithData(BattleType, type);
+    const atk = toNumber(pokemon.pokemonData.stats?.atk);
+    const def = toNumber(pokemon.pokemonData.stats?.def);
+    const sta = toNumber(pokemon.pokemonData.stats?.sta);
+    const atkIV = toNumber((document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value);
+    const defIV = toNumber((document.getElementById(`defIV${battleType}`) as HTMLInputElement).value);
+    const staIV = toNumber((document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value);
+    const level = toNumber((document.getElementById(`level${battleType}`) as HTMLInputElement).value);
+    const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
 
     if (cp > toNumber(params?.cp)) {
       enqueueSnackbar(`This stats Pokémon CP is greater than ${params.cp}, which is not permitted by the league.`, {
@@ -1064,85 +1086,74 @@ const Battle = () => {
       return;
     }
 
-    let stats = pokemon.pokemonData?.allStats?.find(
-      (data) => data.level === level && data.IV && data.IV.atk === atk && data.IV.def === def && data.IV.sta === sta
+    const id = toNumber(pokemon.pokemonData.pokemon?.num);
+    const stats = getBaseStatsByIVandLevel(atk, def, sta, cp, id, level, atkIV, defIV, staIV);
+    setPokemon(
+      PokemonBattle.create({
+        ...pokemon,
+        timeline: [],
+        pokemonData: PokemonBattleData.create({
+          ...pokemon.pokemonData,
+          currentStats: stats,
+        }),
+      })
     );
-
-    if (!stats) {
-      const statsBattle = calculateStatsByTag(
-        pokemon.pokemonData?.pokemon,
-        pokemon.pokemonData?.pokemon?.baseStats,
-        pokemon.pokemonData?.pokemon?.slug
-      );
-
-      const statsATK = calculateStatsBattle(statsBattle.atk, atk, level);
-      const statsDEF = calculateStatsBattle(statsBattle.def, def, level);
-      const statsSTA = calculateStatsBattle(statsBattle.sta, sta, level);
-      stats = BattleBaseStats.create({
-        IV: StatsBase.setValue(atk, def, sta),
-        CP: toNumber(cp),
-        level: toNumber(level),
-        stats: StatsBaseCalculate.create({ statsATK, statsDEF, statsSTA }),
-        statsProds: statsATK * statsDEF * statsSTA,
-        form: pokemon.pokemonData?.pokemon?.forme,
-        id: toNumber(pokemon.pokemonData?.pokemon?.num),
-        league: '',
-        maxCP: 0,
-        name: pokemon.pokemonData?.pokemon?.name,
-      });
-    }
-
-    if (pokemon.pokemonData) {
-      setPokemon(
-        PokemonBattle.create({
-          ...pokemon,
-          timeline: [],
-          pokemonData: PokemonBattleData.create({
-            ...pokemon.pokemonData,
-            currentStats: stats,
-          }),
-        })
-      );
-    }
   };
 
   const onSetStats = (
-    type: string,
+    type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
     isRandom = false
   ) => {
-    if (!pokemon.pokemonData?.allStats) {
+    if (!pokemon.pokemonData) {
       return;
     }
 
-    let stats: IBattleBaseStats | undefined;
+    let stats: IBattleBaseStats | undefined = new BattleBaseStats();
     if (isRandom) {
-      stats = pokemon.pokemonData.allStats[getRandomInt(0, pokemon.pokemonData.allStats.length - 1)];
+      let cp = 0;
+      const maxCP = toNumber(params?.cp);
+      while (cp < MIN_CP || cp > maxCP) {
+        const id = toNumber(pokemon.pokemonData.pokemon?.num);
+        const atk = toNumber(pokemon.pokemonData.stats?.atk);
+        const def = toNumber(pokemon.pokemonData.stats?.def);
+        const sta = toNumber(pokemon.pokemonData.stats?.sta);
+        const atkIV = getRandomInt(MIN_IV, MAX_IV);
+        const defIV = getRandomInt(MIN_IV, MAX_IV);
+        const staIV = getRandomInt(MIN_IV, MAX_IV);
+        const level = getRandomInt(MIN_LEVEL, MAX_LEVEL);
+        cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
+        stats = getBaseStatsByIVandLevel(atk, def, sta, cp, id, level, atkIV, defIV, staIV);
+      }
     } else {
       stats = pokemon.pokemonData.bestStats;
     }
 
-    (document.getElementById(`level${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.level?.toString());
-    (document.getElementById(`atkIV${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.atk.toString());
-    (document.getElementById(`defIV${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.def.toString());
-    (document.getElementById(`hpIV${capitalize(type)}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.sta?.toString());
+    const battleType = getKeyWithData(BattleType, type);
+    (document.getElementById(`level${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.level?.toString());
+    (document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.atk.toString());
+    (document.getElementById(`defIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.def.toString());
+    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.sta?.toString());
 
-    if (pokemon.pokemonData) {
-      setPokemon(
-        PokemonBattle.create({
-          ...pokemon,
-          timeline: [],
-          pokemonData: PokemonBattleData.create({
-            ...pokemon.pokemonData,
-            currentStats: stats,
-          }),
-        })
-      );
-    }
+    setPokemon(
+      PokemonBattle.create({
+        ...pokemon,
+        timeline: [],
+        pokemonData: PokemonBattleData.create({
+          ...pokemon.pokemonData,
+          currentStats: stats,
+        }),
+      })
+    );
   };
 
-  const renderInfoPokemon = (type: string, pokemon: IPokemonBattle, setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>) => {
+  const renderInfoPokemon = (
+    type: BattleType,
+    pokemon: IPokemonBattle,
+    setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>
+  ) => {
+    const battleType = getKeyWithData(BattleType, type);
     return (
       <Accordion defaultActiveKey={[]} alwaysOpen={true}>
         <Accordion.Item eventKey="0">
@@ -1165,7 +1176,12 @@ const Battle = () => {
               </div>
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
-              <Link to={`/pvp/${params.cp}/overall/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}>
+              <Link
+                to={`/pvp/${params.cp}/${getKeyWithData(
+                  ScoreType,
+                  ScoreType.Overall
+                )?.toLowerCase()}/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}
+              >
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
               </Link>
               <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
@@ -1223,7 +1239,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.level}
-                  id={`level${capitalize(type)}`}
+                  id={`level${battleType}`}
                   type="number"
                   step={0.5}
                   min={MIN_LEVEL}
@@ -1235,7 +1251,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.atk}
-                  id={`atkIV${capitalize(type)}`}
+                  id={`atkIV${battleType}`}
                   type="number"
                   step={1}
                   min={MIN_IV}
@@ -1247,7 +1263,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.def}
-                  id={`defIV${capitalize(type)}`}
+                  id={`defIV${battleType}`}
                   type="number"
                   step={1}
                   min={MIN_IV}
@@ -1259,7 +1275,7 @@ const Battle = () => {
                 <input
                   className="form-control shadow-none"
                   defaultValue={pokemon.pokemonData?.currentStats?.IV?.sta}
-                  id={`hpIV${capitalize(type)}`}
+                  id={`hpIV${battleType}`}
                   type="number"
                   step={1}
                   min={MIN_IV}

@@ -5,7 +5,7 @@ import { IPokemonGenderRatio } from '../../core/models/pokemon.model';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getKeyEnum } from '../../util/utils';
+import { getKeyWithData } from '../../util/utils';
 
 const Gender = (props: IGenderComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -23,10 +23,10 @@ const Gender = (props: IGenderComponent) => {
           width={40}
           height={40}
           alt="img-pokemon-sex"
-          src={APIService.getGenderSprite(getKeyEnum(TypeSex, props.sex))}
+          src={APIService.getGenderSprite(getKeyWithData(TypeSex, props.sex))}
         />
         <h6 className="ratio-gender" style={{ margin: 0 }}>
-          {getKeyEnum(TypeSex, props.sex)} {props.ratio && `ratio: ${calculateRatio(props.sex, props.ratio)}%`}
+          {getKeyWithData(TypeSex, props.sex)} {props.ratio && `ratio: ${calculateRatio(props.sex, props.ratio)}%`}
         </h6>
       </div>
       <div className="element-top d-flex" style={{ marginLeft: 30, columnGap: 15 }}>

@@ -1,4 +1,4 @@
-import { BuffType, MoveType, TypeAction } from '../../enums/type.enum';
+import { BuffType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { MoveSetting } from './options.model';
 
@@ -22,7 +22,7 @@ export class Buff implements IBuff {
   }
 }
 
-interface IMove extends MoveSetting {
+interface IMove extends Partial<MoveSetting> {
   id: number;
   name: string;
 }
@@ -30,20 +30,14 @@ interface IMove extends MoveSetting {
 export class Move implements IMove {
   id = 0;
   name = '';
-  movementId: string | number = '';
-  animationId = 0;
-  pokemonType = '';
   power = 0;
-  accuracyChance = 0;
-  criticalChance = 0;
-  staminaLossScalar = 0;
-  trainerLevelMin = 0;
-  trainerLevelMax = 0;
-  vfxName = '';
+  energyDelta = 0;
   durationMs = 0;
   damageWindowStartMs = 0;
   damageWindowEndMs = 0;
-  energyDelta = 0;
+  accuracyChance = 0;
+  criticalChance = 0;
+  staminaLossScalar = 0;
 
   constructor({ ...props }: IMove) {
     Object.assign(this, props);
@@ -67,7 +61,7 @@ export class Sequence implements ISequence {
 export interface ICombat {
   name: string;
   type: string | undefined;
-  typeMove: string | undefined;
+  typeMove: TypeMove | undefined;
   pvpPower: number;
   pvpEnergy: number;
   sound: string | undefined;
@@ -91,7 +85,7 @@ export interface ICombat {
 export class Combat implements ICombat {
   name = '';
   type: string | undefined;
-  typeMove: string | undefined;
+  typeMove: TypeMove | undefined;
   pvpPower = 0;
   pvpEnergy = 0;
   sound: string | undefined;

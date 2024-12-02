@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getCustomThemeDataTable, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -21,6 +21,7 @@ import {
   isNotEmpty,
   toFloat,
   toFloatWithPadding,
+  toNumber,
 } from '../../../util/extension';
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
@@ -81,9 +82,9 @@ const columns: TableColumnModify<ICombat>[] = [
 ];
 
 interface IFilter {
-  fMoveType: string;
+  fMoveType: SelectType;
   fMoveName: string;
-  cMoveType: string;
+  cMoveType: SelectType;
   cMoveName: string;
 }
 
@@ -135,9 +136,9 @@ const Search = () => {
     }
   }, [combat, cMoveType, cMoveName]);
 
-  const searchMove = (category: string, type: string, name: string) => {
+  const searchMove = (category: TypeMove, type: SelectType, name: string) => {
     return combat
-      .filter((item) => isEqual(item.typeMove, category))
+      .filter((item) => item.typeMove === category)
       .filter(
         (move) =>
           (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
@@ -167,10 +168,10 @@ const Search = () => {
                           className="text-black"
                           value={fMoveType}
                           label="Type"
-                          onChange={(e) => setFilters(Filter.create({ ...filters, fMoveType: e.target.value }))}
+                          onChange={(e) => setFilters(Filter.create({ ...filters, fMoveType: toNumber(e.target.value) }))}
                         >
                           <MenuItem value={SelectType.All} defaultChecked={true}>
-                            {SelectType.All}
+                            {getKeyWithData(SelectType, SelectType.All)}
                           </MenuItem>
                           {Object.keys(types).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
@@ -231,9 +232,9 @@ const Search = () => {
                           className="text-black"
                           value={cMoveType}
                           label="Type"
-                          onChange={(e) => setFilters(Filter.create({ ...filters, cMoveType: e.target.value }))}
+                          onChange={(e) => setFilters(Filter.create({ ...filters, cMoveType: toNumber(e.target.value) }))}
                         >
-                          <MenuItem value={SelectType.All}>{SelectType.All}</MenuItem>
+                          <MenuItem value={SelectType.All}>{getKeyWithData(SelectType, SelectType.All)}</MenuItem>
                           {Object.keys(types).map((value, index) => (
                             <MenuItem key={index} value={capitalize(value)}>
                               {capitalize(value)}
