@@ -6,7 +6,7 @@ import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd } from '../../../util/calculate';
 
 import Find from '../../../components/Find/Find';
-import { MIN_IV, MAX_IV } from '../../../util/constants';
+import { MIN_IV, MAX_IV, MIN_CP } from '../../../util/constants';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
@@ -15,6 +15,8 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { combineClasses, isNotEmpty, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { VariantType } from '../../../enums/type.enum';
+import { useSnackbar } from 'notistack';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.statsProds) / 1000);
@@ -93,8 +95,10 @@ const StatsTable = () => {
 
   const [statsBattle, setStatsBattle] = useState<IBattleBaseStats[]>([]);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
-    const battleTable = calStatsProd(statATK, statDEF, statSTA, 0, battleLeague);
+    const battleTable = calStatsProd(statATK, statDEF, statSTA, MIN_CP, battleLeague);
     currStatBattle.current = battleTable;
     setStatsBattle(battleTable);
   }, [statATK, statDEF, statSTA, battleLeague]);
@@ -108,23 +112,22 @@ const StatsTable = () => {
   };
 
   const clearStatsPoke = useCallback(() => {
-    setStatsBattle(calStatsProd(statATK, statDEF, statSTA, 0, battleLeague));
+    setStatsBattle(currStatBattle.current);
   }, [battleLeague, statATK, statDEF, statSTA]);
-
-  const searchStatsPoke = useCallback(() => {
-    setStatsBattle(
-      [...currStatBattle.current].filter(
-        (item) => item.CP === toNumber(searchCP) && item.IV && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv
-      )
-    );
-  }, [searchCP, ATKIv, DEFIv, STAIv]);
 
   const onSearchStatsPoke = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      searchStatsPoke();
+      if (toNumber(searchCP) < MIN_CP) {
+        return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
+      }
+      setStatsBattle(
+        currStatBattle.current.filter(
+          (item) => item.CP === toNumber(searchCP) && item.IV && item.IV.atk === ATKIv && item.IV.def === DEFIv && item.IV.sta === STAIv
+        )
+      );
     },
-    [searchStatsPoke]
+    [searchCP, ATKIv, DEFIv, STAIv]
   );
 
   return (
@@ -285,7 +288,7 @@ const StatsTable = () => {
         defaultSortFieldId={1}
         striped={true}
         highlightOnHover={true}
-        progressPending={!isNotEmpty(statsBattle)}
+        progressPending={!isNotEmpty(currStatBattle.current)}
         progressComponent={
           <div style={{ margin: 10 }}>
             <CircularProgress />

@@ -1,8 +1,21 @@
-interface Color {
+export interface IColor {
   r: number;
   g: number;
   b: number;
-  a: number;
+  a?: number;
+}
+
+export class Color implements IColor {
+  r = 0;
+  g = 0;
+  b = 0;
+  a?: number;
+
+  static create(value: IColor) {
+    const obj = new Color();
+    Object.assign(obj, value);
+    return obj;
+  }
 }
 
 interface FamilyGroup {
@@ -13,13 +26,13 @@ interface FamilyGroup {
 export interface ICandy {
   familyId: number;
   familyGroup: FamilyGroup[];
-  primaryColor: Color;
-  secondaryColor: Color;
+  primaryColor: IColor;
+  secondaryColor: IColor;
   familyName: string;
 }
 
 export interface ICandyModel {
   FamilyId: number;
-  PrimaryColor: Color;
-  SecondaryColor: Color;
+  PrimaryColor: IColor;
+  SecondaryColor: IColor;
 }

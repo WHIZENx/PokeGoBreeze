@@ -1114,7 +1114,7 @@ const Battle = () => {
     if (isRandom) {
       let cp = 0;
       const maxCP = toNumber(params?.cp);
-      while (cp <= MIN_CP || cp > maxCP) {
+      while (cp < MIN_CP || cp > maxCP) {
         const id = toNumber(pokemon.pokemonData.pokemon?.num);
         const atk = toNumber(pokemon.pokemonData.stats?.atk);
         const def = toNumber(pokemon.pokemonData.stats?.def);

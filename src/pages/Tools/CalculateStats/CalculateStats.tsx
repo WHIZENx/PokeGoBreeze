@@ -178,7 +178,7 @@ const Calculate = () => {
         <form className="element-top" onSubmit={onCalculateStatsPoke.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
             <Box sx={{ width: '50%', minWidth: 350 }}>
-              <div className="input-group mb-3">
+              <div style={{ justifyContent: 'center' }} className="input-group mb-3">
                 <DynamicInputCP
                   statATK={statATK}
                   statDEF={statDEF}

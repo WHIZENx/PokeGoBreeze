@@ -177,7 +177,8 @@ const FindTable = () => {
       searchSTAIv < MIN_IV ||
       searchSTAIv > MAX_IV
     ) {
-      return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
+      enqueueSnackbar(`Please input IV between ${MIN_IV} - ${MAX_IV}.`, { variant: VariantType.Error });
+      return;
     }
     const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
     setPreCpArr(result);

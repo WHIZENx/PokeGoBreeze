@@ -38,6 +38,15 @@ const BodyPVP = (props: BodyComponent) => {
   };
 
   useEffect(() => {
+    if (isNotEmpty(matchups) && isNotEmpty(props.data?.matchups)) {
+      setMatchups([]);
+    }
+    if (isNotEmpty(counters) && isNotEmpty(props.data?.counters)) {
+      setCounters([]);
+    }
+  }, [props.type, props.data?.matchups, props.data?.counters]);
+
+  useEffect(() => {
     if (!isNotEmpty(matchups) && isNotEmpty(props.data?.matchups)) {
       setMatchups(setPokemonBody(props.data?.matchups));
     }
