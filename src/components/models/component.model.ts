@@ -324,7 +324,7 @@ export interface IHexagonComponent {
 }
 
 export interface IIVBarComponent {
-  iv: number | undefined;
+  iv: number;
   style: React.CSSProperties;
   title: string;
 }

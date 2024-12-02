@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { LevelSlider, TypeRadioGroup, getDmgMultiplyBonus, getKeyEnum } from '../../../util/utils';
+import { LevelSlider, TypeRadioGroup, getDmgMultiplyBonus, getKeyWithData } from '../../../util/utils';
 import { calculateStatsBattle } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
@@ -93,14 +93,14 @@ const StatsTable = (props: IStatsTableComponent) => {
             <FormControlLabel
               value={PokemonType.Normal}
               control={<Radio />}
-              label={<span>{getKeyEnum(PokemonType, PokemonType.Normal)}</span>}
+              label={<span>{getKeyWithData(PokemonType, PokemonType.Normal)}</span>}
             />
             <FormControlLabel
               value={PokemonType.Buddy}
               control={<Radio />}
               label={
                 <span>
-                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {getKeyEnum(PokemonType, PokemonType.Buddy)}
+                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {getKeyWithData(PokemonType, PokemonType.Buddy)}
                 </span>
               }
             />
@@ -109,7 +109,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyEnum(PokemonType, PokemonType.Shadow)}
+                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               }
             />

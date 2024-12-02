@@ -579,7 +579,31 @@ export const sortStatsProd = (data: IBattleBaseStats[]) => {
   );
 };
 
-export const calStatsProd = (atk: number, def: number, sta: number, minCP?: number, maxCP?: number, pure = false) => {
+export const getBaseStatsByIVandLevel = (
+  atk: number,
+  def: number,
+  sta: number,
+  CP: number,
+  id = 0,
+  level = MAX_LEVEL,
+  atkIV = MAX_IV,
+  defIV = MAX_IV,
+  staIV = MAX_IV
+) => {
+  const statsATK = calculateStatsBattle(atk, atkIV, level);
+  const statsDEF = calculateStatsBattle(def, defIV, level);
+  const statsSTA = calculateStatsBattle(sta, staIV, level);
+  return BattleBaseStats.create({
+    IV: { atk: atkIV, def: defIV, sta: staIV },
+    CP,
+    level,
+    stats: { statsATK, statsDEF, statsSTA },
+    statsProds: statsATK * statsDEF * statsSTA,
+    id,
+  });
+};
+
+export const calStatsProd = (atk: number, def: number, sta: number, minCP: number, maxCP: number, pure = false) => {
   const dataList: IBattleBaseStats[] = [];
   if (atk === 0 || def === 0 || sta === 0) {
     return dataList;
@@ -590,20 +614,8 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP?: numb
       for (let defIV = MIN_IV; defIV <= MAX_IV; ++defIV) {
         for (let staIV = MIN_IV; staIV <= MAX_IV; ++staIV) {
           const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
-          if ((!minCP || minCP <= cp) && (!maxCP || cp <= maxCP)) {
-            const statsATK = calculateStatsBattle(atk, atkIV, level);
-            const statsDEF = calculateStatsBattle(def, defIV, level);
-            const statsSTA = calculateStatsBattle(sta, staIV, level);
-            dataList.push(
-              BattleBaseStats.create({
-                IV: { atk: atkIV, def: defIV, sta: staIV },
-                CP: cp,
-                level,
-                stats: { statsATK, statsDEF, statsSTA },
-                statsProds: statsATK * statsDEF * statsSTA,
-                id: seqId,
-              })
-            );
+          if ((minCP === 0 || minCP <= cp) && (maxCP === 0 || cp <= maxCP)) {
+            dataList.push(getBaseStatsByIVandLevel(atk, def, sta, cp, seqId, level, atkIV, defIV, staIV));
             seqId++;
           }
         }
@@ -1155,7 +1167,7 @@ export const queryStatesEvoChain = (
   );
   const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level);
 
-  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, undefined, undefined, true);
+  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, 0, 0, true);
   const ultraStatsProd = sortStatsProd(statsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Ultra));
   const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Great));
   const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Little));

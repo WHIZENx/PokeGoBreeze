@@ -9,7 +9,7 @@ import {
   checkPokemonGO,
   generateParamForm,
   getDmgMultiplyBonus,
-  getKeyEnum,
+  getKeyWithData,
   getMoveType,
   retrieveMoves,
   splitAndCapitalize,
@@ -792,7 +792,7 @@ const RaidBattle = () => {
                 }
               />
             }
-            label={getKeyEnum(PokemonType, PokemonType.Shadow)}
+            label={getKeyWithData(PokemonType, PokemonType.Shadow)}
           />
           <FormControlLabel
             control={
@@ -917,7 +917,7 @@ const RaidBattle = () => {
                   src={APIService.getPokeShadow()}
                 />
                 <span style={{ color: showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? 'black' : 'lightgray' }}>
-                  {getKeyEnum(PokemonType, PokemonType.Shadow)}
+                  {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               </span>
             }

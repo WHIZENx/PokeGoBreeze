@@ -2,7 +2,7 @@ import { Badge } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle, TimelineElement } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -213,7 +213,7 @@ export const TimeLine = (
                       <div className="position-absolute icon-buff-timeline">
                         {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                            {getKeyEnum(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                            {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
                         ))}
                       </div>
@@ -223,7 +223,7 @@ export const TimeLine = (
                           <div className="position-absolute icon-buff-timeline">
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {getKeyEnum(TypeAction, b.type)?.toUpperCase()} {b.power}
+                                {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>
@@ -346,7 +346,7 @@ export const TimeLineFit = (
                       >
                         {value.buff?.map((b, i) => (
                           <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                            {getKeyEnum(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                            {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
                           </span>
                         ))}
                       </div>
@@ -362,7 +362,7 @@ export const TimeLineFit = (
                           >
                             {value.buff?.map((b, i) => (
                               <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {getKeyEnum(TypeAction, b.type)?.toUpperCase()} {b.power}
+                                {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
                               </span>
                             ))}
                           </div>

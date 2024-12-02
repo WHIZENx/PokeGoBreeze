@@ -1,15 +1,15 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import APIService from '../../../services/API.service';
 
-import { getKeyEnum, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { getKeyWithData, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
-import { calculateCP, calculateStatsByTag, calStatsProd } from '../../../util/calculate';
+import { calculateCP, calculateStatsByTag, calStatsProd, getBaseStatsByIVandLevel } from '../../../util/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { MAX_IV, MAX_LEVEL } from '../../../util/constants';
+import { CP_DIFF_RATIO, MAX_IV, MAX_LEVEL } from '../../../util/constants';
 import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
@@ -18,8 +18,11 @@ import { combineClasses, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } fro
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { MoveType } from '../../../enums/type.enum';
+import { SpinnerActions } from '../../../store/actions';
+import { BattleBaseStats } from '../../../util/models/calculate.model';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
+  const dispatch = useDispatch();
   const combat = useSelector((state: StoreState) => state.store.data.combat);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
@@ -49,7 +52,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
   };
 
   const selectPokemon = (value: IBattlePokemonData) => {
-    if (!isNotEmpty(value.moveset)) {
+    if (!isNotEmpty(value.moveset) || !value.pokemon) {
       return;
     }
     props.clearData(false);
@@ -71,63 +74,47 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
-    let minCP =
-      props.league === BattleLeagueCPType.Little
-        ? BattleLeagueCPType.Master
-        : props.league === BattleLeagueCPType.Great
-        ? BattleLeagueCPType.Little
-        : props.league === BattleLeagueCPType.Ultra
-        ? BattleLeagueCPType.Great
-        : BattleLeagueCPType.Ultra;
-    const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, stats.sta + MAX_IV, MAX_LEVEL);
-
-    if (maxPokeCP < minCP) {
-      if (maxPokeCP <= BattleLeagueCPType.Little) {
-        minCP = BattleLeagueCPType.Master;
-      } else if (maxPokeCP <= BattleLeagueCPType.Great) {
-        minCP = BattleLeagueCPType.Little;
-      } else if (maxPokeCP <= BattleLeagueCPType.Ultra) {
-        minCP = BattleLeagueCPType.Great;
-      } else {
-        minCP = BattleLeagueCPType.Ultra;
-      }
+    let bestStats = new BattleBaseStats();
+    if (props.league === BattleLeagueCPType.InsMaster) {
+      const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, stats.sta + MAX_IV, MAX_LEVEL);
+      bestStats = getBaseStatsByIVandLevel(stats.atk, stats.def, stats.sta, maxPokeCP);
+    } else {
+      const allStats = calStatsProd(stats.atk, stats.def, stats.sta, props.league - CP_DIFF_RATIO, props.league);
+      bestStats = allStats[allStats.length - 1];
     }
-    const allStats = calStatsProd(stats.atk, stats.def, stats.sta, minCP, props.league);
 
-    if (allStats && value && value.pokemon) {
-      setScore(value.score);
-      props.setPokemonBattle(
-        PokemonBattle.create({
-          ...props.pokemonBattle,
-          pokemonData: PokemonBattleData.create({
-            ...value,
-            form: value.form,
-            pokemonType: value.pokemonType,
-            hp: toNumber(value.stats.hp),
-            fMove: fMoveCombat,
-            cMove: cMovePriCombat,
-            cMoveSec: cMoveSecCombat,
-            energy: 0,
-            block: 0,
-            turn: 0,
-            allStats,
-            currentStats: allStats[allStats.length - 1],
-            bestStats: allStats[allStats.length - 1],
-            disableCMovePri: false,
-            disableCMoveSec: false,
-          }),
+    setScore(value.score);
+    props.setPokemonBattle(
+      PokemonBattle.create({
+        ...props.pokemonBattle,
+        pokemonData: PokemonBattleData.create({
+          ...value,
+          form: value.form,
+          pokemonType: value.pokemonType,
+          hp: toNumber(value.stats.hp),
           fMove: fMoveCombat,
-          cMovePri: cMovePriCombat,
+          cMove: cMovePriCombat,
           cMoveSec: cMoveSecCombat,
-          audio: {
-            fMove: new Audio(APIService.getSoundMove(fMoveCombat?.sound)),
-            cMovePri: new Audio(APIService.getSoundMove(cMovePriCombat?.sound)),
-            cMoveSec: new Audio(APIService.getSoundMove(cMoveSecCombat?.sound)),
-          },
-          pokemonType: getPokemonType(value.speciesId),
-        })
-      );
-    }
+          energy: 0,
+          block: 0,
+          turn: 0,
+          currentStats: bestStats,
+          bestStats,
+          disableCMovePri: false,
+          disableCMoveSec: false,
+        }),
+        fMove: fMoveCombat,
+        cMovePri: cMovePriCombat,
+        cMoveSec: cMoveSecCombat,
+        audio: {
+          fMove: new Audio(APIService.getSoundMove(fMoveCombat?.sound)),
+          cMovePri: new Audio(APIService.getSoundMove(cMovePriCombat?.sound)),
+          cMoveSec: new Audio(APIService.getSoundMove(cMoveSecCombat?.sound)),
+        },
+        pokemonType: getPokemonType(value.speciesId),
+      })
+    );
+    dispatch(SpinnerActions.HideSpinner.create());
   };
 
   const selectFMove = (value: ICombat | undefined) => {
@@ -198,9 +185,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       <div className="border-box-battle position-relative">
         {(score > 0 || !isEmpty(pokemonIcon) || pokemon) && (
           <span className="pokemon-select-right">
-            {isInclude(pokemon?.speciesId, '_shadow') && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`)}>
-                {getKeyEnum(MoveType, MoveType.Shadow)}
+            {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
+              <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`)}>
+                {getKeyWithData(MoveType, MoveType.Shadow)}
               </span>
             )}
             {score > 0 && (
@@ -242,7 +229,14 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             )
             .slice(0, firstInit.current + eachCounter.current * startIndex)
             .map((value, index) => (
-              <div className="card-pokemon-select" key={index} onMouseDown={() => selectPokemon(value)}>
+              <div
+                className="card-pokemon-select"
+                key={index}
+                onMouseDown={() => {
+                  dispatch(SpinnerActions.ShowSpinner.create());
+                  setTimeout(() => selectPokemon(value), 200);
+                }}
+              >
                 <CardPokemon value={value.pokemon} score={value.score} pokemonType={getPokemonType(value.speciesId)} />
               </div>
             ))}

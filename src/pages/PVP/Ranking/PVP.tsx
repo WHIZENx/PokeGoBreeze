@@ -1,7 +1,15 @@
 import React, { useState, useEffect, Fragment, useRef, useCallback } from 'react';
 import '../PVP.scss';
 
-import { convertNameRankingToOri, splitAndCapitalize, capitalize, getStyleSheet, replaceTempMovePvpName } from '../../../util/utils';
+import {
+  convertNameRankingToOri,
+  splitAndCapitalize,
+  capitalize,
+  getStyleSheet,
+  replaceTempMovePvpName,
+  getKeyWithData,
+  getKeysObj,
+} from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
@@ -15,12 +23,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { Body, Header, MoveSet, OverAllStats, TypeEffective } from '../Model';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { useLocalStorage } from 'usehooks-ts';
-import { FORM_SHADOW, scoreType } from '../../../util/constants';
+import { FORM_SHADOW } from '../../../util/constants';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -34,6 +41,12 @@ import { LeagueType } from '../../../core/enums/league.enum';
 import { Sorted } from '../enums/pvp-team.enum';
 import { SortType } from '../enums/pvp-ranking-enum';
 import { PokemonType } from '../../../enums/type.enum';
+import HeaderPVP from '../components/HeaderPVP';
+import BodyPVP from '../components/BodyPVP';
+import MoveSet from '../components/MoveSet';
+import TypeEffectivePVP from '../components/TypeEffectivePVP';
+import OverAllStats from '../components/OverAllStats';
+import { ScoreType } from '../../../util/enums/constants.enum';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -189,7 +202,12 @@ const RankingPVP = () => {
           }}
         >
           <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
-            <Link to={`/pvp/${params.cp}/overall/${data.data?.speciesId?.replaceAll('_', '-')}`}>
+            <Link
+              to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${data.data?.speciesId?.replaceAll(
+                '_',
+                '-'
+              )}`}
+            >
               <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
             </Link>
             <div className="d-flex justify-content-center">
@@ -225,19 +243,23 @@ const RankingPVP = () => {
             <Fragment>
               <div className="pokemon-ranking-body ranking-body">
                 <div className="w-100 ranking-info element-top">
-                  {Header(data)}
+                  <HeaderPVP data={data} />
                   <hr />
-                  {Body(dataStore.assets, dataStore.pokemon, data.data, params.cp, params.type)}
+                  <BodyPVP assets={dataStore.assets} pokemonData={dataStore.pokemon} data={data.data} cp={params.cp} type={params.type} />
                 </div>
                 <div className="container">
                   <hr />
                 </div>
-                <div className="stats-container">{OverAllStats(data, statsRanking, params.cp)}</div>
+                <div className="stats-container">
+                  <OverAllStats data={data} statsRanking={statsRanking} cp={params.cp} type={params.type} />
+                </div>
                 <div className="container">
                   <hr />
-                  {TypeEffective(data.pokemon?.types)}
+                  <TypeEffectivePVP types={data.pokemon?.types} />
                 </div>
-                <div className="container">{MoveSet(data.data?.moves, data.pokemon, dataStore.combat)}</div>
+                <div className="container">
+                  <MoveSet moves={data.data?.moves} pokemon={data.pokemon} combatData={dataStore.combat} />
+                </div>
               </div>
               <LeaveToggle eventKey={key.toString()}>
                 <span className="text-danger">
@@ -289,7 +311,7 @@ const RankingPVP = () => {
         {renderLeague()}
         <hr />
         <div className="element-top ranking-link-group">
-          {scoreType.map((type, index) => (
+          {getKeysObj(ScoreType).map((type, index) => (
             <Button
               key={index}
               className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}

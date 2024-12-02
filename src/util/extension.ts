@@ -138,10 +138,8 @@ export const isIncludeList = (
   }
 };
 
-export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) => {
-  return array.filter((item) => isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode))
-    .length;
-};
+export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) =>
+  array.filter((item) => isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode)).length;
 
 export const getPropertyName = <T extends object>(
   obj: T | null | undefined,

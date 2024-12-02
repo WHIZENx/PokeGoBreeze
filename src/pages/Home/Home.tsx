@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
 import { DEFAULT_TYPES, genList, regionList, TRANSITION_TIME, versionList } from '../../util/constants';
@@ -414,7 +414,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label={getKeyEnum(PokemonType, PokemonType.Mega)}
+                    label={getKeyWithData(PokemonType, PokemonType.Mega)}
                   />
                   <FormControlLabel
                     control={
@@ -430,7 +430,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label={getKeyEnum(PokemonType, PokemonType.GMax)}
+                    label={getKeyWithData(PokemonType, PokemonType.GMax)}
                   />
                   <FormControlLabel
                     control={
@@ -446,7 +446,7 @@ const Home = () => {
                         }
                       />
                     }
-                    label={getKeyEnum(PokemonType, PokemonType.Primal)}
+                    label={getKeyWithData(PokemonType, PokemonType.Primal)}
                   />
                   <FormControlLabel
                     control={

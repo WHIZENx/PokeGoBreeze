@@ -158,6 +158,9 @@ export const NICE_THROW_INC_CHANCE = [1.0, 1.3];
 export const GREAT_THROW_INC_CHANCE = [1.3, 1.7];
 export const EXCELLENT_THROW_INC_CHANCE = [1.7, 2.0];
 
+export const MIN_CP = 10;
+export const CP_DIFF_RATIO = 10; // Find difference between CP and Max CP
+
 export const MIN_LEVEL = 1;
 export const MAX_LEVEL = 51;
 
@@ -370,6 +373,5 @@ export const genRoman = (gen: number | string) => {
   }
 };
 
-export const scoreType = ['Overall', 'Leads', 'Closers', 'Switches', 'Chargers', 'Attackers', 'Consistency'];
 export const leaguesDefault = [BattleLeagueIconType.Great, BattleLeagueIconType.Ultra, BattleLeagueIconType.Master];
 export const levelList = Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5);

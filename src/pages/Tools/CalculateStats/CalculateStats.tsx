@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { getKeyEnum, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
+import { getKeyWithData, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -76,8 +76,8 @@ const Calculate = () => {
   };
 
   const calculateStatsPoke = useCallback(() => {
-    if (toNumber(searchCP) < 10) {
-      enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
+    if (toNumber(searchCP) < MIN_CP) {
+      enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
       return;
     }
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
@@ -273,14 +273,14 @@ const Calculate = () => {
               <FormControlLabel
                 value={PokemonType.Normal}
                 control={<Radio />}
-                label={<span>{getKeyEnum(PokemonType, PokemonType.Normal)}</span>}
+                label={<span>{getKeyWithData(PokemonType, PokemonType.Normal)}</span>}
               />
               <FormControlLabel
                 value={PokemonType.Buddy}
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {getKeyEnum(PokemonType, PokemonType.Buddy)}
+                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {getKeyWithData(PokemonType, PokemonType.Buddy)}
                   </span>
                 }
               />
@@ -289,7 +289,7 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={28} alt="img-lucky" src={APIService.getPokeLucky()} /> {getKeyEnum(PokemonType, PokemonType.Lucky)}
+                    <img height={28} alt="img-lucky" src={APIService.getPokeLucky()} /> {getKeyWithData(PokemonType, PokemonType.Lucky)}
                   </span>
                 }
               />
@@ -298,7 +298,7 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyEnum(PokemonType, PokemonType.Shadow)}
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyWithData(PokemonType, PokemonType.Shadow)}
                   </span>
                 }
               />
@@ -308,7 +308,7 @@ const Calculate = () => {
                 label={
                   <span>
                     <img height={32} alt="img-purified" src={APIService.getPokePurified()} />{' '}
-                    {getKeyEnum(PokemonType, PokemonType.Purified)}
+                    {getKeyWithData(PokemonType, PokemonType.Purified)}
                   </span>
                 }
               />
@@ -586,7 +586,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataLittleLeague && dataLittleLeague.isElidge ? (
-                            <span className={`${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+                            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
                               {dataLittleLeague.rangeValue?.resultBetweenStardust}
                             </span>
                           ) : (
@@ -614,7 +614,7 @@ const Calculate = () => {
                               <span
                                 className={
                                   statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
                                     : ''
                                 }
                               >
@@ -639,7 +639,7 @@ const Calculate = () => {
                               <span
                                 className={
                                   statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
                                     : ''
                                 }
                               >
@@ -713,7 +713,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataGreatLeague && dataGreatLeague.isElidge ? (
-                            <span className={`${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+                            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
                               {dataGreatLeague.rangeValue?.resultBetweenStardust}
                             </span>
                           ) : (
@@ -741,7 +741,7 @@ const Calculate = () => {
                               <span
                                 className={
                                   statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
                                     : ''
                                 }
                               >
@@ -766,7 +766,7 @@ const Calculate = () => {
                               <span
                                 className={
                                   statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
                                     : ''
                                 }
                               >
@@ -840,7 +840,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataUltraLeague && dataUltraLeague.isElidge ? (
-                            <span className={`${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+                            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
                               {dataUltraLeague.rangeValue?.resultBetweenStardust}
                             </span>
                           ) : (
@@ -868,7 +868,7 @@ const Calculate = () => {
                               <span
                                 className={
                                   statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
                                     : ''
                                 }
                               >
@@ -893,7 +893,7 @@ const Calculate = () => {
                               <span
                                 className={
                                   statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
                                     : ''
                                 }
                               >
@@ -958,7 +958,7 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataMasterLeague ? (
-                            <span className={`${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+                            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
                               {dataMasterLeague.rangeValue?.resultBetweenStardust}
                             </span>
                           ) : (
@@ -986,7 +986,7 @@ const Calculate = () => {
                               <span
                                 className={
                                   statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
                                     : ''
                                 }
                               >
@@ -1011,7 +1011,7 @@ const Calculate = () => {
                               <span
                                 className={
                                   statData?.pokemonType !== PokemonType.Lucky
-                                    ? `${getKeyEnum(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
+                                    ? `${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`
                                     : ''
                                 }
                               >

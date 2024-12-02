@@ -6,6 +6,7 @@ import {
   convertNameRankingToForm,
   convertNameRankingToOri,
   findMoveTeam,
+  getKeyWithData,
   getMoveType,
   getStyleSheet,
   reverseReplaceTempMovePvpName,
@@ -48,6 +49,7 @@ import { Sorted, SortType } from '../enums/pvp-team.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { PokemonType } from '../../../enums/type.enum';
+import { ScoreType } from '../../../util/enums/constants.enum';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -355,7 +357,11 @@ const TeamPVP = () => {
                 backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, 1, styleSheet.current),
               }}
             >
-              <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
+              <Link
+                to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${value.speciesId
+                  .toString()
+                  .replaceAll('_', '-')}`}
+              >
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
               </Link>
               <div className="d-flex justify-content-center">
@@ -518,7 +524,11 @@ const TeamPVP = () => {
                           backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType),
                         }}
                       >
-                        <Link to={`/pvp/${params.cp}/overall/${value.speciesId.toString().replaceAll('_', '-')}`}>
+                        <Link
+                          to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${value.speciesId
+                            .toString()
+                            .replaceAll('_', '-')}`}
+                        >
                           <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
                         </Link>
                         <div className="d-flex justify-content-center">

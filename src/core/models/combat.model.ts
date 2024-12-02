@@ -22,7 +22,7 @@ export class Buff implements IBuff {
   }
 }
 
-interface IMove extends MoveSetting {
+interface IMove extends Partial<MoveSetting> {
   id: number;
   name: string;
 }
@@ -30,20 +30,14 @@ interface IMove extends MoveSetting {
 export class Move implements IMove {
   id = 0;
   name = '';
-  movementId: string | number = '';
-  animationId = 0;
-  pokemonType = '';
   power = 0;
-  accuracyChance = 0;
-  criticalChance = 0;
-  staminaLossScalar = 0;
-  trainerLevelMin = 0;
-  trainerLevelMax = 0;
-  vfxName = '';
+  energyDelta = 0;
   durationMs = 0;
   damageWindowStartMs = 0;
   damageWindowEndMs = 0;
-  energyDelta = 0;
+  accuracyChance = 0;
+  criticalChance = 0;
+  staminaLossScalar = 0;
 
   constructor({ ...props }: IMove) {
     Object.assign(this, props);

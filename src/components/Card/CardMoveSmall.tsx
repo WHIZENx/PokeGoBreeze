@@ -3,7 +3,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
 import APIService from '../../services/API.service';
-import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ICardSmallComponent } from '../models/component.model';
@@ -39,9 +39,9 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               <span className="d-flex">
                 {props.value && props.value.moveType !== MoveType.None && (
                   <span
-                    className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.value?.moveType)?.toLowerCase()}-ic`)}
+                    className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, props.value?.moveType)?.toLowerCase()}-ic`)}
                   >
-                    {getKeyEnum(MoveType, props.value.moveType)}
+                    {getKeyWithData(MoveType, props.value.moveType)}
                   </span>
                 )}
               </span>

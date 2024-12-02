@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { getKeyEnum, splitAndCapitalize } from '../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { ICardMoveComponent } from '../models/component.model';
@@ -30,8 +30,10 @@ const CardMove = (props: ICardMoveComponent) => {
           </span>
           <span className="d-flex">
             {props.value && props.value.moveType !== MoveType.None && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, props.value?.moveType)?.toLowerCase()}-ic`)}>
-                {getKeyEnum(MoveType, props.value.moveType)}
+              <span
+                className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, props.value?.moveType)?.toLowerCase()}-ic`)}
+              >
+                {getKeyWithData(MoveType, props.value.moveType)}
               </span>
             )}
           </span>

@@ -7,7 +7,7 @@ import {
   convertPokemonDataName,
   generateParamForm,
   getDmgMultiplyBonus,
-  getKeyEnum,
+  getKeyWithData,
   splitAndCapitalize,
 } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
@@ -169,8 +169,8 @@ const Counter = (props: ICounterComponent) => {
           </span>
           <span className="w-100">
             {row.fMove.moveType !== MoveType.None && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`)}>
-                {getKeyEnum(MoveType, row.fMove.moveType)}
+              <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyWithData(MoveType, row.fMove.moveType)}
               </span>
             )}
           </span>
@@ -190,8 +190,8 @@ const Counter = (props: ICounterComponent) => {
           </span>
           <span className="w-100">
             {row.cMove.moveType !== MoveType.None && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`)}>
-                {getKeyEnum(MoveType, row.cMove.moveType)}
+              <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyWithData(MoveType, row.cMove.moveType)}
               </span>
             )}
           </span>

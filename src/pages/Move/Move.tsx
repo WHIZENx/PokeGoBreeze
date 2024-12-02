@@ -3,7 +3,14 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import { capitalize, checkPokemonGO, convertPokemonDataName, generateParamForm, getKeyEnum, splitAndCapitalize } from '../../util/utils';
+import {
+  capitalize,
+  checkPokemonGO,
+  convertPokemonDataName,
+  generateParamForm,
+  getKeyWithData,
+  splitAndCapitalize,
+} from '../../util/utils';
 import { STAB_MULTIPLY } from '../../util/constants';
 import { getBarCharge, queryTopMove } from '../../util/calculate';
 
@@ -89,8 +96,8 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     selector: (row) => (
       <>
         {row.moveType !== MoveType.None && (
-          <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.moveType)?.toLowerCase()}-ic`)}>
-            {getKeyEnum(MoveType, row.moveType)}
+          <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.moveType)?.toLowerCase()}-ic`)}>
+            {getKeyWithData(MoveType, row.moveType)}
           </span>
         )}
       </>
@@ -378,7 +385,7 @@ const Move = (props: IMovePage) => {
                   {move?.buffs.map((value, index) => (
                     <tr key={index}>
                       <td className="target-buff">
-                        <CircleIcon sx={{ fontSize: '5px' }} /> {getKeyEnum(BuffType, value.target)}
+                        <CircleIcon sx={{ fontSize: '5px' }} /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
                         {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}

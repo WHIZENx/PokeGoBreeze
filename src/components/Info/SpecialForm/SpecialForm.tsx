@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 
 import './SpecialForm.scss';
 import { StoreState } from '../../../store/models/state.model';
@@ -70,7 +70,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
       {isNotEmpty(arrEvoList) && (
         <div className={props.className} style={props.style}>
           <h4 className="title-evo">
-            <b>{getKeyEnum(PokemonType, pokemonType)} Evolution</b>
+            <b>{getKeyWithData(PokemonType, pokemonType)} Evolution</b>
           </h4>
           <div className="form-special-container scroll-evolution">
             <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
@@ -93,9 +93,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
                   </div>
                   <span className="caption">
-                    {`First ${getKeyEnum(PokemonType, pokemonType)?.toLowerCase()} evolution: `}
+                    {`First ${getKeyWithData(PokemonType, pokemonType)?.toLowerCase()} evolution: `}
                     <img
-                      alt={`img-${getKeyEnum(PokemonType, pokemonType)?.toLowerCase()}`}
+                      alt={`img-${getKeyWithData(PokemonType, pokemonType)?.toLowerCase()}`}
                       width={25}
                       height={25}
                       src={
@@ -109,7 +109,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     <b>{getQuestEvo(value.name).firstTempEvolution}</b>
                   </span>
                   <span className="caption">
-                    {`${getKeyEnum(PokemonType, pokemonType)} evolution: `}
+                    {`${getKeyWithData(PokemonType, pokemonType)} evolution: `}
                     <img
                       alt="img-primal"
                       width={25}

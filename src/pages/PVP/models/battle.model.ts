@@ -16,13 +16,18 @@ export enum ChargeType {
   Secondary = 2,
 }
 
+interface MoveAudio {
+  fMove?: HTMLAudioElement;
+  cMovePri?: HTMLAudioElement;
+  cMoveSec?: HTMLAudioElement;
+}
+
 export interface IPokemonBattleData {
   speciesId?: string;
   name?: string;
   form?: string | null;
   id?: number;
   pokemonType: PokemonType;
-  allStats?: IBattleBaseStats[];
   hp: number;
   stats: IStatsBase | undefined;
   bestStats: IBattleBaseStats | undefined;
@@ -44,7 +49,6 @@ export class PokemonBattleData implements IPokemonBattleData {
   form?: string | null;
   id?: number;
   pokemonType = PokemonType.Normal;
-  allStats?: IBattleBaseStats[];
   hp = 0;
   stats: IStatsBase | undefined;
   bestStats: IBattleBaseStats | undefined;
@@ -86,7 +90,7 @@ export interface IPokemonBattle {
   energy: number;
   block: number;
   chargeSlot: number;
-  audio?: any;
+  audio?: MoveAudio;
 }
 
 export class PokemonBattle implements IPokemonBattle {
@@ -101,7 +105,7 @@ export class PokemonBattle implements IPokemonBattle {
   energy = 0;
   block = DEFAULT_BLOCK;
   chargeSlot = ChargeType.Primary;
-  audio?: any;
+  audio?: MoveAudio;
 
   static create(value: IPokemonBattle) {
     const obj = new PokemonBattle();
