@@ -33,34 +33,26 @@ const Hexagon = (props: IHexagonComponent) => {
     return new Pointer(x, y);
   };
 
-  const drawLineHex = (
-    ctx: CanvasRenderingContext2D | null | undefined,
-    center: IPointer,
-    percentage: number,
-    color: string,
-    isFill: boolean
-  ) => {
+  const drawLineHex = (ctx: CanvasRenderingContext2D, center: IPointer, percentage: number, color: string, isFill: boolean) => {
     const start = getHexConnerCord(center, percentage, 0);
-    ctx?.beginPath();
-    ctx?.moveTo(start.x, start.y);
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
     for (let i = 1; i <= 6; i++) {
       const end = getHexConnerCord(center, percentage, i);
-      ctx?.lineTo(end.x, end.y);
+      ctx.lineTo(end.x, end.y);
     }
-    ctx?.setLineDash([20, 15]);
-    if (ctx) {
-      if (isFill) {
-        ctx.fillStyle = 'gray';
-        ctx.fill();
-      }
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = color;
+    ctx.setLineDash([20, 15]);
+    if (isFill) {
+      ctx.fillStyle = 'gray';
+      ctx.fill();
     }
-    ctx?.stroke();
-    ctx?.closePath();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = color;
+    ctx.stroke();
+    ctx.closePath();
   };
 
-  const drawStatsHex = (ctx: CanvasRenderingContext2D | null | undefined, center: IPointer, stat: IHexagonStats, hexSize: number) => {
+  const drawStatsHex = (ctx: CanvasRenderingContext2D, center: IPointer, stat: IHexagonStats, hexSize: number) => {
     const stats: DynamicObj<number> = {
       '0': (stat.switching * hexSize) / 100,
       '1': (stat.charger * hexSize) / 100,
@@ -70,24 +62,20 @@ const Hexagon = (props: IHexagonComponent) => {
       '5': (stat.lead * hexSize) / 100,
     };
     const start = getHexConnerCord(center, Math.min(stats['0'], 100), 0);
-    ctx?.beginPath();
-    ctx?.moveTo(start.x, start.y);
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
     for (let i = 1; i <= Object.keys(stats).length; i++) {
       const end = getHexConnerCord(center, Math.min(stats[i.toString()], 100), i);
-      ctx?.lineTo(end.x, end.y);
+      ctx.lineTo(end.x, end.y);
     }
-    ctx?.setLineDash([]);
-    ctx?.lineTo(start.x, start.y);
-    if (ctx) {
-      ctx.lineWidth = 3;
-      ctx.fillStyle = '#a3eca380';
-    }
-    ctx?.fill();
-    if (ctx) {
-      ctx.strokeStyle = 'green';
-    }
-    ctx?.stroke();
-    ctx?.closePath();
+    ctx.setLineDash([]);
+    ctx.lineTo(start.x, start.y);
+    ctx.lineWidth = 3;
+    ctx.fillStyle = '#a3eca380';
+    ctx.fill();
+    ctx.strokeStyle = 'green';
+    ctx.stroke();
+    ctx.closePath();
   };
 
   const loop = (type: number, startStat: number, endStat: number) => {
@@ -104,15 +92,17 @@ const Hexagon = (props: IHexagonComponent) => {
       const hexSize = hexBorderSize / 2;
 
       const ctx = canvasHex.current?.getContext('2d');
-      ctx?.beginPath();
-      ctx?.clearRect(0, 0, hexBorderSize, hexBorderSize);
-      ctx?.closePath();
-      drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, hexSize, 'white', true);
-      drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 25, 'lightgray', false);
-      drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 50, 'lightgray', false);
-      drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 75, 'lightgray', false);
-      drawStatsHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, stats, hexSize);
-      setInitHex(true);
+      if (ctx) {
+        ctx.beginPath();
+        ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
+        ctx.closePath();
+        drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, hexSize, 'white', true);
+        drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 25, 'lightgray', false);
+        drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 50, 'lightgray', false);
+        drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 75, 'lightgray', false);
+        drawStatsHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, stats, hexSize);
+        setInitHex(true);
+      }
     },
     [props.size]
   );

@@ -276,7 +276,8 @@ class APIService {
   }
 
   getItemTroy(item?: ItemLureRequireType) {
-    return !item ? `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey.png` : `${APIUrl.POGO_ASSET_API_URL}Items/TroyKey_${item}.png`;
+    const troy = `TroyKey${item ? `_${item}` : ''}`;
+    return `${APIUrl.POGO_ASSET_API_URL}Items/${troy}.png`;
   }
 
   getSoundCryPokemon(name: string) {

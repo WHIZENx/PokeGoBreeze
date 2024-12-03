@@ -255,6 +255,7 @@ export interface ISelectMoveComponent {
   inputType?: InputType;
   isSelected?: boolean;
   isDisable?: boolean;
+  maxHeight?: number;
 }
 
 export interface ISelectPokemonComponent {

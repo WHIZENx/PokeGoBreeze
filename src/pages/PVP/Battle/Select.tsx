@@ -4,22 +4,19 @@ import APIService from '../../../services/API.service';
 import { getKeyWithData, getPokemonType, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
-import { calculateCP, calculateStatsByTag, calStatsProd, getBaseStatsByIVandLevel } from '../../../util/calculate';
+import { calculateStatsByTag, calculateStatsTopRank } from '../../../util/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
 import { useDispatch, useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
-import { CP_DIFF_RATIO, MAX_IV, MAX_LEVEL } from '../../../util/constants';
 import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { MoveType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
-import { BattleBaseStats } from '../../../util/models/calculate.model';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const dispatch = useDispatch();
@@ -74,14 +71,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
-    let bestStats = new BattleBaseStats();
-    if (props.league === BattleLeagueCPType.InsMaster) {
-      const maxPokeCP = calculateCP(stats.atk + MAX_IV, stats.def + MAX_IV, stats.sta + MAX_IV, MAX_LEVEL);
-      bestStats = getBaseStatsByIVandLevel(stats.atk, stats.def, stats.sta, maxPokeCP);
-    } else {
-      const allStats = calStatsProd(stats.atk, stats.def, stats.sta, props.league - CP_DIFF_RATIO, props.league);
-      bestStats = allStats[allStats.length - 1];
-    }
+    const bestStats = calculateStatsTopRank(stats, value.pokemon.num, props.league);
 
     setScore(value.score);
     props.setPokemonBattle(
@@ -251,7 +241,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         style={{ padding: 0, borderRadius: 0 }}
       >
         <div className="card-move-input" tabIndex={0} onClick={() => setShowFMove(true)} onBlur={() => setShowFMove(false)}>
-          <CardMoveSmall value={fMove} isShow={Boolean(pokemon)} isSelect={isNotEmpty(props.data) && props.data.length > 1} />
+          <CardMoveSmall value={fMove} isShow={Boolean(pokemon)} isSelect={props.data.length > 1} />
           {showFMove && isNotEmpty(props.data) && pokemon && (
             <div className="result-move-select">
               <div>
@@ -317,7 +307,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               value={cMovePri}
               isShow={Boolean(pokemon)}
               isDisable={props.pokemonBattle.disableCMovePri}
-              isSelect={isNotEmpty(props.data) && props.data.length > 1}
+              isSelect={props.data.length > 1}
             />
             {showCMovePri && isNotEmpty(props.data) && pokemon && (
               <div className="result-move-select">
@@ -401,7 +391,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               isShow={Boolean(pokemon)}
               clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
               isDisable={props.pokemonBattle.disableCMoveSec}
-              isSelect={isNotEmpty(props.data) && props.data.length > 1}
+              isSelect={props.data.length > 1}
             />
             {showCMoveSec && isNotEmpty(props.data) && pokemon && (
               <div className="result-move-select">

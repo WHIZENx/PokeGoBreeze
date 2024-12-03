@@ -7,9 +7,9 @@ import Hexagon from '../../../components/Sprites/Hexagon/Hexagon';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import IVBar from '../../../components/Sprites/IVBar/IVBar';
-import { MAX_LEVEL, MAX_IV, CP_DIFF_RATIO } from '../../../util/constants';
+import { MAX_LEVEL, MAX_IV } from '../../../util/constants';
 import { IPokemonAllStats, PokemonAllStats } from '../models/over-all-stats.model';
-import { calculateCP, calStatsProd, getBaseStatsByIVandLevel } from '../../../util/calculate';
+import { calculateStatsTopRank } from '../../../util/calculate';
 import { BattleBaseStats } from '../../../util/models/calculate.model';
 import { getKeyWithData } from '../../../util/utils';
 import { ScoreType } from '../../../util/enums/constants.enum';
@@ -17,19 +17,6 @@ import { EqualMode } from '../../../util/enums/string.enum';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
-
-  const calculateStatsTopRank = (stats: IStatsBase | undefined, id: number, maxCP: number, level = MAX_LEVEL) => {
-    const atk = toNumber(stats?.atk);
-    const def = toNumber(stats?.def);
-    const sta = toNumber(stats?.sta);
-    if (maxCP === BattleLeagueCPType.InsMaster) {
-      const maxPokeCP = calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level);
-      return getBaseStatsByIVandLevel(atk, def, sta, maxPokeCP, id, level);
-    } else {
-      const allStats = calStatsProd(atk, def, sta, maxCP - CP_DIFF_RATIO, maxCP);
-      return allStats[allStats.length - 1];
-    }
-  };
 
   const setPokemonStats = (stats: IStatsBase | undefined, id: number | undefined) => {
     const maxCP = toNumber(props.cp);

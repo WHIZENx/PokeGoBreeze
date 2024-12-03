@@ -67,11 +67,11 @@ const Leagues = () => {
   };
 
   useEffect(() => {
-    const leagues = dataStore.leagues.data;
-    if (isNotEmpty(leagues)) {
-      setLeagues(leagues);
-      setOpenedLeague(leagues.filter((league) => isIncludeList(dataStore.leagues.allowLeagues, league.id)));
-      setSetting(dataStore.leagues.season.settings.find((data) => data.rankLevel === rank + 1));
+    const leagues = dataStore.leagues;
+    if (isNotEmpty(leagues.data)) {
+      setLeagues(leagues.data);
+      setOpenedLeague(leagues.data.filter((league) => isIncludeList(leagues.allowLeagues, league.id)));
+      setSetting(leagues.season.settings.find((data) => data.rankLevel === rank + 1));
     }
   }, [dataStore.leagues]);
 

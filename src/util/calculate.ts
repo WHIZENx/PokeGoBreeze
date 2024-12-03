@@ -18,6 +18,7 @@ import {
   StatsAtk,
   StatsDef,
   StatsSta,
+  IStatsBase,
 } from '../core/models/stats.model';
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
@@ -26,6 +27,7 @@ import { MoveType, PokemonType, TypeAction } from '../enums/type.enum';
 import { Delay, IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
 import { findStabType } from './compute';
 import {
+  CP_DIFF_RATIO,
   DEFAULT_DAMAGE_CONST,
   DEFAULT_DAMAGE_MULTIPLY,
   DEFAULT_ENEMY_ATK_DELAY,
@@ -79,7 +81,18 @@ import {
   PokemonTopMove,
   EDPS,
 } from './models/pokemon-top-move.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isUndefined, toFloat, toNumber } from './extension';
+import {
+  DynamicObj,
+  getValueOrDefault,
+  isEmpty,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isUndefined,
+  toFloat,
+  toNumber,
+} from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 import { EqualMode, IncludeMode } from './enums/string.enum';
@@ -1361,4 +1374,28 @@ const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string) => {
   queryMoveCounter(data, vf, data.pokemon.purifiedMoves, fMoveType);
   queryMoveCounter(data, vf, data.pokemon.specialMoves, fMoveType);
   queryMoveCounter(data, vf, data.pokemon.exclusiveMoves, fMoveType);
+};
+
+export const calculateStatsTopRank = (stats: IStatsBase | undefined, id: number, maxCP: number, level = MAX_LEVEL) => {
+  const atk = toNumber(stats?.atk);
+  const def = toNumber(stats?.def);
+  const sta = toNumber(stats?.sta);
+  if (maxCP === BattleLeagueCPType.InsMaster) {
+    const maxPokeCP = calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level);
+    return getBaseStatsByIVandLevel(atk, def, sta, maxPokeCP, id, level);
+  } else {
+    let allStats: IBattleBaseStats[] = [];
+    let i = 1;
+    let cp = MIN_CP;
+    while (cp >= MIN_CP && !isNotEmpty(allStats)) {
+      cp = maxCP - CP_DIFF_RATIO * i;
+      allStats = calStatsProd(atk, def, sta, cp, maxCP);
+      maxCP = cp;
+      i++;
+    }
+    if (!isNotEmpty(allStats)) {
+      return BattleBaseStats.create({ id });
+    }
+    return BattleBaseStats.create(allStats[allStats.length - 1]);
+  }
 };

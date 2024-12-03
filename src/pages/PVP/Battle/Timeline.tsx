@@ -13,7 +13,7 @@ import { TypeAction } from '../../../enums/type.enum';
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, isHide = false) => {
   const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShadow = false) => {
     if (!move) {
-      return;
+      return <></>;
     }
     return (
       <div className="d-flex flex-wrap align-items-center" style={{ gap: 5 }}>
@@ -314,9 +314,7 @@ export const TimeLineFit = (
   showTap: boolean,
   isHide = false
 ) => {
-  const calculateFitPoint = (length: number, index: number) => {
-    return `${(index * 100) / (length - 2)}%`;
-  };
+  const calculateFitPoint = (length: number, index: number) => `${(index * 100) / (length - 2)}%`;
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => {
     return (

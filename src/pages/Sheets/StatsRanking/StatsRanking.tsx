@@ -170,8 +170,8 @@ const StatsRanking = () => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const [search, setSearch] = useState('');
 
-  const mappingData = (pokemon: IPokemonData[]) => {
-    return pokemon.map((data) => {
+  const mappingData = (pokemon: IPokemonData[]) =>
+    pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
       const details = getPokemonDetails(pokemon, data.num, data.fullName, true);
       return PokemonStatsRanking.create({
@@ -191,14 +191,10 @@ const StatsRanking = () => {
         },
         prod: {
           product: statsTag.atk * statsTag.def * statsTag.sta,
-          rank: getValueOrDefault(
-            Number,
-            stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * statsTag.sta)?.rank
-          ),
+          rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * statsTag.sta)?.rank),
         },
       });
     });
-  };
 
   const setSortBy = (id: ColumnType) => {
     let sortBy: string[] = [];
