@@ -67,7 +67,7 @@ import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from '
 import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
+import { DynamicObj, getPropertyName, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
 import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
@@ -103,7 +103,7 @@ const Battle = () => {
     showTap: false,
     timelineType: TimelineType.Normal,
     duration: 1,
-    league: getValueOrDefault(Number, toNumber(params.cp), BattleLeagueCPType.Little),
+    league: toNumber(params.cp, BattleLeagueCPType.Little),
   });
   const { showTap, timelineType, duration, league } = options;
 
@@ -1008,7 +1008,7 @@ const Battle = () => {
             arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / getValueOrDefault(Number, prevWidth)) * toNumber(timelineNormal.current?.clientWidth) - 2;
+        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineNormal.current?.clientWidth) - 2;
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${Math.max(0, transform)}px, -50%)`;
@@ -1022,7 +1022,7 @@ const Battle = () => {
             arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
           }
         }
-        transform = (xCurrent / getValueOrDefault(Number, prevWidth)) * toNumber(timelineFit.current?.clientWidth);
+        transform = (xCurrent / toNumber(prevWidth)) * toNumber(timelineFit.current?.clientWidth);
         elem = document.getElementById('play-line');
         if (elem) {
           elem.style.transform = `translate(${transform}px, -50%)`;
@@ -1338,6 +1338,10 @@ const Battle = () => {
     // eslint-disable-next-line no-unused-vars
     clearDataPokemon: (removeMove: boolean) => void
   ) => {
+    let pokemonType = getPropertyName(playTimeline, (o) => o.pokemonCurr) as 'pokemonCurr' | 'pokemonObj';
+    if (type === BattleType.Object) {
+      pokemonType = getPropertyName(playTimeline, (o) => o.pokemonObj) as 'pokemonObj';
+    }
     return (
       <Fragment>
         <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
@@ -1451,11 +1455,7 @@ const Battle = () => {
                     size={80}
                     maxEnergy={MAX_ENERGY(dataStore.options)}
                     moveEnergy={toNumber(Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy)))}
-                    energy={getValueOrDefault(
-                      Number,
-                      (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type]?.energy,
-                      pokemon.energy
-                    )}
+                    energy={toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy, pokemon.energy)}
                     isDisable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
@@ -1465,11 +1465,7 @@ const Battle = () => {
                       size={80}
                       maxEnergy={MAX_ENERGY(dataStore.options)}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
-                      energy={getValueOrDefault(
-                        Number,
-                        (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type]?.energy,
-                        pokemon.energy
-                      )}
+                      energy={toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy, pokemon.energy)}
                       isDisable={pokemon.disableCMoveSec}
                     />
                   )}
@@ -1479,7 +1475,7 @@ const Battle = () => {
                     <HpBar
                       text="HP"
                       height={15}
-                      hp={Math.floor((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[type].hp)}
+                      hp={Math.floor(toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.hp))}
                       maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statsSTA))}
                     />
                   </Fragment>

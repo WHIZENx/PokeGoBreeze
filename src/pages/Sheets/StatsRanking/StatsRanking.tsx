@@ -191,10 +191,7 @@ const StatsRanking = () => {
         },
         prod: {
           product: statsTag.atk * statsTag.def * statsTag.sta,
-          rank: getValueOrDefault(
-            Number,
-            stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * statsTag.sta)?.rank
-          ),
+          rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * statsTag.sta)?.rank),
         },
       });
     });

@@ -11,22 +11,22 @@ import { MoveType } from '../../enums/type.enum';
 const CardMove = (props: ICardMoveComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data.combat);
 
-  const [data, setData] = useState<ICombat>();
+  const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
     if (isNotEmpty(combat) && props.value) {
       const move = combat.find((item) => isEqual(item.name, props.value?.name));
-      setData(move);
+      setMove(move);
     }
   }, [combat, props.value]);
 
   return (
     <Fragment>
-      {data && (
+      {move && (
         <div className="d-flex align-items-center w-100 h-100" style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}>
-          <img width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(data.type)} />
+          <img width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(move.type)} />
           <span style={{ marginRight: 5 }}>
-            <b>{splitAndCapitalize(data.name, '_', ' ')}</b>
+            <b>{splitAndCapitalize(move.name, '_', ' ')}</b>
           </span>
           <span className="d-flex">
             {props.value && props.value.moveType !== MoveType.None && (
