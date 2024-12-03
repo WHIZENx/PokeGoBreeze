@@ -844,7 +844,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       }
       result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
       const fastMoveType = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
-      if (item.templateId.endsWith(fastMoveType) || isInclude(item.templateId, `_${fastMoveType}_`)) {
+      if (item.templateId.endsWith(`_${fastMoveType}`) || isInclude(item.templateId, `_${fastMoveType}_`)) {
         result.typeMove = TypeMove.Fast;
       } else {
         result.typeMove = TypeMove.Charge;

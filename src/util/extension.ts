@@ -50,7 +50,7 @@ export const toNumber = (value: string | number | null | undefined, defaultValue
   parseFloat((value || defaultValue).toString()) || defaultValue;
 
 export const toFloat = (value: string | number | null | undefined, fixedRounding = -1, defaultValue = 0) => {
-  const result = parseFloat((value || defaultValue).toString());
+  const result = toNumber(value, defaultValue);
   if (fixedRounding < 0) {
     return result;
   }

@@ -62,7 +62,7 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { InputType, SelectPosition } from '../../../components/Input/enums/input-type.enum';
+import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 
@@ -849,7 +849,6 @@ const DpsTdo = () => {
                       setFMovePokemon={setFMoveTargetPokemon}
                       setCMovePokemon={setCMoveTargetPokemon}
                       isDisable={showSpinner}
-                      position={SelectPosition.Up}
                     />
                   </div>
                 </Box>

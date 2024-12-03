@@ -72,7 +72,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
               isSelect={resultMove.length > 1}
             />
             {showMove && (
-              <div className="result-move-select">
+              <div className="result-move-select" style={{ maxHeight: props.maxHeight ?? 180 }}>
                 <div>
                   {resultMove
                     .filter((value) => !isEqual(value.name, props.move?.name))

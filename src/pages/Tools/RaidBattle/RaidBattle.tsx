@@ -228,9 +228,7 @@ const RaidBattle = () => {
     setShowOption(true);
   };
 
-  const isInvalidIV = (value: number | undefined) => {
-    return !value || value < MIN_IV || value > MAX_IV;
-  };
+  const isInvalidIV = (value: number | undefined) => !value || value < MIN_IV || value > MAX_IV;
 
   const setSortedResult = (primary: IPokemonMoveData, secondary: IPokemonMoveData) => {
     let type = getPropertyName(primary || secondary, (r) => r.dpsAtk);
@@ -862,7 +860,7 @@ const RaidBattle = () => {
   const modalFormSetting = () => {
     const pokemon = showSettingPokemon.pokemon;
     if (!pokemon) {
-      return;
+      return <></>;
     }
     return (
       <Fragment>

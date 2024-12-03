@@ -34,7 +34,7 @@ export enum BuffType {
 
 export enum GlobalType {
   None = -1,
-  All = 0,
+  All,
 }
 
 export enum VariantType {

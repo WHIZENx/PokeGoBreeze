@@ -850,8 +850,9 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
 
 export const replaceTempMoveName = (name: string | number) => {
   name = name.toString();
-  if (name.endsWith('_FAST') || isInclude(name, '_FAST_')) {
-    name = name.replace('_FAST', '');
+  const fastMove = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
+  if (name.endsWith(`_${fastMove}`) || isInclude(name, `_${fastMove}_`)) {
+    name = name.replace(`_${fastMove}`, '');
   } else if (name.endsWith('_PLUS')) {
     name = name.replaceAll('_PLUS', '+');
   }
@@ -998,9 +999,7 @@ export const getPokemonClass = (className?: string | number | null) => {
   return PokemonClass.None;
 };
 
-export const getArrayBySeq = (length: number, startNumber = 0) => {
-  return Array.from({ length }, (_, i) => i + startNumber);
-};
+export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
 
 export const generateParamForm = (form: string | null | undefined, prefix = '?') => {
   return form && !isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)

@@ -121,8 +121,8 @@ const Battle = () => {
 
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
-  const State = (timer: number, block: number, energy: number, hp: number, type?: AttackType) => {
-    return new TimelineModel({
+  const State = (timer: number, block: number, energy: number, hp: number, type?: AttackType) =>
+    new TimelineModel({
       timer,
       type,
       size: DEFAULT_SIZE,
@@ -130,7 +130,6 @@ const Battle = () => {
       energy,
       hp: Math.max(0, hp),
     });
-  };
 
   const calculateMoveDmgActual = (
     poke: IPokemonBattleData | null,
@@ -157,8 +156,8 @@ const Battle = () => {
     return 1;
   };
 
-  const Pokemon = (poke: IPokemonBattle) => {
-    return PokemonBattleData.create({
+  const Pokemon = (poke: IPokemonBattle) =>
+    PokemonBattleData.create({
       ...poke,
       hp: toNumber(poke.pokemonData?.currentStats?.stats?.statsSTA),
       stats: poke.pokemonData?.stats,
@@ -173,9 +172,7 @@ const Battle = () => {
       turn: Math.ceil(toNumber(poke.fMove?.durationMs) / 500),
       pokemonType: poke.pokemonType,
       disableCMovePri: poke.disableCMovePri,
-      disableCMoveSec: poke.disableCMoveSec,
     });
-  };
 
   const getRandomInt = (min: number, max: number) => {
     min = Math.ceil(min);
@@ -789,9 +786,8 @@ const Battle = () => {
   const arrBound = useRef<(DOMRect | undefined)[]>([]);
   const arrStore = useRef<(DOMRect | undefined)[]>([]);
 
-  const getTranslation = (elem: HTMLElement) => {
-    return elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
-  };
+  const getTranslation = (elem: HTMLElement) =>
+    elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
 
   const onPlayLineMove = (e: TimelineEvent<HTMLDivElement>) => {
     stopTimeLine();
@@ -961,9 +957,8 @@ const Battle = () => {
     }
   };
 
-  const isPlaySound = (sound: HTMLAudioElement | undefined) => {
-    return sound && sound.currentTime > 0 && !sound.paused && !sound.ended && sound.readyState > sound.HAVE_CURRENT_DATA;
-  };
+  const isPlaySound = (sound: HTMLAudioElement | undefined) =>
+    sound && sound.currentTime > 0 && !sound.paused && !sound.ended && sound.readyState > sound.HAVE_CURRENT_DATA;
 
   const updateTimeline = (index: number, sound = false) => {
     const pokeCurrData = pokemonCurr.timeline.at(index);
@@ -1033,7 +1028,7 @@ const Battle = () => {
 
   const findBuff = (move: ICombat | undefined) => {
     if (!isNotEmpty(move?.buffs)) {
-      return;
+      return <></>;
     }
     return (
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>

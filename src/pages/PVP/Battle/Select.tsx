@@ -241,7 +241,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         style={{ padding: 0, borderRadius: 0 }}
       >
         <div className="card-move-input" tabIndex={0} onClick={() => setShowFMove(true)} onBlur={() => setShowFMove(false)}>
-          <CardMoveSmall value={fMove} isShow={Boolean(pokemon)} isSelect={isNotEmpty(props.data) && props.data.length > 1} />
+          <CardMoveSmall value={fMove} isShow={Boolean(pokemon)} isSelect={props.data.length > 1} />
           {showFMove && isNotEmpty(props.data) && pokemon && (
             <div className="result-move-select">
               <div>
@@ -307,7 +307,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               value={cMovePri}
               isShow={Boolean(pokemon)}
               isDisable={props.pokemonBattle.disableCMovePri}
-              isSelect={isNotEmpty(props.data) && props.data.length > 1}
+              isSelect={props.data.length > 1}
             />
             {showCMovePri && isNotEmpty(props.data) && pokemon && (
               <div className="result-move-select">
@@ -391,7 +391,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               isShow={Boolean(pokemon)}
               clearData={props.pokemonBattle.disableCMovePri ? undefined : removeChargeMoveSec}
               isDisable={props.pokemonBattle.disableCMoveSec}
-              isSelect={isNotEmpty(props.data) && props.data.length > 1}
+              isSelect={props.data.length > 1}
             />
             {showCMoveSec && isNotEmpty(props.data) && pokemon && (
               <div className="result-move-select">

@@ -1390,6 +1390,7 @@ export const calculateStatsTopRank = (stats: IStatsBase | undefined, id: number,
     while (cp >= MIN_CP && !isNotEmpty(allStats)) {
       cp = maxCP - CP_DIFF_RATIO * i;
       allStats = calStatsProd(atk, def, sta, cp, maxCP);
+      maxCP = cp;
       i++;
     }
     if (!isNotEmpty(allStats)) {
