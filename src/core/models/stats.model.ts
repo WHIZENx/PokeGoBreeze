@@ -5,16 +5,12 @@ export interface OptionsRank {
   maxStats: number;
 }
 
-export interface IStatsRankAtk extends OptionsRank {
+export interface IStatsRankAtk extends Partial<OptionsRank> {
   ranking: IStatsAtk[];
 }
 
 export class StatsRankAtk implements IStatsRankAtk {
   ranking: IStatsAtk[] = [];
-  minRank = 0;
-  maxRank = 0;
-  minStats = 0;
-  maxStats = 0;
 
   static create(value: IStatsRankAtk) {
     const obj = new StatsRankAtk();
@@ -23,16 +19,12 @@ export class StatsRankAtk implements IStatsRankAtk {
   }
 }
 
-export interface IStatsRankDef extends OptionsRank {
+export interface IStatsRankDef extends Partial<OptionsRank> {
   ranking: IStatsDef[];
 }
 
 export class StatsRankDef implements IStatsRankDef {
   ranking: IStatsDef[] = [];
-  minRank = 0;
-  maxRank = 0;
-  minStats = 0;
-  maxStats = 0;
 
   static create(value: IStatsRankDef) {
     const obj = new StatsRankDef();
@@ -41,16 +33,12 @@ export class StatsRankDef implements IStatsRankDef {
   }
 }
 
-export interface IStatsRankSta extends OptionsRank {
+export interface IStatsRankSta extends Partial<OptionsRank> {
   ranking: IStatsSta[];
 }
 
 export class StatsRankSta implements IStatsRankSta {
   ranking: IStatsSta[] = [];
-  minRank = 0;
-  maxRank = 0;
-  minStats = 0;
-  maxStats = 0;
 
   static create(value: IStatsRankSta) {
     const obj = new StatsRankSta();
@@ -59,16 +47,12 @@ export class StatsRankSta implements IStatsRankSta {
   }
 }
 
-export interface IStatsRankProd extends OptionsRank {
+export interface IStatsRankProd extends Partial<OptionsRank> {
   ranking: IStatsProd[];
 }
 
 export class StatsRankProd implements IStatsRankProd {
   ranking: IStatsProd[] = [];
-  minRank = 0;
-  maxRank = 0;
-  minStats = 0;
-  maxStats = 0;
 
   static create(value: IStatsRankProd) {
     const obj = new StatsRankProd();
@@ -182,15 +166,14 @@ interface OptionsStats {
   form?: string;
 }
 
-export interface IStatsAtk extends OptionsStats {
+export interface IStatsAtk extends Partial<OptionsStats> {
   attack: number;
+  rank: number;
 }
 
 export class StatsAtk implements IStatsAtk {
   attack = 0;
   rank = 0;
-  id?: number;
-  form?: string;
 
   static create(value: IStatsAtk) {
     const obj = new StatsAtk();
@@ -199,15 +182,14 @@ export class StatsAtk implements IStatsAtk {
   }
 }
 
-export interface IStatsDef extends OptionsStats {
+export interface IStatsDef extends Partial<OptionsStats> {
   defense: number;
+  rank: number;
 }
 
 export class StatsDef implements IStatsDef {
   defense = 0;
   rank = 0;
-  id?: number;
-  form?: string;
 
   static create(value: IStatsDef) {
     const obj = new StatsDef();
@@ -216,15 +198,14 @@ export class StatsDef implements IStatsDef {
   }
 }
 
-export interface IStatsSta extends OptionsStats {
+export interface IStatsSta extends Partial<OptionsStats> {
   stamina: number;
+  rank: number;
 }
 
 export class StatsSta implements IStatsSta {
   stamina = 0;
   rank = 0;
-  id?: number;
-  form?: string;
 
   static create(value: IStatsSta) {
     const obj = new StatsSta();
@@ -233,15 +214,14 @@ export class StatsSta implements IStatsSta {
   }
 }
 
-export interface IStatsProd extends OptionsStats {
+export interface IStatsProd extends Partial<OptionsStats> {
   product: number;
+  rank: number;
 }
 
 export class StatsProd implements IStatsProd {
   product = 0;
   rank = 0;
-  id?: number;
-  form?: string;
 
   static create(value: IStatsProd) {
     const obj = new StatsProd();

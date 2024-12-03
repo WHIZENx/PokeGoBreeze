@@ -25,7 +25,7 @@ import {
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/constants';
-import { convertPokemonAPIDataName, getKeyEnum, LevelSlider, splitAndCapitalize } from '../../../util/utils';
+import { convertPokemonAPIDataName, getKeyWithData, LevelSlider, splitAndCapitalize } from '../../../util/utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
@@ -518,7 +518,7 @@ const CatchChance = () => {
                 }
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyEnum(PokemonType, PokemonType.Shadow)}
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyWithData(PokemonType, PokemonType.Shadow)}
                   </span>
                 }
               />

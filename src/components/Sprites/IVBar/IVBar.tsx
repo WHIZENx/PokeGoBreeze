@@ -1,18 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './IVBar.scss';
 import { IIVBarComponent } from '../../models/component.model';
-import { combineClasses, toNumber } from '../../../util/extension';
+import { combineClasses } from '../../../util/extension';
 
 const IVBar = (props: IIVBarComponent) => {
-  const iv = useRef(toNumber(props.iv));
   const [ivWidthFirst, setIvWidthFirst] = useState(0);
   const [ivWidthSec, setIvWidthSec] = useState(0);
   const [ivWidthThird, setIvWidthThird] = useState(0);
 
   useEffect(() => {
-    setIvWidthFirst(iv.current < 5 ? 20 * iv.current : 100);
-    setIvWidthSec(iv.current >= 5 ? (iv.current < 10 ? 20 * (iv.current - 5) : 100) : 0);
-    setIvWidthThird(iv.current >= 10 ? (iv.current < 15 ? 20 * (iv.current - 10) : 100) : 0);
+    if (props.iv < 0) {
+      setIvWidthFirst(0);
+      setIvWidthSec(0);
+      setIvWidthThird(0);
+    }
+  }, [props.iv]);
+
+  useEffect(() => {
+    setIvWidthFirst(props.iv < 5 ? 20 * props.iv : 100);
+    setIvWidthSec(props.iv >= 5 ? (props.iv < 10 ? 20 * (props.iv - 5) : 100) : 0);
+    setIvWidthThird(props.iv >= 10 ? (props.iv < 15 ? 20 * (props.iv - 10) : 100) : 0);
   }, [props.iv]);
 
   return (
@@ -25,14 +32,14 @@ const IVBar = (props: IIVBarComponent) => {
         <div className="iv iv-first-child position-relative">
           <div
             style={{ width: `${ivWidthFirst}%` }}
-            className={combineClasses('position-absolute iv-bar', iv.current <= 5 ? 'border-right-iv' : '')}
+            className={combineClasses('position-absolute iv-bar', props.iv <= 5 ? 'border-right-iv' : '')}
           />
           <div className="iv-bg-bar w-100" />
         </div>
         <div className="iv position-relative">
           <div
             style={{ width: `${ivWidthSec}%` }}
-            className={combineClasses('position-absolute iv-bar', iv.current > 5 && iv.current <= 10 ? 'border-right-iv' : '')}
+            className={combineClasses('position-absolute iv-bar', props.iv > 5 && props.iv <= 10 ? 'border-right-iv' : '')}
           />
           <div className="iv-bg-bar w-100" />
         </div>

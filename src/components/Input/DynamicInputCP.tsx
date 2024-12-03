@@ -37,8 +37,8 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
       onChange={(_, newValue) => {
         if (typeof newValue === 'string') {
           props.setSearchCP(newValue);
-        } else {
-          props.setSearchCP(getValueOrDefault(String, newValue?.CP.toString()));
+        } else if (newValue) {
+          props.setSearchCP(getValueOrDefault(String, newValue.CP.toString()));
         }
       }}
       options={getValueOrDefault(Array, preCpArr?.result)}

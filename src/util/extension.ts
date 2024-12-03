@@ -50,7 +50,7 @@ export const toNumber = (value: string | number | null | undefined, defaultValue
   parseFloat((value || defaultValue).toString()) || defaultValue;
 
 export const toFloat = (value: string | number | null | undefined, fixedRounding = -1, defaultValue = 0) => {
-  const result = parseFloat((value || defaultValue).toString());
+  const result = toNumber(value, defaultValue);
   if (fixedRounding < 0) {
     return result;
   }
@@ -138,10 +138,8 @@ export const isIncludeList = (
   }
 };
 
-export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) => {
-  return array.filter((item) => isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode))
-    .length;
-};
+export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) =>
+  array.filter((item) => isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode)).length;
 
 export const getPropertyName = <T extends object>(
   obj: T | null | undefined,

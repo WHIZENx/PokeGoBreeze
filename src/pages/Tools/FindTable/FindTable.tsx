@@ -10,7 +10,7 @@ import '../../../components/Find/FormSelect.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
-import { MAX_IV, MIN_IV } from '../../../util/constants';
+import { MAX_IV, MIN_CP, MIN_IV } from '../../../util/constants';
 import {
   IPredictStatsModel,
   IPredictStatsCalculate,
@@ -140,8 +140,8 @@ const FindTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
-    if (toNumber(searchCP) < 10) {
-      return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
+    if (toNumber(searchCP) < MIN_CP) {
+      return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
     }
     const result = predictStat(statATK, statDEF, statSTA, searchCP);
     if (!isNotEmpty(result.result)) {
@@ -177,7 +177,8 @@ const FindTable = () => {
       searchSTAIv < MIN_IV ||
       searchSTAIv > MAX_IV
     ) {
-      return enqueueSnackbar('Please input CP greater than or equal to 10', { variant: VariantType.Error });
+      enqueueSnackbar(`Please input IV between ${MIN_IV} - ${MAX_IV}.`, { variant: VariantType.Error });
+      return;
     }
     const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
     setPreCpArr(result);
@@ -374,7 +375,7 @@ const FindTable = () => {
                 required={true}
                 value={searchCP}
                 type="number"
-                min={10}
+                min={MIN_CP}
                 className="form-control"
                 aria-label="cp"
                 aria-describedby="input-cp"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, generateParamForm, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
@@ -9,7 +9,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/calculate';
-import { FormControlLabel, Switch, useTheme } from '@mui/material';
+import { CircularProgress, FormControlLabel, Switch, useTheme } from '@mui/material';
 import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -42,10 +42,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
   {
     name: 'Pokémon Name',
     selector: (row) => (
-      <Link
-        to={`/pokemon/${row.num}${row.forme ? `?form=${row.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
-        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
-      >
+      <Link to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
         <img
           height={48}
           alt="img-pokemon"
@@ -370,6 +367,12 @@ const SearchTypes = () => {
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
+                progressPending={!isNotEmpty(result.pokemonList)}
+                progressComponent={
+                  <div style={{ margin: 10 }}>
+                    <CircularProgress />
+                  </div>
+                }
               />
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
@@ -381,6 +384,12 @@ const SearchTypes = () => {
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
+                progressPending={!isNotEmpty(result.pokemonList)}
+                progressComponent={
+                  <div style={{ margin: 10 }}>
+                    <CircularProgress />
+                  </div>
+                }
               />
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
@@ -392,6 +401,12 @@ const SearchTypes = () => {
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
+                progressPending={!isNotEmpty(result.pokemonList)}
+                progressComponent={
+                  <div style={{ margin: 10 }}>
+                    <CircularProgress />
+                  </div>
+                }
               />
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
@@ -403,6 +418,12 @@ const SearchTypes = () => {
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
+                progressPending={!isNotEmpty(result.pokemonList)}
+                progressComponent={
+                  <div style={{ margin: 10 }}>
+                    <CircularProgress />
+                  </div>
+                }
               />
             </Tab>
           </Tabs>

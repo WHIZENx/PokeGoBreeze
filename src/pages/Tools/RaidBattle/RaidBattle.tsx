@@ -7,8 +7,9 @@ import { Link } from 'react-router-dom';
 import {
   addSelectMovesByType,
   checkPokemonGO,
+  generateParamForm,
   getDmgMultiplyBonus,
-  getKeyEnum,
+  getKeyWithData,
   getMoveType,
   retrieveMoves,
   splitAndCapitalize,
@@ -75,7 +76,8 @@ import {
 } from '../../../util/extension';
 import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, RaidSummary, TrainerBattle } from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
-import { RaidState, SortDirectionType, SortType } from './enums/raid-state.enum';
+import { RaidState, SortType } from './enums/raid-state.enum';
+import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -226,9 +228,7 @@ const RaidBattle = () => {
     setShowOption(true);
   };
 
-  const isInvalidIV = (value: number | undefined) => {
-    return !value || value < MIN_IV || value > MAX_IV;
-  };
+  const isInvalidIV = (value: number | undefined) => !value || value < MIN_IV || value > MAX_IV;
 
   const setSortedResult = (primary: IPokemonMoveData, secondary: IPokemonMoveData) => {
     let type = getPropertyName(primary || secondary, (r) => r.dpsAtk);
@@ -791,7 +791,7 @@ const RaidBattle = () => {
                 }
               />
             }
-            label={getKeyEnum(PokemonType, PokemonType.Shadow)}
+            label={getKeyWithData(PokemonType, PokemonType.Shadow)}
           />
           <FormControlLabel
             control={
@@ -860,7 +860,7 @@ const RaidBattle = () => {
   const modalFormSetting = () => {
     const pokemon = showSettingPokemon.pokemon;
     if (!pokemon) {
-      return;
+      return <></>;
     }
     return (
       <Fragment>
@@ -875,7 +875,7 @@ const RaidBattle = () => {
               src={APIService.getPokeIconSprite(pokemon.sprite)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
+                e.currentTarget.src = APIService.getPokeIconSprite();
               }}
             />
           </div>
@@ -916,7 +916,7 @@ const RaidBattle = () => {
                   src={APIService.getPokeShadow()}
                 />
                 <span style={{ color: showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? 'black' : 'lightgray' }}>
-                  {getKeyEnum(PokemonType, PokemonType.Shadow)}
+                  {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               </span>
             }
@@ -1213,9 +1213,7 @@ const RaidBattle = () => {
                 <div className="top-raid-pokemon" key={index}>
                   <div className="d-flex justify-content-center w-100">
                     <Link
-                      to={`/pokemon/${value.pokemon?.num}${
-                        value.pokemon?.forme ? `?form=${value.pokemon?.forme.toLowerCase().replaceAll('_', '-')}` : ''
-                      }`}
+                      to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme)}`}
                       className="sprite-raid position-relative"
                     >
                       {value.pokemonType === PokemonType.Shadow && (

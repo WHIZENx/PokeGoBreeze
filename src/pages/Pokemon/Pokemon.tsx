@@ -44,7 +44,7 @@ import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, FORM_GMAX, regionList } from '../../util/constants';
+import { KEY_LEFT, KEY_RIGHT, FORM_GMAX, regionList, Params } from '../../util/constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
@@ -185,7 +185,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       // Set Default Form
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
-      const formParams = searchParams.get('form')?.toLowerCase().replaceAll('_', '-');
+      const formParams = searchParams.get(Params.Form)?.toLowerCase().replaceAll('_', '-');
       const defaultForm = formListResult.flatMap((item) => item).filter((item) => item.form.isDefault);
       if (formParams) {
         const defaultFormSearch = formListResult
@@ -203,7 +203,7 @@ const Pokemon = (props: IPokemonPage) => {
           currentForm = defaultFormSearch;
         } else {
           currentForm = defaultForm.find((item) => item.form.id === data.id);
-          searchParams.delete('form');
+          searchParams.delete(Params.Form);
           setSearchParams(searchParams);
         }
       } else if (router.action === Action.Pop && props.searching) {
@@ -350,7 +350,7 @@ const Pokemon = (props: IPokemonPage) => {
       const released = checkReleased(id, formName, currentForm);
       setReleased(released);
 
-      const formParams = searchParams.get('form');
+      const formParams = searchParams.get(Params.Form)?.replaceAll('_', '-');
       setVersion(getValueOrDefault(String, currentForm.form.version));
       const gen = data?.generation.url?.split('/').at(6);
       setGeneration(getValueOrDefault(String, gen));
@@ -443,7 +443,7 @@ const Pokemon = (props: IPokemonPage) => {
                     convertPokemonImageName(
                       currentForm && originForm && currentForm.defaultId === currentForm.form.id
                         ? ''
-                        : originForm || searchParams.get('form')
+                        : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
                     )
                   )}
                   onError={(e) => {

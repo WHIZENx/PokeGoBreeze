@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { findStabType } from '../../../util/compute';
 import { levelList, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
@@ -23,33 +23,8 @@ import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleState } from '../../../core/models/damage.model';
 import { combineClasses, DynamicObj, getValueOrDefault, toNumber } from '../../../util/extension';
-
-class ColorTone {
-  number: number;
-  color: string;
-
-  constructor(num: number, color: string) {
-    this.number = num;
-    this.color = color;
-  }
-}
-
-interface BreakPointAtk {
-  data: number[][];
-  colorTone: DynamicObj<ColorTone>;
-}
-
-interface BreakPointDef {
-  dataDef: number[][];
-  dataSta: number[][];
-  colorToneDef: DynamicObj<ColorTone>;
-  colorToneSta: DynamicObj<ColorTone>;
-}
-
-interface BulkPointDef {
-  data: number[][];
-  maxLength: number;
-}
+import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
+import { Color } from '../../../core/models/candy.model';
 
 const CalculatePoint = () => {
   useChangeTitle('Calculate Point Stats - Tools');
@@ -132,26 +107,16 @@ const CalculatePoint = () => {
     setResultBreakPointAtk(undefined);
     const dataList: number[][] = [];
     const group: number[] = [];
-    let lv = 0;
+    let level = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
-      dataList[lv] = getValueOrDefault(Array, dataList[lv]);
+      dataList[level] = getValueOrDefault(Array, dataList[level]);
       for (let j = MIN_IV; j <= MAX_IV; j += 1) {
-        const result = calculateDamagePVE(
-          globalOptions,
-          calculateStatsBattle(statATK, j, i, true),
-          statDefDEF,
-          move ? (!isRaid && pvpDmg ? move.pvpPower : move.pvePower) : 0,
-          BattleState.create({
-            effective: getTypeEffective(typeEff, move?.type, formDef?.form.types),
-            isStab: findStabType(form?.form.types, move?.type),
-            isWb: (!pvpDmg || isRaid) && weatherBoosts,
-          }),
-          false
-        );
-        dataList[lv].push(result);
+        const atk = calculateStatsBattle(statATK, j, i, true);
+        const result = getMoveDamagePVE(atk, statDefDEF, formDef, form, move);
+        dataList[level].push(result);
         group.push(result);
       }
-      lv++;
+      level++;
     }
     const colorTone = computeColorTone([...new Set(group)].sort((a, b) => a - b));
     setResultBreakPointAtk({ data: dataList, colorTone });
@@ -164,30 +129,20 @@ const CalculatePoint = () => {
     const groupDef: number[] = [];
     const dataListSta: number[][] = [];
     const groupSta: number[] = [];
-    let lv = 0;
+    let level = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
-      dataListDef[lv] ??= [];
-      dataListSta[lv] ??= [];
+      dataListDef[level] ??= [];
+      dataListSta[level] ??= [];
       for (let j = MIN_IV; j <= MAX_IV; j += 1) {
-        const resultDef = calculateDamagePVE(
-          globalOptions,
-          statDefATK,
-          calculateStatsBattle(statDEF, j, i, true),
-          moveDef ? (!isRaid && pvpDmg ? moveDef.pvpPower : moveDef.pvePower) : 0,
-          BattleState.create({
-            effective: getTypeEffective(typeEff, moveDef?.type, form?.form.types),
-            isStab: findStabType(formDef?.form.types, moveDef?.type),
-            isWb: (!pvpDmg || isRaid) && weatherBoosts,
-          }),
-          false
-        );
-        dataListDef[lv].push(resultDef);
+        const def = calculateStatsBattle(statDEF, j, i, true);
+        const resultDef = getMoveDamagePVE(statDefATK, def, form, formDef, moveDef);
+        dataListDef[level].push(resultDef);
         groupDef.push(resultDef);
         const resultSta = calculateStatsBattle(statSTA, j, i, true);
-        dataListSta[lv].push(resultSta);
+        dataListSta[level].push(resultSta);
         groupSta.push(resultSta);
       }
-      lv++;
+      level++;
     }
 
     const colorToneDef = computeColorTone([...new Set(groupDef)].sort((a, b) => b - a));
@@ -208,7 +163,7 @@ const CalculatePoint = () => {
       b = 100;
     const diff = Math.max(1, 20 - data.length / 2);
     data.forEach((value, index) => {
-      colorTone[value.toString()] = new ColorTone(value, `rgb(${Math.max(0, r)}, ${Math.max(0, g)}, ${Math.max(0, b)})`);
+      colorTone[value.toString()] = new ColorTone(value, Color.create({ r: Math.max(0, r), g: Math.max(0, g), b: Math.max(0, b) }));
       g -= diff;
       if (index % 2 === 0) {
         b -= diff;
@@ -220,36 +175,41 @@ const CalculatePoint = () => {
     return colorTone;
   };
 
-  const computeBulk = (count: number, lv: number) => {
+  const computeColor = (color: Color | undefined) => {
+    if (!color) {
+      color = new Color();
+    }
+    return `rgb(${Math.max(0, color.r)}, ${Math.max(0, color.g)}, ${Math.max(0, color.b)})`;
+  };
+
+  const getMoveDamagePVE = (
+    atk: number,
+    def: number,
+    pokemon: IPokemonFormModify | undefined,
+    pokemonDef: IPokemonFormModify | undefined,
+    move: ICombat | undefined
+  ) => {
+    return calculateDamagePVE(
+      globalOptions,
+      atk,
+      def,
+      toNumber(!isRaid && pvpDmg ? move?.pvpPower : move?.pvePower),
+      BattleState.create({
+        effective: getTypeEffective(typeEff, move?.type, pokemon?.form.types),
+        isStab: findStabType(pokemonDef?.form.types, move?.type),
+        isWb: (!pvpDmg || isRaid) && weatherBoosts,
+      }),
+      false
+    );
+  };
+
+  const computeBulk = (count: number, level: number) => {
+    const def = calculateStatsBattle(statDEF, DEFIv, level, true);
     return Math.max(
       0,
       Math.ceil(
-        (calculateStatsBattle(statSTA, STAIv, lv, true) -
-          count *
-            calculateDamagePVE(
-              globalOptions,
-              statDefATK,
-              calculateStatsBattle(statDEF, DEFIv, lv, true),
-              toNumber(!isRaid && pvpDmg ? cMove?.pvpPower : cMove?.pvePower),
-              BattleState.create({
-                effective: getTypeEffective(typeEff, cMove?.type, form?.form.types),
-                isStab: findStabType(formDef?.form.types, cMove?.type),
-                isWb: (!pvpDmg || isRaid) && weatherBoosts,
-              }),
-              false
-            )) /
-          calculateDamagePVE(
-            globalOptions,
-            statDefATK,
-            calculateStatsBattle(statDEF, DEFIv, lv, true),
-            toNumber(!isRaid && pvpDmg ? fMove?.pvpPower : fMove?.pvePower),
-            BattleState.create({
-              effective: getTypeEffective(typeEff, fMove?.type, form?.form.types),
-              isStab: findStabType(formDef?.form.types, fMove?.type),
-              isWb: (!pvpDmg || isRaid) && weatherBoosts,
-            }),
-            false
-          )
+        (calculateStatsBattle(statSTA, STAIv, level, true) - count * getMoveDamagePVE(statDefATK, def, form, formDef, cMove)) /
+          getMoveDamagePVE(statDefATK, def, form, formDef, fMove)
       )
     );
   };
@@ -257,17 +217,17 @@ const CalculatePoint = () => {
   const calculateBulkPointDef = () => {
     setResultBulkPointDef(undefined);
     let dataList: number[][] = [];
-    let lv = 0;
+    let level = 0;
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
       let count = 0;
-      dataList[lv] ??= [];
+      dataList[level] ??= [];
       let result = computeBulk(count, i);
       while (result > 0) {
-        dataList[lv].push(result);
+        dataList[level].push(result);
         count++;
         result = computeBulk(count, i);
       }
-      lv++;
+      level++;
     }
     const maxLength = Math.max(...dataList.map((item) => item.length));
     dataList = dataList.map((item) => item.concat(Array(maxLength - item.length).fill(0)));
@@ -288,7 +248,7 @@ const CalculatePoint = () => {
                 src={APIService.getPokeIconSprite(form?.form.name, true)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
+                  e.currentTarget.src = APIService.getPokeIconSprite();
                 }}
               />
             </span>
@@ -308,7 +268,7 @@ const CalculatePoint = () => {
                 src={APIService.getPokeIconSprite(formDef?.form.name, true)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
+                  e.currentTarget.src = APIService.getPokeIconSprite();
                 }}
               />
             </span>
@@ -415,7 +375,7 @@ const CalculatePoint = () => {
                   {move && (
                     <div style={{ width: 300, margin: 'auto' }}>
                       <p>
-                        - Move Ability Type: <b>{capitalize(move.typeMove)}</b>
+                        - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                       </p>
                       <p>
                         - Move Type:{' '}
@@ -476,11 +436,11 @@ const CalculatePoint = () => {
                                 className="text-iv"
                                 style={{
                                   backgroundColor: resultBreakPointAtk
-                                    ? `${
+                                    ? computeColor(
                                         Object.values(resultBreakPointAtk.colorTone).find(
                                           (item) => item.number === resultBreakPointAtk.data[i][index]
                                         )?.color
-                                      }`
+                                      )
                                     : '',
                                 }}
                                 key={index}
@@ -541,7 +501,7 @@ const CalculatePoint = () => {
                   {moveDef && (
                     <div style={{ width: 300, margin: 'auto' }}>
                       <p>
-                        - Move Ability Type: <b>{capitalize(moveDef.typeMove)}</b>
+                        - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
                       </p>
                       <p>
                         - Move Type:{' '}
@@ -602,11 +562,11 @@ const CalculatePoint = () => {
                                 className="text-iv"
                                 style={{
                                   backgroundColor: resultBreakPointDef
-                                    ? `${
+                                    ? computeColor(
                                         Object.values(resultBreakPointDef.colorToneDef).find(
                                           (item) => item.number === resultBreakPointDef.dataDef[i][index]
                                         )?.color
-                                      }`
+                                      )
                                     : '',
                                 }}
                                 key={index}
@@ -654,11 +614,11 @@ const CalculatePoint = () => {
                                 className="text-iv"
                                 style={{
                                   backgroundColor: resultBreakPointDef
-                                    ? `${
+                                    ? computeColor(
                                         Object.values(resultBreakPointDef.colorToneSta).find(
                                           (item) => item.number === resultBreakPointDef.dataSta[i][index]
                                         )?.color
-                                      }`
+                                      )
                                     : '',
                                 }}
                                 key={index}
@@ -695,7 +655,7 @@ const CalculatePoint = () => {
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
                         <p>
-                          - Move Ability Type: <b>{capitalize(fMove.typeMove)}</b>
+                          - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                         </p>
                         <p>
                           - Move Type:{' '}
@@ -727,7 +687,7 @@ const CalculatePoint = () => {
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
                         <p>
-                          - Move Ability Type: <b>{capitalize(cMove.typeMove)}</b>
+                          - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                         </p>
                         <p>
                           - Move Type:{' '}

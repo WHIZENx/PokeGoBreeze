@@ -4,7 +4,7 @@ import APIService from '../../services/API.service';
 import { splitAndCapitalize } from '../../util/utils';
 import { IWeatherComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { getValueOrDefault, isNotEmpty } from '../../util/extension';
+import { isNotEmpty } from '../../util/extension';
 
 const Weather = (props: IWeatherComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -24,7 +24,7 @@ const Weather = (props: IWeatherComponent) => {
         <div className="element-top" style={props.style}>
           {props.text && <p>{props.text}</p>}
           <div className="d-inline-flex flex-wrap type-list align-items-center">
-            {getValueOrDefault(Array, props.arr).map((value, index) => (
+            {props.arr?.map((value, index) => (
               <div className="text-center d-flex" key={index}>
                 <div>
                   <img height={50} alt="img-pokemon" src={APIService.getWeatherSprite(value)} />

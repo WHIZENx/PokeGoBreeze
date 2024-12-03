@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../util/compute';
-import { splitAndCapitalize } from '../../util/utils';
+import { generateParamForm, splitAndCapitalize } from '../../util/utils';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
 
@@ -69,10 +69,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           src={APIService.getShinyIcon()}
         />
       )}
-      <Link
-        className="d-block h-100 pokemon-link"
-        to={`/pokemon/${props.id}${props.forme ? `?form=${props.forme.toLowerCase().replaceAll('_', '-')}` : ''}`}
-      >
+      <Link className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.forme)}`}>
         <div className="d-flex justify-content-center" style={{ padding: 8 }}>
           <span style={{ width: 96 }}>
             <img

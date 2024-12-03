@@ -13,11 +13,12 @@ import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
 import { LocalStorageConfig } from '../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../store/models/local-storage.model';
-import { getTime } from '../../util/utils';
+import { getKeyWithData, getTime } from '../../util/utils';
 import { isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 import { LeagueType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../util/enums/compute.enum';
+import { ScoreType } from '../../util/enums/constants.enum';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -131,7 +132,7 @@ const PVPHome = () => {
       {rank ? (
         <div className="group-selected">
           {rank.cp.map((value, index) => (
-            <Link key={index} to={`/pvp/rankings/${rank.id}/${value}/overall`}>
+            <Link key={index} to={`/pvp/rankings/${rank.id}/${value}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toString()}`}>
               <Button className="btn btn-form" style={{ height: 200 }}>
                 <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
                 <div>

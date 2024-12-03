@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 export enum TypeMove {
-  Fast = 'FAST',
-  Charge = 'CHARGE',
+  Fast = 1,
+  Charge,
 }
 
 export enum TypeTheme {
@@ -10,31 +10,31 @@ export enum TypeTheme {
 }
 
 export enum TypeRaid {
-  Pokemon = 0,
+  Pokemon,
   Boss,
 }
 
 export enum TypeSex {
-  Genderless = 0,
+  Genderless,
   Male,
   Female,
 }
 
 export enum TypeAction {
-  Atk = 0,
+  Atk,
   Def,
   Sta,
   Prod,
 }
 
 export enum BuffType {
-  Target = 0,
+  Target,
   Attacker,
 }
 
 export enum GlobalType {
   None = -1,
-  All = 0,
+  All,
 }
 
 export enum VariantType {
@@ -54,7 +54,7 @@ export enum VariantType {
 }
 
 export enum MoveType {
-  None = 0,
+  None,
   Shadow,
   Purified,
   Elite,
@@ -64,7 +64,7 @@ export enum MoveType {
 }
 
 export enum PokemonType {
-  None = 0,
+  None,
   Normal,
   Shadow,
   Purified,
@@ -76,7 +76,7 @@ export enum PokemonType {
 }
 
 export enum PokemonClass {
-  None = 0,
+  None,
   Legendary,
   Mythic,
   UltraBeast,

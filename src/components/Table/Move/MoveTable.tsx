@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import { convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -198,7 +198,7 @@ const TableMove = (props: ITableMoveComponent) => {
           <thead>
             <tr className="text-center">
               <th className="table-sub-header" colSpan={3}>
-                {`Best Moves ${getKeyEnum(TableType, table)}`}
+                {`Best Moves ${getKeyWithData(TableType, table)}`}
               </th>
             </tr>
             <tr className="text-center">
@@ -253,8 +253,10 @@ const TableMove = (props: ITableMoveComponent) => {
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.fMove.moveType !== MoveType.None && (
-                <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.fMove.moveType)?.toLowerCase()}-ic`)}>
-                  {getKeyEnum(MoveType, value.fMove.moveType)}
+                <span
+                  className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.fMove.moveType)?.toLowerCase()}-ic`)}
+                >
+                  {getKeyWithData(MoveType, value.fMove.moveType)}
                 </span>
               )}
             </span>
@@ -268,8 +270,10 @@ const TableMove = (props: ITableMoveComponent) => {
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.cMove.moveType !== MoveType.None && (
-                <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.cMove.moveType)?.toLowerCase()}-ic`)}>
-                  {getKeyEnum(MoveType, value.cMove.moveType)}
+                <span
+                  className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.cMove.moveType)?.toLowerCase()}-ic`)}
+                >
+                  {getKeyWithData(MoveType, value.cMove.moveType)}
                 </span>
               )}
             </span>
@@ -295,8 +299,8 @@ const TableMove = (props: ITableMoveComponent) => {
                 <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
                 <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
                   {value.moveType !== MoveType.None && (
-                    <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
-                      {getKeyEnum(MoveType, value.moveType)}
+                    <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
+                      {getKeyWithData(MoveType, value.moveType)}
                     </span>
                   )}
                 </span>

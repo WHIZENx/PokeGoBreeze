@@ -3,7 +3,7 @@ import APIService from '../../services/API.service';
 import { FORM_NORMAL, versionList } from '../../util/constants';
 import { getValueOrDefault, toNumber } from '../../util/extension';
 import { convertPokemonImageName, splitAndCapitalize } from '../../util/utils';
-import { IImage } from './asset.model';
+import { IImage, ImageModel } from './asset.model';
 import { IPokemonData } from './pokemon.model';
 import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 
@@ -67,13 +67,13 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     });
     this.pokemonClass = item.pokemonClass;
     this.releasedGO = item.releasedGO;
-    this.image = {
+    this.image = new ImageModel({
       default: assetForm?.default
         ? APIService.getPokemonModel(assetForm.default)
         : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.forme, '_', '-'))),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : undefined,
       pokemonType: item.pokemonType,
-    };
+    });
     this.pokemonType = item.pokemonType;
   }
 }

@@ -12,7 +12,7 @@ import STA_LOGO from '../../assets/stamina.png';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
-import { getKeyEnum } from '../../util/utils';
+import { getKeyWithData } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { toNumber } from '../../util/extension';
@@ -116,15 +116,15 @@ const Raid = (props: IRaidComponent) => {
                   <optgroup
                     label={`Legendary ${
                       props.currForm.form.pokemonType === PokemonType.Primal
-                        ? getKeyEnum(PokemonType, PokemonType.Primal)
-                        : getKeyEnum(PokemonType, PokemonType.Mega)
+                        ? getKeyWithData(PokemonType, PokemonType.Primal)
+                        : getKeyWithData(PokemonType, PokemonType.Mega)
                     } Tier 6`}
                   >
                     <option value={6}>
                       {`Tier ${
                         props.currForm.form.pokemonType === PokemonType.Primal
-                          ? getKeyEnum(PokemonType, PokemonType.Primal)
-                          : getKeyEnum(PokemonType, PokemonType.Mega)
+                          ? getKeyWithData(PokemonType, PokemonType.Primal)
+                          : getKeyWithData(PokemonType, PokemonType.Mega)
                       }`}
                     </option>
                   </optgroup>

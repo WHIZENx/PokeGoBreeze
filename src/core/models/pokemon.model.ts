@@ -1,6 +1,6 @@
 import { capitalize, getPokemonClass, replaceTempMoveName } from '../../util/utils';
 import { ICombat } from './combat.model';
-import { FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
+import { DEFAULT_SPRITE_NAME, FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
@@ -346,34 +346,28 @@ export class PokemonDPSBattle implements IPokemonDPSBattle {
   }
 }
 
-export interface IPokemonMoveData extends IPokemonDPSBattle {
+export interface IPokemonMoveData extends Partial<IPokemonDPSBattle> {
   trainerId?: number;
+  ttkAtk: number;
+  ttkDef: number;
+  tdoAtk: number;
+  tdoDef: number;
+  dpsAtk: number;
+  dpsDef: number;
 }
 
 export class PokemonMoveData implements IPokemonMoveData {
   trainerId?: number;
   pokemon: IPokemonData | undefined;
-  fMove: ICombat | undefined;
-  cMove: ICombat | undefined;
-  dpsDef = 0;
-  dpsAtk = 0;
-  tdoAtk = 0;
-  tdoDef = 0;
-  multiDpsTdo?: number;
+  hp?: number;
+  atkHpRemain?: number;
+  defHpRemain?: number;
   ttkAtk = 0;
   ttkDef = 0;
-  attackHpRemain?: number;
-  defendHpRemain?: number;
-  death?: number;
-  pokemonType?: PokemonType;
-  fMoveType?: MoveType;
-  cMoveType?: MoveType;
-  atk?: number;
-  def?: number;
-  hp?: number;
-  timer?: number;
-  defHpRemain?: number;
-  atkHpRemain?: number;
+  tdoAtk = 0;
+  tdoDef = 0;
+  dpsAtk = 0;
+  dpsDef = 0;
 
   static create(value: IPokemonMoveData) {
     const obj = new PokemonMoveData();
@@ -547,7 +541,7 @@ export class PokemonData implements IPokemonData {
     obj.slug =
       options?.slug ??
       pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
-    obj.sprite = options?.sprite ?? 'unknown-pokemon';
+    obj.sprite = options?.sprite ?? DEFAULT_SPRITE_NAME;
     obj.types = getValueOrDefault(Array, types);
     obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
     obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options?.baseStatsGO;

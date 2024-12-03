@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FORM_NORMAL } from '../../../util/constants';
+import { FORM_NORMAL, Params } from '../../../util/constants';
 import {
   capitalize,
   convertPokemonAPIDataName,
@@ -85,11 +85,9 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   useEffect(() => {
     if (props.pokemonRouter.action === Action.Pop) {
-      const form = searchParams.get('form')?.toUpperCase() || FORM_NORMAL;
+      const form = searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-') || FORM_NORMAL;
       const currentData = props.pokeData.find(
-        (i) =>
-          isInclude(i.name, form.replaceAll('_', '-'), IncludeMode.IncludeIgnoreCaseSensitive) ||
-          (isEqual(form, FORM_NORMAL) && i.isDefault)
+        (i) => isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) || (isEqual(form, FORM_NORMAL) && i.isDefault)
       );
 
       if (currentData) {
@@ -101,7 +99,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   const changeForm = (name: string, form: string | null | undefined) => {
     if (params.id) {
       form = convertPokemonAPIDataName(form).toLowerCase().replaceAll('_', '-');
-      searchParams.set('form', form);
+      searchParams.set(Params.Form, form);
       setSearchParams(searchParams);
     }
     findFormData(name);
@@ -142,7 +140,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                             className="pokemon-sprite-medium"
                             onError={(e) => {
                               e.currentTarget.onerror = null;
-                              e.currentTarget.src = APIService.getPokeIconSprite('unknown-pokemon');
+                              e.currentTarget.src = APIService.getPokeIconSprite();
                             }}
                             alt="img-icon-form"
                             src={formIconAssets(value, props.defaultId)}
@@ -216,6 +214,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         stats={convertStatsEffort(props.data?.stats)}
         id={props.defaultId}
         form={convertPokemonAPIDataName(props.form?.form.formName)}
+        isDisabled={!stats}
       />
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>

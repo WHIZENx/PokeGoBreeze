@@ -5,7 +5,7 @@ import { DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_LEVEL, MAX_IV } from '../../ut
 
 interface IOptionDPSSort {
   selectedColumn: number;
-  sortDirection: string;
+  sortDirection: SortDirectionType;
 }
 
 export class OptionDPSSort implements IOptionDPSSort {

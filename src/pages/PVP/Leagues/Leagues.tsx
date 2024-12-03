@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, getPokemonType } from '../../../util/utils';
+import { getTime, splitAndCapitalize, capitalize, getPokemonType, generateParamForm } from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -22,14 +22,14 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
   step: number;
-  track: string;
+  track: LeagueRewardType;
   type: string | undefined;
 }
 
@@ -67,11 +67,11 @@ const Leagues = () => {
   };
 
   useEffect(() => {
-    const leagues = dataStore.leagues.data;
-    if (isNotEmpty(leagues)) {
-      setLeagues(leagues);
-      setOpenedLeague(leagues.filter((league) => isIncludeList(dataStore.leagues.allowLeagues, league.id)));
-      setSetting(dataStore.leagues.season.settings.find((data) => data.rankLevel === rank + 1));
+    const leagues = dataStore.leagues;
+    if (isNotEmpty(leagues.data)) {
+      setLeagues(leagues.data);
+      setOpenedLeague(leagues.data.filter((league) => isIncludeList(leagues.allowLeagues, league.id)));
+      setSetting(leagues.season.settings.find((data) => data.rankLevel === rank + 1));
     }
   }, [dataStore.leagues]);
 
@@ -102,16 +102,16 @@ const Leagues = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleShow = (type: string | undefined, track: string, step: number) => {
+  const handleShow = (type: string | undefined, track: LeagueRewardType, step: number) => {
     if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
       Object.values(dataStore.leagues.season.rewards.pokemon).forEach((value) => {
         if (toNumber(value.rank) <= rank) {
           let tireRewards: IPokemonRewardSetLeague[] = [];
-          if (isEqual(track, LeagueRewardType.Free, EqualMode.IgnoreCaseSensitive)) {
+          if (track === LeagueRewardType.Free) {
             tireRewards = value.free;
-          } else if (isEqual(track, LeagueRewardType.Premium, EqualMode.IgnoreCaseSensitive)) {
+          } else if (track === LeagueRewardType.Premium) {
             tireRewards = value.premium;
           }
           if (isNotEmpty(tireRewards)) {
@@ -133,7 +133,7 @@ const Leagues = () => {
       setShowData({
         data: result.sort((a, b) => a.id - b.id),
         step,
-        track: track.toLowerCase(),
+        track,
         type,
       });
     } else {
@@ -238,9 +238,7 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={`/pokemon/${item.id}${
-                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
-                      }`}
+                      to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
@@ -268,9 +266,7 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={`/pokemon/${item.id}${
-                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
-                      }`}
+                      to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                       title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
@@ -636,7 +632,9 @@ const Leagues = () => {
           onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>
-      <Accordion alwaysOpen={true}>{leagueFilter.map((value, index) => showAccording(value, index))}</Accordion>
+      <Accordion className="accordion-league" alwaysOpen={true}>
+        {leagueFilter.map((value, index) => showAccording(value, index))}
+      </Accordion>
 
       {showData && (
         <Modal size="lg" show={show} onHide={handleClose} centered={true}>
@@ -656,7 +654,7 @@ const Leagues = () => {
                 Rank {rank} {rank > 20 && `(${rankName(rank)})`}
               </div>
               <div className="reward-info">
-                {isEqual(showData.track, LeagueRewardType.Free, EqualMode.IgnoreCaseSensitive) ? (
+                {showData.track === LeagueRewardType.Free ? (
                   <div className="d-flex" style={{ columnGap: 8 }}>
                     <img
                       className="pokemon-sprite-small filter-shadow"
@@ -688,9 +686,7 @@ const Leagues = () => {
                 <Link
                   className="img-link text-center"
                   key={index}
-                  to={`/pokemon/${item.id}${
-                    item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
-                  }`}
+                  to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
                   <div className="d-flex justify-content-center">
@@ -715,9 +711,7 @@ const Leagues = () => {
                     <Link
                       className="img-link text-center"
                       key={index}
-                      to={`/pokemon/${item.id}${
-                        item.pokemonType === PokemonType.Normal ? '' : `?form=${item.form.toLowerCase().replaceAll('_', '-')}`
-                      }`}
+                      to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">

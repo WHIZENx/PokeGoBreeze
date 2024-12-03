@@ -8,12 +8,19 @@ import { toNumber } from '../../../util/extension';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import { getPokemonType } from '../../../util/utils';
 import { DEFAULT_BLOCK } from '../Battle/Constants';
+import { AttackType } from '../Battle/enums/attack-type.enum';
 
 export enum ChargeType {
   None = -1,
-  Random = 0,
-  Primary = 1,
-  Secondary = 2,
+  Random,
+  Primary,
+  Secondary,
+}
+
+interface MoveAudio {
+  fMove?: HTMLAudioElement;
+  cMovePri?: HTMLAudioElement;
+  cMoveSec?: HTMLAudioElement;
 }
 
 export interface IPokemonBattleData {
@@ -22,7 +29,6 @@ export interface IPokemonBattleData {
   form?: string | null;
   id?: number;
   pokemonType: PokemonType;
-  allStats?: IBattleBaseStats[];
   hp: number;
   stats: IStatsBase | undefined;
   bestStats: IBattleBaseStats | undefined;
@@ -44,7 +50,6 @@ export class PokemonBattleData implements IPokemonBattleData {
   form?: string | null;
   id?: number;
   pokemonType = PokemonType.Normal;
-  allStats?: IBattleBaseStats[];
   hp = 0;
   stats: IStatsBase | undefined;
   bestStats: IBattleBaseStats | undefined;
@@ -86,7 +91,7 @@ export interface IPokemonBattle {
   energy: number;
   block: number;
   chargeSlot: number;
-  audio?: any;
+  audio?: MoveAudio;
 }
 
 export class PokemonBattle implements IPokemonBattle {
@@ -101,7 +106,7 @@ export class PokemonBattle implements IPokemonBattle {
   energy = 0;
   block = DEFAULT_BLOCK;
   chargeSlot = ChargeType.Primary;
-  audio?: any;
+  audio?: MoveAudio;
 
   static create(value: IPokemonBattle) {
     const obj = new PokemonBattle();
@@ -113,7 +118,7 @@ export class PokemonBattle implements IPokemonBattle {
 
 export interface ITimeline {
   timer: number;
-  type?: string;
+  type?: AttackType;
   color?: string;
   size: number;
   isTap?: boolean;
@@ -127,7 +132,7 @@ export interface ITimeline {
 
 export class TimelineModel implements ITimeline {
   timer = 0;
-  type?: string;
+  type?: AttackType;
   color?: string;
   size = 0;
   isTap?: boolean;

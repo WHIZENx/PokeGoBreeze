@@ -9,6 +9,13 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './comput
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType } from '../enums/type.enum';
 
+// Parameters
+export class Params {
+  public static Id = 'id';
+  public static Form = 'form';
+  public static StatsType = 'statsType';
+}
+
 // KeyCode
 export const KEY_ENTER = 13;
 export const KEY_LEFT = 37;
@@ -17,6 +24,8 @@ export const KEY_RIGHT = 39;
 export const KEY_DOWN = 40;
 
 export const SYNC_MSG = 'Waiting to sync current data';
+export const PATH_ASSET_POKEGO = 'Addressable Assets';
+export const DEFAULT_SPRITE_NAME = 'unknown-pokemon';
 
 export const TRANSITION_TIME = '0.3s';
 
@@ -149,6 +158,9 @@ export const NICE_THROW_INC_CHANCE = [1.0, 1.3];
 export const GREAT_THROW_INC_CHANCE = [1.3, 1.7];
 export const EXCELLENT_THROW_INC_CHANCE = [1.7, 2.0];
 
+export const MIN_CP = 10;
+export const CP_DIFF_RATIO = 10; // Find difference between CP and Max CP
+
 export const MIN_LEVEL = 1;
 export const MAX_LEVEL = 51;
 
@@ -172,11 +184,11 @@ export const MULTIPLY_LEVEL_FRIENDSHIP = (
 
 export const MULTIPLY_THROW_CHARGE = (
   options: IOptions | undefined,
-  type = ChargeAbility.NORMAL,
+  type = ChargeAbility.Normal,
   settings = [
     getPropertyName(options, (o) => o.throwCharge),
     getPropertyName(options?.throwCharge, (o) =>
-      type === ChargeAbility.NORMAL ? o.normal : type === ChargeAbility.NICE ? o.nice : type === ChargeAbility.GREAT ? o.great : o.excellent
+      type === ChargeAbility.Normal ? o.normal : type === ChargeAbility.Nice ? o.nice : type === ChargeAbility.Great ? o.great : o.excellent
     ),
   ]
 ) => getOption<number>(options, settings, 1);
@@ -361,6 +373,5 @@ export const genRoman = (gen: number | string) => {
   }
 };
 
-export const scoreType = ['Overall', 'Leads', 'Closers', 'Switches', 'Chargers', 'Attackers', 'Consistency'];
 export const leaguesDefault = [BattleLeagueIconType.Great, BattleLeagueIconType.Ultra, BattleLeagueIconType.Master];
 export const levelList = Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5);

@@ -2,7 +2,14 @@ import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { checkPokemonGO, convertPokemonDataName, getDmgMultiplyBonus, getKeyEnum, splitAndCapitalize } from '../../../util/utils';
+import {
+  checkPokemonGO,
+  convertPokemonDataName,
+  generateParamForm,
+  getDmgMultiplyBonus,
+  getKeyWithData,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
@@ -110,7 +117,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Pokémon',
       selector: (row) => (
-        <Link to={`/pokemon/${row.pokemonId}${row.pokemonForme ? `?form=${row.pokemonForme.toLowerCase().replaceAll('_', '-')}` : ''}`}>
+        <Link to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme)}`}>
           <div className="d-flex justify-content-center">
             <div
               className={combineClasses(
@@ -162,8 +169,8 @@ const Counter = (props: ICounterComponent) => {
           </span>
           <span className="w-100">
             {row.fMove.moveType !== MoveType.None && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`)}>
-                {getKeyEnum(MoveType, row.fMove.moveType)}
+              <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyWithData(MoveType, row.fMove.moveType)}
               </span>
             )}
           </span>
@@ -183,8 +190,8 @@ const Counter = (props: ICounterComponent) => {
           </span>
           <span className="w-100">
             {row.cMove.moveType !== MoveType.None && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyEnum(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`)}>
-                {getKeyEnum(MoveType, row.cMove.moveType)}
+              <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`)}>
+                {getKeyWithData(MoveType, row.cMove.moveType)}
               </span>
             )}
           </span>

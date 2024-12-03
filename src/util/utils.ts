@@ -29,6 +29,7 @@ import {
   FORM_SHADOW,
   FORM_STANDARD,
   MAX_IV,
+  Params,
   PURIFIED_ATK_BONUS,
   PURIFIED_DEF_BONUS,
   SHADOW_ATK_BONUS,
@@ -532,10 +533,20 @@ export const getDataWithKey = <T>(data: object, findKey: string | number) => {
   return result && isNotEmpty(result) ? (result[1] as T) : undefined;
 };
 
-export const getKeyEnum = <V>(enums: object, findValue: V) => {
-  const result = Object.entries(enums).find(([, value]: [string, V]) => value === findValue);
+export const getKeyWithData = <V>(data: object, findValue: V) => {
+  const result = Object.entries(data).find(([, value]: [string, V]) => value === findValue);
   return result && isNotEmpty(result) ? result[0] : undefined;
 };
+
+export const getKeysObj = (data: object) =>
+  Object.values(data)
+    .map((v) => v.toString() as string)
+    .filter((_, i) => i < Object.values(data).length / 2);
+
+export const getValuesObj = <T extends object>(data: T) =>
+  Object.keys(data)
+    .map((v) => v as unknown as T)
+    .filter((_, i) => i < Object.keys(data).length / 2);
 
 export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   if (!pokemon) {
@@ -602,7 +613,7 @@ export const formIconAssets = (value: IPokemonFormModify, id: number | undefined
     value.form.name === 'greninja-battle-bond' ||
     value.form.name === 'urshifu-rapid-strike' ||
     toNumber(id) >= 899
-    ? APIService.getPokeIconSprite('unknown-pokemon')
+    ? APIService.getPokeIconSprite()
     : isInclude(value.form.name, `-${FORM_SHADOW.toLowerCase()}`) || isInclude(value.form.name, `-${FORM_PURIFIED.toLowerCase()}`)
     ? APIService.getPokeIconSprite(value.name)
     : APIService.getPokeIconSprite(value.form.name);
@@ -765,10 +776,7 @@ export const generatePokemonGoShadowForms = (
         `${form}${FORM_SHADOW.toLowerCase()}`,
         `${p.name}-${FORM_SHADOW.toLowerCase()}`,
         'Pokémon-GO',
-        getValueOrDefault(
-          Array,
-          p.types.map((item) => item.type.name)
-        ),
+        p.types.map((item) => item.type.name),
         new PokemonSprit(),
         index,
         PokemonType.Shadow
@@ -781,10 +789,7 @@ export const generatePokemonGoShadowForms = (
         `${form}${FORM_PURIFIED.toLowerCase()}`,
         `${p.name}-${FORM_PURIFIED.toLowerCase()}`,
         'Pokémon-GO',
-        getValueOrDefault(
-          Array,
-          p.types.map((item) => item.type.name)
-        ),
+        p.types.map((item) => item.type.name),
         new PokemonSprit(),
         index,
         PokemonType.Purified
@@ -845,8 +850,9 @@ export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form:
 
 export const replaceTempMoveName = (name: string | number) => {
   name = name.toString();
-  if (name.endsWith('_FAST') || isInclude(name, '_FAST_')) {
-    name = name.replace('_FAST', '');
+  const fastMove = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
+  if (name.endsWith(`_${fastMove}`) || isInclude(name, `_${fastMove}_`)) {
+    name = name.replace(`_${fastMove}`, '');
   } else if (name.endsWith('_PLUS')) {
     name = name.replaceAll('_PLUS', '+');
   }
@@ -993,6 +999,10 @@ export const getPokemonClass = (className?: string | number | null) => {
   return PokemonClass.None;
 };
 
-export const getArrayBySeq = (length: number, startNumber = 0) => {
-  return Array.from({ length }, (_, i) => i + startNumber);
+export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
+
+export const generateParamForm = (form: string | null | undefined, prefix = '?') => {
+  return form && !isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+    ? `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`
+    : '';
 };
