@@ -1,6 +1,16 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
-import { DEFAULT_SPRITE_NAME, FORM_GMAX, FORM_MEGA, FORM_NORMAL, FORM_PRIMAL, FORM_STANDARD, PATH_ASSET_POKEGO } from '../util/constants';
+import {
+  DEFAULT_SPRITE_NAME,
+  FORM_GALARIAN,
+  FORM_GMAX,
+  FORM_HISUIAN,
+  FORM_MEGA,
+  FORM_NORMAL,
+  FORM_PRIMAL,
+  FORM_STANDARD,
+  PATH_ASSET_POKEGO,
+} from '../util/constants';
 import { Species } from '../core/models/API/species.model';
 import { getValueOrDefault, isEqual, isInclude, toNumber } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
@@ -167,6 +177,9 @@ class APIService {
 
   getPokeFullSprite(id: number | string | undefined, form?: string) {
     if (id) {
+      if (form) {
+        form = capitalize(form.toUpperCase().replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI'));
+      }
       return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${form ? `-${form}` : ''}.png`;
     }
     return this.getPokeFullAsset(0);

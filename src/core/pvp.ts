@@ -7,20 +7,17 @@ import { LeagueType } from './enums/league.enum';
 import { ILeague } from './models/league.model';
 import { PVPInfo } from './models/pvp.model';
 
-export const pvpConvertPath = (data: APITree, path: string) => {
-  return data.tree.filter((item) => isInclude(item.path, path)).map((item) => item.path.replace(path, ''));
-};
+export const pvpConvertPath = (data: APITree, path: string) =>
+  data.tree.filter((item) => isInclude(item.path, path)).map((item) => item.path.replace(path, ''));
 
-export const pvpFindFirstPath = (data: APIPath[], path: string) => {
-  return data.filter((item) => isInclude(item.path, path)).map((item) => item.path);
-};
+export const pvpFindFirstPath = (data: APIPath[], path: string) =>
+  data.filter((item) => isInclude(item.path, path)).map((item) => item.path);
 
-export const pvpFindPath = (data: string[], path: string) => {
-  return data.filter((item) => isInclude(item, path)).map((item) => item.replace(path, ''));
-};
+export const pvpFindPath = (data: string[], path: string) =>
+  data.filter((item) => isInclude(item, path)).map((item) => item.replace(path, ''));
 
-export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
-  return [...new Set(data.map((league) => league.split('/').at(0)))].map((league) => {
+export const convertPVPRankings = (data: string[], leagues: ILeague[]) =>
+  [...new Set(data.map((league) => league.split('/').at(0)))].map((league) => {
     let item;
     if (!isEqual(league, LeagueType.All, EqualMode.IgnoreCaseSensitive)) {
       item = leagues.find((item) => isInclude(item.iconUrl, league));
@@ -47,10 +44,9 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) => {
     result.logo = item?.iconUrl;
     return result;
   });
-};
 
-export const convertPVPTrain = (data: string[], leagues: ILeague[]) => {
-  return [...new Set(data.map((league) => league.split('/').at(0)))].map((league) => {
+export const convertPVPTrain = (data: string[], leagues: ILeague[]) =>
+  [...new Set(data.map((league) => league.split('/').at(0)))].map((league) => {
     let item;
     if (!isEqual(league, LeagueType.All, EqualMode.IgnoreCaseSensitive)) {
       item = leagues.find((item) => isInclude(item.iconUrl, league, IncludeMode.IncludeIgnoreCaseSensitive));
@@ -74,4 +70,3 @@ export const convertPVPTrain = (data: string[], leagues: ILeague[]) => {
     result.logo = item?.iconUrl;
     return result;
   });
-};

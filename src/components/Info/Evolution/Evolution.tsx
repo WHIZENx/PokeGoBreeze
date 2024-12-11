@@ -107,6 +107,7 @@ const customTheme = createTheme({
 const Evolution = (props: IEvolutionComponent) => {
   const theme = useTheme<ThemeModify>();
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
+  const evolutionChain = useSelector((state: StoreState) => state.store.data.evolutionChain);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const formatEvoChain = (pokemon: IPokemonData | undefined) => {
@@ -326,6 +327,29 @@ const Evolution = (props: IEvolutionComponent) => {
     return result;
   };
 
+  const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number, form: string) => {
+    const pokemonChain = evolutionChain.find((chain) => chain.id === id);
+    if (pokemonChain) {
+      const chainForms = pokemonChain.evolutionInfos.filter((info) => isEqual(info.form, form, EqualMode.IgnoreCaseSensitive));
+      chainForms.forEach((poke) => {
+        const evolution = modelEvoChain(
+          new EvolutionModel({
+            id: poke.id,
+            name: poke.pokemonId,
+            form: poke.form,
+            evoList: [],
+            tempEvo: [],
+          })
+        );
+        if (poke.id < id) {
+          result.unshift([evolution]);
+        } else if (poke.id > id) {
+          result.push([evolution]);
+        }
+      });
+    }
+  };
+
   const getEvoChainStore = (id: number, forme: IForm) => {
     const formName = forme.formName?.toUpperCase();
     const form =
@@ -348,6 +372,9 @@ const Evolution = (props: IEvolutionComponent) => {
       getPrevEvoChainStore(pokemon, result);
       getCurrEvoChainStore(pokemon, result);
       getNextEvoChainStore(pokemon, result);
+      if (pokemon.prevo && result.length === 1 && result[0].length === 1) {
+        getCombineEvoChainFromPokeGo(result, id, form);
+      }
       setArrEvoList(result);
     }
   };
@@ -390,6 +417,18 @@ const Evolution = (props: IEvolutionComponent) => {
     if (pokemon) {
       return pokemon.evoList?.find((item) => isInclude(item.evoToForm, form) && item.evoToId === prevId);
     } else {
+      const pokemonChain = evolutionChain.find((chain) => chain.id === prevId);
+      if (pokemonChain) {
+        const chainForm = pokemonChain.evolutionInfos.find(
+          (info) => info.id !== prevId && isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
+        );
+        if (chainForm && prevId === props.id) {
+          const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToId === prevId));
+          if (pokemon) {
+            return pokemon.evoList?.find((item) => item.evoToId === prevId);
+          }
+        }
+      }
       return new EvoList();
     }
   };
@@ -445,7 +484,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   <div className="position-absolute" style={{ left: -40 }}>
                     {value.pokemonType !== PokemonType.GMax && (
                       <div>
-                        {!data?.itemCost && (data?.candyCost || data?.purificationEvoCandyCost) && (
+                        {toNumber(data?.evoToId) > 0 && !data?.itemCost && (data?.candyCost || data?.purificationEvoCandyCost) && (
                           <span
                             className="d-flex align-items-center caption"
                             style={{ color: theme.palette.customText.caption, width: 'max-content' }}

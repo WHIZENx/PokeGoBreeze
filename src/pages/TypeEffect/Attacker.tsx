@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize } from '../../util/utils';
+import { capitalize, getMultiplyTypeEffect } from '../../util/utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
@@ -29,17 +29,7 @@ const Attacker = (prop: ITypeEffComponent) => {
       neutral: [],
     });
     Object.entries(((prop.types ?? new TypeEff()) as unknown as DynamicObj<TypeMultiply>)[currentType] ?? new TypeModel()).forEach(
-      ([key, value]) => {
-        if (value === 1.6) {
-          data.weak?.push(key);
-        } else if (value === 1) {
-          data.neutral?.push(key);
-        } else if (value === 0.625) {
-          data.resist?.push(key);
-        } else if (value > 0) {
-          data.veryResist?.push(key);
-        }
-      }
+      ([key, value]) => getMultiplyTypeEffect(data, value, key)
     );
     setTypeEffective(data);
   }, [currentType, prop.types]);

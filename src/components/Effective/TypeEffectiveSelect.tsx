@@ -9,6 +9,7 @@ import { TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
 import { combineClasses, isNotEmpty } from '../../util/extension';
 import { EffectiveType } from '../../pages/PVP/enums/type-eff.enum';
+import { TypeEffectiveAmount } from './enums/type-effective.enum';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
@@ -56,9 +57,9 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
         });
-        if (valueEffective >= 2.56) {
+        if (valueEffective >= TypeEffectiveAmount.VeryWeak) {
           data.veryWeak?.push(key);
-        } else if (valueEffective >= 1.6) {
+        } else if (valueEffective >= TypeEffectiveAmount.Weak) {
           data.weak?.push(key);
         }
       });
@@ -75,7 +76,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
         });
-        if (isNotEmpty(types) && valueEffective === 1) {
+        if (isNotEmpty(types) && valueEffective === TypeEffectiveAmount.Neutral) {
           data.neutral?.push(key);
         }
       });
@@ -90,11 +91,11 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
         });
-        if (valueEffective <= 0.3) {
+        if (valueEffective <= TypeEffectiveAmount.SuperResist) {
           data.superResist?.push(key);
-        } else if (valueEffective <= 0.39) {
+        } else if (valueEffective <= TypeEffectiveAmount.VeryResist) {
           data.veryResist?.push(key);
-        } else if (valueEffective <= 0.625) {
+        } else if (valueEffective <= TypeEffectiveAmount.Resist) {
           data.resist?.push(key);
         }
       });
