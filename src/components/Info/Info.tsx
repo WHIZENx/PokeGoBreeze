@@ -9,6 +9,7 @@ import { TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
 import { isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
+import { getMultiplyTypeEffect } from '../../util/utils';
 
 const Info = (props: IInfoComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
@@ -41,19 +42,7 @@ const Info = (props: IInfoComponent) => {
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()] || 1;
         });
-        if (valueEffective >= 2.56) {
-          data.veryWeak?.push(key);
-        } else if (valueEffective >= 1.6) {
-          data.weak?.push(key);
-        } else if (valueEffective === 1) {
-          data.neutral?.push(key);
-        } else if (valueEffective >= 0.625) {
-          data.resist?.push(key);
-        } else if (valueEffective >= 0.39) {
-          data.veryResist?.push(key);
-        } else if (valueEffective >= 0.2) {
-          data.superResist?.push(key);
-        }
+        getMultiplyTypeEffect(data, valueEffective, key);
       }
     });
     return data;

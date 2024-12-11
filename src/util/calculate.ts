@@ -441,10 +441,7 @@ export const calculateBetweenLevel = (
   toLV: number | undefined,
   pokemonType?: PokemonType
 ) => {
-  toLV = toNumber(toLV);
-  // from_lv -= 0.5;
-  toLV -= 0.5;
-
+  toLV = toNumber(toLV) - 0.5;
   const powerUpCount = (toLV - fromLV) * 2;
 
   if (fromLV > toLV) {
@@ -470,15 +467,16 @@ export const calculateBetweenLevel = (
     const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
     const defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
 
+    const typeCost = typeCostPowerUp(pokemonType);
     data.forEach((ele: CPMData) => {
       const result = CPMDetail.mapping(ele);
       if (ele.level >= fromLV && ele.level <= toNumber(toLV)) {
-        betweenStardust += Math.ceil(result.stardust * typeCostPowerUp(pokemonType).stardust);
-        betweenCandy += Math.ceil(result.candy * typeCostPowerUp(pokemonType).candy);
-        betweenXlCandy += Math.ceil(result.xlCandy * typeCostPowerUp(pokemonType).candy);
-        betweenStardustDiff += Math.abs(result.stardust - Math.ceil(result.stardust * typeCostPowerUp(pokemonType).stardust));
-        betweenCandyDiff += Math.abs(result.candy - Math.ceil(result.candy * typeCostPowerUp(pokemonType).candy));
-        betweenXlCandyDiff += Math.abs(result.xlCandy - Math.ceil(result.xlCandy * typeCostPowerUp(pokemonType).candy));
+        betweenStardust += Math.ceil(result.stardust * typeCost.stardust);
+        betweenCandy += Math.ceil(result.candy * typeCost.candy);
+        betweenXlCandy += Math.ceil(result.xlCandy * typeCost.candy);
+        betweenStardustDiff += Math.abs(result.stardust - Math.ceil(result.stardust * typeCost.stardust));
+        betweenCandyDiff += Math.abs(result.candy - Math.ceil(result.candy * typeCost.candy));
+        betweenXlCandyDiff += Math.abs(result.xlCandy - Math.ceil(result.xlCandy * typeCost.candy));
       }
     });
 
@@ -690,10 +688,11 @@ export const calculateDamagePVE = (
   } else {
     modifier = isStab ? stabMultiply : 1;
   }
+  const result = 0.5 * power * (atk / defObj) * modifier;
   if (notPure) {
-    return 0.5 * power * (atk / defObj) * modifier + 1;
+    return result + 1;
   }
-  return Math.floor(0.5 * power * (atk / defObj) * modifier) + 1;
+  return Math.floor(result) + 1;
 };
 
 export const getBarCharge = (energy: number, isRaid = false) => {
@@ -994,43 +993,49 @@ export const queryTopMove = (
   move: ICombat | undefined
 ) => {
   const dataPri: IPokemonTopMove[] = [];
-  pokemonList?.forEach((value) => {
-    if (value) {
-      const isInclude = isIncludeList(getAllMoves(value), move?.name);
-      if (isInclude) {
-        const stats = calculateStatsByTag(value, value.baseStats, value.slug);
-        const statsAtkBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);
-        const statsDefBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);
-        const statsStaBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);
-        const dps = calculateAvgDPS(
-          globalOptions,
-          typeEff,
-          weatherBoost,
-          move,
-          move,
-          statsAtkBattle,
-          statsDefBattle,
-          statsStaBattle,
-          value.types
-        );
-        const tdo = calculateTDO(globalOptions, statsDefBattle, statsStaBattle, dps);
-        const moveType = getMoveType(value, move?.name);
-        dataPri.push(
-          new PokemonTopMove({
-            num: value.num,
-            forme: value.forme,
-            name: splitAndCapitalize(value.name, '-', ' '),
-            baseSpecies: value.baseSpecies,
-            sprite: value.sprite,
-            releasedGO: value.releasedGO,
-            moveType,
-            dps,
-            tdo,
-          })
-        );
+  if (move) {
+    pokemonList?.forEach((value) => {
+      if (value) {
+        let name = move.name;
+        if (move.track === 281) {
+          name = move.name.replace(`_${move.type}`, '');
+        }
+        const isInclude = isIncludeList(getAllMoves(value), name);
+        if (isInclude) {
+          const stats = calculateStatsByTag(value, value.baseStats, value.slug);
+          const statsAtkBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);
+          const statsDefBattle = calculateStatsBattle(stats.def, MAX_IV, DEFAULT_POKEMON_LEVEL);
+          const statsStaBattle = calculateStatsBattle(stats.sta, MAX_IV, DEFAULT_POKEMON_LEVEL);
+          const dps = calculateAvgDPS(
+            globalOptions,
+            typeEff,
+            weatherBoost,
+            move,
+            move,
+            statsAtkBattle,
+            statsDefBattle,
+            statsStaBattle,
+            value.types
+          );
+          const tdo = calculateTDO(globalOptions, statsDefBattle, statsStaBattle, dps);
+          const moveType = getMoveType(value, name);
+          dataPri.push(
+            new PokemonTopMove({
+              num: value.num,
+              forme: value.forme,
+              name: splitAndCapitalize(value.name, '-', ' '),
+              baseSpecies: value.baseSpecies,
+              sprite: value.sprite,
+              releasedGO: value.releasedGO,
+              moveType,
+              dps,
+              tdo,
+            })
+          );
+        }
       }
-    }
-  });
+    });
+  }
   return dataPri;
 };
 
@@ -1057,8 +1062,8 @@ const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[] | undefi
       });
 
       const statsAtkBattle = calculateStatsBattle(data.atk, options.ivAtk, options.pokemonLevel, true);
-      const statsDefBattle = calculateStatsBattle(data.atk, options.ivDef, options.pokemonLevel, true);
-      const statsStaBattle = calculateStatsBattle(data.atk, options.ivHp, options.pokemonLevel, true);
+      const statsDefBattle = calculateStatsBattle(data.def, options.ivDef, options.pokemonLevel, true);
+      const statsStaBattle = calculateStatsBattle(data.sta, options.ivHp, options.pokemonLevel, true);
 
       const pokemonType = moveTypeToFormType(cMoveType);
 

@@ -162,7 +162,7 @@ const CatchChance = () => {
             (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
             (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
           const prob = calculateCatchChance(
-            data.obShadowFormBaseCaptureRate && options.isShadow ? data.obShadowFormBaseCaptureRate : data.baseCaptureRate,
+            data.shadowBaseCaptureRate && options.isShadow ? data.shadowBaseCaptureRate : data.baseCaptureRate,
             level,
             multiplier
           );
@@ -481,9 +481,7 @@ const CatchChance = () => {
                     <h5>
                       {data &&
                         `${
-                          (data.obShadowFormAttackProbability && isShadow
-                            ? data.obShadowFormAttackProbability
-                            : toNumber(data.attackProbability)) * 100
+                          (data.shadowAttackProbability && isShadow ? data.shadowAttackProbability : toNumber(data.attackProbability)) * 100
                         }%`}
                     </h5>
                     <p>{data && `Time: ${toFloatWithPadding(toNumber(data.attackTimerS) / 10, 2)} sec`}</p>
@@ -494,18 +492,14 @@ const CatchChance = () => {
                   <hr className="w-100" />
                   <h5>
                     {data &&
-                      `${
-                        data.obShadowFormDodgeProbability && isShadow
-                          ? data.obShadowFormDodgeProbability
-                          : toNumber(data.dodgeProbability) * 100
-                      }%`}
+                      `${data.shadowDodgeProbability && isShadow ? data.shadowDodgeProbability : toNumber(data.dodgeProbability) * 100}%`}
                   </h5>
                   <p>{data && `Time: ${toFloatWithPadding(toNumber(data.dodgeDurationS) / 10, 2)} sec`}</p>
                 </div>
               </div>
             </div>
           </div>
-          {data?.obShadowFormBaseCaptureRate && (
+          {data?.shadowBaseCaptureRate && (
             <div className="d-flex justify-content-center">
               <FormControlLabel
                 control={
@@ -612,7 +606,6 @@ const CatchChance = () => {
               </div>
             </Fragment>
           )}
-          {isShadow && <></>}
         </div>
       </div>
       <hr />

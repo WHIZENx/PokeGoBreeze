@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux';
 import './Home.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
+import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
-import { DEFAULT_TYPES, genList, regionList, TRANSITION_TIME, versionList } from '../../util/constants';
+import { genList, regionList, TRANSITION_TIME, versionList } from '../../util/constants';
 import {
   Checkbox,
   FormControl,
@@ -30,6 +30,7 @@ import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
+import { TypeEff } from '../../core/models/type-eff.model';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -95,7 +96,7 @@ const Home = () => {
   const data = useSelector((state: StoreState) => state.store.data);
   const stats = useSelector((state: StatsState) => state.stats);
 
-  const [types, setTypes] = useState(DEFAULT_TYPES);
+  const [types, setTypes] = useState(getKeysObj(new TypeEff()));
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
   const [selectTypes, setSelectTypes] = useState<string[]>([]);
   const [listOfPokemon, setListOfPokemon] = useState<IPokemonHomeModel[]>([]);

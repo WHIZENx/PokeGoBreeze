@@ -11,7 +11,7 @@ import {
   getKeyWithData,
   splitAndCapitalize,
 } from '../../util/utils';
-import { STAB_MULTIPLY } from '../../util/constants';
+import { Params, STAB_MULTIPLY } from '../../util/constants';
 import { getBarCharge, queryTopMove } from '../../util/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
@@ -102,7 +102,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
         )}
       </>
     ),
-    minWidth: '96px',
+    minWidth: '100px',
   },
   {
     name: 'DPS',
@@ -130,6 +130,8 @@ const Move = (props: IMovePage) => {
   const [releasedGO, setReleaseGO] = useState(true);
   const [topList, setTopList] = useState<IPokemonTopMove[]>([]);
   const [topListFilter, setTopListFilter] = useState<IPokemonTopMove[]>([]);
+  const [moveType, setMoveType] = useState<string>();
+  const [progress, setProgress] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -151,7 +153,16 @@ const Move = (props: IMovePage) => {
         const moves = data.combat.filter((item) => item.track === id || item.id === id);
         let move = moves.find((item) => item.id === id);
         if (move?.isMultipleWithType) {
-          searchParams.set('type', getValueOrDefault(String, move.type).toLowerCase());
+          let type = searchParams.get(Params.MoveType);
+          if (type) {
+            searchParams.set(Params.MoveType, type.toLowerCase());
+            move = moves.find((item) => isEqual(item.type, type, EqualMode.IgnoreCaseSensitive));
+          } else {
+            type = getValueOrDefault(String, move.type).toLowerCase();
+            searchParams.set(Params.MoveType, type);
+          }
+          setSearchParams(searchParams);
+          setMoveType(type.toUpperCase());
         } else {
           move = moves.find((item) => item.track === id);
         }
@@ -182,6 +193,7 @@ const Move = (props: IMovePage) => {
     if (move && isNotEmpty(data.pokemon)) {
       const result = queryTopMove(data.options, data.pokemon, data.typeEff, data.weatherBoost, move);
       setTopList(result);
+      setProgress(true);
     }
   }, [move, data.options, data.pokemon, data.typeEff, data.weatherBoost]);
 
@@ -204,6 +216,16 @@ const Move = (props: IMovePage) => {
     );
   }, [topList, releasedGO]);
 
+  useEffect(() => {
+    const type = searchParams.get(Params.MoveType);
+    if (isNotEmpty(data.combat) && move?.isMultipleWithType && type) {
+      searchParams.set(Params.MoveType, type.toLowerCase());
+      setSearchParams(searchParams);
+      setMove(data.combat.find((item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)));
+      setMoveType(type.toUpperCase());
+    }
+  }, [move?.isMultipleWithType, searchParams, data.combat]);
+
   return (
     <div className={combineClasses('element-bottom poke-container', props.id ? '' : 'container')}>
       {move ? (
@@ -219,13 +241,10 @@ const Move = (props: IMovePage) => {
               style={{ maxWidth: 250 }}
               className="element-top w-50"
               onChange={(e) => {
-                searchParams.set('type', e.target.value.toLowerCase());
+                searchParams.set(Params.MoveType, e.target.value.toLowerCase());
                 setSearchParams(searchParams);
-                setMove(
-                  data.combat.find((item) => item.track === move.track && isEqual(item.type, e.target.value, EqualMode.IgnoreCaseSensitive))
-                );
               }}
-              defaultValue={searchParams.get('type') ? searchParams.get('type')?.toUpperCase() : 'NORMAL'}
+              value={moveType}
             >
               {Object.keys(data.typeEff)
                 .filter((type) => !isEqual(type, 'FAIRY', EqualMode.IgnoreCaseSensitive))
@@ -548,7 +567,7 @@ const Move = (props: IMovePage) => {
                     striped={true}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="35vh"
-                    progressPending={!isNotEmpty(topList)}
+                    progressPending={!progress}
                     progressComponent={
                       <div style={{ margin: 10 }}>
                         <CircularProgress />

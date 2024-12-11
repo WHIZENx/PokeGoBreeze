@@ -109,7 +109,7 @@ export const isInclude = (
     case IncludeMode.IncludeBetweenIgnoreCaseSensitive:
       return result.includesWithIgnoreCase(resultIncludesValue) || resultIncludesValue.includesWithIgnoreCase(result);
     case IncludeMode.IncludeBetween:
-      return result.includesWithIgnoreCase(resultIncludesValue) || resultIncludesValue.includes(result);
+      return result.includes(resultIncludesValue) || resultIncludesValue.includes(result);
     case IncludeMode.Include:
     default:
       return result.includes(resultIncludesValue);

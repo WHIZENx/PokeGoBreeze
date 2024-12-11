@@ -55,7 +55,7 @@ export const rankIconCenterName = (rank: number) => {
   }
 };
 
-export const raidEgg = (tier: number, isMega: boolean, isPrimal: boolean, isUltra?: boolean) => {
+export const raidEgg = (tier: number, isMega?: boolean, isPrimal?: boolean, isUltra?: boolean) => {
   if (tier === 1) {
     return APIService.getRaidSprite('raid_egg_0_icon');
   } else if (tier === 3) {

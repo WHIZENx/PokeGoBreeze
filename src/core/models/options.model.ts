@@ -261,6 +261,21 @@ interface EvolutionQuestTemplate {
   goals: EvolutionGoal[];
 }
 
+interface EvolutionInfo {
+  pokemon: string;
+  form?: string;
+}
+
+export interface EvolutionChainData {
+  headerMessage?: string;
+  evolutionInfos: EvolutionInfo[];
+}
+
+interface EvolutionChainDisplaySettings {
+  pokemon: string;
+  evolutionChains?: EvolutionChainData[];
+}
+
 interface DataGM {
   pokemonSettings: PokemonModel;
   combatSettings: CombatSetting;
@@ -285,6 +300,7 @@ interface DataGM {
   vsSeekerLoot: VsSeekerLoot;
   combatLeague: CombatLeague;
   evolutionQuestTemplate?: EvolutionQuestTemplate;
+  evolutionChainDisplaySettings: EvolutionChainDisplaySettings;
 }
 
 export interface PokemonDataGM {

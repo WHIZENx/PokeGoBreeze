@@ -25,6 +25,7 @@ import {
 } from '../../../util/extension';
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { Params } from '../../../util/constants';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -59,7 +60,7 @@ const columns: TableColumnModify<ICombat>[] = [
   {
     name: 'Name',
     selector: (row) => (
-      <Link to={`/move/${row.track}${row.isMultipleWithType ? `?type=${row.type?.toLowerCase()}` : ''}`}>
+      <Link to={`/move/${row.track}${row.isMultipleWithType ? `?${Params.MoveType}=${row.type?.toLowerCase()}` : ''}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
       </Link>
     ),

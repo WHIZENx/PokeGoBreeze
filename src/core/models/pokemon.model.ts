@@ -67,12 +67,9 @@ interface EvolutionBranch {
   evolutionMoveRequirement?: string;
 }
 
-interface IEncounter {
+export interface IEncounter {
   baseCaptureRate?: number;
   baseFleeRate?: number;
-  collisionRadiusM?: number;
-  collisionHeightM?: number;
-  collisionHeadRadiusM?: number;
   movementType?: string;
   movementTimerS?: number;
   jumpTimeS?: number;
@@ -84,17 +81,17 @@ interface IEncounter {
   cameraDistance?: number;
   minPokemonActionFrequencyS?: number;
   maxPokemonActionFrequencyS?: number;
-  obShadowFormBaseCaptureRate?: number;
-  obShadowFormAttackProbability?: number;
-  obShadowFormDodgeProbability?: number;
+  bonusCandyCaptureReward?: number;
+  bonusStardustCaptureReward?: number;
+  bonusXlCandyCaptureReward?: number;
+  shadowBaseCaptureRate?: number;
+  shadowAttackProbability?: number;
+  shadowDodgeProbability?: number;
 }
 
 export class Encounter implements IEncounter {
   baseCaptureRate?: number;
   baseFleeRate?: number;
-  collisionRadiusM?: number;
-  collisionHeightM?: number;
-  collisionHeadRadiusM?: number;
   movementType?: string;
   movementTimerS?: number;
   jumpTimeS?: number;
@@ -106,9 +103,12 @@ export class Encounter implements IEncounter {
   cameraDistance?: number;
   minPokemonActionFrequencyS?: number;
   maxPokemonActionFrequencyS?: number;
-  obShadowFormBaseCaptureRate?: number;
-  obShadowFormAttackProbability?: number;
-  obShadowFormDodgeProbability?: number;
+  bonusCandyCaptureReward?: number;
+  bonusStardustCaptureReward?: number;
+  bonusXlCandyCaptureReward?: number;
+  shadowBaseCaptureRate?: number;
+  shadowAttackProbability?: number;
+  shadowDodgeProbability?: number;
 
   constructor({ ...props }: IEncounter) {
     Object.assign(this, props);

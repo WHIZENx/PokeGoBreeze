@@ -314,8 +314,8 @@ const StatsRanking = () => {
     }
   }, [search, isMatch, releasedGO, pokemonList]);
 
-  const convertToPokemonForm = (pokemon: IPokemonData | IPokemonStatsRanking) => {
-    const pokemonType = getPokemonType(pokemon.slug);
+  const convertToPokemonForm = (pokemon: IPokemonStatsRanking) => {
+    const pokemonType = getPokemonType(pokemon.forme);
     return Form.create({
       formName: pokemon.forme,
       id: pokemon.num,

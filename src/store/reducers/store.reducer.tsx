@@ -78,6 +78,14 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
           combat: action.payload,
         },
       };
+    case StoreActions.StoreActionTypes.setEvolutionChain:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          evolutionChain: action.payload,
+        },
+      };
     case StoreActions.StoreActionTypes.setAssets:
       return {
         ...state,
