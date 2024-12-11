@@ -32,7 +32,7 @@ const Spinner = () => {
                       >
                         Retry Again
                       </p>
-                      {device.isMobile && <p className="text-danger">{spinner.error.message}</p>}
+                      {device.isMobile && spinner.error.message && <p className="text-danger">{spinner.error.message}</p>}
                     </Fragment>
                   ) : (
                     <Fragment>

@@ -14,7 +14,7 @@ interface BarModel {
 
 export interface ErrorModel {
   isError: boolean;
-  message: string;
+  message?: string;
 }
 
 const initialize: SpinnerModel = {

@@ -45,6 +45,8 @@ import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import { Options } from '../core/models/options.model';
 import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
+import { TypeEffChart } from '../core/models/type-eff.model';
+import { TypeEffectiveAmount } from '../components/Effective/enums/type-effective.enum';
 
 class Mask {
   value: number;
@@ -1005,4 +1007,20 @@ export const generateParamForm = (form: string | null | undefined, prefix = '?')
   return form && !isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
     ? `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`
     : '';
+};
+
+export const getMultiplyTypeEffect = (data: TypeEffChart, valueEffective: number, key: string) => {
+  if (valueEffective >= TypeEffectiveAmount.VeryWeak) {
+    data.veryWeak?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.Weak) {
+    data.weak?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.Neutral) {
+    data.neutral?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.Resist) {
+    data.resist?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.VeryResist) {
+    data.veryResist?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.SuperResist) {
+    data.superResist?.push(key);
+  }
 };

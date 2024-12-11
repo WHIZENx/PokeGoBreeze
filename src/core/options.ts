@@ -63,6 +63,7 @@ import {
   Options,
   PokemonPermission,
   PokemonReward,
+  EvolutionChainData,
 } from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
@@ -72,6 +73,7 @@ import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
 import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType, LeagueConditionType } from './enums/option.enum';
 import { StatsBase } from './models/stats.model';
+import { EvolutionChain, EvolutionInfo, IEvolutionInfo } from './models/evolution-chain.model';
 
 export const getOption = <T>(options: any, args: string[], defaultValue?: T): T => {
   if (!options) {
@@ -184,7 +186,7 @@ const convertAndReplaceNameGO = (name: string, defaultName = '') => {
     .replace(/GALARIAN_STANDARD/, FORM_GALARIAN);
 };
 
-export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncounter[]) => {
+export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEncounter[]) => {
   let result: IPokemonData[] = [];
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
@@ -214,7 +216,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     }
 
     const defaultName = pokemonSettings.form ? pokemonSettings.form.toString() : pokemonSettings.pokemonId;
-    const pokemonEncounter = encounter.find((e) => isEqual(defaultName, e.name));
+    const pokemonEncounter = encounter?.find((e) => isEqual(defaultName, e.name));
 
     pokemon.encounter = new Encounter({
       ...pokemon.encounter,
@@ -1140,6 +1142,37 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
   }
 
   return result;
+};
+
+const mappingPokemonEvoInfo = (pokemonData: EvolutionChainData[] | undefined, pokemon: IPokemonData[]) => {
+  const result: IEvolutionInfo[] = [];
+  pokemonData?.forEach((item) => {
+    const form = item.headerMessage?.replace('_pokedex_header', '').toUpperCase() ?? FORM_NORMAL;
+    item.evolutionInfos.forEach((info) => {
+      const id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, info.pokemon))?.num);
+      result.push(
+        EvolutionInfo.create({
+          id,
+          form,
+          pokemonId: info.pokemon,
+        })
+      );
+    });
+  });
+  return result;
+};
+
+export const optionEvolutionChain = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
+  return data
+    .filter((item) => /^EVOLUTION_V\d{4}_*/g.test(item.templateId))
+    .map((item) => {
+      const regId = item.templateId.match(/\d{4}/g) as string[];
+      return EvolutionChain.create({
+        id: toNumber(regId[0]),
+        pokemonId: item.data.evolutionChainDisplaySettings.pokemon,
+        evolutionInfos: mappingPokemonEvoInfo(item.data.evolutionChainDisplaySettings.evolutionChains, pokemon),
+      });
+    });
 };
 
 export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IAsset[]) => {

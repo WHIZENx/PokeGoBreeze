@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize } from '../../util/utils';
+import { capitalize, getMultiplyTypeEffect } from '../../util/utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
@@ -34,19 +34,7 @@ const Defender = (prop: ITypeEffComponent) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= isEmpty(currentTypeSec) ? 1 : value[currentTypeSec];
-      if (valueEffective >= 2.56) {
-        data.veryWeak?.push(key);
-      } else if (valueEffective >= 1.6) {
-        data.weak?.push(key);
-      } else if (valueEffective >= 1) {
-        data.neutral?.push(key);
-      } else if (valueEffective >= 0.625) {
-        data.resist?.push(key);
-      } else if (valueEffective >= 0.39) {
-        data.veryResist?.push(key);
-      } else if (valueEffective > 0) {
-        data.superResist?.push(key);
-      }
+      getMultiplyTypeEffect(data, valueEffective, key);
     });
     setTypeEffective(data);
   }, [currentTypePri, currentTypeSec, prop.types]);
