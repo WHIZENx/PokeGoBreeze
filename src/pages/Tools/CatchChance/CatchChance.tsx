@@ -194,7 +194,7 @@ const CatchChance = () => {
           priority: medal && medal.typePri ? medal.typePri.priority : 0,
         }),
       });
-      if (!typeSec) {
+      if (typeSec) {
         medalType = Medal.create({
           ...medalType,
           typeSec: MedalType.create({
