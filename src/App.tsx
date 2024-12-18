@@ -8,7 +8,8 @@ import './App.scss';
 import NavbarComponent from './components/Navbar';
 // import FooterComponent from './components/Footer'
 
-import Home from './pages/Home/Home';
+import News from './pages/News/News';
+import Pokedex from './pages/Pokedex/Pokedex';
 import SearchPokemon from './pages/Search/Pokemon/Search';
 import SearchMove from './pages/Search/Moves/SearchMoves';
 import TypeEffect from './pages/TypeEffect/TypeEffect';
@@ -76,7 +77,8 @@ function App() {
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
       <NavbarComponent />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Pokedex />} />
+        <Route path="/news" element={<News />} />
         <Route path="/type-effective" element={<TypeEffect />} />
         <Route path="/weather-boosts" element={<Weather />} />
         <Route path="/search-pokemon" element={<SearchPokemon />} />

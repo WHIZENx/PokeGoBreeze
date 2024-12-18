@@ -21,10 +21,10 @@ export enum TypeSex {
 }
 
 export enum TypeAction {
+  Prod,
   Atk,
   Def,
   Sta,
-  Prod,
 }
 
 export enum BuffType {

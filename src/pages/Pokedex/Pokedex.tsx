@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import './Home.scss';
+import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../util/utils';
@@ -89,8 +89,8 @@ class BtnSelect implements IBtnSelect {
   }
 }
 
-const Home = () => {
-  useChangeTitle('Home');
+const Pokedex = () => {
+  useChangeTitle('Pokedex');
   const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -530,4 +530,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Pokedex;

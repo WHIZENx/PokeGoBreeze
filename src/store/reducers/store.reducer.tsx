@@ -86,6 +86,17 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
           evolutionChain: action.payload,
         },
       };
+    case StoreActions.StoreActionTypes.setInformation:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          information: {
+            data: action.payload,
+            isLoaded: true,
+          },
+        },
+      };
     case StoreActions.StoreActionTypes.setAssets:
       return {
         ...state,

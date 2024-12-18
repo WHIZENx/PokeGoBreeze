@@ -2,6 +2,7 @@ import { IAsset } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
 import { ICPM } from '../../core/models/cpm.model';
 import { IEvolutionChain } from '../../core/models/evolution-chain.model';
+import { IInformationData, InformationData } from '../../core/models/information';
 import { ILeagueData, LeagueData } from '../../core/models/league.model';
 import { IOptions, Options } from '../../core/models/options.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
@@ -35,6 +36,7 @@ interface IDataModel {
   assets: IAsset[];
   combat: ICombat[];
   evolutionChain: IEvolutionChain[];
+  information: IInformationData;
   leagues: ILeagueData;
   pvp: IPVPDataModel;
 }
@@ -49,6 +51,7 @@ export class Data implements IDataModel {
   assets: IAsset[] = [];
   combat: ICombat[] = [];
   evolutionChain: IEvolutionChain[] = [];
+  information = new InformationData();
   leagues = new LeagueData();
   pvp = new PVPDataModel();
 

@@ -1,3 +1,4 @@
+import { BadgeType } from '../../../../components/Input/enums/badge-type.enum';
 import { IEncounter } from '../../../../core/models/pokemon.model';
 import { DynamicObj } from '../../../../util/extension';
 import { PokeBallType } from '../enums/poke-ball.enum';
@@ -43,12 +44,12 @@ export class DataAdvance implements IDataAdvance {
 }
 
 interface IMedalType {
-  priority: number;
+  priority: BadgeType;
   type: string;
 }
 
 export class MedalType implements IMedalType {
-  priority = 0;
+  priority = BadgeType.None;
   type = '';
 
   static create(value: IMedalType) {

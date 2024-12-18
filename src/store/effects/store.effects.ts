@@ -18,6 +18,7 @@ import {
   optionPokeSound,
   mappingMoveSetPokemonGO,
   optionEvolutionChain,
+  optionInformation,
 } from '../../core/options';
 import { pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
 import APIService from '../../services/API.service';
@@ -162,6 +163,7 @@ export const loadGameMaster = (
       const combat = optionCombat(gm.data, typeEff);
       dispatch(StoreActions.SetCombat.create(combat));
       dispatch(StoreActions.SetEvolutionChain.create(optionEvolutionChain(gm.data, pokemon)));
+      dispatch(StoreActions.SetInformation.create(optionInformation(gm.data, pokemon)));
       dispatch(StoreActions.SetLeagues.create(league));
 
       mappingMoveSetPokemonGO(pokemon, combat);

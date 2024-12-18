@@ -9,7 +9,7 @@ export type DynamicObj<S, T extends string | number = string | number> = { [x in
 export const getValueOrDefault = <T>(
   i: NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor,
   value: T | undefined | null,
-  defaultValue?: T | undefined | null
+  defaultValue?: T | null
 ) => {
   if (isUndefined(value) || isNull(value)) {
     const type = Object.prototype.toString.call(i.prototype).slice(8, -1).toLowerCase();
@@ -45,6 +45,11 @@ export const isNullOrUndefined = <T>(value?: T | null): value is null | undefine
 export const isEmpty = (value?: string | null): value is null | undefined => getValueOrDefault(Boolean, value?.isEmpty(), false);
 
 export const isNullOrEmpty = (value?: string | null): value is string | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
+
+export const isNotNumber = <T>(value: T | null | undefined) => {
+  const result = getValueOrDefault(String, value?.toString());
+  return !result || isNaN(Number(result));
+};
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>
   parseFloat((value || defaultValue).toString()) || defaultValue;
