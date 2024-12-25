@@ -45,9 +45,9 @@ export const isNull = <T>(value?: T | null): value is null => typeof value !== '
 export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined =>
   getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
 
-export const isEmpty = (value?: string | null): value is null | undefined => getValueOrDefault(Boolean, value?.isEmpty(), false);
+export const isEmpty = (value?: string | null): value is null | undefined | '' => getValueOrDefault(Boolean, value?.isEmpty(), false);
 
-export const isNullOrEmpty = (value?: string | null): value is string | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
+export const isNullOrEmpty = (value?: string | null): value is '' | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
 
 export const isNotNumber = <T>(value: T | null | undefined) => {
   const result = getValueOrDefault(String, value?.toString());
@@ -134,12 +134,12 @@ export const isIncludeList = (
   }
   const result = getValueOrDefault(
     Array,
-    value?.map((i) => (i ? i.toString() : ''))
+    value?.map((i) => (!isNullOrUndefined(i) ? i.toString() : ''))
   );
   const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
   switch (mode) {
     case IncludeMode.IncludeIgnoreCaseSensitive:
-      return result.map((i) => i?.toUpperCase()).includes(resultIncludesValue.toUpperCase());
+      return result.map((i) => i.toUpperCase()).includes(resultIncludesValue.toUpperCase());
     case IncludeMode.Include:
     default:
       return result.includes(resultIncludesValue);
@@ -154,14 +154,16 @@ export const isIncludeListBetween = (
   const result = new Set(
     getValueOrDefault(
       Array,
-      valueList?.map((i) => (i ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''))
+      valueList?.map((i) =>
+        !isNullOrUndefined(i) ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''
+      )
     )
   );
   const resultBetween = new Set(
     getValueOrDefault(
       Array,
       includesValueList?.map((i) =>
-        i ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''
+        !isNullOrUndefined(i) ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''
       )
     )
   );

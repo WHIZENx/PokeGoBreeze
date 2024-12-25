@@ -9,23 +9,23 @@ declare global {
   }
 }
 
-String.prototype.isEmpty = function (): boolean {
+String.prototype.isEmpty = function () {
   return typeof this === 'string' && this === '';
 };
 
-String.prototype.isNull = function (): boolean {
+String.prototype.isNull = function () {
   return typeof this !== 'undefined' && this === null;
 };
 
-String.prototype.isUndefined = function (): boolean {
+String.prototype.isUndefined = function () {
   return typeof this === 'undefined' && this === undefined;
 };
 
-String.prototype.isNullOrEmpty = function (): boolean {
+String.prototype.isNullOrEmpty = function () {
   return this.isNull() || this.isUndefined() || this.isEmpty();
 };
 
-String.prototype.includesWithIgnoreCase = function (searchElement: string): boolean {
+String.prototype.includesWithIgnoreCase = function (searchElement: string) {
   return this.toUpperCase().includes(searchElement.toUpperCase());
 };
 
