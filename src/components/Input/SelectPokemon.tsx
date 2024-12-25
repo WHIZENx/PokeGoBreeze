@@ -133,7 +133,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         placeholder="Enter Name or ID"
         style={{
           background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
-          paddingLeft: pokemonIcon ? 56 : 0,
+          paddingLeft: pokemonIcon ? 56 : '',
         }}
       />
     </div>
