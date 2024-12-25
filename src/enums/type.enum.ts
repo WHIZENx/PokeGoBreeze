@@ -2,6 +2,7 @@
 export enum TypeMove {
   Fast = 1,
   Charge,
+  All,
 }
 
 export enum TypeTheme {

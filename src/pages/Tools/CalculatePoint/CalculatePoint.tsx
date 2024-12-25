@@ -284,9 +284,12 @@ const CalculatePoint = () => {
 
   const getBorderSplit = (row: number, column: number) => {
     const data = getValueOrDefault(Array, resultBulkPointDef?.data);
-    let classes = ' bg-zero';
+    let classes = 'bg-zero';
     if (data[row][column - 1] > 0) {
       classes += ' bp-left-border';
+    }
+    if (data[row - 1]?.[column] > 0) {
+      classes += ' bp-top-border';
     }
     if (data[row + 1][column] > 0) {
       classes += ' bp-bottom-border';

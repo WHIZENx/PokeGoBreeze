@@ -11,7 +11,7 @@ import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { combineClasses, isEqual, isInclude, isNotEmpty, isUndefined } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUndefined } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import { SelectPosition } from './enums/input-type.enum';
 
@@ -37,8 +37,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   const changePokemon = (value: IPokemonData) => {
     setShowPokemon(false);
     const name = splitAndCapitalize(value.name, '-', ' ');
-    const iconName =
-      pokemonIcon && pokemonIcon.split('/').at(9) ? splitAndCapitalize(pokemonIcon.split('/').at(9)?.replace('.png', ''), '-', ' ') : '';
+    const icon = getValueOrDefault(String, pokemonIcon?.split('/').at(9));
+    const iconName = splitAndCapitalize(icon.replace('.png', ''), '-', ' ');
     if (!isEqual(iconName, name)) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
       setSearch(name);
@@ -133,7 +133,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         placeholder="Enter Name or ID"
         style={{
           background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
-          paddingLeft: pokemonIcon ? 56 : '',
+          paddingLeft: pokemonIcon ? 56 : 0,
         }}
       />
     </div>

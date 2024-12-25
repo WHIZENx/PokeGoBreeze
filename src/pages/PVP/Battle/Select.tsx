@@ -201,7 +201,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           placeholder="Enter Name"
           style={{
             background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
-            paddingLeft: pokemonIcon ? 56 : '',
+            paddingLeft: pokemonIcon ? 56 : 0,
           }}
           value={search}
         />

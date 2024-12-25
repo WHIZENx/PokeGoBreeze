@@ -56,7 +56,7 @@ export const loadPokeGOLogo = (dispatch: Dispatch) =>
       }
     })
     .then((file) => {
-      if (file) {
+      if (file?.data) {
         const files = file.data.files;
         if (isNotEmpty(files)) {
           const res = files.find((item) => isInclude(item.filename, 'Images/App Icons/'));

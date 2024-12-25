@@ -54,15 +54,14 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 function App() {
   const dispatch = useDispatch();
 
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.Light);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
-  const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.ASSETS, '');
-  const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.SOUNDS, '');
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
+  const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.Assets, '');
+  const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.Sounds, '');
+
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound);
-    };
     dispatch(DeviceActions.SetDevice.create());
     dispatch(SpinnerActions.SetBar.create(true));
     dispatch(SpinnerActions.SetPercent.create(0));
@@ -70,8 +69,38 @@ function App() {
     loadCPM(dispatch);
     loadPokeGOLogo(dispatch);
     dispatch(SpinnerActions.SetPercent.create(15));
-    fetchData();
   }, [dispatch]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    if (!isLoaded) {
+      setIsLoaded(true);
+      loadData(controller.signal);
+    }
+  }, [isLoaded]);
+
+  const loadData = (signal: AbortSignal, delay = 100) => {
+    return new Promise<void>((resolve, reject) => {
+      let timeout: NodeJS.Timeout | number;
+      const abortHandler = () => {
+        clearTimeout(timeout);
+        reject();
+      };
+
+      const resolveHandler = async () => {
+        if (signal instanceof AbortSignal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
+        resolve(await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound));
+      };
+
+      timeout = setTimeout(resolveHandler, delay);
+
+      if (signal instanceof AbortSignal) {
+        signal.addEventListener('abort', abortHandler, { once: true });
+      }
+    });
+  };
 
   return (
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
@@ -113,7 +142,7 @@ function App() {
 }
 
 export default function Main() {
-  const [stateMode] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.Light);
+  const [stateMode] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [mode, setMode] = useState(stateMode);
   const colorMode = useMemo(
     () => ({

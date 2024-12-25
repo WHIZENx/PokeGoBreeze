@@ -23,7 +23,7 @@ import {
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
-import { MoveType, PokemonType, TypeAction } from '../enums/type.enum';
+import { MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import { Delay, IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
 import { findStabType } from './compute';
 import {
@@ -994,15 +994,15 @@ export const queryTopMove = (
 ) => {
   const dataPri: IPokemonTopMove[] = [];
   if (move) {
-    pokemonList?.forEach((value) => {
-      if (value) {
+    pokemonList?.forEach((pokemon) => {
+      if (pokemon) {
         let name = move.name;
         if (move.track === 281) {
           name = move.name.replace(`_${move.type}`, '');
         }
-        const isInclude = isIncludeList(getAllMoves(value), name);
+        const isInclude = isIncludeList(getAllMoves(pokemon), name);
         if (isInclude) {
-          const stats = calculateStatsByTag(value, value.baseStats, value.slug);
+          const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
           const statsAtkBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);
           const statsDefBattle = calculateStatsBattle(stats.def, MAX_IV, DEFAULT_POKEMON_LEVEL);
           const statsStaBattle = calculateStatsBattle(stats.sta, MAX_IV, DEFAULT_POKEMON_LEVEL);
@@ -1015,18 +1015,18 @@ export const queryTopMove = (
             statsAtkBattle,
             statsDefBattle,
             statsStaBattle,
-            value.types
+            pokemon.types
           );
           const tdo = calculateTDO(globalOptions, statsDefBattle, statsStaBattle, dps);
-          const moveType = getMoveType(value, name);
+          const moveType = getMoveType(pokemon, name);
           dataPri.push(
             new PokemonTopMove({
-              num: value.num,
-              forme: value.forme,
-              name: splitAndCapitalize(value.name, '-', ' '),
-              baseSpecies: value.baseSpecies,
-              sprite: value.sprite,
-              releasedGO: value.releasedGO,
+              num: pokemon.num,
+              forme: pokemon.forme,
+              name: splitAndCapitalize(pokemon.name, '-', ' '),
+              baseSpecies: pokemon.baseSpecies,
+              sprite: pokemon.sprite,
+              releasedGO: pokemon.releasedGO,
               moveType,
               dps,
               tdo,
@@ -1039,8 +1039,8 @@ export const queryTopMove = (
   return dataPri;
 };
 
-const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[] | undefined, fMoveType: MoveType) => {
-  cMove?.forEach((vc) => {
+const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[], fMoveType: MoveType) => {
+  cMove.forEach((vc) => {
     const mf = data.combat.find((item) => isEqual(item.name, vf));
     const mc = data.combat.find((item) => isEqual(item.name, vc));
 
@@ -1113,8 +1113,7 @@ export const rankMove = (
     return new PokemonQueryRankMove();
   }
   const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, atk, def, sta, types);
-  pokemon.quickMoves?.forEach((vf) => setQueryMove(data, vf));
-  pokemon.eliteQuickMoves?.forEach((vf) => setQueryMove(data, vf));
+  getAllMoves(pokemon, TypeMove.Fast).forEach((vf) => setQueryMove(data, vf));
 
   return PokemonQueryRankMove.create({
     data: data.dataList,
@@ -1125,12 +1124,7 @@ export const rankMove = (
 
 const setQueryMove = (data: QueryMovesPokemon, vf: string) => {
   const quickMoveType = getMoveType(data.pokemon, vf);
-  queryMove(data, vf, data.pokemon.cinematicMoves, quickMoveType);
-  queryMove(data, vf, data.pokemon.eliteCinematicMoves, quickMoveType);
-  queryMove(data, vf, data.pokemon.shadowMoves, quickMoveType);
-  queryMove(data, vf, data.pokemon.purifiedMoves, quickMoveType);
-  queryMove(data, vf, data.pokemon.specialMoves, quickMoveType);
-  queryMove(data, vf, data.pokemon.exclusiveMoves, quickMoveType);
+  queryMove(data, vf, getAllMoves(data.pokemon, TypeMove.Charge), quickMoveType);
 };
 
 export const queryStatesEvoChain = (
@@ -1302,8 +1296,8 @@ export const queryStatesEvoChain = (
   });
 };
 
-const queryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, cMove: string[] | undefined, fMoveType: MoveType) => {
-  cMove?.forEach((vc) => {
+const queryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, cMove: string[], fMoveType: MoveType) => {
+  cMove.forEach((vc) => {
     const mf = data.combat.find((item) => isEqual(item.name, vf));
     const mc = data.combat.find((item) => isEqual(item.name, vc));
 
@@ -1362,8 +1356,7 @@ export const counterPokemon = (
   pokemonList.forEach((pokemon) => {
     if (pokemon && checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE')) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
-      pokemon.quickMoves?.forEach((vf) => setQueryMoveCounter(data, vf));
-      pokemon.eliteQuickMoves?.forEach((vf) => setQueryMoveCounter(data, vf));
+      getAllMoves(pokemon, TypeMove.Fast).forEach((vf) => setQueryMoveCounter(data, vf));
     }
   });
   return dataList
@@ -1373,12 +1366,7 @@ export const counterPokemon = (
 
 const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string) => {
   const fMoveType = getMoveType(data.pokemon, vf);
-  queryMoveCounter(data, vf, data.pokemon.cinematicMoves, fMoveType);
-  queryMoveCounter(data, vf, data.pokemon.eliteCinematicMoves, fMoveType);
-  queryMoveCounter(data, vf, data.pokemon.shadowMoves, fMoveType);
-  queryMoveCounter(data, vf, data.pokemon.purifiedMoves, fMoveType);
-  queryMoveCounter(data, vf, data.pokemon.specialMoves, fMoveType);
-  queryMoveCounter(data, vf, data.pokemon.exclusiveMoves, fMoveType);
+  queryMoveCounter(data, vf, getAllMoves(data.pokemon, TypeMove.Charge), fMoveType);
 };
 
 export const calculateStatsTopRank = (stats: IStatsBase | undefined, id: number, maxCP: number, level = MAX_LEVEL) => {

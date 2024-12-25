@@ -567,10 +567,10 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
     return false;
   }
 
-  const quickMoves = getValueOrDefault(Array, pokemon.quickMoves);
-  const cinematicMoves = getValueOrDefault(Array, pokemon.cinematicMoves);
+  const fastMoves = getAllMoves(pokemon, TypeMove.Fast);
+  const chargeMoves = getAllMoves(pokemon, TypeMove.Charge);
   const allMoves = getAllMoves(pokemon);
-  if (allMoves.length <= 2 && (quickMoves[0] === 'STRUGGLE' || isInclude(quickMoves[0], 'SPLASH')) && cinematicMoves[0] === 'STRUGGLE') {
+  if (allMoves.length <= 2 && (fastMoves[0] === 'STRUGGLE' || isInclude(fastMoves[0], 'SPLASH')) && chargeMoves[0] === 'STRUGGLE') {
     return false;
   }
   return true;
@@ -893,9 +893,9 @@ export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
   return name;
 };
 
-export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
-  return getValueOrDefault(Array, pokemon?.quickMoves).concat(
-    getValueOrDefault(Array, pokemon?.eliteQuickMoves),
+export const getAllMoves = (pokemon: IPokemonData | undefined | null, moveType = TypeMove.All) => {
+  const fastMove = getValueOrDefault(Array, pokemon?.quickMoves).concat(getValueOrDefault(Array, pokemon?.eliteQuickMoves));
+  const chargeMoves = getValueOrDefault(Array, pokemon?.cinematicMoves).concat(
     getValueOrDefault(Array, pokemon?.cinematicMoves),
     getValueOrDefault(Array, pokemon?.eliteCinematicMoves),
     getValueOrDefault(Array, pokemon?.shadowMoves),
@@ -903,6 +903,15 @@ export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
     getValueOrDefault(Array, pokemon?.specialMoves),
     getValueOrDefault(Array, pokemon?.exclusiveMoves)
   );
+  switch (moveType) {
+    case TypeMove.Fast:
+      return fastMove;
+    case TypeMove.Charge:
+      return chargeMoves;
+    case TypeMove.All:
+    default:
+      return fastMove.concat(chargeMoves);
+  }
 };
 
 export const moveTypeToFormType = (moveType?: MoveType) => {
@@ -937,7 +946,7 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, options?: Options
 };
 
 export const addSelectMovesByType = (pokemonData: IPokemonData, moveType: TypeMove, selectMoves: ISelectMoveModel[] = []) => {
-  if (moveType === TypeMove.Fast) {
+  if (moveType === TypeMove.Fast || moveType === TypeMove.All) {
     pokemonData.quickMoves?.forEach((value) => {
       selectMoves.push(new SelectMoveModel(value, MoveType.None));
     });
@@ -945,7 +954,7 @@ export const addSelectMovesByType = (pokemonData: IPokemonData, moveType: TypeMo
       selectMoves.push(new SelectMoveModel(value, MoveType.Elite));
     });
   }
-  if (moveType === TypeMove.Charge) {
+  if (moveType === TypeMove.Charge || moveType === TypeMove.All) {
     pokemonData.cinematicMoves?.forEach((value) => {
       selectMoves.push(new SelectMoveModel(value, MoveType.None));
     });
