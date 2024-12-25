@@ -10,10 +10,8 @@ import rootReducer from './reducers';
 export const history = createBrowserHistory();
 const routerMiddleware = createRouterMiddleware(history);
 
-const devTools =
-  process.env.NODE_ENV === 'production'
-    ? applyMiddleware(thunk, routerMiddleware)
-    : composeWithDevTools(applyMiddleware(thunk, routerMiddleware));
+const middleware = applyMiddleware(thunk, routerMiddleware);
+const devTools = process.env.NODE_ENV === 'production' ? middleware : composeWithDevTools(middleware);
 
 export default function configureStore() {
   return createStore(

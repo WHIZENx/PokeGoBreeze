@@ -38,7 +38,7 @@ const PokemonPVP = () => {
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const params = useParams();
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
@@ -55,7 +55,7 @@ const PokemonPVP = () => {
     dispatch(SpinnerActions.ShowSpinner.create());
     try {
       const cp = toNumber(params.cp);
-      const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase();
+      const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase().replace('clodsiresb', 'clodsire');
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
           APIService.getRankingFile(
@@ -75,7 +75,9 @@ const PokemonPVP = () => {
       const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
       const id = pokemon?.num;
       const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
-      document.title = `#${id} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(params.type)})`;
+      document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(
+        params.type
+      )})`;
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 

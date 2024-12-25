@@ -14,6 +14,7 @@ import { BattleBaseStats } from '../../../util/models/calculate.model';
 import { getKeyWithData } from '../../../util/utils';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { EqualMode } from '../../../util/enums/string.enum';
+import { AnimationType } from '../../../components/Sprites/Hexagon/enums/hexagon.enum';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
@@ -96,7 +97,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
               <b>Overall Performance</b>
             </h5>
             <Hexagon
-              animation={0}
+              animation={AnimationType.On}
               borderSize={320}
               size={180}
               stats={HexagonStats.create({

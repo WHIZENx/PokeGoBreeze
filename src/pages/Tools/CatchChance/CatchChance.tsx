@@ -44,6 +44,7 @@ import {
 } from './models/catch-chance.model';
 import { PokeBallType } from './enums/poke-ball.enum';
 import { PokemonType } from '../../../enums/type.enum';
+import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
 
 const CatchChance = () => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -79,7 +80,7 @@ const CatchChance = () => {
   const { isAdvance, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, isShadow } = options;
 
   const pokeBallType: PokeBallThreshold[] = [
-    { name: 'Poke Ball', threshold: POKE_BALL_INC_CHANCE },
+    { name: 'Poké Ball', threshold: POKE_BALL_INC_CHANCE },
     { name: 'Great Ball', threshold: GREAT_BALL_INC_CHANCE },
     { name: 'Ultra Ball', threshold: ULTRA_BALL_INC_CHANCE },
   ];
@@ -129,18 +130,17 @@ const CatchChance = () => {
     setIsLoading(false);
   }, [form]);
 
-  const medalCatchChance = (priority: number) => {
-    if (priority === 1) {
+  const medalCatchChance = (priority: BadgeType) => {
+    if (priority === BadgeType.Bronze) {
       return BRONZE_INC_CHANCE;
-    } else if (priority === 2) {
+    } else if (priority === BadgeType.Silver) {
       return SILVER_INC_CHANCE;
-    } else if (priority === 3) {
+    } else if (priority === BadgeType.Gold) {
       return GOLD_INC_CHANCE;
-    } else if (priority === 4) {
+    } else if (priority === BadgeType.Platinum) {
       return PLATINUM_INC_CHANCE;
-    } else {
-      return 1.0;
     }
+    return 1;
   };
 
   const calculateCatch = () => {
@@ -191,7 +191,7 @@ const CatchChance = () => {
         ...medalType,
         typePri: MedalType.create({
           type: typePri,
-          priority: medal && medal.typePri ? medal.typePri.priority : 0,
+          priority: medal && medal.typePri ? medal.typePri.priority : BadgeType.None,
         }),
       });
       if (typeSec) {
@@ -199,7 +199,7 @@ const CatchChance = () => {
           ...medalType,
           typeSec: MedalType.create({
             type: typeSec,
-            priority: medal && medal.typeSec ? medal.typeSec.priority : 0,
+            priority: medal && medal.typeSec ? medal.typeSec.priority : BadgeType.None,
           }),
         });
       }
@@ -212,7 +212,7 @@ const CatchChance = () => {
     setForm(form);
   };
 
-  const onSetPriorityPri = (priority: number) => {
+  const onSetPriorityPri = (priority: BadgeType) => {
     setMedal(
       Medal.create({
         ...medal,
@@ -224,7 +224,7 @@ const CatchChance = () => {
     );
   };
 
-  const onSetPrioritySec = (priority: number) => {
+  const onSetPrioritySec = (priority: BadgeType) => {
     setMedal(
       Medal.create({
         ...medal,
@@ -541,7 +541,7 @@ const CatchChance = () => {
                   <InputLabel id="demo-select-small">Ball</InputLabel>
                   <Select value={ballType.toString()} label="Ball" onChange={handleChangeBallType}>
                     <MenuItem value={PokeBallType.PokeBall} className="d-flex" style={{ gap: 5 }}>
-                      <img height={16} src={APIService.getItemSprite('pokeball_sprite')} /> Poke Ball
+                      <img height={16} src={APIService.getItemSprite('pokeball_sprite')} /> Poké Ball
                     </MenuItem>
                     <MenuItem value={PokeBallType.GreatBall} className="d-flex" style={{ gap: 5 }}>
                       <img height={16} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball
@@ -619,7 +619,7 @@ const CatchChance = () => {
                   <tr>
                     <th>Throwing</th>
                     <th>
-                      <img height={48} src={APIService.getItemSprite('pokeball_sprite')} /> Poke Ball
+                      <img height={48} src={APIService.getItemSprite('pokeball_sprite')} /> Poké Ball
                     </th>
                     <th>
                       <img height={48} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball

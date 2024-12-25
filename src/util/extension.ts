@@ -7,23 +7,26 @@ import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
 
 export const getValueOrDefault = <T>(
-  i: NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor,
+  type: NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor | DateConstructor,
   value: T | undefined | null,
-  defaultValue?: T | undefined | null
+  defaultValue?: T | null
 ) => {
   if (isUndefined(value) || isNull(value)) {
-    const type = Object.prototype.toString.call(i.prototype).slice(8, -1).toLowerCase();
-    switch (type) {
-      case 'number':
+    switch (type.name) {
+      case Number.name:
         return (defaultValue || 0) as T;
-      case 'string':
+      case String.name:
         return (defaultValue || '') as T;
-      case 'boolean':
+      case Boolean.name:
         return (defaultValue || false) as T;
-      case 'array':
+      case Array.name:
         return (defaultValue || []) as T;
-      case 'object':
+      case Date.name:
+        return (defaultValue || new Date()) as T;
+      case Object.name:
         return (defaultValue || {}) as T;
+      default:
+        return (defaultValue || value) as T;
     }
   }
   return value as T;
@@ -45,6 +48,11 @@ export const isNullOrUndefined = <T>(value?: T | null): value is null | undefine
 export const isEmpty = (value?: string | null): value is null | undefined => getValueOrDefault(Boolean, value?.isEmpty(), false);
 
 export const isNullOrEmpty = (value?: string | null): value is string | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
+
+export const isNotNumber = <T>(value: T | null | undefined) => {
+  const result = getValueOrDefault(String, value?.toString());
+  return !result || isNaN(Number(result));
+};
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>
   parseFloat((value || defaultValue).toString()) || defaultValue;
@@ -126,7 +134,7 @@ export const isIncludeList = (
   }
   const result = getValueOrDefault(
     Array,
-    value?.map((i) => i?.toString())
+    value?.map((i) => (i ? i.toString() : ''))
   );
   const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
   switch (mode) {
@@ -136,6 +144,28 @@ export const isIncludeList = (
     default:
       return result.includes(resultIncludesValue);
   }
+};
+
+export const isIncludeListBetween = (
+  valueList: (string | number | undefined | null)[] | undefined | null,
+  includesValueList: (string | number | undefined | null)[] | undefined | null,
+  mode: IncludeMode.Include | IncludeMode.IncludeIgnoreCaseSensitive = IncludeMode.Include
+) => {
+  const result = new Set(
+    getValueOrDefault(
+      Array,
+      valueList?.map((i) => (i ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''))
+    )
+  );
+  const resultBetween = new Set(
+    getValueOrDefault(
+      Array,
+      includesValueList?.map((i) =>
+        i ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''
+      )
+    )
+  );
+  return isNotEmpty(Array.from(result.intersection(resultBetween)));
 };
 
 export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) =>

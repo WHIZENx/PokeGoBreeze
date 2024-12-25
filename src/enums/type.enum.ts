@@ -2,6 +2,7 @@
 export enum TypeMove {
   Fast = 1,
   Charge,
+  All,
 }
 
 export enum TypeTheme {
@@ -21,10 +22,10 @@ export enum TypeSex {
 }
 
 export enum TypeAction {
+  Prod,
   Atk,
   Def,
   Sta,
-  Prod,
 }
 
 export enum BuffType {

@@ -4,6 +4,7 @@ import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
 import { DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { AnimationType } from './enums/hexagon.enum';
 
 interface IPointer {
   x: number;
@@ -78,8 +79,8 @@ const Hexagon = (props: IHexagonComponent) => {
     ctx.closePath();
   };
 
-  const loop = (type: number, startStat: number, endStat: number) => {
-    return type === 1
+  const loop = (animationType: AnimationType, startStat: number, endStat: number) => {
+    return animationType === AnimationType.On
       ? Math.min(startStat + endStat / 30, endStat)
       : endStat > startStat
       ? Math.min(startStat + endStat / 30, endStat)
@@ -108,7 +109,7 @@ const Hexagon = (props: IHexagonComponent) => {
   );
 
   useEffect(() => {
-    if (!props.animation) {
+    if (props.animation === AnimationType.Off) {
       drawHexagon(props.stats);
     } else if (
       defaultStats.lead !== props.stats.lead ||
@@ -118,7 +119,7 @@ const Hexagon = (props: IHexagonComponent) => {
       defaultStats.atk !== props.stats.atk ||
       defaultStats.switching !== props.stats.switching
     ) {
-      if (props.animation) {
+      if (props.animation === AnimationType.On) {
         animateId.current = requestAnimationFrame(function animate() {
           setDefaultStats(
             HexagonStats.create({
@@ -150,33 +151,34 @@ const Hexagon = (props: IHexagonComponent) => {
       animateId.current = undefined;
     }
 
-    let initStats = new HexagonStats();
+    if (props.animation === AnimationType.On) {
+      let initStats = new HexagonStats();
+      animateId.current = requestAnimationFrame(function animate() {
+        initStats = HexagonStats.create({
+          lead: loop(props.animation, initStats.lead, props.stats.lead),
+          charger: loop(props.animation, initStats.charger, props.stats.charger),
+          closer: loop(props.animation, initStats.closer, props.stats.closer),
+          cons: loop(props.animation, initStats.cons, props.stats.cons),
+          atk: loop(props.animation, initStats.atk, props.stats.atk),
+          switching: loop(props.animation, initStats.switching, props.stats.switching),
+        });
 
-    animateId.current = requestAnimationFrame(function animate() {
-      initStats = HexagonStats.create({
-        lead: loop(1, initStats.lead, props.stats.lead),
-        charger: loop(1, initStats.charger, props.stats.charger),
-        closer: loop(1, initStats.closer, props.stats.closer),
-        cons: loop(1, initStats.cons, props.stats.cons),
-        atk: loop(1, initStats.atk, props.stats.atk),
-        switching: loop(1, initStats.switching, props.stats.switching),
+        drawHexagon(initStats);
+
+        if (
+          !(
+            initStats.lead === props.stats.lead &&
+            initStats.charger === props.stats.charger &&
+            initStats.closer === props.stats.closer &&
+            initStats.cons === props.stats.cons &&
+            initStats.atk === props.stats.atk &&
+            initStats.switching === props.stats.switching
+          )
+        ) {
+          animateId.current = requestAnimationFrame(animate);
+        }
       });
-
-      drawHexagon(initStats);
-
-      if (
-        !(
-          initStats.lead === props.stats.lead &&
-          initStats.charger === props.stats.charger &&
-          initStats.closer === props.stats.closer &&
-          initStats.cons === props.stats.cons &&
-          initStats.atk === props.stats.atk &&
-          initStats.switching === props.stats.switching
-        )
-      ) {
-        animateId.current = requestAnimationFrame(animate);
-      }
-    });
+    }
   };
 
   return (

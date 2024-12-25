@@ -46,10 +46,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
   }, [pokemonType, props.formList]);
 
   const getQuestEvo = (name: string) => {
-    name = name
-      .split('-')
-      .map((text) => text.toUpperCase())
-      .join('_');
+    name = splitAndCapitalize(name, '-', '_').toUpperCase();
     const pokemonEvo = evoData
       .find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)))
       ?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));

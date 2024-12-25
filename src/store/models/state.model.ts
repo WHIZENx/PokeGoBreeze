@@ -10,17 +10,39 @@ import { Dispatch, SetStateAction } from 'react';
 
 const store = configureStore();
 
+interface StoreStateModel {
+  store: StoreModel;
+}
+interface StatsStateModel {
+  stats: IStatsRank | null;
+}
+interface SpinnerStateModel {
+  spinner: SpinnerModel;
+}
+interface SearchingStateModel {
+  searching: SearchingOptionsModel;
+}
+interface OptionsSheetStateModel {
+  options: OptionsSheetModel | null;
+}
+interface ThemeStateModel {
+  theme: string;
+}
+interface DeviceStateModel {
+  device: DeviceModel;
+}
+
 export type RouterState = ReturnType<typeof store.getState>;
 
-export type StatsState = AnyIfEmpty<{ stats: IStatsRank | null }>;
-export type SpinnerState = AnyIfEmpty<{ spinner: SpinnerModel }>;
-export type SearchingState = AnyIfEmpty<{ searching: SearchingOptionsModel }>;
-export type OptionsSheetState = AnyIfEmpty<{ options: OptionsSheetModel | null }>;
+export type StatsState = AnyIfEmpty<StatsStateModel>;
+export type SpinnerState = AnyIfEmpty<SpinnerStateModel>;
+export type SearchingState = AnyIfEmpty<SearchingStateModel>;
+export type OptionsSheetState = AnyIfEmpty<OptionsSheetStateModel>;
 
-export type StoreState = AnyIfEmpty<{ store: StoreModel }>;
+export type StoreState = AnyIfEmpty<StoreStateModel>;
 
-export type ThemeState = AnyIfEmpty<{ theme: string }>;
+export type ThemeState = AnyIfEmpty<ThemeStateModel>;
 
-export type DeviceState = AnyIfEmpty<{ device: DeviceModel }>;
+export type DeviceState = AnyIfEmpty<DeviceStateModel>;
 
 export declare type SetValue<T> = Dispatch<SetStateAction<T>>;

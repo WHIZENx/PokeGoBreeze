@@ -1,7 +1,6 @@
 import { useTheme } from '@mui/material';
 import React from 'react';
 import APIService from '../../services/API.service';
-import { IPokemonGenderRatio } from '../../core/models/pokemon.model';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
@@ -9,11 +8,6 @@ import { getKeyWithData } from '../../util/utils';
 
 const Gender = (props: IGenderComponent) => {
   const theme = useTheme<ThemeModify>();
-  const calculateRatio = (sex: TypeSex, ratio: IPokemonGenderRatio) => {
-    const maleRatio = ratio.M;
-    const femaleRatio = ratio.F;
-    return sex === TypeSex.Male ? maleRatio * 100 : femaleRatio * 100;
-  };
 
   return (
     <div className="element-top" style={{ marginRight: 15 }}>
@@ -26,7 +20,8 @@ const Gender = (props: IGenderComponent) => {
           src={APIService.getGenderSprite(getKeyWithData(TypeSex, props.sex))}
         />
         <h6 className="ratio-gender" style={{ margin: 0 }}>
-          {getKeyWithData(TypeSex, props.sex)} {props.ratio && `ratio: ${calculateRatio(props.sex, props.ratio)}%`}
+          {getKeyWithData(TypeSex, props.sex)}{' '}
+          {props.ratio && `ratio: ${props.sex === TypeSex.Male ? props.ratio.M * 100 : props.ratio.F * 100}%`}
         </h6>
       </div>
       <div className="element-top d-flex" style={{ marginLeft: 30, columnGap: 15 }}>

@@ -11,7 +11,7 @@ import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { combineClasses, isEqual, isInclude, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUndefined } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import { SelectPosition } from './enums/input-type.enum';
 
@@ -37,8 +37,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   const changePokemon = (value: IPokemonData) => {
     setShowPokemon(false);
     const name = splitAndCapitalize(value.name, '-', ' ');
-    const iconName =
-      pokemonIcon && pokemonIcon.split('/').at(9) ? splitAndCapitalize(pokemonIcon.split('/').at(9)?.replace('.png', ''), '-', ' ') : '';
+    const icon = getValueOrDefault(String, pokemonIcon?.split('/').at(9));
+    const iconName = splitAndCapitalize(icon.replace('.png', ''), '-', ' ');
     if (!isEqual(iconName, name)) {
       setPokemonIcon(APIService.getPokeIconSprite(value.sprite));
       setSearch(name);
@@ -92,56 +92,52 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     }
   }, [props.pokemon, pokemonData]);
 
-  const setPos = (position = SelectPosition.Down) => {
-    return (
-      <div
-        className={combineClasses('result-pokemon', position === SelectPosition.Up ? 'pos-up' : '')}
-        onScroll={listenScrollEvent.bind(this)}
-        style={{ display: showPokemon ? 'block' : 'none', maxHeight: props.maxHeight ?? 274 }}
-      >
-        <div>
-          {pokemonData
-            .filter(
-              (item) =>
-                item.num > 0 &&
-                (isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
-                  isInclude(item.num, search))
-            )
-            .slice(0, firstInit.current + eachCounter.current * startIndex)
-            .map((value, index) => (
-              <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
-                <CardPokemon value={value} />
-              </div>
-            ))}
-        </div>
+  const setPos = (position = SelectPosition.Down) => (
+    <div
+      className={combineClasses('result-pokemon', position === SelectPosition.Up ? 'pos-up' : '')}
+      onScroll={listenScrollEvent.bind(this)}
+      style={{ display: showPokemon ? 'block' : 'none', maxHeight: props.maxHeight ?? 274 }}
+    >
+      <div>
+        {pokemonData
+          .filter(
+            (item) =>
+              item.num > 0 &&
+              (isInclude(splitAndCapitalize(item.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive) ||
+                isInclude(item.num, search))
+          )
+          .slice(0, firstInit.current + eachCounter.current * startIndex)
+          .map((value, index) => (
+            <div className="card-pokemon-select" key={index} onMouseDown={() => changePokemon(value)}>
+              <CardPokemon value={value} />
+            </div>
+          ))}
       </div>
-    );
-  };
+    </div>
+  );
 
-  const inputPos = () => {
-    return (
-      <div className="d-flex align-items-center border-box">
-        {pokemonIcon && (
-          <span onClick={() => removePokemon()} className="remove-pokemon-select">
-            <CloseIcon sx={{ color: 'red' }} />
-          </span>
-        )}
-        <input
-          className="input-pokemon-select form-control shadow-none"
-          onClick={() => setShowPokemon(true)}
-          onBlur={() => setShowPokemon(false)}
-          value={search}
-          type="text"
-          onInput={(e) => setSearch(e.currentTarget.value)}
-          placeholder="Enter Name or ID"
-          style={{
-            background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
-            paddingLeft: pokemonIcon ? 56 : '',
-          }}
-        />
-      </div>
-    );
-  };
+  const inputPos = () => (
+    <div className="d-flex align-items-center border-box">
+      {pokemonIcon && (
+        <span onClick={() => removePokemon()} className="remove-pokemon-select">
+          <CloseIcon sx={{ color: 'red' }} />
+        </span>
+      )}
+      <input
+        className="input-pokemon-select form-control shadow-none"
+        onClick={() => setShowPokemon(true)}
+        onBlur={() => setShowPokemon(false)}
+        value={search}
+        type="text"
+        onInput={(e) => setSearch(e.currentTarget.value)}
+        placeholder="Enter Name or ID"
+        style={{
+          background: pokemonIcon ? `url(${pokemonIcon}) left no-repeat` : '',
+          paddingLeft: pokemonIcon ? 56 : '',
+        }}
+      />
+    </div>
+  );
 
   return (
     <div
@@ -149,7 +145,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       style={{ padding: 0, borderRadius: 0 }}
     >
       <div className="card-pokemon-input">
-        {!props.position || props.position === SelectPosition.Down ? (
+        {isUndefined(props.position) || props.position === SelectPosition.Down ? (
           <>
             {inputPos()}
             {setPos(props.position)}

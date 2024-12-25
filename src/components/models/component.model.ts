@@ -34,6 +34,8 @@ import { EvoPath } from '../../core/models/API/species.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
 import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
 import { EffectiveType } from '../../pages/PVP/enums/type-eff.enum';
+import { BadgeType } from '../Input/enums/badge-type.enum';
+import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -242,8 +244,8 @@ export interface IDynamicInputCPComponent {
 
 export interface ISelectBadgeComponent {
   type: string;
-  priority: number;
-  setPriority: (priority: number) => void;
+  priority: BadgeType;
+  setPriority: (priority: BadgeType) => void;
 }
 
 export interface ISelectMoveComponent {
@@ -256,6 +258,7 @@ export interface ISelectMoveComponent {
   isSelected?: boolean;
   isDisable?: boolean;
   maxHeight?: number;
+  position?: SelectPosition;
 }
 
 export interface ISelectPokemonComponent {
@@ -321,7 +324,7 @@ export interface IHexagonComponent {
   defaultStats?: IHexagonStats;
   stats: IHexagonStats;
   size: number;
-  animation: number;
+  animation: AnimationType;
   borderSize: number;
 }
 

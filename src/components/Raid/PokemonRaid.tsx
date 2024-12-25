@@ -12,7 +12,7 @@ import { PokemonType, TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
 import { IPokemonRaidComponent } from '../models/component.model';
 import { combineClasses } from '../../util/extension';
-import { InputType } from '../Input/enums/input-type.enum';
+import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
 
 const PokemonRaid = (props: IPokemonRaidComponent) => {
   const [dataTargetPokemon, setDataTargetPokemon] = useState(props.pokemon.dataTargetPokemon);
@@ -116,6 +116,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           move={fMoveTargetPokemon}
           setMovePokemon={setFMoveTargetPokemon}
           moveType={TypeMove.Fast}
+          position={SelectPosition.Up}
+          maxHeight={90}
         />
       ) : (
         <div
@@ -137,6 +139,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           move={cMoveTargetPokemon}
           setMovePokemon={setCMoveTargetPokemon}
           moveType={TypeMove.Charge}
+          position={SelectPosition.Up}
         />
       ) : (
         <div
