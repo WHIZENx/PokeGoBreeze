@@ -235,52 +235,50 @@ const CalculatePoint = () => {
     enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: VariantType.Success });
   };
 
-  const setIconBattle = (pri: TypeAction, sec: TypeAction) => {
-    return (
-      <div className="d-flex">
-        <div className="border-type-stat text-center">
-          <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === TypeAction.Def ? `Tier ${tier}` : undefined}>
-            <span className="position-relative" style={{ width: 96 }}>
-              <img className="position-absolute" alt="img-logo" height={36} src={pri === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
-              <img
-                alt="img-pokemon"
-                className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(form?.form.name, true)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeIconSprite();
-                }}
-              />
-            </span>
-          </Badge>
-          <span className="caption">{splitAndCapitalize(form?.form.name, '-', ' ')}</span>
-          <span className="caption">
-            <b>{pri === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
+  const setIconBattle = (pri: TypeAction, sec: TypeAction) => (
+    <div className="d-flex">
+      <div className="border-type-stat text-center">
+        <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === TypeAction.Def ? `Tier ${tier}` : undefined}>
+          <span className="position-relative" style={{ width: 96 }}>
+            <img className="position-absolute" alt="img-logo" height={36} src={pri === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
+            <img
+              alt="img-pokemon"
+              className="pokemon-sprite-large"
+              src={APIService.getPokeIconSprite(form?.form.name, true)}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeIconSprite();
+              }}
+            />
           </span>
-        </div>
-        <div className="border-type-stat text-center">
-          <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === TypeAction.Def ? `Tier ${tier}` : undefined}>
-            <span className="position-relative" style={{ width: 96 }}>
-              <img className="position-absolute" alt="img-logo" height={36} src={sec === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
-              <img
-                alt="img-pokemon"
-                className="pokemon-sprite-large"
-                src={APIService.getPokeIconSprite(formDef?.form.name, true)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeIconSprite();
-                }}
-              />
-            </span>
-          </Badge>
-          <span className="caption">{splitAndCapitalize(formDef?.form.name, '-', ' ')}</span>
-          <span className="caption">
-            <b>{sec === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
-          </span>
-        </div>
+        </Badge>
+        <span className="caption">{splitAndCapitalize(form?.form.name, '-', ' ')}</span>
+        <span className="caption">
+          <b>{pri === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
+        </span>
       </div>
-    );
-  };
+      <div className="border-type-stat text-center">
+        <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === TypeAction.Def ? `Tier ${tier}` : undefined}>
+          <span className="position-relative" style={{ width: 96 }}>
+            <img className="position-absolute" alt="img-logo" height={36} src={sec === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
+            <img
+              alt="img-pokemon"
+              className="pokemon-sprite-large"
+              src={APIService.getPokeIconSprite(formDef?.form.name, true)}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeIconSprite();
+              }}
+            />
+          </span>
+        </Badge>
+        <span className="caption">{splitAndCapitalize(formDef?.form.name, '-', ' ')}</span>
+        <span className="caption">
+          <b>{sec === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
+        </span>
+      </div>
+    </div>
+  );
 
   const getBorderSplit = (row: number, column: number) => {
     const data = getValueOrDefault(Array, resultBulkPointDef?.data);

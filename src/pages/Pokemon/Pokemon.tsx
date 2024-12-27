@@ -105,6 +105,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [pokemonDetails, setPokemonDetails] = useState<IPokemonData>();
 
   const [costModifier, setCostModifier] = useState<ITypeCost>();
+  const [urlEvolutionChain, setUrlEvolutionChain] = useState<string>();
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
@@ -137,6 +138,8 @@ const Pokemon = (props: IPokemonPage) => {
       ).catch(() => {
         return;
       });
+
+      setUrlEvolutionChain(data.evolution_chain?.url);
 
       const pokemon = pokemonData.find((item) => item.num === data.id);
       setPokeRatio(pokemon?.genderRatio);
@@ -545,6 +548,7 @@ const Pokemon = (props: IPokemonPage) => {
               pokemonDetail={pokemonDetails}
               defaultId={dataStorePokemon?.current?.id}
               region={region}
+              urlEvolutionChain={urlEvolutionChain}
               setProgress={setProgress}
               isLoadedForms={progress.isLoadedForms}
             />

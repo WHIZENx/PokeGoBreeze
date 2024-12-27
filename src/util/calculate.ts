@@ -103,13 +103,12 @@ const weatherMultiple = (
   weatherBoost: IWeatherBoost | undefined,
   weather: string | undefined,
   type: string | undefined
-) => {
-  return (weatherBoost as unknown as DynamicObj<string[]>)[getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))]?.find(
-    (item) => isEqual(item, type?.replaceAll(' ', '_'), EqualMode.IgnoreCaseSensitive)
+) =>
+  (weatherBoost as unknown as DynamicObj<string[]>)[getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))]?.find((item) =>
+    isEqual(item, type?.replaceAll(' ', '_'), EqualMode.IgnoreCaseSensitive)
   )
     ? STAB_MULTIPLY(globalOptions)
     : 1;
-};
 
 export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: string | undefined, typesObj: string[] | undefined) => {
   let valueEffective = 1;
@@ -124,9 +123,8 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
   return valueEffective;
 };
 
-const convertStatsArray = (stats: Stats[] | undefined, name: string) => {
-  return toNumber(stats?.find((item) => isEqual(item.stat.name, name))?.base_stat);
-};
+const convertStatsArray = (stats: Stats[] | undefined, name: string) =>
+  toNumber(stats?.find((item) => isEqual(item.stat.name, name))?.base_stat);
 
 export const convertAllStats = (stats: Stats[] | undefined) => {
   const atk = convertStatsArray(stats, 'attack');
@@ -316,41 +314,28 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
   });
 };
 
-export const calculateCP = (atk: number, def: number, sta: number, level: number) => {
-  return Math.floor(
+export const calculateCP = (atk: number, def: number, sta: number, level: number) =>
+  Math.floor(
     Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * toNumber(data.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
   );
-};
 
-export const calculateRaidStat = (stat: number, tier: number) => {
-  return Math.floor((stat + MAX_IV) * RAID_BOSS_TIER[tier].CPm);
-};
+export const calculateRaidStat = (stat: number, tier: number) => Math.floor((stat + MAX_IV) * RAID_BOSS_TIER[tier].CPm);
 
-export const calculateRaidCP = (atk: number, def: number, tier: number) => {
-  return Math.floor(((atk + MAX_IV) * Math.sqrt(def + MAX_IV) * Math.sqrt(RAID_BOSS_TIER[tier].sta)) / 10);
-};
+export const calculateRaidCP = (atk: number, def: number, tier: number) =>
+  Math.floor(((atk + MAX_IV) * Math.sqrt(def + MAX_IV) * Math.sqrt(RAID_BOSS_TIER[tier].sta)) / 10);
 
-export const calculateDmgOutput = (atk: number, dps: number) => {
-  return atk * dps;
-};
+export const calculateDmgOutput = (atk: number, dps: number) => atk * dps;
 
-export const calculateTankiness = (def: number, HP: number) => {
-  return def * HP;
-};
+export const calculateTankiness = (def: number, HP: number) => def * HP;
 
-export const calculateDuelAbility = (dmgOutput: number, tankiness: number) => {
-  return dmgOutput * tankiness;
-};
+export const calculateDuelAbility = (dmgOutput: number, tankiness: number) => dmgOutput * tankiness;
 
-export const calculateCatchChance = (baseCaptureRate: number | undefined, level: number, multiplier: number) => {
-  return (
-    1 -
-    Math.pow(
-      Math.max(0, 1 - toNumber(baseCaptureRate) / (2 * toNumber(data?.find((data: ICPM) => data.level === level)?.multiplier))),
-      multiplier
-    )
+export const calculateCatchChance = (baseCaptureRate: number | undefined, level: number, multiplier: number) =>
+  1 -
+  Math.pow(
+    Math.max(0, 1 - toNumber(baseCaptureRate) / (2 * toNumber(data?.find((data: ICPM) => data.level === level)?.multiplier))),
+    multiplier
   );
-};
 
 export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
   const maxCP = toNumber(cp);
@@ -981,9 +966,7 @@ export const calculateBattleDPS = (
   return Math.max(FDPS, DPS, DPSSec);
 };
 
-export const TimeToKill = (hp: number, dpsDef: number) => {
-  return hp / dpsDef;
-};
+export const TimeToKill = (hp: number, dpsDef: number) => hp / dpsDef;
 
 export const queryTopMove = (
   globalOptions: IOptions | undefined,

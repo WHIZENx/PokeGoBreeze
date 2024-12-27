@@ -712,7 +712,7 @@ const RaidBattle = () => {
   };
 
   const resultBattle = (bossHp: number, timer: number) => {
-    const status = enableTimeAllow && timer >= timeAllow ? RaidState.TIMEOUT : bossHp <= 0 ? RaidState.WIN : RaidState.LOSS;
+    const status = enableTimeAllow && timer >= timeAllow ? RaidState.TIMEOUT : bossHp > 0 ? RaidState.LOSS : RaidState.WIN;
     return (
       <td colSpan={3} className={combineClasses('text-center', `bg-${status === RaidState.WIN ? 'success' : 'danger'}`)}>
         <span className="text-white">{status}</span>
@@ -720,142 +720,140 @@ const RaidBattle = () => {
     );
   };
 
-  const modalFormFilters = () => {
-    return (
-      <form>
-        <label className="form-label">Pokémon level</label>
-        <div className="input-group mb-3">
-          <span className="input-group-text">Level</span>
-          <Form.Select
-            value={filters.selected.level}
-            className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: toFloat(e.target.value) } })}
-          >
-            {levelList.map((value, index) => (
-              <option key={index} value={value}>
-                {value}
-              </option>
-            ))}
-          </Form.Select>
-        </div>
-        <label className="form-label">Pokémon IV</label>
-        <div className="input-group mb-3">
-          <span className="input-group-text">ATK</span>
-          <input
-            value={filters.selected.iv.atk}
-            type="number"
-            min={MIN_IV}
-            max={MAX_IV}
-            required={true}
-            className="form-control"
-            placeholder="IV ATK"
-            onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: toNumber(e.currentTarget.value) } } })
-            }
-          />
-          <span className="input-group-text">DEF</span>
-          <input
-            value={filters.selected.iv.def}
-            type="number"
-            min={MIN_IV}
-            max={MAX_IV}
-            required={true}
-            className="form-control"
-            placeholder="IV DEF"
-            onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: toNumber(e.currentTarget.value) } } })
-            }
-          />
-          <span className="input-group-text">STA</span>
-          <input
-            value={filters.selected.iv.sta}
-            type="number"
-            min={MIN_IV}
-            max={MAX_IV}
-            required={true}
-            className="form-control"
-            placeholder="IV STA"
-            onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: toNumber(e.currentTarget.value) } } })
-            }
-          />
-        </div>
-        <div className="input-group mb-3 border-input">
-          <span className="input-group-text">Search filter only by</span>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filters.selected.onlyShadow}
-                onChange={(_, check) =>
-                  setFilters({ ...filters, selected: { ...selected, onlyShadow: check, onlyMega: check ? false : selected.onlyMega } })
-                }
+  const modalFormFilters = () => (
+    <form>
+      <label className="form-label">Pokémon level</label>
+      <div className="input-group mb-3">
+        <span className="input-group-text">Level</span>
+        <Form.Select
+          value={filters.selected.level}
+          className="form-control"
+          onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: toFloat(e.target.value) } })}
+        >
+          {levelList.map((value, index) => (
+            <option key={index} value={value}>
+              {value}
+            </option>
+          ))}
+        </Form.Select>
+      </div>
+      <label className="form-label">Pokémon IV</label>
+      <div className="input-group mb-3">
+        <span className="input-group-text">ATK</span>
+        <input
+          value={filters.selected.iv.atk}
+          type="number"
+          min={MIN_IV}
+          max={MAX_IV}
+          required={true}
+          className="form-control"
+          placeholder="IV ATK"
+          onInput={(e) =>
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: toNumber(e.currentTarget.value) } } })
+          }
+        />
+        <span className="input-group-text">DEF</span>
+        <input
+          value={filters.selected.iv.def}
+          type="number"
+          min={MIN_IV}
+          max={MAX_IV}
+          required={true}
+          className="form-control"
+          placeholder="IV DEF"
+          onInput={(e) =>
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: toNumber(e.currentTarget.value) } } })
+          }
+        />
+        <span className="input-group-text">STA</span>
+        <input
+          value={filters.selected.iv.sta}
+          type="number"
+          min={MIN_IV}
+          max={MAX_IV}
+          required={true}
+          className="form-control"
+          placeholder="IV STA"
+          onInput={(e) =>
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: toNumber(e.currentTarget.value) } } })
+          }
+        />
+      </div>
+      <div className="input-group mb-3 border-input">
+        <span className="input-group-text">Search filter only by</span>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={filters.selected.onlyShadow}
+              onChange={(_, check) =>
+                setFilters({ ...filters, selected: { ...selected, onlyShadow: check, onlyMega: check ? false : selected.onlyMega } })
+              }
+            />
+          }
+          label={getKeyWithData(PokemonType, PokemonType.Shadow)}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={filters.selected.onlyMega}
+              onChange={(_, check) =>
+                setFilters({ ...filters, selected: { ...selected, onlyMega: check, onlyShadow: check ? false : selected.onlyShadow } })
+              }
+            />
+          }
+          label="Mega"
+        />
+      </div>
+      <div className="input-group mb-3">
+        <FormControlLabel
+          control={
+            <Switch
+              checked={filters.selected.onlyReleasedGO}
+              onChange={(_, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
+            />
+          }
+          label={
+            <span className="d-flex align-items-center">
+              Released in GO
+              <img
+                className={filters.selected.onlyReleasedGO ? '' : 'filter-gray'}
+                width={28}
+                height={28}
+                style={{ marginLeft: 5 }}
+                alt="pokemon-go-icon"
+                src={APIService.getPokemonGoIcon(icon)}
               />
-            }
-            label={getKeyWithData(PokemonType, PokemonType.Shadow)}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filters.selected.onlyMega}
-                onChange={(_, check) =>
-                  setFilters({ ...filters, selected: { ...selected, onlyMega: check, onlyShadow: check ? false : selected.onlyShadow } })
-                }
-              />
-            }
-            label="Mega"
-          />
-        </div>
-        <div className="input-group mb-3">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={filters.selected.onlyReleasedGO}
-                onChange={(_, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
-              />
-            }
-            label={
-              <span className="d-flex align-items-center">
-                Released in GO
-                <img
-                  className={filters.selected.onlyReleasedGO ? '' : 'filter-gray'}
-                  width={28}
-                  height={28}
-                  style={{ marginLeft: 5 }}
-                  alt="pokemon-go-icon"
-                  src={APIService.getPokemonGoIcon(icon)}
-                />
-              </span>
-            }
-          />
-        </div>
-        <label className="form-label">Sorting</label>
-        <div className="input-group mb-3">
-          <span className="input-group-text">Sort By</span>
-          <Form.Select
-            style={{ width: '40%' }}
-            value={filters.selected.sortBy}
-            className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
-          >
-            <option value={SortType.DPS}>Damage Per Second</option>
-            <option value={SortType.TDO}>Total Damage Output</option>
-            <option value={SortType.TTK}>Time To Kill</option>
-            <option value={SortType.TANK}>Tankiness</option>
-          </Form.Select>
-          <span className="input-group-text">Priority</span>
-          <Form.Select
-            style={{ width: '15%' }}
-            value={filters.selected.sorted}
-            className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
-          >
-            <option value={SortDirectionType.ASC}>Best</option>
-            <option value={SortDirectionType.DESC}>Worst</option>
-          </Form.Select>
-        </div>
-      </form>
-    );
-  };
+            </span>
+          }
+        />
+      </div>
+      <label className="form-label">Sorting</label>
+      <div className="input-group mb-3">
+        <span className="input-group-text">Sort By</span>
+        <Form.Select
+          style={{ width: '40%' }}
+          value={filters.selected.sortBy}
+          className="form-control"
+          onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
+        >
+          <option value={SortType.DPS}>Damage Per Second</option>
+          <option value={SortType.TDO}>Total Damage Output</option>
+          <option value={SortType.TTK}>Time To Kill</option>
+          <option value={SortType.TANK}>Tankiness</option>
+        </Form.Select>
+        <span className="input-group-text">Priority</span>
+        <Form.Select
+          style={{ width: '15%' }}
+          value={filters.selected.sorted}
+          className="form-control"
+          onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
+        >
+          <option value={SortDirectionType.ASC}>Best</option>
+          <option value={SortDirectionType.DESC}>Worst</option>
+        </Form.Select>
+      </div>
+    </form>
+  );
 
   const modalFormSetting = () => {
     const pokemon = showSettingPokemon.pokemon;

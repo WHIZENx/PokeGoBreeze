@@ -14,33 +14,31 @@ import { TypeEffectiveAmount } from './enums/type-effective.enum';
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
 
-  const renderEffective = (text: string, data: string[] | undefined) => {
-    return (
-      <Fragment>
-        {isNotEmpty(data) && (
-          <Fragment>
-            <h6 className={props.isBlock ? 'element-top' : ''}>
-              <b className="text-shadow">x{text}</b>
-            </h6>
-            <div className="d-flex flex-wrap" style={{ gap: 5 }}>
-              {data?.map((value, index) => (
-                <span key={index} className={combineClasses(value.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}>
-                  <div style={{ display: 'contents', width: 16 }}>
-                    <img
-                      className="pokemon-sprite-small sprite-type-select filter-shadow"
-                      alt="img-type-pokemon"
-                      src={APIService.getTypeHqSprite(value)}
-                    />
-                  </div>
-                  <span className="filter-shadow">{capitalize(value)}</span>
-                </span>
-              ))}
-            </div>
-          </Fragment>
-        )}
-      </Fragment>
-    );
-  };
+  const renderEffective = (text: string, data: string[] | undefined) => (
+    <Fragment>
+      {isNotEmpty(data) && (
+        <Fragment>
+          <h6 className={props.isBlock ? 'element-top' : ''}>
+            <b className="text-shadow">x{text}</b>
+          </h6>
+          <div className="d-flex flex-wrap" style={{ gap: 5 }}>
+            {data?.map((value, index) => (
+              <span key={index} className={combineClasses(value.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}>
+                <div style={{ display: 'contents', width: 16 }}>
+                  <img
+                    className="pokemon-sprite-small sprite-type-select filter-shadow"
+                    alt="img-type-pokemon"
+                    src={APIService.getTypeHqSprite(value)}
+                  />
+                </div>
+                <span className="filter-shadow">{capitalize(value)}</span>
+              </span>
+            ))}
+          </div>
+        </Fragment>
+      )}
+    </Fragment>
+  );
 
   const getTypeEffect = (effect: EffectiveType, types: string[] | undefined) => {
     const data = TypeEffChart.create({

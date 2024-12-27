@@ -109,9 +109,23 @@ const Hexagon = (props: IHexagonComponent) => {
   );
 
   useEffect(() => {
-    if (props.animation === AnimationType.Off) {
-      drawHexagon(props.stats);
-    } else if (
+    if (props.animation === AnimationType.On) {
+      animateId.current = requestAnimationFrame(function animate() {
+        setDefaultStats(
+          HexagonStats.create({
+            lead: loop(props.animation, defaultStats.lead, props.stats.lead),
+            charger: loop(props.animation, defaultStats.charger, props.stats.charger),
+            closer: loop(props.animation, defaultStats.closer, props.stats.closer),
+            cons: loop(props.animation, defaultStats.cons, props.stats.cons),
+            atk: loop(props.animation, defaultStats.atk, props.stats.atk),
+            switching: loop(props.animation, defaultStats.switching, props.stats.switching),
+          })
+        );
+        animateId.current = requestAnimationFrame(animate);
+      });
+    }
+
+    if (
       defaultStats.lead !== props.stats.lead ||
       defaultStats.charger !== props.stats.charger ||
       defaultStats.closer !== props.stats.closer ||
@@ -119,29 +133,16 @@ const Hexagon = (props: IHexagonComponent) => {
       defaultStats.atk !== props.stats.atk ||
       defaultStats.switching !== props.stats.switching
     ) {
-      if (props.animation === AnimationType.On) {
-        animateId.current = requestAnimationFrame(function animate() {
-          setDefaultStats(
-            HexagonStats.create({
-              lead: loop(props.animation, defaultStats.lead, props.stats.lead),
-              charger: loop(props.animation, defaultStats.charger, props.stats.charger),
-              closer: loop(props.animation, defaultStats.closer, props.stats.closer),
-              cons: loop(props.animation, defaultStats.cons, props.stats.cons),
-              atk: loop(props.animation, defaultStats.atk, props.stats.atk),
-              switching: loop(props.animation, defaultStats.switching, props.stats.switching),
-            })
-          );
-          animateId.current = requestAnimationFrame(animate);
-        });
-      }
       drawHexagon(defaultStats);
-      return () => {
-        if (animateId.current) {
-          cancelAnimationFrame(animateId.current);
-          animateId.current = undefined;
-        }
-      };
+    } else {
+      drawHexagon(props.stats);
     }
+    return () => {
+      if (props.animation === AnimationType.On && animateId.current) {
+        cancelAnimationFrame(animateId.current);
+        animateId.current = undefined;
+      }
+    };
   }, [drawHexagon, defaultStats, props.animation, props.stats]);
 
   const animateId = useRef<number>();

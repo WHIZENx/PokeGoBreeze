@@ -38,125 +38,121 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
     );
   };
 
-  const renderTimeline = (pokeCurr: IPokemonBattle, pokeObj: IPokemonBattle, end = false) => {
-    return (
-      <Fragment>
-        {pokeCurr.timeline.map((value, index) => (
-          <Fragment key={index}>
-            {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && (
-              <Fragment>
-                {value.type === AttackType.Block ? (
-                  <div
-                    style={{ height: 80 }}
-                    className={combineClasses('d-flex align-items-center turn-battle', end ? 'justify-content-end' : '')}
-                  >
-                    <div className="block-attack-container">
-                      <img className="block-spirit-timeline" alt="img-shield" src={APIService.getPokeOtherLeague('ShieldButton')} />
-                    </div>
-                    <span className="text-success">
-                      x{value.block}
-                      <span className="dec-block">-1</span>
-                    </span>
+  const renderTimeline = (pokeCurr: IPokemonBattle, pokeObj: IPokemonBattle, end = false) => (
+    <Fragment>
+      {pokeCurr.timeline.map((value, index) => (
+        <Fragment key={index}>
+          {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && (
+            <Fragment>
+              {value.type === AttackType.Block ? (
+                <div
+                  style={{ height: 80 }}
+                  className={combineClasses('d-flex align-items-center turn-battle', end ? 'justify-content-end' : '')}
+                >
+                  <div className="block-attack-container">
+                    <img className="block-spirit-timeline" alt="img-shield" src={APIService.getPokeOtherLeague('ShieldButton')} />
                   </div>
-                ) : (
-                  <div className={combineClasses('wait-attack-container turn-battle', end ? 'justify-content-end' : '')} />
-                )}
-              </Fragment>
-            )}
-            {value.type === AttackType.Fast && (
-              <Badge
-                color="primary"
-                overlap="circular"
-                badgeContent={value.isTap ? 'Tap' : undefined}
-                className={combineClasses('fast-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: end ? 'right' : 'left',
-                }}
-              >
-                <div className={combineClasses('fast-attack-content text-center', value.color)}>
+                  <span className="text-success">
+                    x{value.block}
+                    <span className="dec-block">-1</span>
+                  </span>
+                </div>
+              ) : (
+                <div className={combineClasses('wait-attack-container turn-battle', end ? 'justify-content-end' : '')} />
+              )}
+            </Fragment>
+          )}
+          {value.type === AttackType.Fast && (
+            <Badge
+              color="primary"
+              overlap="circular"
+              badgeContent={value.isTap ? 'Tap' : undefined}
+              className={combineClasses('fast-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: end ? 'right' : 'left',
+              }}
+            >
+              <div className={combineClasses('fast-attack-content text-center', value.color)}>
+                <span className="text-warning" style={{ fontSize: 12 }}>
+                  <b>Fast Attack!</b>
+                </span>
+                {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
+              </div>
+            </Badge>
+          )}
+          {value.type === AttackType.Wait && (
+            <Badge
+              color="primary"
+              overlap="circular"
+              badgeContent={value.isTap ? 'Tap' : undefined}
+              className={combineClasses(
+                pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune
+                  ? 'fast-attack-container text-shadow'
+                  : 'wait-attack-container',
+                end ? 'justify-content-end' : '',
+                'turn-battle',
+                value.isTap ? `${value.color}-border` : ''
+              )}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: end ? 'right' : 'left',
+              }}
+            >
+              {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune ? (
+                <div className={combineClasses('fast-attack-content text-center', value.move?.type?.toLowerCase())}>
                   <span className="text-warning" style={{ fontSize: 12 }}>
                     <b>Fast Attack!</b>
                   </span>
                   {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
                 </div>
-              </Badge>
-            )}
-            {value.type === AttackType.Wait && (
-              <Badge
-                color="primary"
-                overlap="circular"
-                badgeContent={value.isTap ? 'Tap' : undefined}
-                className={combineClasses(
-                  pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune
-                    ? 'fast-attack-container text-shadow'
-                    : 'wait-attack-container',
-                  end ? 'justify-content-end' : '',
-                  'turn-battle',
-                  value.isTap ? `${value.color}-border` : ''
-                )}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: end ? 'right' : 'left',
-                }}
-              >
-                {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune ? (
-                  <div className={combineClasses('fast-attack-content text-center', value.move?.type?.toLowerCase())}>
-                    <span className="text-warning" style={{ fontSize: 12 }}>
-                      <b>Fast Attack!</b>
-                    </span>
-                    {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
-                  </div>
-                ) : (
-                  <Fragment>{value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, true)}</Fragment>}</Fragment>
-                )}
-              </Badge>
-            )}
-            {value.type === AttackType.Prepare && (
-              <div
-                style={{ height: 80 }}
-                className={combineClasses('d-flex align-items-center turn-battle', end ? 'justify-content-end' : '')}
-              >
-                <div className={combineClasses('swipe-attack-container', `${value.color}-border`, 'text-center')}>
-                  <span style={{ fontSize: 12 }}>
-                    <b>Swipe Charge</b>
-                  </span>
-                  <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>
+              ) : (
+                <Fragment>{value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, true)}</Fragment>}</Fragment>
+              )}
+            </Badge>
+          )}
+          {value.type === AttackType.Prepare && (
+            <div
+              style={{ height: 80 }}
+              className={combineClasses('d-flex align-items-center turn-battle', end ? 'justify-content-end' : '')}
+            >
+              <div className={combineClasses('swipe-attack-container', `${value.color}-border`, 'text-center')}>
+                <span style={{ fontSize: 12 }}>
+                  <b>Swipe Charge</b>
+                </span>
+                <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>
+              </div>
+            </div>
+          )}
+          {value.type === AttackType.Charge && (
+            <div className={combineClasses('charged-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}>
+              <div className={combineClasses('charged-attack-content text-center', value.color)}>
+                <span className="text-warning" style={{ fontSize: 16 }}>
+                  <b>Charged Attack!</b>
+                </span>
+              </div>
+            </div>
+          )}
+          {value.type === AttackType.Dead && pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Dead ? (
+            <div className={combineClasses('winner-container bg-dark text-white turn-battle', end ? 'justify-content-end' : '')}>TIE!</div>
+          ) : (
+            <Fragment>
+              {value.type === AttackType.Win && (
+                <div className={combineClasses('winner-container bg-success text-white turn-battle', end ? 'justify-content-end' : '')}>
+                  WIN!
                 </div>
-              </div>
-            )}
-            {value.type === AttackType.Charge && (
-              <div className={combineClasses('charged-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}>
-                <div className={combineClasses('charged-attack-content text-center', value.color)}>
-                  <span className="text-warning" style={{ fontSize: 16 }}>
-                    <b>Charged Attack!</b>
-                  </span>
+              )}
+              {value.type === AttackType.Dead && (
+                <div className={combineClasses('loser-container bg-danger text-white turn-battle', end ? 'justify-content-end' : '')}>
+                  LOSE!
                 </div>
-              </div>
-            )}
-            {value.type === AttackType.Dead && pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Dead ? (
-              <div className={combineClasses('winner-container bg-dark text-white turn-battle', end ? 'justify-content-end' : '')}>
-                TIE!
-              </div>
-            ) : (
-              <Fragment>
-                {value.type === AttackType.Win && (
-                  <div className={combineClasses('winner-container bg-success text-white turn-battle', end ? 'justify-content-end' : '')}>
-                    WIN!
-                  </div>
-                )}
-                {value.type === AttackType.Dead && (
-                  <div className={combineClasses('loser-container bg-danger text-white turn-battle', end ? 'justify-content-end' : '')}>
-                    LOSE!
-                  </div>
-                )}
-              </Fragment>
-            )}
-          </Fragment>
-        ))}
-      </Fragment>
-    );
-  };
+              )}
+            </Fragment>
+          )}
+        </Fragment>
+      ))}
+    </Fragment>
+  );
 
   return (
     <Fragment>
@@ -190,97 +186,93 @@ export const TimeLine = (
   showTap: boolean,
   isHide = false
 ) => {
-  const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => {
-    return (
-      <Fragment>
-        <div className="element-top" style={{ height: 12 }}>
-          <div className="d-flex" style={{ columnGap: 10, width: 'max-content' }}>
-            {poke.timeline.map((value, index) => (
-              <span className="position-relative" key={index} style={{ width: value.size }}>
-                {value.isTap && (
-                  <div
-                    style={{
-                      display: !showTap ? 'none' : 'block',
-                      opacity: 0.5,
-                      borderColor: value.isDmgImmune ? 'red' : 'black',
-                    }}
-                    className="charge-attack"
-                  />
-                )}
-                {!value.isTap && (
-                  <Fragment>
-                    {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                      <div className="position-absolute icon-buff-timeline">
-                        {value.buff?.map((b, i) => (
-                          <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                            {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <Fragment>
-                        {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                          <div className="position-absolute icon-buff-timeline">
-                            {value.buff?.map((b, i) => (
-                              <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          <div style={{ display: !showTap ? 'none' : 'block' }} className="wait-attack" />
-                        )}
-                      </Fragment>
-                    )}
-                  </Fragment>
-                )}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div
-          className="d-flex align-items-center"
-          style={{
-            columnGap: 10,
-            width: 'max-content',
-            borderBottom: border ? '1px solid lightgray' : 'none',
-          }}
-        >
+  const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
+    <Fragment>
+      <div className="element-top" style={{ height: 12 }}>
+        <div className="d-flex" style={{ columnGap: 10, width: 'max-content' }}>
           {poke.timeline.map((value, index) => (
-            <Fragment key={index}>
-              {value.type === AttackType.Block && <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />}
-              {value.type === AttackType.Fast && (
-                <div id={index.toString()} className={combineClasses('fast-attack', value.color, `${value.color}-border`)} />
-              )}
-              {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
+            <span className="position-relative" key={index} style={{ width: value.size }}>
+              {value.isTap && (
                 <div
-                  id={index.toString()}
-                  className={combineClasses('charge-attack', `${value.color}-border`)}
-                  style={{ width: value.size, height: value.size }}
+                  style={{
+                    display: !showTap ? 'none' : 'block',
+                    opacity: 0.5,
+                    borderColor: value.isDmgImmune ? 'red' : 'black',
+                  }}
+                  className="charge-attack"
                 />
               )}
-              {value.type === AttackType.Charge && (
-                <div
-                  id={index.toString()}
-                  className={combineClasses('charge-attack', value.color, `${value.color}-border`)}
-                  style={{ width: value.size, height: value.size }}
-                />
+              {!value.isTap && (
+                <Fragment>
+                  {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
+                    <div className="position-absolute icon-buff-timeline">
+                      {value.buff?.map((b, i) => (
+                        <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
+                          {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <Fragment>
+                      {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && isNotEmpty(value.buff) ? (
+                        <div className="position-absolute icon-buff-timeline">
+                          {value.buff?.map((b, i) => (
+                            <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
+                              {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ display: !showTap ? 'none' : 'block' }} className="wait-attack" />
+                      )}
+                    </Fragment>
+                  )}
+                </Fragment>
               )}
-              {(value.type === AttackType.Wait || value.type === AttackType.New) && <div id={index.toString()} className="wait-attack" />}
-              {!value.type && (
-                <div id={index.toString()} className="wait-charge-attack" style={{ width: value.size, height: value.size }} />
-              )}
-              {value.type === AttackType.Dead && (
-                <div id={index.toString()}>
-                  <CloseIcon color="error" />
-                </div>
-              )}
-            </Fragment>
+            </span>
           ))}
         </div>
-      </Fragment>
-    );
-  };
+      </div>
+      <div
+        className="d-flex align-items-center"
+        style={{
+          columnGap: 10,
+          width: 'max-content',
+          borderBottom: border ? '1px solid lightgray' : 'none',
+        }}
+      >
+        {poke.timeline.map((value, index) => (
+          <Fragment key={index}>
+            {value.type === AttackType.Block && <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />}
+            {value.type === AttackType.Fast && (
+              <div id={index.toString()} className={combineClasses('fast-attack', value.color, `${value.color}-border`)} />
+            )}
+            {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
+              <div
+                id={index.toString()}
+                className={combineClasses('charge-attack', `${value.color}-border`)}
+                style={{ width: value.size, height: value.size }}
+              />
+            )}
+            {value.type === AttackType.Charge && (
+              <div
+                id={index.toString()}
+                className={combineClasses('charge-attack', value.color, `${value.color}-border`)}
+                style={{ width: value.size, height: value.size }}
+              />
+            )}
+            {(value.type === AttackType.Wait || value.type === AttackType.New) && <div id={index.toString()} className="wait-attack" />}
+            {!value.type && <div id={index.toString()} className="wait-charge-attack" style={{ width: value.size, height: value.size }} />}
+            {value.type === AttackType.Dead && (
+              <div id={index.toString()}>
+                <CloseIcon color="error" />
+              </div>
+            )}
+          </Fragment>
+        ))}
+      </div>
+    </Fragment>
+  );
 
   return (
     <Fragment>
@@ -316,134 +308,132 @@ export const TimeLineFit = (
 ) => {
   const calculateFitPoint = (length: number, index: number) => `${(index * 100) / (length - 2)}%`;
 
-  const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => {
-    return (
-      <Fragment>
-        <div className="element-top" style={{ height: 12 }}>
-          <div className="position-relative timeline-fit-container">
-            {poke.timeline.map((value, index) => (
-              <Fragment key={index}>
-                {value.isTap && (
-                  <div
-                    className="charge-attack"
-                    style={{
-                      display: !showTap ? 'none' : 'block',
-                      opacity: 0.5,
-                      width: value.size,
-                      left: calculateFitPoint(poke.timeline.length, index),
-                      borderColor: value.isDmgImmune ? 'red' : 'black',
-                    }}
-                  />
-                )}
-                {!value.isTap && (
-                  <Fragment>
-                    {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                      <div
-                        className="position-absolute icon-buff-timeline"
-                        style={{ left: calculateFitPoint(poke.timeline.length, index), top: 10 }}
-                      >
-                        {value.buff?.map((b, i) => (
-                          <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                            {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <Fragment>
-                        {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && isNotEmpty(value.buff) ? (
-                          <div
-                            className="position-absolute icon-buff-timeline"
-                            style={{
-                              left: calculateFitPoint(poke.timeline.length, index),
-                              top: 10,
-                            }}
-                          >
-                            {value.buff?.map((b, i) => (
-                              <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
-                                {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          <div
-                            className="wait-attack"
-                            style={{
-                              display: !showTap ? 'none' : 'block',
-                              width: value.size,
-                              left: calculateFitPoint(poke.timeline.length, index),
-                            }}
-                          />
-                        )}
-                      </Fragment>
-                    )}
-                  </Fragment>
-                )}
-              </Fragment>
-            ))}
-          </div>
-        </div>
-        <div className="position-relative timeline-fit-container" style={{ height: 30 }}>
+  const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => (
+    <Fragment>
+      <div className="element-top" style={{ height: 12 }}>
+        <div className="position-relative timeline-fit-container">
           {poke.timeline.map((value, index) => (
             <Fragment key={index}>
-              {value.type === AttackType.Block && (
-                <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>
-                  <HexagonIcon sx={{ color: 'purple', fontSize: value.size }} />
-                </div>
-              )}
-              {value.type === AttackType.Fast && (
+              {value.isTap && (
                 <div
-                  id={index.toString()}
-                  className={combineClasses('fast-attack', value.color, 'black-border')}
-                  style={{ left: calculateFitPoint(poke.timeline.length, index) }}
-                />
-              )}
-              {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
-                <div
-                  id={index.toString()}
-                  className={combineClasses('charge-attack', `${value.color}-border`)}
+                  className="charge-attack"
                   style={{
+                    display: !showTap ? 'none' : 'block',
+                    opacity: 0.5,
                     width: value.size,
-                    height: value.size,
                     left: calculateFitPoint(poke.timeline.length, index),
+                    borderColor: value.isDmgImmune ? 'red' : 'black',
                   }}
                 />
               )}
-              {value.type === AttackType.Charge && (
-                <div
-                  id={index.toString()}
-                  className={combineClasses('charge-attack', value.color, `${value.color}-border`)}
-                  style={{
-                    width: value.size,
-                    height: value.size,
-                    left: calculateFitPoint(poke.timeline.length, index),
-                  }}
-                />
-              )}
-              {(value.type === AttackType.Wait || value.type === AttackType.New) && (
-                <div id={index.toString()} className="wait-attack" style={{ left: calculateFitPoint(poke.timeline.length, index) }} />
-              )}
-              {!value.type && (
-                <div
-                  id={index.toString()}
-                  className="wait-charge-attack"
-                  style={{
-                    width: value.size,
-                    height: value.size,
-                    left: calculateFitPoint(poke.timeline.length, index),
-                  }}
-                />
-              )}
-              {value.type === AttackType.Dead && (
-                <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>
-                  <CloseIcon color="error" />
-                </div>
+              {!value.isTap && (
+                <Fragment>
+                  {value.type === AttackType.Charge && isNotEmpty(value.buff) ? (
+                    <div
+                      className="position-absolute icon-buff-timeline"
+                      style={{ left: calculateFitPoint(poke.timeline.length, index), top: 10 }}
+                    >
+                      {value.buff?.map((b, i) => (
+                        <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
+                          {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {(b.power > 0 ? '+' : '') + b.power}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <Fragment>
+                      {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && isNotEmpty(value.buff) ? (
+                        <div
+                          className="position-absolute icon-buff-timeline"
+                          style={{
+                            left: calculateFitPoint(poke.timeline.length, index),
+                            top: 10,
+                          }}
+                        >
+                          {value.buff?.map((b, i) => (
+                            <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
+                              {getKeyWithData(TypeAction, b.type)?.toUpperCase()} {b.power}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <div
+                          className="wait-attack"
+                          style={{
+                            display: !showTap ? 'none' : 'block',
+                            width: value.size,
+                            left: calculateFitPoint(poke.timeline.length, index),
+                          }}
+                        />
+                      )}
+                    </Fragment>
+                  )}
+                </Fragment>
               )}
             </Fragment>
           ))}
         </div>
-      </Fragment>
-    );
-  };
+      </div>
+      <div className="position-relative timeline-fit-container" style={{ height: 30 }}>
+        {poke.timeline.map((value, index) => (
+          <Fragment key={index}>
+            {value.type === AttackType.Block && (
+              <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>
+                <HexagonIcon sx={{ color: 'purple', fontSize: value.size }} />
+              </div>
+            )}
+            {value.type === AttackType.Fast && (
+              <div
+                id={index.toString()}
+                className={combineClasses('fast-attack', value.color, 'black-border')}
+                style={{ left: calculateFitPoint(poke.timeline.length, index) }}
+              />
+            )}
+            {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
+              <div
+                id={index.toString()}
+                className={combineClasses('charge-attack', `${value.color}-border`)}
+                style={{
+                  width: value.size,
+                  height: value.size,
+                  left: calculateFitPoint(poke.timeline.length, index),
+                }}
+              />
+            )}
+            {value.type === AttackType.Charge && (
+              <div
+                id={index.toString()}
+                className={combineClasses('charge-attack', value.color, `${value.color}-border`)}
+                style={{
+                  width: value.size,
+                  height: value.size,
+                  left: calculateFitPoint(poke.timeline.length, index),
+                }}
+              />
+            )}
+            {(value.type === AttackType.Wait || value.type === AttackType.New) && (
+              <div id={index.toString()} className="wait-attack" style={{ left: calculateFitPoint(poke.timeline.length, index) }} />
+            )}
+            {!value.type && (
+              <div
+                id={index.toString()}
+                className="wait-charge-attack"
+                style={{
+                  width: value.size,
+                  height: value.size,
+                  left: calculateFitPoint(poke.timeline.length, index),
+                }}
+              />
+            )}
+            {value.type === AttackType.Dead && (
+              <div id={index.toString()} style={{ left: calculateFitPoint(poke.timeline.length, index) }}>
+                <CloseIcon color="error" />
+              </div>
+            )}
+          </Fragment>
+        ))}
+      </div>
+    </Fragment>
+  );
 
   return (
     <Fragment>

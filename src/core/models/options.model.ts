@@ -291,6 +291,11 @@ interface IconRewardPokemon {
   pokemonDisplay?: IconRewardPokemonDisplay;
 }
 
+interface NeutralAvatarItem {
+  neutralAvatarItemTemplateString1: string;
+  neutralAvatarItemTemplateString2: string;
+}
+
 interface IconReward {
   type: string;
   item?: IconRewardItem;
@@ -299,6 +304,7 @@ interface IconReward {
   pokecoin?: number;
   exp?: number;
   avatarTemplateId?: string;
+  neutralAvatarItemTemplate?: NeutralAvatarItem;
 }
 
 export interface GlobalEventTicket {

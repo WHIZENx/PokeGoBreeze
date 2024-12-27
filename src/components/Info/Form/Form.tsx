@@ -263,6 +263,7 @@ const FormComponent = (props: IFormInfoComponent) => {
               pokemonRouter={props.pokemonRouter}
               pokemonType={props.form?.form.pokemonType}
               isLoadedForms={props.isLoadedForms}
+              urlEvolutionChain={props.urlEvolutionChain}
             />
           </div>
           <SpecialForm className={'col-xl'} style={{ padding: 0 }} formList={props.formList} id={props.defaultId} />
@@ -277,6 +278,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           pokemonRouter={props.pokemonRouter}
           pokemonType={props.form?.form.pokemonType}
           isLoadedForms={props.isLoadedForms}
+          urlEvolutionChain={props.urlEvolutionChain}
         />
       )}
       {isNotEmpty(props.pokemonDetail?.formChange) && <FromChange details={props.pokemonDetail} defaultName={props.form?.defaultName} />}

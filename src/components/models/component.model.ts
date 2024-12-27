@@ -169,6 +169,7 @@ export interface IEvolutionComponent {
   pokemonRouter: ReduxRouterState;
   pokemonType?: PokemonType;
   isLoadedForms: boolean;
+  urlEvolutionChain?: string;
 }
 
 export interface IFormInfoComponent {
@@ -187,6 +188,7 @@ export interface IFormInfoComponent {
   defaultId: number | undefined;
   region: string;
   setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
+  urlEvolutionChain?: string;
   isLoadedForms: boolean;
 }
 

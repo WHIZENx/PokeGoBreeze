@@ -122,89 +122,85 @@ const Find = (props: IFindComponent) => {
     }
   };
 
-  const searchPokemon = () => {
-    return (
-      <div
-        className="col d-flex justify-content-center"
-        style={{
-          height:
-            Math.min(eachCounter.current, pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).length + 1) *
-            cardHeight.current,
-          maxHeight: eachCounter.current * cardHeight.current,
-        }}
-      >
-        <div className="btn-group-search">
-          <input
-            type="text"
-            className="form-control"
-            aria-label="search"
-            aria-describedby="input-search"
-            placeholder="Enter Name or ID"
-            defaultValue={searchTerm}
-            onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
-          />
-        </div>
-        <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
-          <Fragment>
-            {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
-              <div
-                className={combineClasses('container card-pokemon', value.id === id ? 'selected' : '')}
-                key={index}
-                onMouseDown={() => getInfoPoke(value)}
-              >
-                <b>#{value.id}</b>
-                <img
-                  width={36}
-                  height={36}
-                  className="img-search"
-                  alt="img-pokemon"
-                  src={value.sprites}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = APIService.getPokeIconSprite();
-                  }}
-                />
-                {value.name}
-              </div>
-            ))}
-          </Fragment>
-        </div>
+  const searchPokemon = () => (
+    <div
+      className="col d-flex justify-content-center"
+      style={{
+        height:
+          Math.min(eachCounter.current, pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).length + 1) *
+          cardHeight.current,
+        maxHeight: eachCounter.current * cardHeight.current,
+      }}
+    >
+      <div className="btn-group-search">
+        <input
+          type="text"
+          className="form-control"
+          aria-label="search"
+          aria-describedby="input-search"
+          placeholder="Enter Name or ID"
+          defaultValue={searchTerm}
+          onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
+        />
       </div>
-    );
-  };
+      <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
+        <Fragment>
+          {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
+            <div
+              className={combineClasses('container card-pokemon', value.id === id ? 'selected' : '')}
+              key={index}
+              onMouseDown={() => getInfoPoke(value)}
+            >
+              <b>#{value.id}</b>
+              <img
+                width={36}
+                height={36}
+                className="img-search"
+                alt="img-pokemon"
+                src={value.sprites}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeIconSprite();
+                }}
+              />
+              {value.name}
+            </div>
+          ))}
+        </Fragment>
+      </div>
+    </div>
+  );
 
-  const showPokemon = () => {
-    return (
-      <div className="col d-flex justify-content-center text-center">
-        <div>
-          {isNotEmpty(pokemonList) && (
-            <FormSelect
-              router={router}
-              searching={searching}
-              isHide={props.isHide}
-              isRaid={props.isRaid}
-              setRaid={props.setRaid}
-              tier={props.tier}
-              setTier={props.setTier}
-              setForm={props.setForm}
-              id={id}
-              setName={props.setName}
-              name={pokemonList.find((item) => item.id === id)?.name}
-              data={pokemonData}
-              stats={stats}
-              onHandleSetStats={handleSetStats}
-              onClearStats={props.clearStats}
-              onSetPrev={decId}
-              onSetNext={incId}
-              setUrlEvo={props.setUrlEvo}
-              isObjective={props.isObjective}
-              pokemonName={pokemonData}
-            />
-          )}
-        </div>
+  const showPokemon = () => (
+    <div className="col d-flex justify-content-center text-center">
+      <div>
+        {isNotEmpty(pokemonList) && (
+          <FormSelect
+            router={router}
+            searching={searching}
+            isHide={props.isHide}
+            isRaid={props.isRaid}
+            setRaid={props.setRaid}
+            tier={props.tier}
+            setTier={props.setTier}
+            setForm={props.setForm}
+            id={id}
+            setName={props.setName}
+            name={pokemonList.find((item) => item.id === id)?.name}
+            data={pokemonData}
+            stats={stats}
+            onHandleSetStats={handleSetStats}
+            onClearStats={props.clearStats}
+            onSetPrev={decId}
+            onSetNext={incId}
+            setUrlEvo={props.setUrlEvo}
+            isObjective={props.isObjective}
+            pokemonName={pokemonData}
+          />
+        )}
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <div className="container element-top">

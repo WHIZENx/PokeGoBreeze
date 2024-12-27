@@ -15,7 +15,7 @@ import { Species } from '../core/models/API/species.model';
 import { getValueOrDefault, isEqual, isInclude, toNumber } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
-import { capitalize } from '../util/utils';
+import { capitalize, splitAndCapitalize } from '../util/utils';
 
 class APIService {
   date: Date;
@@ -178,7 +178,7 @@ class APIService {
   getPokeFullSprite(id: number | string | undefined, form?: string) {
     if (id) {
       if (form) {
-        form = capitalize(form.toUpperCase().replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI'));
+        form = splitAndCapitalize(form.toUpperCase().replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI'), '-', '-');
       }
       return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${form ? `-${form}` : ''}.png`;
     }

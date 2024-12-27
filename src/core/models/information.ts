@@ -12,6 +12,11 @@ export interface RewardPokemon {
   form?: string;
 }
 
+interface NeutralAvatarItem {
+  neutralAvatarItemTemplateString1: string;
+  neutralAvatarItemTemplateString2: string;
+}
+
 export interface ITicketReward {
   type?: TicketRewardType;
   item?: RewardItem;
@@ -20,6 +25,7 @@ export interface ITicketReward {
   pokeCoin?: number;
   exp?: number;
   avatarTemplateId?: string;
+  neutralAvatarItemTemplate?: NeutralAvatarItem;
 }
 
 export class TicketReward implements ITicketReward {
@@ -30,6 +36,7 @@ export class TicketReward implements ITicketReward {
   pokeCoin?: number;
   exp?: number;
   avatarTemplateId?: string;
+  neutralAvatarItemTemplate?: NeutralAvatarItem;
 
   static create(value: ITicketReward) {
     const obj = new TicketReward();
