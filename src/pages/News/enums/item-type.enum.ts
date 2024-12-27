@@ -6,6 +6,12 @@ export enum ItemName {
   MasterBall = 'ITEM_MASTER_BALL',
   GoldenPinapBerry = 'ITEM_GOLDEN_PINAP_BERRY',
   LuckyEgg = 'ITEM_LUCKY_EGG',
+  PaidRaidTicket = 'ITEM_PAID_RAID_TICKET',
+  StarPice = 'ITEM_STAR_PIECE',
+  Troy = 'ITEM_TROY',
+  Poffin = 'ITEM_POFFIN',
+  EliteSpecialAttack = 'ITEM_MOVE_REROLL_ELITE_SPECIAL_ATTACK',
+  IncubatorBasic = 'ITEM_INCUBATOR_BASIC',
 }
 
 export enum TitleName {

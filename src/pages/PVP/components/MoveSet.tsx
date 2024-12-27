@@ -57,88 +57,80 @@ const MoveSet = (props: MoveSetComponent) => {
     ));
   };
 
-  const moveOverlay = () => {
-    return (
-      <OverlayTrigger
-        placement="auto"
-        overlay={
-          <PopoverConfig id="popover-info-evo">
-            <span className="info-evo">
-              <span className="d-block caption">
-                - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> {ArcheType.General}
-              </span>
-              <span className="d-block caption">
-                - <RocketLaunchIcon className="filter-shadow" sx={{ color: 'gray' }} /> {ArcheType.Nuke}
-              </span>
-              <span className="d-block caption">
-                - <BakeryDiningIcon className="filter-shadow" sx={{ color: 'pink' }} /> {ArcheType.SpamBait}
-              </span>
-              <span className="d-block caption">
-                - <EnergySavingsLeafIcon className="filter-shadow" sx={{ color: 'orange' }} /> {ArcheType.HighEnergy}
-              </span>
-              <span className="d-block caption">
-                - <StairsIcon className="filter-shadow" sx={{ color: 'lightgray' }} /> {ArcheType.LowQuality}
-              </span>
-              <span className="d-block caption">
-                - <ArrowDownwardIcon className="filter-shadow" sx={{ color: 'lightcoral' }} /> {ArcheType.Debuff}
-              </span>
-              <span className="d-block caption">
-                - <ArrowUpwardIcon className="filter-shadow" sx={{ color: 'lightgreen' }} /> {ArcheType.Boost}
-              </span>
-              <span className="d-block caption">
-                - <BoltIcon className="filter-shadow" sx={{ color: '#f8d030' }} /> {ArcheType.FastCharge}
-              </span>
-              <span className="d-block caption">
-                - <BrokenImageIcon className="filter-shadow" sx={{ color: 'brown' }} /> {ArcheType.HeavyDamage}
-              </span>
-              <span className="d-block caption">
-                - <SpokeIcon className="filter-shadow" sx={{ color: 'lightskyblue' }} /> {ArcheType.Multipurpose}
-              </span>
-              <span className="d-block caption">
-                -{' '}
-                <span className="position-relative filter-shadow" style={{ marginRight: 5 }}>
-                  <PersonIcon sx={{ color: 'black' }} />
-                  <KeyboardDoubleArrowDownIcon
-                    fontSize="small"
-                    className="position-absolute"
-                    sx={{ color: 'red', left: '50%', bottom: 0 }}
-                  />
-                </span>{' '}
-                {ArcheType.SelfDebuff}
-              </span>
+  const moveOverlay = () => (
+    <OverlayTrigger
+      placement="auto"
+      overlay={
+        <PopoverConfig id="popover-info-evo">
+          <span className="info-evo">
+            <span className="d-block caption">
+              - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> {ArcheType.General}
             </span>
-          </PopoverConfig>
-        }
-      >
-        <span className="tooltips-info">
-          <InfoOutlinedIcon color="primary" />
-        </span>
-      </OverlayTrigger>
-    );
-  };
-
-  const renderMove = (move: IMoveSet) => {
-    return (
-      <Link
-        to={`/move/${move?.id}`}
-        className={combineClasses(
-          move?.type?.toLowerCase(),
-          'filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
-        )}
-      >
-        <div className="d-flex" style={{ columnGap: 10 }}>
-          <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move?.type)} />
-          <span className="filter-shadow">
-            {splitAndCapitalize(move.name, '_', ' ')} {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}
+            <span className="d-block caption">
+              - <RocketLaunchIcon className="filter-shadow" sx={{ color: 'gray' }} /> {ArcheType.Nuke}
+            </span>
+            <span className="d-block caption">
+              - <BakeryDiningIcon className="filter-shadow" sx={{ color: 'pink' }} /> {ArcheType.SpamBait}
+            </span>
+            <span className="d-block caption">
+              - <EnergySavingsLeafIcon className="filter-shadow" sx={{ color: 'orange' }} /> {ArcheType.HighEnergy}
+            </span>
+            <span className="d-block caption">
+              - <StairsIcon className="filter-shadow" sx={{ color: 'lightgray' }} /> {ArcheType.LowQuality}
+            </span>
+            <span className="d-block caption">
+              - <ArrowDownwardIcon className="filter-shadow" sx={{ color: 'lightcoral' }} /> {ArcheType.Debuff}
+            </span>
+            <span className="d-block caption">
+              - <ArrowUpwardIcon className="filter-shadow" sx={{ color: 'lightgreen' }} /> {ArcheType.Boost}
+            </span>
+            <span className="d-block caption">
+              - <BoltIcon className="filter-shadow" sx={{ color: '#f8d030' }} /> {ArcheType.FastCharge}
+            </span>
+            <span className="d-block caption">
+              - <BrokenImageIcon className="filter-shadow" sx={{ color: 'brown' }} /> {ArcheType.HeavyDamage}
+            </span>
+            <span className="d-block caption">
+              - <SpokeIcon className="filter-shadow" sx={{ color: 'lightskyblue' }} /> {ArcheType.Multipurpose}
+            </span>
+            <span className="d-block caption">
+              -{' '}
+              <span className="position-relative filter-shadow" style={{ marginRight: 5 }}>
+                <PersonIcon sx={{ color: 'black' }} />
+                <KeyboardDoubleArrowDownIcon fontSize="small" className="position-absolute" sx={{ color: 'red', left: '50%', bottom: 0 }} />
+              </span>{' '}
+              {ArcheType.SelfDebuff}
+            </span>
           </span>
-        </div>
-        <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-          {move?.archetype && findArchetype(move.archetype)}
-          <span className="ranking-score score-ic filter-shadow">{move.uses}</span>
-        </div>
-      </Link>
-    );
-  };
+        </PopoverConfig>
+      }
+    >
+      <span className="tooltips-info">
+        <InfoOutlinedIcon color="primary" />
+      </span>
+    </OverlayTrigger>
+  );
+
+  const renderMove = (move: IMoveSet) => (
+    <Link
+      to={`/move/${move?.id}`}
+      className={combineClasses(
+        move?.type?.toLowerCase(),
+        'filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
+      )}
+    >
+      <div className="d-flex" style={{ columnGap: 10 }}>
+        <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move?.type)} />
+        <span className="filter-shadow">
+          {splitAndCapitalize(move.name, '_', ' ')} {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}
+        </span>
+      </div>
+      <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
+        {move?.archetype && findArchetype(move.archetype)}
+        <span className="ranking-score score-ic filter-shadow">{move.uses}</span>
+      </div>
+    </Link>
+  );
 
   const setMoves = (moves: PokemonRankingMove[] | undefined) => {
     return moves

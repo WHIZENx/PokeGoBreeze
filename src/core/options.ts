@@ -29,6 +29,7 @@ import {
   convertPokemonDataName,
   getDataWithKey,
   getKeyWithData,
+  getLureItemType,
   getPokemonType,
   getTicketRewardType,
   replacePokemonGoForm,
@@ -77,7 +78,7 @@ import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNot
 import { GenderType } from './enums/asset.enum';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
-import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType, LeagueConditionType } from './enums/option.enum';
+import { ItemEvolutionRequireType, ItemEvolutionType, LeagueConditionType } from './enums/option.enum';
 import { StatsBase } from './models/stats.model';
 import { EvolutionChain, EvolutionInfo, IEvolutionInfo } from './models/evolution-chain.model';
 import { Information, ITicketReward, TicketReward } from './models/information';
@@ -353,42 +354,38 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
       if (evo.onlyNighttime) {
         dataEvo.quest.isOnlyNighttime = evo.onlyNighttime;
       }
-      if (evo.lureItemRequirement) {
-        if (evo.lureItemRequirement === ItemLureType.Magnetic) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Magnetic;
-        } else if (evo.lureItemRequirement === ItemLureType.Mossy) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Mossy;
-        } else if (evo.lureItemRequirement === ItemLureType.Glacial) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Glacial;
-        } else if (evo.lureItemRequirement === ItemLureType.Rainy) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Rainy;
-        } else if (evo.lureItemRequirement === ItemLureType.Sparkly) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Sparkly;
-        }
-      }
-      if (evo.evolutionItemRequirement) {
-        if (evo.evolutionItemRequirement === ItemEvolutionType.SunStone) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.SunStone;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.KingsRock) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.KingsRock;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.MetalCoat) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.MetalCoat;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.Gen4Stone) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Gen4Stone;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.DragonScale) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.DragonScale;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.Upgrade) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Upgrade;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.Gen5Stone) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Gen5Stone;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.OtherStone) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.OtherStone;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.Beans) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Beans;
-        }
-      }
       if (evo.onlyUpsideDown) {
         dataEvo.quest.isOnlyUpsideDown = evo.onlyUpsideDown;
+      }
+      dataEvo.quest.lureItemRequirement = getLureItemType(evo.lureItemRequirement);
+      switch (evo.evolutionItemRequirement) {
+        case ItemEvolutionType.SunStone:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.SunStone;
+          break;
+        case ItemEvolutionType.KingsRock:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.KingsRock;
+          break;
+        case ItemEvolutionType.MetalCoat:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.MetalCoat;
+          break;
+        case ItemEvolutionType.Gen4Stone:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Gen4Stone;
+          break;
+        case ItemEvolutionType.DragonScale:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.DragonScale;
+          break;
+        case ItemEvolutionType.Upgrade:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Upgrade;
+          break;
+        case ItemEvolutionType.Gen5Stone:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Gen5Stone;
+          break;
+        case ItemEvolutionType.OtherStone:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.OtherStone;
+          break;
+        case ItemEvolutionType.Beans:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Beans;
+          break;
       }
       if (isNotEmpty(evo.questDisplay)) {
         const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
@@ -1225,8 +1222,9 @@ const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData
     ticket.iconRewards?.forEach((result) => {
       const reward = new TicketReward();
       reward.type = getTicketRewardType(result.type);
-      if (result.avatarTemplateId) {
+      if (result.avatarTemplateId || result.neutralAvatarItemTemplate) {
         reward.avatarTemplateId = result.avatarTemplateId;
+        reward.neutralAvatarItemTemplate = result.neutralAvatarItemTemplate;
       } else if (result.exp) {
         reward.exp = result.exp;
       } else if (result.stardust) {

@@ -286,31 +286,29 @@ const TableMove = (props: ITableMoveComponent) => {
     );
   };
 
-  const renderMoveSetTable = (data: ICombat[]) => {
-    return (
-      <Fragment>
-        {data.map((value, index) => (
-          <tr key={index}>
-            <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-              <Link to={`../move/${value.id}`} className="d-block">
-                <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                  <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.type)} />
-                </div>
-                <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
-                <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
-                  {value.moveType !== MoveType.None && (
-                    <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
-                      {getKeyWithData(MoveType, value.moveType)}
-                    </span>
-                  )}
-                </span>
-              </Link>
-            </td>
-          </tr>
-        ))}
-      </Fragment>
-    );
-  };
+  const renderMoveSetTable = (data: ICombat[]) => (
+    <Fragment>
+      {data.map((value, index) => (
+        <tr key={index}>
+          <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
+            <Link to={`../move/${value.id}`} className="d-block">
+              <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+                <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.type)} />
+              </div>
+              <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
+              <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
+                {value.moveType !== MoveType.None && (
+                  <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
+                    {getKeyWithData(MoveType, value.moveType)}
+                  </span>
+                )}
+              </span>
+            </Link>
+          </td>
+        </tr>
+      ))}
+    </Fragment>
+  );
 
   const arrowSort = (table: TableType, type: TypeSorted) => {
     if (type !== TypeSorted.Effective && (disableSortFM || disableSortCM)) {

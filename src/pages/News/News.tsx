@@ -4,8 +4,8 @@ import './News.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { Accordion } from 'react-bootstrap';
-import { generateParamForm, getKeyWithData, getTime, splitAndCapitalize } from '../../util/utils';
-import { isEqual, isNotEmpty, isNotNumber, toNumber } from '../../util/extension';
+import { generateParamForm, getKeyWithData, getLureItemType, getTime, splitAndCapitalize } from '../../util/utils';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNotNumber, toNumber } from '../../util/extension';
 import APIService from '../../services/API.service';
 import { DateEvent, ItemName, TitleName } from './enums/item-type.enum';
 import { ITicketReward, RewardPokemon } from '../../core/models/information';
@@ -16,12 +16,12 @@ import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { Link } from 'react-router-dom';
 
 const News = () => {
-  useChangeTitle('Home');
+  useChangeTitle('News');
   const information = useSelector((state: StoreState) => state.store.data.information);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
 
   const getItemTitle = (reward: ITicketReward) => {
-    let result;
+    let result: string | undefined;
     if (reward.type === TicketRewardType.Item && toNumber(reward.item?.item) === 0) {
       result = reward?.item?.item.replace('ITEM_', '').replace('FREE_', '');
     } else if (reward.type === TicketRewardType.Pokemon) {
@@ -38,6 +38,17 @@ const News = () => {
       result = TitleName.Exp;
     } else if (reward.type === TicketRewardType.Avatar) {
       result = reward.avatarTemplateId;
+      if (!result && reward.neutralAvatarItemTemplate) {
+        result = getValueOrDefault(
+          String,
+          reward.neutralAvatarItemTemplate.neutralAvatarItemTemplateString1,
+          reward.neutralAvatarItemTemplate.neutralAvatarItemTemplateString2
+        )
+          .replaceAll('-', '_')
+          .replace('N_AVATAR_n_', '')
+          .replace('N_DISPLAY_n_', '')
+          .replace(/_\d{1}$/, '');
+      }
     }
     return splitAndCapitalize(result, '_', ' ');
   };
@@ -104,6 +115,19 @@ const News = () => {
       return APIService.getItemSprite('Item_0705');
     } else if (value.item?.item === ItemName.LuckyEgg) {
       return APIService.getItemSprite('luckyegg');
+    } else if (isInclude(value.item?.item, ItemName.Troy)) {
+      const itemLure = getLureItemType(value.item?.item);
+      return APIService.getItemTroy(itemLure);
+    } else if (value.item?.item === ItemName.PaidRaidTicket) {
+      return APIService.getItemSprite('Item_1402');
+    } else if (value.item?.item === ItemName.StarPice) {
+      return APIService.getItemSprite('starpiece');
+    } else if (value.item?.item === ItemName.Poffin) {
+      return APIService.getItemSprite('Item_0704');
+    } else if (value.item?.item === ItemName.EliteSpecialAttack) {
+      return APIService.getItemSprite('Item_1204');
+    } else if (value.item?.item === ItemName.IncubatorBasic) {
+      return APIService.getItemSprite('EggIncubatorIAP_Empty');
     } else if (value.type === TicketRewardType.Pokemon) {
       return getImageList(value.pokemon);
     } else if (value.type === TicketRewardType.Stardust) {

@@ -58,6 +58,7 @@ import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/se
 import { TypeEffChart } from '../core/models/type-eff.model';
 import { TypeEffectiveAmount } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
+import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 
 class Mask {
   value: number;
@@ -542,7 +543,7 @@ export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => {
   };
 };
 
-export const getDataWithKey = <T>(data: object, findKey: string | number, mode = EqualMode.CaseSensitive) => {
+export const getDataWithKey = <T>(data: object, findKey: string | number | undefined | null, mode = EqualMode.CaseSensitive) => {
   const result = Object.entries(data).find(([key]) => isEqual(key, findKey, mode));
   return result && isNotEmpty(result) ? (result[1] as T) : undefined;
 };
@@ -1060,4 +1061,19 @@ export const getTicketRewardType = (type?: string | number | null) => {
     return TicketRewardType.Stardust;
   }
   return TicketRewardType.None;
+};
+
+export const getLureItemType = (lureItem: string | undefined | null) => {
+  switch (lureItem) {
+    case ItemLureType.Magnetic:
+      return ItemLureRequireType.Magnetic;
+    case ItemLureType.Mossy:
+      return ItemLureRequireType.Mossy;
+    case ItemLureType.Glacial:
+      return ItemLureRequireType.Glacial;
+    case ItemLureType.Rainy:
+      return ItemLureRequireType.Rainy;
+    case ItemLureType.Sparkly:
+      return ItemLureRequireType.Sparkly;
+  }
 };
