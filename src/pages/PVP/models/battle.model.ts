@@ -57,7 +57,7 @@ export class PokemonBattleData implements IPokemonBattleData {
   pokemon: IPokemonData | undefined;
   fMove = new Combat();
   cMove = new Combat();
-  cMoveSec = new Combat();
+  cMoveSec: ICombat | undefined;
   energy = 0;
   block = 0;
   turn = 0;

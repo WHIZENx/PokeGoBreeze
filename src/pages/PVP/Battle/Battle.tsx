@@ -211,12 +211,12 @@ const Battle = () => {
     let chargeSlotPlayer1 = pokemonCurr.chargeSlot;
     let chargeSlotPlayer2 = pokemonObj.chargeSlot;
 
-    if (player1.disableCMovePri || chargeSlotPlayer1 === ChargeType.Secondary) {
+    if (player1.cMoveSec && (player1.disableCMovePri || chargeSlotPlayer1 === ChargeType.Secondary)) {
       player1.cMove = player1.cMoveSec;
       chargeSlotPlayer1 = ChargeType.Primary;
     }
 
-    if (player2.disableCMovePri || chargeSlotPlayer2 === ChargeType.Secondary) {
+    if (player2.cMoveSec && (player2.disableCMovePri || chargeSlotPlayer2 === ChargeType.Secondary)) {
       player2.cMove = player2.cMoveSec;
       chargeSlotPlayer2 = ChargeType.Primary;
     }
@@ -258,6 +258,9 @@ const Battle = () => {
     timelineSec.push(State(timer - 1, player2.block, player2.energy, player2.hp, AttackType.Wait));
     timelineSec.push(State(timer, player2.block, player2.energy, player2.hp, AttackType.Wait));
 
+    const player1EnergyMoveSec = toNumber(player1.cMoveSec?.pvpEnergy);
+    const player2EnergyMoveSec = toNumber(player2.cMoveSec?.pvpEnergy);
+
     timelineInterval = setInterval(() => {
       timer += 1;
       timelinePri.push(State(timer, player1.block, player1.energy, player1.hp));
@@ -289,16 +292,16 @@ const Battle = () => {
             chargedPriCount = DEFAULT_AMOUNT;
           }
           if (
-            player1.energy >= Math.abs(player1.cMoveSec.pvpEnergy) &&
+            player1.energy >= Math.abs(player1EnergyMoveSec) &&
             ((!preRandomPlayer1 && chargeSlotPlayer1 !== ChargeType.Primary) ||
               (postRandomPlayer1 && chargeSlotPlayer1 === ChargeType.Secondary))
           ) {
             chargeType = ChargeType.Secondary;
-            player1.energy += player1.cMoveSec.pvpEnergy;
+            player1.energy += player1EnergyMoveSec;
             timelinePri[timer] = new TimelineModel({
               ...timelinePri[timer],
               type: AttackType.Prepare,
-              color: player1.cMoveSec.type?.toLowerCase(),
+              color: player1.cMoveSec?.type?.toLowerCase(),
               size: DEFAULT_SIZE,
               move: player1.cMoveSec,
             });
@@ -336,16 +339,16 @@ const Battle = () => {
             chargedSecCount = DEFAULT_AMOUNT;
           }
           if (
-            player2.energy >= Math.abs(player2.cMoveSec.pvpEnergy) &&
+            player2.energy >= Math.abs(player2EnergyMoveSec) &&
             ((!preRandomPlayer2 && !postRandomPlayer2 && chargeSlotPlayer2 !== ChargeType.Primary) ||
               (postRandomPlayer2 && chargeSlotPlayer2 === ChargeType.Secondary))
           ) {
             chargeType = ChargeType.Secondary;
-            player2.energy += player2.cMoveSec.pvpEnergy;
+            player2.energy += player2EnergyMoveSec;
             timelineSec[timer] = new TimelineModel({
               ...timelineSec[timer],
               type: AttackType.Prepare,
-              color: player2.cMoveSec.type?.toLowerCase(),
+              color: player2.cMoveSec?.type?.toLowerCase(),
               size: DEFAULT_SIZE,
               move: player2.cMoveSec,
             });
@@ -450,7 +453,7 @@ const Battle = () => {
               timelinePri[timer] = new TimelineModel({
                 ...timelinePri[timer],
                 type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player1.cMoveSec.type?.toLowerCase(),
+                color: player1.cMoveSec?.type?.toLowerCase(),
                 size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player1.cMoveSec,
               });
@@ -481,7 +484,7 @@ const Battle = () => {
               timelineSec[timer] = new TimelineModel({
                 ...timelineSec[timer],
                 type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player2.cMoveSec.type?.toLowerCase(),
+                color: player2.cMoveSec?.type?.toLowerCase(),
                 size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
                 move: player2.cMoveSec,
               });
@@ -521,8 +524,8 @@ const Battle = () => {
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = toFloat(Math.random(), 3);
-            if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= toNumber(moveType.buffs[0].buffChance)) {
-              moveType.buffs.forEach((value) => {
+            if (isNotEmpty(moveType?.buffs) && randInt > 0 && randInt <= toNumber(moveType?.buffs[0].buffChance)) {
+              moveType?.buffs.forEach((value) => {
                 if (value.target === BuffType.Target) {
                   player2 = PokemonBattleData.create({
                     ...player2,
@@ -577,8 +580,8 @@ const Battle = () => {
             const arrBufAtk: IBuff[] = [],
               arrBufTarget: IBuff[] = [];
             const randInt = toFloat(Math.random(), 3);
-            if (isNotEmpty(moveType.buffs) && randInt > 0 && randInt <= toNumber(moveType.buffs[0].buffChance)) {
-              moveType.buffs.forEach((value) => {
+            if (isNotEmpty(moveType?.buffs) && randInt > 0 && randInt <= toNumber(moveType?.buffs[0].buffChance)) {
+              moveType?.buffs.forEach((value) => {
                 if (value.target === BuffType.Target) {
                   player1 = PokemonBattleData.create({
                     ...player1,

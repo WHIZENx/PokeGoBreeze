@@ -70,7 +70,6 @@ module.exports = {
       seed: manifest
     }),
     new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin(),
     new ReactRefreshPlugin()
   ],
   optimization: {
@@ -166,7 +165,7 @@ module.exports = {
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
-            MiniCssExtractPlugin.loader,
+            "style-loader",
             {
               loader: 'css-loader',
               options: {

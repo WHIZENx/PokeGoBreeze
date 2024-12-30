@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import './News.scss';
 import { useSelector } from 'react-redux';
@@ -8,35 +8,63 @@ import { generateParamForm, getKeyWithData, getLureItemType, getTime, splitAndCa
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNotNumber, toNumber } from '../../util/extension';
 import APIService from '../../services/API.service';
 import { DateEvent, ItemName, TitleName } from './enums/item-type.enum';
-import { ITicketReward, RewardPokemon } from '../../core/models/information';
-import { TicketRewardType } from '../../core/enums/information.enum';
+import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
+import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/information.enum';
 import { FORM_NORMAL } from '../../util/constants';
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { Link } from 'react-router-dom';
+import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
 
 const News = () => {
   useChangeTitle('News');
   const information = useSelector((state: StoreState) => state.store.data.information);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
 
-  const getItemTitle = (reward: ITicketReward) => {
+  const [data, setData] = useState<INewsModel[]>([]);
+
+  useEffect(() => {
+    if (information.isLoaded && !isNotEmpty(data)) {
+      const result = mapDataInformation(information.data);
+      setData(result);
+    }
+  }, [information, data]);
+
+  const mapDataInformation = (information: IInformation[]) =>
+    information.map((info) =>
+      NewsModel.create({
+        ...info,
+        startTime: getTime(info.startTime),
+        endTime: getTime(info.endTime),
+        eventType: getDateEvent(info.startTime, info.endTime),
+        rewardNews: info.rewards?.map((reward) =>
+          RewardNews.create({
+            ...reward,
+            imageSrc: getItemSprite(reward),
+            title: getItemTitle(reward),
+            count: getItemCount(reward),
+          })
+        ),
+      })
+    );
+
+  const getItemTitle = (reward: ITicketReward | undefined) => {
     let result: string | undefined;
-    if (reward.type === TicketRewardType.Item && toNumber(reward.item?.item) === 0) {
+    if (reward?.type === TicketRewardType.Item && toNumber(reward.item?.item) === 0) {
       result = reward?.item?.item.replace('ITEM_', '').replace('FREE_', '');
-    } else if (reward.type === TicketRewardType.Pokemon) {
+    } else if (reward?.type === TicketRewardType.Pokemon) {
       result = `#${reward.pokemon?.id}_${reward.pokemon?.pokemonId}${
         reward.pokemon?.form && !isEqual(reward.pokemon?.form, FORM_NORMAL) ? `_${reward.pokemon?.form}` : ''
       }`.replace(/_MR_/i, '_MR._');
-    } else if (reward.type === TicketRewardType.PokeCoin) {
+    } else if (reward?.type === TicketRewardType.PokeCoin) {
       result = getKeyWithData(TicketRewardType, TicketRewardType.PokeCoin)
         ?.split(/(?=[A-Z])/)
         .join('_');
-    } else if (reward.type === TicketRewardType.Stardust) {
+    } else if (reward?.type === TicketRewardType.Stardust) {
       result = getKeyWithData(TicketRewardType, TicketRewardType.Stardust);
-    } else if (reward.type === TicketRewardType.Exp) {
+    } else if (reward?.type === TicketRewardType.Exp) {
       result = TitleName.Exp;
-    } else if (reward.type === TicketRewardType.Avatar) {
+    } else if (reward?.type === TicketRewardType.Avatar) {
       result = reward.avatarTemplateId;
       if (!result && reward.neutralAvatarItemTemplate) {
         result = getValueOrDefault(
@@ -93,7 +121,7 @@ const News = () => {
         date = new Date(dateEndString);
       }
     }
-    return currentDate > date ? DateEvent.End : DateEvent.Progress;
+    return currentDate > date ? DateEvent.End : DateEvent.Progressing;
   };
 
   const getItemSprite = (value: ITicketReward) => {
@@ -138,17 +166,29 @@ const News = () => {
     return APIService.getPokeSprite(0);
   };
 
-  const renderReward = (value: ITicketReward) => (
+  const getItemCount = (value: ITicketReward) => {
+    switch (value.type) {
+      case TicketRewardType.Item:
+        return toNumber(value.item?.amount, 1);
+      case TicketRewardType.Stardust:
+        return toNumber(value.stardust);
+      case TicketRewardType.Exp:
+        return toNumber(value.exp);
+      case TicketRewardType.PokeCoin:
+        return toNumber(value.pokeCoin);
+      default:
+        return;
+    }
+  };
+
+  const renderReward = (value: IRewardNews) => (
     <div>
       <div className="w-100 h-100">
-        <img style={{ width: 64 }} className="pokemon-sprite-medium" src={getItemSprite(value)} />
+        <img style={{ width: 64 }} className="pokemon-sprite-medium" src={value.imageSrc} />
       </div>
       <p className="element-top" style={{ fontWeight: 'bold' }}>
-        <span className={value.type === TicketRewardType.Pokemon ? 'select-evo' : ''}>{getItemTitle(value)}</span>
-        {value.type === TicketRewardType.Item && ` x${toNumber(value.item?.amount, 1)}`}
-        {value.type === TicketRewardType.Stardust && ` x${toNumber(value.stardust)}`}
-        {value.type === TicketRewardType.Exp && ` x${toNumber(value.exp)}`}
-        {value.type === TicketRewardType.PokeCoin && ` x${toNumber(value.pokeCoin)}`}
+        <span className={value.type === TicketRewardType.Pokemon ? 'select-evo' : ''}>{value.title}</span>
+        {value.count && ` x${value.count}`}
       </p>
     </div>
   );
@@ -176,14 +216,14 @@ const News = () => {
 
   return (
     <div className="info-main-bg">
-      <div className="container info-main-container element-top">
+      <div className="container info-main-container element-top" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
         <h1 className="text-center" style={{ textDecoration: 'underline' }}>
           News
         </h1>
         {reload(
           <>
-            {information.data
-              .filter((info) => info.giftAble)
+            {data
+              .filter((info) => info.giftAble || isInclude(info.id, ItemTicketRewardType.BattlePass))
               .map((value, index) => (
                 <div key={index}>
                   <div className="position-relative info-container">
@@ -201,15 +241,15 @@ const News = () => {
                           <div className="d-flex align-items-center flex-end">
                             <div
                               className={
-                                getDateEvent(value.startTime, value.endTime) === DateEvent.End
+                                value.eventType === DateEvent.End
                                   ? 'info-event-ending'
-                                  : DateEvent.Progress
+                                  : DateEvent.Progressing
                                   ? 'info-event-progress'
                                   : 'info-event-future'
                               }
                               style={{ padding: 6, borderRadius: 4, fontSize: 14 }}
                             >
-                              <b>{getDateEvent(value.startTime, value.endTime)}</b>
+                              <b>{getKeyWithData(DateEvent, value.eventType)}</b>
                             </div>
                           </div>
                         </div>
@@ -219,14 +259,14 @@ const News = () => {
                           {value.desc && <p>{value.desc}</p>}
                           <div className="d-flex justify-content-center">
                             <h5>
-                              Start time: {getTime(value.startTime)} | End time: {getTime(value.endTime)}
+                              Start time: {value.startTime} | End time: {value.endTime}
                             </h5>
                           </div>
-                          {isNotEmpty(value.rewards) && (
+                          {isNotEmpty(value.rewardNews) && (
                             <>
                               <h6 style={{ textDecoration: 'underline' }}>Rewards</h6>
                               <div className="w-100 text-center d-inline-block align-middle">
-                                {value.rewards.map((value, i) => (
+                                {value.rewardNews.map((value, i) => (
                                   <div key={i} className="d-inline-block" style={{ margin: '0 10px' }}>
                                     {value.type === TicketRewardType.Pokemon && value.pokemon ? (
                                       <Link

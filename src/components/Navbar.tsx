@@ -34,7 +34,7 @@ const NavbarComponent = () => {
           PokéGoBreeze
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
+        <Navbar.Collapse id="responsive-navbar-nav" style={{ flexWrap: 'wrap' }}>
           <Nav className="me-auto">
             <Link className="nav-link" to="/">
               Pokédex
