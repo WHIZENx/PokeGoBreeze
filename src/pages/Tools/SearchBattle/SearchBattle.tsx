@@ -22,7 +22,7 @@ import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN, MIN_CP } from '../../../util/constants';
 import { IEvolution } from '../../../core/models/evolution.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain } from '../../../util/models/calculate.model';
+import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain, StatsCalculate } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -40,7 +40,7 @@ import {
 } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 import { LeagueType } from '../../../core/enums/league.enum';
-import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
+import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
 
@@ -265,33 +265,33 @@ const FindBattle = () => {
       if (toNumber(searchCP) < MIN_CP) {
         return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
       }
-      const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
-      if (!result.level) {
-        return enqueueSnackbar(
-          `At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`,
-          { variant: VariantType.Error }
-        );
-      }
       dispatch(SpinnerActions.ShowSpinner.create());
       setTimeout(() => {
-        searchStatsPoke(result.level);
-        enqueueSnackbar(
-          `Search success at CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${
-            result.IV.sta
-          } found in ${name} ${splitAndCapitalize(form?.form.formName, '-', ' ')}`,
-          { variant: VariantType.Success }
-        );
-      }, 500);
+        const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
+        processStatsPoke(result);
+      }, 200);
     },
     [dispatch, searchStatsPoke, ATKIv, DEFIv, STAIv, enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA, form]
   );
 
-  const getImageList = (id: number) => {
-    let img = dataStore.assets.find((item) => item.id === id)?.image.find((item) => item.pokemonType === form?.form.pokemonType);
-    if (!img) {
-      img = dataStore.assets.find((item) => item.id === id)?.image.at(0);
+  const processStatsPoke = (result: StatsCalculate) => {
+    if (result.level === 0) {
+      dispatch(SpinnerActions.HideSpinner.create());
+      return enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`, {
+        variant: VariantType.Error,
+      });
     }
-    return img?.default;
+    setTimeout(() => {
+      searchStatsPoke(result.level);
+      enqueueSnackbar(
+        `Search success at CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} found in ${name} ${splitAndCapitalize(
+          form?.form.formName,
+          '-',
+          ' '
+        )}`,
+        { variant: VariantType.Success }
+      );
+    }, 500);
   };
 
   const getCandyEvo = (item: IEvolution[], evoId: number, candy = 0): number => {
@@ -445,8 +445,8 @@ const FindBattle = () => {
                         alt="pokemon-model"
                         height={102}
                         src={
-                          getImageList(value.id)
-                            ? APIService.getPokemonModel(getImageList(value.id))
+                          findAssetForm(dataStore.assets, value.id, form?.form.formName)
+                            ? APIService.getPokemonModel(findAssetForm(dataStore.assets, value.id, form?.form.formName))
                             : APIService.getPokeFullSprite(value.id)
                         }
                       />
@@ -499,28 +499,30 @@ const FindBattle = () => {
                       <div className="row justify-content-center league-info-content" style={{ margin: 0 }}>
                         {value.map((item, index) => (
                           <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{ padding: 0 }}>
-                            <Link
-                              to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
-                              title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
-                            >
-                              <Badge color="primary" overlap="circular" badgeContent={index + 1}>
-                                <img
-                                  alt="pokemon-model"
-                                  height={100}
-                                  src={
-                                    getImageList(item.id)
-                                      ? APIService.getPokemonModel(getImageList(item.id))
-                                      : APIService.getPokeFullSprite(item.id)
-                                  }
-                                />
-                              </Badge>
-                              <div>
-                                <b>
-                                  #{item.id} {splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}{' '}
-                                  {splitAndCapitalize(form?.form.formName, '-', ' ')}
-                                </b>
-                              </div>
-                            </Link>
+                            <div className="pokemon-best-league">
+                              <Link
+                                to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
+                                title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
+                              >
+                                <Badge color="primary" overlap="circular" badgeContent={index + 1}>
+                                  <img
+                                    alt="pokemon-model"
+                                    height={100}
+                                    src={
+                                      findAssetForm(dataStore.assets, item.id, form?.form.formName)
+                                        ? APIService.getPokemonModel(findAssetForm(dataStore.assets, item.id, form?.form.formName))
+                                        : APIService.getPokeFullSprite(item.id)
+                                    }
+                                  />
+                                </Badge>
+                                <div>
+                                  <b>
+                                    #{item.id} {splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}{' '}
+                                    {splitAndCapitalize(form?.form.formName, '-', ' ')}
+                                  </b>
+                                </div>
+                              </Link>
+                            </div>
                             {toNumber(item.maxCP) < maxCP ? (
                               <div className="text-danger">
                                 <b>

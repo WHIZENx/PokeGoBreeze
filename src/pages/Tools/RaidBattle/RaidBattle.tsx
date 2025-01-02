@@ -8,7 +8,7 @@ import {
   addSelectMovesByType,
   checkPokemonGO,
   generateParamForm,
-  getDmgMultiplyBonus,
+  getAllMoves,
   getKeyWithData,
   getMoveType,
   retrieveMoves,
@@ -58,7 +58,7 @@ import {
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { MoveType, PokemonType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -418,17 +418,17 @@ const RaidBattle = () => {
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc) => {
-      const fMove = data.combat.find((item) => isEqual(item.name, vf));
-      const cMove = data.combat.find((item) => isEqual(item.name, vc));
-      if (fMove && cMove) {
+      const fMoveCurrent = data.combat.find((item) => isEqual(item.name, vf));
+      const cMoveCurrent = data.combat.find((item) => isEqual(item.name, vc));
+      if (fMoveCurrent && cMoveCurrent) {
         const cMoveType = getMoveType(value, vc);
         const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
         const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
           hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
-          fMove,
-          cMove,
+          fMove: fMoveCurrent,
+          cMove: cMoveCurrent,
           types: value?.types,
           pokemonType,
         });
@@ -510,8 +510,7 @@ const RaidBattle = () => {
     let dataList: IPokemonMoveData[] = [];
     data.pokemon.forEach((pokemon) => {
       if (pokemon && pokemon.pokemonType !== PokemonType.GMax) {
-        addFPokeData(dataList, pokemon, pokemon.quickMoves, pokemonTarget);
-        addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves, pokemonTarget);
+        addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast), pokemonTarget);
       }
     });
     if (pokemonTarget) {
@@ -547,26 +546,18 @@ const RaidBattle = () => {
   };
 
   const calculateDPSBattle = (pokemon: IPokemonRaidModel, hpRemain: number, timer: number) => {
-    const fMove = data.combat.find((item) => isEqual(item.name, pokemon.fMoveTargetPokemon?.name));
-    const cMove = data.combat.find((item) => isEqual(item.name, pokemon.cMoveTargetPokemon?.name));
+    const fMoveCurrent = data.combat.find((item) => isEqual(item.name, pokemon.fMoveTargetPokemon?.name));
+    const cMoveCurrent = data.combat.find((item) => isEqual(item.name, pokemon.cMoveTargetPokemon?.name));
 
-    if (fMove && cMove) {
+    if (fMoveCurrent && cMoveCurrent) {
       const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
       const statsGO = pokemon.dataTargetPokemon?.stats ?? used;
       const statsAttacker = new BattleCalculate({
-        atk: calculateStatsBattle(
-          stats.atk,
-          statsGO.iv.atk * getDmgMultiplyBonus(statsGO.pokemonType, data.options, TypeAction.Atk),
-          statsGO.level
-        ),
-        def: calculateStatsBattle(
-          stats.def,
-          statsGO.iv.def * getDmgMultiplyBonus(statsGO.pokemonType, data.options, TypeAction.Def),
-          statsGO.level
-        ),
+        atk: calculateStatsBattle(stats.atk, statsGO.iv.atk, statsGO.level),
+        def: calculateStatsBattle(stats.def, statsGO.iv.def, statsGO.level),
         hp: calculateStatsBattle(stats?.sta, statsGO.iv.sta, statsGO.level),
-        fMove,
-        cMove,
+        fMove: fMoveCurrent,
+        cMove: cMoveCurrent,
         types: pokemon.dataTargetPokemon?.types,
         pokemonType: statsGO.pokemonType,
       });
@@ -1215,7 +1206,7 @@ const RaidBattle = () => {
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
           <div className="element-top position-relative">
-            {(!resultFMove || !resultCMove) && (
+            {(!isNotEmpty(resultFMove) || !isNotEmpty(resultCMove)) && (
               <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>

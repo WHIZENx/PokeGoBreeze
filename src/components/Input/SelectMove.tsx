@@ -9,7 +9,7 @@ import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel } from './models/select-move.model';
 import { addSelectMovesByType, retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
-import { combineClasses, isEqual, isNotEmpty, isUndefined } from '../../util/extension';
+import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 import { InputType, SelectPosition } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
@@ -28,7 +28,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   };
 
   const findMove = useCallback(
-    (id: number, form: string | null | undefined, type: TypeMove, selected = false) => {
+    (id: number | undefined, form: string | null | undefined, type: TypeMove, selected = false) => {
       const result = retrieveMoves(pokemon, id, form);
       if (result) {
         const simpleMove = addSelectMovesByType(result, type);
@@ -43,8 +43,8 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   useEffect(() => {
     if (isNotEmpty(pokemon)) {
-      if (props.pokemon?.num) {
-        findMove(props.pokemon.num, props.pokemon.forme, props.moveType, props.isSelected);
+      if (toNumber(props.pokemon?.num) > 0) {
+        findMove(props.pokemon?.num, props.pokemon?.forme, props.moveType, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }

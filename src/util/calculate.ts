@@ -446,12 +446,6 @@ export const calculateBetweenLevel = (
     let betweenCandyDiff = 0;
     let betweenXlCandyDiff = 0;
 
-    const atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Atk));
-    const defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def));
-
-    const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
-    const defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
-
     const typeCost = typeCostPowerUp(pokemonType);
     data.forEach((ele: CPMData) => {
       const result = CPMDetail.mapping(ele);
@@ -478,6 +472,12 @@ export const calculateBetweenLevel = (
     });
 
     if (pokemonType === PokemonType.Shadow) {
+      const atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Atk));
+      const defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def));
+
+      const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
+      const defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
+
       dataList.atkStat = atkStat;
       dataList.defStat = defStat;
       dataList.atkStatDiff = atkStatDiff;
@@ -1096,7 +1096,7 @@ export const rankMove = (
     return new PokemonQueryRankMove();
   }
   const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, atk, def, sta, types);
-  getAllMoves(pokemon, TypeMove.Fast).forEach((vf) => setQueryMove(data, vf));
+  setQueryMove(data, getAllMoves(pokemon, TypeMove.Fast));
 
   return PokemonQueryRankMove.create({
     data: data.dataList,
@@ -1105,9 +1105,11 @@ export const rankMove = (
   });
 };
 
-const setQueryMove = (data: QueryMovesPokemon, vf: string) => {
-  const quickMoveType = getMoveType(data.pokemon, vf);
-  queryMove(data, vf, getAllMoves(data.pokemon, TypeMove.Charge), quickMoveType);
+const setQueryMove = (data: QueryMovesPokemon, movePoke: string[]) => {
+  movePoke.forEach((vf) => {
+    const quickMoveType = getMoveType(data.pokemon, vf);
+    queryMove(data, vf, getAllMoves(data.pokemon, TypeMove.Charge), quickMoveType);
+  });
 };
 
 export const queryStatesEvoChain = (
@@ -1339,7 +1341,7 @@ export const counterPokemon = (
   pokemonList.forEach((pokemon) => {
     if (pokemon && checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE')) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
-      getAllMoves(pokemon, TypeMove.Fast).forEach((vf) => setQueryMoveCounter(data, vf));
+      setQueryMoveCounter(data, getAllMoves(pokemon, TypeMove.Fast));
     }
   });
   return dataList
@@ -1347,9 +1349,11 @@ export const counterPokemon = (
     .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / toNumber(dataList.at(0)?.dps, 1) }));
 };
 
-const setQueryMoveCounter = (data: QueryMovesCounterPokemon, vf: string) => {
-  const fMoveType = getMoveType(data.pokemon, vf);
-  queryMoveCounter(data, vf, getAllMoves(data.pokemon, TypeMove.Charge), fMoveType);
+const setQueryMoveCounter = (data: QueryMovesCounterPokemon, movePoke: string[]) => {
+  movePoke.forEach((vf) => {
+    const fMoveType = getMoveType(data.pokemon, vf);
+    queryMoveCounter(data, vf, getAllMoves(data.pokemon, TypeMove.Charge), fMoveType);
+  });
 };
 
 export const calculateStatsTopRank = (stats: IStatsBase | undefined, id: number, maxCP: number, level = MAX_LEVEL) => {

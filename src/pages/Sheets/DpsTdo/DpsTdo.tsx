@@ -9,6 +9,7 @@ import {
   getMoveType,
   generateParamForm,
   getKeysObj,
+  getAllMoves,
 } from '../../../util/utils';
 import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import {
@@ -395,9 +396,8 @@ const DpsTdo = () => {
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
-      } else {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
       }
+      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
       addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType);
       addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, vf, fMoveType);
     });
@@ -406,8 +406,7 @@ const DpsTdo = () => {
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
     data.pokemon.forEach((pokemon) => {
-      addFPokeData(dataList, pokemon, pokemon.quickMoves);
-      addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves);
+      addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
     setShowSpinner(false);
     return dataList;
