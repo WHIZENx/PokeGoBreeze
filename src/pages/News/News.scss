@@ -11,7 +11,9 @@
   row-gap: 20px;
   max-height: 90vh;
 
-  .accordion-button, .accordion-item, .accordion-header {
+  .accordion-button,
+  .accordion-item,
+  .accordion-header {
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
   }
