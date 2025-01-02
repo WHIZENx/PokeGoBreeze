@@ -832,7 +832,7 @@ export const getFormFromForms = (
   return filterForm;
 };
 
-export const retrieveMoves = (pokemon: IPokemonData[], id: number, form: string | null | undefined) => {
+export const retrieveMoves = (pokemon: IPokemonData[], id: number | undefined, form: string | null | undefined) => {
   if (isNotEmpty(pokemon)) {
     const resultFirst = pokemon.filter((item) => item.num === id);
     form =
@@ -897,7 +897,6 @@ export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
 export const getAllMoves = (pokemon: IPokemonData | undefined | null, moveType = TypeMove.All) => {
   const fastMove = getValueOrDefault(Array, pokemon?.quickMoves).concat(getValueOrDefault(Array, pokemon?.eliteQuickMoves));
   const chargeMoves = getValueOrDefault(Array, pokemon?.cinematicMoves).concat(
-    getValueOrDefault(Array, pokemon?.cinematicMoves),
     getValueOrDefault(Array, pokemon?.eliteCinematicMoves),
     getValueOrDefault(Array, pokemon?.shadowMoves),
     getValueOrDefault(Array, pokemon?.purifiedMoves),

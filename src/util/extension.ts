@@ -49,7 +49,10 @@ export const isEmpty = (value?: string | null): value is null | undefined | '' =
 
 export const isNullOrEmpty = (value?: string | null): value is '' | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
 
-export const isNotNumber = <T>(value: T | null | undefined) => !Number.isInteger(value);
+export const isNotNumber = <T>(value: T | null | undefined) => {
+  const result = getValueOrDefault(String, value?.toString());
+  return isEmpty(result) || isNaN(Number(result));
+};
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>
   parseFloat((value || defaultValue).toString()) || defaultValue;
