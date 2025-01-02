@@ -19,7 +19,8 @@ export enum TitleName {
 }
 
 export enum DateEvent {
-  End = 'End',
-  Progress = 'Progressing',
-  Future = 'Future',
+  None = 0,
+  End,
+  Progressing,
+  Future,
 }

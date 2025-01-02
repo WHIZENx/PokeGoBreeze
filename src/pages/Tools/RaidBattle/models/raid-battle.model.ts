@@ -1,4 +1,4 @@
-import { PokemonRaidModel, PokemonMoveData, IPokemonData } from '../../../../core/models/pokemon.model';
+import { PokemonRaidModel, PokemonMoveData, IPokemonData, IPokemonMoveData } from '../../../../core/models/pokemon.model';
 
 export interface ITrainerBattle {
   pokemons: PokemonRaidModel[];
@@ -76,6 +76,24 @@ export class RaidSetting implements IRaidSetting {
 
   static create(value: IRaidSetting) {
     const obj = new RaidSetting();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IMovePokemon {
+  isShow: boolean;
+  id: number;
+  pokemon?: IPokemonMoveData;
+}
+
+export class MovePokemon implements IMovePokemon {
+  isShow = false;
+  id = 0;
+  pokemon?: IPokemonMoveData;
+
+  static create(value: IMovePokemon) {
+    const obj = new MovePokemon();
     Object.assign(obj, value);
     return obj;
   }

@@ -16,4 +16,5 @@ export enum ItemTicketRewardType {
   Exp = 'EXPERIENCE',
   Stardust = 'STARDUST',
   Avatar = 'AVATAR_CLOTHING',
+  BattlePass = 'BATTLE_PASS_TICKET',
 }

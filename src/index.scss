@@ -1,10 +1,10 @@
-/* stylelint-disable */
-$ph-color: #e2eaf1 !default;
-$ph-border: none !default;
-$ph-border-radius: 0 !default;
-
-@import "bootstrap/dist/css/bootstrap.min.css";
-@import "~/node_modules/placeholder-loading/src/scss/placeholder-loading";
+@use "../node_modules/bootstrap/dist/css/bootstrap.min.css" as *;
+@use "../node_modules/placeholder-loading/src/scss/variables.scss" as * with (
+  $ph-color: #e2eaf1,
+  $ph-border: none,
+  $ph-border-radius: 0,
+);
+@use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
 
 html {
   height: 100%;
