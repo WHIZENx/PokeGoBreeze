@@ -52,7 +52,7 @@ const StatsTable = (props: IStatsTableComponent) => {
       if (props.setStatLvSTA) {
         props.setStatLvSTA(calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel));
       }
-      setCurrStatLevel(v as number);
+      setCurrStatLevel(v);
     },
     [
       globalOptions,

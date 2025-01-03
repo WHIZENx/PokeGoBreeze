@@ -13,6 +13,7 @@ import { PokemonType } from '../enums/type.enum';
 export class Params {
   public static Id = 'id';
   public static Form = 'form';
+  public static FormType = 'formType';
   public static StatsType = 'statsType';
   public static MoveType = 'moveType';
 }

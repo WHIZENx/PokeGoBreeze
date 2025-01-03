@@ -182,6 +182,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         id,
         name: currentForm.defaultName,
         form: currentForm.form.formName,
+        formType: currentForm.form.pokemonType,
         fullName: currentForm.form.name,
         timestamp: new Date(),
       });
