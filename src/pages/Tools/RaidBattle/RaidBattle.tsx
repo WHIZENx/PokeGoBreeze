@@ -1373,7 +1373,7 @@ const RaidBattle = () => {
                   </div>
                   <div className="d-flex justify-content-center w-100">
                     <Link
-                      to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme)}`}
+                      to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
                       className="sprite-raid position-relative"
                     >
                       {value.pokemonType === PokemonType.Shadow && (

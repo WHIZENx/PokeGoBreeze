@@ -130,7 +130,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Pokémon Name',
     selector: (row) => (
       <Link
-        to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme)}`}
+        to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
         {row.pokemonType === PokemonType.Shadow && (

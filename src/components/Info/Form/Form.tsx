@@ -8,6 +8,7 @@ import {
   convertPokemonAPIDataName,
   convertStatsEffort,
   formIconAssets,
+  getDataWithKey,
   getFormFromForms,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -27,7 +28,7 @@ import { StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { WeightHeight } from '../../../core/models/pokemon.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
@@ -96,10 +97,21 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   }, [props.pokemonRouter]);
 
-  const changeForm = (name: string, form: string | null | undefined) => {
+  const changeForm = (name: string, form: string | null | undefined, pokemonType = PokemonType.None) => {
     if (params.id) {
       form = convertPokemonAPIDataName(form).toLowerCase().replaceAll('_', '-');
-      searchParams.set(Params.Form, form);
+      if (form) {
+        searchParams.set(Params.Form, form);
+      } else {
+        searchParams.delete(Params.Form);
+      }
+      const isSpecialForm = pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
+      if (isSpecialForm) {
+        const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
+        searchParams.set(Params.FormType, getValueOrDefault(String, formType));
+      } else {
+        searchParams.delete(Params.FormType);
+      }
       setSearchParams(searchParams);
     }
     findFormData(name);
@@ -126,7 +138,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                           ? 'form-selected'
                           : ''
                       )}
-                      onClick={() => changeForm(value.form.name, value.form.formName)}
+                      onClick={() => changeForm(value.form.name, value.form.formName, value.form.pokemonType)}
                     >
                       <div className="d-flex w-100 justify-content-center">
                         <div className="position-relative" style={{ width: 64 }}>

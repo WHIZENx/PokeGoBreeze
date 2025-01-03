@@ -1024,10 +1024,26 @@ export const getPokemonClass = (className?: string | number | null) => {
 
 export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
 
-export const generateParamForm = (form: string | null | undefined, prefix = '?') =>
-  form && !isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-    ? `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`
-    : '';
+export const generateParamForm = (form: string | null | undefined, pokemonType = PokemonType.None, prefix = '?') => {
+  const isSpecialForm = pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
+  const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
+  if (form) {
+    if (isEqual(form, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) || isEqual(form, FORM_PURIFIED, EqualMode.IgnoreCaseSensitive)) {
+      return `${prefix}${Params.FormType}=${formType}`;
+    } else {
+      if (!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)) {
+        return `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}${
+          isSpecialForm ? `?${Params.FormType}=${formType}` : ''
+        }`;
+      } else if (isSpecialForm) {
+        return `${prefix}${Params.FormType}=${formType}`;
+      }
+    }
+  } else if (isSpecialForm) {
+    return `${prefix}${Params.FormType}=${formType}`;
+  }
+  return '';
+};
 
 export const getMultiplyTypeEffect = (data: TypeEffChart, valueEffective: number, key: string) => {
   if (valueEffective >= TypeEffectiveAmount.VeryWeak) {

@@ -5,6 +5,7 @@ import { IStatsBarComponent } from '../../models/component.model';
 import { combineClasses } from '../../../util/extension';
 import { generateParamForm } from '../../../util/utils';
 import { Params } from '../../../util/constants';
+import { PokemonType } from '../../../enums/type.enum';
 
 interface Element {
   isRank?: boolean;
@@ -37,7 +38,11 @@ const StatsBar = (props: IStatsBarComponent) => {
       className={combineClasses('progress', props.isDisabled ? '' : 'progress-hover')}
       onClick={() =>
         !props.isDisabled &&
-        navigate(`/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, '&')}&${Params.StatsType}=${props.statType}`)
+        navigate(
+          `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, PokemonType.None, '&')}&${Params.StatsType}=${
+            props.statType
+          }`
+        )
       }
     >
       <BoxText className="box-text stats-text" isRank={false}>

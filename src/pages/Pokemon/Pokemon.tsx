@@ -188,14 +188,28 @@ const Pokemon = (props: IPokemonPage) => {
 
       // Set Default Form
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
-      const formParams = searchParams.get(Params.Form)?.toLowerCase().replaceAll('_', '-');
+      let formParams = searchParams.get(Params.Form)?.toLowerCase().replaceAll('_', '-');
+      const formTypeParams = searchParams.get(Params.FormType)?.toLowerCase();
+      if (formTypeParams) {
+        if (formParams) {
+          formParams = `${formParams}-${formTypeParams}`;
+        } else {
+          formParams = formTypeParams;
+        }
+      }
       const defaultForm = formListResult.flatMap((item) => item).filter((item) => item.form.isDefault);
       if (formParams) {
         const defaultFormSearch = formListResult
           .flatMap((form) => form)
           .find(
             (item) =>
-              isEqual(convertPokemonAPIDataName(item.form.formName).replaceAll('_', '-'), formParams, EqualMode.IgnoreCaseSensitive) ||
+              isEqual(
+                formTypeParams
+                  ? item.form.formName?.replaceAll('_', '-')
+                  : convertPokemonAPIDataName(item.form.formName).replaceAll('_', '-'),
+                formParams,
+                EqualMode.IgnoreCaseSensitive
+              ) ||
               isEqual(
                 convertPokemonAPIDataName(item.form.name).replaceAll('_', '-'),
                 `${item.defaultName}-${formParams}`,
