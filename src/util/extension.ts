@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
 import './extensions/string.extension';
 import { TableColumn } from 'react-data-table-component';
 import { TableColumnModify } from './models/overrides/data-table.model';
 import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
 
+// eslint-disable-next-line no-unused-vars
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
 
 export const getValueOrDefault = <T>(
@@ -29,7 +29,7 @@ export const getValueOrDefault = <T>(
         return (defaultValue || value) as T;
     }
   }
-  return value as T;
+  return value;
 };
 
 export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => columns as TableColumn<T>[];
@@ -134,7 +134,7 @@ export const isIncludeList = (
   }
   const result = getValueOrDefault(
     Array,
-    value?.map((i) => (!isNullOrUndefined(i) ? i.toString() : ''))
+    value.map((i) => (!isNullOrUndefined(i) ? i.toString() : ''))
   );
   const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
   switch (mode) {
@@ -175,11 +175,13 @@ export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.Ca
 
 export const getPropertyName = <T extends object>(
   obj: T | null | undefined,
+  // eslint-disable-next-line no-unused-vars
   expression: (x: { [Property in keyof T]: string }) => string
 ) => {
   if (!obj) {
     return '';
   }
+  // eslint-disable-next-line no-unused-vars
   const res = {} as { [Property in keyof T]: string };
   Object.keys(obj).map((k) => (res[k as keyof T] = k));
   return expression(res);

@@ -73,3 +73,12 @@
   white-space: nowrap;
   overflow-x: auto;
 }
+
+.img-evo-container {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  width: 96px;
+}

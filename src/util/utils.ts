@@ -1046,17 +1046,17 @@ export const generateParamForm = (form: string | null | undefined, pokemonType =
 };
 
 export const getMultiplyTypeEffect = (data: TypeEffChart, valueEffective: number, key: string) => {
-  if (valueEffective >= TypeEffectiveAmount.VeryWeak) {
+  if (valueEffective >= TypeEffectiveAmount.VeryWeak && !isIncludeList(data.veryWeak, key)) {
     data.veryWeak?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.Weak) {
+  } else if (valueEffective >= TypeEffectiveAmount.Weak && !isIncludeList(data.weak, key)) {
     data.weak?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.Neutral) {
+  } else if (valueEffective >= TypeEffectiveAmount.Neutral && !isIncludeList(data.neutral, key)) {
     data.neutral?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.Resist) {
+  } else if (valueEffective >= TypeEffectiveAmount.Resist && !isIncludeList(data.resist, key)) {
     data.resist?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.VeryResist) {
+  } else if (valueEffective >= TypeEffectiveAmount.VeryResist && !isIncludeList(data.veryResist, key)) {
     data.veryResist?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.SuperResist) {
+  } else if (valueEffective >= TypeEffectiveAmount.SuperResist && !isIncludeList(data.superResist, key)) {
     data.superResist?.push(key);
   }
 };
