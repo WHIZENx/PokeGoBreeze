@@ -8,7 +8,7 @@ import {
   addSelectMovesByType,
   checkPokemonGO,
   generateParamForm,
-  getDmgMultiplyBonus,
+  getAllMoves,
   getKeyWithData,
   getMoveType,
   retrieveMoves,
@@ -58,7 +58,7 @@ import {
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
-import { MoveType, PokemonType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -74,10 +74,20 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { BattleResult, IRaidResult, ITrainerBattle, RaidResult, RaidSetting, RaidSummary, TrainerBattle } from './models/raid-battle.model';
+import {
+  BattleResult,
+  MovePokemon,
+  IRaidResult,
+  ITrainerBattle,
+  RaidResult,
+  RaidSetting,
+  RaidSummary,
+  TrainerBattle,
+} from './models/raid-battle.model';
 import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
+import { ICombat } from '../../../core/models/combat.model';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -192,6 +202,16 @@ const RaidBattle = () => {
     })
   );
 
+  const initPokemonStats = {
+    level: filters.selected.level,
+    pokemonType: PokemonType.Normal,
+    iv: {
+      atk: filters.selected.iv.atk,
+      def: filters.selected.iv.def,
+      sta: filters.selected.iv.sta,
+    },
+  };
+
   const { used, selected } = filters;
 
   const { isWeatherBoss, isReleased, enableTimeAllow } = options;
@@ -204,8 +224,10 @@ const RaidBattle = () => {
 
   const [show, setShow] = useState(false);
   const [showOption, setShowOption] = useState(false);
-
   const [showSettingPokemon, setShowSettingPokemon] = useState(new RaidSetting());
+  const [showMovePokemon, setShowMovePokemon] = useState(new MovePokemon());
+
+  const [hoverSlot, setHoverSlot] = useState<string>();
 
   const handleClose = () => {
     setTrainerBattle(update(trainerBattle, { [trainerBattleId]: { pokemons: { $set: tempPokemonBattle } } }));
@@ -226,6 +248,17 @@ const RaidBattle = () => {
 
   const handleShowOption = () => {
     setShowOption(true);
+  };
+
+  const handleShowMovePokemon = (pokemon: IPokemonMoveData | undefined) => {
+    setHoverSlot(undefined);
+    setShowMovePokemon(
+      MovePokemon.create({
+        isShow: true,
+        id: toNumber(pokemon?.pokemon?.num),
+        pokemon,
+      })
+    );
   };
 
   const isInvalidIV = (value: number | undefined) => !value || value < MIN_IV || value > MAX_IV;
@@ -279,6 +312,17 @@ const RaidBattle = () => {
     );
   };
 
+  const handleCloseMovePokemon = () => {
+    setHoverSlot(undefined);
+    setShowMovePokemon(
+      MovePokemon.create({
+        isShow: false,
+        id: 0,
+        pokemon: undefined,
+      })
+    );
+  };
+
   const handleSaveSettingPokemon = () => {
     const pokemon = showSettingPokemon.pokemon;
     if (isInvalidIV(pokemon?.stats?.iv.atk) || isInvalidIV(pokemon?.stats?.iv.def) || isInvalidIV(pokemon?.stats?.iv.sta)) {
@@ -296,9 +340,8 @@ const RaidBattle = () => {
     handleCloseSettingPokemon();
   };
 
-  const initDataPoke = new PokemonRaidModel();
   const initTrainer = TrainerBattle.create({
-    pokemons: [initDataPoke],
+    pokemons: [new PokemonRaidModel()],
     trainerId: 1,
   });
 
@@ -375,17 +418,17 @@ const RaidBattle = () => {
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc) => {
-      const fMove = data.combat.find((item) => isEqual(item.name, vf));
-      const cMove = data.combat.find((item) => isEqual(item.name, vc));
-      if (fMove && cMove) {
+      const fMoveCurrent = data.combat.find((item) => isEqual(item.name, vf));
+      const cMoveCurrent = data.combat.find((item) => isEqual(item.name, vc));
+      if (fMoveCurrent && cMoveCurrent) {
         const cMoveType = getMoveType(value, vc);
         const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
         const statsAttackerTemp = new BattleCalculate({
           atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
           def: calculateStatsBattle(stats.def, used.iv.def, used.level),
           hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
-          fMove,
-          cMove,
+          fMove: fMoveCurrent,
+          cMove: cMoveCurrent,
           types: value?.types,
           pokemonType,
         });
@@ -467,8 +510,7 @@ const RaidBattle = () => {
     let dataList: IPokemonMoveData[] = [];
     data.pokemon.forEach((pokemon) => {
       if (pokemon && pokemon.pokemonType !== PokemonType.GMax) {
-        addFPokeData(dataList, pokemon, pokemon.quickMoves, pokemonTarget);
-        addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves, pokemonTarget);
+        addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast), pokemonTarget);
       }
     });
     if (pokemonTarget) {
@@ -504,26 +546,18 @@ const RaidBattle = () => {
   };
 
   const calculateDPSBattle = (pokemon: IPokemonRaidModel, hpRemain: number, timer: number) => {
-    const fMove = data.combat.find((item) => isEqual(item.name, pokemon.fMoveTargetPokemon?.name));
-    const cMove = data.combat.find((item) => isEqual(item.name, pokemon.cMoveTargetPokemon?.name));
+    const fMoveCurrent = data.combat.find((item) => isEqual(item.name, pokemon.fMoveTargetPokemon?.name));
+    const cMoveCurrent = data.combat.find((item) => isEqual(item.name, pokemon.cMoveTargetPokemon?.name));
 
-    if (fMove && cMove) {
+    if (fMoveCurrent && cMoveCurrent) {
       const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
       const statsGO = pokemon.dataTargetPokemon?.stats ?? used;
       const statsAttacker = new BattleCalculate({
-        atk: calculateStatsBattle(
-          stats.atk,
-          statsGO.iv.atk * getDmgMultiplyBonus(statsGO.pokemonType, data.options, TypeAction.Atk),
-          statsGO.level
-        ),
-        def: calculateStatsBattle(
-          stats.def,
-          statsGO.iv.def * getDmgMultiplyBonus(statsGO.pokemonType, data.options, TypeAction.Def),
-          statsGO.level
-        ),
+        atk: calculateStatsBattle(stats.atk, statsGO.iv.atk, statsGO.level),
+        def: calculateStatsBattle(stats.def, statsGO.iv.def, statsGO.level),
         hp: calculateStatsBattle(stats?.sta, statsGO.iv.sta, statsGO.level),
-        fMove,
-        cMove,
+        fMove: fMoveCurrent,
+        cMove: cMoveCurrent,
         types: pokemon.dataTargetPokemon?.types,
         pokemonType: statsGO.pokemonType,
       });
@@ -712,7 +746,7 @@ const RaidBattle = () => {
   };
 
   const resultBattle = (bossHp: number, timer: number) => {
-    const status = enableTimeAllow && timer >= timeAllow ? RaidState.TIMEOUT : bossHp <= 0 ? RaidState.WIN : RaidState.LOSS;
+    const status = enableTimeAllow && timer >= timeAllow ? RaidState.TIMEOUT : bossHp > 0 ? RaidState.LOSS : RaidState.WIN;
     return (
       <td colSpan={3} className={combineClasses('text-center', `bg-${status === RaidState.WIN ? 'success' : 'danger'}`)}>
         <span className="text-white">{status}</span>
@@ -720,142 +754,140 @@ const RaidBattle = () => {
     );
   };
 
-  const modalFormFilters = () => {
-    return (
-      <form>
-        <label className="form-label">Pokémon level</label>
-        <div className="input-group mb-3">
-          <span className="input-group-text">Level</span>
-          <Form.Select
-            value={filters.selected.level}
-            className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: toFloat(e.target.value) } })}
-          >
-            {levelList.map((value, index) => (
-              <option key={index} value={value}>
-                {value}
-              </option>
-            ))}
-          </Form.Select>
-        </div>
-        <label className="form-label">Pokémon IV</label>
-        <div className="input-group mb-3">
-          <span className="input-group-text">ATK</span>
-          <input
-            value={filters.selected.iv.atk}
-            type="number"
-            min={MIN_IV}
-            max={MAX_IV}
-            required={true}
-            className="form-control"
-            placeholder="IV ATK"
-            onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: toNumber(e.currentTarget.value) } } })
-            }
-          />
-          <span className="input-group-text">DEF</span>
-          <input
-            value={filters.selected.iv.def}
-            type="number"
-            min={MIN_IV}
-            max={MAX_IV}
-            required={true}
-            className="form-control"
-            placeholder="IV DEF"
-            onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: toNumber(e.currentTarget.value) } } })
-            }
-          />
-          <span className="input-group-text">STA</span>
-          <input
-            value={filters.selected.iv.sta}
-            type="number"
-            min={MIN_IV}
-            max={MAX_IV}
-            required={true}
-            className="form-control"
-            placeholder="IV STA"
-            onInput={(e) =>
-              setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: toNumber(e.currentTarget.value) } } })
-            }
-          />
-        </div>
-        <div className="input-group mb-3 border-input">
-          <span className="input-group-text">Search filter only by</span>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filters.selected.onlyShadow}
-                onChange={(_, check) =>
-                  setFilters({ ...filters, selected: { ...selected, onlyShadow: check, onlyMega: check ? false : selected.onlyMega } })
-                }
+  const modalFormFilters = () => (
+    <form>
+      <label className="form-label">Pokémon level</label>
+      <div className="input-group mb-3">
+        <span className="input-group-text">Level</span>
+        <Form.Select
+          value={filters.selected.level}
+          className="form-control"
+          onChange={(e) => setFilters({ ...filters, selected: { ...selected, level: toFloat(e.target.value) } })}
+        >
+          {levelList.map((value, index) => (
+            <option key={index} value={value}>
+              {value}
+            </option>
+          ))}
+        </Form.Select>
+      </div>
+      <label className="form-label">Pokémon IV</label>
+      <div className="input-group mb-3">
+        <span className="input-group-text">ATK</span>
+        <input
+          value={filters.selected.iv.atk}
+          type="number"
+          min={MIN_IV}
+          max={MAX_IV}
+          required={true}
+          className="form-control"
+          placeholder="IV ATK"
+          onInput={(e) =>
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: toNumber(e.currentTarget.value) } } })
+          }
+        />
+        <span className="input-group-text">DEF</span>
+        <input
+          value={filters.selected.iv.def}
+          type="number"
+          min={MIN_IV}
+          max={MAX_IV}
+          required={true}
+          className="form-control"
+          placeholder="IV DEF"
+          onInput={(e) =>
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: toNumber(e.currentTarget.value) } } })
+          }
+        />
+        <span className="input-group-text">STA</span>
+        <input
+          value={filters.selected.iv.sta}
+          type="number"
+          min={MIN_IV}
+          max={MAX_IV}
+          required={true}
+          className="form-control"
+          placeholder="IV STA"
+          onInput={(e) =>
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: toNumber(e.currentTarget.value) } } })
+          }
+        />
+      </div>
+      <div className="input-group mb-3 border-input">
+        <span className="input-group-text">Search filter only by</span>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={filters.selected.onlyShadow}
+              onChange={(_, check) =>
+                setFilters({ ...filters, selected: { ...selected, onlyShadow: check, onlyMega: check ? false : selected.onlyMega } })
+              }
+            />
+          }
+          label={getKeyWithData(PokemonType, PokemonType.Shadow)}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={filters.selected.onlyMega}
+              onChange={(_, check) =>
+                setFilters({ ...filters, selected: { ...selected, onlyMega: check, onlyShadow: check ? false : selected.onlyShadow } })
+              }
+            />
+          }
+          label="Mega"
+        />
+      </div>
+      <div className="input-group mb-3">
+        <FormControlLabel
+          control={
+            <Switch
+              checked={filters.selected.onlyReleasedGO}
+              onChange={(_, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
+            />
+          }
+          label={
+            <span className="d-flex align-items-center">
+              Released in GO
+              <img
+                className={filters.selected.onlyReleasedGO ? '' : 'filter-gray'}
+                width={28}
+                height={28}
+                style={{ marginLeft: 5 }}
+                alt="pokemon-go-icon"
+                src={APIService.getPokemonGoIcon(icon)}
               />
-            }
-            label={getKeyWithData(PokemonType, PokemonType.Shadow)}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filters.selected.onlyMega}
-                onChange={(_, check) =>
-                  setFilters({ ...filters, selected: { ...selected, onlyMega: check, onlyShadow: check ? false : selected.onlyShadow } })
-                }
-              />
-            }
-            label="Mega"
-          />
-        </div>
-        <div className="input-group mb-3">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={filters.selected.onlyReleasedGO}
-                onChange={(_, check) => setFilters({ ...filters, selected: { ...selected, onlyReleasedGO: check } })}
-              />
-            }
-            label={
-              <span className="d-flex align-items-center">
-                Released in GO
-                <img
-                  className={filters.selected.onlyReleasedGO ? '' : 'filter-gray'}
-                  width={28}
-                  height={28}
-                  style={{ marginLeft: 5 }}
-                  alt="pokemon-go-icon"
-                  src={APIService.getPokemonGoIcon(icon)}
-                />
-              </span>
-            }
-          />
-        </div>
-        <label className="form-label">Sorting</label>
-        <div className="input-group mb-3">
-          <span className="input-group-text">Sort By</span>
-          <Form.Select
-            style={{ width: '40%' }}
-            value={filters.selected.sortBy}
-            className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
-          >
-            <option value={SortType.DPS}>Damage Per Second</option>
-            <option value={SortType.TDO}>Total Damage Output</option>
-            <option value={SortType.TTK}>Time To Kill</option>
-            <option value={SortType.TANK}>Tankiness</option>
-          </Form.Select>
-          <span className="input-group-text">Priority</span>
-          <Form.Select
-            style={{ width: '15%' }}
-            value={filters.selected.sorted}
-            className="form-control"
-            onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
-          >
-            <option value={SortDirectionType.ASC}>Best</option>
-            <option value={SortDirectionType.DESC}>Worst</option>
-          </Form.Select>
-        </div>
-      </form>
-    );
-  };
+            </span>
+          }
+        />
+      </div>
+      <label className="form-label">Sorting</label>
+      <div className="input-group mb-3">
+        <span className="input-group-text">Sort By</span>
+        <Form.Select
+          style={{ width: '40%' }}
+          value={filters.selected.sortBy}
+          className="form-control"
+          onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
+        >
+          <option value={SortType.DPS}>Damage Per Second</option>
+          <option value={SortType.TDO}>Total Damage Output</option>
+          <option value={SortType.TTK}>Time To Kill</option>
+          <option value={SortType.TANK}>Tankiness</option>
+        </Form.Select>
+        <span className="input-group-text">Priority</span>
+        <Form.Select
+          style={{ width: '15%' }}
+          value={filters.selected.sorted}
+          className="form-control"
+          onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
+        >
+          <option value={SortDirectionType.ASC}>Best</option>
+          <option value={SortDirectionType.DESC}>Worst</option>
+        </Form.Select>
+      </div>
+    </form>
+  );
 
   const modalFormSetting = () => {
     const pokemon = showSettingPokemon.pokemon;
@@ -1036,6 +1068,127 @@ const RaidBattle = () => {
     );
   };
 
+  const renderMove = (value: ICombat | undefined) => (
+    <span className={combineClasses(value?.type?.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}>
+      <div style={{ display: 'contents', width: 16 }}>
+        <img
+          className="pokemon-sprite-small sprite-type-select filter-shadow"
+          alt="img-type-pokemon"
+          src={APIService.getTypeHqSprite(value?.type)}
+        />
+      </div>
+      <span className="filter-shadow">{splitAndCapitalize(value?.name, '_', ' ')}</span>
+    </span>
+  );
+
+  const onHoverSlot = (id: string) => {
+    setHoverSlot(id);
+  };
+
+  const onLeaveSlot = () => {
+    setHoverSlot(undefined);
+  };
+
+  const onMovePokemon = (trainerId: number, index: number) => {
+    const tempPokemonBattle = [...trainerBattle[trainerId].pokemons];
+    if (!tempPokemonBattle[index]) {
+      tempPokemonBattle[index] = new PokemonRaidModel();
+    }
+    if (showMovePokemon.pokemon?.pokemon) {
+      const stats = tempPokemonBattle[index].dataTargetPokemon?.stats ?? initPokemonStats;
+      tempPokemonBattle[index].dataTargetPokemon = showMovePokemon.pokemon.pokemon;
+      tempPokemonBattle[index].dataTargetPokemon.stats = {
+        ...stats,
+        pokemonType: showMovePokemon.pokemon?.pokemonType ?? PokemonType.None,
+      };
+      tempPokemonBattle[index].fMoveTargetPokemon = {
+        name: getValueOrDefault(String, showMovePokemon.pokemon.fMove?.name),
+        moveType: showMovePokemon.pokemon.fMoveType ?? MoveType.None,
+      };
+      tempPokemonBattle[index].cMoveTargetPokemon = {
+        name: getValueOrDefault(String, showMovePokemon.pokemon.cMove?.name),
+        moveType: showMovePokemon.pokemon?.cMoveType ?? MoveType.None,
+      };
+      setTrainerBattle(update(trainerBattle, { [trainerId]: { pokemons: { $set: tempPokemonBattle } } }));
+    }
+  };
+
+  const modalMovePokemon = () => {
+    const pokemon = showMovePokemon.pokemon;
+    if (!pokemon) {
+      return <></>;
+    }
+    return (
+      <Fragment>
+        <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 5, paddingLeft: 10 }}>
+          <div className="pokemon-battle">
+            <span className="position-relative">
+              {pokemon.pokemonType === PokemonType.Shadow && (
+                <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+              )}
+              <img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, true)} />
+            </span>
+          </div>
+          <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 8 }}>
+            {renderMove(pokemon.fMove)}
+            {renderMove(pokemon.cMove)}
+          </div>
+        </div>
+        <p className="element-top">Select slot Pokémon that you want to replace.</p>
+        <div className="element-top justify-content-center" style={{ padding: '0 10px' }}>
+          {trainerBattle.map((trainer, i) => (
+            <div className="trainer-battle d-flex align-items-center position-relative" key={i}>
+              <Badge
+                color="primary"
+                overlap="circular"
+                badgeContent={`Trainer ${i + 1}`}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+              >
+                <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel(trainer.trainerId % 294)} />
+              </Badge>
+              <div className="pokemon-battle-group">
+                {trainer.pokemons.map((poke, index) => (
+                  <div
+                    onMouseOver={() => onHoverSlot(`${i}-${index}`)}
+                    onMouseLeave={onLeaveSlot}
+                    onTouchEnd={onLeaveSlot}
+                    key={index}
+                    className={combineClasses('pokemon-battle', hoverSlot === `${i}-${index}` ? 'slot-active' : '')}
+                    onClick={() => onMovePokemon(i, index)}
+                  >
+                    {poke.dataTargetPokemon ? (
+                      <span className="position-relative">
+                        {(hoverSlot === `${i}-${index}` ? pokemon.pokemonType : poke.dataTargetPokemon.stats?.pokemonType) ===
+                          PokemonType.Shadow && (
+                          <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                        )}
+                        <img
+                          className="pokemon-sprite-battle"
+                          alt="img-pokemon"
+                          src={APIService.getPokeIconSprite(
+                            hoverSlot === `${i}-${index}` ? pokemon.pokemon?.sprite : poke.dataTargetPokemon.sprite,
+                            true
+                          )}
+                        />
+                      </span>
+                    ) : (
+                      <span>
+                        <AddIcon fontSize="large" sx={{ color: 'lightgray' }} />
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Fragment>
+    );
+  };
+
   return (
     <Fragment>
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
@@ -1053,7 +1206,7 @@ const RaidBattle = () => {
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
           <div className="element-top position-relative">
-            {(!resultFMove || !resultCMove) && (
+            {(!isNotEmpty(resultFMove) || !isNotEmpty(resultCMove)) && (
               <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>
@@ -1210,10 +1363,17 @@ const RaidBattle = () => {
               })
               .slice(0, 10)
               .map((value, index) => (
-                <div className="top-raid-pokemon" key={index}>
+                <div className="position-relative top-raid-pokemon" key={index}>
+                  <div>
+                    <AddCircleIcon
+                      className="position-absolute cursor-pointer link-success"
+                      fontSize="large"
+                      onClick={() => handleShowMovePokemon(value)}
+                    />
+                  </div>
                   <div className="d-flex justify-content-center w-100">
                     <Link
-                      to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme)}`}
+                      to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
                       className="sprite-raid position-relative"
                     >
                       {value.pokemonType === PokemonType.Shadow && (
@@ -1436,11 +1596,11 @@ const RaidBattle = () => {
                 </div>
               </Fragment>
             )}
-            {resultRaid && (
+            {isNotEmpty(resultRaid) && (
               <Fragment>
                 <hr />
                 <ul className="element-top" style={{ listStyleType: 'initial' }}>
-                  {resultRaid.map((result, turn) => (
+                  {resultRaid?.map((result, turn) => (
                     <li style={{ marginBottom: 15 }} key={turn}>
                       <h4>
                         <b>Pokémon Round {turn + 1}</b>
@@ -1535,15 +1695,7 @@ const RaidBattle = () => {
                   pokemon={pokemon}
                   data={pokemonBattle}
                   setData={setPokemonBattle}
-                  defaultSetting={{
-                    level: filters.selected.level,
-                    pokemonType: PokemonType.Normal,
-                    iv: {
-                      atk: filters.selected.iv.atk,
-                      def: filters.selected.iv.def,
-                      sta: filters.selected.iv.sta,
-                    },
-                  }}
+                  defaultSetting={initPokemonStats}
                   onCopyPokemon={onCopyPokemon}
                   onRemovePokemon={onRemovePokemon}
                   onOptionsPokemon={onOptionsPokemon}
@@ -1566,7 +1718,7 @@ const RaidBattle = () => {
               className="cursor-pointer link-success"
               fontSize="large"
               onClick={() => {
-                setPokemonBattle(update(pokemonBattle, { $push: [initDataPoke] }));
+                setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }));
               }}
             />
           </div>
@@ -1611,6 +1763,20 @@ const RaidBattle = () => {
           </Button>
           <Button variant={VariantType.Primary} onClick={handleSaveSettingPokemon}>
             Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showMovePokemon.isShow} onHide={handleCloseMovePokemon} centered={true}>
+        <Modal.Header closeButton={true}>
+          <Modal.Title>Move Pokémon</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalMovePokemon()}</div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={VariantType.Secondary} onClick={handleCloseMovePokemon}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>

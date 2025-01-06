@@ -55,49 +55,47 @@ const BodyPVP = (props: BodyComponent) => {
     }
   }, [matchups, counters, props.data?.matchups, props.data?.counters]);
 
-  const renderItemList = (data: IBody, bgType: BackgroundType) => {
-    return (
-      <Link
-        to={`/pvp/${props.cp}/${props.type}/${data.opponent.replaceAll('_', '-')}`}
-        className="list-item-ranking"
-        style={{
-          backgroundImage: computeBgType(
-            data.pokemon?.types,
-            isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) ? PokemonType.Shadow : PokemonType.Normal
-          ),
-        }}
-      >
-        <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
-          <div className="d-flex justify-content-center">
-            <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
-              {isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) && (
-                <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-              )}
-              <img
-                alt="img-league"
-                className="pokemon-sprite-accordion"
-                src={data.form ? APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}
-              />
-            </span>
-          </div>
-          <div>
-            <b className="text-white text-shadow">
-              #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
-            </b>
-            <TypeInfo isShadow={true} isHideText={true} height={20} arr={data.pokemon?.types} />
-          </div>
-        </div>
-        <div style={{ marginRight: 15 }}>
-          <span
-            className="ranking-score score-ic text-white text-shadow filter-shadow"
-            style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
-          >
-            {data.rating}
+  const renderItemList = (data: IBody, bgType: BackgroundType) => (
+    <Link
+      to={`/pvp/${props.cp}/${props.type}/${data.opponent.replaceAll('_', '-')}`}
+      className="list-item-ranking"
+      style={{
+        backgroundImage: computeBgType(
+          data.pokemon?.types,
+          isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) ? PokemonType.Shadow : PokemonType.Normal
+        ),
+      }}
+    >
+      <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
+        <div className="d-flex justify-content-center">
+          <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
+            {isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) && (
+              <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+            )}
+            <img
+              alt="img-league"
+              className="pokemon-sprite-accordion"
+              src={data.form ? APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}
+            />
           </span>
         </div>
-      </Link>
-    );
-  };
+        <div>
+          <b className="text-white text-shadow">
+            #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
+          </b>
+          <TypeInfo isShadow={true} isHideText={true} height={20} arr={data.pokemon?.types} />
+        </div>
+      </div>
+      <div style={{ marginRight: 15 }}>
+        <span
+          className="ranking-score score-ic text-white text-shadow filter-shadow"
+          style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
+        >
+          {data.rating}
+        </span>
+      </div>
+    </Link>
+  );
 
   return (
     <div className="row" style={{ margin: 0 }}>

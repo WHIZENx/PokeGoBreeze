@@ -24,12 +24,15 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
 
   const timestamp = useSelector((state: StoreState) => state.store.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.Light);
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
 
   const [version, setVersion] = useState<string>();
 
   useEffect(() => {
-    getEdgeItem<string>(EdgeKey.VERSION).then((res) => setVersion(res));
+    try {
+      getEdgeItem<string>(EdgeKey.VERSION).then((res) => setVersion(res));
+      // tslint:disable-next-line:no-empty
+    } catch {}
   }, []);
 
   const [isDelay, setIsDelay] = useState(false);
@@ -53,10 +56,13 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
           PokéGoBreeze
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
+        <Navbar.Collapse id="responsive-navbar-nav" style={{ flexWrap: 'wrap' }}>
           <Nav className="me-auto">
             <Link className="nav-link" to="/">
-              Home
+              Pokédex
+            </Link>
+            <Link className="nav-link" to="/news">
+              News
             </Link>
             <NavDropdown title="Search">
               <Link className="dropdown-item" to="/search-pokemon">

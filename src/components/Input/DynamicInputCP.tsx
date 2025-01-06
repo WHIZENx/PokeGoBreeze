@@ -21,7 +21,7 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
     ) {
       return;
     }
-    if (props.statATK && props.statDEF && props.statSTA) {
+    if (props.statATK > 0 && props.statDEF > 0 && props.statSTA > 0) {
       const result = predictCPList(props.statATK, props.statDEF, props.statSTA, props.ivAtk, props.ivDef, props.ivSta);
       setPreCpArr(result);
     }
@@ -51,7 +51,7 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
       selectOnFocus={true}
       clearOnBlur={true}
       handleHomeEndKeys={true}
-      renderOption={(props, option) => <li {...props}>{`Level: ${option.level} | CP: ${option.CP}`}</li>}
+      renderOption={(props, option) => <li {...props} key={props.key}>{`Level: ${option.level} | CP: ${option.CP}`}</li>}
       sx={{ width: props.width ?? 'auto', minWidth: props.minWidth ?? 'auto' }}
       freeSolo={true}
       renderInput={(params) => <TextField {...params} label={props.label} />}

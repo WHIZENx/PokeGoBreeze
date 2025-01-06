@@ -1,32 +1,35 @@
-/* eslint-disable no-unused-vars */
 import './extensions/string.extension';
 import { TableColumn } from 'react-data-table-component';
 import { TableColumnModify } from './models/overrides/data-table.model';
 import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
 
+// eslint-disable-next-line no-unused-vars
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
 
 export const getValueOrDefault = <T>(
-  i: NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor,
+  type: NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor | DateConstructor,
   value: T | undefined | null,
-  defaultValue?: T | undefined | null
+  defaultValue?: T | null
 ) => {
   if (isUndefined(value) || isNull(value)) {
-    const type = Object.prototype.toString.call(i.prototype).slice(8, -1).toLowerCase();
-    switch (type) {
-      case 'number':
+    switch (type.name) {
+      case Number.name:
         return (defaultValue || 0) as T;
-      case 'string':
+      case String.name:
         return (defaultValue || '') as T;
-      case 'boolean':
+      case Boolean.name:
         return (defaultValue || false) as T;
-      case 'array':
+      case Array.name:
         return (defaultValue || []) as T;
-      case 'object':
+      case Date.name:
+        return (defaultValue || new Date()) as T;
+      case Object.name:
         return (defaultValue || {}) as T;
+      default:
+        return (defaultValue || value) as T;
     }
   }
-  return value as T;
+  return value;
 };
 
 export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => columns as TableColumn<T>[];
@@ -42,9 +45,14 @@ export const isNull = <T>(value?: T | null): value is null => typeof value !== '
 export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined =>
   getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
 
-export const isEmpty = (value?: string | null): value is null | undefined => getValueOrDefault(Boolean, value?.isEmpty(), false);
+export const isEmpty = (value?: string | null): value is null | undefined | '' => getValueOrDefault(Boolean, value?.isEmpty(), false);
 
-export const isNullOrEmpty = (value?: string | null): value is string | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
+export const isNullOrEmpty = (value?: string | null): value is '' | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
+
+export const isNotNumber = <T>(value: T | null | undefined) => {
+  const result = getValueOrDefault(String, value?.toString());
+  return isEmpty(result) || isNaN(Number(result));
+};
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>
   parseFloat((value || defaultValue).toString()) || defaultValue;
@@ -109,7 +117,7 @@ export const isInclude = (
     case IncludeMode.IncludeBetweenIgnoreCaseSensitive:
       return result.includesWithIgnoreCase(resultIncludesValue) || resultIncludesValue.includesWithIgnoreCase(result);
     case IncludeMode.IncludeBetween:
-      return result.includesWithIgnoreCase(resultIncludesValue) || resultIncludesValue.includes(result);
+      return result.includes(resultIncludesValue) || resultIncludesValue.includes(result);
     case IncludeMode.Include:
     default:
       return result.includes(resultIncludesValue);
@@ -126,16 +134,40 @@ export const isIncludeList = (
   }
   const result = getValueOrDefault(
     Array,
-    value?.map((i) => i?.toString())
+    value.map((i) => (!isNullOrUndefined(i) ? i.toString() : ''))
   );
   const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
   switch (mode) {
     case IncludeMode.IncludeIgnoreCaseSensitive:
-      return result.map((i) => i?.toUpperCase()).includes(resultIncludesValue.toUpperCase());
+      return result.map((i) => i.toUpperCase()).includes(resultIncludesValue.toUpperCase());
     case IncludeMode.Include:
     default:
       return result.includes(resultIncludesValue);
   }
+};
+
+export const isIncludeListBetween = (
+  valueList: (string | number | undefined | null)[] | undefined | null,
+  includesValueList: (string | number | undefined | null)[] | undefined | null,
+  mode: IncludeMode.Include | IncludeMode.IncludeIgnoreCaseSensitive = IncludeMode.Include
+) => {
+  const result = new Set(
+    getValueOrDefault(
+      Array,
+      valueList?.map((i) =>
+        !isNullOrUndefined(i) ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''
+      )
+    )
+  );
+  const resultBetween = new Set(
+    getValueOrDefault(
+      Array,
+      includesValueList?.map((i) =>
+        !isNullOrUndefined(i) ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''
+      )
+    )
+  );
+  return isNotEmpty(Array.from(result.intersection(resultBetween)));
 };
 
 export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) =>
@@ -143,11 +175,13 @@ export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.Ca
 
 export const getPropertyName = <T extends object>(
   obj: T | null | undefined,
+  // eslint-disable-next-line no-unused-vars
   expression: (x: { [Property in keyof T]: string }) => string
 ) => {
   if (!obj) {
     return '';
   }
+  // eslint-disable-next-line no-unused-vars
   const res = {} as { [Property in keyof T]: string };
   Object.keys(obj).map((k) => (res[k as keyof T] = k));
   return expression(res);

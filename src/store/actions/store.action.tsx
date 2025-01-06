@@ -10,6 +10,8 @@ import { IAsset } from '../../core/models/asset.model';
 import { LeagueData } from '../../core/models/league.model';
 import { PokemonPVPMove } from '../../core/models/pvp.model';
 import { DynamicObj } from '../../util/extension';
+import { IEvolutionChain } from '../../core/models/evolution-chain.model';
+import { IInformation } from '../../core/models/information';
 
 export enum StoreActionTypes {
   getStore = '[Store] GetStore',
@@ -21,6 +23,8 @@ export enum StoreActionTypes {
   setSticker = '[Store] SetSticker',
   setCombat = '[Store] SetCombat',
   setAssets = '[Store] SetAssets',
+  setEvolutionChain = '[Store] SetEvolutionChain',
+  setInformation = '[Store] SetInformation',
   setLeagues = '[Store] SetLeagues',
   setLogoPokeGO = '[Store] SetLogoPokeGO',
   setCPM = '[Store] SetCPM',
@@ -138,6 +142,34 @@ export class SetCombat implements Action {
   }
 }
 
+export class SetEvolutionChain implements Action {
+  readonly type = StoreActionTypes.setEvolutionChain;
+
+  constructor(public payload: IEvolutionChain[]) {}
+
+  static create(value: IEvolutionChain[]) {
+    const { type, payload } = new SetEvolutionChain(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+export class SetInformation implements Action {
+  readonly type = StoreActionTypes.setInformation;
+
+  constructor(public payload: IInformation[]) {}
+
+  static create(value: IInformation[]) {
+    const { type, payload } = new SetInformation(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
 export class SetAssets implements Action {
   readonly type = StoreActionTypes.setAssets;
 
@@ -242,6 +274,8 @@ export type StoreActionsUnion =
   | SetPokemon
   | SetSticker
   | SetCombat
+  | SetEvolutionChain
+  | SetInformation
   | SetAssets
   | SetLeagues
   | SetLogoPokeGO

@@ -105,6 +105,7 @@ const Pokemon = (props: IPokemonPage) => {
   const [pokemonDetails, setPokemonDetails] = useState<IPokemonData>();
 
   const [costModifier, setCostModifier] = useState<ITypeCost>();
+  const [urlEvolutionChain, setUrlEvolutionChain] = useState<string>();
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
@@ -137,6 +138,8 @@ const Pokemon = (props: IPokemonPage) => {
       ).catch(() => {
         return;
       });
+
+      setUrlEvolutionChain(data.evolution_chain?.url);
 
       const pokemon = pokemonData.find((item) => item.num === data.id);
       setPokeRatio(pokemon?.genderRatio);
@@ -185,14 +188,28 @@ const Pokemon = (props: IPokemonPage) => {
 
       // Set Default Form
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
-      const formParams = searchParams.get(Params.Form)?.toLowerCase().replaceAll('_', '-');
+      let formParams = searchParams.get(Params.Form)?.toLowerCase().replaceAll('_', '-');
+      const formTypeParams = searchParams.get(Params.FormType)?.toLowerCase();
+      if (formTypeParams) {
+        if (formParams) {
+          formParams = `${formParams}-${formTypeParams}`;
+        } else {
+          formParams = formTypeParams;
+        }
+      }
       const defaultForm = formListResult.flatMap((item) => item).filter((item) => item.form.isDefault);
       if (formParams) {
         const defaultFormSearch = formListResult
           .flatMap((form) => form)
           .find(
             (item) =>
-              isEqual(convertPokemonAPIDataName(item.form.formName).replaceAll('_', '-'), formParams, EqualMode.IgnoreCaseSensitive) ||
+              isEqual(
+                formTypeParams
+                  ? item.form.formName?.replaceAll('_', '-')
+                  : convertPokemonAPIDataName(item.form.formName).replaceAll('_', '-'),
+                formParams,
+                EqualMode.IgnoreCaseSensitive
+              ) ||
               isEqual(
                 convertPokemonAPIDataName(item.form.name).replaceAll('_', '-'),
                 `${item.defaultName}-${formParams}`,
@@ -545,6 +562,7 @@ const Pokemon = (props: IPokemonPage) => {
               pokemonDetail={pokemonDetails}
               defaultId={dataStorePokemon?.current?.id}
               region={region}
+              urlEvolutionChain={urlEvolutionChain}
               setProgress={setProgress}
               isLoadedForms={progress.isLoadedForms}
             />

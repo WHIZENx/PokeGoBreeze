@@ -63,7 +63,7 @@ const RankingPVP = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
   const params = useParams();
 
@@ -200,87 +200,85 @@ const RankingPVP = () => {
     };
   }, [fetchPokemonRanking, rankingData, pvp, router.action, dispatch]);
 
-  const renderItem = (data: IPokemonBattleRanking, key: number) => {
-    return (
-      <Accordion.Item eventKey={key.toString()}>
-        <Accordion.Header
-          onClick={() => {
-            if (storeStats && !storeStats[key]) {
-              setStoreStats(update(storeStats, { [key]: { $set: true } }));
-            }
-          }}
-        >
-          <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
-            <Link
-              to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${data.data?.speciesId?.replaceAll(
-                '_',
-                '-'
-              )}`}
-            >
-              <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
-            </Link>
-            <div className="d-flex justify-content-center">
-              <span className="position-relative" style={{ width: 50 }}>
-                {data.pokemonType === PokemonType.Shadow && (
-                  <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                )}
-                {data.pokemonType === PokemonType.Purified && (
-                  <img height={28} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
-                )}
-                <img
-                  alt="img-league"
-                  className="pokemon-sprite-accordion"
-                  src={data.form ? APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}
-                />
-              </span>
-            </div>
-            <div className="ranking-group w-100">
-              <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
-              <div style={{ marginRight: 15 }}>
-                <span className="ranking-score score-ic">{data.data?.score}</span>
-              </div>
+  const renderItem = (data: IPokemonBattleRanking, key: number) => (
+    <Accordion.Item eventKey={key.toString()}>
+      <Accordion.Header
+        onClick={() => {
+          if (storeStats && !storeStats[key]) {
+            setStoreStats(update(storeStats, { [key]: { $set: true } }));
+          }
+        }}
+      >
+        <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
+          <Link
+            to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${data.data?.speciesId?.replaceAll(
+              '_',
+              '-'
+            )}`}
+          >
+            <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+          </Link>
+          <div className="d-flex justify-content-center">
+            <span className="position-relative" style={{ width: 50 }}>
+              {data.pokemonType === PokemonType.Shadow && (
+                <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+              )}
+              {data.pokemonType === PokemonType.Purified && (
+                <img height={28} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
+              )}
+              <img
+                alt="img-league"
+                className="pokemon-sprite-accordion"
+                src={data.form ? APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}
+              />
+            </span>
+          </div>
+          <div className="ranking-group w-100">
+            <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
+            <div style={{ marginRight: 15 }}>
+              <span className="ranking-score score-ic">{data.data?.score}</span>
             </div>
           </div>
-        </Accordion.Header>
-        <Accordion.Body
-          style={{
-            padding: 0,
-            backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, 0.8, styleSheet.current),
-          }}
-        >
-          {storeStats && storeStats[key] && (
-            <Fragment>
-              <div className="pokemon-ranking-body ranking-body">
-                <div className="w-100 ranking-info element-top">
-                  <HeaderPVP data={data} />
-                  <hr />
-                  <BodyPVP assets={dataStore.assets} pokemonData={dataStore.pokemon} data={data.data} cp={params.cp} type={params.type} />
-                </div>
-                <div className="container">
-                  <hr />
-                </div>
-                <div className="stats-container">
-                  <OverAllStats data={data} statsRanking={statsRanking} cp={params.cp} type={params.type} />
-                </div>
-                <div className="container">
-                  <hr />
-                  <TypeEffectivePVP types={data.pokemon?.types} />
-                </div>
-                <div className="container">
-                  <MoveSet moves={data.data?.moves} pokemon={data.pokemon} combatData={dataStore.combat} />
-                </div>
+        </div>
+      </Accordion.Header>
+      <Accordion.Body
+        style={{
+          padding: 0,
+          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, 0.8, styleSheet.current),
+        }}
+      >
+        {storeStats && storeStats[key] && (
+          <Fragment>
+            <div className="pokemon-ranking-body ranking-body">
+              <div className="w-100 ranking-info element-top">
+                <HeaderPVP data={data} />
+                <hr />
+                <BodyPVP assets={dataStore.assets} pokemonData={dataStore.pokemon} data={data.data} cp={params.cp} type={params.type} />
               </div>
-              <LeaveToggle eventKey={key.toString()}>
-                <span className="text-danger">
-                  Close <CloseIcon sx={{ color: 'red' }} />
-                </span>
-              </LeaveToggle>
-            </Fragment>
-          )}
-        </Accordion.Body>
-      </Accordion.Item>
-    );
-  };
+              <div className="container">
+                <hr />
+              </div>
+              <div className="stats-container">
+                <OverAllStats data={data} statsRanking={statsRanking} cp={params.cp} type={params.type} />
+              </div>
+              <div className="container">
+                <hr />
+                <TypeEffectivePVP types={data.pokemon?.types} />
+              </div>
+              <div className="container">
+                <MoveSet moves={data.data?.moves} pokemon={data.pokemon} combatData={dataStore.combat} />
+              </div>
+            </div>
+            <LeaveToggle eventKey={key.toString()}>
+              <span className="text-danger">
+                Close <CloseIcon sx={{ color: 'red' }} />
+              </span>
+            </LeaveToggle>
+          </Fragment>
+        )}
+      </Accordion.Body>
+    </Accordion.Item>
+  );
 
   const setSortedPokemonBattle = (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
     const modelColumn = primary.data || secondary.data;

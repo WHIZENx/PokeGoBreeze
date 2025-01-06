@@ -22,11 +22,16 @@ import {
 import { ISticker, Sticker } from './models/sticker.model';
 
 import pokemonStoreData from '../data/pokemon.json';
+import textEng from '../data/text_english.json';
 import {
+  capitalize,
   checkMoveSetAvailable,
   convertPokemonDataName,
+  getDataWithKey,
   getKeyWithData,
+  getLureItemType,
   getPokemonType,
+  getTicketRewardType,
   replacePokemonGoForm,
   replaceTempMoveName,
 } from '../util/utils';
@@ -63,15 +68,20 @@ import {
   Options,
   PokemonPermission,
   PokemonReward,
+  EvolutionChainData,
+  GlobalEventTicket,
+  ItemSettings,
 } from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
-import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, isNotNumber, toNumber } from '../util/extension';
 import { GenderType } from './enums/asset.enum';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
-import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType, LeagueConditionType } from './enums/option.enum';
+import { ItemEvolutionRequireType, ItemEvolutionType, LeagueConditionType } from './enums/option.enum';
 import { StatsBase } from './models/stats.model';
+import { EvolutionChain, EvolutionInfo, IEvolutionInfo } from './models/evolution-chain.model';
+import { Information, ITicketReward, TicketReward } from './models/information';
 
 export const getOption = <T>(options: any, args: string[], defaultValue?: T): T => {
   if (!options) {
@@ -184,7 +194,7 @@ const convertAndReplaceNameGO = (name: string, defaultName = '') => {
     .replace(/GALARIAN_STANDARD/, FORM_GALARIAN);
 };
 
-export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncounter[]) => {
+export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEncounter[]) => {
   let result: IPokemonData[] = [];
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
@@ -214,7 +224,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
     }
 
     const defaultName = pokemonSettings.form ? pokemonSettings.form.toString() : pokemonSettings.pokemonId;
-    const pokemonEncounter = encounter.find((e) => isEqual(defaultName, e.name));
+    const pokemonEncounter = encounter?.find((e) => isEqual(defaultName, e.name));
 
     pokemon.encounter = new Encounter({
       ...pokemon.encounter,
@@ -344,42 +354,38 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter: PokemonEncou
       if (evo.onlyNighttime) {
         dataEvo.quest.isOnlyNighttime = evo.onlyNighttime;
       }
-      if (evo.lureItemRequirement) {
-        if (evo.lureItemRequirement === ItemLureType.Magnetic) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Magnetic;
-        } else if (evo.lureItemRequirement === ItemLureType.Mossy) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Mossy;
-        } else if (evo.lureItemRequirement === ItemLureType.Glacial) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Glacial;
-        } else if (evo.lureItemRequirement === ItemLureType.Rainy) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Rainy;
-        } else if (evo.lureItemRequirement === ItemLureType.Sparkly) {
-          dataEvo.quest.lureItemRequirement = ItemLureRequireType.Sparkly;
-        }
-      }
-      if (evo.evolutionItemRequirement) {
-        if (evo.evolutionItemRequirement === ItemEvolutionType.SunStone) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.SunStone;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.KingsRock) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.KingsRock;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.MetalCoat) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.MetalCoat;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.Gen4Stone) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Gen4Stone;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.DragonScale) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.DragonScale;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.Upgrade) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Upgrade;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.Gen5Stone) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Gen5Stone;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.OtherStone) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.OtherStone;
-        } else if (evo.evolutionItemRequirement === ItemEvolutionType.Beans) {
-          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Beans;
-        }
-      }
       if (evo.onlyUpsideDown) {
         dataEvo.quest.isOnlyUpsideDown = evo.onlyUpsideDown;
+      }
+      dataEvo.quest.lureItemRequirement = getLureItemType(evo.lureItemRequirement);
+      switch (evo.evolutionItemRequirement) {
+        case ItemEvolutionType.SunStone:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.SunStone;
+          break;
+        case ItemEvolutionType.KingsRock:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.KingsRock;
+          break;
+        case ItemEvolutionType.MetalCoat:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.MetalCoat;
+          break;
+        case ItemEvolutionType.Gen4Stone:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Gen4Stone;
+          break;
+        case ItemEvolutionType.DragonScale:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.DragonScale;
+          break;
+        case ItemEvolutionType.Upgrade:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Upgrade;
+          break;
+        case ItemEvolutionType.Gen5Stone:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Gen5Stone;
+          break;
+        case ItemEvolutionType.OtherStone:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.OtherStone;
+          break;
+        case ItemEvolutionType.Beans:
+          dataEvo.quest.evolutionItemRequirement = ItemEvolutionRequireType.Beans;
+          break;
       }
       if (isNotEmpty(evo.questDisplay)) {
         const questDisplay = evo.questDisplay[0].questRequirementTemplateId;
@@ -1142,6 +1148,37 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
   return result;
 };
 
+const mappingPokemonEvoInfo = (pokemonData: EvolutionChainData[] | undefined, pokemon: IPokemonData[]) => {
+  const result: IEvolutionInfo[] = [];
+  pokemonData?.forEach((item) => {
+    const form = item.headerMessage?.replace('_pokedex_header', '').toUpperCase() ?? FORM_NORMAL;
+    item.evolutionInfos.forEach((info) => {
+      const id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, info.pokemon))?.num);
+      result.push(
+        EvolutionInfo.create({
+          id,
+          form,
+          pokemonId: info.pokemon,
+        })
+      );
+    });
+  });
+  return result;
+};
+
+export const optionEvolutionChain = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
+  return data
+    .filter((item) => /^EVOLUTION_V\d{4}_*/g.test(item.templateId))
+    .map((item) => {
+      const regId = item.templateId.match(/\d{4}/g) as string[];
+      return EvolutionChain.create({
+        id: toNumber(regId[0]),
+        pokemonId: item.data.evolutionChainDisplaySettings.pokemon,
+        evolutionInfos: mappingPokemonEvoInfo(item.data.evolutionChainDisplaySettings.evolutionChains, pokemon),
+      });
+    });
+};
+
 export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IAsset[]) => {
   pokemonData.forEach((item) => {
     const form = assets.find((asset) => asset.id === item.num);
@@ -1177,4 +1214,129 @@ export const mappingMoveSetPokemonGO = (pokemonData: IPokemonData[], combat: ICo
     pokemon.purifiedMoves = convertMoveName(combat, pokemon.purifiedMoves);
     pokemon.shadowMoves = convertMoveName(combat, pokemon.shadowMoves);
   });
+};
+
+const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData: IPokemonData[]) => {
+  const rewards: ITicketReward[] = [];
+  if (ticket && isNotEmpty(ticket.iconRewards)) {
+    ticket.iconRewards?.forEach((result) => {
+      const reward = new TicketReward();
+      reward.type = getTicketRewardType(result.type);
+      if (result.avatarTemplateId || result.neutralAvatarItemTemplate) {
+        reward.avatarTemplateId = result.avatarTemplateId;
+        reward.neutralAvatarItemTemplate = result.neutralAvatarItemTemplate;
+      } else if (result.exp) {
+        reward.exp = result.exp;
+      } else if (result.stardust) {
+        reward.stardust = result.stardust;
+      } else if (result.pokecoin) {
+        reward.pokeCoin = result.pokecoin;
+      } else if (result.item) {
+        reward.item = {
+          ...result.item,
+          item: result.item.item.toString(),
+        };
+      } else if (result.pokemonEncounter) {
+        const id = pokemonData.find((poke) => poke.pokemonId === result.pokemonEncounter?.pokemonId)?.num;
+        reward.pokemon = {
+          id,
+          pokemonId: result.pokemonEncounter.pokemonId,
+          form: result.pokemonEncounter.pokemonDisplay?.form?.replace(`${result.pokemonEncounter.pokemonId}_`, ''),
+          costume: result.pokemonEncounter.pokemonDisplay?.costume,
+        };
+      }
+      rewards.push(reward);
+    });
+  }
+  return rewards;
+};
+
+const getTextWithKey = <T>(data: object, findKey: string | number) => {
+  const result = Object.entries(data).find(([key]) => isInclude(key, findKey, IncludeMode.IncludeIgnoreCaseSensitive));
+  return result && isNotEmpty(result) ? (result[1] as T) : undefined;
+};
+
+const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
+  if (itemSettings) {
+    const textKey = getValueOrDefault(String, itemSettings.nameOverride);
+    const result = getDataWithKey<string>(textEng, textKey, EqualMode.IgnoreCaseSensitive);
+    if (result) {
+      return result;
+    }
+    if (itemSettings.globalEventTicket.eventBannerUrl) {
+      let descKey = itemSettings.globalEventTicket.eventBannerUrl.split('/');
+      let srcText = descKey[descKey.length - 1];
+      srcText = srcText
+        .replaceAll('-', '_')
+        .replace(/\.[^.]*$/, '')
+        .replace(/^PGO_MCS_/, '');
+      const [firstText] = srcText.split('_');
+      if (!isNotNumber(firstText) && !itemSettings.globalEventTicket.titleImageUrl) {
+        const descKey = itemSettings.globalEventTicket.itemBagDescriptionKey.split('_');
+        return descKey[descKey.length - 1]?.split(/(?=[A-Z])/).join(' ');
+      }
+      descKey = srcText.split('_');
+      if (/^PGO/i.test(descKey[0])) {
+        const msgList: string[] = [];
+        for (const text of descKey.slice(1)) {
+          if (/[\d*]x[\d*]/i.test(text)) {
+            break;
+          }
+          msgList.push(text);
+        }
+        return msgList
+          .map((text) => text.replace(/^S/i, 'Season '))
+          .map((text) => capitalize(text))
+          .join(' ');
+      } else {
+        descKey = descKey
+          .filter(
+            (text) => /^S[\d*]/i.test(text) || isInclude(itemSettings.descriptionOverride, text, IncludeMode.IncludeIgnoreCaseSensitive)
+          )
+          .map((text) => text.replace(/^S/i, 'Season '));
+      }
+      return descKey.map((text) => capitalize(text)).join(' ');
+    }
+  }
+  return;
+};
+
+const getInformationDesc = (itemSettings: ItemSettings | undefined) => {
+  const textKey = getValueOrDefault(String, itemSettings?.descriptionOverride, itemSettings?.globalEventTicket.itemBagDescriptionKey);
+  if (!textKey) {
+    return;
+  }
+  const result = getTextWithKey<string>(textEng, textKey);
+  return result;
+};
+
+const getInformationDetails = (itemSettings: ItemSettings | undefined) => {
+  const textKey = getValueOrDefault(String, itemSettings?.globalEventTicket.detailsLinkKey);
+  if (!textKey) {
+    return;
+  }
+  const result = getTextWithKey<string>(textEng, textKey);
+  return result;
+};
+
+export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonData[]) => {
+  return data
+    .filter((item) => item.templateId.startsWith('ITEM_') && item.data.itemSettings && item.data.itemSettings.globalEventTicket)
+    .map((item) => {
+      return Information.create({
+        id: item.templateId,
+        title: getInformationTitle(item.data.itemSettings),
+        desc: getInformationDesc(item.data.itemSettings),
+        type: item.data.itemSettings?.itemType,
+        startTime: item.data.itemSettings?.globalEventTicket.eventStartTime,
+        endTime: item.data.itemSettings?.globalEventTicket.eventEndTime,
+        bannerUrl: item.data.itemSettings?.globalEventTicket.eventBannerUrl,
+        backgroundImgUrl: item.data.itemSettings?.globalEventTicket.backgroundImageUrl,
+        titleImgUrl: item.data.itemSettings?.globalEventTicket.titleImageUrl,
+        giftAble: Boolean(item.data.itemSettings?.globalEventTicket.giftable),
+        giftItem: item.data.itemSettings?.globalEventTicket.giftItem,
+        detailsLink: getInformationDetails(item.data.itemSettings),
+        rewards: getInformationReward(item.data.itemSettings?.globalEventTicket, pokemonData),
+      });
+    });
 };

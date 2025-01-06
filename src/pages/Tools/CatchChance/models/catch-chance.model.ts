@@ -1,20 +1,11 @@
+import { BadgeType } from '../../../../components/Input/enums/badge-type.enum';
+import { IEncounter } from '../../../../core/models/pokemon.model';
 import { DynamicObj } from '../../../../util/extension';
 import { PokeBallType } from '../enums/poke-ball.enum';
 
-export interface PokemonCatchChance {
+export interface PokemonCatchChance extends IEncounter {
   baseCaptureRate?: number;
   baseFleeRate?: number;
-  movementType?: string;
-  movementTimerS?: number;
-  jumpTimeS?: number;
-  attackTimerS?: number;
-  attackProbability?: number;
-  dodgeProbability?: number;
-  dodgeDurationS?: number;
-  dodgeDistance?: number;
-  obShadowFormBaseCaptureRate?: number;
-  obShadowFormAttackProbability?: number;
-  obShadowFormDodgeProbability?: number;
   result?: DynamicObj<DynamicObj<number>>;
 }
 
@@ -53,12 +44,12 @@ export class DataAdvance implements IDataAdvance {
 }
 
 interface IMedalType {
-  priority: number;
+  priority: BadgeType;
   type: string;
 }
 
 export class MedalType implements IMedalType {
-  priority = 0;
+  priority = BadgeType.None;
   type = '';
 
   static create(value: IMedalType) {

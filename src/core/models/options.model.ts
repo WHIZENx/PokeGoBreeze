@@ -261,6 +261,81 @@ interface EvolutionQuestTemplate {
   goals: EvolutionGoal[];
 }
 
+interface EvolutionInfo {
+  pokemon: string;
+  form?: string;
+}
+
+export interface EvolutionChainData {
+  headerMessage?: string;
+  evolutionInfos: EvolutionInfo[];
+}
+
+interface EvolutionChainDisplaySettings {
+  pokemon: string;
+  evolutionChains?: EvolutionChainData[];
+}
+
+interface IconRewardItem {
+  item: string | number;
+  amount?: number;
+}
+
+interface IconRewardPokemonDisplay {
+  costume: string;
+  form?: string;
+}
+
+interface IconRewardPokemon {
+  pokemonId: string;
+  pokemonDisplay?: IconRewardPokemonDisplay;
+}
+
+interface NeutralAvatarItem {
+  neutralAvatarItemTemplateString1: string;
+  neutralAvatarItemTemplateString2: string;
+}
+
+interface IconReward {
+  type: string;
+  item?: IconRewardItem;
+  pokemonEncounter?: IconRewardPokemon;
+  stardust?: number;
+  pokecoin?: number;
+  exp?: number;
+  avatarTemplateId?: string;
+  neutralAvatarItemTemplate?: NeutralAvatarItem;
+}
+
+export interface GlobalEventTicket {
+  eventStartTime: string;
+  eventEndTime: string;
+  itemBagDescriptionKey: string;
+  eventBannerUrl: string;
+  clientEventStartTimeUtcMs: string;
+  clientEventEndTimeUtcMs: string;
+  ticketItem?: string;
+  giftable?: boolean;
+  giftItem?: string;
+  displayV2Enabled?: boolean;
+  backgroundImageUrl?: string;
+  titleImageUrl?: string;
+  eventDatetimeRangeKey?: string;
+  textRewardsKey?: string;
+  iconRewards?: IconReward[];
+  detailsLinkKey?: string;
+}
+
+export interface ItemSettings {
+  itemId: string;
+  itemType: string;
+  category: string;
+  globalEventTicket: GlobalEventTicket;
+  ignoreInventorySpace?: boolean;
+  nameOverride?: string;
+  descriptionOverride?: string;
+}
+
 interface DataGM {
   pokemonSettings: PokemonModel;
   combatSettings: CombatSetting;
@@ -285,6 +360,8 @@ interface DataGM {
   vsSeekerLoot: VsSeekerLoot;
   combatLeague: CombatLeague;
   evolutionQuestTemplate?: EvolutionQuestTemplate;
+  evolutionChainDisplaySettings: EvolutionChainDisplaySettings;
+  itemSettings?: ItemSettings;
 }
 
 export interface PokemonDataGM {

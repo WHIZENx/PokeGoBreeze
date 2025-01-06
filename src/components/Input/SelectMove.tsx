@@ -9,8 +9,8 @@ import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel } from './models/select-move.model';
 import { addSelectMovesByType, retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
-import { combineClasses, isEqual, isNotEmpty } from '../../util/extension';
-import { InputType } from './enums/input-type.enum';
+import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
+import { InputType, SelectPosition } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
   const pokemon = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -28,7 +28,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
   };
 
   const findMove = useCallback(
-    (id: number, form: string | null | undefined, type: TypeMove, selected = false) => {
+    (id: number | undefined, form: string | null | undefined, type: TypeMove, selected = false) => {
       const result = retrieveMoves(pokemon, id, form);
       if (result) {
         const simpleMove = addSelectMovesByType(result, type);
@@ -43,84 +43,114 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   useEffect(() => {
     if (isNotEmpty(pokemon)) {
-      if (props.pokemon?.num) {
-        findMove(props.pokemon.num, props.pokemon.forme, props.moveType, props.isSelected);
+      if (toNumber(props.pokemon?.num) > 0) {
+        findMove(props.pokemon?.num, props.pokemon?.forme, props.moveType, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
     }
   }, [props.pokemon?.num, props.pokemon?.forme, props.isSelected, resultMove.length, pokemon, findMove]);
 
-  const smallInput = () => {
-    return (
-      <div
-        className={combineClasses(
-          'position-relative d-flex align-items-center form-control',
-          !props.isDisable && props.pokemon ? 'card-select-enabled' : 'card-select-disabled'
-        )}
-        style={{ padding: 0, borderRadius: 0 }}
-      >
-        {props.pokemon && !isNotEmpty(resultMove) && (
-          <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>
-        )}
-        {isNotEmpty(resultMove) && (
-          <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
-            <CardMoveSmall
-              value={props.move}
-              isShow={Boolean(props.pokemon)}
-              isDisable={props.isDisable}
-              isSelect={resultMove.length > 1}
-            />
-            {showMove && (
-              <div className="result-move-select" style={{ maxHeight: props.maxHeight ?? 180 }}>
-                <div>
-                  {resultMove
-                    .filter((value) => !isEqual(value.name, props.move?.name))
-                    .map((value, index) => (
-                      <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
-                        <CardMoveSmall value={value} />
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  };
+  const smallCardInput = () => (
+    <CardMoveSmall value={props.move} isShow={Boolean(props.pokemon)} isDisable={props.isDisable} isSelect={resultMove.length > 1} />
+  );
 
-  const defaultInput = () => {
-    return (
-      <div
-        className="card-input"
-        style={{ marginBottom: 15 }}
-        tabIndex={0}
-        onClick={() => setShowMove(true)}
-        onBlur={() => setShowMove(false)}
-      >
-        <CardMove value={props.move} />
-        {showMove && (
-          <div className="result-move-select-default">
-            <div>
-              {resultMove
-                .filter((value) => !isEqual(value.name, props.move?.name))
-                .map((value, index) => (
-                  <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
-                    <CardMove value={value} />
-                  </div>
-                ))}
-            </div>
+  const smallCardList = (position = SelectPosition.Down) => (
+    <>
+      {showMove && (
+        <div
+          className={combineClasses('result-move-select', position === SelectPosition.Up ? 'pos-up' : '')}
+          style={{ maxHeight: props.maxHeight ?? 180 }}
+        >
+          <div>
+            {resultMove
+              .filter((value) => !isEqual(value.name, props.move?.name))
+              .map((value, index) => (
+                <div className="card-move" key={index} onMouseDown={() => changeMove(value)}>
+                  <CardMoveSmall value={value} />
+                </div>
+              ))}
           </div>
-        )}
-      </div>
-    );
-  };
+        </div>
+      )}
+    </>
+  );
+
+  const smallInput = () => (
+    <div
+      className={combineClasses(
+        'position-relative d-flex align-items-center form-control',
+        !props.isDisable && props.pokemon ? 'card-select-enabled' : 'card-select-disabled'
+      )}
+      style={{ padding: 0, borderRadius: 0 }}
+    >
+      {props.pokemon && !isNotEmpty(resultMove) && (
+        <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>
+      )}
+      {isNotEmpty(resultMove) && (
+        <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
+          {isUndefined(props.position) || props.position === SelectPosition.Down ? (
+            <>
+              {smallCardInput()}
+              {smallCardList(props.position)}
+            </>
+          ) : (
+            <>
+              {smallCardList(props.position)}
+              {smallCardInput()}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  const defaultCardInput = () => <CardMove value={props.move} />;
+
+  const defaultCardList = (position = SelectPosition.Down) => (
+    <>
+      {showMove && (
+        <div className={combineClasses('result-move-select-default', position === SelectPosition.Up ? 'pos-up-default' : '')}>
+          <div>
+            {resultMove
+              .filter((value) => !isEqual(value.name, props.move?.name))
+              .map((value, index) => (
+                <div className="container card-pokemon" key={index} onMouseDown={() => changeMove(value)}>
+                  <CardMove value={value} />
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+
+  const defaultInput = () => (
+    <div
+      className="position-relative card-input"
+      style={{ marginBottom: 15 }}
+      tabIndex={0}
+      onClick={() => setShowMove(true)}
+      onBlur={() => setShowMove(false)}
+    >
+      {isUndefined(props.position) || props.position === SelectPosition.Down ? (
+        <>
+          {defaultCardInput()}
+          {defaultCardList(props.position)}
+        </>
+      ) : (
+        <>
+          {defaultCardList(props.position)}
+          {defaultCardInput()}
+        </>
+      )}
+    </div>
+  );
 
   return (
     <Fragment>
       {props.inputType === InputType.Small && <Fragment>{smallInput()}</Fragment>}
-      {!props.inputType && <Fragment>{defaultInput()}</Fragment>}
+      {(!props.inputType || props.inputType !== InputType.Small) && <Fragment>{defaultInput()}</Fragment>}
     </Fragment>
   );
 };

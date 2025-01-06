@@ -8,8 +8,10 @@ import {
   getKeyWithData,
   getMoveType,
   generateParamForm,
+  getKeysObj,
+  getAllMoves,
 } from '../../../util/utils';
-import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, DEFAULT_TYPES, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -65,6 +67,7 @@ import {
 import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
+import { TypeEff } from '../../../core/models/type-eff.model';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -127,7 +130,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Pokémon Name',
     selector: (row) => (
       <Link
-        to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme)}`}
+        to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
         {row.pokemonType === PokemonType.Shadow && (
@@ -244,7 +247,7 @@ const DpsTdo = () => {
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
   const router = useSelector((state: RouterState) => state.router);
 
-  const [types, setTypes] = useState(DEFAULT_TYPES);
+  const [types, setTypes] = useState(getKeysObj(new TypeEff()));
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
   const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
@@ -393,9 +396,8 @@ const DpsTdo = () => {
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
-      } else {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
       }
+      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
       addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType);
       addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, vf, fMoveType);
     });
@@ -404,8 +406,7 @@ const DpsTdo = () => {
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
     data.pokemon.forEach((pokemon) => {
-      addFPokeData(dataList, pokemon, pokemon.quickMoves);
-      addFPokeData(dataList, pokemon, pokemon.eliteQuickMoves);
+      addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
     setShowSpinner(false);
     return dataList;
@@ -676,35 +677,95 @@ const DpsTdo = () => {
             <div className="input-group">
               <span className="input-group-text">Filter show</span>
               <FormControlLabel
-                control={<Checkbox checked={showShadow} onChange={(_, check) => setFilters({ ...filters, showShadow: check })} />}
+                control={
+                  <Checkbox
+                    checked={showShadow}
+                    onChange={(_, check) =>
+                      setFilters({ ...filters, showShadow: check, enableShadow: check === false ? check : filters.enableShadow })
+                    }
+                  />
+                }
                 label={getKeyWithData(PokemonType, PokemonType.Shadow)}
               />
               <FormControlLabel
-                control={<Checkbox checked={showMega} onChange={(_, check) => setFilters({ ...filters, showMega: check })} />}
+                control={
+                  <Checkbox
+                    checked={showMega}
+                    onChange={(_, check) =>
+                      setFilters({ ...filters, showMega: check, enableMega: check === false ? check : filters.enableMega })
+                    }
+                  />
+                }
                 label={getKeyWithData(PokemonType, PokemonType.Mega)}
               />
               <FormControlLabel
-                control={<Checkbox checked={showGMax} onChange={(_, check) => setFilters({ ...filters, showGMax: check })} />}
+                control={
+                  <Checkbox
+                    checked={showGMax}
+                    onChange={(_, check) =>
+                      setFilters({ ...filters, showGMax: check, enableGMax: check === false ? check : filters.enableGMax })
+                    }
+                  />
+                }
                 label={getKeyWithData(PokemonType, PokemonType.GMax)}
               />
               <FormControlLabel
-                control={<Checkbox checked={showPrimal} onChange={(_, check) => setFilters({ ...filters, showPrimal: check })} />}
+                control={
+                  <Checkbox
+                    checked={showPrimal}
+                    onChange={(_, check) =>
+                      setFilters({ ...filters, showPrimal: check, enablePrimal: check === false ? check : filters.enablePrimal })
+                    }
+                  />
+                }
                 label={getKeyWithData(PokemonType, PokemonType.Primal)}
               />
               <FormControlLabel
-                control={<Checkbox checked={showLegendary} onChange={(_, check) => setFilters({ ...filters, showLegendary: check })} />}
+                control={
+                  <Checkbox
+                    checked={showLegendary}
+                    onChange={(_, check) =>
+                      setFilters({ ...filters, showLegendary: check, enableLegendary: check === false ? check : filters.enableLegendary })
+                    }
+                  />
+                }
                 label="Legendary"
               />
               <FormControlLabel
-                control={<Checkbox checked={showMythic} onChange={(_, check) => setFilters({ ...filters, showMythic: check })} />}
+                control={
+                  <Checkbox
+                    checked={showMythic}
+                    onChange={(_, check) =>
+                      setFilters({ ...filters, showMythic: check, enableMythic: check === false ? check : filters.enableMythic })
+                    }
+                  />
+                }
                 label="Mythic"
               />
               <FormControlLabel
-                control={<Checkbox checked={showUltraBeast} onChange={(_, check) => setFilters({ ...filters, showUltraBeast: check })} />}
+                control={
+                  <Checkbox
+                    checked={showUltraBeast}
+                    onChange={(_, check) =>
+                      setFilters({
+                        ...filters,
+                        showUltraBeast: check,
+                        enableUltraBeast: check === false ? check : filters.enableUltraBeast,
+                      })
+                    }
+                  />
+                }
                 label="Ultra Beast"
               />
               <FormControlLabel
-                control={<Checkbox checked={showSpecialMove} onChange={(_, check) => setFilters({ ...filters, showSpecialMove: check })} />}
+                control={
+                  <Checkbox
+                    checked={showSpecialMove}
+                    onChange={(_, check) =>
+                      setFilters({ ...filters, showSpecialMove: check, enableSpecial: check === false ? check : filters.enableSpecial })
+                    }
+                  />
+                }
                 label="Special Moves"
               />
             </div>

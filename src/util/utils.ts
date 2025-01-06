@@ -40,11 +40,25 @@ import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
 import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
-import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, isNullOrUndefined, toNumber } from './extension';
+import {
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isNotNumber,
+  isNullOrUndefined,
+  toNumber,
+} from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import { Options } from '../core/models/options.model';
 import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
+import { TypeEffChart } from '../core/models/type-eff.model';
+import { TypeEffectiveAmount } from '../components/Effective/enums/type-effective.enum';
+import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
+import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 
 class Mask {
   value: number;
@@ -180,8 +194,8 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
   if (isNullOrUndefined(value)) {
     return value;
   }
-
-  return notFull ? Moment(new Date(toNumber(value))).format('D MMMM YYYY') : Moment(new Date(toNumber(value))).format('HH:mm D MMMM YYYY');
+  const date = Moment(new Date(isNotNumber(value) ? value : toNumber(value)));
+  return notFull ? date.format('D MMMM YYYY') : date.format('HH:mm D MMMM YYYY');
 };
 
 export const convertModelSpritName = (text: string | undefined) => {
@@ -246,9 +260,10 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
   const formOri = form;
   if (text === 'lanturnw') {
     text = 'lanturn';
-  }
-  if (text === 'unown') {
+  } else if (text === 'unown') {
     text = 'unown-a';
+  } else if (text === 'clodsiresb') {
+    text = 'clodsire';
   }
   if (isInclude(text, 'pyroar') || isInclude(text, 'frillish') || isInclude(text, 'jellicent') || isInclude(text, 'urshifu')) {
     return text.split('_').at(0);
@@ -528,13 +543,13 @@ export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => {
   };
 };
 
-export const getDataWithKey = <T>(data: object, findKey: string | number) => {
-  const result = Object.entries(data).find(([key]) => key === findKey.toString());
+export const getDataWithKey = <T>(data: object, findKey: string | number | undefined | null, mode = EqualMode.CaseSensitive) => {
+  const result = Object.entries(data).find(([key]) => isEqual(key, findKey, mode));
   return result && isNotEmpty(result) ? (result[1] as T) : undefined;
 };
 
-export const getKeyWithData = <V>(data: object, findValue: V) => {
-  const result = Object.entries(data).find(([, value]: [string, V]) => value === findValue);
+export const getKeyWithData = <T>(data: object, findValue: T) => {
+  const result = Object.entries(data).find(([, value]: [string, T]) => value === findValue);
   return result && isNotEmpty(result) ? result[0] : undefined;
 };
 
@@ -553,10 +568,10 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
     return false;
   }
 
-  const quickMoves = getValueOrDefault(Array, pokemon.quickMoves);
-  const cinematicMoves = getValueOrDefault(Array, pokemon.cinematicMoves);
+  const fastMoves = getAllMoves(pokemon, TypeMove.Fast);
+  const chargeMoves = getAllMoves(pokemon, TypeMove.Charge);
   const allMoves = getAllMoves(pokemon);
-  if (allMoves.length <= 2 && (quickMoves[0] === 'STRUGGLE' || isInclude(quickMoves[0], 'SPLASH')) && cinematicMoves[0] === 'STRUGGLE') {
+  if (allMoves.length <= 2 && (fastMoves[0] === 'STRUGGLE' || isInclude(fastMoves[0], 'SPLASH')) && chargeMoves[0] === 'STRUGGLE') {
     return false;
   }
   return true;
@@ -817,7 +832,7 @@ export const getFormFromForms = (
   return filterForm;
 };
 
-export const retrieveMoves = (pokemon: IPokemonData[], id: number, form: string | null | undefined) => {
+export const retrieveMoves = (pokemon: IPokemonData[], id: number | undefined, form: string | null | undefined) => {
   if (isNotEmpty(pokemon)) {
     const resultFirst = pokemon.filter((item) => item.num === id);
     form =
@@ -879,16 +894,24 @@ export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
   return name;
 };
 
-export const getAllMoves = (pokemon: IPokemonData | undefined | null) => {
-  return getValueOrDefault(Array, pokemon?.quickMoves).concat(
-    getValueOrDefault(Array, pokemon?.eliteQuickMoves),
-    getValueOrDefault(Array, pokemon?.cinematicMoves),
+export const getAllMoves = (pokemon: IPokemonData | undefined | null, moveType = TypeMove.All) => {
+  const fastMove = getValueOrDefault(Array, pokemon?.quickMoves).concat(getValueOrDefault(Array, pokemon?.eliteQuickMoves));
+  const chargeMoves = getValueOrDefault(Array, pokemon?.cinematicMoves).concat(
     getValueOrDefault(Array, pokemon?.eliteCinematicMoves),
     getValueOrDefault(Array, pokemon?.shadowMoves),
     getValueOrDefault(Array, pokemon?.purifiedMoves),
     getValueOrDefault(Array, pokemon?.specialMoves),
     getValueOrDefault(Array, pokemon?.exclusiveMoves)
   );
+  switch (moveType) {
+    case TypeMove.Fast:
+      return fastMove;
+    case TypeMove.Charge:
+      return chargeMoves;
+    case TypeMove.All:
+    default:
+      return fastMove.concat(chargeMoves);
+  }
 };
 
 export const moveTypeToFormType = (moveType?: MoveType) => {
@@ -923,7 +946,7 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, options?: Options
 };
 
 export const addSelectMovesByType = (pokemonData: IPokemonData, moveType: TypeMove, selectMoves: ISelectMoveModel[] = []) => {
-  if (moveType === TypeMove.Fast) {
+  if (moveType === TypeMove.Fast || moveType === TypeMove.All) {
     pokemonData.quickMoves?.forEach((value) => {
       selectMoves.push(new SelectMoveModel(value, MoveType.None));
     });
@@ -931,7 +954,7 @@ export const addSelectMovesByType = (pokemonData: IPokemonData, moveType: TypeMo
       selectMoves.push(new SelectMoveModel(value, MoveType.Elite));
     });
   }
-  if (moveType === TypeMove.Charge) {
+  if (moveType === TypeMove.Charge || moveType === TypeMove.All) {
     pokemonData.cinematicMoves?.forEach((value) => {
       selectMoves.push(new SelectMoveModel(value, MoveType.None));
     });
@@ -1001,8 +1024,71 @@ export const getPokemonClass = (className?: string | number | null) => {
 
 export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
 
-export const generateParamForm = (form: string | null | undefined, prefix = '?') => {
-  return form && !isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-    ? `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}`
-    : '';
+export const generateParamForm = (form: string | null | undefined, pokemonType = PokemonType.None, prefix = '?') => {
+  const isSpecialForm = pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
+  const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
+  if (form) {
+    if (isEqual(form, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) || isEqual(form, FORM_PURIFIED, EqualMode.IgnoreCaseSensitive)) {
+      return `${prefix}${Params.FormType}=${formType}`;
+    } else {
+      if (!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)) {
+        return `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}${
+          isSpecialForm ? `?${Params.FormType}=${formType}` : ''
+        }`;
+      } else if (isSpecialForm) {
+        return `${prefix}${Params.FormType}=${formType}`;
+      }
+    }
+  } else if (isSpecialForm) {
+    return `${prefix}${Params.FormType}=${formType}`;
+  }
+  return '';
+};
+
+export const getMultiplyTypeEffect = (data: TypeEffChart, valueEffective: number, key: string) => {
+  if (valueEffective >= TypeEffectiveAmount.VeryWeak && !isIncludeList(data.veryWeak, key)) {
+    data.veryWeak?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.Weak && !isIncludeList(data.weak, key)) {
+    data.weak?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.Neutral && !isIncludeList(data.neutral, key)) {
+    data.neutral?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.Resist && !isIncludeList(data.resist, key)) {
+    data.resist?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.VeryResist && !isIncludeList(data.veryResist, key)) {
+    data.veryResist?.push(key);
+  } else if (valueEffective >= TypeEffectiveAmount.SuperResist && !isIncludeList(data.superResist, key)) {
+    data.superResist?.push(key);
+  }
+};
+
+export const getTicketRewardType = (type?: string | number | null) => {
+  if (isInclude(type, ItemTicketRewardType.Avatar, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return TicketRewardType.Avatar;
+  } else if (isInclude(type, ItemTicketRewardType.Exp, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return TicketRewardType.Exp;
+  } else if (isInclude(type, ItemTicketRewardType.Item, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return TicketRewardType.Item;
+  } else if (isInclude(type, ItemTicketRewardType.PokeCoin, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return TicketRewardType.PokeCoin;
+  } else if (isInclude(type, ItemTicketRewardType.Pokemon, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return TicketRewardType.Pokemon;
+  } else if (isInclude(type, ItemTicketRewardType.Stardust, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return TicketRewardType.Stardust;
+  }
+  return TicketRewardType.None;
+};
+
+export const getLureItemType = (lureItem: string | undefined | null) => {
+  switch (lureItem) {
+    case ItemLureType.Magnetic:
+      return ItemLureRequireType.Magnetic;
+    case ItemLureType.Mossy:
+      return ItemLureRequireType.Mossy;
+    case ItemLureType.Glacial:
+      return ItemLureRequireType.Glacial;
+    case ItemLureType.Rainy:
+      return ItemLureRequireType.Rainy;
+    case ItemLureType.Sparkly:
+      return ItemLureRequireType.Sparkly;
+  }
 };

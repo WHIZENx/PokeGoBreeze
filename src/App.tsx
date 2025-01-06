@@ -8,7 +8,8 @@ import './App.scss';
 import NavbarComponent from './components/Navbar';
 // import FooterComponent from './components/Footer'
 
-import Home from './pages/Home/Home';
+import News from './pages/News/News';
+import Pokedex from './pages/Pokedex/Pokedex';
 import SearchPokemon from './pages/Search/Pokemon/Search';
 import SearchMove from './pages/Search/Moves/SearchMoves';
 import TypeEffect from './pages/TypeEffect/TypeEffect';
@@ -55,15 +56,14 @@ function App() {
 
   const theme = useTheme<ThemeModify>();
   const colorMode = useContext(ColorModeContext);
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.Light);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
-  const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.ASSETS, '');
-  const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.SOUNDS, '');
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
+  const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.Assets, '');
+  const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.Sounds, '');
+
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound);
-    };
     dispatch(DeviceActions.SetDevice.create());
     dispatch(SpinnerActions.SetBar.create(true));
     dispatch(SpinnerActions.SetPercent.create(0));
@@ -71,14 +71,45 @@ function App() {
     loadCPM(dispatch);
     loadPokeGOLogo(dispatch);
     dispatch(SpinnerActions.SetPercent.create(15));
-    fetchData();
   }, [dispatch]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    if (!isLoaded) {
+      setIsLoaded(true);
+      loadData(controller.signal);
+    }
+  }, [isLoaded]);
+
+  const loadData = (signal: AbortSignal, delay = 100) => {
+    return new Promise<void>((resolve, reject) => {
+      let timeout: NodeJS.Timeout | number;
+      const abortHandler = () => {
+        clearTimeout(timeout);
+        reject();
+      };
+
+      const resolveHandler = async () => {
+        if (signal instanceof AbortSignal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
+        resolve(await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound));
+      };
+
+      timeout = setTimeout(resolveHandler, delay);
+
+      if (signal instanceof AbortSignal) {
+        signal.addEventListener('abort', abortHandler, { once: true });
+      }
+    });
+  };
 
   return (
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
       <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Pokedex />} />
+        <Route path="/news" element={<News />} />
         <Route path="/type-effective" element={<TypeEffect />} />
         <Route path="/weather-boosts" element={<Weather />} />
         <Route path="/search-pokemon" element={<SearchPokemon />} />
@@ -113,7 +144,7 @@ function App() {
 }
 
 export default function Main() {
-  const [stateMode] = useLocalStorage(LocalStorageConfig.THEME, TypeTheme.Light);
+  const [stateMode] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [mode, setMode] = useState(stateMode);
   const colorMode = useMemo(
     () => ({

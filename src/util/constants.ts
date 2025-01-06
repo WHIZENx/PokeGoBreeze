@@ -13,7 +13,9 @@ import { PokemonType } from '../enums/type.enum';
 export class Params {
   public static Id = 'id';
   public static Form = 'form';
+  public static FormType = 'formType';
   public static StatsType = 'statsType';
+  public static MoveType = 'moveType';
 }
 
 // KeyCode
@@ -77,27 +79,6 @@ export const RAID_BOSS_TIER: DynamicObj<ITier> = {
     timer: 300,
   }),
 };
-
-export const DEFAULT_TYPES = [
-  'NORMAL',
-  'FIGHTING',
-  'FLYING',
-  'POISON',
-  'GROUND',
-  'ROCK',
-  'BUG',
-  'GHOST',
-  'STEEL',
-  'FIRE',
-  'WATER',
-  'GRASS',
-  'ELECTRIC',
-  'PSYCHIC',
-  'ICE',
-  'DRAGON',
-  'DARK',
-  'FAIRY',
-];
 
 export const FORM_NORMAL = 'NORMAL';
 export const FORM_SPECIAL = 'SPECIAL';

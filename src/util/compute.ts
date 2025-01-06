@@ -2,7 +2,7 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import { PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
-import { FORM_NORMAL } from './constants';
+import { FORM_GMAX, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { EqualMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
@@ -55,7 +55,7 @@ export const rankIconCenterName = (rank: number) => {
   }
 };
 
-export const raidEgg = (tier: number, isMega: boolean, isPrimal: boolean, isUltra?: boolean) => {
+export const raidEgg = (tier: number, isMega?: boolean, isPrimal?: boolean, isUltra?: boolean) => {
   if (tier === 1) {
     return APIService.getRaidSprite('raid_egg_0_icon');
   } else if (tier === 3) {
@@ -139,7 +139,7 @@ export const computeBgType = (
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets || isEqual(formName, PokemonType.GMax, EqualMode.IgnoreCaseSensitive)) {
+  if (!pokemonAssets || isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
     return;
   }
   const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));

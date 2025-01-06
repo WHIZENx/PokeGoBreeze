@@ -161,7 +161,7 @@ ul {
 .result {
   position: absolute;
   z-index: 4;
-  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+  box-shadow: 0 4px 8px 0 #00000033;
   width: 300px;
   background-color: white;
   max-height: 570px;
@@ -241,7 +241,7 @@ ul {
     hue-rotate(6deg)
     brightness(108%)
     contrast(105%)
-    drop-shadow(1px 1px 1px rgb(0 0 0 / 60%));
+    drop-shadow(1px 1px 1px #00000099);
 }
 
 .filter-shadow {
@@ -249,7 +249,7 @@ ul {
 }
 
 .filter-shadow-hover:hover {
-  filter: drop-shadow(2px 2px 2px rgb(0 0 0 / 80%));
+  filter: drop-shadow(2px 2px 2px #000000cc);
 }
 
 .filter-light-shadow {
@@ -257,7 +257,7 @@ ul {
 }
 
 .filter-light-shadow-hover:hover {
-  filter: drop-shadow(2px 2px 2px rgb(255 255 255 / 80%));
+  filter: drop-shadow(2px 2px 2px #ffffffcc);
 }
 
 .text-shadow {

@@ -14,6 +14,7 @@ import { BattleBaseStats } from '../../../util/models/calculate.model';
 import { getKeyWithData } from '../../../util/utils';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { EqualMode } from '../../../util/enums/string.enum';
+import { AnimationType } from '../../../components/Sprites/Hexagon/enums/hexagon.enum';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
@@ -45,47 +46,45 @@ const OverAllStats = (props: OverAllStatsComponent) => {
     }
   }, [pokemonAllStats, props.data?.stats, props.data?.id]);
 
-  const renderTopStats = (data: IPokemonAllStats | undefined) => {
-    return (
-      <ul className="element-top">
-        <li className="element-top">
-          {'CP: '}
+  const renderTopStats = (data: IPokemonAllStats | undefined) => (
+    <ul className="element-top">
+      <li className="element-top">
+        {'CP: '}
+        <b>
+          {data?.maxCP === BattleLeagueCPType.InsMaster
+            ? `${data.prevCurrentStats.CP}-${data.currentStats.CP}`
+            : `${toNumber(data?.currentStats.CP)}`}
+        </b>
+      </li>
+      <li className={toNumber(data?.level) <= 40 ? 'element-top' : ''}>
+        Level: <b>{data?.maxCP === BattleLeagueCPType.InsMaster ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${toNumber(data?.level)}`} </b>
+        {(toNumber(data?.level) > 40 || data?.maxCP === BattleLeagueCPType.InsMaster) && (
           <b>
-            {data?.maxCP === BattleLeagueCPType.InsMaster
-              ? `${data.prevCurrentStats.CP}-${data.currentStats.CP}`
-              : `${toNumber(data?.currentStats.CP)}`}
+            (
+            <CandyXL id={data?.id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
+            XL Candy required)
           </b>
-        </li>
-        <li className={toNumber(data?.level) <= 40 ? 'element-top' : ''}>
-          Level: <b>{data?.maxCP === BattleLeagueCPType.InsMaster ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${toNumber(data?.level)}`} </b>
-          {(toNumber(data?.level) > 40 || data?.maxCP === BattleLeagueCPType.InsMaster) && (
-            <b>
-              (
-              <CandyXL id={data?.id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
-              XL Candy required)
-            </b>
-          )}
-        </li>
-        <li className="element-top">
-          <IVBar
-            title="Attack"
-            iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.atk)}
-            style={{ maxWidth: 500 }}
-          />
-          <IVBar
-            title="Defense"
-            iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.def)}
-            style={{ maxWidth: 500 }}
-          />
-          <IVBar
-            title="HP"
-            iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.sta)}
-            style={{ maxWidth: 500 }}
-          />
-        </li>
-      </ul>
-    );
-  };
+        )}
+      </li>
+      <li className="element-top">
+        <IVBar
+          title="Attack"
+          iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.atk)}
+          style={{ maxWidth: 500 }}
+        />
+        <IVBar
+          title="Defense"
+          iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.def)}
+          style={{ maxWidth: 500 }}
+        />
+        <IVBar
+          title="HP"
+          iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.sta)}
+          style={{ maxWidth: 500 }}
+        />
+      </li>
+    </ul>
+  );
 
   return (
     <div className="row w-100" style={{ margin: 0 }}>
@@ -96,7 +95,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
               <b>Overall Performance</b>
             </h5>
             <Hexagon
-              animation={0}
+              animation={AnimationType.On}
               borderSize={320}
               size={180}
               stats={HexagonStats.create({

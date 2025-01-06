@@ -9,7 +9,7 @@
 }
 
 .progress-hover:hover {
-  filter: drop-shadow(2px 2px 2px rgb(10 10 10 / 50%));
+  filter: drop-shadow(2px 2px 2px #0a0a0a80);
 }
 
 .stats-text {
@@ -20,7 +20,7 @@
 
 .box-text span {
   padding: 3px;
-  background-color: rgb(211 211 211 / 80%);
+  background-color: #d3d3d3cc;
   border-radius: 5px;
   font-weight: bold;
 }

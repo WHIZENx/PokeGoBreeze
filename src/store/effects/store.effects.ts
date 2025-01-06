@@ -17,6 +17,8 @@ import {
   optionPokeImg,
   optionPokeSound,
   mappingMoveSetPokemonGO,
+  optionEvolutionChain,
+  optionInformation,
 } from '../../core/options';
 import { pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
 import APIService from '../../services/API.service';
@@ -27,7 +29,7 @@ import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
-import { getValueOrDefault, isInclude, toNumber } from '../../util/extension';
+import { getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 
 interface Timestamp {
   images: boolean;
@@ -46,32 +48,27 @@ const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
 };
 
-export const loadPokeGOLogo = (dispatch: Dispatch) => {
-  try {
-    APIService.getFetchUrl<APIPath[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options)
-      .then((res) => APIService.getFetchUrl<Files>(res.data[0]?.url, options))
-      .then((file) => {
-        dispatch(
-          StoreActions.SetLogoPokeGO.create(
-            getValueOrDefault(
-              String,
-              file.data.files
-                .find((item) => isInclude(item.filename, 'Images/App Icons/'))
-                ?.filename.replace('Images/App Icons/', '')
-                .replace('.png', '')
-            )
-          )
-        );
-      });
-  } catch {
-    dispatch(StoreActions.SetLogoPokeGO.create());
-  }
-};
+export const loadPokeGOLogo = (dispatch: Dispatch) =>
+  APIService.getFetchUrl<APIPath[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options)
+    .then((res) => {
+      if (isNotEmpty(res.data)) {
+        return APIService.getFetchUrl<Files>(res.data[0].url, options);
+      }
+    })
+    .then((file) => {
+      if (file?.data) {
+        const files = file.data.files;
+        if (isNotEmpty(files)) {
+          const res = files.find((item) => isInclude(item.filename, 'Images/App Icons/'));
+          if (res) {
+            dispatch(StoreActions.SetLogoPokeGO.create(res.filename.replace('Images/App Icons/', '').replace('.png', '')));
+          }
+        }
+      }
+    })
+    .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
 
-export const loadCPM = (dispatch: Dispatch) => {
-  const cpm = calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL);
-  return dispatch(StoreActions.SetCPM.create(cpm));
-};
+export const loadCPM = (dispatch: Dispatch) => dispatch(StoreActions.SetCPM.create(calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
 
 export const loadTimestamp = async (
   dispatch: Dispatch,
@@ -90,25 +87,27 @@ export const loadTimestamp = async (
     .then(async ([GMtimestamp, imageRoot, soundsRoot]) => {
       dispatch(StoreActions.SetTimestamp.create(toNumber(GMtimestamp.data)));
 
-      const imageTimestamp = new Date(imageRoot.data[0].commit.committer.date).getTime();
-      const soundTimestamp = new Date(soundsRoot.data[0].commit.committer.date).getTime();
-      setStateTimestamp(
-        JSON.stringify(
-          LocalTimeStamp.create({
-            ...JSON.parse(stateTimestamp),
-            gamemaster: toNumber(GMtimestamp.data),
-            images: imageTimestamp,
-            sounds: soundTimestamp,
-          })
-        )
-      );
+      if (isNotEmpty(imageRoot.data) && isNotEmpty(soundsRoot.data)) {
+        const imageTimestamp = new Date(imageRoot.data[0].commit.committer.date).getTime();
+        const soundTimestamp = new Date(soundsRoot.data[0].commit.committer.date).getTime();
+        setStateTimestamp(
+          JSON.stringify(
+            LocalTimeStamp.create({
+              ...JSON.parse(stateTimestamp),
+              gamemaster: toNumber(GMtimestamp.data),
+              images: imageTimestamp,
+              sounds: soundTimestamp,
+            })
+          )
+        );
 
-      const timestampLoaded = {
-        images: !stateImage || JSON.parse(stateTimestamp).images !== imageTimestamp,
-        sounds: !stateSound || JSON.parse(stateTimestamp).sounds !== soundTimestamp,
-      };
-      dispatch(SpinnerActions.SetPercent.create(40));
-      loadGameMaster(dispatch, imageRoot.data, soundsRoot.data, timestampLoaded, setStateImage, setStateSound, stateImage, stateSound);
+        const timestampLoaded: Timestamp = {
+          images: !stateImage || JSON.parse(stateTimestamp).images !== imageTimestamp,
+          sounds: !stateSound || JSON.parse(stateTimestamp).sounds !== soundTimestamp,
+        };
+        dispatch(SpinnerActions.SetPercent.create(40));
+        loadGameMaster(dispatch, imageRoot.data, soundsRoot.data, timestampLoaded, setStateImage, setStateSound, stateImage, stateSound);
+      }
     })
     .catch((e: ErrorEvent) => {
       dispatch(SpinnerActions.SetBar.create(false));
@@ -133,6 +132,14 @@ export const loadGameMaster = (
 ) => {
   APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER)
     .then(async (gm) => {
+      if (!gm || !isNotEmpty(gm.data)) {
+        dispatch(
+          SpinnerActions.ShowSpinnerMsg.create({
+            isError: true,
+          })
+        );
+        return;
+      }
       let pokemonEncounter = new Database<PokemonEncounter>();
       try {
         pokemonEncounter = await getDbPokemonEncounter();
@@ -155,6 +162,8 @@ export const loadGameMaster = (
       dispatch(StoreActions.SetSticker.create(optionSticker(gm.data, pokemon)));
       const combat = optionCombat(gm.data, typeEff);
       dispatch(StoreActions.SetCombat.create(combat));
+      dispatch(StoreActions.SetEvolutionChain.create(optionEvolutionChain(gm.data, pokemon)));
+      dispatch(StoreActions.SetInformation.create(optionInformation(gm.data, pokemon)));
       dispatch(StoreActions.SetLeagues.create(league));
 
       mappingMoveSetPokemonGO(pokemon, combat);
@@ -193,9 +202,12 @@ export const loadAssets = async (
   setStateImage: SetValue<string>,
   setStateSound: SetValue<string>
 ) => {
+  if (!isNotEmpty(imageRoot) || !isNotEmpty(soundsRoot)) {
+    return;
+  }
   await Promise.all([
-    APIService.getFetchUrl<APITree>(imageRoot.at(0)?.commit.tree.url, options),
-    APIService.getFetchUrl<APITree>(soundsRoot.at(0)?.commit.tree.url, options),
+    APIService.getFetchUrl<APITree>(imageRoot[0].commit.tree.url, options),
+    APIService.getFetchUrl<APITree>(soundsRoot[0].commit.tree.url, options),
   ]).then(async ([imageFolder, soundFolder]) => {
     const imageFolderPath = imageFolder.data.tree.find((item) => item.path === 'Images');
     const soundFolderPath = soundFolder.data.tree.find((item) => item.path === 'Sounds');
@@ -248,8 +260,8 @@ export const loadPVP = (
         })
       )
     );
-    if (pvpDate !== JSON.parse(stateTimestamp).pvp) {
-      const pvpUrl = res.data.at(0)?.commit.tree.url;
+    if (pvpDate !== JSON.parse(stateTimestamp).pvp && isNotEmpty(res.data)) {
+      const pvpUrl = res.data[0].commit.tree.url;
       if (pvpUrl) {
         APIService.getFetchUrl<APITree>(pvpUrl, options)
           .then((pvpRoot) => {

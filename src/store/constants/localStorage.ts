@@ -1,7 +1,7 @@
 export class LocalStorageConfig {
-  public static TIMESTAMP = 'timestamp';
-  public static THEME = 'theme';
-  public static ASSETS = 'assets';
-  public static SOUNDS = 'sounds';
+  public static Timestamp = 'timestamp';
+  public static Theme = 'theme';
+  public static Assets = 'assets';
+  public static Sounds = 'sounds';
   public static PVP = 'pvp';
 }

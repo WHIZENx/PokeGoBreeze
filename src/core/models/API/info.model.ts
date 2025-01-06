@@ -1,4 +1,5 @@
-import { DynamicObj } from '../../../util/extension';
+import { DynamicObj, toNumber } from '../../../util/extension';
+import { splitAndCapitalize } from '../../../util/utils';
 import { IPokemonSprit, PokemonSprit } from './form.model';
 
 export interface SpriteInfo {
@@ -202,10 +203,7 @@ export interface PokemonInfo {
 }
 
 interface Ability {
-  ability: {
-    name: string;
-    url: string;
-  };
+  ability: Path;
   is_hidden: boolean;
   slot: number;
 }
@@ -288,6 +286,83 @@ export class PokemonDetail implements IPokemonDetail {
     obj.weight = info.weight;
     obj.isDefault = info.is_default;
     obj.isIncludeShadow = info.isIncludeShadow;
+    return obj;
+  }
+}
+
+interface InfoEvoToDetail {
+  gender: string | null;
+  held_item: Path;
+  item: string | null;
+  known_move: string | null;
+  known_move_type: string | null;
+  location: string | null;
+  min_affection: string | null;
+  min_beauty: string | null;
+  min_happiness: string | null;
+  min_level: string | null;
+  needs_overworld_rain: boolean;
+  party_species: string | null;
+  party_type: string | null;
+  relative_physical_stats: string | null;
+  time_of_day: string | null;
+  trade_species: string | null;
+  trigger: Path;
+  turn_upside_down: boolean;
+}
+
+interface PokemonInfoEvoChain {
+  evolution_details: InfoEvoToDetail[];
+  evolves_to: PokemonInfoEvoChain[];
+  is_baby: boolean;
+  species: Path;
+}
+
+export interface PokemonInfoEvo {
+  baby_trigger_item: Path | null;
+  chain: PokemonInfoEvoChain;
+  id: number;
+}
+
+export interface IInfoEvoChain {
+  id: number;
+  name: string;
+  evolutionDetails: InfoEvoToDetail[];
+  evolvesTo: IInfoEvoChain[];
+  isBaby: boolean;
+}
+
+class InfoEvoChain implements IInfoEvoChain {
+  id = 0;
+  name = '';
+  evolutionDetails: InfoEvoToDetail[] = [];
+  evolvesTo: IInfoEvoChain[] = [];
+  isBaby = false;
+
+  static mapping(value: PokemonInfoEvoChain) {
+    const obj = new InfoEvoChain();
+    obj.id = toNumber(value.species.url.split('/')[6]);
+    obj.name = splitAndCapitalize(value.species.name, '-', ' ');
+    obj.evolutionDetails = value.evolution_details;
+    obj.evolvesTo = value.evolves_to.map((v) => this.mapping(v));
+    obj.isBaby = value.is_baby;
+    return obj;
+  }
+}
+
+export interface IPokemonDetailEvoChain {
+  chain: IInfoEvoChain;
+  id: number;
+}
+
+export class PokemonDetailEvoChain implements IPokemonDetailEvoChain {
+  chain = new InfoEvoChain();
+  id = 0;
+
+  static mapping(value: PokemonInfoEvo) {
+    const obj = new PokemonDetailEvoChain();
+    obj.id = value.id;
+    obj.chain = InfoEvoChain.mapping(value.chain);
     return obj;
   }
 }

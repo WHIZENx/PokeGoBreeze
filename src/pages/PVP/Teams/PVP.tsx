@@ -6,6 +6,7 @@ import {
   convertNameRankingToForm,
   convertNameRankingToOri,
   findMoveTeam,
+  getAllMoves,
   getKeyWithData,
   getMoveType,
   getStyleSheet,
@@ -37,7 +38,6 @@ import {
   combineClasses,
   DynamicObj,
   getPropertyName,
-  getValueOrDefault,
   isEqual,
   isInclude,
   isIncludeList,
@@ -49,7 +49,7 @@ import {
 import { SortType } from '../enums/pvp-team.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueType } from '../../../core/enums/league.enum';
-import { PokemonType } from '../../../enums/type.enum';
+import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 
@@ -58,7 +58,7 @@ const TeamPVP = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const allMoves = useSelector((state: StoreState) => state.store.data.combat.map((c) => c.name));
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.TIMESTAMP, JSON.stringify(new LocalTimeStamp()));
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
   const params = useParams();
 
@@ -94,17 +94,8 @@ const TeamPVP = () => {
       [fMoveText, cMovePriText, cMoveSecText] = moveSet.split('/');
     }
 
-    const fastMoveSet = getValueOrDefault(Array, pokemon?.quickMoves?.concat(getValueOrDefault(Array, pokemon.eliteQuickMoves)));
-    const chargedMoveSet = getValueOrDefault(
-      Array,
-      pokemon?.cinematicMoves?.concat(
-        getValueOrDefault(Array, pokemon.eliteCinematicMoves),
-        getValueOrDefault(Array, pokemon.shadowMoves),
-        getValueOrDefault(Array, pokemon.purifiedMoves),
-        getValueOrDefault(Array, pokemon.specialMoves),
-        getValueOrDefault(Array, pokemon.exclusiveMoves)
-      )
-    );
+    const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
+    const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
 
     const fCombatName = findMoveTeam(fMoveText, fastMoveSet);
     const cCombatName = findMoveTeam(cMovePriText, chargedMoveSet);

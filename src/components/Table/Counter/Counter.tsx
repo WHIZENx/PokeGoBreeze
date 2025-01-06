@@ -117,7 +117,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Pokémon',
       selector: (row) => (
-        <Link to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme)}`}>
+        <Link to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme, row.pokemonType)}`}>
           <div className="d-flex justify-content-center">
             <div
               className={combineClasses(
