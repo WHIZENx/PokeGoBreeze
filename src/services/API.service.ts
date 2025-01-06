@@ -15,7 +15,8 @@ import { Species } from '../core/models/API/species.model';
 import { getValueOrDefault, isEqual, isInclude, toNumber } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
-import { capitalize, splitAndCapitalize } from '../util/utils';
+import { capitalize, getDataWithKey, splitAndCapitalize } from '../util/utils';
+import { PokemonTypeBadge } from '../core/models/type.model';
 
 class APIService {
   date: Date;
@@ -136,10 +137,62 @@ class APIService {
       return this.getPokeSprite(0);
     }
     type = capitalize(type);
-    if (type === 'Fighting') {
-      type = 'Fight';
+    let encryptUrl = '';
+    switch (getDataWithKey<PokemonTypeBadge>(PokemonTypeBadge, type, EqualMode.IgnoreCaseSensitive)) {
+      case PokemonTypeBadge.Bug:
+        encryptUrl = '7/7d';
+        break;
+      case PokemonTypeBadge.Dark:
+        encryptUrl = '0/0e';
+        break;
+      case PokemonTypeBadge.Dragon:
+        encryptUrl = 'c/c7';
+        break;
+      case PokemonTypeBadge.Electric:
+        encryptUrl = '2/2f';
+        break;
+      case PokemonTypeBadge.Fairy:
+        encryptUrl = '4/43';
+        break;
+      case PokemonTypeBadge.Fighting:
+      case PokemonTypeBadge.Fire:
+        encryptUrl = '3/30';
+        break;
+      case PokemonTypeBadge.Flying:
+        encryptUrl = '7/7f';
+        break;
+      case PokemonTypeBadge.Ghost:
+        encryptUrl = 'a/ab';
+        break;
+      case PokemonTypeBadge.Grass:
+        encryptUrl = 'c/c5';
+        break;
+      case PokemonTypeBadge.Ground:
+        encryptUrl = '8/8f';
+        break;
+      case PokemonTypeBadge.Ice:
+        encryptUrl = '7/77';
+        break;
+      case PokemonTypeBadge.Normal:
+        encryptUrl = 'f/fb';
+        break;
+      case PokemonTypeBadge.Poison:
+        encryptUrl = '0/05';
+        break;
+      case PokemonTypeBadge.Psychic:
+        encryptUrl = '2/21';
+        break;
+      case PokemonTypeBadge.Rock:
+        encryptUrl = '0/0b';
+        break;
+      case PokemonTypeBadge.Steel:
+        encryptUrl = 'c/c9';
+        break;
+      case PokemonTypeBadge.Water:
+        encryptUrl = '9/9d';
+        break;
     }
-    return `${APIUrl.POKE_ICON_SPRITES_TYPE_API_URL}Badge_Type_${type}_01.png`;
+    return `${APIUrl.POKE_ICON_SPRITES_TYPE_API_URL}${encryptUrl}/${type}.png`;
   }
 
   getWeatherSprite(weather: string) {

@@ -752,7 +752,7 @@ const Evolution = (props: IEvolutionComponent) => {
               )}
             </Fragment>
           ) : (
-            <Fragment>{renderImgGif(value)}</Fragment>
+            <span className="img-evo-container">{renderImgGif(value)}</span>
           )}
           <div id="id-pokemon" style={{ color: theme.palette.text.primary }}>
             <b>#{value.id}</b>
