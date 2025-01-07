@@ -104,6 +104,8 @@ export const optionSettings = (data: PokemonDataGM[]) => {
 
   data.forEach((item) => {
     if (item.templateId === 'PLAYER_LEVEL_SETTINGS') {
+      settings.playerSetting.maxEncounterPlayerLevel = item.data.playerLevel.maxEncounterPlayerLevel;
+      settings.playerSetting.maxQuestEncounterPlayerLevel = item.data.playerLevel.maxQuestEncounterPlayerLevel;
       settings.playerSetting.levelUps = item.data.playerLevel.rankNum.map((value, index) => ({
         level: index + value,
         amount: value,

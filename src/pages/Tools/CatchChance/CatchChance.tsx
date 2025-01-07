@@ -47,12 +47,13 @@ import { PokemonType } from '../../../enums/type.enum';
 import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
 
 const CatchChance = () => {
+  const playerSetting = useSelector((state: StoreState) => state.store.data.options.playerSetting);
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const circleDistance = useRef(200);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [form, setForm] = useState<IPokemonFormModify>();
 
   const [statATK, setStatATK] = useState(0);
@@ -443,8 +444,20 @@ const CatchChance = () => {
                   valueLabelDisplay="off"
                   marks={[
                     {
-                      value: 30,
-                      label: 'Max LV counter in wild',
+                      value: playerSetting.maxQuestEncounterPlayerLevel,
+                      label: (
+                        <span className="position-absolute" style={{ top: '-0.25rem' }}>
+                          Max LV encounter in quest
+                        </span>
+                      ),
+                    },
+                    {
+                      value: playerSetting.maxEncounterPlayerLevel,
+                      label: (
+                        <span className="position-absolute" style={{ bottom: '1.75rem' }}>
+                          Max LV encounter in wild
+                        </span>
+                      ),
                     },
                   ]}
                   step={0.5}

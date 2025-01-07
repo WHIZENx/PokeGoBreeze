@@ -33,7 +33,7 @@ const Calculate = () => {
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
 
   const [searchCP, setSearchCP] = useState('');

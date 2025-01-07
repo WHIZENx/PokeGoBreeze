@@ -340,6 +340,8 @@ export interface PlayerLevel {
   rankNum: number[];
   requiredExperience: number[];
   cpMultiplier: number[];
+  maxEncounterPlayerLevel: number;
+  maxQuestEncounterPlayerLevel: number;
 }
 
 interface DataGM {
@@ -431,11 +433,15 @@ interface PlayerLevelUp {
 interface IPlayerSetting {
   levelUps: PlayerLevelUp[];
   cpMultipliers: DynamicObj<number>;
+  maxEncounterPlayerLevel: number;
+  maxQuestEncounterPlayerLevel: number;
 }
 
 export class PlayerSetting implements IPlayerSetting {
   levelUps: PlayerLevelUp[] = [];
   cpMultipliers: DynamicObj<number> = {};
+  maxEncounterPlayerLevel = 0;
+  maxQuestEncounterPlayerLevel = 0;
 }
 
 interface ICombatOption {
