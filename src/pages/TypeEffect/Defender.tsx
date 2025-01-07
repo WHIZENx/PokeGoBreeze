@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize, getMultiplyTypeEffect } from '../../util/utils';
+import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../util/utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, isEmpty, isEqual } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEmpty, isEqual } from '../../util/extension';
+import { PokemonTypeBadge } from '../../core/models/type.model';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -15,7 +16,9 @@ const Defender = (prop: ITypeEffComponent) => {
 
   const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
 
-  const [currentTypePri, setCurrentTypePri] = useState('BUG');
+  const [currentTypePri, setCurrentTypePri] = useState(
+    getValueOrDefault(String, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase())
+  );
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
   const [showTypePri, setShowTypePri] = useState(false);

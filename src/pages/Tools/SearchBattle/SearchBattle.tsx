@@ -50,7 +50,7 @@ const FindBattle = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm] = useState<IPokemonFormModify>();
   const [maxCP, setMaxCP] = useState(0);

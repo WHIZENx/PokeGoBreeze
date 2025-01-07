@@ -336,6 +336,14 @@ export interface ItemSettings {
   descriptionOverride?: string;
 }
 
+export interface PlayerLevel {
+  rankNum: number[];
+  requiredExperience: number[];
+  cpMultiplier: number[];
+  maxEncounterPlayerLevel: number;
+  maxQuestEncounterPlayerLevel: number;
+}
+
 interface DataGM {
   pokemonSettings: PokemonModel;
   combatSettings: CombatSetting;
@@ -362,6 +370,7 @@ interface DataGM {
   evolutionQuestTemplate?: EvolutionQuestTemplate;
   evolutionChainDisplaySettings: EvolutionChainDisplaySettings;
   itemSettings?: ItemSettings;
+  playerLevel: PlayerLevel;
 }
 
 export interface PokemonDataGM {
@@ -413,6 +422,26 @@ export class PokemonPermission implements IPokemonPermission {
     props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
+}
+
+interface PlayerLevelUp {
+  level: number;
+  amount: number;
+  requiredExp: number;
+}
+
+interface IPlayerSetting {
+  levelUps: PlayerLevelUp[];
+  cpMultipliers: DynamicObj<number>;
+  maxEncounterPlayerLevel: number;
+  maxQuestEncounterPlayerLevel: number;
+}
+
+export class PlayerSetting implements IPlayerSetting {
+  levelUps: PlayerLevelUp[] = [];
+  cpMultipliers: DynamicObj<number> = {};
+  maxEncounterPlayerLevel = 0;
+  maxQuestEncounterPlayerLevel = 0;
 }
 
 interface ICombatOption {
@@ -484,6 +513,7 @@ export class TrainerFriendship implements ITrainerFriendship {
 }
 
 export interface IOptions {
+  playerSetting: IPlayerSetting;
   combatOptions: ICombatOption;
   battleOptions: IBattleOption;
   throwCharge: IThrowOption;
@@ -492,6 +522,7 @@ export interface IOptions {
 }
 
 export class Options implements IOptions {
+  playerSetting = new PlayerSetting();
   combatOptions = new CombatOption();
   battleOptions = new BattleOption();
   throwCharge = new ThrowOption();

@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { calculateCPM } from '../../core/cpm';
+import { calculateBaseCPM, calculateCPM } from '../../core/cpm';
 import { Database } from '../../core/models/API/db.model';
 import { PokemonDataGM } from '../../core/models/options.model';
 import { IPokemonData, PokemonEncounter } from '../../core/models/pokemon.model';
@@ -29,7 +29,7 @@ import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
-import { getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { DynamicObj, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 
 interface Timestamp {
   images: boolean;
@@ -68,7 +68,10 @@ export const loadPokeGOLogo = (dispatch: Dispatch) =>
     })
     .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
 
-export const loadCPM = (dispatch: Dispatch) => dispatch(StoreActions.SetCPM.create(calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
+export const loadBaseCPM = (dispatch: Dispatch) => dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
+
+export const loadCPM = (dispatch: Dispatch, cpmList: DynamicObj<number>) =>
+  dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, MIN_LEVEL, Object.keys(cpmList).length)));
 
 export const loadTimestamp = async (
   dispatch: Dispatch,

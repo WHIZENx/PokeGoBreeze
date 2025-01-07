@@ -1,7 +1,7 @@
-import { DynamicObj, toNumber } from '../util/extension';
+import { DynamicObj, toFloat, toNumber } from '../util/extension';
 import { CPM, ICPM } from './models/cpm.model';
 
-export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {
+export const calculateBaseCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {
   const cpmList: ICPM[] = [];
   for (let i = min; i <= max; i += 1) {
     const result = new CPM();
@@ -39,4 +39,22 @@ export const calculateCPM = (baseCPM: DynamicObj<number>, min: number, max: numb
     }
   }
   return cpmList.sort((a, b) => a.level - b.level);
+};
+
+export const calculateCPM = (cpmList: DynamicObj<number>, min: number, max: number) => {
+  const result = Object.entries(cpmList).map(([l, v]) => {
+    const cpm = new CPM();
+    const level = toFloat(l);
+    cpm.level = level;
+    cpm.multiplier = v;
+
+    if (level > 1) {
+      const cpmLow = toNumber(cpmList[level - 0.5]);
+      const cpmHeight = toNumber(cpmList[level]);
+      cpm.step = Math.max(0, cpmHeight - cpmLow);
+    }
+    return cpm;
+  });
+
+  return result.sort((a, b) => a.level - b.level).filter((r) => r.level >= min && r.level <= max);
 };

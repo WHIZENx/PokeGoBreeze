@@ -32,7 +32,7 @@ const CalculatePoint = () => {
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm] = useState<IPokemonFormModify>();
   const [move, setMove] = useState<ICombat>();
@@ -53,7 +53,7 @@ const CalculatePoint = () => {
   const [isRaid, setIsRaid] = useState(true);
   const [tier, setTier] = useState(1);
 
-  const [idDef, setIdDef] = useState(searching?.obj ? searching.obj.id : 1);
+  const [idDef, setIdDef] = useState(toNumber(searching?.obj?.id, 1));
   const [nameDef, setNameDef] = useState(splitAndCapitalize(searching?.obj?.fullName, '-', ' '));
   const [formDef, setFormDef] = useState<IPokemonFormModify>();
   const [moveDef, setMoveDef] = useState<ICombat>();
