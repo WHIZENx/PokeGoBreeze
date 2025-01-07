@@ -2,10 +2,10 @@ import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
 import { PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
-import { FORM_GMAX, FORM_NORMAL } from './constants';
+import { FORM_GMAX, FORM_MEGA, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
-import { EqualMode } from './enums/string.enum';
-import { getValueOrDefault, isEqual, isIncludeList, isNotEmpty, toNumber } from './extension';
+import { EqualMode, IncludeMode } from './enums/string.enum';
+import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from './extension';
 import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
@@ -145,7 +145,7 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
   const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
   if (asset) {
     return asset;
-  } else if (!asset && isNotEmpty(pokemonAssets.image)) {
+  } else if (!asset && isNotEmpty(pokemonAssets.image) && !isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
     const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
       return pokemonAssets.image[0];

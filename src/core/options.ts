@@ -35,7 +35,7 @@ import {
   replacePokemonGoForm,
   replaceTempMoveName,
 } from '../util/utils';
-import { ITypeSet, TypeSet } from './models/type.model';
+import { ITypeSet, PokemonTypeBadge, TypeSet } from './models/type.model';
 import { BuffType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import {
   Encounter,
@@ -57,6 +57,7 @@ import {
   FORM_NORMAL,
   FORM_SHADOW,
   FORM_SPECIAL,
+  MIN_LEVEL,
   PATH_ASSET_POKEGO,
 } from '../util/constants';
 import { APIUrl } from '../services/constants';
@@ -102,7 +103,24 @@ export const optionSettings = (data: PokemonDataGM[]) => {
   const settings = new Options();
 
   data.forEach((item) => {
-    if (item.templateId === 'COMBAT_SETTINGS') {
+    if (item.templateId === 'PLAYER_LEVEL_SETTINGS') {
+      settings.playerSetting.levelUps = item.data.playerLevel.rankNum.map((value, index) => ({
+        level: index + value,
+        amount: value,
+        requiredExp: item.data.playerLevel.requiredExperience[index],
+      }));
+      const cpmList = item.data.playerLevel.cpMultiplier;
+      for (let level = MIN_LEVEL; level <= cpmList.length; level++) {
+        const cpmLow = toNumber(cpmList[level - 1]);
+        const cpmHigh = toNumber(cpmList[level]);
+
+        settings.playerSetting.cpMultipliers[level] = cpmLow;
+        if (cpmHigh > 0) {
+          const multiplier = Math.sqrt(Math.pow(cpmLow, 2) - Math.pow(cpmLow, 2) / 2 + Math.pow(cpmHigh, 2) / 2);
+          settings.playerSetting.cpMultipliers[level + 0.5] = multiplier;
+        }
+      }
+    } else if (item.templateId === 'COMBAT_SETTINGS') {
       settings.combatOptions.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
       settings.combatOptions.shadowBonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
       settings.combatOptions.shadowBonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
@@ -931,13 +949,17 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
     if (move.id === 281) {
       move.isMultipleWithType = true;
       Object.keys(types)
-        .filter((type) => !isEqual(type, 'NORMAL', EqualMode.IgnoreCaseSensitive) && !isEqual(type, 'FAIRY', EqualMode.IgnoreCaseSensitive))
+        .filter(
+          (type) =>
+            !isEqual(type, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Normal), EqualMode.IgnoreCaseSensitive) &&
+            !isEqual(type, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Fairy), EqualMode.IgnoreCaseSensitive)
+        )
         .forEach((type, index) =>
           result.push(
             Combat.create({
               ...move,
               id: toNumber(`${move.id}${index}`),
-              name: `${move.name}_${type}`.replace('_NORMAL', ''),
+              name: `${move.name}_${type}`.replace(`_${getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Normal)?.toUpperCase()}`, ''),
               type,
             })
           )
