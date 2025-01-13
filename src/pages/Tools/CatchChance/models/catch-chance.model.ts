@@ -1,6 +1,8 @@
 import { BadgeType } from '../../../../components/Input/enums/badge-type.enum';
 import { IEncounter } from '../../../../core/models/pokemon.model';
+import { ThrowType } from '../../../../enums/type.enum';
 import { DynamicObj } from '../../../../util/extension';
+import { ItemName } from '../../../News/enums/item-type.enum';
 import { PokeBallType } from '../enums/poke-ball.enum';
 
 export interface PokemonCatchChance extends IEncounter {
@@ -9,32 +11,22 @@ export interface PokemonCatchChance extends IEncounter {
   result?: DynamicObj<DynamicObj<number>>;
 }
 
-interface ITitleThrow {
-  title: string;
-  type: string;
-  threshold: number[];
-}
-
-export class TitleThrow implements ITitleThrow {
-  title = '';
-  type = '';
-  threshold: number[] = [];
-
-  constructor({ ...props }: ITitleThrow) {
-    Object.assign(this, props);
-  }
-}
-
 interface IDataAdvance {
   result: number;
   ballName: string;
-  throwType: string;
+  ballItemName: string;
+  pokeBallType: PokeBallType;
+  throwText: string;
+  throwType: ThrowType;
 }
 
 export class DataAdvance implements IDataAdvance {
   result = 0;
   ballName = '';
-  throwType = '';
+  ballItemName = '';
+  pokeBallType = PokeBallType.PokeBall;
+  throwText = '';
+  throwType = ThrowType.Normal;
 
   static create(value: IDataAdvance) {
     const obj = new DataAdvance();
@@ -117,10 +109,13 @@ export class PokeBallOption implements IPokeBallOption {
 
 export interface PokeBallThreshold {
   name: string;
+  itemName: ItemName;
   threshold: number;
+  pokeBallType: PokeBallType;
 }
 
 export interface ThrowThreshold {
   name: string;
   threshold: number[];
+  throwType: ThrowType;
 }

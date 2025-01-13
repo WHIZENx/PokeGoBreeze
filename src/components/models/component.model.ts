@@ -323,6 +323,7 @@ export interface ICircleComponent {
 }
 
 export interface IHexagonComponent {
+  name?: string;
   defaultStats?: IHexagonStats;
   stats: IHexagonStats;
   size: number;

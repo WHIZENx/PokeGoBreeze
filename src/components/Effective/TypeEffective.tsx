@@ -5,16 +5,14 @@ import { ITypeEffectiveComponent } from '../models/component.model';
 import { isNotEmpty } from '../../util/extension';
 
 const TypeEffective = (props: ITypeEffectiveComponent) => {
-  const noneSprit = () => {
-    return (
-      <div className="element-top d-flex" style={{ marginLeft: 15 }}>
-        <div className="text-center" key={0}>
-          <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />
-          <span className="caption text-black">None</span>
-        </div>
+  const noneSprit = () => (
+    <div className="element-top d-flex" style={{ marginLeft: 15 }}>
+      <div className="text-center" key={0}>
+        <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />
+        <span className="caption text-black">None</span>
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <Fragment>

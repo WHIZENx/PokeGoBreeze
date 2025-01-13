@@ -1,6 +1,14 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { getKeyWithData, LevelSlider, marks, PokeGoSlider, splitAndCapitalize, TypeRadioGroup } from '../../../util/utils';
+import {
+  getItemSpritePath,
+  getKeyWithData,
+  LevelSlider,
+  marks,
+  PokeGoSlider,
+  splitAndCapitalize,
+  TypeRadioGroup,
+} from '../../../util/utils';
 import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
@@ -27,6 +35,7 @@ import { EvoPath } from '../../../core/models/API/species.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
+import { ItemName } from '../../News/enums/item-type.enum';
 
 const Calculate = () => {
   useChangeTitle('Calculate CP&IV - Tool');
@@ -406,7 +415,7 @@ const Calculate = () => {
                           {statData ? (
                             <Candy id={id} style={{ marginRight: 8 }} />
                           ) : (
-                            <img style={{ marginRight: 8 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
+                            <img style={{ marginRight: 8 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                           )}
                           Candy Required
                         </td>
@@ -442,12 +451,7 @@ const Calculate = () => {
                           {statData ? (
                             <CandyXL id={id} />
                           ) : (
-                            <img
-                              style={{ marginRight: 10 }}
-                              alt="img-stardust"
-                              height={20}
-                              src={APIService.getItemSprite('RareXLCandy_PSD')}
-                            />
+                            <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.XlRareCandy)} />
                           )}
                           XL Candy Required
                         </td>
@@ -608,7 +612,7 @@ const Calculate = () => {
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
                               <Candy id={id} style={{ marginRight: 10 }} />
                             ) : (
-                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
+                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                             )}
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
                               <span
@@ -632,7 +636,7 @@ const Calculate = () => {
                                 style={{ marginRight: 10 }}
                                 alt="img-stardust"
                                 height={20}
-                                src={APIService.getItemSprite('RareXLCandy_PSD')}
+                                src={getItemSpritePath(ItemName.XlRareCandy)}
                               />
                             )}
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
@@ -735,7 +739,7 @@ const Calculate = () => {
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
                               <Candy id={id} style={{ marginRight: 10 }} />
                             ) : (
-                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
+                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                             )}
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
                               <span
@@ -759,7 +763,7 @@ const Calculate = () => {
                                 style={{ marginRight: 10 }}
                                 alt="img-stardust"
                                 height={20}
-                                src={APIService.getItemSprite('RareXLCandy_PSD')}
+                                src={getItemSpritePath(ItemName.XlRareCandy)}
                               />
                             )}
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
@@ -862,7 +866,7 @@ const Calculate = () => {
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
                               <Candy id={id} style={{ marginRight: 10 }} />
                             ) : (
-                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
+                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                             )}
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
                               <span
@@ -886,7 +890,7 @@ const Calculate = () => {
                                 style={{ marginRight: 10 }}
                                 alt="img-stardust"
                                 height={20}
-                                src={APIService.getItemSprite('RareXLCandy_PSD')}
+                                src={getItemSpritePath(ItemName.XlRareCandy)}
                               />
                             )}
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
@@ -980,7 +984,7 @@ const Calculate = () => {
                             {dataMasterLeague ? (
                               <Candy id={id} style={{ marginRight: 10 }} />
                             ) : (
-                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} />
+                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                             )}
                             {dataMasterLeague ? (
                               <span
@@ -1004,7 +1008,7 @@ const Calculate = () => {
                                 style={{ marginRight: 10 }}
                                 alt="img-stardust"
                                 height={20}
-                                src={APIService.getItemSprite('RareXLCandy_PSD')}
+                                src={getItemSpritePath(ItemName.XlRareCandy)}
                               />
                             )}
                             {dataMasterLeague ? (

@@ -4,10 +4,9 @@ import { getOption } from '../core/options';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
 import { DynamicObj, getPropertyName, toNumber } from './extension';
 import { LeagueType } from '../core/enums/league.enum';
-import { ChargeAbility } from '../pages/Tools/BattleDamage/enums/damage.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
-import { PokemonType } from '../enums/type.enum';
+import { PokemonType, ThrowType } from '../enums/type.enum';
 
 // Parameters
 export class Params {
@@ -165,11 +164,11 @@ export const MULTIPLY_LEVEL_FRIENDSHIP = (
 
 export const MULTIPLY_THROW_CHARGE = (
   options: IOptions | undefined,
-  type = ChargeAbility.Normal,
+  type = ThrowType.Normal,
   settings = [
     getPropertyName(options, (o) => o.throwCharge),
     getPropertyName(options?.throwCharge, (o) =>
-      type === ChargeAbility.Normal ? o.normal : type === ChargeAbility.Nice ? o.nice : type === ChargeAbility.Great ? o.great : o.excellent
+      type === ThrowType.Normal ? o.normal : type === ThrowType.Nice ? o.nice : type === ThrowType.Great ? o.great : o.excellent
     ),
   ]
 ) => getOption<number>(options, settings, 1);

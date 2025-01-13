@@ -57,10 +57,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
     });
   };
 
-  const getCombatMove = (moveName: string | undefined) => {
-    const move = combat.find((item) => isEqual(item.name, moveName));
-    return move;
-  };
+  const getCombatMove = (moveName: string | undefined) => combat.find((item) => isEqual(item.name, moveName));
 
   return (
     <Fragment>

@@ -12,6 +12,7 @@ import { PokemonPVPMove } from '../../core/models/pvp.model';
 import { DynamicObj } from '../../util/extension';
 import { IEvolutionChain } from '../../core/models/evolution-chain.model';
 import { IInformation } from '../../core/models/information';
+import { ITrainerLevelUp } from '../../core/models/trainer.model';
 
 export enum StoreActionTypes {
   getStore = '[Store] GetStore',
@@ -28,6 +29,7 @@ export enum StoreActionTypes {
   setLeagues = '[Store] SetLeagues',
   setLogoPokeGO = '[Store] SetLogoPokeGO',
   setCPM = '[Store] SetCPM',
+  setTrainers = '[Store] SetTrainers',
   setPVP = '[Store] SetPVP',
   setPVPMoves = '[Store] SetPVPMoves',
   resetStore = '[Store] ResetStore',
@@ -226,6 +228,20 @@ export class SetCPM implements Action {
   }
 }
 
+export class SetTrainer implements Action {
+  readonly type = StoreActionTypes.setTrainers;
+
+  constructor(public payload: ITrainerLevelUp[]) {}
+
+  static create(value: ITrainerLevelUp[]) {
+    const { type, payload } = new SetTrainer(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
 export class SetPVP implements Action {
   readonly type = StoreActionTypes.setPVP;
 
@@ -280,6 +296,7 @@ export type StoreActionsUnion =
   | SetLeagues
   | SetLogoPokeGO
   | SetCPM
+  | SetTrainer
   | SetPVP
   | SetPVPMoves
   | ResetStore;

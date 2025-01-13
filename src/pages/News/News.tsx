@@ -4,10 +4,10 @@ import './News.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { Accordion } from 'react-bootstrap';
-import { generateParamForm, getKeyWithData, getLureItemType, getTime, splitAndCapitalize } from '../../util/utils';
+import { generateParamForm, getItemSpritePath, getKeyWithData, getTime, splitAndCapitalize } from '../../util/utils';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNotNumber, toNumber } from '../../util/extension';
 import APIService from '../../services/API.service';
-import { DateEvent, ItemName, TitleName } from './enums/item-type.enum';
+import { DateEvent, TitleName } from './enums/item-type.enum';
 import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
 import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/information.enum';
 import { FORM_NORMAL } from '../../util/constants';
@@ -125,43 +125,14 @@ const News = () => {
   };
 
   const getItemSprite = (value: ITicketReward) => {
-    if (
-      (value.type === TicketRewardType.Item && !isNotNumber(value.item?.item)) ||
-      value.type === TicketRewardType.Exp ||
-      value.type === TicketRewardType.Avatar
-    ) {
-      return APIService.getPokeSprite(0);
-    } else if (value.item?.item === ItemName.RaidTicket) {
-      return APIService.getItemSprite('Item_1401');
-    } else if (value.item?.item === ItemName.RareCandy) {
-      return APIService.getItemSprite('Item_1301');
-    } else if (value.item?.item === ItemName.XlRareCandy) {
-      return APIService.getItemSprite('RareXLCandy_PSD');
-    } else if (value.item?.item === ItemName.MasterBall) {
-      return APIService.getItemSprite('masterball_sprite');
-    } else if (value.item?.item === ItemName.GoldenPinapBerry) {
-      return APIService.getItemSprite('Item_0705');
-    } else if (value.item?.item === ItemName.LuckyEgg) {
-      return APIService.getItemSprite('luckyegg');
-    } else if (isInclude(value.item?.item, ItemName.Troy)) {
-      const itemLure = getLureItemType(value.item?.item);
-      return APIService.getItemTroy(itemLure);
-    } else if (value.item?.item === ItemName.PaidRaidTicket) {
-      return APIService.getItemSprite('Item_1402');
-    } else if (value.item?.item === ItemName.StarPice) {
-      return APIService.getItemSprite('starpiece');
-    } else if (value.item?.item === ItemName.Poffin) {
-      return APIService.getItemSprite('Item_0704');
-    } else if (value.item?.item === ItemName.EliteSpecialAttack) {
-      return APIService.getItemSprite('Item_1204');
-    } else if (value.item?.item === ItemName.IncubatorBasic) {
-      return APIService.getItemSprite('EggIncubatorIAP_Empty');
-    } else if (value.type === TicketRewardType.Pokemon) {
+    if (value.type === TicketRewardType.Pokemon) {
       return getImageList(value.pokemon);
     } else if (value.type === TicketRewardType.Stardust) {
       return APIService.getItemSprite('stardust_painted');
     } else if (value.type === TicketRewardType.PokeCoin) {
       return APIService.getItemSprite('Item_COIN_01');
+    } else if (value.type === TicketRewardType.Item && value.item?.item) {
+      return getItemSpritePath(value.item.item);
     }
     return APIService.getPokeSprite(0);
   };

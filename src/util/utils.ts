@@ -59,6 +59,7 @@ import { TypeEffChart } from '../core/models/type-eff.model';
 import { TypeEffectiveAmount } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
 import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
+import { ItemName } from '../pages/News/enums/item-type.enum';
 
 class Mask {
   value: number;
@@ -172,22 +173,23 @@ export const HundoRate = styled(Rating)(() => ({
   },
 }));
 
-export const capitalize = (str: string | undefined | null) => {
-  return getValueOrDefault(String, str?.charAt(0).toUpperCase()) + getValueOrDefault(String, str?.slice(1).toLowerCase());
+export const capitalize = (str: string | undefined | null, defaultText = '') => {
+  return getValueOrDefault(String, str?.charAt(0).toUpperCase()) + getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
 };
 
-export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string) => {
+export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') => {
   return getValueOrDefault(
     String,
     str
       ?.split(splitBy)
       .map((text) => capitalize(text))
-      .join(joinBy)
+      .join(joinBy),
+    defaultText
   );
 };
 
-export const reversedCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string) => {
-  return getValueOrDefault(String, str?.replaceAll(joinBy, splitBy).toLowerCase());
+export const reversedCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') => {
+  return getValueOrDefault(String, str?.replaceAll(joinBy, splitBy).toLowerCase(), defaultText);
 };
 
 export const getTime = (value: string | number | undefined, notFull = false) => {
@@ -508,40 +510,38 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   return new PokemonModel(result.num, result.name);
 };
 
-export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => {
-  return {
-    rows: {
-      style: {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.background.tablePrimary,
-        '&:not(:last-of-type)': {
-          borderBottomColor: theme.palette.background.tableDivided,
-        },
-      },
-      stripedStyle: {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.background.tableStrip,
-      },
-      highlightOnHoverStyle: {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.background.tableHover,
+export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => ({
+  rows: {
+    style: {
+      color: theme.palette.text.primary,
+      backgroundColor: theme.palette.background.tablePrimary,
+      '&:not(:last-of-type)': {
         borderBottomColor: theme.palette.background.tableDivided,
-        outlineColor: theme.palette.background.tablePrimary,
       },
     },
-    headCells: {
-      style: {
-        backgroundColor: theme.palette.background.tablePrimary,
-        color: theme.palette.text.primary,
-      },
+    stripedStyle: {
+      color: theme.palette.text.primary,
+      backgroundColor: theme.palette.background.tableStrip,
     },
-    cells: {
-      style: {
-        color: theme.palette.text.primary,
-      },
+    highlightOnHoverStyle: {
+      color: theme.palette.text.primary,
+      backgroundColor: theme.palette.background.tableHover,
+      borderBottomColor: theme.palette.background.tableDivided,
+      outlineColor: theme.palette.background.tablePrimary,
     },
-  };
-};
+  },
+  headCells: {
+    style: {
+      backgroundColor: theme.palette.background.tablePrimary,
+      color: theme.palette.text.primary,
+    },
+  },
+  cells: {
+    style: {
+      color: theme.palette.text.primary,
+    },
+  },
+});
 
 export const getDataWithKey = <T>(data: object, findKey: string | number | undefined | null, mode = EqualMode.CaseSensitive) => {
   const result = Object.entries(data).find(([key]) => isEqual(key, findKey, mode));
@@ -1052,11 +1052,11 @@ export const getMultiplyTypeEffect = (data: TypeEffChart, valueEffective: number
     data.weak?.push(key);
   } else if (valueEffective >= TypeEffectiveAmount.Neutral && !isIncludeList(data.neutral, key)) {
     data.neutral?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.Resist && !isIncludeList(data.resist, key)) {
+  } else if (valueEffective >= TypeEffectiveAmount.Resistance && !isIncludeList(data.resist, key)) {
     data.resist?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.VeryResist && !isIncludeList(data.veryResist, key)) {
+  } else if (valueEffective >= TypeEffectiveAmount.VeryResistance && !isIncludeList(data.veryResist, key)) {
     data.veryResist?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.SuperResist && !isIncludeList(data.superResist, key)) {
+  } else if (valueEffective >= TypeEffectiveAmount.SuperResistance && !isIncludeList(data.superResist, key)) {
     data.superResist?.push(key);
   }
 };
@@ -1091,4 +1091,62 @@ export const getLureItemType = (lureItem: string | undefined | null) => {
     case ItemLureType.Sparkly:
       return ItemLureRequireType.Sparkly;
   }
+};
+
+export const getItemSpritePath = (itemName: string | null | undefined) => {
+  if (isEqual(itemName, ItemName.RaidTicket)) {
+    return APIService.getItemSprite('Item_1401');
+  } else if (isEqual(itemName, ItemName.RareCandy)) {
+    return APIService.getItemSprite('Item_1301');
+  } else if (isEqual(itemName, ItemName.XlRareCandy)) {
+    return APIService.getItemSprite('RareXLCandy_PSD');
+  } else if (isEqual(itemName, ItemName.PokeBall)) {
+    return APIService.getItemSprite('pokeball_sprite');
+  } else if (isEqual(itemName, ItemName.GreatBall)) {
+    return APIService.getItemSprite('greatball_sprite');
+  } else if (isEqual(itemName, ItemName.UltraBall)) {
+    return APIService.getItemSprite('ultraball_sprite');
+  } else if (isEqual(itemName, ItemName.MasterBall)) {
+    return APIService.getItemSprite('masterball_sprite');
+  } else if (isEqual(itemName, ItemName.RazzBerry)) {
+    return APIService.getItemSprite('Item_0701');
+  } else if (isEqual(itemName, ItemName.NanabBerry)) {
+    return APIService.getItemSprite('Item_0703');
+  } else if (isEqual(itemName, ItemName.PinapBerry)) {
+    return APIService.getItemSprite('Item_0705');
+  } else if (isEqual(itemName, ItemName.GoldenPinapBerry)) {
+    return APIService.getItemSprite('Item_0707');
+  } else if (isEqual(itemName, ItemName.LuckyEgg)) {
+    return APIService.getItemSprite('luckyegg');
+  } else if (isInclude(itemName, ItemName.Troy)) {
+    const itemLure = getLureItemType(itemName);
+    return APIService.getItemTroy(itemLure);
+  } else if (isInclude(itemName, ItemName.PaidRaidTicket)) {
+    return APIService.getItemSprite('Item_1402');
+  } else if (isInclude(itemName, ItemName.StarPice)) {
+    return APIService.getItemSprite('starpiece');
+  } else if (isInclude(itemName, ItemName.Poffin)) {
+    return APIService.getItemSprite('Item_0704');
+  } else if (isInclude(itemName, ItemName.EliteFastAttack)) {
+    return APIService.getItemSprite('Item_1203');
+  } else if (isInclude(itemName, ItemName.EliteSpecialAttack)) {
+    return APIService.getItemSprite('Item_1204');
+  } else if (isInclude(itemName, ItemName.IncubatorBasic)) {
+    return APIService.getItemSprite('EggIncubatorIAP_Empty');
+  } else if (isInclude(itemName, ItemName.Incense)) {
+    return APIService.getItemSprite('Incense_0');
+  } else if (isInclude(itemName, ItemName.Potion)) {
+    return APIService.getItemSprite('Item_0101');
+  } else if (isInclude(itemName, ItemName.SuperPotion)) {
+    return APIService.getItemSprite('Item_0102');
+  } else if (isInclude(itemName, ItemName.HyperPotion)) {
+    return APIService.getItemSprite('Item_0103');
+  } else if (isInclude(itemName, ItemName.MaxPotion)) {
+    return APIService.getItemSprite('Item_0104');
+  } else if (isInclude(itemName, ItemName.Revive)) {
+    return APIService.getItemSprite('Item_0201');
+  } else if (isInclude(itemName, ItemName.MaxRevive)) {
+    return APIService.getItemSprite('Item_0202');
+  }
+  return APIService.getPokeSprite(0);
 };

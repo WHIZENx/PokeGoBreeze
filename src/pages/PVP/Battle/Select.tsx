@@ -176,7 +176,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         {(score > 0 || !isEmpty(pokemonIcon) || pokemon) && (
           <span className="pokemon-select-right">
             {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`)}>
+              <span
+                style={{ marginRight: 5 }}
+                className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`)}
+              >
                 {getKeyWithData(MoveType, MoveType.Shadow)}
               </span>
             )}

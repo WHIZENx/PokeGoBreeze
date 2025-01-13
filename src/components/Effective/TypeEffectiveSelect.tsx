@@ -7,19 +7,19 @@ import './TypeEffectiveSelect.scss';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
-import { combineClasses, isNotEmpty } from '../../util/extension';
+import { combineClasses, isNotEmpty, toFloat } from '../../util/extension';
 import { EffectiveType } from '../../pages/PVP/enums/type-eff.enum';
 import { TypeEffectiveAmount } from './enums/type-effective.enum';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
 
-  const renderEffective = (text: string, data: string[] | undefined) => (
+  const renderEffective = (amount: TypeEffectiveAmount, data: string[] | undefined) => (
     <Fragment>
       {isNotEmpty(data) && (
         <Fragment>
           <h6 className={props.isBlock ? 'element-top' : ''}>
-            <b className="text-shadow">x{text}</b>
+            <b className="text-shadow">x{toFloat(amount, 3)}</b>
           </h6>
           <div className="d-flex flex-wrap" style={{ gap: 5 }}>
             {data?.map((value, index) => (
@@ -64,8 +64,8 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
 
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
-          {renderEffective('2.56', data.veryWeak)}
-          {renderEffective('1.6', data.weak)}
+          {renderEffective(TypeEffectiveAmount.VeryWeak, data.veryWeak)}
+          {renderEffective(TypeEffectiveAmount.Weak, data.weak)}
         </div>
       );
     } else if (effect === EffectiveType.Neutral) {
@@ -80,7 +80,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       });
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
-          {renderEffective('1', data.neutral)}
+          {renderEffective(TypeEffectiveAmount.Neutral, data.neutral)}
         </div>
       );
     } else if (effect === EffectiveType.Resistance) {
@@ -89,19 +89,19 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
         });
-        if (valueEffective <= TypeEffectiveAmount.SuperResist) {
+        if (valueEffective <= TypeEffectiveAmount.SuperResistance) {
           data.superResist?.push(key);
-        } else if (valueEffective <= TypeEffectiveAmount.VeryResist) {
+        } else if (valueEffective <= TypeEffectiveAmount.VeryResistance) {
           data.veryResist?.push(key);
-        } else if (valueEffective <= TypeEffectiveAmount.Resist) {
+        } else if (valueEffective <= TypeEffectiveAmount.Resistance) {
           data.resist?.push(key);
         }
       });
       return (
         <div className="container" style={{ paddingBottom: '0.5rem' }}>
-          {renderEffective('0.244', data.superResist)}
-          {renderEffective('0.391', data.veryResist)}
-          {renderEffective('0.625', data.resist)}
+          {renderEffective(TypeEffectiveAmount.SuperResistance, data.superResist)}
+          {renderEffective(TypeEffectiveAmount.VeryResistance, data.veryResist)}
+          {renderEffective(TypeEffectiveAmount.Resistance, data.resist)}
         </div>
       );
     }

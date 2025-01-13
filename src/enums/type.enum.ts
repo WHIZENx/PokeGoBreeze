@@ -82,3 +82,10 @@ export enum PokemonClass {
   Mythic,
   UltraBeast,
 }
+
+export enum ThrowType {
+  Normal,
+  Nice,
+  Great,
+  Excellent,
+}

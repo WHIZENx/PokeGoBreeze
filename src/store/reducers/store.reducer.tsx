@@ -1,14 +1,14 @@
 import { convertPVPRankings, convertPVPTrain } from '../../core/pvp';
 import { replaceTempMovePvpName } from '../../util/utils';
-import { Store, StoreModel } from '../models/store.model';
+import { Store } from '../models/store.model';
 import { StoreActions } from '../../store/actions';
 import { StoreActionsUnion } from '../actions/store.action';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { isEqual } from '../../util/extension';
 
-const initialize: StoreModel = new Store();
+const initialize = new Store();
 
-const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion) => {
+const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
   switch (action.type) {
     case StoreActions.StoreActionTypes.getStore:
       return state;
@@ -113,6 +113,14 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
           leagues: action.payload,
         },
       };
+    case StoreActions.StoreActionTypes.setTrainers:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          trainers: action.payload,
+        },
+      };
     case StoreActions.StoreActionTypes.setPVP:
       return {
         ...state,
@@ -143,7 +151,7 @@ const StoreReducer = (state: StoreModel = initialize, action: StoreActionsUnion)
     }
     case StoreActions.StoreActionTypes.resetStore:
       return {
-        ...state,
+        initialize,
         timestamp: new Date().getTime(),
       };
     default:

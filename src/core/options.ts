@@ -83,6 +83,7 @@ import { ItemEvolutionRequireType, ItemEvolutionType, LeagueConditionType } from
 import { StatsBase } from './models/stats.model';
 import { EvolutionChain, EvolutionInfo, IEvolutionInfo } from './models/evolution-chain.model';
 import { Information, ITicketReward, TicketReward } from './models/information';
+import { TrainerLevelUp } from './models/trainer.model';
 
 export const getOption = <T>(options: any, args: string[], defaultValue?: T): T => {
   if (!options) {
@@ -1363,4 +1364,20 @@ export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonDa
         rewards: getInformationReward(item.data.itemSettings?.globalEventTicket, pokemonData),
       });
     });
+};
+
+export const optionTrainer = (data: PokemonDataGM[]) => {
+  return data
+    .filter((item) => /^AWARDS_LEVEL_(\d*)$/.test(item.templateId) && item.data.levelUpRewardSettings)
+    .map((item) => {
+      return TrainerLevelUp.create({
+        level: item.data.levelUpRewardSettings.level,
+        items: item.data.levelUpRewardSettings.items.map((value, index) => ({
+          name: value,
+          amount: item.data.levelUpRewardSettings.itemsCount[index],
+        })),
+        itemsUnlock: item.data.levelUpRewardSettings.itemsUnlocked,
+      });
+    })
+    .sort((a, b) => a.level - b.level);
 };
