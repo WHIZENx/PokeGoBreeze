@@ -19,9 +19,9 @@ import {
   CLASS_MYTHIC,
   CLASS_ULTRA_BEAST,
   FORM_ALOLA,
-  FORM_GALARIAN,
+  FORM_GALAR,
   FORM_GMAX,
-  FORM_HISUIAN,
+  FORM_HISUI,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PRIMAL,
@@ -56,7 +56,7 @@ import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../en
 import { Options } from '../core/models/options.model';
 import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
 import { TypeEffChart } from '../core/models/type-eff.model';
-import { TypeEffectiveAmount } from '../components/Effective/enums/type-effective.enum';
+import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
 import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 import { ItemName } from '../pages/News/enums/item-type.enum';
@@ -326,8 +326,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     '-speed',
     '-dusk',
     '-dawn',
-    `-${FORM_GALARIAN.toLowerCase()}`,
-    `-${FORM_HISUIAN.toLowerCase()}`,
+    `-${`${FORM_GALAR}IAN`.toLowerCase()}`,
+    `-${`${FORM_HISUI}AN`.toLowerCase()}`,
   ];
   return isInclude(formOri, '(') && isInclude(formOri, ')') && !isIncludeList(invalidForm, form)
     ? text.replaceAll(form.toLowerCase(), '')
@@ -652,9 +652,9 @@ export const convertPokemonDataName = (text: string | undefined | null, defaultN
     .replace(/_M$/, '_MALE')
     .replace(/^F$/, 'FEMALE')
     .replace(/^M$/, 'MALE')
-    .replace(/GALAR/, FORM_GALARIAN)
-    .replace(/HISUI/, FORM_HISUIAN)
-    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
+    .replace(/GALAR/, `${FORM_GALAR}IAN`)
+    .replace(/HISUI/, `${FORM_HISUI}AN`)
+    .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`)
     .replace(/_SUNSHINE$/, '_SUNNY')
     .replace(/_TOTEM$/, '')
     .replace(/_CAP$/, '')
@@ -689,10 +689,10 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/^PURIFIED$/, '')
     .replace(/^SHADOW$/, '')
     .replace(/_MALE$/, '')
-    .replace(/GALAR$/, FORM_GALARIAN)
-    .replace(/HISUI$/, FORM_HISUIAN)
-    .replace(/GALAR_/, `${FORM_GALARIAN}_`)
-    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
+    .replace(/GALAR$/, `${FORM_GALAR}IAN`)
+    .replace(/HISUI$/, `${FORM_HISUI}AN`)
+    .replace(/GALAR_/, `${`${FORM_GALAR}IAN`}_`)
+    .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`)
     .replace(/_TOTEM$/, '')
     .replace(/_PALDEA_COMBAT_BREED$/, '')
     .replace(/_PALDEA_BLAZE_BREED$/, '')
@@ -1046,17 +1046,17 @@ export const generateParamForm = (form: string | null | undefined, pokemonType =
 };
 
 export const getMultiplyTypeEffect = (data: TypeEffChart, valueEffective: number, key: string) => {
-  if (valueEffective >= TypeEffectiveAmount.VeryWeak && !isIncludeList(data.veryWeak, key)) {
+  if (valueEffective >= EffectiveType.VeryWeakness && !isIncludeList(data.veryWeak, key)) {
     data.veryWeak?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.Weak && !isIncludeList(data.weak, key)) {
+  } else if (valueEffective >= EffectiveType.Weakness && !isIncludeList(data.weak, key)) {
     data.weak?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.Neutral && !isIncludeList(data.neutral, key)) {
+  } else if (valueEffective >= EffectiveType.Neutral && !isIncludeList(data.neutral, key)) {
     data.neutral?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.Resistance && !isIncludeList(data.resist, key)) {
+  } else if (valueEffective >= EffectiveType.Resistance && !isIncludeList(data.resist, key)) {
     data.resist?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.VeryResistance && !isIncludeList(data.veryResist, key)) {
+  } else if (valueEffective >= EffectiveType.VeryResistance && !isIncludeList(data.veryResist, key)) {
     data.veryResist?.push(key);
-  } else if (valueEffective >= TypeEffectiveAmount.SuperResistance && !isIncludeList(data.superResist, key)) {
+  } else if (valueEffective >= EffectiveType.SuperResistance && !isIncludeList(data.superResist, key)) {
     data.superResist?.push(key);
   }
 };
@@ -1133,6 +1133,8 @@ export const getItemSpritePath = (itemName: string | null | undefined) => {
     return APIService.getItemSprite('Item_1204');
   } else if (isInclude(itemName, ItemName.IncubatorBasic)) {
     return APIService.getItemSprite('EggIncubatorIAP_Empty');
+  } else if (isInclude(itemName, ItemName.IncubatorSuper)) {
+    return APIService.getItemSprite('EggIncubatorSuper_Empty');
   } else if (isInclude(itemName, ItemName.Incense)) {
     return APIService.getItemSprite('Incense_0');
   } else if (isInclude(itemName, ItemName.Potion)) {

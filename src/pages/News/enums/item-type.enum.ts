@@ -19,6 +19,7 @@ export enum ItemName {
   EliteFastAttack = 'ITEM_MOVE_REROLL_ELITE_FAST_ATTACK',
   EliteSpecialAttack = 'ITEM_MOVE_REROLL_ELITE_SPECIAL_ATTACK',
   IncubatorBasic = 'ITEM_INCUBATOR_BASIC',
+  IncubatorSuper = 'ITEM_INCUBATOR_SUPER',
   Potion = 'ITEM_POTION',
   SuperPotion = 'ITEM_SUPER_POTION',
   MaxPotion = 'ITEM_MAX_POTION',

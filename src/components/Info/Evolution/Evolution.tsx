@@ -39,9 +39,9 @@ import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvolution } from '../../../core/models/evolution.model';
 import {
-  FORM_GALARIAN,
+  FORM_GALAR,
   FORM_GMAX,
-  FORM_HISUIAN,
+  FORM_HISUI,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PURIFIED,
@@ -189,7 +189,7 @@ const Evolution = (props: IEvolutionComponent) => {
       pokemon.id === 718 && isEmpty(pokemon.form)
         ? 'TEN_PERCENT'
         : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
-    form = form?.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
+    form = form?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
     let sprite = '';
     if (pokemon.id === 664 || pokemon.id === 665) {
       sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;

@@ -14,17 +14,17 @@ import { IDamageTableComponent } from '../../models/page.model';
 import { LabelDamage } from '../../../core/models/damage.model';
 import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { PokemonType } from '../../../enums/type.enum';
-import { TypeEffectiveAmount } from '../../../components/Effective/enums/type-effective.enum';
+import { EffectiveType } from '../../../components/Effective/enums/type-effective.enum';
 
 const DamageTable = (props: IDamageTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
 
-  const setLabelDamage = (amount: TypeEffectiveAmount) =>
+  const setLabelDamage = (amount: EffectiveType) =>
     LabelDamage.create({
       label: toFloat(amount, 3),
       style: getValueOrDefault(
         String,
-        getKeyWithData(TypeEffectiveAmount, amount)
+        getKeyWithData(EffectiveType, amount)
           ?.split(/(?=[A-Z])/)
           .join('-')
           .toLowerCase()
@@ -32,18 +32,18 @@ const DamageTable = (props: IDamageTableComponent) => {
     });
 
   const getLabelDamage = (valueEffective: number) => {
-    if (valueEffective >= TypeEffectiveAmount.VeryWeak) {
-      return setLabelDamage(TypeEffectiveAmount.VeryWeak);
-    } else if (valueEffective >= TypeEffectiveAmount.Weak) {
-      return setLabelDamage(TypeEffectiveAmount.Weak);
-    } else if (valueEffective >= TypeEffectiveAmount.Neutral) {
-      return setLabelDamage(TypeEffectiveAmount.Neutral);
-    } else if (valueEffective >= TypeEffectiveAmount.Resistance) {
-      return setLabelDamage(TypeEffectiveAmount.Resistance);
-    } else if (valueEffective >= TypeEffectiveAmount.VeryResistance) {
-      return setLabelDamage(TypeEffectiveAmount.VeryResistance);
-    } else if (valueEffective >= TypeEffectiveAmount.SuperResistance) {
-      return setLabelDamage(TypeEffectiveAmount.SuperResistance);
+    if (valueEffective >= EffectiveType.VeryWeakness) {
+      return setLabelDamage(EffectiveType.VeryWeakness);
+    } else if (valueEffective >= EffectiveType.Weakness) {
+      return setLabelDamage(EffectiveType.Weakness);
+    } else if (valueEffective >= EffectiveType.Neutral) {
+      return setLabelDamage(EffectiveType.Neutral);
+    } else if (valueEffective >= EffectiveType.Resistance) {
+      return setLabelDamage(EffectiveType.Resistance);
+    } else if (valueEffective >= EffectiveType.VeryResistance) {
+      return setLabelDamage(EffectiveType.VeryResistance);
+    } else if (valueEffective >= EffectiveType.SuperResistance) {
+      return setLabelDamage(EffectiveType.SuperResistance);
     }
     return new LabelDamage();
   };

@@ -87,16 +87,16 @@ export const FORM_MEGA = 'MEGA';
 export const FORM_GMAX = 'GMAX';
 export const FORM_PRIMAL = 'PRIMAL';
 export const FORM_ALOLA = 'ALOLA';
-export const FORM_HISUIAN = 'HISUIAN';
-export const FORM_GALARIAN = 'GALARIAN';
+export const FORM_HISUI = 'HISUI';
+export const FORM_GALAR = 'GALAR';
 
 // Forms special
 export const FORM_HERO = 'HERO';
 export const FORM_STANDARD = 'STANDARD';
 export const FORM_INCARNATE = 'INCARNATE';
 export const FORM_ARMOR = 'ARMOR';
-export const FORM_MEGA_X = 'MEGA_X';
-export const FORM_MEGA_Y = 'MEGA_Y';
+export const FORM_MEGA_X = `${FORM_MEGA}_X`;
+export const FORM_MEGA_Y = `${FORM_MEGA}_Y`;
 
 // Pokémon Class
 export const CLASS_LEGENDARY = 'LEGENDARY';

@@ -50,7 +50,7 @@ import {
 import { ITypeEff } from './models/type-eff.model';
 import {
   FORM_ARMOR,
-  FORM_GALARIAN,
+  FORM_GALAR,
   FORM_MEGA,
   FORM_MEGA_X,
   FORM_MEGA_Y,
@@ -212,7 +212,7 @@ const convertAndReplaceNameGO = (name: string, defaultName = '') => {
     .replace(`${replacePokemonGoForm(defaultName)}_`, '')
     .replace(/^S$/gi, FORM_SHADOW)
     .replace(/^A$/gi, FORM_ARMOR)
-    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN);
+    .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`);
 };
 
 export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEncounter[]) => {
@@ -1320,6 +1320,10 @@ const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
           )
           .map((text) => text.replace(/^S/i, 'Season '));
       }
+      if (!isNotEmpty(descKey)) {
+        const descriptionOverride = getValueOrDefault(Array, itemSettings.descriptionOverride?.split('_'));
+        return capitalize(descriptionOverride[descriptionOverride?.length - 1]);
+      }
       return descKey.map((text) => capitalize(text)).join(' ');
     }
   }
@@ -1344,11 +1348,11 @@ const getInformationDetails = (itemSettings: ItemSettings | undefined) => {
   return result;
 };
 
-export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonData[]) => {
-  return data
+export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonData[]) =>
+  data
     .filter((item) => item.templateId.startsWith('ITEM_') && item.data.itemSettings && item.data.itemSettings.globalEventTicket)
-    .map((item) => {
-      return Information.create({
+    .map((item) =>
+      Information.create({
         id: item.templateId,
         title: getInformationTitle(item.data.itemSettings),
         desc: getInformationDesc(item.data.itemSettings),
@@ -1362,22 +1366,20 @@ export const optionInformation = (data: PokemonDataGM[], pokemonData: IPokemonDa
         giftItem: item.data.itemSettings?.globalEventTicket.giftItem,
         detailsLink: getInformationDetails(item.data.itemSettings),
         rewards: getInformationReward(item.data.itemSettings?.globalEventTicket, pokemonData),
-      });
-    });
-};
+      })
+    );
 
-export const optionTrainer = (data: PokemonDataGM[]) => {
-  return data
+export const optionTrainer = (data: PokemonDataGM[]) =>
+  data
     .filter((item) => /^AWARDS_LEVEL_(\d*)$/.test(item.templateId) && item.data.levelUpRewardSettings)
-    .map((item) => {
-      return TrainerLevelUp.create({
+    .map((item) =>
+      TrainerLevelUp.create({
         level: item.data.levelUpRewardSettings.level,
         items: item.data.levelUpRewardSettings.items.map((value, index) => ({
           name: value,
           amount: item.data.levelUpRewardSettings.itemsCount[index],
         })),
         itemsUnlock: item.data.levelUpRewardSettings.itemsUnlocked,
-      });
-    })
+      })
+    )
     .sort((a, b) => a.level - b.level);
-};

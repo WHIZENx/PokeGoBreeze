@@ -2,9 +2,9 @@ import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios
 import { APIUrl } from './constants';
 import {
   DEFAULT_SPRITE_NAME,
-  FORM_GALARIAN,
+  FORM_GALAR,
   FORM_GMAX,
-  FORM_HISUIAN,
+  FORM_HISUI,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PRIMAL,
@@ -231,7 +231,11 @@ class APIService {
   getPokeFullSprite(id: number | string | undefined, form?: string) {
     if (id) {
       if (form) {
-        form = splitAndCapitalize(form.toUpperCase().replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI'), '-', '-');
+        form = splitAndCapitalize(
+          form.toUpperCase().replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI),
+          '-',
+          '-'
+        );
       }
       return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${form ? `-${form}` : ''}.png`;
     }
