@@ -19,6 +19,7 @@ import {
   mappingMoveSetPokemonGO,
   optionEvolutionChain,
   optionInformation,
+  optionTrainer,
 } from '../../core/options';
 import { pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
 import APIService from '../../services/API.service';
@@ -160,6 +161,7 @@ export const loadGameMaster = (
       dispatch(SpinnerActions.SetPercent.create(60));
 
       dispatch(StoreActions.SetOptions.create(optionSettings(gm.data)));
+      dispatch(StoreActions.SetTrainer.create(optionTrainer(gm.data)));
       dispatch(StoreActions.SetTypeEff.create(typeEff));
       dispatch(StoreActions.SetWeatherBoost.create(weatherBoost));
       dispatch(StoreActions.SetSticker.create(optionSticker(gm.data, pokemon)));

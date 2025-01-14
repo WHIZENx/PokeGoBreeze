@@ -1,6 +1,7 @@
 import { PokemonType } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
+import { BattleLeagueCPType } from '../../util/enums/compute.enum';
 import { getPokemonType } from '../../util/utils';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
@@ -19,14 +20,14 @@ export class PVPDataModel implements IPVPDataModel {
 export interface IPVPInfo {
   id: string;
   name: string;
-  cp: number[];
+  cp: BattleLeagueCPType[];
   logo?: string;
 }
 
 export class PVPInfo implements IPVPInfo {
   id = '';
   name = '';
-  cp: number[] = [];
+  cp: BattleLeagueCPType[] = [];
   logo?: string;
 }
 

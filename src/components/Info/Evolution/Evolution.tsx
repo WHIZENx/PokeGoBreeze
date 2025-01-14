@@ -26,6 +26,7 @@ import {
   convertModelSpritName,
   convertPokemonAPIDataName,
   getDataWithKey,
+  getItemSpritePath,
   getPokemonType,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -38,9 +39,9 @@ import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvolution } from '../../../core/models/evolution.model';
 import {
-  FORM_GALARIAN,
+  FORM_GALAR,
   FORM_GMAX,
-  FORM_HISUIAN,
+  FORM_HISUI,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PURIFIED,
@@ -56,6 +57,7 @@ import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmp
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 import { IInfoEvoChain, IPokemonDetailEvoChain, PokemonDetailEvoChain, PokemonInfoEvo } from '../../../core/models/API/info.model';
+import { ItemName } from '../../../pages/News/enums/item-type.enum';
 
 interface IPokemonEvo {
   prev?: string;
@@ -187,7 +189,7 @@ const Evolution = (props: IEvolutionComponent) => {
       pokemon.id === 718 && isEmpty(pokemon.form)
         ? 'TEN_PERCENT'
         : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
-    form = form?.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
+    form = form?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
     let sprite = '';
     if (pokemon.id === 664 || pokemon.id === 665) {
       sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;
@@ -699,7 +701,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {data?.quest?.type === QuestType.UseIncense && (
                           <span className="caption">
                             <Fragment>
-                              <img width={20} height={20} src={APIService.getItemSprite('Incense_0')} />
+                              <img width={20} height={20} src={getItemSpritePath(ItemName.Incense)} />
                               <div style={{ fontSize: 11, lineHeight: 1 }}>Use Incense</div>
                             </Fragment>
                           </span>
@@ -794,7 +796,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <PopoverConfig id="popover-info-evo">
               <span className="info-evo">
                 <span className="d-block caption">
-                  - <img alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} /> : Candy of pokemon.
+                  - <img alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of pokemon.
                 </span>
                 <span className="d-block caption">
                   - <QuestionMarkIcon fontSize="small" /> : Random evolution.
@@ -837,7 +839,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <RestaurantIcon fontSize="small" /> : Buddy feed.
                 </span>
                 <span className="d-block caption">
-                  - <img width={20} height={20} src={APIService.getItemSprite('Incense_0')} /> : Use Incense.
+                  - <img width={20} height={20} src={getItemSpritePath(ItemName.Incense)} /> : Use Incense.
                 </span>
                 <span className="d-block caption">- Pokemon Battle.</span>
               </span>

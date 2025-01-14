@@ -8,6 +8,7 @@ import {
   convertPokemonImageName,
   formIconAssets,
   generatePokemonGoForms,
+  getItemSpritePath,
   getPokemonById,
   splitAndCapitalize,
   TypeRadioGroup,
@@ -37,6 +38,7 @@ import { SearchingModel } from '../../store/models/searching.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
+import { ItemName } from '../../pages/News/enums/item-type.enum';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -396,7 +398,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-pokemon" src={APIService.getItemSprite('pokeball_sprite')} /> Pokémon Stats
+                  <img height={32} alt="img-pokemon" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
                 </span>
               }
             />

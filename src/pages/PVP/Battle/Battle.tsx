@@ -1,5 +1,4 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
@@ -807,9 +806,8 @@ const Battle = () => {
       }
     }
     if (xPos <= 0) {
-      const element = ReactDOM.findDOMNode(timelineNormalContainer.current) as Element;
-      if (element) {
-        const rect = element.getBoundingClientRect();
+      if (timelineNormalContainer.current) {
+        const rect = timelineNormalContainer.current.getBoundingClientRect();
         xNormal.current = rect.left;
       }
     }
@@ -853,9 +851,8 @@ const Battle = () => {
           left: Math.max(0, xCurrent - timelineNormalContainer.current?.clientWidth / 2),
         });
         if (!xNormal.current) {
-          const element = ReactDOM.findDOMNode(timelineNormalContainer.current) as Element;
-          if (element) {
-            const rect = element.getBoundingClientRect();
+          if (timelineNormalContainer.current) {
+            const rect = timelineNormalContainer.current.getBoundingClientRect();
             xNormal.current = rect.left;
           }
         }

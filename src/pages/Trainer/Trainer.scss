@@ -1,0 +1,13 @@
+.trainer-levelup {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #b8d4da;
+
+  .levelup-container {
+    padding: 1rem;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}

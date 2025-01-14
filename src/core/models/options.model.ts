@@ -344,6 +344,13 @@ export interface PlayerLevel {
   maxQuestEncounterPlayerLevel: number;
 }
 
+export interface LevelUpRewardSettings {
+  level: number;
+  items: string[];
+  itemsCount: number[];
+  itemsUnlocked?: string[];
+}
+
 interface DataGM {
   pokemonSettings: PokemonModel;
   combatSettings: CombatSetting;
@@ -371,6 +378,7 @@ interface DataGM {
   evolutionChainDisplaySettings: EvolutionChainDisplaySettings;
   itemSettings?: ItemSettings;
   playerLevel: PlayerLevel;
+  levelUpRewardSettings: LevelUpRewardSettings;
 }
 
 export interface PokemonDataGM {

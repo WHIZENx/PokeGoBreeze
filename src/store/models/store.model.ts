@@ -9,6 +9,7 @@ import { IPokemonData } from '../../core/models/pokemon.model';
 import { IPVPDataModel, PVPDataModel } from '../../core/models/pvp.model';
 import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { ISticker } from '../../core/models/sticker.model';
+import { ITrainerLevelUp } from '../../core/models/trainer.model';
 import { ITypeEff, TypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost, WeatherBoost } from '../../core/models/weatherBoost.model';
 
@@ -37,6 +38,7 @@ interface IDataModel {
   combat: ICombat[];
   evolutionChain: IEvolutionChain[];
   information: IInformationData;
+  trainers: ITrainerLevelUp[];
   leagues: ILeagueData;
   pvp: IPVPDataModel;
 }
@@ -52,6 +54,7 @@ export class Data implements IDataModel {
   combat: ICombat[] = [];
   evolutionChain: IEvolutionChain[] = [];
   information = new InformationData();
+  trainers: ITrainerLevelUp[] = [];
   leagues = new LeagueData();
   pvp = new PVPDataModel();
 

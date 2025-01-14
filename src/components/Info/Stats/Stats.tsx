@@ -82,9 +82,7 @@ const Stats = (props: IStatsComponent) => {
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType]);
 
-  const setStats = (stats: number, type: TypeAction) => {
-    return Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
-  };
+  const setStats = (stats: number, type: TypeAction) => Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
 
   return (
     <div className="element-top" style={{ color: theme.palette.constant.text }}>

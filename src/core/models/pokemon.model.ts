@@ -1,6 +1,6 @@
 import { capitalize, getPokemonClass, replaceTempMoveName } from '../../util/utils';
 import { ICombat } from './combat.model';
-import { DEFAULT_SPRITE_NAME, FORM_GALARIAN, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
+import { DEFAULT_SPRITE_NAME, FORM_GALAR, FORM_HISUI, FORM_NORMAL, genList } from '../../util/constants';
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
@@ -540,7 +540,11 @@ export class PokemonData implements IPokemonData {
     }
     obj.slug =
       options?.slug ??
-      pokemon.name.replace(`_${FORM_GALARIAN}`, '_GALAR').replace(`_${FORM_HISUIAN}`, '_HISUI').replaceAll('_', '-').toLowerCase();
+      pokemon.name
+        .replace(`_${FORM_GALAR}IAN`, `_${FORM_GALAR}`)
+        .replace(`_${FORM_HISUI}AN`, `_${FORM_HISUI}`)
+        .replaceAll('_', '-')
+        .toLowerCase();
     obj.sprite = options?.sprite ?? DEFAULT_SPRITE_NAME;
     obj.types = getValueOrDefault(Array, types);
     obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));

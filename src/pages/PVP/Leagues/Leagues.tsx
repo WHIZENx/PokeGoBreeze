@@ -8,7 +8,7 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, getPokemonType, generateParamForm } from '../../../util/utils';
+import { getTime, splitAndCapitalize, capitalize, getPokemonType, generateParamForm, getItemSpritePath } from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -25,6 +25,7 @@ import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/le
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
+import { ItemName } from '../../News/enums/item-type.enum';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -357,7 +358,7 @@ const Leagues = () => {
                   badgeContent={null}
                   sx={{ paddingBottom: '1.5rem !important', maxWidth: 64 }}
                 >
-                  <img className="pokemon-sprite-medium" alt="img-pokemon" src={APIService.getItemSprite('Item_1402')} />
+                  <img className="pokemon-sprite-medium" alt="img-pokemon" src={getItemSpritePath(ItemName.PaidRaidTicket)} />
                   <span className="caption text-black">Premium</span>
                 </Badge>
               </div>
@@ -418,7 +419,7 @@ const Leagues = () => {
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
                             alt="img-pokemon"
-                            src={APIService.getItemSprite('Item_1301')}
+                            src={getItemSpritePath(ItemName.RareCandy)}
                           />
                           <span className="caption text-black">Rare Candy</span>
                         </Fragment>
@@ -518,7 +519,7 @@ const Leagues = () => {
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
                             alt="img-pokemon"
-                            src={APIService.getItemSprite('Item_1301')}
+                            src={getItemSpritePath(ItemName.RareCandy)}
                           />
                           <span className="caption text-black">Rare Candy</span>
                         </Fragment>
@@ -668,7 +669,7 @@ const Leagues = () => {
                       className="pokemon-sprite-small filter-shadow"
                       style={{ width: 16 }}
                       alt="img-pokemon"
-                      src={APIService.getItemSprite('Item_1402')}
+                      src={getItemSpritePath(ItemName.PaidRaidTicket)}
                     />
                     <span style={{ color: 'crimson' }}>Premium</span> (Win stack {showData.step})
                   </div>

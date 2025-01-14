@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN, MIN_CP } from '../../../util/constants';
+import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALAR, FORM_HISUI, MIN_CP } from '../../../util/constants';
 import { IEvolution } from '../../../core/models/evolution.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain, StatsCalculate } from '../../../util/models/calculate.model';
@@ -81,7 +81,7 @@ const FindBattle = () => {
 
   const currEvoChain = useCallback(
     (currId: number[], form: string, arr: IEvolution[]) => {
-      form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
+      form = form.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
       if (!isNotEmpty(currId)) {
         return arr;
       }

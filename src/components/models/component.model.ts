@@ -33,9 +33,9 @@ import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
 import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
-import { EffectiveType } from '../../pages/PVP/enums/type-eff.enum';
 import { BadgeType } from '../Input/enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
+import { EffectiveType } from '../Effective/enums/type-effective.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -323,6 +323,7 @@ export interface ICircleComponent {
 }
 
 export interface IHexagonComponent {
+  name?: string;
   defaultStats?: IHexagonStats;
   stats: IHexagonStats;
   size: number;

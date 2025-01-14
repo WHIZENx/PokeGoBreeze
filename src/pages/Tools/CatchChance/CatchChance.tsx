@@ -25,26 +25,38 @@ import {
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/constants';
-import { convertPokemonAPIDataName, getKeyWithData, LevelSlider, splitAndCapitalize } from '../../../util/utils';
+import { convertPokemonAPIDataName, getItemSpritePath, getKeyWithData, LevelSlider, splitAndCapitalize } from '../../../util/utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj, isEqual, isIncludeList, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
 import {
   Medal,
   MedalType,
   DataAdvance,
   PokemonCatchChance,
-  TitleThrow,
   AdvanceOption,
   PokeBallThreshold,
   ThrowThreshold,
   PokeBallOption,
 } from './models/catch-chance.model';
 import { PokeBallType } from './enums/poke-ball.enum';
-import { PokemonType } from '../../../enums/type.enum';
+import { PokemonType, ThrowType } from '../../../enums/type.enum';
 import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
+import { ItemName } from '../../News/enums/item-type.enum';
+
+const balls: PokeBallThreshold[] = [
+  { name: 'Poké Ball', itemName: ItemName.PokeBall, threshold: POKE_BALL_INC_CHANCE, pokeBallType: PokeBallType.PokeBall },
+  { name: 'Great Ball', itemName: ItemName.GreatBall, threshold: GREAT_BALL_INC_CHANCE, pokeBallType: PokeBallType.GreatBall },
+  { name: 'Ultra Ball', itemName: ItemName.UltraBall, threshold: ULTRA_BALL_INC_CHANCE, pokeBallType: PokeBallType.UltraBall },
+];
+const throws: ThrowThreshold[] = [
+  { name: 'Normal Throw', threshold: NORMAL_THROW_INC_CHANCE, throwType: ThrowType.Normal },
+  { name: 'Nice Throw', threshold: NICE_THROW_INC_CHANCE, throwType: ThrowType.Nice },
+  { name: 'Great Throw', threshold: GREAT_THROW_INC_CHANCE, throwType: ThrowType.Great },
+  { name: 'Excellent Throw', threshold: EXCELLENT_THROW_INC_CHANCE, throwType: ThrowType.Excellent },
+];
 
 const CatchChance = () => {
   const playerSetting = useSelector((state: StoreState) => state.store.data.options.playerSetting);
@@ -65,32 +77,14 @@ const CatchChance = () => {
   const [medal, setMedal] = useState(new Medal());
   const [level, setLevel] = useState(MIN_LEVEL);
   const [radius, setRadius] = useState(circleDistance.current / 2);
-  const [throwTitle, setThrowTitle] = useState(
-    new TitleThrow({
-      title: 'Nice!',
-      type: 'Nice Throw',
-      threshold: NICE_THROW_INC_CHANCE,
-    })
-  );
+  const [advThrow, setAdvThrow] = useState<ThrowThreshold>();
   const [advanceOption, setAdvanceOption] = useState(new AdvanceOption());
   const { ballType, isNormalThrow } = advanceOption;
-  const [colorCircle, setColorCircle] = useState('rgb(0, 255, 0)');
+  const [colorCircle, setColorCircle] = useState('#00ff00');
   const [isEncounter, setIsEncounter] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [options, setOptions] = useState(new PokeBallOption());
   const { isAdvance, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, isShadow } = options;
-
-  const pokeBallType: PokeBallThreshold[] = [
-    { name: 'Poké Ball', threshold: POKE_BALL_INC_CHANCE },
-    { name: 'Great Ball', threshold: GREAT_BALL_INC_CHANCE },
-    { name: 'Ultra Ball', threshold: ULTRA_BALL_INC_CHANCE },
-  ];
-  const throwType: ThrowThreshold[] = [
-    { name: 'Normal Throw', threshold: NORMAL_THROW_INC_CHANCE },
-    { name: 'Nice Throw', threshold: NICE_THROW_INC_CHANCE },
-    { name: 'Great Throw', threshold: GREAT_THROW_INC_CHANCE },
-    { name: 'Excellent Throw', threshold: EXCELLENT_THROW_INC_CHANCE },
-  ];
 
   useEffect(() => {
     document.title = 'Calculate Catch Chance - Tool';
@@ -116,7 +110,7 @@ const CatchChance = () => {
 
   useEffect(() => {
     if (isAdvance) {
-      setThrowTitle(renderTitleThrow());
+      setAdvThrow(renderAdvThrow());
       calculateAdvance();
     }
   }, [isAdvance, radius]);
@@ -132,16 +126,18 @@ const CatchChance = () => {
   }, [form]);
 
   const medalCatchChance = (priority: BadgeType) => {
-    if (priority === BadgeType.Bronze) {
-      return BRONZE_INC_CHANCE;
-    } else if (priority === BadgeType.Silver) {
-      return SILVER_INC_CHANCE;
-    } else if (priority === BadgeType.Gold) {
-      return GOLD_INC_CHANCE;
-    } else if (priority === BadgeType.Platinum) {
-      return PLATINUM_INC_CHANCE;
+    switch (priority) {
+      case BadgeType.Bronze:
+        return BRONZE_INC_CHANCE;
+      case BadgeType.Silver:
+        return SILVER_INC_CHANCE;
+      case BadgeType.Gold:
+        return GOLD_INC_CHANCE;
+      case BadgeType.Platinum:
+        return PLATINUM_INC_CHANCE;
+      default:
+        return 1;
     }
-    return 1;
   };
 
   const calculateCatch = () => {
@@ -150,9 +146,10 @@ const CatchChance = () => {
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
 
     if (data) {
-      pokeBallType.forEach((ball) => {
-        result[ball.name.toLowerCase().replace(' ball', '')] = {};
-        throwType.forEach((type) => {
+      balls.forEach((ball) => {
+        const ballType = getValueOrDefault(String, getKeyWithData(ThrowType, ball.pokeBallType)?.toLowerCase());
+        result[ballType] = {};
+        throws.forEach((type) => {
           const [minThreshold, maxThreshold] = type.threshold;
           const multiplier =
             ball.threshold *
@@ -167,7 +164,8 @@ const CatchChance = () => {
             level,
             multiplier
           );
-          result[ball.name.toLowerCase().replace(' ball', '')][type.name.toLowerCase().replace(' throw', '')] = Math.min(prob * 100, 100);
+          const throwType = getValueOrDefault(String, getKeyWithData(ThrowType, type.throwType)?.toLowerCase());
+          result[ballType][throwType] = Math.min(prob * 100, 100);
         });
       });
     }
@@ -269,28 +267,21 @@ const CatchChance = () => {
     }
   };
 
-  const titleThrowModel = (title: string, type: string, threshold: number[]) => {
-    return new TitleThrow({
-      title,
-      type,
-      threshold,
-    });
-  };
-
-  const renderTitleThrow = () => {
+  const renderAdvThrow = () => {
     if (radius >= 70) {
-      return titleThrowModel('Nice!', 'Nice Throw', NICE_THROW_INC_CHANCE);
+      return throws.find((t) => t.throwType === ThrowType.Nice);
     } else if (radius >= 30) {
-      return titleThrowModel('Great!', 'Great Throw', GREAT_THROW_INC_CHANCE);
+      return throws.find((t) => t.throwType === ThrowType.Great);
     } else {
-      return titleThrowModel('Excellent!', 'Excellent Throw', EXCELLENT_THROW_INC_CHANCE);
+      return throws.find((t) => t.throwType === ThrowType.Excellent);
     }
   };
 
   const calculateProb = (disable = false, threshold = 1) => {
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
-    const pokeBall = Object.entries(pokeBallType).find((_, index) => index === ballType);
+    const pokeBall = Object.entries(balls).find((_, type) => type === ballType);
+    let result = 0;
     if (pokeBall && isNotEmpty(pokeBall)) {
       const multiplier =
         pokeBall[1].threshold *
@@ -301,22 +292,30 @@ const CatchChance = () => {
         (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
         (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
       const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
-      const result = Math.min(prob * 100, 100);
-      return result;
+      result = Math.min(prob * 100, 100);
     }
-    return 0;
+    return result;
   };
 
   const calculateAdvance = () => {
     const threshold = isNormalThrow ? 1 : 1 + (100 - radius) / 100;
     const result = calculateProb(false, threshold);
-    const pokeBall = Object.entries(pokeBallType).find((_, index) => index === ballType);
-    if (pokeBall) {
+    const pokeBall = Object.entries(balls).find((_, index) => index === ballType);
+    let throwText = '';
+    if (isNormalThrow) {
+      throwText = getValueOrDefault(String, throws.find((t) => t.throwType === ThrowType.Normal)?.name);
+    } else if (advThrow) {
+      throwText = advThrow.name;
+    }
+    if (pokeBall && isNotEmpty(pokeBall)) {
       setDataAdv(
         DataAdvance.create({
           result,
           ballName: pokeBall[1].name,
-          throwType: isNormalThrow ? 'Normal Throw' : throwTitle.type,
+          ballItemName: pokeBall[1].itemName,
+          pokeBallType: pokeBall[1].pokeBallType,
+          throwText,
+          throwType: advThrow?.throwType ?? ThrowType.Normal,
         })
       );
     }
@@ -385,7 +384,7 @@ const CatchChance = () => {
                   }
                   label={
                     <span>
-                      <img height={32} src={APIService.getItemSprite('Item_0701')} /> Razz Berry
+                      <img height={32} src={getItemSpritePath(ItemName.RazzBerry)} /> Razz Berry
                     </span>
                   }
                 />
@@ -429,7 +428,7 @@ const CatchChance = () => {
                   }
                   label={
                     <span>
-                      <img height={32} src={APIService.getItemSprite('Item_0707')} /> Silver Pinaps
+                      <img height={32} src={getItemSpritePath(ItemName.GoldenPinapBerry)} /> Silver Pinaps
                     </span>
                   }
                 />
@@ -553,15 +552,11 @@ const CatchChance = () => {
                 <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
                   <InputLabel id="demo-select-small">Ball</InputLabel>
                   <Select value={ballType.toString()} label="Ball" onChange={handleChangeBallType}>
-                    <MenuItem value={PokeBallType.PokeBall} className="d-flex" style={{ gap: 5 }}>
-                      <img height={16} src={APIService.getItemSprite('pokeball_sprite')} /> Poké Ball
-                    </MenuItem>
-                    <MenuItem value={PokeBallType.GreatBall} className="d-flex" style={{ gap: 5 }}>
-                      <img height={16} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball
-                    </MenuItem>
-                    <MenuItem value={PokeBallType.UltraBall} className="d-flex" style={{ gap: 5 }}>
-                      <img height={16} src={APIService.getItemSprite('ultraball_sprite')} /> Ultra Ball
-                    </MenuItem>
+                    {balls.map((value, index) => (
+                      <MenuItem key={index} value={value.pokeBallType} className="d-flex" style={{ gap: 5 }}>
+                        <img height={16} src={getItemSpritePath(value.itemName)} /> {value.name}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
                 <FormControlLabel
@@ -604,7 +599,7 @@ const CatchChance = () => {
                   </div>
                 </div>
                 <div className="col-md-6 d-flex flex-column justify-content-center align-items-center" style={{ padding: 0 }}>
-                  <h5 className="text-center">{throwTitle.title}</h5>
+                  {advThrow && <h5 className="text-center">{getKeyWithData(ThrowType, advThrow.throwType)}!</h5>}
                   <div className="d-flex justify-content-center position-relative">
                     <Circle line={2} color="lightgray" size={circleDistance.current} />
                     <div className="position-absolute circle-ring">
@@ -624,65 +619,36 @@ const CatchChance = () => {
       <hr />
       <div className="position-relative">
         {isLoading && <div className="position-absolute w-100 h-100 impossible-encounter" />}
-        {!isAdvance && isEncounter && data && isIncludeList(Object.keys(data), 'result') && (
+        {!isAdvance && isEncounter && data?.result && (
           <div className="d-flex flex-column flex-wrap justify-content-center align-items-center">
             <div className="container table-container">
               <table className="table-catch-chance w-100">
                 <thead>
                   <tr>
                     <th>Throwing</th>
-                    <th>
-                      <img height={48} src={APIService.getItemSprite('pokeball_sprite')} /> Poké Ball
-                    </th>
-                    <th>
-                      <img height={48} src={APIService.getItemSprite('greatball_sprite')} /> Great Ball
-                    </th>
-                    <th>
-                      <img height={48} src={APIService.getItemSprite('ultraball_sprite')} /> Ultra Ball
-                    </th>
+                    {balls.map((value, index) => (
+                      <th key={index}>
+                        <img height={48} src={getItemSpritePath(value.itemName)} /> {value.name}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="text-center">
-                    <td>Normal Throw</td>
-                    {Object.entries(data.result ?? new Object())
-                      .reduce((p, c) => [...p, c[1].normal], [] as number[])
-                      .map((value, index) => (
-                        <td key={index} style={{ color: checkValueColor(value) }}>
-                          {Math.round(value)} %
-                        </td>
-                      ))}
-                  </tr>
-                  <tr className="text-center">
-                    <td>Nice Throw</td>
-                    {Object.entries(data.result ?? new Object())
-                      .reduce((p, c) => [...p, c[1].nice], [] as number[])
-                      .map((value, index) => (
-                        <td key={index} style={{ color: checkValueColor(value) }}>
-                          {Math.round(value)} %
-                        </td>
-                      ))}
-                  </tr>
-                  <tr className="text-center">
-                    <td>Great Throw</td>
-                    {Object.entries(data.result ?? new Object())
-                      .reduce((p, c) => [...p, c[1].great], [] as number[])
-                      .map((value, index) => (
-                        <td key={index} style={{ color: checkValueColor(value) }}>
-                          {Math.round(value)} %
-                        </td>
-                      ))}
-                  </tr>
-                  <tr className="text-center">
-                    <td>Excellent Throw</td>
-                    {Object.entries(data.result ?? new Object())
-                      .reduce((p, c) => [...p, c[1].excellent], [] as number[])
-                      .map((value, index) => (
-                        <td key={index} style={{ color: checkValueColor(value) }}>
-                          {Math.round(value)} %
-                        </td>
-                      ))}
-                  </tr>
+                  {throws.map((value, index) => (
+                    <tr key={index} className="text-center">
+                      <td>{value.name}</td>
+                      {Object.entries(data.result ?? new Object())
+                        .reduce(
+                          (p, c) => [...p, c[1][getValueOrDefault(String, getKeyWithData(ThrowType, value.throwType)?.toLowerCase())]],
+                          [] as number[]
+                        )
+                        .map((value: number, index) => (
+                          <td key={index} style={{ color: checkValueColor(value) }}>
+                            {Math.round(value)} %
+                          </td>
+                        ))}
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -705,7 +671,7 @@ const CatchChance = () => {
             </div>
           </div>
         )}
-        {isAdvance && isEncounter && dataAdv && (
+        {isAdvance && isEncounter && (
           <div className="d-flex flex-wrap justify-content-center">
             <div className="container table-container">
               <table className="table-catch-chance w-100">
@@ -713,14 +679,13 @@ const CatchChance = () => {
                   <tr>
                     <th>Throwing</th>
                     <th>
-                      <img height={48} src={APIService.getItemSprite(`${dataAdv.ballName.replaceAll(' ', '').toLowerCase()}_sprite`)} />{' '}
-                      {dataAdv.ballName}
+                      <img height={48} src={getItemSpritePath(dataAdv.ballItemName)} /> {dataAdv.ballName}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="text-center">
-                    <td>{dataAdv.throwType}</td>
+                    <td>{dataAdv.throwText}</td>
                     <td style={{ color: checkValueColor(dataAdv.result) }}>{Math.round(dataAdv.result)} %</td>
                   </tr>
                 </tbody>
