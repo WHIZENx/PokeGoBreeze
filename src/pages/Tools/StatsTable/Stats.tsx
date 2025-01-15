@@ -99,20 +99,54 @@ const StatsTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    if (!isNotEmpty(statsBattle) && statATK > 0 && statDEF > 0 && statSTA > 0) {
-      setTimeout(() => {
-        const battleTable = calStatsProd(statATK, statDEF, statSTA, MIN_CP, BattleLeagueCPType.InsMaster);
-        setStatsBattle(battleTable);
-      }, 500);
+    const controller = new AbortController();
+    if (isNotEmpty(statsBattle)) {
+      setStatsBattle([]);
+      setIsLoading(true);
     }
-  }, [statsBattle, statATK, statDEF, statSTA]);
+    if (statATK > 0 && statDEF > 0 && statSTA > 0) {
+      calculateStats(controller.signal)
+        .then((data) => {
+          setStatsBattle(data);
+        })
+        .catch(() => setStatsBattle([]));
+    }
+    return () => controller.abort();
+  }, [statATK, statDEF, statSTA]);
+
+  const calculateStats = (signal: AbortSignal, delay = 500) => {
+    return new Promise<IBattleBaseStats[]>((resolve, reject) => {
+      let result: IBattleBaseStats[] = [];
+      let timeout: NodeJS.Timeout | number;
+      const abortHandler = () => {
+        clearTimeout(timeout);
+        reject();
+      };
+
+      const resolveHandler = () => {
+        if (signal instanceof AbortSignal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
+        result = calStatsProd(statATK, statDEF, statSTA, MIN_CP, BattleLeagueCPType.InsMaster);
+        resolve(result);
+      };
+
+      timeout = setTimeout(resolveHandler, delay, result);
+
+      if (signal instanceof AbortSignal) {
+        signal.addEventListener('abort', abortHandler, { once: true });
+      }
+    });
+  };
 
   useEffect(() => {
     if (isNotEmpty(statsBattle)) {
       setIsLoading(true);
       setTimeout(() => {
         const result = statsBattle.filter((stats) => toNumber(stats.CP) <= battleLeague);
-        setFilterStatsBattle(result);
+        setFilterStatsBattle(
+          result.sort((a, b) => toNumber(b.statsProds) - toNumber(a.statsProds)).map((stats, index) => ({ ...stats, rank: index + 1 }))
+        );
         setIsLoading(false);
       }, 500);
     }

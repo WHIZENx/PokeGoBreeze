@@ -107,25 +107,25 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   },
   {
     name: 'ATK',
-    selector: (row) => row.atk.attack,
+    selector: (row) => toNumber(row.atk.attack),
     sortable: true,
     width: '100px',
   },
   {
     name: 'DEF',
-    selector: (row) => row.def.defense,
+    selector: (row) => toNumber(row.def.defense),
     sortable: true,
     width: '100px',
   },
   {
     name: 'STA',
-    selector: (row) => row.sta.stamina,
+    selector: (row) => toNumber(row.sta.stamina),
     sortable: true,
     width: '100px',
   },
   {
     name: 'Stat Prod',
-    selector: (row) => row.prod.product,
+    selector: (row) => toNumber(row.prod.product),
     sortable: true,
     width: '150px',
   },
@@ -371,9 +371,9 @@ const StatsRanking = () => {
                 data={select}
                 id={select.num}
                 form={convertToPokemonForm(select)}
-                statATK={select.atk.attack}
-                statDEF={select.def.defense}
-                statSTA={select.sta.stamina}
+                statATK={toNumber(select.atk.attack)}
+                statDEF={toNumber(select.def.defense)}
+                statSTA={toNumber(select.sta.stamina)}
                 maxHeight={400}
               />
             </div>

@@ -90,13 +90,16 @@ const Tools = (props: IToolsComponent) => {
       if (props.onSetStats && formATK && formDEF && formSTA) {
         props.onSetStats(
           TypeAction.Atk,
-          props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formATK.attack, props.tier) : formATK.attack
+          props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formATK.attack, props.tier) : toNumber(formATK.attack)
         );
         props.onSetStats(
           TypeAction.Def,
-          props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formDEF.defense, props.tier) : formDEF.defense
+          props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formDEF.defense, props.tier) : toNumber(formDEF.defense)
         );
-        props.onSetStats(TypeAction.Sta, props.isRaid && props.tier && !props.isHide ? RAID_BOSS_TIER[props.tier].sta : formSTA.stamina);
+        props.onSetStats(
+          TypeAction.Sta,
+          props.isRaid && props.tier && !props.isHide ? RAID_BOSS_TIER[props.tier].sta : toNumber(formSTA.stamina)
+        );
         if (props.setForm) {
           props.setForm(props.currForm);
         }
@@ -185,7 +188,7 @@ const Tools = (props: IToolsComponent) => {
                   STA
                 </td>
                 <td className="text-center">
-                  {statsPokemon?.sta ? Math.floor(statsPokemon.sta.stamina / RAID_BOSS_TIER[props.tier].CPm) : 0}
+                  {statsPokemon?.sta ? Math.floor(toNumber(statsPokemon.sta.stamina) / RAID_BOSS_TIER[props.tier].CPm) : 0}
                 </td>
               </tr>
               <tr>

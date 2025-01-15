@@ -58,7 +58,6 @@ import {
   TimelineModel,
   IPokemonBattle,
   ChargeType,
-  TimelineEvent,
 } from '../models/battle.model';
 import { BattleBaseStats, IBattleBaseStats } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
@@ -71,6 +70,7 @@ import { LeagueType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
+import { TimelineEvent } from '../../../util/models/overrides/dom.model';
 
 interface OptionsBattle {
   showTap: boolean;

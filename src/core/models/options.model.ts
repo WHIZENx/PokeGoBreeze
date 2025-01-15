@@ -413,8 +413,8 @@ interface EvolutionCondition {
 
 export interface IPokemonPermission {
   id: number | undefined;
-  form: string;
-  forms?: string;
+  form?: string;
+  forms?: string[];
   name: string | undefined;
   pokemonType: PokemonType;
 }
@@ -422,7 +422,7 @@ export interface IPokemonPermission {
 export class PokemonPermission implements IPokemonPermission {
   id: number | undefined;
   form = '';
-  forms?: string;
+  forms?: string[];
   name: string | undefined;
   pokemonType = PokemonType.Normal;
 

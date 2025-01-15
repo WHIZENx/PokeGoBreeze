@@ -334,6 +334,11 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     : text;
 };
 
+interface CSSRuleSelector extends CSSRule {
+  selectorText?: string;
+  style?: DynamicObj<string>;
+}
+
 export const getStyleSheet = (selector: string) => {
   const sheets = document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
@@ -342,7 +347,7 @@ export const getStyleSheet = (selector: string) => {
       continue;
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
-      const rule: any = sheet.cssRules[j];
+      const rule: CSSRuleSelector = sheet.cssRules[j];
       if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
         return sheet;
       }
@@ -359,9 +364,9 @@ export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSSt
       continue;
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
-      const rule: any = sheet.cssRules[j];
-      if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
-        return rule.style[style] as string;
+      const rule: CSSRuleSelector = sheet.cssRules[j];
+      if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1 && rule.style) {
+        return rule.style[style];
       }
     }
   }

@@ -75,7 +75,17 @@ import {
 } from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
-import { DynamicObj, getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, isNotNumber, toNumber } from '../util/extension';
+import {
+  DynamicObj,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  isNotNumber,
+  toNumber,
+  UniqValueInArray,
+} from '../util/extension';
 import { GenderType } from './enums/asset.enum';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { LeagueRewardType, RewardType } from './enums/league.enum';
@@ -657,8 +667,6 @@ const pokemonDefaultForm = (data: PokemonDataGM[]) => {
   );
 };
 
-const optionPokemonFamily = (pokemon: IPokemonData[]) => [...new Set(pokemon.map((item) => getValueOrDefault(String, item.pokemonId)))];
-
 export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
   const stickers: ISticker[] = [];
   data
@@ -687,7 +695,7 @@ export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
 };
 
 export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: string[]) => {
-  const family = optionPokemonFamily(pokemon);
+  const family = UniqValueInArray(pokemon.map((item) => item.pokemonId));
   return family.map((item) => {
     const result = new Asset();
     result.id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, item))?.num);
@@ -973,6 +981,42 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
   return result;
 };
 
+const setPokemonPermission = (
+  pokemonData: IPokemonData[],
+  pokemon: IPokemonPermission[] | undefined,
+  pokemonPermission: IPokemonPermission[] = []
+) => {
+  pokemon?.forEach((currentPokemon) => {
+    const item = pokemonData.find((i) => isEqual(i.pokemonId, currentPokemon.id));
+    if (isNotEmpty(currentPokemon.forms)) {
+      currentPokemon.forms
+        ?.filter((form) => !isEqual(form, 'FORM_UNSET'))
+        .forEach((form) => {
+          form = form.replace(`${currentPokemon.id}_`, '');
+          pokemonPermission.push(
+            new PokemonPermission({
+              id: item?.num,
+              name: item?.pokemonId,
+              form,
+              pokemonType: getPokemonType(form),
+            })
+          );
+        });
+    } else {
+      const form = currentPokemon.form ? currentPokemon.form.replace(`${currentPokemon.id}_`, '') : FORM_NORMAL;
+      pokemonPermission.push(
+        new PokemonPermission({
+          id: item?.num,
+          name: item?.pokemonId,
+          form,
+          pokemonType: getPokemonType(form),
+        })
+      );
+    }
+  });
+  return pokemonPermission.sort((a, b) => toNumber(a.id) - toNumber(b.id));
+};
+
 export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) => {
   const result = new LeagueData();
   result.allowLeagues = getValueOrDefault(
@@ -1010,61 +1054,9 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         } else if (con.type === LeagueConditionType.PokemonLimitCP) {
           result.conditions.maxCp = con.withPokemonCpLimit?.maxCp;
         } else if (con.type === LeagueConditionType.Whitelist) {
-          result.conditions.whiteList = getValueOrDefault(
-            Array,
-            con.pokemonWhiteList?.pokemon.map((poke) => {
-              const item = pokemon.find((item) => isEqual(item.pokemonId, poke.id));
-              return new PokemonPermission({
-                id: item?.num,
-                name: item?.pokemonId,
-                form: poke.forms ?? FORM_NORMAL,
-                pokemonType: getPokemonType(poke.forms ?? FORM_NORMAL),
-              });
-            })
-          );
-          const whiteList: IPokemonPermission[] = [];
-          result.conditions.whiteList.forEach((value) => {
-            if (typeof value.form !== 'string') {
-              (value.form as string[]).forEach((form) => {
-                if (form === 'FORM_UNSET' && value.form.length === 1) {
-                  whiteList.push(new PokemonPermission({ ...value, form: FORM_NORMAL }));
-                } else if (!isEqual(form, 'FORM_UNSET', EqualMode.IgnoreCaseSensitive)) {
-                  whiteList.push(new PokemonPermission({ ...value, form: form.replace(`${value.name}_`, '') }));
-                }
-              });
-            } else {
-              whiteList.push(new PokemonPermission(value));
-            }
-          });
-          result.conditions.whiteList = whiteList.sort((a, b) => toNumber(a.id) - toNumber(b.id));
+          result.conditions.whiteList = setPokemonPermission(pokemon, con.pokemonWhiteList?.pokemon);
         } else if (con.type === LeagueConditionType.BanList) {
-          result.conditions.banned = getValueOrDefault(
-            Array,
-            con.pokemonBanList?.pokemon.map((poke) => {
-              const item = pokemon.find((item) => isEqual(item.pokemonId, poke.id));
-              return new PokemonPermission({
-                id: item?.num,
-                name: item?.pokemonId,
-                form: poke.forms ?? FORM_NORMAL,
-                pokemonType: getPokemonType(poke.forms ?? FORM_NORMAL),
-              });
-            })
-          );
-          const banList: IPokemonPermission[] = [];
-          result.conditions.banned.forEach((value) => {
-            if (typeof value.form !== 'string') {
-              (value.form as string[]).forEach((form) => {
-                if (form === 'FORM_UNSET' && value.form.length === 1) {
-                  banList.push(new PokemonPermission({ ...value, form: FORM_NORMAL }));
-                } else if (!isEqual(form, 'FORM_UNSET', EqualMode.IgnoreCaseSensitive)) {
-                  banList.push(new PokemonPermission({ ...value, form: form.replace(`${value.name}_`, '') }));
-                }
-              });
-            } else {
-              banList.push(new PokemonPermission(value));
-            }
-          });
-          result.conditions.banned = banList.sort((a, b) => toNumber(a.id) - toNumber(b.id));
+          result.conditions.banned = setPokemonPermission(pokemon, con.pokemonBanList?.pokemon);
         }
       });
       result.iconUrl = item.data.combatLeague.iconUrl

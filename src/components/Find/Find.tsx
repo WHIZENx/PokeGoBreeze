@@ -59,13 +59,13 @@ const Find = (props: IFindComponent) => {
   };
 
   const getInfoPoke = (value: IPokemonSearching) => {
-    const currentId = getPokemonById(pokemonData, value.id);
+    const currentPokemon = getPokemonById(pokemonData, value.id);
     setId(value.id);
     if (props.setId) {
       props.setId(value.id);
     }
-    if (props.setName && currentId) {
-      props.setName(currentId.name);
+    if (props.setName && currentPokemon) {
+      props.setName(currentPokemon.name);
     }
     if (props.clearStats) {
       props.clearStats();
@@ -83,9 +83,9 @@ const Find = (props: IFindComponent) => {
   };
 
   const decId = () => {
-    const currentId = getPokemonById(pokemonData, id);
-    if (currentId) {
-      const prev = getPokemonById(pokemonData, currentId.id - 1);
+    const currentPokemon = getPokemonById(pokemonData, id);
+    if (currentPokemon) {
+      const prev = getPokemonById(pokemonData, currentPokemon.id - 1);
       if (prev) {
         setId(prev.id);
         if (props.setId) {
@@ -102,9 +102,9 @@ const Find = (props: IFindComponent) => {
   };
 
   const incId = () => {
-    const currentId = getPokemonById(pokemonData, id);
-    if (currentId) {
-      const next = getPokemonById(pokemonData, currentId.id + 1);
+    const currentPokemon = getPokemonById(pokemonData, id);
+    if (currentPokemon) {
+      const next = getPokemonById(pokemonData, currentPokemon.id + 1);
       if (next) {
         setId(next.id);
         if (props.setId) {

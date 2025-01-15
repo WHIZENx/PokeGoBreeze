@@ -22,7 +22,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleState } from '../../../core/models/damage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, toNumber, UniqValueInArray } from '../../../util/extension';
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
 
@@ -118,7 +118,7 @@ const CalculatePoint = () => {
       }
       level++;
     }
-    const colorTone = computeColorTone([...new Set(group)].sort((a, b) => a - b));
+    const colorTone = computeColorTone(UniqValueInArray(group).sort((a, b) => a - b));
     setResultBreakPointAtk({ data: dataList, colorTone });
     enqueueSnackbar('Calculate breakpoint attacker successfully!', { variant: VariantType.Success });
   };
@@ -145,8 +145,8 @@ const CalculatePoint = () => {
       level++;
     }
 
-    const colorToneDef = computeColorTone([...new Set(groupDef)].sort((a, b) => b - a));
-    const colorToneSta = computeColorTone([...new Set(groupSta)].sort((a, b) => a - b));
+    const colorToneDef = computeColorTone(UniqValueInArray(groupDef).sort((a, b) => b - a));
+    const colorToneSta = computeColorTone(UniqValueInArray(groupSta).sort((a, b) => a - b));
     setResultBreakPointDef({
       dataDef: dataListDef,
       dataSta: dataListSta,
