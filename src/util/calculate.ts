@@ -92,6 +92,7 @@ import {
   isUndefined,
   toFloat,
   toNumber,
+  UniqValueInArray,
 } from './extension';
 import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
@@ -212,13 +213,11 @@ export const calBaseSTA = (stats: IStatsPokemon | null | undefined, nerf: boolea
 };
 
 export const sortStatsPokemon = (stats: IArrayStats[]) => {
-  const attackRanking = [
-    ...new Set(
-      stats
-        .sort((a, b) => toNumber(a.baseStatsPokeGo?.attack) - toNumber(b.baseStatsPokeGo?.attack))
-        .map((item) => toNumber(item.baseStatsPokeGo?.attack))
-    ),
-  ];
+  const attackRanking = UniqValueInArray(
+    stats
+      .sort((a, b) => toNumber(a.baseStatsPokeGo?.attack) - toNumber(b.baseStatsPokeGo?.attack))
+      .map((item) => toNumber(item.baseStatsPokeGo?.attack))
+  );
 
   const minATK = Math.min(...attackRanking);
   const maxATK = Math.max(...attackRanking);
@@ -231,13 +230,11 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     })
   );
 
-  const defenseRanking = [
-    ...new Set(
-      stats
-        .sort((a, b) => toNumber(a.baseStatsPokeGo?.defense) - toNumber(b.baseStatsPokeGo?.defense))
-        .map((item) => toNumber(item.baseStatsPokeGo?.defense))
-    ),
-  ];
+  const defenseRanking = UniqValueInArray(
+    stats
+      .sort((a, b) => toNumber(a.baseStatsPokeGo?.defense) - toNumber(b.baseStatsPokeGo?.defense))
+      .map((item) => toNumber(item.baseStatsPokeGo?.defense))
+  );
 
   const minDEF = Math.min(...defenseRanking);
   const maxDEF = Math.max(...defenseRanking);
@@ -250,13 +247,11 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     })
   );
 
-  const staminaRanking = [
-    ...new Set(
-      stats
-        .sort((a, b) => toNumber(a.baseStatsPokeGo?.stamina) - toNumber(b.baseStatsPokeGo?.stamina))
-        .map((item) => toNumber(item.baseStatsPokeGo?.stamina))
-    ),
-  ];
+  const staminaRanking = UniqValueInArray(
+    stats
+      .sort((a, b) => toNumber(a.baseStatsPokeGo?.stamina) - toNumber(b.baseStatsPokeGo?.stamina))
+      .map((item) => toNumber(item.baseStatsPokeGo?.stamina))
+  );
 
   const minSTA = Math.min(...staminaRanking);
   const maxSTA = Math.max(...staminaRanking);
@@ -269,7 +264,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     })
   );
 
-  const prodRanking = [...new Set(stats.sort((a, b) => a.baseStatsProd - b.baseStatsProd).map((item) => item.baseStatsProd))];
+  const prodRanking = UniqValueInArray(stats.sort((a, b) => a.baseStatsProd - b.baseStatsProd).map((item) => item.baseStatsProd));
 
   const minPROD = Math.min(...prodRanking);
   const maxPROD = Math.max(...prodRanking);
@@ -319,7 +314,8 @@ export const calculateCP = (atk: number, def: number, sta: number, level: number
     Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * toNumber(data.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
   );
 
-export const calculateRaidStat = (stat: number, tier: number) => Math.floor((stat + MAX_IV) * RAID_BOSS_TIER[tier].CPm);
+export const calculateRaidStat = (stat: number | undefined | null, tier: number) =>
+  Math.floor((toNumber(stat) + MAX_IV) * RAID_BOSS_TIER[tier].CPm);
 
 export const calculateRaidCP = (atk: number, def: number, tier: number) =>
   Math.floor(((atk + MAX_IV) * Math.sqrt(def + MAX_IV) * Math.sqrt(RAID_BOSS_TIER[tier].sta)) / 10);

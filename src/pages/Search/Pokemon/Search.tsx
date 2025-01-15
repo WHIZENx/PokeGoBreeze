@@ -72,27 +72,30 @@ const Search = () => {
   const getInfoPoke = (value: IPokemonSearching) => {
     setShowResult(false);
     setId(value.id);
+    setSelectId(value.id);
   };
 
   const decId = () => {
-    const currentId = getPokemonById(pokemonName, selectId);
-    if (currentId) {
-      setId(toNumber(getPokemonById(pokemonName, currentId.id - 1)?.id));
+    const currentPokemon = getPokemonById(pokemonName, selectId - 1);
+    if (currentPokemon) {
+      setSelectId(selectId - 1);
+      setId(toNumber(currentPokemon.id));
     }
   };
 
   const incId = () => {
-    const currentId = getPokemonById(pokemonName, selectId);
-    if (currentId) {
-      setId(toNumber(getPokemonById(pokemonName, currentId.id + 1)?.id));
+    const currentPokemon = getPokemonById(pokemonName, selectId + 1);
+    if (currentPokemon) {
+      setSelectId(selectId + 1);
+      setId(toNumber(currentPokemon.id));
     }
   };
 
   const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
-    const currentId = getPokemonById(pokemonName, selectId);
-    if (currentId) {
-      const prev = getPokemonById(pokemonName, currentId.id - 1);
-      const next = getPokemonById(pokemonName, currentId.id + 1);
+    const currentPokemon = getPokemonById(pokemonName, selectId);
+    if (currentPokemon) {
+      const prev = getPokemonById(pokemonName, currentPokemon.id - 1);
+      const next = getPokemonById(pokemonName, currentPokemon.id + 1);
       if (event.keyCode === KEY_ENTER) {
         setShowResult(false);
         setId(selectId);

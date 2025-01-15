@@ -326,10 +326,10 @@ const Pokemon = (props: IPokemonPage) => {
     if (id > 0 && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.isLoading) {
-          const currentId = getPokemonById(pokemonData, id);
-          if (currentId) {
-            const prev = getPokemonById(pokemonData, currentId.id - 1);
-            const next = getPokemonById(pokemonData, currentId.id + 1);
+          const currentPokemon = getPokemonById(pokemonData, id);
+          if (currentPokemon) {
+            const prev = getPokemonById(pokemonData, currentPokemon.id - 1);
+            const next = getPokemonById(pokemonData, currentPokemon.id + 1);
             if (prev && event.keyCode === KEY_LEFT) {
               event.preventDefault();
               params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
@@ -340,9 +340,9 @@ const Pokemon = (props: IPokemonPage) => {
           }
         }
       };
-      document.addEventListener('keyup', keyDownHandler, false);
+      document.addEventListener('keyup', keyDownHandler);
       return () => {
-        document.removeEventListener('keyup', keyDownHandler, false);
+        document.removeEventListener('keyup', keyDownHandler);
       };
     }
   }, [params.id, props.id, spinner.isLoading, pokemonData]);
@@ -409,12 +409,12 @@ const Pokemon = (props: IPokemonPage) => {
   useEffect(() => {
     const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
     if (id > 0 && isNotEmpty(pokemonData)) {
-      const currentId = getPokemonById(pokemonData, id);
-      if (currentId) {
+      const currentPokemon = getPokemonById(pokemonData, id);
+      if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(pokemonData, currentId.id - 1),
-          current: getPokemonById(pokemonData, currentId.id),
-          next: getPokemonById(pokemonData, currentId.id + 1),
+          prev: getPokemonById(pokemonData, currentPokemon.id - 1),
+          current: getPokemonById(pokemonData, currentPokemon.id),
+          next: getPokemonById(pokemonData, currentPokemon.id + 1),
         });
       }
     }

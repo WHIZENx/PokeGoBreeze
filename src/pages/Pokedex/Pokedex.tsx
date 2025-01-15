@@ -27,10 +27,11 @@ import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-h
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { PokemonClass, PokemonType, TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
 import { TypeEff } from '../../core/models/type-eff.model';
+import { ScrollModifyEvent } from '../../util/models/overrides/dom.model';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -201,19 +202,21 @@ const Pokedex = () => {
   }, [dataList, searchTerm, selectTypes, isMatch, releasedGO, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast, gen, version]);
 
   useEffect(() => {
-    const onScroll = (e: { target: { documentElement: { scrollTop: number; offsetHeight: number } } }) => {
-      const scrollTop = e.target.documentElement.scrollTop;
-      const fullHeight = e.target.documentElement.offsetHeight;
-      if (scrollTop * 1.5 >= fullHeight * (scrollID.current + 1)) {
-        scrollID.current += 1;
-        setListOfPokemon((oldArr) => [
-          ...oldArr,
-          ...result.slice(scrollID.current * subItem.current, (scrollID.current + 1) * subItem.current),
-        ]);
-      }
-    };
-    window.addEventListener('scroll', onScroll as any);
-    return () => window.removeEventListener('scroll', onScroll as any);
+    if (isNotEmpty(listOfPokemon)) {
+      const onScroll = (e: ScrollModifyEvent) => {
+        const scrollTop = toNumber(e.target?.documentElement?.scrollTop);
+        const fullHeight = toNumber(e.target?.documentElement?.offsetHeight);
+        if (scrollTop * 1.5 >= fullHeight * (scrollID.current + 1)) {
+          scrollID.current += 1;
+          setListOfPokemon((oldArr) => [
+            ...oldArr,
+            ...result.slice(scrollID.current * subItem.current, (scrollID.current + 1) * subItem.current),
+          ]);
+        }
+      };
+      window.addEventListener('scroll', onScroll);
+      return () => window.removeEventListener('scroll', onScroll);
+    }
   }, [listOfPokemon]);
 
   const handleChangeGen = (event: SelectChangeEvent<number[]>) => {

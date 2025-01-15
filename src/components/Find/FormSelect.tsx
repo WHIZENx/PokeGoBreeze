@@ -210,12 +210,12 @@ const FormSelect = (props: IFormSelectComponent) => {
   useEffect(() => {
     const id = toNumber(props.id);
     if (isNotEmpty(props.data) && id > 0) {
-      const currentId = getPokemonById(props.data, id);
-      if (currentId) {
+      const currentPokemon = getPokemonById(props.data, id);
+      if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(props.data, currentId.id - 1),
-          current: getPokemonById(props.data, currentId.id),
-          next: getPokemonById(props.data, currentId.id + 1),
+          prev: getPokemonById(props.data, currentPokemon.id - 1),
+          current: getPokemonById(props.data, currentPokemon.id),
+          next: getPokemonById(props.data, currentPokemon.id + 1),
         });
       }
     }
@@ -343,7 +343,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <h4>
         <b>
-          {`#${dataStorePokemon?.current?.id} `}
+          {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}
           {currentForm ? splitAndCapitalize(currentForm.form.name.replace('-f', '-female').replace('-m', '-male'), '-', ' ') : props.name}
         </b>
       </h4>

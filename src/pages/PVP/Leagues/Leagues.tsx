@@ -26,6 +26,7 @@ import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
+import { APIUrl } from '../../../services/constants';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -46,7 +47,7 @@ const Leagues = () => {
   const [setting, setSetting] = useState<SettingLeague>();
   const [showData, setShowData] = useState<LeagueData>();
 
-  const getAssetPokeGo = (id: number | undefined, formName: string) => {
+  const getAssetPokeGo = (id: number | undefined, formName: string | undefined) => {
     const asset = queryAssetForm(dataStore.assets, id, formName);
     if (asset) {
       return APIService.getPokemonModel(asset.default);
@@ -247,12 +248,20 @@ const Leagues = () => {
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="img-pokemon"
                           src={getAssetPokeGo(item.id, item.form)}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                              e.currentTarget.src = APIService.getPokeFullAsset(item.id);
+                            } else {
+                              e.currentTarget.src = APIService.getPokeFullSprite(0);
+                            }
+                          }}
                         />
                       </span>
                     </div>
                     <span className="caption">
                       {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                        item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                        item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
                       }`}
                     </span>
                   </Link>
@@ -275,12 +284,20 @@ const Leagues = () => {
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="img-pokemon"
                           src={getAssetPokeGo(item.id, item.form)}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                              e.currentTarget.src = APIService.getPokeFullAsset(item.id);
+                            } else {
+                              e.currentTarget.src = APIService.getPokeFullSprite(0);
+                            }
+                          }}
                         />
                       </span>
                     </div>
                     <span className="caption">
                       {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                        item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form.toLowerCase(), '_', ' ')}`
+                        item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
                       }`}
                     </span>
                   </Link>

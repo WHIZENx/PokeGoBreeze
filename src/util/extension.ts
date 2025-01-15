@@ -186,3 +186,26 @@ export const getPropertyName = <T extends object>(
   Object.keys(obj).map((k) => (res[k as keyof T] = k));
   return expression(res);
 };
+
+export const sparseIndexOf = <T>(array: T[], value: T) => {
+  return toNumber(
+    Object.keys(array).find((k) => array[toNumber(k)] === value),
+    -1
+  );
+};
+
+export const UniqValueInArray = <T>(array: (T | null | undefined)[] | null | undefined) => {
+  const seen: DynamicObj<number> = {};
+  const out: T[] = [];
+  array = getValueOrDefault(Array, array);
+  const len = array.length;
+  let j = 0;
+  for (let i = 0; i < len; i++) {
+    const item = array[i];
+    if (!isNullOrUndefined(item) && seen[`${item}`] !== 1) {
+      seen[`${item}`] = 1;
+      out[j++] = item;
+    }
+  }
+  return out;
+};

@@ -9,7 +9,7 @@ import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { isEqual, isNotEmpty } from '../../../util/extension';
+import { isEqual, isNotEmpty, UniqValueInArray } from '../../../util/extension';
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -19,7 +19,8 @@ const FromChange = (props: IFromChangeComponent) => {
 
   const getImageList = (id: number) => {
     const model = assets.find((item) => item.id === id);
-    return [...new Set(model?.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model?.image));
+    const result = UniqValueInArray(model?.image.map((item) => item.form)).map((value) => new PokemonModelComponent(value, model?.image));
+    return result;
   };
 
   useEffect(() => {

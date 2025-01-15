@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { Accordion } from 'react-bootstrap';
 import { generateParamForm, getItemSpritePath, getKeyWithData, getTime, splitAndCapitalize } from '../../util/utils';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNotNumber, toNumber } from '../../util/extension';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNotNumber, toNumber, UniqValueInArray } from '../../util/extension';
 import APIService from '../../services/API.service';
 import { DateEvent, TitleName } from './enums/item-type.enum';
 import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
@@ -83,7 +83,7 @@ const News = () => {
 
   const getImageList = (pokemon: RewardPokemon | undefined) => {
     const model = assets.find((item) => item.id === pokemon?.id);
-    const result = [...new Set(model?.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model?.image));
+    const result = UniqValueInArray(model?.image.map((item) => item.form)).map((value) => new PokemonModelComponent(value, model?.image));
     if (pokemon?.costume && toNumber(pokemon.costume) === 0) {
       const form = pokemon?.costume;
       const imageList = result.find((poke) => isEqual(poke.form, form));

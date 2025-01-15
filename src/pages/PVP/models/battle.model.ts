@@ -225,13 +225,3 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
     Object.assign(this, props);
   }
 }
-
-export interface TimelineEvent<T, E = object> extends React.SyntheticEvent<T, E>, React.MouseEvent<T, E> {
-  nativeEvent: E;
-  changedTouches: TouchList;
-}
-
-export interface TimelineElement<T> {
-  (e: TimelineEvent<T>): void;
-  bind?: any;
-}
