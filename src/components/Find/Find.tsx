@@ -9,7 +9,7 @@ import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { combineClasses, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 
@@ -203,7 +203,7 @@ const Find = (props: IFindComponent) => {
   return (
     <div className="container element-top">
       <h1 id="main" className="text-center" style={{ marginBottom: 15 }}>
-        {props.title ?? 'Pokémon GO Tools'}
+        {getValueOrDefault(String, props.title, 'Pokémon GO Tools')}
       </h1>
       {isNotEmpty(pokemonList) ? (
         <div className="row search-container">

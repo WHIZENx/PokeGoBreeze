@@ -106,18 +106,16 @@ const Battle = () => {
   });
   const { showTap, timelineType, duration, league } = options;
 
-  const timelineFit = useRef<Element>();
-  const timelineNormal = useRef<Element>();
-  const timelineNormalContainer = useRef<Element>();
-  const playLine = useRef<Element>();
+  const timelineFit = useRef<HTMLDivElement>();
+  const timelineNormal = useRef<HTMLDivElement>();
+  const timelineNormalContainer = useRef<HTMLDivElement>();
+  const playLine = useRef<HTMLDivElement>();
 
   let timelineInterval: NodeJS.Timeout;
   let turnInterval: NodeJS.Timeout;
 
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
-
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
-
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
   const State = (timer: number, block: number, energy: number, hp: number, type?: AttackType) =>
@@ -136,11 +134,16 @@ const Battle = () => {
     move: ICombat | undefined | null
   ) => {
     if (poke && pokeObj && move) {
-      const atkPoke = calculateStatsBattle(poke.stats?.atk, poke.currentStats?.IV?.atk, poke.currentStats?.level ?? MIN_LEVEL, true);
+      const atkPoke = calculateStatsBattle(
+        poke.stats?.atk,
+        poke.currentStats?.IV?.atk,
+        toNumber(poke.currentStats?.level, MIN_LEVEL),
+        true
+      );
       const defPokeObj = calculateStatsBattle(
         pokeObj.stats?.def,
         pokeObj.currentStats?.IV?.def,
-        pokeObj.currentStats?.level ?? MIN_LEVEL,
+        toNumber(pokeObj.currentStats?.level, MIN_LEVEL),
         true
       );
       return (
@@ -167,7 +170,7 @@ const Battle = () => {
       cMove: poke.cMovePri,
       cMoveSec: poke.cMoveSec,
       energy: poke.energy,
-      block: poke.block ?? DEFAULT_BLOCK,
+      block: toNumber(poke.block, DEFAULT_BLOCK),
       turn: Math.ceil(toNumber(poke.fMove?.durationMs) / 500),
       pokemonType: poke.pokemonType,
       disableCMovePri: poke.disableCMovePri,
@@ -390,9 +393,7 @@ const Battle = () => {
             });
           } else {
             fastPriDelay -= 1;
-            if (!preChargePri) {
-              timelinePri[timer].type = AttackType.Wait;
-            }
+            timelinePri[timer].type = AttackType.Wait;
           }
         }
 
@@ -429,9 +430,7 @@ const Battle = () => {
             });
           } else {
             fastSecDelay -= 1;
-            if (!preChargeSec) {
-              timelineSec[timer].type = AttackType.Wait;
-            }
+            timelineSec[timer].type = AttackType.Wait;
           }
         }
       } else {
@@ -697,7 +696,7 @@ const Battle = () => {
             APIService.getRankingFile(LeagueType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
           )
         ).data;
-        if (!file) {
+        if (!isNotEmpty(file)) {
           return;
         }
         document.title = `PVP Battle Simulator - ${getPokemonBattleLeagueName(league)}`;

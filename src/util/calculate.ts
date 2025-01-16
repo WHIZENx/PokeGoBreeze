@@ -423,8 +423,6 @@ export const calculateBetweenLevel = (
   pokemonType?: PokemonType
 ) => {
   toLV = toNumber(toLV) - 0.5;
-  const powerUpCount = (toLV - fromLV) * 2;
-
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
       CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
@@ -434,6 +432,7 @@ export const calculateBetweenLevel = (
       powerUpCount: 0,
     });
   } else {
+    const powerUpCount = (toLV - fromLV) * 2;
     let betweenStardust = 0;
     let betweenCandy = 0;
     let betweenXlCandy = 0;

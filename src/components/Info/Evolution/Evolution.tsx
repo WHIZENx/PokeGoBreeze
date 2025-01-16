@@ -192,7 +192,7 @@ const Evolution = (props: IEvolutionComponent) => {
     form = form?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
     let sprite = '';
     if (pokemon.id === 664 || pokemon.id === 665) {
-      sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;
+      sprite = getValueOrDefault(String, pokemon.pokemonId?.toLowerCase(), pokemon.name);
     } else {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
@@ -304,7 +304,7 @@ const Evolution = (props: IEvolutionComponent) => {
               ...evo,
               name: evo.name.replaceAll('-', '_').toUpperCase(),
               id: evo.num,
-              form: evo.forme ?? FORM_NORMAL,
+              form: getValueOrDefault(String, evo.forme, FORM_NORMAL),
               evoList: getValueOrDefault(Array, evo.evoList),
               tempEvo: getValueOrDefault(Array, evo.tempEvo),
             })
@@ -327,7 +327,7 @@ const Evolution = (props: IEvolutionComponent) => {
             ...poke,
             name: getValueOrDefault(String, poke.fullName),
             id: poke.num,
-            form: poke.forme ?? FORM_NORMAL,
+            form: getValueOrDefault(String, poke.forme, FORM_NORMAL),
             evoList: getValueOrDefault(Array, poke.evoList),
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
           })

@@ -130,7 +130,12 @@ const FormSelect = (props: IFormSelectComponent) => {
       if (!currentForm) {
         currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === data.id);
       }
-      setCurrentForm(currentForm ?? defaultForm.at(0));
+      if (!currentForm && isNotEmpty(defaultForm)) {
+        currentForm = defaultForm.at(0);
+      }
+      if (currentForm) {
+        setCurrentForm(currentForm);
+      }
       setData(data);
     },
     [props.searching]

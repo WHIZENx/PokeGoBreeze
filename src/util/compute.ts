@@ -16,55 +16,62 @@ export const priorityBadge = (priority: number) => {
 };
 
 export const rankName = (rank: number) => {
-  if (rank === 21) {
-    return 'Ace';
-  } else if (rank === 22) {
-    return 'Veteran';
-  } else if (rank === 23) {
-    return 'Expert';
-  } else if (rank === 24) {
-    return 'Legend';
+  switch (rank) {
+    case 21:
+      return 'Ace';
+    case 22:
+      return 'Veteran';
+    case 23:
+      return 'Expert';
+    case 24:
+      return 'Legend';
   }
 };
 
 export const rankIconName = (rank: number) => {
-  if (rank === 20) {
-    return APIService.getPokeOtherLeague('CombatRank03');
-  } else if (rank === 21) {
-    return APIService.getPokeOtherLeague('special_combat_rank_1');
-  } else if (rank === 22) {
-    return APIService.getPokeOtherLeague('special_combat_rank_2');
-  } else if (rank === 23) {
-    return APIService.getPokeOtherLeague('special_combat_rank_3');
-  } else if (rank === 24) {
-    return APIService.getPokeOtherLeague('special_combat_rank_4');
-  } else {
-    return APIService.getPokeOtherLeague(
-      `CombatRank${Math.floor(rank / 5)
-        .toString()
-        .padStart(2, '0')}`
-    );
+  switch (rank) {
+    case 20:
+      return APIService.getPokeOtherLeague('CombatRank03');
+    case 21:
+      return APIService.getPokeOtherLeague('special_combat_rank_1');
+    case 22:
+      return APIService.getPokeOtherLeague('special_combat_rank_2');
+    case 23:
+      return APIService.getPokeOtherLeague('special_combat_rank_3');
+    case 24:
+      return APIService.getPokeOtherLeague('special_combat_rank_4');
+    case 20:
+      return APIService.getPokeOtherLeague('CombatRank03');
+    default:
+      return APIService.getPokeOtherLeague(
+        `CombatRank${Math.floor(rank / 5)
+          .toString()
+          .padStart(2, '0')}`
+      );
   }
 };
 
 export const rankIconCenterName = (rank: number) => {
-  if (rank === 21 || rank === 22 || rank === 23) {
-    return APIService.getPokeOtherLeague('special_combat_rank_1_center');
-  } else if (rank === 24) {
-    return APIService.getPokeOtherLeague('special_combat_rank_4_center');
+  switch (rank) {
+    case 21:
+    case 22:
+    case 23:
+      return APIService.getPokeOtherLeague('special_combat_rank_1_center');
+    case 24:
+      return APIService.getPokeOtherLeague('special_combat_rank_4_center');
   }
 };
 
 export const raidEgg = (tier: number, isMega?: boolean, isPrimal?: boolean, isUltra?: boolean) => {
   if (tier === 1) {
-    return APIService.getRaidSprite('raid_egg_0_icon');
+    return APIService.getRaidSprite('ic_raid_egg_normal');
   } else if (tier === 3) {
-    return APIService.getRaidSprite('raid_egg_1_icon');
+    return APIService.getRaidSprite('ic_raid_egg_rare');
   } else if (tier === 4) {
     if (isMega) {
       return APIService.getRaidSprite('raid_egg_3_icon');
     }
-    return APIService.getRaidSprite('raid_egg_5_icon');
+    return APIService.getRaidSprite('ic_raid_egg_legendary');
   } else if (tier === 5) {
     if (isUltra) {
       return APIService.getRaidSprite('raid_ultra_icon');
@@ -111,9 +118,9 @@ export const computeBgType = (
   pokemonType = PokemonType.Normal,
   opacity = 1,
   styleSheet?: CSSStyleSheet,
-  defaultColor?: string
+  defaultColor?: string,
+  defaultBg = `rgb(100, 100, 100)`
 ) => {
-  const defaultBg = `rgb(100, 100, 100)`;
   if (defaultColor) {
     return `linear-gradient(to bottom right, ${defaultColor}, ${defaultColor})`;
   }
@@ -160,7 +167,7 @@ export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, f
   if (form) {
     return form.default;
   }
-  return form;
+  return;
 };
 
 export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formName: string | null = FORM_NORMAL) => {
@@ -168,7 +175,7 @@ export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formName
   if (form) {
     return form.shiny;
   }
-  return form;
+  return;
 };
 
 export const findStabType = (types: string[] | undefined, findType: string | undefined) => {
