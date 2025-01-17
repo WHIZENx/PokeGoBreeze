@@ -47,7 +47,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   }, [data.assets, data.pokemon, props.id]);
 
   return (
-    <div className="element-top">
+    <div className="element-top position-relative">
       <h4 className="title-evo">
         <b>{`Assets of ${splitAndCapitalize(props.name, '-', ' ')} in Pokémon GO`}</b>
         <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon)} />
@@ -80,7 +80,15 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                     <div className="model text-center" style={{ minWidth: value.shiny ? '50%' : '100%' }}>
                       <div className="d-flex w-100 justify-content-center">
                         <div style={{ width: 80 }}>
-                          <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.default)} />
+                          <img
+                            className="pokemon-sprite-model"
+                            alt="pokemon-model"
+                            src={APIService.getPokemonModel(value.default)}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = APIService.getPokemonSqModel(value.default);
+                            }}
+                          />
                         </div>
                       </div>
                       <span className="caption" style={{ color: theme.palette.customText.caption }}>
@@ -91,7 +99,15 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                       <div className="model text-center">
                         <div className="d-flex w-100 justify-content-center">
                           <div style={{ width: 80 }}>
-                            <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.shiny)} />
+                            <img
+                              className="pokemon-sprite-model"
+                              alt="pokemon-model"
+                              src={APIService.getPokemonModel(value.shiny)}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = APIService.getPokemonSqModel(value.shiny);
+                              }}
+                            />
                           </div>
                         </div>
                         <span className="caption" style={{ color: theme.palette.customText.caption }}>

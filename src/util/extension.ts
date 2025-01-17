@@ -36,7 +36,7 @@ export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => col
 
 export const combineClasses = <T>(...classes: (T | null | undefined)[]) => classes.filter((c) => c).join(' ');
 
-export const isNotEmpty = <T>(array: T[] | null | undefined = []) => Array.isArray(array) && array && array.length > 0;
+export const isNotEmpty = <T>(array: T[] | null | undefined) => Array.isArray(array) && !isNullOrUndefined(array) && array.length > 0;
 
 export const isUndefined = <T>(value?: T | null): value is undefined => typeof value === 'undefined' && value === undefined;
 

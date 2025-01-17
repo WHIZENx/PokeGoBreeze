@@ -273,6 +273,7 @@ export interface IPokemonData {
   cinematicMoves?: string[];
   specialMoves?: string[];
   exclusiveMoves?: string[];
+  dynamaxMoves?: string[];
   eliteQuickMoves?: string[];
   eliteCinematicMoves?: string[];
   shadowMoves?: string[];
@@ -497,6 +498,7 @@ export class PokemonData implements IPokemonData {
   cinematicMoves?: string[];
   specialMoves?: string[];
   exclusiveMoves?: string[];
+  dynamaxMoves?: string[];
   eliteQuickMoves?: string[];
   eliteCinematicMoves?: string[];
   shadowMoves?: string[];

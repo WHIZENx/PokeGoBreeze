@@ -63,7 +63,7 @@ export interface IPokemonFormDetail {
   formName: string;
   id: number;
   isDefault: boolean;
-  isMega: boolean;
+  pokemonType: PokemonType;
   name: string;
   pokemon: Path;
   sprites: IPokemonSprit | undefined;
@@ -75,7 +75,7 @@ export class PokemonFormDetail implements IPokemonFormDetail {
   formName = '';
   id = 0;
   isDefault = false;
-  isMega = false;
+  pokemonType = PokemonType.None;
   name = '';
   pokemon!: Path;
   sprites: IPokemonSprit | undefined;
@@ -87,7 +87,7 @@ export class PokemonFormDetail implements IPokemonFormDetail {
     obj.formName = info.form_name;
     obj.id = info.id;
     obj.isDefault = info.is_default;
-    obj.isMega = info.is_mega;
+    obj.pokemonType = getPokemonType(obj.formName, info.is_mega);
     obj.name = info.name;
     obj.pokemon = info.pokemon;
     obj.sprites = PokemonSprit.setDetails(info.sprites);
@@ -111,7 +111,6 @@ export interface IForm {
   formName: string | null | undefined;
   id: number | undefined;
   isDefault: boolean;
-  isMega: boolean;
   pokemonType?: PokemonType;
   name: string;
   version: string | null | undefined;
@@ -167,8 +166,7 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
     sprites: IPokemonSprit | undefined,
     formId: number,
     pokemonType = PokemonType.Normal,
-    isDefault = true,
-    isMega = false
+    isDefault = true
   ) {
     this.defaultId = id;
     this.defaultName = defaultName;
@@ -177,7 +175,6 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
       formName,
       id: formId,
       isDefault,
-      isMega,
       pokemonType,
       name: getValueOrDefault(String, fullFormName),
       version,
@@ -191,30 +188,22 @@ export class Form implements IForm {
   formName: string | null | undefined = '';
   id: number | undefined;
   isDefault = false;
-  isMega = false;
   pokemonType = PokemonType.Normal;
   name = '';
   version: string | null | undefined = '';
   types: string[] | undefined = [];
   sprites?: IPokemonSprit;
 
-  constructor(data?: IPokemonFormDetail) {
-    if (data) {
-      this.formName = data.formName;
-      this.id = data.id;
-      this.isDefault = data.isDefault;
-      this.isMega = data.isMega;
-      this.name = data.name;
-      this.version = data.version;
-      this.types = data.types;
-      this.sprites = data.sprites;
-      this.pokemonType = getPokemonType(data.formName);
-    }
-  }
-
   static create(value: IForm) {
     const obj = new Form();
     obj.pokemonType = getPokemonType(value.formName);
+    Object.assign(obj, value);
+    return obj;
+  }
+
+  static setValue(value: IPokemonFormDetail, name: string) {
+    const obj = new Form();
+    obj.formName = isEqual(value.pokemonType, PokemonType.GMax) ? value.name.replace(`${name}-`, '') : value.formName;
     Object.assign(obj, value);
     return obj;
   }

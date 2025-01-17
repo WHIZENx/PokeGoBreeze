@@ -116,45 +116,46 @@ const Counter = (props: ICounterComponent) => {
   const columns: TableColumnModify<ICounterModel>[] = [
     {
       name: 'Pokémon',
-      selector: (row) => (
-        <Link to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme, row.pokemonType)}`}>
-          <div className="d-flex justify-content-center">
-            <div
-              className={combineClasses(
-                theme.palette.mode === TypeTheme.Light ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
-                'position-relative group-pokemon-sprite'
-              )}
-            >
-              {row.pokemonType === PokemonType.Shadow && (
-                <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-              )}
-              {row.pokemonType === PokemonType.Purified && (
-                <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
-              )}
-              <img
-                className="pokemon-sprite-counter"
-                alt="img-pokemon"
-                src={
-                  findAssetForm(data.assets, row.pokemonId, row.pokemonForme)
-                    ? APIService.getPokemonModel(findAssetForm(data.assets, row.pokemonId, row.pokemonForme))
-                    : APIService.getPokeFullSprite(row.pokemonId)
-                }
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(row.pokemonId);
-                  } else {
-                    e.currentTarget.src = APIService.getPokeFullSprite(0);
-                  }
-                }}
-              />
+      selector: (row) => {
+        const assets = findAssetForm(data.assets, row.pokemonId, row.pokemonForme);
+        return (
+          <Link to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme, row.pokemonType)}`}>
+            <div className="d-flex justify-content-center">
+              <div
+                className={combineClasses(
+                  theme.palette.mode === TypeTheme.Light ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
+                  'position-relative group-pokemon-sprite'
+                )}
+              >
+                {row.pokemonType === PokemonType.Shadow && (
+                  <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                )}
+                {row.pokemonType === PokemonType.Purified && (
+                  <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
+                )}
+                <img
+                  className="pokemon-sprite-counter"
+                  alt="img-pokemon"
+                  src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(row.pokemonId)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    if (isInclude(e.currentTarget.src, APIUrl.POGO_ASSET_API_URL)) {
+                      e.currentTarget.src = APIService.getPokemonSqModel(assets);
+                    } else if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
+                      e.currentTarget.src = APIService.getPokeFullAsset(row.pokemonId);
+                    } else {
+                      e.currentTarget.src = APIService.getPokeFullSprite();
+                    }
+                  }}
+                />
+              </div>
             </div>
-          </div>
-          <span className="caption text-overflow" style={{ color: theme.palette.text.primary }}>
-            #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
-          </span>
-        </Link>
-      ),
+            <span className="caption text-overflow" style={{ color: theme.palette.text.primary }}>
+              #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
+            </span>
+          </Link>
+        );
+      },
       width: '30%',
     },
     {

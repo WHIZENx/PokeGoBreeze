@@ -69,10 +69,7 @@ class APIService {
     return `${APIUrl.POKE_API_URL}${path}/${value}`;
   }
 
-  getPokemonModel(item: string | null | undefined) {
-    if (!item) {
-      return this.getPokeSprite(0);
-    }
+  setPokemonModel(item: string) {
     if (isInclude(item, 'necrozma-dawn')) {
       item += '-wings';
     } else if (isInclude(item, 'necrozma-dusk')) {
@@ -81,10 +78,22 @@ class APIService {
     if (isEqual(item[0], '/')) {
       item = `${PATH_ASSET_POKEGO}${item}`;
     }
+    return item;
+  }
+
+  getPokemonModel(item: string | null | undefined) {
+    if (!item) {
+      return this.getPokeSprite(0);
+    }
+    item = this.setPokemonModel(item);
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon/${item}.png`;
   }
 
-  getPokemonSqModel(item: string) {
+  getPokemonSqModel(item: string | null | undefined) {
+    if (!item) {
+      return this.getPokeSprite(0);
+    }
+    item = this.setPokemonModel(item);
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon - 256x256/${item}.png`;
   }
 
@@ -224,11 +233,11 @@ class APIService {
     return `${APIUrl.POKE_SPRITES_API_URL}${id}.png`;
   }
 
-  getPokeFullAsset(id: number | undefined) {
+  getPokeFullAsset(id?: number) {
     return `${APIUrl.POKE_ASSETS}${toNumber(id)}.png`;
   }
 
-  getPokeFullSprite(id: number | string | undefined, form?: string) {
+  getPokeFullSprite(id?: number | string, form?: string) {
     if (id) {
       if (form) {
         form = splitAndCapitalize(
@@ -239,7 +248,7 @@ class APIService {
       }
       return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${form ? `-${form}` : ''}.png`;
     }
-    return this.getPokeFullAsset(0);
+    return this.getPokeFullAsset();
   }
 
   getPokeIconSprite(name?: string | null, noFix = false) {

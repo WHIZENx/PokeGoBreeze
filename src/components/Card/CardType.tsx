@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { ICardTypeComponent } from '../models/component.model';
 import { MoveType } from '../../enums/type.enum';
-import { combineClasses } from '../../util/extension';
+import { combineClasses, getValueOrDefault } from '../../util/extension';
 import { getKeyWithData } from '../../util/utils';
 
 const CardType = (props: ICardTypeComponent) => {
@@ -11,7 +11,7 @@ const CardType = (props: ICardTypeComponent) => {
       {props.value ? (
         <Fragment>
           <img width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(props.value)} />
-          <b>{`${props.name ?? props.value} `}</b>
+          <b>{`${getValueOrDefault(String, props.name, props.value)} `}</b>
           {props.moveType !== MoveType.None && (
             <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, props.moveType)?.toLowerCase()}-ic`)}>
               {getKeyWithData(MoveType, props.moveType)}

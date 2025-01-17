@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import {
-  splitAndCapitalize,
-  capitalize,
-  convertPokemonImageName,
-  getPokemonDetails,
-  getPokemonType,
-  generateParamForm,
-} from '../../../util/utils';
+import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails, generateParamForm } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/calculate';
@@ -30,7 +23,7 @@ import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_NORMAL, Params } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
-import { PokemonType, TypeAction } from '../../../enums/type.enum';
+import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   convertColumnDataType,
@@ -314,18 +307,15 @@ const StatsRanking = () => {
     }
   }, [search, isMatch, releasedGO, pokemonList]);
 
-  const convertToPokemonForm = (pokemon: IPokemonStatsRanking) => {
-    const pokemonType = getPokemonType(pokemon.forme);
-    return Form.create({
+  const convertToPokemonForm = (pokemon: IPokemonStatsRanking) =>
+    Form.create({
       formName: pokemon.forme,
       id: pokemon.num,
       isDefault: true,
-      isMega: pokemonType === PokemonType.Mega,
       name: pokemon.name,
       types: pokemon.types,
       version: pokemon.version,
     });
-  };
 
   return (
     <div className="element-bottom position-relative poke-container container">
@@ -345,7 +335,7 @@ const StatsRanking = () => {
                 if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                   e.currentTarget.src = APIService.getPokeFullAsset(select?.num);
                 } else {
-                  e.currentTarget.src = APIService.getPokeFullSprite(0);
+                  e.currentTarget.src = APIService.getPokeFullSprite();
                 }
               }}
             />

@@ -36,7 +36,7 @@ import {
   replaceTempMoveName,
 } from '../util/utils';
 import { ITypeSet, PokemonTypeBadge, TypeSet } from './models/type.model';
-import { BuffType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
+import { BuffType, MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import {
   Encounter,
   IPokemonData,
@@ -51,6 +51,7 @@ import { ITypeEff } from './models/type-eff.model';
 import {
   FORM_ARMOR,
   FORM_GALAR,
+  FORM_GMAX,
   FORM_MEGA,
   FORM_MEGA_X,
   FORM_MEGA_Y,
@@ -83,6 +84,7 @@ import {
   isIncludeList,
   isNotEmpty,
   isNotNumber,
+  isNullOrUndefined,
   toNumber,
   UniqValueInArray,
 } from '../util/extension';
@@ -501,6 +503,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
   addPokemonFromData(data, result);
   result = cleanPokemonDupForm(result);
 
+  addPokemonGMaxMove(data, result);
+
   return result.sort((a, b) => a.num - b.num);
 };
 
@@ -531,7 +535,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       });
 
       const goTemplate = `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
-        pokemon.pokemonType === PokemonType.Mega || pokemon.pokemonType === PokemonType.Primal
+        pokemon.pokemonType === PokemonType.Mega || pokemon.pokemonType === PokemonType.Primal || pokemon.pokemonType === PokemonType.GMax
           ? pokemon.pokemonId
           : convertPokemonDataName(item.baseFormeSlug ?? item.slug)
       )}`;
@@ -614,6 +618,21 @@ const cleanPokemonDupForm = (result: IPokemonData[]) => {
     }
     return true;
   });
+};
+
+const addPokemonGMaxMove = (data: PokemonDataGM[], result: IPokemonData[]) => {
+  const template = data.find((gm) => isEqual(gm.templateId, 'SOURDOUGH_MOVE_MAPPING_SETTINGS'));
+  result
+    .filter((pokemon) => isEqual(pokemon.pokemonType, PokemonType.GMax))
+    .forEach((item) => {
+      const move = template?.data.sourdoughMoveMappingSettings?.mappings.find((m) => isEqual(m.pokemonId, item.pokemonId));
+      if (move) {
+        if (isNullOrUndefined(item.dynamaxMoves)) {
+          item.dynamaxMoves = [];
+        }
+        item.dynamaxMoves.push(move.move);
+      }
+    });
 };
 
 export const optionPokemonWeather = (data: PokemonDataGM[]) => {
@@ -703,18 +722,17 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
 
     let formSet = imgs.filter((img) => isInclude(img, `/pm${result.id}.`) && !isInclude(img, 'cry'));
     let count = 0;
-    let isMega = false;
     while (formSet.length > count) {
       let [, form] = formSet[count].split('.');
-      if (form === 'icon' || form === 'g2') {
+      if (isInclude(form, 'GIGANTAMAX')) {
+        form = FORM_GMAX;
+      } else if (form === 'icon' || form === 'g2') {
         form = FORM_NORMAL;
       } else {
         form = form.replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
       }
       let gender = GenderType.GenderLess;
       const isShiny = isIncludeList(formSet, `${formSet[count].replace('.icon', '')}.s.icon`);
-      const pokemonType = getPokemonType(form);
-      isMega = pokemonType === PokemonType.Mega;
       if (!isInclude(formSet[count], '.g2.') && isIncludeList(formSet, `${formSet[count].replace('.icon', '')}.g2.icon`)) {
         gender = GenderType.Male;
       } else if (isInclude(formSet[count], '.g2.')) {
@@ -739,7 +757,12 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
         (isInclude(img, `pokemon_icon_${result.id.toString().padStart(3, '0')}_51`) ||
           isInclude(img, `pokemon_icon_${result.id.toString().padStart(3, '0')}_52`))
     );
-    if (!isMega) {
+    if (
+      !isIncludeList(
+        result.image.map((i) => i.pokemonType),
+        PokemonType.Mega
+      )
+    ) {
       for (let index = 0; index < formSet.length; index += 2) {
         const form = formSet.length === 2 ? FORM_MEGA : isInclude(formSet[index], '_51') ? FORM_MEGA_X : FORM_MEGA_Y;
         result.image.push(
@@ -794,7 +817,6 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       }
     }
 
-    isMega = false;
     let soundForm = sounds.filter((sound) => isInclude(sound, `/pm${result.id}.`) && isInclude(sound, 'cry'));
     result.sound.cry = soundForm.map((sound) => {
       let [, form] = sound.split('.');
@@ -803,8 +825,6 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       } else {
         form = form.replace(/[a-z]/g, '');
       }
-      const pokemonType = getPokemonType(form);
-      isMega = pokemonType === PokemonType.Mega;
       return new CryPath({
         form,
         path: sound,
@@ -817,7 +837,12 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
         (isInclude(sound, `pv${result.id.toString().padStart(3, '0')}_51`) ||
           isInclude(sound, `pv${result.id.toString().padStart(3, '0')}_52`))
     );
-    if (!isMega) {
+    if (
+      !isIncludeList(
+        result.sound.cry.map((i) => i.pokemonType),
+        PokemonType.Mega
+      )
+    ) {
       soundForm.forEach((sound) => {
         result.sound.cry.push(
           new CryPath({
@@ -977,6 +1002,26 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         );
     }
   });
+
+  data
+    .filter((item) => /^VN_BM_\d{3}$/g.test(item.templateId))
+    .forEach((item, index) => {
+      const combat = new Combat();
+      const move = item.data.moveSettings;
+      combat.id = toNumber(result[result.length - 1].id) + 1 + index;
+      const regId = item.templateId.match(/\d{3}/g) as string[];
+      combat.track = toNumber(regId[0]);
+      combat.name = move.vfxName.replace('max_', '').toUpperCase();
+      combat.type = move.pokemonType.replace('POKEMON_TYPE_', '');
+      combat.typeMove = TypeMove.Charge;
+      combat.durationMs = move.durationMs;
+      combat.damageWindowStartMs = move.damageWindowStartMs;
+      combat.damageWindowEndMs = move.damageWindowEndMs;
+      combat.accuracyChance = move.accuracyChance;
+      combat.staminaLossScalar = move.staminaLossScalar;
+      combat.moveType = MoveType.Dynamax;
+      result.push(combat);
+    });
 
   return result;
 };
@@ -1216,6 +1261,13 @@ const convertMoveName = (combat: ICombat[], moves: string[] | undefined) => {
         return result.name;
       }
     }
+    if (/^VN_BM_\d{3}$/g.test(move)) {
+      const id = move.match(/\d{3}/g) as string[];
+      const result = combat.find((item) => item.track === toNumber(id[0]) && isEqual(item.moveType, MoveType.Dynamax));
+      if (result) {
+        return result.name;
+      }
+    }
     return move;
   });
 };
@@ -1228,6 +1280,7 @@ export const mappingMoveSetPokemonGO = (pokemonData: IPokemonData[], combat: ICo
     pokemon.eliteCinematicMoves = convertMoveName(combat, pokemon.eliteCinematicMoves);
     pokemon.specialMoves = convertMoveName(combat, pokemon.specialMoves);
     pokemon.exclusiveMoves = convertMoveName(combat, pokemon.exclusiveMoves);
+    pokemon.dynamaxMoves = convertMoveName(combat, pokemon.dynamaxMoves);
     pokemon.purifiedMoves = convertMoveName(combat, pokemon.purifiedMoves);
     pokemon.shadowMoves = convertMoveName(combat, pokemon.shadowMoves);
   });

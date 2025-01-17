@@ -43,6 +43,7 @@ interface PokemonMoves {
   shadowMoves: ICombat[];
   specialMoves: ICombat[];
   exclusiveMoves: ICombat[];
+  dynamaxMoves: ICombat[];
 }
 
 interface ISortModel {
@@ -124,6 +125,7 @@ const TableMove = (props: ITableMoveComponent) => {
       shadowMoves: props.form?.pokemonType === PokemonType.Purified ? [] : filterUnknownMove(combat.shadowMoves),
       specialMoves: filterUnknownMove(combat.specialMoves),
       exclusiveMoves: filterUnknownMove(combat.exclusiveMoves),
+      dynamaxMoves: filterUnknownMove(combat.dynamaxMoves),
     });
   };
 
@@ -139,15 +141,21 @@ const TableMove = (props: ITableMoveComponent) => {
     );
     if (isNotEmpty(pokemonFilter)) {
       let pokemon: IPokemonData | undefined;
-      if (
-        pokemonFilter.length === 1 ||
-        (typeof props.form === 'string'
+      const isGMax =
+        typeof props.form === 'string'
           ? isEqual(props.form, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
-          : props.form?.pokemonType === PokemonType.GMax)
-      ) {
+          : props.form?.pokemonType === PokemonType.GMax;
+      if (pokemonFilter.length === 1) {
         pokemon = pokemonFilter.at(0);
+      } else if (isGMax) {
+        const pokemonDynamax = pokemonFilter.find((item) => isEqual(item.pokemonType, PokemonType.GMax));
+        if (pokemonDynamax && isNotEmpty(pokemonDynamax.dynamaxMoves)) {
+          pokemon = pokemonDynamax;
+        } else {
+          pokemon = pokemonFilter.at(0);
+        }
       } else if (!isNotEmpty(pokemonFilter) && props.id) {
-        pokemon = data.pokemon.filter((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name)).at(0);
+        pokemon = data.pokemon.find((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name));
       } else {
         const result = pokemonFilter.find((item) => props.form && isEqual(item.fullName, convertPokemonAPIDataName(props.form?.name)));
         if (isUndefined(result)) {
@@ -402,7 +410,8 @@ const TableMove = (props: ITableMoveComponent) => {
                       moveOrigin.purifiedMoves,
                       moveOrigin.shadowMoves,
                       moveOrigin.specialMoves,
-                      moveOrigin.exclusiveMoves
+                      moveOrigin.exclusiveMoves,
+                      moveOrigin.dynamaxMoves
                     )
                   )}
               </tbody>
