@@ -44,7 +44,7 @@ import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, FORM_GMAX, regionList, Params } from '../../util/constants';
+import { KEY_LEFT, KEY_RIGHT, regionList, Params } from '../../util/constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
@@ -139,6 +139,9 @@ const Pokemon = (props: IPokemonPage) => {
         return;
       });
 
+      if (!isNotEmpty(dataPokeList) || !isNotEmpty(dataFormList)) {
+        return;
+      }
       setUrlEvolutionChain(data.evolution_chain?.url);
 
       const pokemon = pokemonData.find((item) => item.num === data.id);
@@ -164,12 +167,7 @@ const Pokemon = (props: IPokemonPage) => {
                 data.id,
                 data.name,
                 data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
-                new Form({
-                  ...item,
-                  formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
-                    ? item.name.replace(`${data.name}-`, '')
-                    : item.formName,
-                })
+                Form.setValue(item, data.name)
               )
             )
             .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
@@ -468,7 +466,7 @@ const Pokemon = (props: IPokemonPage) => {
                     if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                       e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id);
                     } else {
-                      e.currentTarget.src = APIService.getPokeFullSprite(0);
+                      e.currentTarget.src = APIService.getPokeFullSprite();
                     }
                   }}
                 />

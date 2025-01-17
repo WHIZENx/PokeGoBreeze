@@ -43,6 +43,7 @@ import { LeagueType } from '../../../core/enums/league.enum';
 import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
+import { APIUrl } from '../../../services/constants';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -327,6 +328,28 @@ const FindBattle = () => {
     );
   };
 
+  const renderPokemon = (value: IBattleBaseStats | IQueryStatesEvoChain, className?: string, height = 100) => {
+    const assets = findAssetForm(dataStore.assets, value.id, form?.form.formName);
+    return (
+      <img
+        className={className}
+        alt="pokemon-model"
+        height={height}
+        src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(value.id)}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          if (isInclude(e.currentTarget.src, APIUrl.POGO_ASSET_API_URL)) {
+            e.currentTarget.src = APIService.getPokemonSqModel(assets);
+          } else if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
+            e.currentTarget.src = APIService.getPokeFullAsset(value.id);
+          } else {
+            e.currentTarget.src = APIService.getPokeFullSprite();
+          }
+        }}
+      />
+    );
+  };
+
   return (
     <div className="container">
       <Find
@@ -440,16 +463,7 @@ const FindBattle = () => {
                 >
                   <div className="d-flex align-items-center h-100">
                     <div className="border-best-poke h-100">
-                      <img
-                        className="poke-best-league"
-                        alt="pokemon-model"
-                        height={102}
-                        src={
-                          findAssetForm(dataStore.assets, value.id, form?.form.formName)
-                            ? APIService.getPokemonModel(findAssetForm(dataStore.assets, value.id, form?.form.formName))
-                            : APIService.getPokeFullSprite(value.id)
-                        }
-                      />
+                      {renderPokemon(value, 'poke-best-league', 102)}
                       <span className="caption text-black border-best-poke best-name">
                         <b>
                           #{value.id} {splitAndCapitalize(value.name, '_', ' ')} {splitAndCapitalize(form?.form.formName, '-', ' ')}
@@ -505,15 +519,7 @@ const FindBattle = () => {
                                 title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
                               >
                                 <Badge color="primary" overlap="circular" badgeContent={index + 1}>
-                                  <img
-                                    alt="pokemon-model"
-                                    height={100}
-                                    src={
-                                      findAssetForm(dataStore.assets, item.id, form?.form.formName)
-                                        ? APIService.getPokemonModel(findAssetForm(dataStore.assets, item.id, form?.form.formName))
-                                        : APIService.getPokeFullSprite(item.id)
-                                    }
-                                  />
+                                  {renderPokemon(item)}
                                 </Badge>
                                 <div>
                                   <b>

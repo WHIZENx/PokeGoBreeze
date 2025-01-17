@@ -978,8 +978,8 @@ export const queryTopMove = (
         if (move.track === 281) {
           name = move.name.replace(`_${move.type}`, '');
         }
-        const isInclude = isIncludeList(getAllMoves(pokemon), name);
-        if (isInclude) {
+        const moveType = getMoveType(pokemon, name);
+        if (!isEqual(moveType, MoveType.Unavailable)) {
           const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
           const statsAtkBattle = calculateStatsBattle(stats.atk, MAX_IV, DEFAULT_POKEMON_LEVEL);
           const statsDefBattle = calculateStatsBattle(stats.def, MAX_IV, DEFAULT_POKEMON_LEVEL);
@@ -996,7 +996,7 @@ export const queryTopMove = (
             pokemon.types
           );
           const tdo = calculateTDO(globalOptions, statsDefBattle, statsStaBattle, dps);
-          const moveType = getMoveType(pokemon, name);
+
           dataPri.push(
             new PokemonTopMove({
               num: pokemon.num,
@@ -1024,54 +1024,56 @@ const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[], fMoveTy
 
     if (mf && mc) {
       const cMoveType = getMoveType(data.pokemon, vc);
-      mf.moveType = fMoveType;
-      mc.moveType = cMoveType;
+      if (!isEqual(cMoveType, MoveType.Dynamax)) {
+        mf.moveType = fMoveType;
+        mc.moveType = cMoveType;
 
-      const options = OptionOtherDPS.create({
-        delay: Delay.create({
-          fTime: DEFAULT_ENEMY_ATK_DELAY,
-          cTime: DEFAULT_ENEMY_ATK_DELAY,
-        }),
-        pokemonDefObj: DEFAULT_POKEMON_DEF_OBJ,
-        ivAtk: MAX_IV,
-        ivDef: MAX_IV,
-        ivHp: MAX_IV,
-        pokemonLevel: DEFAULT_POKEMON_LEVEL,
-      });
+        const options = OptionOtherDPS.create({
+          delay: Delay.create({
+            fTime: DEFAULT_ENEMY_ATK_DELAY,
+            cTime: DEFAULT_ENEMY_ATK_DELAY,
+          }),
+          pokemonDefObj: DEFAULT_POKEMON_DEF_OBJ,
+          ivAtk: MAX_IV,
+          ivDef: MAX_IV,
+          ivHp: MAX_IV,
+          pokemonLevel: DEFAULT_POKEMON_LEVEL,
+        });
 
-      const statsAtkBattle = calculateStatsBattle(data.atk, options.ivAtk, options.pokemonLevel, true);
-      const statsDefBattle = calculateStatsBattle(data.def, options.ivDef, options.pokemonLevel, true);
-      const statsStaBattle = calculateStatsBattle(data.sta, options.ivHp, options.pokemonLevel, true);
+        const statsAtkBattle = calculateStatsBattle(data.atk, options.ivAtk, options.pokemonLevel, true);
+        const statsDefBattle = calculateStatsBattle(data.def, options.ivDef, options.pokemonLevel, true);
+        const statsStaBattle = calculateStatsBattle(data.sta, options.ivHp, options.pokemonLevel, true);
 
-      const pokemonType = moveTypeToFormType(cMoveType);
+        const pokemonType = moveTypeToFormType(cMoveType);
 
-      const offensive = calculateAvgDPS(
-        data.globalOptions,
-        data.typeEff,
-        data.weatherBoost,
-        mf,
-        mc,
-        statsAtkBattle,
-        statsDefBattle,
-        statsStaBattle,
-        data.types,
-        pokemonType
-      );
-      const defensive = calculateAvgDPS(
-        data.globalOptions,
-        data.typeEff,
-        data.weatherBoost,
-        mf,
-        mc,
-        statsAtkBattle,
-        statsDefBattle,
-        statsStaBattle,
-        data.types,
-        pokemonType,
-        options
-      );
+        const offensive = calculateAvgDPS(
+          data.globalOptions,
+          data.typeEff,
+          data.weatherBoost,
+          mf,
+          mc,
+          statsAtkBattle,
+          statsDefBattle,
+          statsStaBattle,
+          data.types,
+          pokemonType
+        );
+        const defensive = calculateAvgDPS(
+          data.globalOptions,
+          data.typeEff,
+          data.weatherBoost,
+          mf,
+          mc,
+          statsAtkBattle,
+          statsDefBattle,
+          statsStaBattle,
+          data.types,
+          pokemonType,
+          options
+        );
 
-      data.dataList.push(new PokemonQueryMove({ fMove: mf, cMove: mc, eDPS: EDPS.create({ offensive, defensive }) }));
+        data.dataList.push(new PokemonQueryMove({ fMove: mf, cMove: mc, eDPS: EDPS.create({ offensive, defensive }) }));
+      }
     }
   });
 };
@@ -1091,7 +1093,9 @@ export const rankMove = (
     return new PokemonQueryRankMove();
   }
   const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, atk, def, sta, types);
-  setQueryMove(data, getAllMoves(pokemon, TypeMove.Fast));
+  const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
+  const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
+  setQueryMove(data, fastMoveSet, chargedMoveSet);
 
   return PokemonQueryRankMove.create({
     data: data.dataList,
@@ -1100,10 +1104,10 @@ export const rankMove = (
   });
 };
 
-const setQueryMove = (data: QueryMovesPokemon, movePoke: string[]) => {
-  movePoke.forEach((vf) => {
+const setQueryMove = (data: QueryMovesPokemon, fastMoveSet: string[], chargedMoveSet: string[]) => {
+  fastMoveSet.forEach((vf) => {
     const quickMoveType = getMoveType(data.pokemon, vf);
-    queryMove(data, vf, getAllMoves(data.pokemon, TypeMove.Charge), quickMoveType);
+    queryMove(data, vf, chargedMoveSet, quickMoveType);
   });
 };
 
@@ -1283,42 +1287,44 @@ const queryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, cMove: str
 
     if (mf && mc) {
       const cMoveType = getMoveType(data.pokemon, vc);
-      const options = OptionOtherDPS.create({
-        objTypes: data.types,
-        pokemonDefObj: calculateStatsBattle(data.def, MAX_IV, DEFAULT_POKEMON_LEVEL, true),
-        ivAtk: MAX_IV,
-        ivDef: MAX_IV,
-        ivHp: MAX_IV,
-        pokemonLevel: DEFAULT_POKEMON_LEVEL,
-      });
+      if (!isEqual(cMoveType, MoveType.Dynamax)) {
+        const options = OptionOtherDPS.create({
+          objTypes: data.types,
+          pokemonDefObj: calculateStatsBattle(data.def, MAX_IV, DEFAULT_POKEMON_LEVEL, true),
+          ivAtk: MAX_IV,
+          ivDef: MAX_IV,
+          ivHp: MAX_IV,
+          pokemonLevel: DEFAULT_POKEMON_LEVEL,
+        });
 
-      const pokemonType = moveTypeToFormType(cMoveType);
+        const pokemonType = moveTypeToFormType(cMoveType);
 
-      const dpsOff = calculateAvgDPS(
-        data.globalOptions,
-        data.typeEff,
-        data.weatherBoost,
-        mf,
-        mc,
-        calculateStatsBattle(data.pokemon.baseStats.atk, options.ivAtk, options.pokemonLevel, true),
-        calculateStatsBattle(data.pokemon.baseStats.def, options.ivDef, options.pokemonLevel, true),
-        calculateStatsBattle(data.pokemon.baseStats.sta, options.ivHp, options.pokemonLevel, true),
-        data.pokemon.types,
-        pokemonType,
-        options
-      );
+        const dpsOff = calculateAvgDPS(
+          data.globalOptions,
+          data.typeEff,
+          data.weatherBoost,
+          mf,
+          mc,
+          calculateStatsBattle(data.pokemon.baseStats.atk, options.ivAtk, options.pokemonLevel, true),
+          calculateStatsBattle(data.pokemon.baseStats.def, options.ivDef, options.pokemonLevel, true),
+          calculateStatsBattle(data.pokemon.baseStats.sta, options.ivHp, options.pokemonLevel, true),
+          data.pokemon.types,
+          pokemonType,
+          options
+        );
 
-      data.dataList.push(
-        new PokemonQueryCounter({
-          pokemonId: data.pokemon.num,
-          pokemonName: data.pokemon.name,
-          pokemonForme: data.pokemon.forme,
-          releasedGO: data.pokemon.releasedGO,
-          dps: dpsOff,
-          fMove: Combat.create({ ...mf, moveType: fMoveType }),
-          cMove: Combat.create({ ...mc, moveType: cMoveType }),
-        })
-      );
+        data.dataList.push(
+          new PokemonQueryCounter({
+            pokemonId: data.pokemon.num,
+            pokemonName: data.pokemon.name,
+            pokemonForme: data.pokemon.forme,
+            releasedGO: data.pokemon.releasedGO,
+            dps: dpsOff,
+            fMove: Combat.create({ ...mf, moveType: fMoveType }),
+            cMove: Combat.create({ ...mc, moveType: cMoveType }),
+          })
+        );
+      }
     }
   });
 };
@@ -1336,7 +1342,9 @@ export const counterPokemon = (
   pokemonList.forEach((pokemon) => {
     if (pokemon && checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE')) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
-      setQueryMoveCounter(data, getAllMoves(pokemon, TypeMove.Fast));
+      const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
+      const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
+      setQueryMoveCounter(data, fastMoveSet, chargedMoveSet);
     }
   });
   return dataList
@@ -1344,10 +1352,10 @@ export const counterPokemon = (
     .map((item) => new CounterModel({ ...item, ratio: (item.dps * 100) / toNumber(dataList.at(0)?.dps, 1) }));
 };
 
-const setQueryMoveCounter = (data: QueryMovesCounterPokemon, movePoke: string[]) => {
-  movePoke.forEach((vf) => {
+const setQueryMoveCounter = (data: QueryMovesCounterPokemon, fastMoveSet: string[], chargedMoveSet: string[]) => {
+  fastMoveSet.forEach((vf) => {
     const fMoveType = getMoveType(data.pokemon, vf);
-    queryMoveCounter(data, vf, getAllMoves(data.pokemon, TypeMove.Charge), fMoveType);
+    queryMoveCounter(data, vf, chargedMoveSet, fMoveType);
   });
 };
 

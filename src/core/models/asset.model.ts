@@ -30,13 +30,18 @@ export class ImageModel implements IImage {
 export interface ICryPath {
   form: string;
   path: string;
+  pokemonType?: PokemonType;
 }
 
 export class CryPath implements ICryPath {
   form = '';
   path = '';
+  pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: ICryPath) {
+    if (!props.pokemonType) {
+      props.pokemonType = getPokemonType(props.form);
+    }
     Object.assign(this, props);
   }
 }

@@ -253,7 +253,7 @@ const Leagues = () => {
                             if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                               e.currentTarget.src = APIService.getPokeFullAsset(item.id);
                             } else {
-                              e.currentTarget.src = APIService.getPokeFullSprite(0);
+                              e.currentTarget.src = APIService.getPokeFullSprite();
                             }
                           }}
                         />
@@ -289,7 +289,7 @@ const Leagues = () => {
                             if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                               e.currentTarget.src = APIService.getPokeFullAsset(item.id);
                             } else {
-                              e.currentTarget.src = APIService.getPokeFullSprite(0);
+                              e.currentTarget.src = APIService.getPokeFullSprite();
                             }
                           }}
                         />

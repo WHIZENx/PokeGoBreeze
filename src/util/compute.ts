@@ -3,7 +3,7 @@ import { ICandy } from '../core/models/candy.model';
 import { PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL } from './constants';
-import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
+import { BattleLeagueCPType, BattleLeagueIconType, FormType } from './enums/compute.enum';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from './extension';
 import { getStyleRuleValue } from './utils';
@@ -40,8 +40,6 @@ export const rankIconName = (rank: number) => {
       return APIService.getPokeOtherLeague('special_combat_rank_3');
     case 24:
       return APIService.getPokeOtherLeague('special_combat_rank_4');
-    case 20:
-      return APIService.getPokeOtherLeague('CombatRank03');
     default:
       return APIService.getPokeOtherLeague(
         `CombatRank${Math.floor(rank / 5)
@@ -162,25 +160,27 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
   return;
 };
 
-export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
+export const findAssetForm = (
+  pokemonAssets: IAsset[],
+  id: number | undefined,
+  formName: string | null = FORM_NORMAL,
+  formType = FormType.Default
+) => {
   const form = queryAssetForm(pokemonAssets, id, formName);
   if (form) {
-    return form.default;
+    switch (formType) {
+      case FormType.Shiny:
+        return form.shiny;
+      case FormType.Default:
+      default:
+        return form.default;
+    }
   }
   return;
 };
 
-export const findAssetFormShiny = (pokemonAssets: IAsset[], id: number, formName: string | null = FORM_NORMAL) => {
-  const form = queryAssetForm(pokemonAssets, id, formName);
-  if (form) {
-    return form.shiny;
-  }
-  return;
-};
-
-export const findStabType = (types: string[] | undefined, findType: string | undefined) => {
-  return getValueOrDefault(Array, types).some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
-};
+export const findStabType = (types: string[] | undefined, findType: string | undefined) =>
+  getValueOrDefault(Array, types).some((type) => isEqual(type, findType, EqualMode.IgnoreCaseSensitive));
 
 export const getPokemonBattleLeagueName = (cp = BattleLeagueCPType.Master) => {
   switch (cp) {

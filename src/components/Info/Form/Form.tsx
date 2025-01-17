@@ -265,7 +265,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       <hr className="w-100" />
       {props.form?.form.pokemonType !== PokemonType.GMax ? (
         <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xl" style={{ padding: 0 }}>
+          <div className="col-xl h-100 position-relative" style={{ padding: 0 }}>
             <Evolution
               setId={props.setId}
               id={props.defaultId}
@@ -278,7 +278,7 @@ const FormComponent = (props: IFormInfoComponent) => {
               urlEvolutionChain={props.urlEvolutionChain}
             />
           </div>
-          <SpecialForm className={'col-xl'} style={{ padding: 0 }} formList={props.formList} id={props.defaultId} />
+          <SpecialForm className="col-xl h-100 position-relative" style={{ padding: 0 }} formList={props.formList} id={props.defaultId} />
         </div>
       ) : (
         <Evolution

@@ -575,7 +575,7 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 
   const fastMoves = getAllMoves(pokemon, TypeMove.Fast);
   const chargeMoves = getAllMoves(pokemon, TypeMove.Charge);
-  const allMoves = getAllMoves(pokemon);
+  const allMoves = fastMoves.concat(chargeMoves);
   if (allMoves.length <= 2 && (fastMoves[0] === 'STRUGGLE' || isInclude(fastMoves[0], 'SPLASH')) && chargeMoves[0] === 'STRUGGLE') {
     return false;
   }
@@ -906,7 +906,8 @@ export const getAllMoves = (pokemon: IPokemonData | undefined | null, moveType =
     getValueOrDefault(Array, pokemon?.shadowMoves),
     getValueOrDefault(Array, pokemon?.purifiedMoves),
     getValueOrDefault(Array, pokemon?.specialMoves),
-    getValueOrDefault(Array, pokemon?.exclusiveMoves)
+    getValueOrDefault(Array, pokemon?.exclusiveMoves),
+    getValueOrDefault(Array, pokemon?.dynamaxMoves)
   );
   switch (moveType) {
     case TypeMove.Fast:
@@ -978,6 +979,9 @@ export const addSelectMovesByType = (pokemonData: IPokemonData, moveType: TypeMo
     pokemonData.exclusiveMoves?.forEach((value) => {
       selectMoves.push(new SelectMoveModel(value, MoveType.Exclusive));
     });
+    pokemonData.dynamaxMoves?.forEach((value) => {
+      selectMoves.push(new SelectMoveModel(value, MoveType.Dynamax));
+    });
   }
   return selectMoves;
 };
@@ -993,6 +997,8 @@ export const getMoveType = (pokemonData?: IPokemonData, moveName?: string) => {
     return MoveType.Special;
   } else if (isIncludeList(pokemonData?.exclusiveMoves, moveName)) {
     return MoveType.Exclusive;
+  } else if (isIncludeList(pokemonData?.dynamaxMoves, moveName)) {
+    return MoveType.Dynamax;
   } else if (!isIncludeList(getAllMoves(pokemonData), moveName)) {
     return MoveType.Unavailable;
   }

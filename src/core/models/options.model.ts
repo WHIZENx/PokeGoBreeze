@@ -125,9 +125,9 @@ export interface MoveSetting {
   movementId: string | number;
   animationId: number;
   pokemonType: string;
-  power: number;
+  power?: number;
   accuracyChance: number;
-  criticalChance: number;
+  criticalChance?: number;
   staminaLossScalar: number;
   trainerLevelMin: number;
   trainerLevelMax: number;
@@ -135,7 +135,7 @@ export interface MoveSetting {
   durationMs: number;
   damageWindowStartMs: number;
   damageWindowEndMs: number;
-  energyDelta: number;
+  energyDelta?: number;
 }
 
 interface MoveSequenceSetting {
@@ -351,6 +351,16 @@ export interface LevelUpRewardSettings {
   itemsUnlocked?: string[];
 }
 
+interface MoveMapping {
+  pokemonId: string;
+  form: string;
+  move: string;
+}
+
+interface SourdoughMoveMappingSettings {
+  mappings: MoveMapping[];
+}
+
 interface DataGM {
   pokemonSettings: PokemonModel;
   combatSettings: CombatSetting;
@@ -379,6 +389,7 @@ interface DataGM {
   itemSettings?: ItemSettings;
   playerLevel: PlayerLevel;
   levelUpRewardSettings: LevelUpRewardSettings;
+  sourdoughMoveMappingSettings?: SourdoughMoveMappingSettings;
 }
 
 export interface PokemonDataGM {

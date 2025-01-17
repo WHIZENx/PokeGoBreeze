@@ -69,6 +69,7 @@ import {
   getPropertyName,
   getValueOrDefault,
   isEqual,
+  isInclude,
   isNotEmpty,
   toFloat,
   toFloatWithPadding,
@@ -88,6 +89,7 @@ import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
+import { APIUrl } from '../../../services/constants';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -422,62 +424,64 @@ const RaidBattle = () => {
       const cMoveCurrent = data.combat.find((item) => isEqual(item.name, vc));
       if (fMoveCurrent && cMoveCurrent) {
         const cMoveType = getMoveType(value, vc);
-        const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
-        const statsAttackerTemp = new BattleCalculate({
-          atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
-          def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
-          fMove: fMoveCurrent,
-          cMove: cMoveCurrent,
-          types: value?.types,
-          pokemonType,
-        });
-        let statsDefender = new BattleCalculate({
-          atk: statBossATK,
-          def: statBossDEF,
-          hp: statBossHP,
-          fMove: data.combat.find((item) => isEqual(item.name, fMove?.name)),
-          cMove: data.combat.find((item) => isEqual(item.name, cMove?.name)),
-          types: form?.form.types,
-          isStab: isWeatherBoss,
-        });
-        const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
-        if (pokemonTarget) {
-          statsDefender = statsAttackerTemp;
+        if (!isEqual(cMoveType, MoveType.Dynamax)) {
+          const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
+          const statsAttackerTemp = new BattleCalculate({
+            atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
+            def: calculateStatsBattle(stats.def, used.iv.def, used.level),
+            hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
+            fMove: fMoveCurrent,
+            cMove: cMoveCurrent,
+            types: value?.types,
+            pokemonType,
+          });
+          let statsDefender = new BattleCalculate({
+            atk: statBossATK,
+            def: statBossDEF,
+            hp: statBossHP,
+            fMove: data.combat.find((item) => isEqual(item.name, fMove?.name)),
+            cMove: data.combat.find((item) => isEqual(item.name, cMove?.name)),
+            types: form?.form.types,
+            isStab: isWeatherBoss,
+          });
+          const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
+          if (pokemonTarget) {
+            statsDefender = statsAttackerTemp;
+          }
+
+          if (!statsAttacker || !statsDefender) {
+            enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
+            return;
+          }
+
+          const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+          const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+
+          const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
+          const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
+
+          const tdoAtk = dpsAtk * ttkDef;
+          const tdoDef = dpsDef * ttkAtk;
+
+          dataList.push({
+            pokemon: value,
+            fMove: statsAttacker.fMove,
+            cMove: statsAttacker.cMove,
+            dpsDef,
+            dpsAtk,
+            tdoAtk,
+            tdoDef,
+            multiDpsTdo: Math.pow(dpsAtk, 3) * tdoAtk,
+            ttkAtk,
+            ttkDef,
+            attackHpRemain: Math.floor(toNumber(statsAttacker.hp)) - Math.min(timeAllow, ttkDef) * dpsDef,
+            defendHpRemain: Math.floor(toNumber(statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
+            death: Math.floor(toNumber(statsDefender.hp) / tdoAtk),
+            pokemonType,
+            fMoveType,
+            cMoveType,
+          });
         }
-
-        if (!statsAttacker || !statsDefender) {
-          enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
-          return;
-        }
-
-        const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-        const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
-
-        const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
-        const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
-
-        const tdoAtk = dpsAtk * ttkDef;
-        const tdoDef = dpsDef * ttkAtk;
-
-        dataList.push({
-          pokemon: value,
-          fMove: statsAttacker.fMove,
-          cMove: statsAttacker.cMove,
-          dpsDef,
-          dpsAtk,
-          tdoAtk,
-          tdoDef,
-          multiDpsTdo: Math.pow(dpsAtk, 3) * tdoAtk,
-          ttkAtk,
-          ttkDef,
-          attackHpRemain: Math.floor(toNumber(statsAttacker.hp)) - Math.min(timeAllow, ttkDef) * dpsDef,
-          defendHpRemain: Math.floor(toNumber(statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
-          death: Math.floor(toNumber(statsDefender.hp) / tdoAtk),
-          pokemonType,
-          fMoveType,
-          cMoveType,
-        });
       }
     });
   };
@@ -1189,6 +1193,35 @@ const RaidBattle = () => {
     );
   };
 
+  const renderPokemon = (value: IPokemonMoveData) => {
+    const assets = findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme);
+    return (
+      <Link
+        to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
+        className="sprite-raid position-relative"
+      >
+        {value.pokemonType === PokemonType.Shadow && (
+          <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+        )}
+        <img
+          className="pokemon-sprite-raid"
+          alt="img-pokemon"
+          src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(value.pokemon?.num)}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            if (isInclude(e.currentTarget.src, APIUrl.POGO_ASSET_API_URL)) {
+              e.currentTarget.src = APIService.getPokemonSqModel(assets);
+            } else if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
+              e.currentTarget.src = APIService.getPokeFullAsset(value.pokemon?.num);
+            } else {
+              e.currentTarget.src = APIService.getPokeFullSprite();
+            }
+          }}
+        />
+      </Link>
+    );
+  };
+
   return (
     <Fragment>
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
@@ -1371,25 +1404,7 @@ const RaidBattle = () => {
                       onClick={() => handleShowMovePokemon(value)}
                     />
                   </div>
-                  <div className="d-flex justify-content-center w-100">
-                    <Link
-                      to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
-                      className="sprite-raid position-relative"
-                    >
-                      {value.pokemonType === PokemonType.Shadow && (
-                        <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                      )}
-                      <img
-                        className="pokemon-sprite-raid"
-                        alt="img-pokemon"
-                        src={
-                          findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme)
-                            ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme))
-                            : APIService.getPokeFullSprite(value.pokemon?.num)
-                        }
-                      />
-                    </Link>
-                  </div>
+                  <div className="d-flex justify-content-center w-100">{renderPokemon(value)}</div>
                   <span className="d-flex justify-content-center w-100">
                     <b>
                       #{value.pokemon?.num} {splitAndCapitalize(value.pokemon?.name, '-', ' ')}

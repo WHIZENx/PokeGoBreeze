@@ -163,7 +163,7 @@ const Move = (props: IMovePage) => {
           }
           setSearchParams(searchParams);
           setMoveType(type.toUpperCase());
-        } else {
+        } else if (!isEqual(move?.moveType, MoveType.Dynamax)) {
           move = moves.find((item) => item.track === id);
         }
         if (move) {

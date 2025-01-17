@@ -222,7 +222,7 @@ export const loadAssets = async (
         APIService.getFetchUrl<APITree>(imageFolderPath.url, options),
         APIService.getFetchUrl<APITree>(soundFolderPath.url, options),
       ]).then(async ([image, sound]) => {
-        const imagePath = image.data.tree.find((item) => item.path === 'Pokemon');
+        const imagePath = image.data.tree.find((item) => item.path === 'Pokemon - 256x256');
         const soundPath = sound.data.tree.find((item) => item.path === 'Pokemon Cries');
 
         if (imagePath && soundPath) {

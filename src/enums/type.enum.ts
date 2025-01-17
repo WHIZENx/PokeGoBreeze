@@ -61,6 +61,7 @@ export enum MoveType {
   Elite,
   Special,
   Exclusive,
+  Dynamax,
   Unavailable,
 }
 

@@ -82,7 +82,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
                 if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                   e.currentTarget.src = APIService.getPokeFullAsset(props.id);
                 } else {
-                  e.currentTarget.src = APIService.getPokeFullSprite(0);
+                  e.currentTarget.src = APIService.getPokeFullSprite();
                 }
               }}
             />

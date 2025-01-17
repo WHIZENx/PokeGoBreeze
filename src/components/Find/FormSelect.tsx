@@ -28,7 +28,7 @@ import {
 } from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
 import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
-import { FORM_GMAX, FORM_NORMAL } from '../../util/constants';
+import { FORM_NORMAL } from '../../util/constants';
 import { AxiosError } from 'axios';
 import { APIUrl } from '../../services/constants';
 import { IFormSelectComponent } from '../models/component.model';
@@ -36,7 +36,6 @@ import { TypeRaid, VariantType } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
-import { EqualMode } from '../../util/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
 
@@ -96,12 +95,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 data.id,
                 data.name,
                 data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
-                new Form({
-                  ...item,
-                  formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
-                    ? item.name.replace(`${data.name}-`, '')
-                    : item.formName,
-                })
+                Form.setValue(item, data.name)
               )
             )
             .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
@@ -286,7 +280,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                   if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                     e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon.prev?.id);
                   } else {
-                    e.currentTarget.src = APIService.getPokeFullSprite(0);
+                    e.currentTarget.src = APIService.getPokeFullSprite();
                   }
                 }}
               />
@@ -313,7 +307,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
             e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id);
           } else {
-            e.currentTarget.src = APIService.getPokeFullSprite(0);
+            e.currentTarget.src = APIService.getPokeFullSprite();
           }
         }}
       />
@@ -330,7 +324,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                   if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
                     e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon.next?.id);
                   } else {
-                    e.currentTarget.src = APIService.getPokeFullSprite(0);
+                    e.currentTarget.src = APIService.getPokeFullSprite();
                   }
                 }}
               />
