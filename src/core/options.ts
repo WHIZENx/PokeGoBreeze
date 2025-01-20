@@ -269,12 +269,6 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
       baseStatsGO: true,
     });
 
-    if (pokemon.id === 235) {
-      const moves = data.find((item) => item.templateId === 'SMEARGLE_MOVES_SETTINGS')?.data.smeargleMovesSettings;
-      pokemon.quickMoves = moves?.quickMoves;
-      pokemon.cinematicMoves = moves?.cinematicMoves;
-    }
-
     if (pokemonSettings.shadow) {
       optional.shadowMoves = [pokemonSettings.shadow.shadowChargeMove];
       optional.purifiedMoves = [pokemonSettings.shadow.purifiedChargeMove];
@@ -549,18 +543,12 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
         pokemon.isTransferable = pokemonSettings.isTransferable;
         pokemon.disableTransferToPokemonHome = pokemonSettings.disableTransferToPokemonHome;
 
-        if (pokemon.id === 235) {
-          const moves = data.find((item) => item.templateId === 'SMEARGLE_MOVES_SETTINGS')?.data.smeargleMovesSettings;
-          pokemon.quickMoves = moves?.quickMoves;
-          pokemon.cinematicMoves = moves?.cinematicMoves;
-        } else {
-          pokemon.quickMoves = pokemonSettings.quickMoves;
-          pokemon.cinematicMoves = pokemonSettings.cinematicMoves;
-          pokemon.eliteQuickMove = pokemonSettings.eliteQuickMove;
-          pokemon.eliteCinematicMove = pokemonSettings.eliteCinematicMove;
-          pokemon.obSpecialAttackMoves = pokemonSettings.obSpecialAttackMoves;
-          pokemon.nonTmCinematicMoves = pokemonSettings.nonTmCinematicMoves;
-        }
+        pokemon.quickMoves = pokemonSettings.quickMoves;
+        pokemon.cinematicMoves = pokemonSettings.cinematicMoves;
+        pokemon.eliteQuickMove = pokemonSettings.eliteQuickMove;
+        pokemon.eliteCinematicMove = pokemonSettings.eliteCinematicMove;
+        pokemon.obSpecialAttackMoves = pokemonSettings.obSpecialAttackMoves;
+        pokemon.nonTmCinematicMoves = pokemonSettings.nonTmCinematicMoves;
 
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
         if (tempEvo) {

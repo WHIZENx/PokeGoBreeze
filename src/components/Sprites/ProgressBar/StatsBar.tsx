@@ -45,7 +45,7 @@ const StatsBar = (props: IStatsBarComponent) => {
         )
       }
     >
-      <BoxText className="box-text stats-text" isRank={false}>
+      <BoxText className="box-text stats-text">
         <span>
           {props.tag} {props.pokemonStatsRank && getValueOrDefault(String, props.optionalStats, props.currentStats.toString())}
         </span>

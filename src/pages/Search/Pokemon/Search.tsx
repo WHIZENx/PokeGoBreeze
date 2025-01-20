@@ -159,7 +159,7 @@ const Search = () => {
                   src={value.sprites}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    e.currentTarget.src = APIService.getPokeSprite(0);
+                    e.currentTarget.src = APIService.getPokeSprite();
                   }}
                 />
                 {value.name}

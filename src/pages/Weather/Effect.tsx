@@ -7,6 +7,7 @@ import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { isEmpty, isEqual, isIncludeList } from '../../util/extension';
 import { PokemonTypeBadge } from '../../core/models/type.model';
+import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 
 const Effect = (prop: IWeatherEffComponent) => {
   const [types, setTypes] = useState<string[]>([]);
@@ -106,7 +107,7 @@ const Effect = (prop: IWeatherEffComponent) => {
             >
               {isEmpty(currentTypeSec) ? (
                 <div className="type-none">
-                  <b>None</b>
+                  <b>{getKeyWithData(EffectiveType, EffectiveType.None)}</b>
                 </div>
               ) : (
                 <div className="type-sec">

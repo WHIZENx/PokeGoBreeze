@@ -14,7 +14,7 @@ const Weather = (props: IWeatherComponent) => {
       {!isNotEmpty(props.arr) ? (
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
           <div className="text-center" key={0}>
-            <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />
+            <img height={50} alt="img-pokemon" src={APIService.getPokeSprite()} />
             <span className="caption" style={{ color: theme.palette.text.primary }}>
               None
             </span>

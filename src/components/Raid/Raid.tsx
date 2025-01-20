@@ -159,12 +159,7 @@ const Raid = (props: IRaidComponent) => {
           <img
             className={tier === 2 ? 'img-type-icon' : ''}
             alt="img-raid-egg"
-            src={raidEgg(
-              tier,
-              props.currForm?.form.pokemonType === PokemonType.Mega,
-              props.currForm?.form.pokemonType === PokemonType.Primal,
-              pokemonClass === PokemonClass.UltraBeast
-            )}
+            src={raidEgg(tier, props.currForm?.form.pokemonType, pokemonClass)}
           />
         </div>
         <div className="col d-flex justify-content-center" style={{ marginBottom: 15 }}>

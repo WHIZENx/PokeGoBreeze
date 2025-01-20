@@ -21,7 +21,7 @@ const TypeInfo = (props: ITypeComponent) => {
               width={toNumber(props.height, 36)}
               height={toNumber(props.height, 36)}
               alt="img-pokemon"
-              src={APIService.getPokeSprite(0)}
+              src={APIService.getPokeSprite()}
             />
             <span className="caption" style={{ color: theme.palette.text.primary }}>
               None
@@ -45,7 +45,7 @@ const TypeInfo = (props: ITypeComponent) => {
                         src={APIService.getTypeSprite(value)}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
-                          e.currentTarget.src = APIService.getPokeSprite(0);
+                          e.currentTarget.src = APIService.getPokeSprite();
                         }}
                       />
                     ) : (

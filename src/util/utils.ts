@@ -1161,5 +1161,5 @@ export const getItemSpritePath = (itemName: string | null | undefined) => {
   } else if (isInclude(itemName, ItemName.MaxRevive)) {
     return APIService.getItemSprite('Item_0202');
   }
-  return APIService.getPokeSprite(0);
+  return APIService.getPokeSprite();
 };

@@ -244,7 +244,7 @@ const CalculatePoint = () => {
             <img
               alt="img-pokemon"
               className="pokemon-sprite-large"
-              src={APIService.getPokeIconSprite(form?.form.name, true)}
+              src={APIService.getPokeIconSprite(form?.form.name, false)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = APIService.getPokeIconSprite();
@@ -264,7 +264,7 @@ const CalculatePoint = () => {
             <img
               alt="img-pokemon"
               className="pokemon-sprite-large"
-              src={APIService.getPokeIconSprite(formDef?.form.name, true)}
+              src={APIService.getPokeIconSprite(formDef?.form.name, false)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = APIService.getPokeIconSprite();

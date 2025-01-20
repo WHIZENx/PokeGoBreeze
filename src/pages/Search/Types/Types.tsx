@@ -48,7 +48,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.sprite, true)}
+          src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);

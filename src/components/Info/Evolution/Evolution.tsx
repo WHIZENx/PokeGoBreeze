@@ -655,7 +655,7 @@ const Evolution = (props: IEvolutionComponent) => {
                                     src={APIService.getTypeSprite(value)}
                                     onError={(e) => {
                                       e.currentTarget.onerror = null;
-                                      e.currentTarget.src = APIService.getPokeSprite(0);
+                                      e.currentTarget.src = APIService.getPokeSprite();
                                     }}
                                   />
                                 ))}
@@ -827,7 +827,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.
                 </span>
                 <span className="d-block caption">
-                  - <img alt="img-stardust" height={20} src={APIService.getPokeSprite(0)} /> : Catch pokemon with type.
+                  - <img alt="img-stardust" height={20} src={APIService.getPokeSprite()} /> : Catch pokemon with type.
                 </span>
                 <span className="d-block caption">
                   - <SportsMartialArtsIcon fontSize="small" /> : Win raid.

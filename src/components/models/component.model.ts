@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import { IForm, IFormSoundCry, IPokemonFormModify, PokemonDataForm } from '../../core/models/API/form.model';
+import { IForm, IFormSoundCry, IPokemonFormModify, IPokemonSprit, PokemonDataForm } from '../../core/models/API/form.model';
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
 import {
@@ -220,10 +220,7 @@ export interface IStatsComponent {
 export interface IGenderComponent {
   sex: TypeSex;
   ratio?: IPokemonGenderRatio;
-  defaultM?: string;
-  defaultF?: string;
-  shinyM?: string;
-  shinyF?: string;
+  sprit?: IPokemonSprit;
 }
 
 export interface IInfoComponent {

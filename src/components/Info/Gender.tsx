@@ -32,8 +32,8 @@ const Gender = (props: IGenderComponent) => {
             alt="img-pokemon"
             src={
               props.sex === TypeSex.Male
-                ? props.defaultM || props.defaultF || APIService.getPokeSprite(0)
-                : props.defaultF || props.defaultM || APIService.getPokeSprite(0)
+                ? props.sprit?.frontDefault || props.sprit?.frontFemale || APIService.getPokeSprite()
+                : props.sprit?.frontFemale || props.sprit?.frontDefault || APIService.getPokeSprite()
             }
           />
           <span className="caption" style={{ color: theme.palette.customText.caption }}>
@@ -47,8 +47,8 @@ const Gender = (props: IGenderComponent) => {
             alt="img-pokemon"
             src={
               props.sex === TypeSex.Male
-                ? props.shinyM || props.shinyF || APIService.getPokeSprite(0)
-                : props.shinyF || props.shinyM || APIService.getPokeSprite(0)
+                ? props.sprit?.frontShiny || props.sprit?.frontShinyFemale || APIService.getPokeSprite()
+                : props.sprit?.frontShinyFemale || props.sprit?.frontShiny || APIService.getPokeSprite()
             }
           />
           <span className="caption" style={{ color: theme.palette.customText.caption }}>

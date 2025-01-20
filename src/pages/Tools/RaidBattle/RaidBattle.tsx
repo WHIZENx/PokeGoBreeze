@@ -1130,7 +1130,7 @@ const RaidBattle = () => {
               {pokemon.pokemonType === PokemonType.Shadow && (
                 <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
               )}
-              <img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, true)} />
+              <img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, false)} />
             </span>
           </div>
           <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 8 }}>
@@ -1463,7 +1463,7 @@ const RaidBattle = () => {
                           <img
                             className="pokemon-sprite-battle"
                             alt="img-pokemon"
-                            src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, true)}
+                            src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, false)}
                           />
                         </span>
                       ) : (
@@ -1642,7 +1642,7 @@ const RaidBattle = () => {
                                       className="pokemon-sprite-battle"
                                       height={36}
                                       alt="img-pokemon"
-                                      src={APIService.getPokeIconSprite(data.pokemon?.sprite, true)}
+                                      src={APIService.getPokeIconSprite(data.pokemon?.sprite, false)}
                                     />
                                     <span className="caption">{splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}</span>
                                   </div>

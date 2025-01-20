@@ -713,7 +713,7 @@ const FindBattle = () => {
                                       <li>CP: {item.battleLeague.master.CP}</li>
                                       <li>Level: {item.battleLeague.master.level}</li>
                                       <li>
-                                        Stats Prod (%):{' '}
+                                        {'Stats Prod (%): '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(item.battleLeague.master.ratio)}

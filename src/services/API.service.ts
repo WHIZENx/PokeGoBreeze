@@ -12,7 +12,7 @@ import {
   PATH_ASSET_POKEGO,
 } from '../util/constants';
 import { Species } from '../core/models/API/species.model';
-import { getValueOrDefault, isEqual, isInclude, toNumber } from '../util/extension';
+import { getValueOrDefault, isEqual, isInclude } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
 import { capitalize, getDataWithKey, splitAndCapitalize } from '../util/utils';
@@ -83,7 +83,7 @@ class APIService {
 
   getPokemonModel(item: string | null | undefined) {
     if (!item) {
-      return this.getPokeSprite(0);
+      return this.getPokeSprite();
     }
     item = this.setPokemonModel(item);
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon/${item}.png`;
@@ -91,7 +91,7 @@ class APIService {
 
   getPokemonSqModel(item: string | null | undefined) {
     if (!item) {
-      return this.getPokeSprite(0);
+      return this.getPokeSprite();
     }
     item = this.setPokemonModel(item);
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon - 256x256/${item}.png`;
@@ -136,14 +136,14 @@ class APIService {
 
   getTypeSprite(type: string | undefined) {
     if (!type || isEqual(type, 'unknown', EqualMode.IgnoreCaseSensitive)) {
-      return this.getPokeSprite(0);
+      return this.getPokeSprite();
     }
     return `${APIUrl.POGO_ASSET_API_URL}Types/POKEMON_TYPE_${type.toUpperCase()}.png`;
   }
 
   getTypeHqSprite(type: string | undefined) {
     if (!type) {
-      return this.getPokeSprite(0);
+      return this.getPokeSprite();
     }
     type = capitalize(type);
     let encryptUrl = '';
@@ -216,12 +216,15 @@ class APIService {
   }
 
   getWeatherIconSprite(weather: string | undefined) {
-    weather = weather?.toLowerCase().replaceAll('_', '').replaceAll('rainy', 'rain');
+    if (!weather) {
+      return this.getPokeSprite();
+    }
+    weather = weather.toLowerCase().replaceAll('_', '').replaceAll('rainy', 'rain');
 
-    if (weather === 'overcast') {
+    if (isEqual(weather, 'overcast', EqualMode.IgnoreCaseSensitive)) {
       weather = 'cloudy';
     }
-    if (weather === 'partlycloudy') {
+    if (isEqual(weather, 'partlycloudy', EqualMode.IgnoreCaseSensitive)) {
       return `${APIUrl.POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather}_${
         this.date.getHours() > 6 && this.date.getHours() < 18 ? 'day' : 'night'
       }.png`;
@@ -229,12 +232,12 @@ class APIService {
     return `${APIUrl.POGO_ASSET_API_URL}Weather/weatherIcon_small_${weather}.png`;
   }
 
-  getPokeSprite(id: number) {
+  getPokeSprite(id = 0) {
     return `${APIUrl.POKE_SPRITES_API_URL}${id}.png`;
   }
 
-  getPokeFullAsset(id?: number) {
-    return `${APIUrl.POKE_ASSETS}${toNumber(id)}.png`;
+  getPokeFullAsset(id = 0) {
+    return `${APIUrl.POKE_ASSETS}${id}.png`;
   }
 
   getPokeFullSprite(id?: number | string, form?: string) {
@@ -251,11 +254,8 @@ class APIService {
     return this.getPokeFullAsset();
   }
 
-  getPokeIconSprite(name?: string | null, noFix = false) {
-    if (!name) {
-      name = DEFAULT_SPRITE_NAME;
-    }
-    if (!noFix) {
+  getPokeIconSprite(name?: string | null, isFix = true) {
+    if (name && isFix) {
       if (isInclude(name, 'necrozma-dawn')) {
         name += '-wings';
       } else if (isInclude(name, 'necrozma-dusk')) {
@@ -304,6 +304,9 @@ class APIService {
         .replace('-matcha-cream', '')
         .replace('-neutral', '');
     }
+    if (!name) {
+      name = DEFAULT_SPRITE_NAME;
+    }
     return `${APIUrl.POKE_ASSETS_URL}/icon/${name}.png`;
   }
 
@@ -349,7 +352,7 @@ class APIService {
 
   getItemEvo(item: ItemEvolutionRequireType) {
     if (item === ItemEvolutionRequireType.Beans) {
-      return this.getPokeSprite(0);
+      return this.getPokeSprite();
     }
     return `${APIUrl.POGO_ASSET_API_URL}Items/Bag_${item}_Sprite.png`;
   }
