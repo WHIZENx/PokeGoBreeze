@@ -1,6 +1,7 @@
 import { PokemonType } from '../../enums/type.enum';
 import { DynamicObj } from '../../util/extension';
 import { getPokemonType } from '../../util/utils';
+import { LeagueType } from '../enums/league.enum';
 import { IPokemonPermission } from './options.model';
 
 interface ILeaguePVP {
@@ -18,6 +19,9 @@ export interface ILeague {
   iconUrl?: string;
   league: string;
   pokemonCount: number;
+  leagueType: LeagueType;
+  combatLeagueTemplate?: string;
+  allowEvolutions?: boolean;
 }
 
 export interface ILeagueTimestamp {
@@ -122,7 +126,7 @@ interface LeagueRewardItem {
 
 export interface LeagueReward {
   pokemonReward: boolean;
-  itemLootTable: boolean;
+  itemRankingLootTableCount: number;
   item: LeagueRewardItem;
 }
 
@@ -176,6 +180,9 @@ export class League implements ILeague {
   iconUrl?: string;
   league = '';
   pokemonCount = 0;
+  leagueType = LeagueType.Standard;
+  combatLeagueTemplate?: string;
+  allowEvolutions?: boolean;
 }
 
 export class RankRewardSetLeague implements IRankRewardSetLeague {

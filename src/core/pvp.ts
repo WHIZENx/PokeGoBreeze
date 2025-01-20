@@ -3,7 +3,7 @@ import { ScoreType } from '../util/enums/constants.enum';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { getValueOrDefault, isEqual, isInclude, toNumber, UniqValueInArray } from '../util/extension';
 import { getKeyWithData, splitAndCapitalize } from '../util/utils';
-import { LeagueType } from './enums/league.enum';
+import { LeagueBattleType } from './enums/league.enum';
 import { ILeague } from './models/league.model';
 import { PVPInfo } from './models/pvp.model';
 
@@ -19,7 +19,7 @@ export const pvpFindPath = (data: string[], path: string) =>
 export const convertPVPRankings = (data: string[], leagues: ILeague[]) =>
   UniqValueInArray(data.map((league) => league.split('/').at(0))).map((league) => {
     let item;
-    if (!isEqual(league, LeagueType.All, EqualMode.IgnoreCaseSensitive)) {
+    if (!isEqual(league, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
       item = leagues.find((item) => isInclude(item.iconUrl, league));
       if (!item) {
         item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));
@@ -48,7 +48,7 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) =>
 export const convertPVPTrain = (data: string[], leagues: ILeague[]) =>
   UniqValueInArray(data.map((league) => league.split('/').at(0))).map((league) => {
     let item;
-    if (!isEqual(league, LeagueType.All, EqualMode.IgnoreCaseSensitive)) {
+    if (!isEqual(league, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
       item = leagues.find((item) => isInclude(item.iconUrl, league, IncludeMode.IncludeIgnoreCaseSensitive));
       if (!item) {
         item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));

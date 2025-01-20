@@ -116,7 +116,6 @@ export interface IFindComponent {
 }
 
 export interface IFormSelectComponent {
-  router: ReduxRouterState;
   searching: IToolSearching | null;
   isRaid?: boolean;
   tier?: number;

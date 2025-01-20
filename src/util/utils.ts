@@ -49,6 +49,7 @@ import {
   isNotEmpty,
   isNotNumber,
   isNullOrUndefined,
+  isUndefined,
   toNumber,
 } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
@@ -347,7 +348,7 @@ export const getStyleSheet = (selector: string) => {
       continue;
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
-      const rule: CSSRuleSelector = sheet.cssRules[j];
+      const rule = sheet.cssRules[j] as CSSRuleSelector;
       if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1) {
         return sheet;
       }
@@ -357,14 +358,14 @@ export const getStyleSheet = (selector: string) => {
 };
 
 export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet) => {
-  const sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
+  const sheets = !isUndefined(sheet) ? [sheet] : document.styleSheets;
   for (let i = 0, l = sheets.length; i < l; i++) {
     sheet = sheets[i];
     if (!sheet || !sheet.cssRules) {
       continue;
     }
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
-      const rule: CSSRuleSelector = sheet.cssRules[j];
+      const rule = sheet.cssRules[j] as CSSRuleSelector;
       if (rule.selectorText && rule.selectorText.split(',').indexOf(selector) !== -1 && rule.style) {
         return rule.style[style];
       }
@@ -427,9 +428,8 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
   return mSet;
 };
 
-export const checkPokemonGO = (id: number, name: string | undefined, details: IPokemonData[]) => {
-  return details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name));
-};
+export const checkPokemonGO = (id: number, name: string | undefined, details: IPokemonData[]) =>
+  details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name));
 
 export const convertFormGif = (name: string | undefined) => {
   if (name === 'nidoran') {
@@ -488,8 +488,8 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: IS
 export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, rank: number) =>
   ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
 
-export const mappingPokemonName = (pokemonData: IPokemonData[]) => {
-  return pokemonData
+export const mappingPokemonName = (pokemonData: IPokemonData[]) =>
+  pokemonData
     .filter(
       (pokemon) =>
         pokemon.num > 0 &&
@@ -499,7 +499,6 @@ export const mappingPokemonName = (pokemonData: IPokemonData[]) => {
     )
     .map((pokemon) => new PokemonSearching(pokemon))
     .sort((a, b) => a.id - b.id);
-};
 
 export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   const result = pokemonData
@@ -582,9 +581,8 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   return true;
 };
 
-export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) => {
-  return pokemon.some((p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
-};
+export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) =>
+  pokemon.some((p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
 
 const convertNameEffort = (name: string) => {
   switch (name) {
@@ -613,31 +611,28 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
   return result as unknown as IStatsPokemon;
 };
 
-export const replacePokemonGoForm = (form: string) => {
-  return form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
-};
+export const replacePokemonGoForm = (form: string) => form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
 
-export const formIconAssets = (value: IPokemonFormModify, id: number | undefined) => {
-  return isInclude(value.form.name, '-totem') ||
-    isInclude(value.form.name, '-hisui') ||
-    isInclude(value.form.name, 'power-construct') ||
-    isInclude(value.form.name, 'own-tempo') ||
-    isInclude(value.form.name, '-meteor') ||
-    value.form.name === 'mewtwo-armor' ||
-    value.form.name === 'arceus-unknown' ||
-    value.form.name === 'dialga-origin' ||
-    value.form.name === 'palkia-origin' ||
-    value.form.name === 'mothim-sandy' ||
-    value.form.name === 'mothim-trash' ||
-    value.form.name === 'basculin-white-striped' ||
-    value.form.name === 'greninja-battle-bond' ||
-    value.form.name === 'urshifu-rapid-strike' ||
-    toNumber(id) >= 899
+export const formIconAssets = (value: IPokemonFormModify, id: number | undefined) =>
+  isInclude(value.form.name, '-totem') ||
+  isInclude(value.form.name, '-hisui') ||
+  isInclude(value.form.name, 'power-construct') ||
+  isInclude(value.form.name, 'own-tempo') ||
+  isInclude(value.form.name, '-meteor') ||
+  value.form.name === 'mewtwo-armor' ||
+  value.form.name === 'arceus-unknown' ||
+  value.form.name === 'dialga-origin' ||
+  value.form.name === 'palkia-origin' ||
+  value.form.name === 'mothim-sandy' ||
+  value.form.name === 'mothim-trash' ||
+  value.form.name === 'basculin-white-striped' ||
+  value.form.name === 'greninja-battle-bond' ||
+  value.form.name === 'urshifu-rapid-strike' ||
+  toNumber(id) >= 899
     ? APIService.getPokeIconSprite()
     : isInclude(value.form.name, `-${FORM_SHADOW.toLowerCase()}`) || isInclude(value.form.name, `-${FORM_PURIFIED.toLowerCase()}`)
     ? APIService.getPokeIconSprite(value.name)
     : APIService.getPokeIconSprite(value.form.name);
-};
 
 // Convert Pokemon from Storage data to GO name
 export const convertPokemonDataName = (text: string | undefined | null, defaultName = '') => {

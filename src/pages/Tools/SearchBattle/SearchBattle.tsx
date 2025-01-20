@@ -39,7 +39,7 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
-import { LeagueType } from '../../../core/enums/league.enum';
+import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
@@ -239,9 +239,9 @@ const FindBattle = () => {
         let bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
         bestLeague = bestLeague.filter(
           (item) =>
-            (item.league === LeagueType.Master && toNumber(item.CP) > BattleLeagueCPType.Ultra) ||
-            (item.league === LeagueType.Ultra && toNumber(item.CP) > BattleLeagueCPType.Great) ||
-            (item.league === LeagueType.Great && toNumber(item.CP) > BattleLeagueCPType.Little)
+            (item.league === LeagueBattleType.Master && toNumber(item.CP) > BattleLeagueCPType.Ultra) ||
+            (item.league === LeagueBattleType.Ultra && toNumber(item.CP) > BattleLeagueCPType.Great) ||
+            (item.league === LeagueBattleType.Great && toNumber(item.CP) > BattleLeagueCPType.Little)
         );
         if (!isNotEmpty(bestLeague)) {
           bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
@@ -476,11 +476,11 @@ const FindBattle = () => {
                           alt="pokemon-model"
                           height={32}
                           src={
-                            value.league === LeagueType.Little
+                            value.league === LeagueBattleType.Little
                               ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)
-                              : value.league === LeagueType.Great
+                              : value.league === LeagueBattleType.Great
                               ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)
-                              : value.league === LeagueType.Ultra
+                              : value.league === LeagueBattleType.Ultra
                               ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)
                               : getPokemonBattleLeagueIcon()
                           }

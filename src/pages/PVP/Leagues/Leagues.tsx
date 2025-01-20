@@ -8,7 +8,15 @@ import APIService from '../../../services/API.service';
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTime, splitAndCapitalize, capitalize, getPokemonType, generateParamForm, getItemSpritePath } from '../../../util/utils';
+import {
+  getTime,
+  splitAndCapitalize,
+  capitalize,
+  getPokemonType,
+  generateParamForm,
+  getItemSpritePath,
+  getKeyWithData,
+} from '../../../util/utils';
 import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
@@ -21,7 +29,7 @@ import { leaguesDefault } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
-import { LeagueRewardType, LeagueType, RewardType } from '../../../core/enums/league.enum';
+import { LeagueRewardType, LeagueBattleType, RewardType, LeagueType } from '../../../core/enums/league.enum';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
@@ -151,17 +159,26 @@ const Leagues = () => {
   const showAccording = (league: ILeague, index: number, isOpened = false) => (
     <Accordion.Item key={index} eventKey={index.toString()}>
       <Accordion.Header className={isOpened ? 'league-opened' : ''}>
-        <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-          <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl)} />
-          <b className={league.enabled ? '' : 'text-danger'}>
-            {(isInclude(league.id, BattleLeagueTag.Seeker, IncludeMode.IncludeIgnoreCaseSensitive) &&
-            isIncludeList(leaguesDefault, league.title, IncludeMode.IncludeIgnoreCaseSensitive)
-              ? splitAndCapitalize(league.id?.replace('VS_', '').toLowerCase(), '_', ' ')
-              : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
-              (isInclude(league.id, BattleLeagueTag.SafariZone, IncludeMode.IncludeIgnoreCaseSensitive)
-                ? ` ${league.id?.split('_').at(3)} ${capitalize(league.id).split('_').at(4)}`
-                : '')}
-          </b>
+        <div className="d-flex justify-content-between w-100" style={{ marginRight: 15, columnGap: 10 }}>
+          <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
+            <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl)} />
+            <b className={league.enabled ? '' : 'text-danger'}>
+              {(isInclude(league.id, BattleLeagueTag.Seeker, IncludeMode.IncludeIgnoreCaseSensitive) &&
+              isIncludeList(leaguesDefault, league.title, IncludeMode.IncludeIgnoreCaseSensitive)
+                ? splitAndCapitalize(league.id?.replace('VS_', '').toLowerCase(), '_', ' ')
+                : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
+                (isInclude(league.id, BattleLeagueTag.SafariZone, IncludeMode.IncludeIgnoreCaseSensitive)
+                  ? ` ${league.id?.split('_').at(3)} ${capitalize(league.id).split('_').at(4)}`
+                  : '')}
+            </b>
+          </div>
+          {isEqual(league.leagueType, LeagueType.Premier) && (
+            <div className="d-flex align-items-center flex-end">
+              <div className="info-event-future" style={{ padding: 6, borderRadius: 4, fontSize: 14 }}>
+                <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
+              </div>
+            </div>
+          )}
         </div>
       </Accordion.Header>
       <Accordion.Body className="league-body">
@@ -169,7 +186,7 @@ const Leagues = () => {
           <h4 className="title-leagues">{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</h4>
           <div className="text-center">
             {!isEqual(league.league, league.title) &&
-            !isInclude(league.title, LeagueType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
+            !isInclude(league.title, LeagueBattleType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
             !isInclude(league.iconUrl, 'pogo') ? (
               <div className="league">
                 <img
@@ -196,17 +213,17 @@ const Leagues = () => {
                 <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
               </h6>
             </li>
-            {league.pokemonCount > 0 && (
-              <li style={{ fontWeight: 500 }}>
-                <h6>
-                  <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
-                </h6>
-              </li>
-            )}
             {league.conditions.maxLevel && (
               <li style={{ fontWeight: 500 }}>
                 <h6>
                   <b>Max Level:</b> <span>{league.conditions.maxLevel}</span>
+                </h6>
+              </li>
+            )}
+            {league.pokemonCount > 0 && (
+              <li style={{ fontWeight: 500 }}>
+                <h6>
+                  <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
                 </h6>
               </li>
             )}
@@ -222,6 +239,10 @@ const Leagues = () => {
                 )}
               </li>
             )}
+            <li style={{ fontWeight: 500 }}>
+              <h6 className="title-leagues">Allow Forms Evolution</h6>
+              {league.allowEvolutions ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+            </li>
             <li style={{ fontWeight: 500 }}>
               <h6 className="title-leagues">Unique Selected</h6>
               {league.conditions.uniqueSelected ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}

@@ -16,7 +16,7 @@ import { LocalTimeStamp } from '../../store/models/local-storage.model';
 import { getKeyWithData, getTime } from '../../util/utils';
 import { isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
-import { LeagueType } from '../../core/enums/league.enum';
+import { LeagueBattleType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../util/enums/compute.enum';
 import { ScoreType } from '../../util/enums/constants.enum';
 
@@ -86,7 +86,7 @@ const PVPHome = () => {
   };
 
   const renderLeagueName = (name: string, cp: number) => {
-    if (isEqual(name, LeagueType.All, EqualMode.IgnoreCaseSensitive)) {
+    if (isEqual(name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
       return getPokemonBattleLeagueName(cp);
     }
     return name;

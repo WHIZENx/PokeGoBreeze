@@ -3,7 +3,7 @@ import { PVPInfo } from '../core/models/pvp.model';
 import { getOption } from '../core/options';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
 import { DynamicObj, getPropertyName, toNumber } from './extension';
-import { LeagueType } from '../core/enums/league.enum';
+import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType, ThrowType } from '../enums/type.enum';
@@ -303,25 +303,25 @@ export const typeCostPowerUp = (type: PokemonType | undefined) => {
 
 export const leaguesTeamBattle: PVPInfo[] = [
   {
-    id: LeagueType.All,
+    id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(BattleLeagueCPType.Little),
     cp: [BattleLeagueCPType.Little],
     logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Little),
   },
   {
-    id: LeagueType.All,
+    id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(BattleLeagueCPType.Great),
     cp: [BattleLeagueCPType.Great],
     logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Great),
   },
   {
-    id: LeagueType.All,
+    id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra),
     cp: [BattleLeagueCPType.Ultra],
     logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra),
   },
   {
-    id: LeagueType.All,
+    id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(),
     cp: [BattleLeagueCPType.InsMaster],
     logo: getPokemonBattleLeagueIcon(),

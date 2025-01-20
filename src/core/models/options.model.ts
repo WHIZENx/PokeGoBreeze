@@ -253,6 +253,9 @@ interface CombatLeague {
   badgeType: string;
   bannedPokemon: string[];
   pokemonCount: number;
+  leagueType: string;
+  battlePartyCombatLeagueTemplateId?: string;
+  allowTempEvos?: boolean;
 }
 
 interface EvolutionQuestTemplate {

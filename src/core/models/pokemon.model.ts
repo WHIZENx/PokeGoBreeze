@@ -136,6 +136,8 @@ export class StatsGO implements IStatsGO {
 interface TempEvoOverrides {
   tempEvoId: string;
   stats: IStatsGO;
+  typeOverride1: string;
+  typeOverride2?: string;
 }
 
 interface Camera {
