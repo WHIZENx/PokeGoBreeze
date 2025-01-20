@@ -4,7 +4,7 @@ import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../util/utils';
-import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
+import { SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
@@ -20,7 +20,6 @@ const Find = (props: IFindComponent) => {
   const cardHeight = useRef(65);
 
   const stats = useSelector((state: StatsState) => state.stats);
-  const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
 
@@ -174,7 +173,6 @@ const Find = (props: IFindComponent) => {
       <div>
         {isNotEmpty(pokemonList) && (
           <FormSelect
-            router={router}
             searching={searching}
             isHide={props.isHide}
             isRaid={props.isRaid}

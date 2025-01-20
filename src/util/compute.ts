@@ -1,6 +1,6 @@
 import { IAsset } from '../core/models/asset.model';
 import { ICandy } from '../core/models/candy.model';
-import { PokemonType } from '../enums/type.enum';
+import { PokemonClass, PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType, FormType } from './enums/compute.enum';
@@ -10,7 +10,7 @@ import { getStyleRuleValue } from './utils';
 
 export const priorityBadge = (priority: number) => {
   if (priority === 0) {
-    return APIService.getPokeSprite(0);
+    return APIService.getPokeSprite();
   }
   return APIService.getBadgeSprite(`Frames/badge_ring_${priority}`);
 };
@@ -60,23 +60,23 @@ export const rankIconCenterName = (rank: number) => {
   }
 };
 
-export const raidEgg = (tier: number, isMega?: boolean, isPrimal?: boolean, isUltra?: boolean) => {
+export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: PokemonClass) => {
   if (tier === 1) {
     return APIService.getRaidSprite('ic_raid_egg_normal');
   } else if (tier === 3) {
     return APIService.getRaidSprite('ic_raid_egg_rare');
   } else if (tier === 4) {
-    if (isMega) {
+    if (isEqual(pokemonType, PokemonType.Mega)) {
       return APIService.getRaidSprite('raid_egg_3_icon');
     }
     return APIService.getRaidSprite('ic_raid_egg_legendary');
   } else if (tier === 5) {
-    if (isUltra) {
+    if (isEqual(pokemonClass, PokemonClass.UltraBeast)) {
       return APIService.getRaidSprite('raid_ultra_icon');
     }
     return APIService.getRaidSprite('raid_egg_2_icon');
   } else if (tier === 6) {
-    if (isPrimal) {
+    if (isEqual(pokemonType, PokemonType.Primal)) {
       return APIService.getRaidSprite('raid_egg_primal_icon');
     }
     return APIService.getRaidSprite('raid_egg_4_icon');

@@ -9,6 +9,7 @@ import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, getValueOrDefault, isEmpty, isEqual } from '../../util/extension';
 import { PokemonTypeBadge } from '../../core/models/type.model';
+import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -121,7 +122,7 @@ const Defender = (prop: ITypeEffComponent) => {
             >
               {isEmpty(currentTypeSec) ? (
                 <div className="type-none">
-                  <b>None</b>
+                  <b>{getKeyWithData(EffectiveType, EffectiveType.None)}</b>
                 </div>
               ) : (
                 <div className="type-sec">

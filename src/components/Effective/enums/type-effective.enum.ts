@@ -6,4 +6,5 @@ export enum EffectiveType {
   SuperResistance = 0.244140625,
   VeryResistance = 0.390625,
   Resistance = 0.625,
+  None = 0,
 }

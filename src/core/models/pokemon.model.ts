@@ -136,6 +136,8 @@ export class StatsGO implements IStatsGO {
 interface TempEvoOverrides {
   tempEvoId: string;
   stats: IStatsGO;
+  typeOverride1: string;
+  typeOverride2?: string;
 }
 
 interface Camera {
@@ -550,7 +552,7 @@ export class PokemonData implements IPokemonData {
     obj.sprite = options?.sprite ?? DEFAULT_SPRITE_NAME;
     obj.types = getValueOrDefault(Array, types);
     obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
-    obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options?.baseStatsGO;
+    obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options.baseStatsGO;
     obj.baseStats = StatsPokemon.create({
       atk: toNumber(pokemon.stats?.baseAttack),
       def: toNumber(pokemon.stats?.baseDefense),

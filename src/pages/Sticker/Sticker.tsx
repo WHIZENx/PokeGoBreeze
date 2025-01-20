@@ -1,6 +1,6 @@
 import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 
-import { splitAndCapitalize } from '../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
 
 import './Sticker.scss';
 import APIService from '../../services/API.service';
@@ -88,8 +88,8 @@ const Sticker = () => {
       <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find Sticker</span>
         <Form.Select className="form-control input-search" value={id} onChange={(e) => setId(toNumber(e.target.value))}>
-          <option value={GlobalType.All}>All</option>
-          <option value={GlobalType.None}>None</option>
+          <option value={GlobalType.All}>{getKeyWithData(GlobalType, GlobalType.All)}</option>
+          <option value={GlobalType.None}>{getKeyWithData(GlobalType, GlobalType.None)}</option>
           {selectPokemon
             .filter((value) => toNumber(value.id) > 0)
             .map((value, index) => (

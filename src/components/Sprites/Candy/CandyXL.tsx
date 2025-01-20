@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { computeCandyBgColor, computeCandyColor } from '../../../util/compute';
 
@@ -9,31 +9,41 @@ import { ICandy } from '../../../core/models/candy.model';
 import { ICandyComponent } from '../../models/component.model';
 
 interface Element {
-  candy: ICandy[];
-  candyId: number | undefined;
+  candyColor?: string;
+  candyBgColor?: string;
   size?: number;
 }
 
 const Background = styled.div<Element>`
   position: absolute;
-  background: ${(props) => computeCandyBgColor(props.candy, props.candyId)};
+  background: ${(props) => props.candyBgColor};
   clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
   width: ${(props) => props.size ?? 30}px;
   height: ${(props) => props.size ?? 30}px;
 `;
 
 const Fill = styled.div<Element>`
-  background: ${(props) => computeCandyColor(props.candy, props.candyId)};
+  background: ${(props) => props.candyColor};
   width: ${(props) => props.size ?? 30}px;
   height: ${(props) => props.size ?? 30}px;
   mask: url(${bgCandyXL}) center/contain;
 `;
 
 const CandyXL = (props: ICandyComponent) => {
+  const [color, setColor] = useState<string>();
+  const [bgColor, setBgColor] = useState<string>();
+
+  useEffect(() => {
+    const candyColor = computeCandyColor(candy as ICandy[], props.id);
+    const candyBgColor = computeCandyBgColor(candy as ICandy[], props.id);
+    setColor(candyColor);
+    setBgColor(candyBgColor);
+  }, [props.id]);
+
   return (
     <div className="position-relative d-inline-block" style={props.style}>
-      <Background candyId={props.id} candy={candy as ICandy[]} size={props.size} />
-      <Fill candyId={props.id} candy={candy as ICandy[]} size={props.size} />
+      <Background candyBgColor={bgColor} size={props.size} />
+      <Fill candyColor={color} size={props.size} />
     </div>
   );
 };

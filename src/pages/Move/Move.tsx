@@ -44,6 +44,7 @@ import {
   toNumber,
 } from '../../util/extension';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
+import { PokemonTypeBadge } from '../../core/models/type.model';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -78,7 +79,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.sprite, true)}
+          src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
@@ -247,7 +248,7 @@ const Move = (props: IMovePage) => {
               value={moveType}
             >
               {Object.keys(data.typeEff)
-                .filter((type) => !isEqual(type, 'FAIRY', EqualMode.IgnoreCaseSensitive))
+                .filter((type) => !isEqual(type, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Fairy), EqualMode.IgnoreCaseSensitive))
                 .map((value, index) => (
                   <option key={index} value={value}>
                     {capitalize(value)}

@@ -66,7 +66,7 @@ import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/t
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
 import { DynamicObj, getPropertyName, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
-import { LeagueType } from '../../../core/enums/league.enum';
+import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
@@ -693,7 +693,7 @@ const Battle = () => {
         clearData();
         const file = (
           await APIService.getFetchUrl<RankingsPVP[]>(
-            APIService.getRankingFile(LeagueType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
+            APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
           )
         ).data;
         if (!isNotEmpty(file)) {

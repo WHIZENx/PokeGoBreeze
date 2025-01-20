@@ -134,7 +134,7 @@ const News = () => {
     } else if (value.type === TicketRewardType.Item && value.item?.item) {
       return getItemSpritePath(value.item.item);
     }
-    return APIService.getPokeSprite(0);
+    return APIService.getPokeSprite();
   };
 
   const getItemCount = (value: ITicketReward) => {

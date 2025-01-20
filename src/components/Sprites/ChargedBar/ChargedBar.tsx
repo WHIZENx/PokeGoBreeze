@@ -17,12 +17,10 @@ const Bar = styled.div<Element>`
 `;
 
 const ChargedBar = (props: IChargedBarComponent) => {
-  const widthInit = props.width ?? 120;
-  const gapInit = props.gap ?? 5;
   return (
     <Fragment>
       {[...Array(props.barCount).keys()].map((_, index) => (
-        <Bar className={props.color} key={index} barCount={props.barCount} width={widthInit} gap={gapInit} />
+        <Bar className={props.color} key={index} barCount={props.barCount} width={props.width ?? 120} gap={props.gap ?? 5} />
       ))}
     </Fragment>
   );
