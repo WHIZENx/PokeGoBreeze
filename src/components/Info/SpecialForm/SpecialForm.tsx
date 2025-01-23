@@ -7,7 +7,7 @@ import './SpecialForm.scss';
 import { StoreState } from '../../../store/models/state.model';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { Link } from 'react-router-dom';
@@ -77,7 +77,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                     src={APIService.getPokeGifSprite(value.name)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = `${value.sprites?.frontDefault}`;
+                      e.currentTarget.src = getValueOrDefault(String, value.sprites?.frontDefault);
                     }}
                   />
                   <div id="id-pokemon" style={{ color: 'black' }}>

@@ -11,7 +11,7 @@ export const getValueOrDefault = <T>(
   value: T | undefined | null,
   defaultValue?: T | null
 ) => {
-  if (isUndefined(value) || isNull(value)) {
+  if (isNullOrUndefined(value)) {
     switch (type.name) {
       case Number.name:
         return (defaultValue || 0) as T;

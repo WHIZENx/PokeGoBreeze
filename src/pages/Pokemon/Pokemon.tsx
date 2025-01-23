@@ -36,6 +36,7 @@ import {
   generatePokemonGoShadowForms,
   getPokemonById,
   getPokemonDetails,
+  getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../util/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
@@ -50,7 +51,6 @@ import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
-import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
@@ -469,11 +469,7 @@ const Pokemon = (props: IPokemonPage) => {
                   )}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                      e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id);
-                    } else {
-                      e.currentTarget.src = APIService.getPokeFullSprite();
-                    }
+                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
                   }}
                 />
               </div>

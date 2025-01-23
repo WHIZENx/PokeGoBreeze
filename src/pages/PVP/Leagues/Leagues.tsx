@@ -16,6 +16,7 @@ import {
   generateParamForm,
   getItemSpritePath,
   getKeyWithData,
+  getValidPokemonImgPath,
 } from '../../../util/utils';
 import { findAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
@@ -34,7 +35,6 @@ import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { APIUrl } from '../../../services/constants';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -55,14 +55,7 @@ const Leagues = () => {
   const [setting, setSetting] = useState<SettingLeague>();
   const [showData, setShowData] = useState<LeagueData>();
 
-  const getAssetPokeGo = (id: number | undefined, formName: string | undefined) => {
-    const form = findAssetForm(dataStore.assets, id, formName);
-    if (form) {
-      return APIService.getPokemonModel(form);
-    } else {
-      return APIService.getPokeFullSprite(id);
-    }
-  };
+  const getAssetPokeGo = (id: number | undefined, formName: string | undefined) => findAssetForm(dataStore.assets, id, formName);
 
   const LeaveToggle = (props: Toggle) => {
     const decoratedOnClick = useAccordionButton(props.eventKey);
@@ -268,14 +261,10 @@ const Leagues = () => {
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="img-pokemon"
-                          src={getAssetPokeGo(item.id, item.form)}
+                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                              e.currentTarget.src = APIService.getPokeFullAsset(item.id);
-                            } else {
-                              e.currentTarget.src = APIService.getPokeFullSprite();
-                            }
+                            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
                           }}
                         />
                       </span>
@@ -304,14 +293,10 @@ const Leagues = () => {
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="img-pokemon"
-                          src={getAssetPokeGo(item.id, item.form)}
+                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                              e.currentTarget.src = APIService.getPokeFullAsset(item.id);
-                            } else {
-                              e.currentTarget.src = APIService.getPokeFullSprite();
-                            }
+                            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
                           }}
                         />
                       </span>
