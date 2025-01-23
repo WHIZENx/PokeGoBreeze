@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 
 import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
-import { calStatsProd } from '../../../util/calculate';
+import { calStatsProd, sortStatsProd } from '../../../util/calculate';
 
 import Find from '../../../components/Find/Find';
 import { MIN_IV, MAX_IV, MIN_CP, leaguesTeamBattle } from '../../../util/constants';
@@ -114,7 +114,7 @@ const StatsTable = () => {
     return () => controller.abort();
   }, [statATK, statDEF, statSTA]);
 
-  const calculateStats = (signal: AbortSignal, delay = 500) => {
+  const calculateStats = (signal: AbortSignal, delay = 3000) => {
     return new Promise<IBattleBaseStats[]>((resolve, reject) => {
       let result: IBattleBaseStats[] = [];
       let timeout: NodeJS.Timeout | number;
@@ -127,7 +127,7 @@ const StatsTable = () => {
         if (signal instanceof AbortSignal) {
           signal.removeEventListener('abort', abortHandler);
         }
-        result = calStatsProd(statATK, statDEF, statSTA, MIN_CP, BattleLeagueCPType.InsMaster);
+        result = calStatsProd(statATK, statDEF, statSTA, MIN_CP, BattleLeagueCPType.InsMaster, true);
         resolve(result);
       };
 
@@ -144,9 +144,7 @@ const StatsTable = () => {
       setIsLoading(true);
       setTimeout(() => {
         const result = statsBattle.filter((stats) => toNumber(stats.CP) <= battleLeague);
-        setFilterStatsBattle(
-          result.sort((a, b) => toNumber(b.statsProds) - toNumber(a.statsProds)).map((stats, index) => ({ ...stats, rank: index + 1 }))
-        );
+        setFilterStatsBattle(sortStatsProd(result));
         setIsLoading(false);
       }, 500);
     }

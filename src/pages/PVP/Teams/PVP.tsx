@@ -10,6 +10,7 @@ import {
   getKeyWithData,
   getMoveType,
   getStyleSheet,
+  getValidPokemonImgPath,
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -381,6 +382,10 @@ const TeamPVP = () => {
                     alt="img-league"
                     className="pokemon-sprite"
                     src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                    }}
                   />
                 </span>
               </div>
@@ -497,6 +502,10 @@ const TeamPVP = () => {
                                 alt="img-league"
                                 className="pokemon-sprite"
                                 src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                                }}
                               />
                             </div>
                           </div>
@@ -548,6 +557,10 @@ const TeamPVP = () => {
                               alt="img-league"
                               className="pokemon-sprite"
                               src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                              }}
                             />
                           </div>
                         </div>

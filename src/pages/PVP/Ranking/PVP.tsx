@@ -9,6 +9,7 @@ import {
   replaceTempMovePvpName,
   getKeyWithData,
   getKeysObj,
+  getValidPokemonImgPath,
 } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
@@ -228,6 +229,10 @@ const RankingPVP = () => {
                 alt="img-league"
                 className="pokemon-sprite-accordion"
                 src={data.form ? APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, data.id, data.form);
+                }}
               />
             </span>
           </div>

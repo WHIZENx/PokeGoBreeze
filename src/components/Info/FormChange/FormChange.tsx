@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
-import { splitAndCapitalize } from '../../../util/utils';
+import { getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
@@ -16,6 +16,7 @@ const FromChange = (props: IFromChangeComponent) => {
   const assets = useSelector((state: StoreState) => state.store.data.assets);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
+  const [data, setData] = useState<string>();
 
   const getImageList = (id: number) => {
     const model = assets.find((item) => item.id === id);
@@ -29,12 +30,23 @@ const FromChange = (props: IFromChangeComponent) => {
     }
   }, [assets, props.details?.num]);
 
+  useEffect(() => {
+    if (!data && isNotEmpty(pokeAssets)) {
+      setData(pokeAssets.find((pokemon) => isEqual(pokemon.form, props.details?.forme))?.image?.at(0)?.default);
+    }
+  }, [data, pokeAssets, props.details?.forme]);
+
+  const findPokeAsset = (name: string) =>
+    pokeAssets
+      ?.find((pokemon) => isEqual(pokemon.form, name.replace('_COMPLETE_', '_').replace(`${props.defaultName?.toUpperCase()}_`, '')))
+      ?.image.at(0)?.default;
+
   return (
     <Fragment>
       <h4 className="title-evo">
         <b>Form Change</b>
       </h4>
-      {pokeAssets && (
+      {isNotEmpty(pokeAssets) && (
         <div className="element-top d-flex">
           <div className="d-flex flex-column align-items-center justify-content-center w-50">
             <div className="d-flex flex-column align-items-center justify-content-center" id="form-origin">
@@ -42,9 +54,11 @@ const FromChange = (props: IFromChangeComponent) => {
                 <img
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
-                  src={APIService.getPokemonModel(
-                    pokeAssets.find((pokemon) => isEqual(pokemon.form, props.details?.forme))?.image?.at(0)?.default
-                  )}
+                  src={APIService.getPokemonModel(data)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.details?.num, data);
+                  }}
                 />
               </div>
               <span className="caption" style={{ color: theme.palette.customText.caption }}>
@@ -61,13 +75,11 @@ const FromChange = (props: IFromChangeComponent) => {
                       <img
                         className="pokemon-sprite-large"
                         alt="pokemon-model"
-                        src={APIService.getPokemonModel(
-                          pokeAssets
-                            ?.find((pokemon) =>
-                              isEqual(pokemon.form, name.replace('_COMPLETE_', '_').replace(`${props.defaultName?.toUpperCase()}_`, ''))
-                            )
-                            ?.image.at(0)?.default
-                        )}
+                        src={APIService.getPokemonModel(findPokeAsset(name))}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.details?.num, findPokeAsset(name));
+                        }}
                       />
                     </div>
                     <span className="caption" style={{ color: theme.palette.customText.caption }}>

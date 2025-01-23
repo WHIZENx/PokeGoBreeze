@@ -8,6 +8,7 @@ import {
   getDmgMultiplyBonus,
   getKeyWithData,
   getMoveType,
+  getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../util/utils';
 import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
@@ -1166,6 +1167,10 @@ const Battle = () => {
                       ? APIService.getPokemonModel(pokemon.pokemonData.form)
                       : APIService.getPokeFullSprite(pokemon.pokemonData?.id)
                   }
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.pokemonData?.id, pokemon.pokemonData?.form);
+                  }}
                 />
               </div>
             </div>
@@ -1546,6 +1551,14 @@ const Battle = () => {
                                   ? APIService.getPokemonModel(pokemonCurr.pokemonData.form)
                                   : APIService.getPokeFullSprite(pokemonCurr.pokemonData.id)
                               }
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(
+                                  e.currentTarget.src,
+                                  pokemonCurr.pokemonData?.id,
+                                  pokemonCurr.pokemonData?.form
+                                );
+                              }}
                             />
                           </div>
                           <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
@@ -1565,6 +1578,14 @@ const Battle = () => {
                                   ? APIService.getPokemonModel(pokemonObj.pokemonData.form)
                                   : APIService.getPokeFullSprite(pokemonObj.pokemonData.id)
                               }
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(
+                                  e.currentTarget.src,
+                                  pokemonObj.pokemonData?.id,
+                                  pokemonObj.pokemonData?.form
+                                );
+                              }}
                             />
                           </div>
                           <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>

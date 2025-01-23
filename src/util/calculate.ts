@@ -595,7 +595,7 @@ export const getBaseStatsByIVandLevel = (
   });
 };
 
-export const calStatsProd = (atk: number, def: number, sta: number, minCP: number, maxCP: number, pure = false) => {
+export const calStatsProd = (atk: number, def: number, sta: number, minCP: number, maxCP: number, isPure = false) => {
   const dataList: IBattleBaseStats[] = [];
   if (atk === 0 || def === 0 || sta === 0) {
     return dataList;
@@ -615,7 +615,7 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
     }
   }
 
-  if (!pure) {
+  if (!isPure) {
     return sortStatsProd(dataList);
   } else {
     return dataList;

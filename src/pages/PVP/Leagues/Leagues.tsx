@@ -17,7 +17,7 @@ import {
   getItemSpritePath,
   getKeyWithData,
 } from '../../../util/utils';
-import { queryAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
+import { findAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -56,9 +56,9 @@ const Leagues = () => {
   const [showData, setShowData] = useState<LeagueData>();
 
   const getAssetPokeGo = (id: number | undefined, formName: string | undefined) => {
-    const asset = queryAssetForm(dataStore.assets, id, formName);
-    if (asset) {
-      return APIService.getPokemonModel(asset.default);
+    const form = findAssetForm(dataStore.assets, id, formName);
+    if (form) {
+      return APIService.getPokemonModel(form);
     } else {
       return APIService.getPokeFullSprite(id);
     }

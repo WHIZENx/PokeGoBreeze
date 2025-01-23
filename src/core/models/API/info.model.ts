@@ -1,6 +1,7 @@
 import { DynamicObj, toNumber } from '../../../util/extension';
 import { splitAndCapitalize } from '../../../util/utils';
 import { IPokemonSprit, PokemonSprit } from './form.model';
+import { Path } from './species.model';
 
 export interface SpriteInfo {
   back_default: string;
@@ -206,11 +207,6 @@ interface Ability {
   ability: Path;
   is_hidden: boolean;
   slot: number;
-}
-
-interface Path {
-  name: string;
-  url: string;
 }
 
 interface Indices {

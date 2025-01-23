@@ -44,7 +44,7 @@ import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, regionList, Params } from '../../util/constants';
+import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_GALAR, FORM_HISUI, FORM_STANDARD } from '../../util/constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
@@ -186,7 +186,13 @@ const Pokemon = (props: IPokemonPage) => {
 
       // Set Default Form
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
-      let formParams = searchParams.get(Params.Form)?.toLowerCase().replaceAll('_', '-');
+      let formParams = searchParams
+        .get(Params.Form)
+        ?.toUpperCase()
+        .replaceAll('_', '-')
+        .replace(`${FORM_GALAR}IAN`, FORM_GALAR)
+        .replace(`${FORM_HISUI}AN`, FORM_GALAR)
+        .toLowerCase();
       const formTypeParams = searchParams.get(Params.FormType)?.toLowerCase();
       if (formTypeParams) {
         if (formParams) {
@@ -203,13 +209,13 @@ const Pokemon = (props: IPokemonPage) => {
             (item) =>
               isEqual(
                 formTypeParams
-                  ? item.form.formName?.replaceAll('_', '-')
-                  : convertPokemonAPIDataName(item.form.formName).replaceAll('_', '-'),
+                  ? item.form.formName?.replace(`-${FORM_STANDARD.toLowerCase()}`, '').replaceAll('_', '-')
+                  : convertPokemonAPIDataName(item.form.formName).replace(`_${FORM_STANDARD}`, '').replaceAll('_', '-'),
                 formParams,
                 EqualMode.IgnoreCaseSensitive
               ) ||
               isEqual(
-                convertPokemonAPIDataName(item.form.name).replaceAll('_', '-'),
+                convertPokemonAPIDataName(item.form.name).replace(`_${FORM_STANDARD}`, '').replaceAll('_', '-'),
                 `${item.defaultName}-${formParams}`,
                 EqualMode.IgnoreCaseSensitive
               )

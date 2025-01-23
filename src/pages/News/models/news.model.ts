@@ -2,13 +2,13 @@ import { IInformation, ITicketReward } from '../../../core/models/information';
 import { DateEvent } from '../enums/item-type.enum';
 
 export interface IRewardNews extends Partial<ITicketReward> {
-  imageSrc: string;
+  imageSrc: string | undefined;
   title: string;
   count?: number;
 }
 
 export class RewardNews implements IRewardNews {
-  imageSrc = '';
+  imageSrc: string | undefined;
   title = '';
 
   static create(value: IRewardNews) {

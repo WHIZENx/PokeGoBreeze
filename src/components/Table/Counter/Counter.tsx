@@ -8,6 +8,7 @@ import {
   generateParamForm,
   getDmgMultiplyBonus,
   getKeyWithData,
+  getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
@@ -25,14 +26,12 @@ import { TableColumnModify } from '../../../util/models/overrides/data-table.mod
 import {
   combineClasses,
   convertColumnDataType,
-  isInclude,
   isNotEmpty,
   isUndefined,
   toFloat,
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { APIUrl } from '../../../services/constants';
 
 const customStyles: TableStyles = {
   head: {
@@ -139,13 +138,7 @@ const Counter = (props: ICounterComponent) => {
                   src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(row.pokemonId)}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    if (isInclude(e.currentTarget.src, APIUrl.POGO_ASSET_API_URL)) {
-                      e.currentTarget.src = APIService.getPokemonSqModel(assets);
-                    } else if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                      e.currentTarget.src = APIService.getPokeFullAsset(row.pokemonId);
-                    } else {
-                      e.currentTarget.src = APIService.getPokeFullSprite();
-                    }
+                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, row.pokemonId, assets);
                   }}
                 />
               </div>
