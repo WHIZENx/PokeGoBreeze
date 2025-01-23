@@ -4,7 +4,7 @@ declare global {
     isEmpty(): boolean;
     isNull(): boolean;
     isUndefined(): boolean;
-    isNullOrEmpty(): boolean;
+    isEqual(value: string): boolean;
     includesWithIgnoreCase(searchElement: string): boolean;
   }
 }
@@ -21,8 +21,8 @@ String.prototype.isUndefined = function () {
   return typeof this === 'undefined' && this === undefined;
 };
 
-String.prototype.isNullOrEmpty = function () {
-  return this.isNull() || this.isUndefined() || this.isEmpty();
+String.prototype.isEqual = function (value: string) {
+  return this === value;
 };
 
 String.prototype.includesWithIgnoreCase = function (searchElement: string) {

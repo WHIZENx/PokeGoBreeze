@@ -31,7 +31,7 @@ const Attacker = (prop: ITypeEffComponent) => {
       neutral: [],
     });
     Object.entries(((prop.types ?? new TypeEff()) as unknown as DynamicObj<TypeMultiply>)[currentType] ?? new TypeModel()).forEach(
-      ([key, value]) => getMultiplyTypeEffect(data, value, key)
+      ([key, value]: [string, number]) => getMultiplyTypeEffect(data, value, key)
     );
     setTypeEffective(data);
   }, [currentType, prop.types]);

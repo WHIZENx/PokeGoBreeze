@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { capitalize, generateParamForm, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -43,7 +43,6 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
-import { APIUrl } from '../../../services/constants';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -338,13 +337,7 @@ const FindBattle = () => {
         src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(value.id)}
         onError={(e) => {
           e.currentTarget.onerror = null;
-          if (isInclude(e.currentTarget.src, APIUrl.POGO_ASSET_API_URL)) {
-            e.currentTarget.src = APIService.getPokemonSqModel(assets);
-          } else if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-            e.currentTarget.src = APIService.getPokeFullAsset(value.id);
-          } else {
-            e.currentTarget.src = APIService.getPokeFullSprite();
-          }
+          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, assets);
         }}
       />
     );

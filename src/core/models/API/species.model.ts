@@ -32,7 +32,7 @@ export interface Species {
   varieties: Variety[];
 }
 
-interface Path {
+export interface Path {
   name: string;
   url: string;
 }

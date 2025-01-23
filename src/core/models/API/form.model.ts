@@ -4,6 +4,7 @@ import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../uti
 import { getPokemonType } from '../../../util/utils';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
+import { Path } from './species.model';
 
 export interface IPokemonSprit {
   backDefault: string;
@@ -95,11 +96,6 @@ export class PokemonFormDetail implements IPokemonFormDetail {
     obj.version = info.version_group.name;
     return obj;
   }
-}
-
-interface Path {
-  name: string;
-  url: string;
 }
 
 interface SlotType {

@@ -11,6 +11,7 @@ import {
   getAllMoves,
   getKeyWithData,
   getMoveType,
+  getValidPokemonImgPath,
   retrieveMoves,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -69,7 +70,6 @@ import {
   getPropertyName,
   getValueOrDefault,
   isEqual,
-  isInclude,
   isNotEmpty,
   toFloat,
   toFloatWithPadding,
@@ -89,7 +89,6 @@ import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
-import { APIUrl } from '../../../services/constants';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -1209,13 +1208,7 @@ const RaidBattle = () => {
           src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(value.pokemon?.num)}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            if (isInclude(e.currentTarget.src, APIUrl.POGO_ASSET_API_URL)) {
-              e.currentTarget.src = APIService.getPokemonSqModel(assets);
-            } else if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-              e.currentTarget.src = APIService.getPokeFullAsset(value.pokemon?.num);
-            } else {
-              e.currentTarget.src = APIService.getPokeFullSprite();
-            }
+            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.num, assets);
           }}
         />
       </Link>

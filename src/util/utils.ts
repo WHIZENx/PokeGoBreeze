@@ -61,6 +61,7 @@ import { EffectiveType } from '../components/Effective/enums/type-effective.enum
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
 import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 import { ItemName } from '../pages/News/enums/item-type.enum';
+import { APIUrl } from '../services/constants';
 
 class Mask {
   value: number;
@@ -72,9 +73,7 @@ class Mask {
   }
 }
 
-export const marks = [...Array(MAX_IV + 1).keys()].map((n) => {
-  return new Mask(n, n.toString());
-});
+export const marks = [...Array(MAX_IV + 1).keys()].map((n) => new Mask(n, n.toString()));
 
 export const PokeGoSlider = styled(Slider)(() => ({
   color: '#ef911d',
@@ -174,12 +173,11 @@ export const HundoRate = styled(Rating)(() => ({
   },
 }));
 
-export const capitalize = (str: string | undefined | null, defaultText = '') => {
-  return getValueOrDefault(String, str?.charAt(0).toUpperCase()) + getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
-};
+export const capitalize = (str: string | undefined | null, defaultText = '') =>
+  getValueOrDefault(String, str?.charAt(0).toUpperCase()) + getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
 
-export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') => {
-  return getValueOrDefault(
+export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') =>
+  getValueOrDefault(
     String,
     str
       ?.split(splitBy)
@@ -187,11 +185,9 @@ export const splitAndCapitalize = (str: string | undefined | null, splitBy: stri
       .join(joinBy),
     defaultText
   );
-};
 
-export const reversedCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') => {
-  return getValueOrDefault(String, str?.replaceAll(joinBy, splitBy).toLowerCase(), defaultText);
-};
+export const reversedCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') =>
+  getValueOrDefault(String, str?.replaceAll(joinBy, splitBy).toLowerCase(), defaultText);
 
 export const getTime = (value: string | number | undefined, notFull = false) => {
   if (isNullOrUndefined(value)) {
@@ -201,8 +197,8 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
   return notFull ? date.format('D MMMM YYYY') : date.format('HH:mm D MMMM YYYY');
 };
 
-export const convertModelSpritName = (text: string | undefined) => {
-  return getValueOrDefault(String, text)
+export const convertModelSpritName = (text: string | undefined) =>
+  getValueOrDefault(String, text)
     .toLowerCase()
     .replaceAll('_', '-')
     .replaceAll('%', '')
@@ -246,7 +242,6 @@ export const convertModelSpritName = (text: string | undefined) => {
     .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
     .replace('-armor', '')
     .replace(`-${FORM_NORMAL.toLowerCase()}`, '');
-};
 
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
@@ -948,35 +943,17 @@ export const getDmgMultiplyBonus = (form = PokemonType.Normal, options?: Options
 
 export const addSelectMovesByType = (pokemonData: IPokemonData, moveType: TypeMove, selectMoves: ISelectMoveModel[] = []) => {
   if (moveType === TypeMove.Fast || moveType === TypeMove.All) {
-    pokemonData.quickMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.None));
-    });
-    pokemonData.eliteQuickMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.Elite));
-    });
+    pokemonData.quickMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.None)));
+    pokemonData.eliteQuickMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Elite)));
   }
   if (moveType === TypeMove.Charge || moveType === TypeMove.All) {
-    pokemonData.cinematicMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.None));
-    });
-    pokemonData.eliteCinematicMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.Elite));
-    });
-    pokemonData.shadowMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.Shadow));
-    });
-    pokemonData.purifiedMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.Purified));
-    });
-    pokemonData.specialMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.Special));
-    });
-    pokemonData.exclusiveMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.Exclusive));
-    });
-    pokemonData.dynamaxMoves?.forEach((value) => {
-      selectMoves.push(new SelectMoveModel(value, MoveType.Dynamax));
-    });
+    pokemonData.cinematicMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.None)));
+    pokemonData.eliteCinematicMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Elite)));
+    pokemonData.shadowMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Shadow)));
+    pokemonData.purifiedMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Purified)));
+    pokemonData.specialMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Special)));
+    pokemonData.exclusiveMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Exclusive)));
+    pokemonData.dynamaxMoves?.forEach((value) => selectMoves.push(new SelectMoveModel(value, MoveType.Dynamax)));
   }
   return selectMoves;
 };
@@ -1039,7 +1016,7 @@ export const generateParamForm = (form: string | null | undefined, pokemonType =
     } else {
       if (!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)) {
         return `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}${
-          isSpecialForm ? `?${Params.FormType}=${formType}` : ''
+          isSpecialForm ? `&${Params.FormType}=${formType}` : ''
         }`;
       } else if (isSpecialForm) {
         return `${prefix}${Params.FormType}=${formType}`;
@@ -1157,4 +1134,14 @@ export const getItemSpritePath = (itemName: string | null | undefined) => {
     return APIService.getItemSprite('Item_0202');
   }
   return APIService.getPokeSprite();
+};
+
+export const getValidPokemonImgPath = (src: string | undefined | null, id?: number, form?: string | null) => {
+  if (isInclude(src, `${APIUrl.POGO_ASSET_API_URL}Pokemon - 256x256`) || isInclude(src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
+    return APIService.getPokeFullAsset(id);
+  } else if (isInclude(src, APIUrl.POGO_ASSET_API_URL)) {
+    return APIService.getPokemonSqModel(form);
+  } else {
+    return APIService.getPokeFullSprite();
+  }
 };

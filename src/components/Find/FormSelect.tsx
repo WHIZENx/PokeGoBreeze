@@ -10,6 +10,7 @@ import {
   generatePokemonGoForms,
   getItemSpritePath,
   getPokemonById,
+  getValidPokemonImgPath,
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../util/utils';
@@ -30,7 +31,6 @@ import { Species } from '../../core/models/API/species.model';
 import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
 import { FORM_NORMAL } from '../../util/constants';
 import { AxiosError } from 'axios';
-import { APIUrl } from '../../services/constants';
 import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid, VariantType } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
@@ -277,11 +277,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon.prev?.id);
-                  } else {
-                    e.currentTarget.src = APIService.getPokeFullSprite();
-                  }
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon.prev?.id);
                 }}
               />
             </div>
@@ -304,11 +300,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         }
         onError={(e) => {
           e.currentTarget.onerror = null;
-          if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-            e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id);
-          } else {
-            e.currentTarget.src = APIService.getPokeFullSprite();
-          }
+          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
         }}
       />
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
@@ -321,11 +313,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon.next?.id);
-                  } else {
-                    e.currentTarget.src = APIService.getPokeFullSprite();
-                  }
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon.next?.id);
                 }}
               />
             </div>

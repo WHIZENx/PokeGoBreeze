@@ -11,7 +11,7 @@ export const getValueOrDefault = <T>(
   value: T | undefined | null,
   defaultValue?: T | null
 ) => {
-  if (isUndefined(value) || isNull(value)) {
+  if (isNullOrUndefined(value)) {
     switch (type.name) {
       case Number.name:
         return (defaultValue || 0) as T;
@@ -34,20 +34,21 @@ export const getValueOrDefault = <T>(
 
 export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => columns as TableColumn<T>[];
 
-export const combineClasses = <T>(...classes: (T | null | undefined)[]) => classes.filter((c) => c).join(' ');
+export const combineClasses = <T>(...classes: (T | null | undefined)[]) => classes.filter((c) => !isNullOrUndefined(c)).join(' ');
 
-export const isNotEmpty = <T>(array: T[] | null | undefined) => Array.isArray(array) && !isNullOrUndefined(array) && array.length > 0;
+export const isNotEmpty = <T>(array: T[] | null | undefined) => Array.isArray(array) && array.length > 0;
 
 export const isUndefined = <T>(value?: T | null): value is undefined => typeof value === 'undefined' && value === undefined;
 
 export const isNull = <T>(value?: T | null): value is null => typeof value !== 'undefined' && value === null;
 
-export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined =>
-  getValueOrDefault(Boolean, isNull(value) || isUndefined(value), true);
+export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined => isNull(value) || isUndefined(value);
 
-export const isEmpty = (value?: string | null): value is null | undefined | '' => getValueOrDefault(Boolean, value?.isEmpty(), false);
+export const isEmpty = (value?: string | null): value is '' => !isNullOrUndefined(value) && value.isEmpty();
 
-export const isNullOrEmpty = (value?: string | null): value is '' | null => getValueOrDefault(Boolean, value?.isNullOrEmpty(), true);
+export const isNullOrEmpty = (value?: string | null): value is '' | null => isNull(value) || isEmpty(value);
+
+export const isUndefinedOrEmpty = (value?: string | null): value is '' | undefined => isUndefined(value) || isEmpty(value);
 
 export const isNotNumber = <T>(value: T | null | undefined) => {
   const result = getValueOrDefault(String, value?.toString());
@@ -96,11 +97,10 @@ export const isEqual = (
   compareValue = getValueOrDefault(String, compareValue?.toString());
   switch (mode) {
     case EqualMode.IgnoreCaseSensitive:
-      return value.toUpperCase() === compareValue.toUpperCase();
+      return value.toUpperCase().isEqual(compareValue.toUpperCase());
     case EqualMode.CaseSensitive:
-    default: {
-      return value === compareValue;
-    }
+    default:
+      return value.isEqual(compareValue);
   }
 };
 
@@ -173,16 +173,18 @@ export const isIncludeListBetween = (
 export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) =>
   array.filter((item) => isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode)).length;
 
+// eslint-disable-next-line no-unused-vars
+type DynamicKeyObj<T> = { [Property in keyof T]: string };
 export const getPropertyName = <T extends object>(
   obj: T | null | undefined,
   // eslint-disable-next-line no-unused-vars
-  expression: (x: { [Property in keyof T]: string }) => string
+  expression: (x: DynamicKeyObj<T>) => string
 ) => {
   if (!obj) {
     return '';
   }
   // eslint-disable-next-line no-unused-vars
-  const res = {} as { [Property in keyof T]: string };
+  const res = {} as DynamicKeyObj<T>;
   Object.keys(obj).map((k) => (res[k as keyof T] = k));
   return expression(res);
 };

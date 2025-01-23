@@ -7,7 +7,7 @@ import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff
 import { ITypeEffComponent } from '../models/page.model';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual } from '../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEmpty, isEqual } from '../../util/extension';
 import { PokemonTypeBadge } from '../../core/models/type.model';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 
@@ -34,7 +34,7 @@ const Defender = (prop: ITypeEffComponent) => {
       resist: [],
       neutral: [],
     });
-    Object.entries(prop.types ?? new TypeEff()).forEach(([key, value]) => {
+    Object.entries(prop.types ?? new TypeEff()).forEach(([key, value]: [string, DynamicObj<number>]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= isEmpty(currentTypeSec) ? 1 : value[currentTypeSec];

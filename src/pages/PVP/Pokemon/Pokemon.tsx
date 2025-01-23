@@ -1,7 +1,14 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertNameRankingToOri, getKeysObj, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  convertNameRankingToOri,
+  getKeysObj,
+  getValidPokemonImgPath,
+  replaceTempMovePvpName,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { calculateStatsByTag } from '../../../util/calculate';
@@ -216,6 +223,10 @@ const PokemonPVP = () => {
                     alt="img-league"
                     className="pokemon-sprite-raid"
                     src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, rankingPoke?.id, rankingPoke?.form);
+                    }}
                   />
                 </div>
                 <div>

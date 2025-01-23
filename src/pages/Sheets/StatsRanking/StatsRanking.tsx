@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, capitalize, convertPokemonImageName, getPokemonDetails, generateParamForm } from '../../../util/utils';
+import {
+  splitAndCapitalize,
+  capitalize,
+  convertPokemonImageName,
+  getPokemonDetails,
+  generateParamForm,
+  getValidPokemonImgPath,
+} from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import { calculateStatsByTag } from '../../../util/calculate';
@@ -19,7 +26,6 @@ import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.mode
 import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_NORMAL, Params } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
@@ -332,11 +338,7 @@ const StatsRanking = () => {
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                  e.currentTarget.src = APIService.getPokeFullAsset(select?.num);
-                } else {
-                  e.currentTarget.src = APIService.getPokeFullSprite();
-                }
+                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, select?.num);
               }}
             />
           </div>

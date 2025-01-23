@@ -8,7 +8,7 @@ import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/API.service';
 import { findAssetForm, computeBgType } from '../../../util/compute';
 import { isEqual, isInclude, isNotEmpty } from '../../../util/extension';
-import { convertNameRankingToOri, convertNameRankingToForm, splitAndCapitalize } from '../../../util/utils';
+import { convertNameRankingToOri, convertNameRankingToForm, splitAndCapitalize, getValidPokemonImgPath } from '../../../util/utils';
 import { BodyModel, IBody } from '../models/body.model';
 import { FORM_SHADOW } from '../../../util/constants';
 import { IncludeMode } from '../../../util/enums/string.enum';
@@ -76,6 +76,10 @@ const BodyPVP = (props: BodyComponent) => {
               alt="img-league"
               className="pokemon-sprite-accordion"
               src={data.form ? APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, data.id, data.form);
+              }}
             />
           </span>
         </div>

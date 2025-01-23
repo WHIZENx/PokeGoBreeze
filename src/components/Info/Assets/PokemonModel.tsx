@@ -5,7 +5,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
@@ -86,7 +86,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                             src={APIService.getPokemonModel(value.default)}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
-                              e.currentTarget.src = APIService.getPokemonSqModel(value.default);
+                              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemonId, value.default);
                             }}
                           />
                         </div>
@@ -105,7 +105,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                               src={APIService.getPokemonModel(value.shiny)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
-                                e.currentTarget.src = APIService.getPokemonSqModel(value.shiny);
+                                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemonId, value.shiny);
                               }}
                             />
                           </div>

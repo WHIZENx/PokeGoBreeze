@@ -280,7 +280,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
     getNextEvoChainJSON(pokemon.evos, evo);
     const result = prevEvo.concat(curr, evo);
-    if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1) {
+    if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
       queryPokemonEvolutionChain(props.urlEvolutionChain, result);
     } else {
       setArrEvoList(result);
@@ -328,7 +328,7 @@ const Evolution = (props: IEvolutionComponent) => {
             name: getValueOrDefault(String, poke.fullName),
             id: poke.num,
             form: getValueOrDefault(String, poke.forme, FORM_NORMAL),
-            evoList: getValueOrDefault(Array, poke.evoList),
+            evoList: [],
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
           })
         )
@@ -336,7 +336,7 @@ const Evolution = (props: IEvolutionComponent) => {
     } else {
       evoList = getValueOrDefault(
         Array,
-        pokemon.evoList
+        pokemon?.evoList
           ?.map((evo) =>
             modelEvoChain(
               new EvolutionModel({
@@ -386,7 +386,7 @@ const Evolution = (props: IEvolutionComponent) => {
     return result;
   };
 
-  const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string) => {
+  const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string | undefined) => {
     const pokemonChain = evolutionChain.find((chain) => chain.id === id);
     if (pokemonChain) {
       const chainForms = pokemonChain.evolutionInfos.filter((info) => isEqual(info.form, form, EqualMode.IgnoreCaseSensitive));
@@ -410,14 +410,14 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainStore = (id: number | undefined, forme: IForm) => {
-    const formName = forme.formName?.toUpperCase();
+    const formName = forme.formName?.toUpperCase().replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
     const form =
       isEmpty(formName) || forme.pokemonType === PokemonType.Mega
         ? FORM_NORMAL
         : forme.pokemonType === PokemonType.Purified || forme.pokemonType === PokemonType.Shadow
         ? isEqual(formName, FORM_SHADOW) || isEqual(formName, FORM_PURIFIED)
           ? FORM_NORMAL
-          : formName.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
+          : formName?.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
         : convertPokemonAPIDataName(formName);
     const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
     let pokemon = pokemons.find((p) => isEqual(p.forme, form));
@@ -434,7 +434,7 @@ const Evolution = (props: IEvolutionComponent) => {
       if (pokemon.prevo && result.length === 1 && result[0].length === 1) {
         getCombineEvoChainFromPokeGo(result, id, form);
       }
-      if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1) {
+      if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
         queryPokemonEvolutionChain(props.urlEvolutionChain, result);
       } else {
         setArrEvoList(result);
