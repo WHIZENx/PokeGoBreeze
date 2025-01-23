@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/effects/store.effects';
 
@@ -47,12 +47,15 @@ import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/localStorage';
 import { LocalTimeStamp } from './store/models/local-storage.model';
+import { StoreState } from './store/models/state.model';
+import { isNotEmpty } from './util/extension';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
   const dispatch = useDispatch();
+  const data = useSelector((state: StoreState) => state.store.data);
 
   const theme = useTheme<ThemeModify>();
   const colorMode = useContext(ColorModeContext);
@@ -68,7 +71,6 @@ function App() {
     dispatch(SpinnerActions.SetBar.create(true));
     dispatch(SpinnerActions.SetPercent.create(0));
     loadTheme(dispatch, stateTheme, setStateTheme);
-    loadCPM(dispatch);
     loadPokeGOLogo(dispatch);
     dispatch(SpinnerActions.SetPercent.create(15));
   }, [dispatch]);
@@ -80,6 +82,12 @@ function App() {
       loadData(controller.signal);
     }
   }, [isLoaded]);
+
+  useEffect(() => {
+    if (!isNotEmpty(data.cpm) && isNotEmpty(data.options.playerSetting.levelUps)) {
+      loadCPM(dispatch, data.options.playerSetting.cpMultipliers);
+    }
+  }, [data]);
 
   const loadData = (signal: AbortSignal, delay = 100) => {
     return new Promise<void>((resolve, reject) => {

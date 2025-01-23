@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import { IForm, IFormSoundCry, IPokemonFormModify, PokemonDataForm } from '../../core/models/API/form.model';
+import { IForm, IFormSoundCry, IPokemonFormModify, IPokemonSprit, PokemonDataForm } from '../../core/models/API/form.model';
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
 import {
@@ -33,9 +33,9 @@ import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
 import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
-import { EffectiveType } from '../../pages/PVP/enums/type-eff.enum';
 import { BadgeType } from '../Input/enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
+import { EffectiveType } from '../Effective/enums/type-effective.enum';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -116,7 +116,6 @@ export interface IFindComponent {
 }
 
 export interface IFormSelectComponent {
-  router: ReduxRouterState;
   searching: IToolSearching | null;
   isRaid?: boolean;
   tier?: number;
@@ -220,10 +219,7 @@ export interface IStatsComponent {
 export interface IGenderComponent {
   sex: TypeSex;
   ratio?: IPokemonGenderRatio;
-  defaultM?: string;
-  defaultF?: string;
-  shinyM?: string;
-  shinyF?: string;
+  sprit?: IPokemonSprit;
 }
 
 export interface IInfoComponent {
@@ -323,6 +319,7 @@ export interface ICircleComponent {
 }
 
 export interface IHexagonComponent {
+  name?: string;
   defaultStats?: IHexagonStats;
   stats: IHexagonStats;
   size: number;

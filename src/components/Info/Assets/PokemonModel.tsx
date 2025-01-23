@@ -5,7 +5,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
-import { capitalize, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
@@ -14,7 +14,7 @@ import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { isNotEmpty, toNumber } from '../../../util/extension';
+import { isNotEmpty, toNumber, UniqValueInArray } from '../../../util/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
@@ -35,7 +35,8 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       femalePercent: detail?.genderRatio.F,
       genderlessPercent: Number(detail?.genderRatio.M === 0 && detail?.genderRatio.F === 0),
     };
-    return [...new Set(model?.image.map((item) => item.form))].map((value) => new PokemonModelComponent(value, model?.image));
+    const result = UniqValueInArray(model?.image.map((item) => item.form)).map((value) => new PokemonModelComponent(value, model?.image));
+    return result;
   };
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   }, [data.assets, data.pokemon, props.id]);
 
   return (
-    <div className="element-top">
+    <div className="element-top position-relative">
       <h4 className="title-evo">
         <b>{`Assets of ${splitAndCapitalize(props.name, '-', ' ')} in Pokémon GO`}</b>
         <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon)} />
@@ -79,7 +80,15 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                     <div className="model text-center" style={{ minWidth: value.shiny ? '50%' : '100%' }}>
                       <div className="d-flex w-100 justify-content-center">
                         <div style={{ width: 80 }}>
-                          <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.default)} />
+                          <img
+                            className="pokemon-sprite-model"
+                            alt="pokemon-model"
+                            src={APIService.getPokemonModel(value.default)}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemonId, value.default);
+                            }}
+                          />
                         </div>
                       </div>
                       <span className="caption" style={{ color: theme.palette.customText.caption }}>
@@ -90,7 +99,15 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                       <div className="model text-center">
                         <div className="d-flex w-100 justify-content-center">
                           <div style={{ width: 80 }}>
-                            <img className="pokemon-sprite-model" alt="pokemon-model" src={APIService.getPokemonModel(value.shiny)} />
+                            <img
+                              className="pokemon-sprite-model"
+                              alt="pokemon-model"
+                              src={APIService.getPokemonModel(value.shiny)}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemonId, value.shiny);
+                              }}
+                            />
                           </div>
                         </div>
                         <span className="caption" style={{ color: theme.palette.customText.caption }}>

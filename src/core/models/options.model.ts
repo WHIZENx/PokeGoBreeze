@@ -125,9 +125,9 @@ export interface MoveSetting {
   movementId: string | number;
   animationId: number;
   pokemonType: string;
-  power: number;
+  power?: number;
   accuracyChance: number;
-  criticalChance: number;
+  criticalChance?: number;
   staminaLossScalar: number;
   trainerLevelMin: number;
   trainerLevelMax: number;
@@ -135,7 +135,7 @@ export interface MoveSetting {
   durationMs: number;
   damageWindowStartMs: number;
   damageWindowEndMs: number;
-  energyDelta: number;
+  energyDelta?: number;
 }
 
 interface MoveSequenceSetting {
@@ -253,6 +253,9 @@ interface CombatLeague {
   badgeType: string;
   bannedPokemon: string[];
   pokemonCount: number;
+  leagueType: string;
+  battlePartyCombatLeagueTemplateId?: string;
+  allowTempEvos?: boolean;
 }
 
 interface EvolutionQuestTemplate {
@@ -336,6 +339,31 @@ export interface ItemSettings {
   descriptionOverride?: string;
 }
 
+export interface PlayerLevel {
+  rankNum: number[];
+  requiredExperience: number[];
+  cpMultiplier: number[];
+  maxEncounterPlayerLevel: number;
+  maxQuestEncounterPlayerLevel: number;
+}
+
+export interface LevelUpRewardSettings {
+  level: number;
+  items: string[];
+  itemsCount: number[];
+  itemsUnlocked?: string[];
+}
+
+interface MoveMapping {
+  pokemonId: string;
+  form: string;
+  move: string;
+}
+
+interface SourdoughMoveMappingSettings {
+  mappings: MoveMapping[];
+}
+
 interface DataGM {
   pokemonSettings: PokemonModel;
   combatSettings: CombatSetting;
@@ -362,6 +390,9 @@ interface DataGM {
   evolutionQuestTemplate?: EvolutionQuestTemplate;
   evolutionChainDisplaySettings: EvolutionChainDisplaySettings;
   itemSettings?: ItemSettings;
+  playerLevel: PlayerLevel;
+  levelUpRewardSettings: LevelUpRewardSettings;
+  sourdoughMoveMappingSettings?: SourdoughMoveMappingSettings;
 }
 
 export interface PokemonDataGM {
@@ -396,8 +427,8 @@ interface EvolutionCondition {
 
 export interface IPokemonPermission {
   id: number | undefined;
-  form: string;
-  forms?: string;
+  form?: string;
+  forms?: string[];
   name: string | undefined;
   pokemonType: PokemonType;
 }
@@ -405,7 +436,7 @@ export interface IPokemonPermission {
 export class PokemonPermission implements IPokemonPermission {
   id: number | undefined;
   form = '';
-  forms?: string;
+  forms?: string[];
   name: string | undefined;
   pokemonType = PokemonType.Normal;
 
@@ -413,6 +444,26 @@ export class PokemonPermission implements IPokemonPermission {
     props.pokemonType = getPokemonType(props.form);
     Object.assign(this, props);
   }
+}
+
+interface PlayerLevelUp {
+  level: number;
+  amount: number;
+  requiredExp: number;
+}
+
+interface IPlayerSetting {
+  levelUps: PlayerLevelUp[];
+  cpMultipliers: DynamicObj<number>;
+  maxEncounterPlayerLevel: number;
+  maxQuestEncounterPlayerLevel: number;
+}
+
+export class PlayerSetting implements IPlayerSetting {
+  levelUps: PlayerLevelUp[] = [];
+  cpMultipliers: DynamicObj<number> = {};
+  maxEncounterPlayerLevel = 0;
+  maxQuestEncounterPlayerLevel = 0;
 }
 
 interface ICombatOption {
@@ -484,6 +535,7 @@ export class TrainerFriendship implements ITrainerFriendship {
 }
 
 export interface IOptions {
+  playerSetting: IPlayerSetting;
   combatOptions: ICombatOption;
   battleOptions: IBattleOption;
   throwCharge: IThrowOption;
@@ -492,6 +544,7 @@ export interface IOptions {
 }
 
 export class Options implements IOptions {
+  playerSetting = new PlayerSetting();
   combatOptions = new CombatOption();
   battleOptions = new BattleOption();
   throwCharge = new ThrowOption();

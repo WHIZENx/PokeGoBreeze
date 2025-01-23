@@ -1,5 +1,4 @@
-import { PokemonType } from '../../enums/type.enum';
-import { ChargeAbility } from '../../pages/Tools/BattleDamage/enums/damage.enum';
+import { PokemonType, ThrowType } from '../../enums/type.enum';
 import { MIN_LEVEL } from '../../util/constants';
 import { IPokemonFormModify } from './API/form.model';
 import { ICombat } from './combat.model';
@@ -28,7 +27,7 @@ export interface IBattleState {
   isDodge?: boolean;
   isTrainer?: boolean;
   fLevel?: number;
-  cLevel?: ChargeAbility;
+  cLevel?: ThrowType;
   effective: number;
   isMega?: boolean;
 }

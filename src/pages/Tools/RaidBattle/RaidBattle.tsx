@@ -11,6 +11,7 @@ import {
   getAllMoves,
   getKeyWithData,
   getMoveType,
+  getValidPokemonImgPath,
   retrieveMoves,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -156,7 +157,7 @@ const RaidBattle = () => {
   const data = useSelector((state: StoreState) => state.store.data);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm] = useState<IPokemonFormModify>();
 
@@ -422,62 +423,64 @@ const RaidBattle = () => {
       const cMoveCurrent = data.combat.find((item) => isEqual(item.name, vc));
       if (fMoveCurrent && cMoveCurrent) {
         const cMoveType = getMoveType(value, vc);
-        const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
-        const statsAttackerTemp = new BattleCalculate({
-          atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
-          def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-          hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
-          fMove: fMoveCurrent,
-          cMove: cMoveCurrent,
-          types: value?.types,
-          pokemonType,
-        });
-        let statsDefender = new BattleCalculate({
-          atk: statBossATK,
-          def: statBossDEF,
-          hp: statBossHP,
-          fMove: data.combat.find((item) => isEqual(item.name, fMove?.name)),
-          cMove: data.combat.find((item) => isEqual(item.name, cMove?.name)),
-          types: form?.form.types,
-          isStab: isWeatherBoss,
-        });
-        const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
-        if (pokemonTarget) {
-          statsDefender = statsAttackerTemp;
+        if (!isEqual(cMoveType, MoveType.Dynamax)) {
+          const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
+          const statsAttackerTemp = new BattleCalculate({
+            atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
+            def: calculateStatsBattle(stats.def, used.iv.def, used.level),
+            hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
+            fMove: fMoveCurrent,
+            cMove: cMoveCurrent,
+            types: value?.types,
+            pokemonType,
+          });
+          let statsDefender = new BattleCalculate({
+            atk: statBossATK,
+            def: statBossDEF,
+            hp: statBossHP,
+            fMove: data.combat.find((item) => isEqual(item.name, fMove?.name)),
+            cMove: data.combat.find((item) => isEqual(item.name, cMove?.name)),
+            types: form?.form.types,
+            isStab: isWeatherBoss,
+          });
+          const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
+          if (pokemonTarget) {
+            statsDefender = statsAttackerTemp;
+          }
+
+          if (!statsAttacker || !statsDefender) {
+            enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
+            return;
+          }
+
+          const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+          const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+
+          const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
+          const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
+
+          const tdoAtk = dpsAtk * ttkDef;
+          const tdoDef = dpsDef * ttkAtk;
+
+          dataList.push({
+            pokemon: value,
+            fMove: statsAttacker.fMove,
+            cMove: statsAttacker.cMove,
+            dpsDef,
+            dpsAtk,
+            tdoAtk,
+            tdoDef,
+            multiDpsTdo: Math.pow(dpsAtk, 3) * tdoAtk,
+            ttkAtk,
+            ttkDef,
+            attackHpRemain: Math.floor(toNumber(statsAttacker.hp)) - Math.min(timeAllow, ttkDef) * dpsDef,
+            defendHpRemain: Math.floor(toNumber(statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
+            death: Math.floor(toNumber(statsDefender.hp) / tdoAtk),
+            pokemonType,
+            fMoveType,
+            cMoveType,
+          });
         }
-
-        if (!statsAttacker || !statsDefender) {
-          enqueueSnackbar('Something went wrong!', { variant: VariantType.Error });
-          return;
-        }
-
-        const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-        const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
-
-        const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
-        const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
-
-        const tdoAtk = dpsAtk * ttkDef;
-        const tdoDef = dpsDef * ttkAtk;
-
-        dataList.push({
-          pokemon: value,
-          fMove: statsAttacker.fMove,
-          cMove: statsAttacker.cMove,
-          dpsDef,
-          dpsAtk,
-          tdoAtk,
-          tdoDef,
-          multiDpsTdo: Math.pow(dpsAtk, 3) * tdoAtk,
-          ttkAtk,
-          ttkDef,
-          attackHpRemain: Math.floor(toNumber(statsAttacker.hp)) - Math.min(timeAllow, ttkDef) * dpsDef,
-          defendHpRemain: Math.floor(toNumber(statsDefender.hp)) - Math.min(timeAllow, ttkAtk) * dpsAtk,
-          death: Math.floor(toNumber(statsDefender.hp) / tdoAtk),
-          pokemonType,
-          fMoveType,
-          cMoveType,
-        });
       }
     });
   };
@@ -1126,7 +1129,7 @@ const RaidBattle = () => {
               {pokemon.pokemonType === PokemonType.Shadow && (
                 <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
               )}
-              <img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, true)} />
+              <img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, false)} />
             </span>
           </div>
           <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 8 }}>
@@ -1186,6 +1189,29 @@ const RaidBattle = () => {
           ))}
         </div>
       </Fragment>
+    );
+  };
+
+  const renderPokemon = (value: IPokemonMoveData) => {
+    const assets = findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme);
+    return (
+      <Link
+        to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
+        className="sprite-raid position-relative"
+      >
+        {value.pokemonType === PokemonType.Shadow && (
+          <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+        )}
+        <img
+          className="pokemon-sprite-raid"
+          alt="img-pokemon"
+          src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(value.pokemon?.num)}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.num, assets);
+          }}
+        />
+      </Link>
     );
   };
 
@@ -1371,25 +1397,7 @@ const RaidBattle = () => {
                       onClick={() => handleShowMovePokemon(value)}
                     />
                   </div>
-                  <div className="d-flex justify-content-center w-100">
-                    <Link
-                      to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
-                      className="sprite-raid position-relative"
-                    >
-                      {value.pokemonType === PokemonType.Shadow && (
-                        <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                      )}
-                      <img
-                        className="pokemon-sprite-raid"
-                        alt="img-pokemon"
-                        src={
-                          findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme)
-                            ? APIService.getPokemonModel(findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme))
-                            : APIService.getPokeFullSprite(value.pokemon?.num)
-                        }
-                      />
-                    </Link>
-                  </div>
+                  <div className="d-flex justify-content-center w-100">{renderPokemon(value)}</div>
                   <span className="d-flex justify-content-center w-100">
                     <b>
                       #{value.pokemon?.num} {splitAndCapitalize(value.pokemon?.name, '-', ' ')}
@@ -1448,7 +1456,7 @@ const RaidBattle = () => {
                           <img
                             className="pokemon-sprite-battle"
                             alt="img-pokemon"
-                            src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, true)}
+                            src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, false)}
                           />
                         </span>
                       ) : (
@@ -1627,7 +1635,7 @@ const RaidBattle = () => {
                                       className="pokemon-sprite-battle"
                                       height={36}
                                       alt="img-pokemon"
-                                      src={APIService.getPokeIconSprite(data.pokemon?.sprite, true)}
+                                      src={APIService.getPokeIconSprite(data.pokemon?.sprite, false)}
                                     />
                                     <span className="caption">{splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}</span>
                                   </div>

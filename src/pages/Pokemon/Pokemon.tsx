@@ -36,6 +36,7 @@ import {
   generatePokemonGoShadowForms,
   getPokemonById,
   getPokemonDetails,
+  getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../util/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
@@ -44,13 +45,12 @@ import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, FORM_GMAX, regionList, Params } from '../../util/constants';
+import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_GALAR, FORM_HISUI, FORM_STANDARD } from '../../util/constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
-import { APIUrl } from '../../services/constants';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
@@ -139,6 +139,9 @@ const Pokemon = (props: IPokemonPage) => {
         return;
       });
 
+      if (!isNotEmpty(dataPokeList) || !isNotEmpty(dataFormList)) {
+        return;
+      }
       setUrlEvolutionChain(data.evolution_chain?.url);
 
       const pokemon = pokemonData.find((item) => item.num === data.id);
@@ -164,12 +167,7 @@ const Pokemon = (props: IPokemonPage) => {
                 data.id,
                 data.name,
                 data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
-                new Form({
-                  ...item,
-                  formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
-                    ? item.name.replace(`${data.name}-`, '')
-                    : item.formName,
-                })
+                Form.setValue(item, data.name)
               )
             )
             .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
@@ -188,7 +186,13 @@ const Pokemon = (props: IPokemonPage) => {
 
       // Set Default Form
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
-      let formParams = searchParams.get(Params.Form)?.toLowerCase().replaceAll('_', '-');
+      let formParams = searchParams
+        .get(Params.Form)
+        ?.toUpperCase()
+        .replaceAll('_', '-')
+        .replace(`${FORM_GALAR}IAN`, FORM_GALAR)
+        .replace(`${FORM_HISUI}AN`, FORM_GALAR)
+        .toLowerCase();
       const formTypeParams = searchParams.get(Params.FormType)?.toLowerCase();
       if (formTypeParams) {
         if (formParams) {
@@ -205,13 +209,13 @@ const Pokemon = (props: IPokemonPage) => {
             (item) =>
               isEqual(
                 formTypeParams
-                  ? item.form.formName?.replaceAll('_', '-')
-                  : convertPokemonAPIDataName(item.form.formName).replaceAll('_', '-'),
+                  ? item.form.formName?.replace(`-${FORM_STANDARD.toLowerCase()}`, '').replaceAll('_', '-')
+                  : convertPokemonAPIDataName(item.form.formName).replace(`_${FORM_STANDARD}`, '').replaceAll('_', '-'),
                 formParams,
                 EqualMode.IgnoreCaseSensitive
               ) ||
               isEqual(
-                convertPokemonAPIDataName(item.form.name).replaceAll('_', '-'),
+                convertPokemonAPIDataName(item.form.name).replace(`_${FORM_STANDARD}`, '').replaceAll('_', '-'),
                 `${item.defaultName}-${formParams}`,
                 EqualMode.IgnoreCaseSensitive
               )
@@ -326,10 +330,10 @@ const Pokemon = (props: IPokemonPage) => {
     if (id > 0 && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.isLoading) {
-          const currentId = getPokemonById(pokemonData, id);
-          if (currentId) {
-            const prev = getPokemonById(pokemonData, currentId.id - 1);
-            const next = getPokemonById(pokemonData, currentId.id + 1);
+          const currentPokemon = getPokemonById(pokemonData, id);
+          if (currentPokemon) {
+            const prev = getPokemonById(pokemonData, currentPokemon.id - 1);
+            const next = getPokemonById(pokemonData, currentPokemon.id + 1);
             if (prev && event.keyCode === KEY_LEFT) {
               event.preventDefault();
               params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
@@ -340,9 +344,9 @@ const Pokemon = (props: IPokemonPage) => {
           }
         }
       };
-      document.addEventListener('keyup', keyDownHandler, false);
+      document.addEventListener('keyup', keyDownHandler);
       return () => {
-        document.removeEventListener('keyup', keyDownHandler, false);
+        document.removeEventListener('keyup', keyDownHandler);
       };
     }
   }, [params.id, props.id, spinner.isLoading, pokemonData]);
@@ -409,12 +413,12 @@ const Pokemon = (props: IPokemonPage) => {
   useEffect(() => {
     const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
     if (id > 0 && isNotEmpty(pokemonData)) {
-      const currentId = getPokemonById(pokemonData, id);
-      if (currentId) {
+      const currentPokemon = getPokemonById(pokemonData, id);
+      if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(pokemonData, currentId.id - 1),
-          current: getPokemonById(pokemonData, currentId.id),
-          next: getPokemonById(pokemonData, currentId.id + 1),
+          prev: getPokemonById(pokemonData, currentPokemon.id - 1),
+          current: getPokemonById(pokemonData, currentPokemon.id),
+          next: getPokemonById(pokemonData, currentPokemon.id + 1),
         });
       }
     }
@@ -465,11 +469,7 @@ const Pokemon = (props: IPokemonPage) => {
                   )}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                      e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id);
-                    } else {
-                      e.currentTarget.src = APIService.getPokeFullSprite(0);
-                    }
+                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
                   }}
                 />
               </div>

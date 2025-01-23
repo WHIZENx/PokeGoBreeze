@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { capitalize, generateParamForm, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALARIAN, FORM_HISUIAN, MIN_CP } from '../../../util/constants';
+import { MIN_IV, MAX_IV, FORM_NORMAL, FORM_GALAR, FORM_HISUI, MIN_CP } from '../../../util/constants';
 import { IEvolution } from '../../../core/models/evolution.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain, StatsCalculate } from '../../../util/models/calculate.model';
@@ -39,7 +39,7 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { Toggle } from '../../../core/models/pvp.model';
-import { LeagueType } from '../../../core/enums/league.enum';
+import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
@@ -50,7 +50,7 @@ const FindBattle = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm] = useState<IPokemonFormModify>();
   const [maxCP, setMaxCP] = useState(0);
@@ -81,7 +81,7 @@ const FindBattle = () => {
 
   const currEvoChain = useCallback(
     (currId: number[], form: string, arr: IEvolution[]) => {
-      form = form.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
+      form = form.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
       if (!isNotEmpty(currId)) {
         return arr;
       }
@@ -238,9 +238,9 @@ const FindBattle = () => {
         let bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
         bestLeague = bestLeague.filter(
           (item) =>
-            (item.league === LeagueType.Master && toNumber(item.CP) > BattleLeagueCPType.Ultra) ||
-            (item.league === LeagueType.Ultra && toNumber(item.CP) > BattleLeagueCPType.Great) ||
-            (item.league === LeagueType.Great && toNumber(item.CP) > BattleLeagueCPType.Little)
+            (item.league === LeagueBattleType.Master && toNumber(item.CP) > BattleLeagueCPType.Ultra) ||
+            (item.league === LeagueBattleType.Ultra && toNumber(item.CP) > BattleLeagueCPType.Great) ||
+            (item.league === LeagueBattleType.Great && toNumber(item.CP) > BattleLeagueCPType.Little)
         );
         if (!isNotEmpty(bestLeague)) {
           bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
@@ -324,6 +324,22 @@ const FindBattle = () => {
           Close <CloseIcon sx={{ color: 'red' }} />
         </span>
       </div>
+    );
+  };
+
+  const renderPokemon = (value: IBattleBaseStats | IQueryStatesEvoChain, className?: string, height = 100) => {
+    const assets = findAssetForm(dataStore.assets, value.id, form?.form.formName);
+    return (
+      <img
+        className={className}
+        alt="pokemon-model"
+        height={height}
+        src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(value.id)}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, assets);
+        }}
+      />
     );
   };
 
@@ -440,16 +456,7 @@ const FindBattle = () => {
                 >
                   <div className="d-flex align-items-center h-100">
                     <div className="border-best-poke h-100">
-                      <img
-                        className="poke-best-league"
-                        alt="pokemon-model"
-                        height={102}
-                        src={
-                          findAssetForm(dataStore.assets, value.id, form?.form.formName)
-                            ? APIService.getPokemonModel(findAssetForm(dataStore.assets, value.id, form?.form.formName))
-                            : APIService.getPokeFullSprite(value.id)
-                        }
-                      />
+                      {renderPokemon(value, 'poke-best-league', 102)}
                       <span className="caption text-black border-best-poke best-name">
                         <b>
                           #{value.id} {splitAndCapitalize(value.name, '_', ' ')} {splitAndCapitalize(form?.form.formName, '-', ' ')}
@@ -462,11 +469,11 @@ const FindBattle = () => {
                           alt="pokemon-model"
                           height={32}
                           src={
-                            value.league === LeagueType.Little
+                            value.league === LeagueBattleType.Little
                               ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)
-                              : value.league === LeagueType.Great
+                              : value.league === LeagueBattleType.Great
                               ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)
-                              : value.league === LeagueType.Ultra
+                              : value.league === LeagueBattleType.Ultra
                               ? getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)
                               : getPokemonBattleLeagueIcon()
                           }
@@ -505,15 +512,7 @@ const FindBattle = () => {
                                 title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
                               >
                                 <Badge color="primary" overlap="circular" badgeContent={index + 1}>
-                                  <img
-                                    alt="pokemon-model"
-                                    height={100}
-                                    src={
-                                      findAssetForm(dataStore.assets, item.id, form?.form.formName)
-                                        ? APIService.getPokemonModel(findAssetForm(dataStore.assets, item.id, form?.form.formName))
-                                        : APIService.getPokeFullSprite(item.id)
-                                    }
-                                  />
+                                  {renderPokemon(item)}
                                 </Badge>
                                 <div>
                                   <b>
@@ -707,7 +706,7 @@ const FindBattle = () => {
                                       <li>CP: {item.battleLeague.master.CP}</li>
                                       <li>Level: {item.battleLeague.master.level}</li>
                                       <li>
-                                        Stats Prod (%):{' '}
+                                        {'Stats Prod (%): '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(item.battleLeague.master.ratio)}

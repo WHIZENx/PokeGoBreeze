@@ -4,11 +4,12 @@ import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 import CloseIcon from '@mui/icons-material/Close';
-import { IPokemonBattle, TimelineElement } from '../models/battle.model';
+import { IPokemonBattle } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
 import { combineClasses, isNotEmpty } from '../../../util/extension';
 import { TypeAction } from '../../../enums/type.enum';
+import { TimelineElement } from '../../../util/models/overrides/dom.model';
 
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, isHide = false) => {
   const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShadow = false) => {

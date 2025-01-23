@@ -61,6 +61,7 @@ export enum MoveType {
   Elite,
   Special,
   Exclusive,
+  Dynamax,
   Unavailable,
 }
 
@@ -81,4 +82,11 @@ export enum PokemonClass {
   Legendary,
   Mythic,
   UltraBeast,
+}
+
+export enum ThrowType {
+  Normal,
+  Nice,
+  Great,
+  Excellent,
 }

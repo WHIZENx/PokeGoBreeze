@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
-import { DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { DynamicObj, toFloatWithPadding } from '../../../util/extension';
 import { AnimationType } from './enums/hexagon.enum';
 
 interface IPointer {
@@ -24,7 +24,7 @@ class Pointer implements IPointer {
 const Hexagon = (props: IHexagonComponent) => {
   const canvasHex = useRef<HTMLCanvasElement>();
   const [initHex, setInitHex] = useState(false);
-  const [defaultStats, setDefaultStats] = useState(props.defaultStats ?? props.stats);
+  const [defaultStats, setDefaultStats] = useState(new HexagonStats());
 
   const getHexConnerCord = (center: IPointer, size: number, i: number) => {
     const angleDeg = 60 * i - 30;
@@ -97,16 +97,36 @@ const Hexagon = (props: IHexagonComponent) => {
         ctx.beginPath();
         ctx.clearRect(0, 0, hexBorderSize, hexBorderSize);
         ctx.closePath();
-        drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, hexSize, 'white', true);
-        drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 25, 'lightgray', false);
-        drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 50, 'lightgray', false);
-        drawLineHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, 75, 'lightgray', false);
-        drawStatsHex(ctx, { x: hexSize, y: (hexBorderSize + 4) / 2 }, stats, hexSize);
+        const pointer = new Pointer(hexSize, (hexBorderSize + 4) / 2);
+        drawLineHex(ctx, pointer, hexSize, 'white', true);
+        drawLineHex(ctx, pointer, 25, 'lightgray', false);
+        drawLineHex(ctx, pointer, 50, 'lightgray', false);
+        drawLineHex(ctx, pointer, 75, 'lightgray', false);
+        drawStatsHex(ctx, pointer, stats, hexSize);
         setInitHex(true);
       }
     },
     [props.size]
   );
+
+  const equalStats = (initStats: HexagonStats) => {
+    return (
+      initStats.lead === props.stats.lead &&
+      initStats.charger === props.stats.charger &&
+      initStats.closer === props.stats.closer &&
+      initStats.cons === props.stats.cons &&
+      initStats.atk === props.stats.atk &&
+      initStats.switching === props.stats.switching
+    );
+  };
+
+  useEffect(() => {
+    if (props.name && props.animation === AnimationType.On) {
+      setDefaultStats(new HexagonStats());
+    } else {
+      setDefaultStats(props.defaultStats ?? props.stats);
+    }
+  }, [props.name, props.animation, props.defaultStats, props.stats]);
 
   useEffect(() => {
     if (props.animation === AnimationType.On) {
@@ -125,14 +145,7 @@ const Hexagon = (props: IHexagonComponent) => {
       });
     }
 
-    if (
-      defaultStats.lead !== props.stats.lead ||
-      defaultStats.charger !== props.stats.charger ||
-      defaultStats.closer !== props.stats.closer ||
-      defaultStats.cons !== props.stats.cons ||
-      defaultStats.atk !== props.stats.atk ||
-      defaultStats.switching !== props.stats.switching
-    ) {
+    if (!equalStats(defaultStats)) {
       drawHexagon(defaultStats);
     } else {
       drawHexagon(props.stats);
@@ -166,16 +179,7 @@ const Hexagon = (props: IHexagonComponent) => {
 
         drawHexagon(initStats);
 
-        if (
-          !(
-            initStats.lead === props.stats.lead &&
-            initStats.charger === props.stats.charger &&
-            initStats.closer === props.stats.closer &&
-            initStats.cons === props.stats.cons &&
-            initStats.atk === props.stats.atk &&
-            initStats.switching === props.stats.switching
-          )
-        ) {
+        if (!equalStats(initStats)) {
           animateId.current = requestAnimationFrame(animate);
         }
       });
@@ -221,8 +225,8 @@ const Hexagon = (props: IHexagonComponent) => {
       <canvas
         onClick={() => onPlayAnimation()}
         ref={canvasHex as React.LegacyRef<HTMLCanvasElement> | undefined}
-        width={toNumber(props.size)}
-        height={toNumber(props.size) + 4}
+        width={props.size}
+        height={props.size + 4}
       />
     </div>
   );

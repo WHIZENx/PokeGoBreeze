@@ -8,7 +8,9 @@ import {
   convertPokemonImageName,
   formIconAssets,
   generatePokemonGoForms,
+  getItemSpritePath,
   getPokemonById,
+  getValidPokemonImgPath,
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../util/utils';
@@ -27,16 +29,15 @@ import {
 } from '../../core/models/API/form.model';
 import { Species } from '../../core/models/API/species.model';
 import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
-import { FORM_GMAX, FORM_NORMAL } from '../../util/constants';
+import { FORM_NORMAL } from '../../util/constants';
 import { AxiosError } from 'axios';
-import { APIUrl } from '../../services/constants';
 import { IFormSelectComponent } from '../models/component.model';
 import { TypeRaid, VariantType } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
-import { EqualMode } from '../../util/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
+import { ItemName } from '../../pages/News/enums/item-type.enum';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -94,12 +95,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 data.id,
                 data.name,
                 data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
-                new Form({
-                  ...item,
-                  formName: isEqual(item.formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
-                    ? item.name.replace(`${data.name}-`, '')
-                    : item.formName,
-                })
+                Form.setValue(item, data.name)
               )
             )
             .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
@@ -128,7 +124,12 @@ const FormSelect = (props: IFormSelectComponent) => {
       if (!currentForm) {
         currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === data.id);
       }
-      setCurrentForm(currentForm ?? defaultForm.at(0));
+      if (!currentForm && isNotEmpty(defaultForm)) {
+        currentForm = defaultForm.at(0);
+      }
+      if (currentForm) {
+        setCurrentForm(currentForm);
+      }
       setData(data);
     },
     [props.searching]
@@ -208,12 +209,12 @@ const FormSelect = (props: IFormSelectComponent) => {
   useEffect(() => {
     const id = toNumber(props.id);
     if (isNotEmpty(props.data) && id > 0) {
-      const currentId = getPokemonById(props.data, id);
-      if (currentId) {
+      const currentPokemon = getPokemonById(props.data, id);
+      if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(props.data, currentId.id - 1),
-          current: getPokemonById(props.data, currentId.id),
-          next: getPokemonById(props.data, currentId.id + 1),
+          prev: getPokemonById(props.data, currentPokemon.id - 1),
+          current: getPokemonById(props.data, currentPokemon.id),
+          next: getPokemonById(props.data, currentPokemon.id + 1),
         });
       }
     }
@@ -276,11 +277,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon.prev?.id);
-                  } else {
-                    e.currentTarget.src = APIService.getPokeFullSprite(0);
-                  }
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon.prev?.id);
                 }}
               />
             </div>
@@ -303,11 +300,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         }
         onError={(e) => {
           e.currentTarget.onerror = null;
-          if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-            e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon?.current?.id);
-          } else {
-            e.currentTarget.src = APIService.getPokeFullSprite(0);
-          }
+          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
         }}
       />
       <div className="d-inline-block" style={{ width: 60, height: 60 }}>
@@ -320,11 +313,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                 src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                    e.currentTarget.src = APIService.getPokeFullAsset(dataStorePokemon.next?.id);
-                  } else {
-                    e.currentTarget.src = APIService.getPokeFullSprite(0);
-                  }
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon.next?.id);
                 }}
               />
             </div>
@@ -341,7 +330,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       </div>
       <h4>
         <b>
-          {`#${dataStorePokemon?.current?.id} `}
+          {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}
           {currentForm ? splitAndCapitalize(currentForm.form.name.replace('-f', '-female').replace('-m', '-male'), '-', ' ') : props.name}
         </b>
       </h4>
@@ -396,7 +385,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-pokemon" src={APIService.getItemSprite('pokeball_sprite')} /> Pokémon Stats
+                  <img height={32} alt="img-pokemon" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
                 </span>
               }
             />

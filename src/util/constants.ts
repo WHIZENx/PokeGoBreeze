@@ -3,11 +3,10 @@ import { PVPInfo } from '../core/models/pvp.model';
 import { getOption } from '../core/options';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
 import { DynamicObj, getPropertyName, toNumber } from './extension';
-import { LeagueType } from '../core/enums/league.enum';
-import { ChargeAbility } from '../pages/Tools/BattleDamage/enums/damage.enum';
+import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
-import { PokemonType } from '../enums/type.enum';
+import { PokemonType, ThrowType } from '../enums/type.enum';
 
 // Parameters
 export class Params {
@@ -88,16 +87,16 @@ export const FORM_MEGA = 'MEGA';
 export const FORM_GMAX = 'GMAX';
 export const FORM_PRIMAL = 'PRIMAL';
 export const FORM_ALOLA = 'ALOLA';
-export const FORM_HISUIAN = 'HISUIAN';
-export const FORM_GALARIAN = 'GALARIAN';
+export const FORM_HISUI = 'HISUI';
+export const FORM_GALAR = 'GALAR';
 
 // Forms special
 export const FORM_HERO = 'HERO';
 export const FORM_STANDARD = 'STANDARD';
 export const FORM_INCARNATE = 'INCARNATE';
 export const FORM_ARMOR = 'ARMOR';
-export const FORM_MEGA_X = 'MEGA_X';
-export const FORM_MEGA_Y = 'MEGA_Y';
+export const FORM_MEGA_X = `${FORM_MEGA}_X`;
+export const FORM_MEGA_Y = `${FORM_MEGA}_Y`;
 
 // Pokémon Class
 export const CLASS_LEGENDARY = 'LEGENDARY';
@@ -165,11 +164,11 @@ export const MULTIPLY_LEVEL_FRIENDSHIP = (
 
 export const MULTIPLY_THROW_CHARGE = (
   options: IOptions | undefined,
-  type = ChargeAbility.Normal,
+  type = ThrowType.Normal,
   settings = [
     getPropertyName(options, (o) => o.throwCharge),
     getPropertyName(options?.throwCharge, (o) =>
-      type === ChargeAbility.Normal ? o.normal : type === ChargeAbility.Nice ? o.nice : type === ChargeAbility.Great ? o.great : o.excellent
+      type === ThrowType.Normal ? o.normal : type === ThrowType.Nice ? o.nice : type === ThrowType.Great ? o.great : o.excellent
     ),
   ]
 ) => getOption<number>(options, settings, 1);
@@ -304,25 +303,25 @@ export const typeCostPowerUp = (type: PokemonType | undefined) => {
 
 export const leaguesTeamBattle: PVPInfo[] = [
   {
-    id: LeagueType.All,
+    id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(BattleLeagueCPType.Little),
     cp: [BattleLeagueCPType.Little],
     logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Little),
   },
   {
-    id: LeagueType.All,
+    id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(BattleLeagueCPType.Great),
     cp: [BattleLeagueCPType.Great],
     logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Great),
   },
   {
-    id: LeagueType.All,
+    id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(BattleLeagueCPType.Ultra),
     cp: [BattleLeagueCPType.Ultra],
     logo: getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra),
   },
   {
-    id: LeagueType.All,
+    id: LeagueBattleType.All,
     name: getPokemonBattleLeagueName(),
     cp: [BattleLeagueCPType.InsMaster],
     logo: getPokemonBattleLeagueIcon(),

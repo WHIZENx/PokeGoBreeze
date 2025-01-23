@@ -22,7 +22,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleState } from '../../../core/models/damage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, toNumber } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, toNumber, UniqValueInArray } from '../../../util/extension';
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
 
@@ -32,7 +32,7 @@ const CalculatePoint = () => {
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm] = useState<IPokemonFormModify>();
   const [move, setMove] = useState<ICombat>();
@@ -53,7 +53,7 @@ const CalculatePoint = () => {
   const [isRaid, setIsRaid] = useState(true);
   const [tier, setTier] = useState(1);
 
-  const [idDef, setIdDef] = useState(searching?.obj ? searching.obj.id : 1);
+  const [idDef, setIdDef] = useState(toNumber(searching?.obj?.id, 1));
   const [nameDef, setNameDef] = useState(splitAndCapitalize(searching?.obj?.fullName, '-', ' '));
   const [formDef, setFormDef] = useState<IPokemonFormModify>();
   const [moveDef, setMoveDef] = useState<ICombat>();
@@ -118,7 +118,7 @@ const CalculatePoint = () => {
       }
       level++;
     }
-    const colorTone = computeColorTone([...new Set(group)].sort((a, b) => a - b));
+    const colorTone = computeColorTone(UniqValueInArray(group).sort((a, b) => a - b));
     setResultBreakPointAtk({ data: dataList, colorTone });
     enqueueSnackbar('Calculate breakpoint attacker successfully!', { variant: VariantType.Success });
   };
@@ -145,8 +145,8 @@ const CalculatePoint = () => {
       level++;
     }
 
-    const colorToneDef = computeColorTone([...new Set(groupDef)].sort((a, b) => b - a));
-    const colorToneSta = computeColorTone([...new Set(groupSta)].sort((a, b) => a - b));
+    const colorToneDef = computeColorTone(UniqValueInArray(groupDef).sort((a, b) => b - a));
+    const colorToneSta = computeColorTone(UniqValueInArray(groupSta).sort((a, b) => a - b));
     setResultBreakPointDef({
       dataDef: dataListDef,
       dataSta: dataListSta,
@@ -244,7 +244,7 @@ const CalculatePoint = () => {
             <img
               alt="img-pokemon"
               className="pokemon-sprite-large"
-              src={APIService.getPokeIconSprite(form?.form.name, true)}
+              src={APIService.getPokeIconSprite(form?.form.name, false)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = APIService.getPokeIconSprite();
@@ -264,7 +264,7 @@ const CalculatePoint = () => {
             <img
               alt="img-pokemon"
               className="pokemon-sprite-large"
-              src={APIService.getPokeIconSprite(formDef?.form.name, true)}
+              src={APIService.getPokeIconSprite(formDef?.form.name, false)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = APIService.getPokeIconSprite();

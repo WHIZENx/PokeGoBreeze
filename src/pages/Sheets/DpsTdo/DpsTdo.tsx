@@ -143,7 +143,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.pokemon.sprite, true)}
+          src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon.baseSpecies);
@@ -317,65 +317,67 @@ const DpsTdo = () => {
 
       if (fMove && cMove) {
         const cMoveType = getMoveType(pokemon, vc);
-        const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
-        const statsAttacker = new BattleCalculate({
-          atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
-          def: calculateStatsBattle(stats.def, ivDef, pokemonLevel),
-          hp: calculateStatsBattle(stats.sta, ivHp, pokemonLevel),
-          fMove,
-          cMove,
-          types: pokemon.types,
-          pokemonType,
-          weatherBoosts: options.weatherBoosts,
-          isPokemonFriend: options.isTrainerFriend,
-          pokemonFriendLevel: options.pokemonFriendLevel,
-        });
-
-        let dps = 0;
-        let tdo = 0;
-        if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
-          const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
-          const statsDefender = new BattleCalculate({
-            atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
-            def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
-            hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
-            fMove: data.combat.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
-            cMove: data.combat.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
-            types: dataTargetPokemon.types,
+        if (!isEqual(cMoveType, MoveType.Dynamax)) {
+          const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
+          const statsAttacker = new BattleCalculate({
+            atk: calculateStatsBattle(stats.atk, ivAtk, pokemonLevel),
+            def: calculateStatsBattle(stats.def, ivDef, pokemonLevel),
+            hp: calculateStatsBattle(stats.sta, ivHp, pokemonLevel),
+            fMove,
+            cMove,
+            types: pokemon.types,
+            pokemonType,
             weatherBoosts: options.weatherBoosts,
+            isPokemonFriend: options.isTrainerFriend,
+            pokemonFriendLevel: options.pokemonFriendLevel,
           });
 
-          const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-          dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
-          tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
-        } else {
-          dps = calculateAvgDPS(
-            data.options,
-            data.typeEff,
-            data.weatherBoost,
-            statsAttacker.fMove,
-            statsAttacker.cMove,
-            statsAttacker.atk,
-            statsAttacker.def,
-            statsAttacker.hp,
-            statsAttacker.types,
-            statsAttacker.pokemonType,
-            options
-          );
-          tdo = calculateTDO(data.options, statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
+          let dps = 0;
+          let tdo = 0;
+          if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
+            const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
+            const statsDefender = new BattleCalculate({
+              atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
+              def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
+              hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
+              fMove: data.combat.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
+              cMove: data.combat.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
+              types: dataTargetPokemon.types,
+              weatherBoosts: options.weatherBoosts,
+            });
+
+            const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+            dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+            tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
+          } else {
+            dps = calculateAvgDPS(
+              data.options,
+              data.typeEff,
+              data.weatherBoost,
+              statsAttacker.fMove,
+              statsAttacker.cMove,
+              statsAttacker.atk,
+              statsAttacker.def,
+              statsAttacker.hp,
+              statsAttacker.types,
+              statsAttacker.pokemonType,
+              options
+            );
+            tdo = calculateTDO(data.options, statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
+          }
+          dataList.push({
+            pokemon,
+            fMove: statsAttacker.fMove,
+            cMove: statsAttacker.cMove,
+            dps,
+            tdo,
+            multiDpsTdo: Math.pow(dps, 3) * tdo,
+            cMoveType,
+            fMoveType,
+            pokemonType,
+            cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, toNumber(stats.sta) + ivHp, pokemonLevel),
+          });
         }
-        dataList.push({
-          pokemon,
-          fMove: statsAttacker.fMove,
-          cMove: statsAttacker.cMove,
-          dps,
-          tdo,
-          multiDpsTdo: Math.pow(dps, 3) * tdo,
-          cMoveType,
-          fMoveType,
-          pokemonType,
-          cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, toNumber(stats.sta) + ivHp, pokemonLevel),
-        });
       }
     });
   };

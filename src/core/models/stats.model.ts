@@ -167,7 +167,7 @@ interface OptionsStats {
 }
 
 export interface IStatsAtk extends Partial<OptionsStats> {
-  attack: number;
+  attack?: number;
   rank: number;
 }
 
@@ -183,7 +183,7 @@ export class StatsAtk implements IStatsAtk {
 }
 
 export interface IStatsDef extends Partial<OptionsStats> {
-  defense: number;
+  defense?: number;
   rank: number;
 }
 
@@ -199,7 +199,7 @@ export class StatsDef implements IStatsDef {
 }
 
 export interface IStatsSta extends Partial<OptionsStats> {
-  stamina: number;
+  stamina?: number;
   rank: number;
 }
 
@@ -215,7 +215,7 @@ export class StatsSta implements IStatsSta {
 }
 
 export interface IStatsProd extends Partial<OptionsStats> {
-  product: number;
+  product?: number;
   rank: number;
 }
 

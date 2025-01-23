@@ -1,6 +1,6 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../../util/utils';
+import { getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -41,7 +41,7 @@ const SearchBar = (props: ISearchBarComponent) => {
                 src={APIService.getPokeFullSprite(props.data.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(props.data?.prev?.id);
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.data?.prev?.id);
                 }}
               />
             </div>
@@ -84,7 +84,7 @@ const SearchBar = (props: ISearchBarComponent) => {
                 src={APIService.getPokeFullSprite(props.data.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeFullAsset(props.data?.next?.id);
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.data?.next?.id);
                 }}
               />
             </div>

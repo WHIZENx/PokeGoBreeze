@@ -1,20 +1,22 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize, getMultiplyTypeEffect } from '../../util/utils';
+import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../util/utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
-import { TypeModel, TypeMultiply } from '../../core/models/type.model';
+import { PokemonTypeBadge, TypeModel, TypeMultiply } from '../../core/models/type.model';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, DynamicObj, isEqual } from '../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEqual } from '../../util/extension';
 
 const Attacker = (prop: ITypeEffComponent) => {
   const theme = useTheme<ThemeModify>();
   const [types, setTypes] = useState<string[]>([]);
 
-  const [currentType, setCurrentType] = useState('BUG');
+  const [currentType, setCurrentType] = useState(
+    getValueOrDefault(String, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase())
+  );
   const [showType, setShowType] = useState(false);
 
   const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
@@ -29,7 +31,7 @@ const Attacker = (prop: ITypeEffComponent) => {
       neutral: [],
     });
     Object.entries(((prop.types ?? new TypeEff()) as unknown as DynamicObj<TypeMultiply>)[currentType] ?? new TypeModel()).forEach(
-      ([key, value]) => getMultiplyTypeEffect(data, value, key)
+      ([key, value]: [string, number]) => getMultiplyTypeEffect(data, value, key)
     );
     setTypeEffective(data);
   }, [currentType, prop.types]);

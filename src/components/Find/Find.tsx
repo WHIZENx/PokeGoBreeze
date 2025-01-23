@@ -4,12 +4,12 @@ import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../util/utils';
-import { RouterState, SearchingState, StatsState, StoreState } from '../../store/models/state.model';
+import { SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { combineClasses, isInclude, isNotEmpty } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 
@@ -20,13 +20,10 @@ const Find = (props: IFindComponent) => {
   const cardHeight = useRef(65);
 
   const stats = useSelector((state: StatsState) => state.stats);
-  const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
 
-  const [id, setId] = useState(
-    searching ? (props.isObjective ? (searching ? (searching.obj ? searching.obj.id : 1) : 1) : searching.id) : 1
-  );
+  const [id, setId] = useState(searching ? (props.isObjective ? toNumber(searching?.obj?.id, 1) : searching.id) : 1);
 
   const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
 
@@ -61,13 +58,13 @@ const Find = (props: IFindComponent) => {
   };
 
   const getInfoPoke = (value: IPokemonSearching) => {
-    const currentId = getPokemonById(pokemonData, value.id);
+    const currentPokemon = getPokemonById(pokemonData, value.id);
     setId(value.id);
     if (props.setId) {
       props.setId(value.id);
     }
-    if (props.setName && currentId) {
-      props.setName(currentId.name);
+    if (props.setName && currentPokemon) {
+      props.setName(currentPokemon.name);
     }
     if (props.clearStats) {
       props.clearStats();
@@ -85,9 +82,9 @@ const Find = (props: IFindComponent) => {
   };
 
   const decId = () => {
-    const currentId = getPokemonById(pokemonData, id);
-    if (currentId) {
-      const prev = getPokemonById(pokemonData, currentId.id - 1);
+    const currentPokemon = getPokemonById(pokemonData, id);
+    if (currentPokemon) {
+      const prev = getPokemonById(pokemonData, currentPokemon.id - 1);
       if (prev) {
         setId(prev.id);
         if (props.setId) {
@@ -104,9 +101,9 @@ const Find = (props: IFindComponent) => {
   };
 
   const incId = () => {
-    const currentId = getPokemonById(pokemonData, id);
-    if (currentId) {
-      const next = getPokemonById(pokemonData, currentId.id + 1);
+    const currentPokemon = getPokemonById(pokemonData, id);
+    if (currentPokemon) {
+      const next = getPokemonById(pokemonData, currentPokemon.id + 1);
       if (next) {
         setId(next.id);
         if (props.setId) {
@@ -176,7 +173,6 @@ const Find = (props: IFindComponent) => {
       <div>
         {isNotEmpty(pokemonList) && (
           <FormSelect
-            router={router}
             searching={searching}
             isHide={props.isHide}
             isRaid={props.isRaid}
@@ -205,7 +201,7 @@ const Find = (props: IFindComponent) => {
   return (
     <div className="container element-top">
       <h1 id="main" className="text-center" style={{ marginBottom: 15 }}>
-        {props.title ?? 'Pokémon GO Tools'}
+        {getValueOrDefault(String, props.title, 'Pokémon GO Tools')}
       </h1>
       {isNotEmpty(pokemonList) ? (
         <div className="row search-container">

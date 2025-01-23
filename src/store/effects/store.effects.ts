@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { calculateCPM } from '../../core/cpm';
+import { calculateBaseCPM, calculateCPM } from '../../core/cpm';
 import { Database } from '../../core/models/API/db.model';
 import { PokemonDataGM } from '../../core/models/options.model';
 import { IPokemonData, PokemonEncounter } from '../../core/models/pokemon.model';
@@ -19,6 +19,7 @@ import {
   mappingMoveSetPokemonGO,
   optionEvolutionChain,
   optionInformation,
+  optionTrainer,
 } from '../../core/options';
 import { pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
 import APIService from '../../services/API.service';
@@ -29,7 +30,7 @@ import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
-import { getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { DynamicObj, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 
 interface Timestamp {
   images: boolean;
@@ -68,7 +69,10 @@ export const loadPokeGOLogo = (dispatch: Dispatch) =>
     })
     .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
 
-export const loadCPM = (dispatch: Dispatch) => dispatch(StoreActions.SetCPM.create(calculateCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
+export const loadBaseCPM = (dispatch: Dispatch) => dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
+
+export const loadCPM = (dispatch: Dispatch, cpmList: DynamicObj<number>) =>
+  dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, MIN_LEVEL, Object.keys(cpmList).length)));
 
 export const loadTimestamp = async (
   dispatch: Dispatch,
@@ -157,6 +161,7 @@ export const loadGameMaster = (
       dispatch(SpinnerActions.SetPercent.create(60));
 
       dispatch(StoreActions.SetOptions.create(optionSettings(gm.data)));
+      dispatch(StoreActions.SetTrainer.create(optionTrainer(gm.data)));
       dispatch(StoreActions.SetTypeEff.create(typeEff));
       dispatch(StoreActions.SetWeatherBoost.create(weatherBoost));
       dispatch(StoreActions.SetSticker.create(optionSticker(gm.data, pokemon)));
@@ -217,7 +222,7 @@ export const loadAssets = async (
         APIService.getFetchUrl<APITree>(imageFolderPath.url, options),
         APIService.getFetchUrl<APITree>(soundFolderPath.url, options),
       ]).then(async ([image, sound]) => {
-        const imagePath = image.data.tree.find((item) => item.path === 'Pokemon');
+        const imagePath = image.data.tree.find((item) => item.path === 'Pokemon - 256x256');
         const soundPath = sound.data.tree.find((item) => item.path === 'Pokemon Cries');
 
         if (imagePath && soundPath) {

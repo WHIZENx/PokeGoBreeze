@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize, getMultiplyTypeEffect } from '../../util/utils';
+import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../util/utils';
 import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
 import { TypeTheme } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, isEmpty, isEqual } from '../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isEmpty, isEqual } from '../../util/extension';
+import { PokemonTypeBadge } from '../../core/models/type.model';
+import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 
 const Defender = (prop: ITypeEffComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -15,7 +17,9 @@ const Defender = (prop: ITypeEffComponent) => {
 
   const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
 
-  const [currentTypePri, setCurrentTypePri] = useState('BUG');
+  const [currentTypePri, setCurrentTypePri] = useState(
+    getValueOrDefault(String, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase())
+  );
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
   const [showTypePri, setShowTypePri] = useState(false);
@@ -30,7 +34,7 @@ const Defender = (prop: ITypeEffComponent) => {
       resist: [],
       neutral: [],
     });
-    Object.entries(prop.types ?? new TypeEff()).forEach(([key, value]) => {
+    Object.entries(prop.types ?? new TypeEff()).forEach(([key, value]: [string, DynamicObj<number>]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= isEmpty(currentTypeSec) ? 1 : value[currentTypeSec];
@@ -118,7 +122,7 @@ const Defender = (prop: ITypeEffComponent) => {
             >
               {isEmpty(currentTypeSec) ? (
                 <div className="type-none">
-                  <b>None</b>
+                  <b>{getKeyWithData(EffectiveType, EffectiveType.None)}</b>
                 </div>
               ) : (
                 <div className="type-sec">

@@ -49,10 +49,10 @@ const FormComponent = (props: IFormInfoComponent) => {
   useEffect(() => {
     if (stats) {
       setStatsPokemon({
-        atk: filterFormList(stats.attack.ranking) as IStatsAtk,
-        def: filterFormList(stats.defense.ranking) as IStatsDef,
-        sta: filterFormList(stats.stamina.ranking) as IStatsSta,
-        prod: filterFormList(stats.statProd.ranking) as IStatsProd,
+        atk: filterFormList(stats.attack.ranking),
+        def: filterFormList(stats.defense.ranking),
+        sta: filterFormList(stats.stamina.ranking),
+        prod: filterFormList(stats.statProd.ranking),
       });
     }
   }, [filterFormList, stats]);
@@ -186,35 +186,11 @@ const FormComponent = (props: IFormInfoComponent) => {
       </div>
       {props.ratio?.M !== 0 || props.ratio?.F !== 0 ? (
         <div className="d-flex flex-wrap" style={{ columnGap: 50, rowGap: 15 }}>
-          {props.ratio?.M !== 0 && (
-            <Gender
-              ratio={props.ratio}
-              sex={TypeSex.Male}
-              defaultM={props.form?.form.sprites?.frontDefault}
-              shinyM={props.form?.form.sprites?.frontShiny}
-              defaultF={props.form?.form.sprites?.frontFemale}
-              shinyF={props.form?.form.sprites?.frontShinyFemale}
-            />
-          )}
-          {props.ratio?.F !== 0 && (
-            <Gender
-              ratio={props.ratio}
-              sex={TypeSex.Female}
-              defaultM={props.form?.form.sprites?.frontDefault}
-              shinyM={props.form?.form.sprites?.frontShiny}
-              defaultF={props.form?.form.sprites?.frontFemale}
-              shinyF={props.form?.form.sprites?.frontShinyFemale}
-            />
-          )}
+          {props.ratio?.M !== 0 && <Gender ratio={props.ratio} sex={TypeSex.Male} sprit={props.form?.form.sprites} />}
+          {props.ratio?.F !== 0 && <Gender ratio={props.ratio} sex={TypeSex.Female} sprit={props.form?.form.sprites} />}
         </div>
       ) : (
-        <Gender
-          sex={TypeSex.Genderless}
-          defaultM={props.form?.form.sprites?.frontDefault}
-          shinyM={props.form?.form.sprites?.frontShiny}
-          defaultF={props.form?.form.sprites?.frontFemale}
-          shinyF={props.form?.form.sprites?.frontShinyFemale}
-        />
+        <Gender sex={TypeSex.Genderless} />
       )}
       <Stats
         pokemonType={props.form?.form.pokemonType}
@@ -265,7 +241,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       <hr className="w-100" />
       {props.form?.form.pokemonType !== PokemonType.GMax ? (
         <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xl" style={{ padding: 0 }}>
+          <div className="col-xl h-100 position-relative" style={{ padding: 0 }}>
             <Evolution
               setId={props.setId}
               id={props.defaultId}
@@ -278,7 +254,7 @@ const FormComponent = (props: IFormInfoComponent) => {
               urlEvolutionChain={props.urlEvolutionChain}
             />
           </div>
-          <SpecialForm className={'col-xl'} style={{ padding: 0 }} formList={props.formList} id={props.defaultId} />
+          <SpecialForm className="col-xl h-100 position-relative" style={{ padding: 0 }} formList={props.formList} id={props.defaultId} />
         </div>
       ) : (
         <Evolution

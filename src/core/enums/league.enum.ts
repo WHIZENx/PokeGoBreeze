@@ -12,7 +12,7 @@ export enum LeagueRewardType {
   Premium,
 }
 
-export enum LeagueType {
+export enum LeagueBattleType {
   All = 'all',
   Remix = 'remix',
   Little = 'little',
@@ -20,4 +20,9 @@ export enum LeagueType {
   Ultra = 'ultra',
   Master = 'master',
   Mega = 'mega',
+}
+
+export enum LeagueType {
+  Standard,
+  Premier,
 }

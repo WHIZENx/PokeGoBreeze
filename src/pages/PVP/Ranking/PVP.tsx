@@ -9,6 +9,7 @@ import {
   replaceTempMovePvpName,
   getKeyWithData,
   getKeysObj,
+  getValidPokemonImgPath,
 } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
@@ -46,7 +47,7 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { LeagueType } from '../../../core/enums/league.enum';
+import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { SortType } from '../enums/pvp-ranking-enum';
 import { PokemonType } from '../../../enums/type.enum';
 import HeaderPVP from '../components/HeaderPVP';
@@ -113,14 +114,12 @@ const RankingPVP = () => {
       if (!file) {
         return;
       }
-      if (params.serie === LeagueType.All) {
+      if (params.serie === LeagueBattleType.All) {
         document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
       } else {
-        document.title = `PVP Ranking - ${params.serie === LeagueType.Remix ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
-          params.serie,
-          '-',
-          ' '
-        )} (${capitalize(params.type)})`;
+        document.title = `PVP Ranking - ${
+          params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
+        } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
       }
       const filePVP = file.map((item) => {
         const name = convertNameRankingToOri(item.speciesId, item.speciesName);
@@ -230,6 +229,10 @@ const RankingPVP = () => {
                 alt="img-league"
                 className="pokemon-sprite-accordion"
                 src={data.form ? APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, data.id, data.form);
+                }}
               />
             </span>
           </div>
@@ -302,7 +305,9 @@ const RankingPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{isEqual(league.name, LeagueType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}</b>
+              <b>
+                {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}
+              </b>
             </h2>
           </div>
         ) : (

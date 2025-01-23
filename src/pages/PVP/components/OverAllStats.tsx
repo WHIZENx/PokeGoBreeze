@@ -95,6 +95,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
               <b>Overall Performance</b>
             </h5>
             <Hexagon
+              name={props.data?.name}
               animation={AnimationType.On}
               borderSize={320}
               size={180}

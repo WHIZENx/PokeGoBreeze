@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, generateParamForm, getCustomThemeDataTable, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, generateParamForm, getCustomThemeDataTable, getItemSpritePath, splitAndCapitalize } from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
@@ -25,6 +25,7 @@ import {
   isNotEmpty,
   toNumber,
 } from '../../../util/extension';
+import { ItemName } from '../../News/enums/item-type.enum';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -47,7 +48,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.sprite, true)}
+          src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
@@ -315,7 +316,7 @@ const SearchTypes = () => {
               <span className="filter-shadow">{capitalize(currentType)}</span>
             </span>
             <span className="element-top text-white text-shadow">
-              <img height={36} src={APIService.getItemSprite('pokeball_sprite')} />{' '}
+              <img height={36} src={getItemSpritePath(ItemName.PokeBall)} />{' '}
               <b>{`Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
                 toNumber(allData?.pokemon) > 0 &&

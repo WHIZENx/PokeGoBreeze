@@ -44,18 +44,18 @@ const Stats = (props: IStatsComponent) => {
 
   useEffect(() => {
     const atk = setStats(
-      props.stats || props.statATK ? (props.statATK ? props.statATK.attack : calBaseATK(props.stats, true)) : 0,
+      props.stats || props.statATK ? (props.statATK ? toNumber(props.statATK.attack) : calBaseATK(props.stats, true)) : 0,
       TypeAction.Atk
     );
     const def = setStats(
-      props.stats || props.statDEF ? (props.statDEF ? props.statDEF.defense : calBaseDEF(props.stats, true)) : 0,
+      props.stats || props.statDEF ? (props.statDEF ? toNumber(props.statDEF.defense) : calBaseDEF(props.stats, true)) : 0,
       TypeAction.Def
     );
-    const sta = props.stats || props.statSTA ? (props.statSTA ? props.statSTA.stamina : calBaseSTA(props.stats, true)) : 0;
+    const sta = props.stats || props.statSTA ? (props.statSTA ? toNumber(props.statSTA.stamina) : calBaseSTA(props.stats, true)) : 0;
     const prod = setStats(
       props.stats || props.statProd
         ? props.statProd
-          ? props.statProd.product
+          ? toNumber(props.statProd.product)
           : calBaseATK(props.stats, true) * calBaseDEF(props.stats, true) * calBaseSTA(props.stats, true)
         : 0,
       TypeAction.Prod
@@ -82,9 +82,7 @@ const Stats = (props: IStatsComponent) => {
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType]);
 
-  const setStats = (stats: number, type: TypeAction) => {
-    return Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
-  };
+  const setStats = (stats: number, type: TypeAction) => Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
 
   return (
     <div className="element-top" style={{ color: theme.palette.constant.text }}>

@@ -288,7 +288,7 @@ const FindTable = () => {
       Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) / toNumber(preCpArr?.result.length, 1);
     return (
       <Fragment>
-        {preCpArr && isNotEmpty(preCpArr.result) && (
+        {isNotEmpty(preCpArr?.result) && (
           <Fragment>
             <p className="element-top">
               Average of CP: <b>{Math.round(avgCp)}</b>
@@ -297,9 +297,9 @@ const FindTable = () => {
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <DataTable
-              title={`Levels/CP for IV: ${preCpArr.IV.atk}/${preCpArr.IV.def}/${preCpArr.IV.sta}`}
+              title={`Levels/CP for IV: ${preCpArr?.IV.atk}/${preCpArr?.IV.def}/${preCpArr?.IV.sta}`}
               columns={columnsCP}
-              data={preCpArr.result}
+              data={getValueOrDefault(Array, preCpArr?.result)}
               pagination={true}
               defaultSortFieldId={1}
               highlightOnHover={true}

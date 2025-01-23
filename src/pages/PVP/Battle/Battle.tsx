@@ -1,5 +1,4 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
 
 import SelectPoke from './Select';
 import APIService from '../../../services/API.service';
@@ -9,6 +8,7 @@ import {
   getDmgMultiplyBonus,
   getKeyWithData,
   getMoveType,
+  getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../util/utils';
 import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
@@ -59,7 +59,6 @@ import {
   TimelineModel,
   IPokemonBattle,
   ChargeType,
-  TimelineEvent,
 } from '../models/battle.model';
 import { BattleBaseStats, IBattleBaseStats } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
@@ -68,10 +67,11 @@ import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/t
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
 import { DynamicObj, getPropertyName, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
-import { LeagueType } from '../../../core/enums/league.enum';
+import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
+import { TimelineEvent } from '../../../util/models/overrides/dom.model';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -107,18 +107,16 @@ const Battle = () => {
   });
   const { showTap, timelineType, duration, league } = options;
 
-  const timelineFit = useRef<Element>();
-  const timelineNormal = useRef<Element>();
-  const timelineNormalContainer = useRef<Element>();
-  const playLine = useRef<Element>();
+  const timelineFit = useRef<HTMLDivElement>();
+  const timelineNormal = useRef<HTMLDivElement>();
+  const timelineNormalContainer = useRef<HTMLDivElement>();
+  const playLine = useRef<HTMLDivElement>();
 
   let timelineInterval: NodeJS.Timeout;
   let turnInterval: NodeJS.Timeout;
 
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
-
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
-
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
 
   const State = (timer: number, block: number, energy: number, hp: number, type?: AttackType) =>
@@ -137,11 +135,16 @@ const Battle = () => {
     move: ICombat | undefined | null
   ) => {
     if (poke && pokeObj && move) {
-      const atkPoke = calculateStatsBattle(poke.stats?.atk, poke.currentStats?.IV?.atk, poke.currentStats?.level ?? MIN_LEVEL, true);
+      const atkPoke = calculateStatsBattle(
+        poke.stats?.atk,
+        poke.currentStats?.IV?.atk,
+        toNumber(poke.currentStats?.level, MIN_LEVEL),
+        true
+      );
       const defPokeObj = calculateStatsBattle(
         pokeObj.stats?.def,
         pokeObj.currentStats?.IV?.def,
-        pokeObj.currentStats?.level ?? MIN_LEVEL,
+        toNumber(pokeObj.currentStats?.level, MIN_LEVEL),
         true
       );
       return (
@@ -168,7 +171,7 @@ const Battle = () => {
       cMove: poke.cMovePri,
       cMoveSec: poke.cMoveSec,
       energy: poke.energy,
-      block: poke.block ?? DEFAULT_BLOCK,
+      block: toNumber(poke.block, DEFAULT_BLOCK),
       turn: Math.ceil(toNumber(poke.fMove?.durationMs) / 500),
       pokemonType: poke.pokemonType,
       disableCMovePri: poke.disableCMovePri,
@@ -391,9 +394,7 @@ const Battle = () => {
             });
           } else {
             fastPriDelay -= 1;
-            if (!preChargePri) {
-              timelinePri[timer].type = AttackType.Wait;
-            }
+            timelinePri[timer].type = AttackType.Wait;
           }
         }
 
@@ -430,9 +431,7 @@ const Battle = () => {
             });
           } else {
             fastSecDelay -= 1;
-            if (!preChargeSec) {
-              timelineSec[timer].type = AttackType.Wait;
-            }
+            timelineSec[timer].type = AttackType.Wait;
           }
         }
       } else {
@@ -695,10 +694,10 @@ const Battle = () => {
         clearData();
         const file = (
           await APIService.getFetchUrl<RankingsPVP[]>(
-            APIService.getRankingFile(LeagueType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
+            APIService.getRankingFile(LeagueBattleType.All, league, getKeyWithData(ScoreType, ScoreType.Overall))
           )
         ).data;
-        if (!file) {
+        if (!isNotEmpty(file)) {
           return;
         }
         document.title = `PVP Battle Simulator - ${getPokemonBattleLeagueName(league)}`;
@@ -807,9 +806,8 @@ const Battle = () => {
       }
     }
     if (xPos <= 0) {
-      const element = ReactDOM.findDOMNode(timelineNormalContainer.current) as Element;
-      if (element) {
-        const rect = element.getBoundingClientRect();
+      if (timelineNormalContainer.current) {
+        const rect = timelineNormalContainer.current.getBoundingClientRect();
         xNormal.current = rect.left;
       }
     }
@@ -853,9 +851,8 @@ const Battle = () => {
           left: Math.max(0, xCurrent - timelineNormalContainer.current?.clientWidth / 2),
         });
         if (!xNormal.current) {
-          const element = ReactDOM.findDOMNode(timelineNormalContainer.current) as Element;
-          if (element) {
-            const rect = element.getBoundingClientRect();
+          if (timelineNormalContainer.current) {
+            const rect = timelineNormalContainer.current.getBoundingClientRect();
             xNormal.current = rect.left;
           }
         }
@@ -1170,6 +1167,10 @@ const Battle = () => {
                       ? APIService.getPokemonModel(pokemon.pokemonData.form)
                       : APIService.getPokeFullSprite(pokemon.pokemonData?.id)
                   }
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.pokemonData?.id, pokemon.pokemonData?.form);
+                  }}
                 />
               </div>
             </div>
@@ -1550,6 +1551,14 @@ const Battle = () => {
                                   ? APIService.getPokemonModel(pokemonCurr.pokemonData.form)
                                   : APIService.getPokeFullSprite(pokemonCurr.pokemonData.id)
                               }
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(
+                                  e.currentTarget.src,
+                                  pokemonCurr.pokemonData?.id,
+                                  pokemonCurr.pokemonData?.form
+                                );
+                              }}
                             />
                           </div>
                           <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
@@ -1569,6 +1578,14 @@ const Battle = () => {
                                   ? APIService.getPokemonModel(pokemonObj.pokemonData.form)
                                   : APIService.getPokeFullSprite(pokemonObj.pokemonData.id)
                               }
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(
+                                  e.currentTarget.src,
+                                  pokemonObj.pokemonData?.id,
+                                  pokemonObj.pokemonData?.form
+                                );
+                              }}
                             />
                           </div>
                           <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>

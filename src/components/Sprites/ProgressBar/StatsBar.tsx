@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { IStatsBarComponent } from '../../models/component.model';
-import { combineClasses } from '../../../util/extension';
+import { combineClasses, getValueOrDefault } from '../../../util/extension';
 import { generateParamForm } from '../../../util/utils';
 import { Params } from '../../../util/constants';
 import { PokemonType } from '../../../enums/type.enum';
@@ -45,9 +45,9 @@ const StatsBar = (props: IStatsBarComponent) => {
         )
       }
     >
-      <BoxText className="box-text stats-text" isRank={false}>
+      <BoxText className="box-text stats-text">
         <span>
-          {props.tag} {props.pokemonStatsRank && (props.optionalStats ?? props.currentStats)}
+          {props.tag} {props.pokemonStatsRank && getValueOrDefault(String, props.optionalStats, props.currentStats.toString())}
         </span>
       </BoxText>
       <Bar className={combineClasses('progress-bar', props.class)} aria-valuenow={props.statsPercent} statsPercent={props.statsPercent} />

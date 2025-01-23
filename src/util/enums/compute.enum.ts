@@ -18,3 +18,8 @@ export enum BattleLeagueTag {
   Seeker = 'seeker',
   SafariZone = 'safari_zone',
 }
+
+export enum FormType {
+  Default,
+  Shiny,
+}

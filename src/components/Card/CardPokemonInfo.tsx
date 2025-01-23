@@ -1,15 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { computeBgType } from '../../util/compute';
-import { generateParamForm, splitAndCapitalize } from '../../util/utils';
+import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../util/utils';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { Link } from 'react-router-dom';
 import { ICardPokemonInfoComponent } from '../models/component.model';
-import { combineClasses, isInclude } from '../../util/extension';
+import { combineClasses } from '../../util/extension';
 import { PokemonType } from '../../enums/type.enum';
-import { APIUrl } from '../../services/constants';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
@@ -79,11 +78,11 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                  e.currentTarget.src = APIService.getPokeFullAsset(props.id);
-                } else {
-                  e.currentTarget.src = APIService.getPokeFullSprite(0);
-                }
+                e.currentTarget.src = getValidPokemonImgPath(
+                  e.currentTarget.src,
+                  props.id,
+                  props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default
+                );
               }}
             />
           </span>

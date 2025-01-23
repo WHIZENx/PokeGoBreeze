@@ -26,6 +26,7 @@ import {
   convertModelSpritName,
   convertPokemonAPIDataName,
   getDataWithKey,
+  getItemSpritePath,
   getPokemonType,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -38,9 +39,9 @@ import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvolution } from '../../../core/models/evolution.model';
 import {
-  FORM_GALARIAN,
+  FORM_GALAR,
   FORM_GMAX,
-  FORM_HISUIAN,
+  FORM_HISUI,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PURIFIED,
@@ -56,6 +57,7 @@ import { getValueOrDefault, isEmpty, isEqual, isInclude, isIncludeList, isNotEmp
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 import { IInfoEvoChain, IPokemonDetailEvoChain, PokemonDetailEvoChain, PokemonInfoEvo } from '../../../core/models/API/info.model';
+import { ItemName } from '../../../pages/News/enums/item-type.enum';
 
 interface IPokemonEvo {
   prev?: string;
@@ -187,10 +189,10 @@ const Evolution = (props: IEvolutionComponent) => {
       pokemon.id === 718 && isEmpty(pokemon.form)
         ? 'TEN_PERCENT'
         : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
-    form = form?.replace(FORM_GALARIAN, 'GALAR').replace(FORM_HISUIAN, 'HISUI');
+    form = form?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
     let sprite = '';
     if (pokemon.id === 664 || pokemon.id === 665) {
-      sprite = pokemon.pokemonId?.toLowerCase() ?? pokemon.name;
+      sprite = getValueOrDefault(String, pokemon.pokemonId?.toLowerCase(), pokemon.name);
     } else {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
@@ -278,7 +280,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
     getNextEvoChainJSON(pokemon.evos, evo);
     const result = prevEvo.concat(curr, evo);
-    if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1) {
+    if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
       queryPokemonEvolutionChain(props.urlEvolutionChain, result);
     } else {
       setArrEvoList(result);
@@ -302,7 +304,7 @@ const Evolution = (props: IEvolutionComponent) => {
               ...evo,
               name: evo.name.replaceAll('-', '_').toUpperCase(),
               id: evo.num,
-              form: evo.forme ?? FORM_NORMAL,
+              form: getValueOrDefault(String, evo.forme, FORM_NORMAL),
               evoList: getValueOrDefault(Array, evo.evoList),
               tempEvo: getValueOrDefault(Array, evo.tempEvo),
             })
@@ -325,8 +327,8 @@ const Evolution = (props: IEvolutionComponent) => {
             ...poke,
             name: getValueOrDefault(String, poke.fullName),
             id: poke.num,
-            form: poke.forme ?? FORM_NORMAL,
-            evoList: getValueOrDefault(Array, poke.evoList),
+            form: getValueOrDefault(String, poke.forme, FORM_NORMAL),
+            evoList: [],
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
           })
         )
@@ -334,7 +336,7 @@ const Evolution = (props: IEvolutionComponent) => {
     } else {
       evoList = getValueOrDefault(
         Array,
-        pokemon.evoList
+        pokemon?.evoList
           ?.map((evo) =>
             modelEvoChain(
               new EvolutionModel({
@@ -384,7 +386,7 @@ const Evolution = (props: IEvolutionComponent) => {
     return result;
   };
 
-  const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string) => {
+  const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string | undefined) => {
     const pokemonChain = evolutionChain.find((chain) => chain.id === id);
     if (pokemonChain) {
       const chainForms = pokemonChain.evolutionInfos.filter((info) => isEqual(info.form, form, EqualMode.IgnoreCaseSensitive));
@@ -408,14 +410,14 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getEvoChainStore = (id: number | undefined, forme: IForm) => {
-    const formName = forme.formName?.toUpperCase();
+    const formName = forme.formName?.toUpperCase().replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
     const form =
       isEmpty(formName) || forme.pokemonType === PokemonType.Mega
         ? FORM_NORMAL
         : forme.pokemonType === PokemonType.Purified || forme.pokemonType === PokemonType.Shadow
         ? isEqual(formName, FORM_SHADOW) || isEqual(formName, FORM_PURIFIED)
           ? FORM_NORMAL
-          : formName.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
+          : formName?.replaceAll('-', '_').replace(`_${FORM_SHADOW}`, '').replace(`_${FORM_PURIFIED}`, '')
         : convertPokemonAPIDataName(formName);
     const pokemons = pokemonData.filter((pokemon) => pokemon.num === id);
     let pokemon = pokemons.find((p) => isEqual(p.forme, form));
@@ -432,7 +434,7 @@ const Evolution = (props: IEvolutionComponent) => {
       if (pokemon.prevo && result.length === 1 && result[0].length === 1) {
         getCombineEvoChainFromPokeGo(result, id, form);
       }
-      if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1) {
+      if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
         queryPokemonEvolutionChain(props.urlEvolutionChain, result);
       } else {
         setArrEvoList(result);
@@ -653,7 +655,7 @@ const Evolution = (props: IEvolutionComponent) => {
                                     src={APIService.getTypeSprite(value)}
                                     onError={(e) => {
                                       e.currentTarget.onerror = null;
-                                      e.currentTarget.src = APIService.getPokeSprite(0);
+                                      e.currentTarget.src = APIService.getPokeSprite();
                                     }}
                                   />
                                 ))}
@@ -699,7 +701,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {data?.quest?.type === QuestType.UseIncense && (
                           <span className="caption">
                             <Fragment>
-                              <img width={20} height={20} src={APIService.getItemSprite('Incense_0')} />
+                              <img width={20} height={20} src={getItemSpritePath(ItemName.Incense)} />
                               <div style={{ fontSize: 11, lineHeight: 1 }}>Use Incense</div>
                             </Fragment>
                           </span>
@@ -794,7 +796,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <PopoverConfig id="popover-info-evo">
               <span className="info-evo">
                 <span className="d-block caption">
-                  - <img alt="img-stardust" height={20} src={APIService.getItemSprite('Item_1301')} /> : Candy of pokemon.
+                  - <img alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of pokemon.
                 </span>
                 <span className="d-block caption">
                   - <QuestionMarkIcon fontSize="small" /> : Random evolution.
@@ -825,7 +827,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.
                 </span>
                 <span className="d-block caption">
-                  - <img alt="img-stardust" height={20} src={APIService.getPokeSprite(0)} /> : Catch pokemon with type.
+                  - <img alt="img-stardust" height={20} src={APIService.getPokeSprite()} /> : Catch pokemon with type.
                 </span>
                 <span className="d-block caption">
                   - <SportsMartialArtsIcon fontSize="small" /> : Win raid.
@@ -837,7 +839,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <RestaurantIcon fontSize="small" /> : Buddy feed.
                 </span>
                 <span className="d-block caption">
-                  - <img width={20} height={20} src={APIService.getItemSprite('Incense_0')} /> : Use Incense.
+                  - <img width={20} height={20} src={getItemSpritePath(ItemName.Incense)} /> : Use Incense.
                 </span>
                 <span className="d-block caption">- Pokemon Battle.</span>
               </span>

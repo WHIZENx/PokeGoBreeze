@@ -7,43 +7,46 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
-import { capitalize, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { IDamageTableComponent } from '../../models/page.model';
-import { ILabelDamage, LabelDamage } from '../../../core/models/damage.model';
-import { combineClasses, DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { LabelDamage } from '../../../core/models/damage.model';
+import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { PokemonType } from '../../../enums/type.enum';
-
-const eff: DynamicObj<ILabelDamage> = {
-  0.244140625: LabelDamage.create({
-    label: 0.244,
-    style: 'super-resistance',
-  }),
-  0.390625: LabelDamage.create({
-    label: 0.391,
-    style: 'very-resistance',
-  }),
-  0.625: LabelDamage.create({
-    label: 0.625,
-    style: 'resistance',
-  }),
-  1: LabelDamage.create({
-    label: 1,
-    style: 'neutral',
-  }),
-  1.6: LabelDamage.create({
-    label: 1.6,
-    style: 'weakness',
-  }),
-  2.5600000000000005: LabelDamage.create({
-    label: 2.56,
-    style: 'super-weakness',
-  }),
-};
+import { EffectiveType } from '../../../components/Effective/enums/type-effective.enum';
 
 const DamageTable = (props: IDamageTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
+
+  const setLabelDamage = (amount: EffectiveType) =>
+    LabelDamage.create({
+      label: toFloat(amount, 3),
+      style: getValueOrDefault(
+        String,
+        getKeyWithData(EffectiveType, amount)
+          ?.split(/(?=[A-Z])/)
+          .join('-')
+          .toLowerCase()
+      ),
+    });
+
+  const getLabelDamage = (valueEffective: number) => {
+    if (valueEffective >= EffectiveType.VeryWeakness) {
+      return setLabelDamage(EffectiveType.VeryWeakness);
+    } else if (valueEffective >= EffectiveType.Weakness) {
+      return setLabelDamage(EffectiveType.Weakness);
+    } else if (valueEffective >= EffectiveType.Neutral) {
+      return setLabelDamage(EffectiveType.Neutral);
+    } else if (valueEffective >= EffectiveType.Resistance) {
+      return setLabelDamage(EffectiveType.Resistance);
+    } else if (valueEffective >= EffectiveType.VeryResistance) {
+      return setLabelDamage(EffectiveType.VeryResistance);
+    } else if (valueEffective >= EffectiveType.SuperResistance) {
+      return setLabelDamage(EffectiveType.SuperResistance);
+    }
+    return new LabelDamage();
+  };
 
   return (
     <div className="container">
@@ -96,7 +99,7 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>Move name</td>
-              <td>{props.result.move ? splitAndCapitalize(props.result.move.name, '_', ' ') : '-'}</td>
+              <td>{splitAndCapitalize(props.result.move?.name, '_', ' ', '-')}</td>
             </tr>
             <tr>
               <td>Move damage</td>
@@ -174,8 +177,8 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Damage Effective</td>
               <td>
                 {props.result.battleState ? (
-                  <span className={combineClasses(`eff-${eff[props.result.battleState.effective].style}`)}>
-                    {`x${eff[props.result.battleState.effective].label}`}
+                  <span className={combineClasses(`eff-${getLabelDamage(props.result.battleState.effective).style}`)}>
+                    {`x${getLabelDamage(props.result.battleState.effective).label}`}
                   </span>
                 ) : (
                   '-'

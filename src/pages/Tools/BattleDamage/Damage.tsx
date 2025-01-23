@@ -26,8 +26,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { combineClasses, DynamicObj, padding, toNumber } from '../../../util/extension';
-import { ChargeAbility } from './enums/damage.enum';
-import { PokemonType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -61,7 +60,7 @@ class Filter implements IFilter {
   isDodge = false;
   isTrainer = false;
   fLevel = 0;
-  cLevel = ChargeAbility.Excellent;
+  cLevel = ThrowType.Excellent;
 
   static create(value: IFilter) {
     const obj = new Filter();
@@ -76,7 +75,7 @@ const Damage = () => {
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const [id, setId] = useState(searching ? searching.id : 1);
+  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
   const [form, setForm] = useState<IPokemonFormModify>();
   const [move, setMove] = useState<ICombat>();

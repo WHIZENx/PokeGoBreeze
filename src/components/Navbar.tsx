@@ -29,10 +29,13 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
   const [version, setVersion] = useState<string>();
 
   useEffect(() => {
-    try {
-      getEdgeItem<string>(EdgeKey.VERSION).then((res) => setVersion(res));
-      // tslint:disable-next-line:no-empty
-    } catch {}
+    const timeOutId = setTimeout(() =>
+      getEdgeItem<string>(EdgeKey.VERSION)
+        .then((res) => setVersion(res))
+        .catch()
+        .finally(() => clearTimeout(timeOutId))
+    );
+    return () => clearTimeout(timeOutId);
   }, []);
 
   const [isDelay, setIsDelay] = useState(false);

@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
-import { capitalize } from '../../util/utils';
+import { capitalize, getKeyWithData } from '../../util/utils';
 import { IWeatherEffComponent } from '../models/page.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
 import { isEmpty, isEqual, isIncludeList } from '../../util/extension';
+import { PokemonTypeBadge } from '../../core/models/type.model';
+import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 
 const Effect = (prop: IWeatherEffComponent) => {
   const [types, setTypes] = useState<string[]>([]);
 
-  const [currentTypePri, setCurrentTypePri] = useState('BUG');
+  const [currentTypePri, setCurrentTypePri] = useState(getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase());
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
   const [showTypePri, setShowTypePri] = useState(false);
@@ -105,7 +107,7 @@ const Effect = (prop: IWeatherEffComponent) => {
             >
               {isEmpty(currentTypeSec) ? (
                 <div className="type-none">
-                  <b>None</b>
+                  <b>{getKeyWithData(EffectiveType, EffectiveType.None)}</b>
                 </div>
               ) : (
                 <div className="type-sec">

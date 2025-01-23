@@ -5,8 +5,8 @@ import {
   capitalize,
   convertPokemonImageName,
   getPokemonDetails,
-  getPokemonType,
   generateParamForm,
+  getValidPokemonImgPath,
 } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
@@ -26,11 +26,10 @@ import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.mode
 import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { APIUrl } from '../../../services/constants';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_NORMAL, Params } from '../../../util/constants';
 import { Form } from '../../../core/models/API/form.model';
-import { PokemonType, TypeAction } from '../../../enums/type.enum';
+import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   convertColumnDataType,
@@ -78,7 +77,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           height={48}
           alt="img-pokemon"
           style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.sprite, true)}
+          src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = APIService.getPokeIconSprite(row.baseSpecies);
@@ -107,25 +106,25 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   },
   {
     name: 'ATK',
-    selector: (row) => row.atk.attack,
+    selector: (row) => toNumber(row.atk.attack),
     sortable: true,
     width: '100px',
   },
   {
     name: 'DEF',
-    selector: (row) => row.def.defense,
+    selector: (row) => toNumber(row.def.defense),
     sortable: true,
     width: '100px',
   },
   {
     name: 'STA',
-    selector: (row) => row.sta.stamina,
+    selector: (row) => toNumber(row.sta.stamina),
     sortable: true,
     width: '100px',
   },
   {
     name: 'Stat Prod',
-    selector: (row) => row.prod.product,
+    selector: (row) => toNumber(row.prod.product),
     sortable: true,
     width: '150px',
   },
@@ -314,18 +313,15 @@ const StatsRanking = () => {
     }
   }, [search, isMatch, releasedGO, pokemonList]);
 
-  const convertToPokemonForm = (pokemon: IPokemonStatsRanking) => {
-    const pokemonType = getPokemonType(pokemon.forme);
-    return Form.create({
+  const convertToPokemonForm = (pokemon: IPokemonStatsRanking) =>
+    Form.create({
       formName: pokemon.forme,
       id: pokemon.num,
       isDefault: true,
-      isMega: pokemonType === PokemonType.Mega,
       name: pokemon.name,
       types: pokemon.types,
       version: pokemon.version,
     });
-  };
 
   return (
     <div className="element-bottom position-relative poke-container container">
@@ -342,11 +338,7 @@ const StatsRanking = () => {
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                if (isInclude(e.currentTarget.src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
-                  e.currentTarget.src = APIService.getPokeFullAsset(select?.num);
-                } else {
-                  e.currentTarget.src = APIService.getPokeFullSprite(0);
-                }
+                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, select?.num);
               }}
             />
           </div>
@@ -371,9 +363,9 @@ const StatsRanking = () => {
                 data={select}
                 id={select.num}
                 form={convertToPokemonForm(select)}
-                statATK={select.atk.attack}
-                statDEF={select.def.defense}
-                statSTA={select.sta.stamina}
+                statATK={toNumber(select.atk.attack)}
+                statDEF={toNumber(select.def.defense)}
+                statSTA={toNumber(select.sta.stamina)}
                 maxHeight={400}
               />
             </div>

@@ -10,6 +10,7 @@ import {
   getKeyWithData,
   getMoveType,
   getStyleSheet,
+  getValidPokemonImgPath,
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -48,7 +49,7 @@ import {
 } from '../../../util/extension';
 import { SortType } from '../enums/pvp-team.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { LeagueType } from '../../../core/enums/league.enum';
+import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
@@ -149,14 +150,12 @@ const TeamPVP = () => {
       try {
         const cp = toNumber(params.cp);
         const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp))).data;
-        if (params.serie === LeagueType.All) {
+        if (params.serie === LeagueBattleType.All) {
           document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
         } else {
-          document.title = `PVP Teams - ${params.serie === LeagueType.Remix ? getPokemonBattleLeagueName(cp) : ''} ${splitAndCapitalize(
-            params.serie,
-            '-',
-            ' '
-          )}`;
+          document.title = `PVP Teams - ${
+            params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
+          } ${splitAndCapitalize(params.serie, '-', ' ')}`;
         }
 
         const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);
@@ -220,7 +219,9 @@ const TeamPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{isEqual(league.name, LeagueType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}</b>
+              <b>
+                {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}
+              </b>
             </h2>
           </div>
         )}
@@ -381,6 +382,10 @@ const TeamPVP = () => {
                     alt="img-league"
                     className="pokemon-sprite"
                     src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                    }}
                   />
                 </span>
               </div>
@@ -497,6 +502,10 @@ const TeamPVP = () => {
                                 alt="img-league"
                                 className="pokemon-sprite"
                                 src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                                }}
                               />
                             </div>
                           </div>
@@ -548,6 +557,10 @@ const TeamPVP = () => {
                               alt="img-league"
                               className="pokemon-sprite"
                               src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                              }}
                             />
                           </div>
                         </div>

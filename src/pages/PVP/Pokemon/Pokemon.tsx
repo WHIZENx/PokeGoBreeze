@@ -1,7 +1,14 @@
 import '../PVP.scss';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
-import { capitalize, convertNameRankingToOri, getKeysObj, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  convertNameRankingToOri,
+  getKeysObj,
+  getValidPokemonImgPath,
+  replaceTempMovePvpName,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { calculateStatsByTag } from '../../../util/calculate';
@@ -22,7 +29,7 @@ import { LocalStorageConfig } from '../../../store/constants/localStorage';
 import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { LeagueType } from '../../../core/enums/league.enum';
+import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { PokemonType } from '../../../enums/type.enum';
 import HeaderPVP from '../components/HeaderPVP';
 import BodyPVP from '../components/BodyPVP';
@@ -59,7 +66,7 @@ const PokemonPVP = () => {
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
           APIService.getRankingFile(
-            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? LeagueType.Mega : LeagueType.All,
+            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? LeagueBattleType.Mega : LeagueBattleType.All,
             cp,
             params.type
           )
@@ -149,7 +156,7 @@ const PokemonPVP = () => {
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvp.rankings.find((item) => item.id === LeagueType.All && isIncludeList(item.cp, cp));
+    const league = pvp.rankings.find((item) => item.id === LeagueBattleType.All && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -161,7 +168,9 @@ const PokemonPVP = () => {
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
             />
             <h2>
-              <b>{isEqual(league.name, LeagueType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}</b>
+              <b>
+                {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}
+              </b>
             </h2>
           </div>
         )}
@@ -214,6 +223,10 @@ const PokemonPVP = () => {
                     alt="img-league"
                     className="pokemon-sprite-raid"
                     src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, rankingPoke?.id, rankingPoke?.form);
+                    }}
                   />
                 </div>
                 <div>

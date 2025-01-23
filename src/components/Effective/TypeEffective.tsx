@@ -2,19 +2,19 @@ import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import TypeInfo from '../Sprites/Type/Type';
 import { ITypeEffectiveComponent } from '../models/component.model';
-import { isNotEmpty } from '../../util/extension';
+import { isNotEmpty, toFloat } from '../../util/extension';
+import { EffectiveType } from './enums/type-effective.enum';
+import { getKeyWithData } from '../../util/utils';
 
 const TypeEffective = (props: ITypeEffectiveComponent) => {
-  const noneSprit = () => {
-    return (
-      <div className="element-top d-flex" style={{ marginLeft: 15 }}>
-        <div className="text-center" key={0}>
-          <img height={50} alt="img-pokemon" src={APIService.getPokeSprite(0)} />
-          <span className="caption text-black">None</span>
-        </div>
+  const noneSprit = () => (
+    <div className="element-top d-flex" style={{ marginLeft: 15 }}>
+      <div className="text-center" key={0}>
+        <img height={50} alt="img-pokemon" src={APIService.getPokeSprite()} />
+        <span className="caption text-black">{getKeyWithData(EffectiveType, EffectiveType.None)}</span>
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <Fragment>
@@ -27,11 +27,19 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
             <Fragment>
               <h6 className="element-top">
                 <span className="type-title weakness-title">
-                  <b>Weakness</b>
+                  <b>{getKeyWithData(EffectiveType, EffectiveType.Weakness)}</b>
                 </span>
               </h6>
-              <TypeInfo text="2.56x damage from" arr={props.typeEffective.veryWeak} style={{ marginLeft: 15 }} />
-              <TypeInfo text="1.6x damage from" arr={props.typeEffective.weak} style={{ marginLeft: 15 }} />
+              <TypeInfo
+                text={`${toFloat(EffectiveType.VeryWeakness, 3)}x damage from`}
+                arr={props.typeEffective.veryWeak}
+                style={{ marginLeft: 15 }}
+              />
+              <TypeInfo
+                text={`${toFloat(EffectiveType.Weakness, 3)}x damage from`}
+                arr={props.typeEffective.weak}
+                style={{ marginLeft: 15 }}
+              />
             </Fragment>
           )}
           {(isNotEmpty(props.typeEffective.superResist) ||
@@ -40,21 +48,37 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
             <Fragment>
               <h6 className="element-top">
                 <span className="type-title resistance-title">
-                  <b>Resistance</b>
+                  <b>{getKeyWithData(EffectiveType, EffectiveType.Resistance)}</b>
                 </span>
               </h6>
-              <TypeInfo text="0.244x damage from" arr={props.typeEffective.superResist} style={{ marginLeft: 15 }} />
-              <TypeInfo text="0.391x damage from" arr={props.typeEffective.veryResist} style={{ marginLeft: 15 }} />
-              <TypeInfo text="0.625x damage from" arr={props.typeEffective.resist} style={{ marginLeft: 15 }} />
+              <TypeInfo
+                text={`${toFloat(EffectiveType.SuperResistance, 3)}x damage from`}
+                arr={props.typeEffective.superResist}
+                style={{ marginLeft: 15 }}
+              />
+              <TypeInfo
+                text={`${toFloat(EffectiveType.VeryResistance, 3)}x damage from`}
+                arr={props.typeEffective.veryResist}
+                style={{ marginLeft: 15 }}
+              />
+              <TypeInfo
+                text={`${toFloat(EffectiveType.Resistance, 3)}x damage from`}
+                arr={props.typeEffective.resist}
+                style={{ marginLeft: 15 }}
+              />
             </Fragment>
           )}
           <h6 className="element-top">
             <span className="type-title neutral-title">
-              <b>Neutral</b>
+              <b>{getKeyWithData(EffectiveType, EffectiveType.Neutral)}</b>
             </span>
           </h6>
           {isNotEmpty(props.typeEffective.neutral) ? (
-            <TypeInfo text="1x damage from" arr={props.typeEffective.neutral} style={{ marginLeft: 15 }} />
+            <TypeInfo
+              text={`${toFloat(EffectiveType.Neutral, 3)}x damage from`}
+              arr={props.typeEffective.neutral}
+              style={{ marginLeft: 15 }}
+            />
           ) : (
             noneSprit()
           )}
