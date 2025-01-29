@@ -538,6 +538,8 @@ const RaidBattle = () => {
     const cMoveCurrent = data.combat.find((item) => isEqual(item.name, pokemon.cMoveTargetPokemon?.name));
 
     if (fMoveCurrent && cMoveCurrent) {
+      fMoveCurrent.moveType = pokemon.fMoveTargetPokemon?.moveType;
+      cMoveCurrent.moveType = pokemon.cMoveTargetPokemon?.moveType;
       const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
       const statsGO = pokemon.dataTargetPokemon?.stats ?? used;
       const statsAttacker = new BattleCalculate({
@@ -1065,8 +1067,15 @@ const RaidBattle = () => {
     );
   };
 
-  const renderMove = (value: ICombat | undefined) => (
+  const renderMove = (value: Partial<ICombat> | undefined) => (
     <span className={combineClasses(value?.type?.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}>
+      {value && value.moveType !== MoveType.None && (
+        <span className="move-badge">
+          <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
+            {getKeyWithData(MoveType, value.moveType)}
+          </span>
+        </span>
+      )}
       <div style={{ display: 'contents', width: 16 }}>
         <img
           className="pokemon-sprite-small sprite-type-select filter-shadow"
@@ -1130,8 +1139,8 @@ const RaidBattle = () => {
             </span>
           </div>
           <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 8 }}>
-            {renderMove(pokemon.fMove)}
-            {renderMove(pokemon.cMove)}
+            {renderMove({ ...pokemon.fMove, moveType: pokemon.fMoveType })}
+            {renderMove({ ...pokemon.cMove, moveType: pokemon.cMoveType })}
           </div>
         </div>
         <p className="element-top">Select slot Pokémon that you want to replace.</p>
