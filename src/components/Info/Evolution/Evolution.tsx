@@ -155,7 +155,7 @@ const Evolution = (props: IEvolutionComponent) => {
     setArrEvoList(result);
   };
 
-  const queryPokemonEvolutionChain = (url: string, result: IPokemonEvo[][]) => {
+  const queryPokemonEvolutionChain = (url: string, result: IPokemonEvo[][]) =>
     APIService.getFetchUrl<PokemonInfoEvo>(url)
       .then((res) => {
         if (res.data) {
@@ -163,10 +163,9 @@ const Evolution = (props: IEvolutionComponent) => {
         }
       })
       .catch();
-  };
 
-  const formatEvoChain = (pokemon: IPokemonData | undefined) => {
-    return PokemonEvo.create(
+  const formatEvoChain = (pokemon: IPokemonData | undefined) =>
+    PokemonEvo.create(
       pokemon?.baseSpecies ? pokemon.baseSpecies.toLowerCase() : pokemon?.name.toLowerCase(),
       pokemon?.num,
       pokemon?.forme,
@@ -175,11 +174,8 @@ const Evolution = (props: IEvolutionComponent) => {
       undefined,
       pokemon?.isBaby
     );
-  };
 
-  const pokeSetName = (name: string) => {
-    return name.replace(`_${FORM_NORMAL}`, '').replaceAll('_', '-').replace('MR', 'MR.');
-  };
+  const pokeSetName = (name: string) => name.replace(`_${FORM_NORMAL}`, '').replaceAll('_', '-').replace('MR', 'MR.');
 
   const modelEvoChain = (pokemon: IEvolution) => {
     const name = pokeSetName(
@@ -721,10 +717,10 @@ const Evolution = (props: IEvolutionComponent) => {
           )}
           {evoCount > 1 ? (
             <Fragment>
-              {chain.length > 1 || (chain.length === 1 && !isEqual(form, FORM_NORMAL) && !isEmpty(form)) ? (
+              {chain.length > 1 || (chain.length === 1 && !isEqual(form, FORM_NORMAL) && isNotEmpty(form)) ? (
                 <Fragment>
                   {!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) &&
-                  !isEmpty(form) &&
+                  isNotEmpty(form) &&
                   !isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) ? (
                     <ThemeProvider theme={customTheme}>
                       <Badge

@@ -7,6 +7,7 @@ import bgCandy from '../../../assets/bg_Candy.png';
 import candy from '../../../data/pokemon_candy_color_data.json';
 import { ICandy } from '../../../core/models/candy.model';
 import { ICandyComponent } from '../../models/component.model';
+import { toNumber } from '../../../util/extension';
 
 const DEFAULT_SIZE = 20;
 
@@ -26,8 +27,8 @@ const Background = styled.div<Element>`
 
 const Fill = styled.div<Element>`
   background: ${(props) => props.candyColor};
-  width: ${(props) => props.size ?? DEFAULT_SIZE}px;
-  height: ${(props) => props.size ?? DEFAULT_SIZE}px;
+  width: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
+  height: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
   mask: url(${bgCandy}) center/contain;
 `;
 

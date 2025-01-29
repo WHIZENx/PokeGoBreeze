@@ -61,27 +61,31 @@ export const rankIconCenterName = (rank: number) => {
 };
 
 export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: PokemonClass) => {
-  if (tier === 1) {
-    return APIService.getRaidSprite('ic_raid_egg_normal');
-  } else if (tier === 3) {
-    return APIService.getRaidSprite('ic_raid_egg_rare');
-  } else if (tier === 4) {
-    if (isEqual(pokemonType, PokemonType.Mega)) {
-      return APIService.getRaidSprite('raid_egg_3_icon');
+  switch (tier) {
+    case 1:
+    case 2:
+      return APIService.getRaidSprite('ic_raid_egg_normal');
+    case 3:
+    case 4: {
+      if (tier === 4 && isEqual(pokemonType, PokemonType.Mega)) {
+        return APIService.getRaidSprite('raid_egg_3_icon');
+      }
+      return APIService.getRaidSprite('ic_raid_egg_rare');
     }
-    return APIService.getRaidSprite('ic_raid_egg_legendary');
-  } else if (tier === 5) {
-    if (isEqual(pokemonClass, PokemonClass.UltraBeast)) {
-      return APIService.getRaidSprite('raid_ultra_icon');
+    case 5: {
+      if (isEqual(pokemonClass, PokemonClass.UltraBeast)) {
+        return APIService.getRaidSprite('raid_ultra_icon');
+      }
+      return APIService.getRaidSprite('raid_egg_2_icon');
     }
-    return APIService.getRaidSprite('raid_egg_2_icon');
-  } else if (tier === 6) {
-    if (isEqual(pokemonType, PokemonType.Primal)) {
-      return APIService.getRaidSprite('raid_egg_primal_icon');
+    case 6: {
+      if (isEqual(pokemonType, PokemonType.Primal)) {
+        return APIService.getRaidSprite('raid_egg_primal_icon');
+      }
+      return APIService.getRaidSprite('raid_egg_4_icon');
     }
-    return APIService.getRaidSprite('raid_egg_4_icon');
-  } else {
-    return APIService.getRaidSprite('ic_raid_small');
+    default:
+      return APIService.getRaidSprite('ic_raid_small');
   }
 };
 
@@ -150,7 +154,7 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
   const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
   if (asset) {
     return asset;
-  } else if (!asset && isNotEmpty(pokemonAssets.image) && !isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
+  } else if (isNotEmpty(pokemonAssets.image) && !isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
     const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
       return pokemonAssets.image[0];
