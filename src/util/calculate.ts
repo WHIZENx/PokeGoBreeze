@@ -662,8 +662,8 @@ export const calculateDamagePVE = (
     const isDodge = battleState.isDodge ? 1 - DODGE_REDUCE(globalOptions) : 1;
     const isMega = battleState.isMega ? (battleState.isStab ? stabMultiply : DEFAULT_MEGA_MULTIPLY) : 1;
     const isTrainer = battleState.isTrainer ? DEFAULT_TRAINER_MULTIPLY : 1;
-    const multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.fLevel);
-    const multiplyThrowCharge = MULTIPLY_THROW_CHARGE(globalOptions, battleState.cLevel);
+    const multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.friendshipLevel);
+    const multiplyThrowCharge = MULTIPLY_THROW_CHARGE(globalOptions, battleState.throwLevel);
     modifier = isStab * isWb * multiplyLevelFriendship * isDodge * multiplyThrowCharge * isMega * isTrainer * battleState.effective;
   } else {
     modifier = isStab ? stabMultiply : 1;

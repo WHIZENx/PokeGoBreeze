@@ -45,7 +45,7 @@ import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_GALAR, FORM_HISUI, FORM_STANDARD } from '../../util/constants';
+import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_STANDARD } from '../../util/constants';
 import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
@@ -53,7 +53,7 @@ import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 import { VariantType } from '../../enums/type.enum';
@@ -111,6 +111,15 @@ const Pokemon = (props: IPokemonPage) => {
 
   const axiosSource = useRef(APIService.getCancelToken());
   const { enqueueSnackbar } = useSnackbar();
+
+  const convertPokemonForm = (formName: string | undefined | null, formType: string) => {
+    if (!isInclude(formName, formType, IncludeMode.IncludeIgnoreCaseSensitive)) {
+      return;
+    }
+    const [form] = getValueOrDefault(String, formName?.replaceAll('_', '-').toUpperCase()).split(`-${formType.toUpperCase()}`);
+    const result = convertPokemonAPIDataName(form).replace(`_${FORM_STANDARD}`, '').replaceAll('_', '-');
+    return `${result}${result ? '-' : ''}${formType.toUpperCase()}`;
+  };
 
   const fetchMap = useCallback(
     async (data: Species) => {
@@ -186,13 +195,7 @@ const Pokemon = (props: IPokemonPage) => {
 
       // Set Default Form
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
-      let formParams = searchParams
-        .get(Params.Form)
-        ?.toUpperCase()
-        .replaceAll('_', '-')
-        .replace(`${FORM_GALAR}IAN`, FORM_GALAR)
-        .replace(`${FORM_HISUI}AN`, FORM_GALAR)
-        .toLowerCase();
+      let formParams = searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-').toLowerCase();
       const formTypeParams = searchParams.get(Params.FormType)?.toLowerCase();
       if (formTypeParams) {
         if (formParams) {
@@ -205,21 +208,12 @@ const Pokemon = (props: IPokemonPage) => {
       if (formParams) {
         const defaultFormSearch = formListResult
           .flatMap((form) => form)
-          .find(
-            (item) =>
-              isEqual(
-                formTypeParams
-                  ? item.form.formName?.replace(`-${FORM_STANDARD.toLowerCase()}`, '').replaceAll('_', '-')
-                  : convertPokemonAPIDataName(item.form.formName).replace(`_${FORM_STANDARD}`, '').replaceAll('_', '-'),
-                formParams,
-                EqualMode.IgnoreCaseSensitive
-              ) ||
-              isEqual(
-                convertPokemonAPIDataName(item.form.name).replace(`_${FORM_STANDARD}`, '').replaceAll('_', '-'),
-                `${item.defaultName}-${formParams}`,
-                EqualMode.IgnoreCaseSensitive
-              )
-          );
+          .find((item) => {
+            const result = formTypeParams
+              ? convertPokemonForm(item.form.formName, formTypeParams)
+              : convertPokemonAPIDataName(item.form.formName).replace(`_${FORM_STANDARD}`, '').replaceAll('_', '-');
+            return isEqual(result, formParams, EqualMode.IgnoreCaseSensitive);
+          });
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
         } else {
@@ -381,7 +375,7 @@ const Pokemon = (props: IPokemonPage) => {
         const currentRegion = Object.values(regionList).find((item) =>
           isInclude(currentForm.form.formName, item, IncludeMode.IncludeIgnoreCaseSensitive)
         );
-        if (!isEmpty(currentForm.form.formName) && currentRegion) {
+        if (isNotEmpty(currentForm.form.formName) && currentRegion) {
           setRegion(!region || !isEqual(region, currentRegion) ? currentRegion : region);
         } else {
           setRegion(regionList[toNumber(gen)]);

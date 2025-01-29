@@ -163,13 +163,13 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>Pokémon Friendship level</td>
-              <td>{props.result.battleState ? props.result.battleState.fLevel : '-'}</td>
+              <td>{props.result.battleState ? props.result.battleState.friendshipLevel : '-'}</td>
             </tr>
             <tr>
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize(Object.keys(globalOptions.throwCharge).at(toNumber(props.result.battleState.cLevel)))
+                  ? capitalize(Object.keys(globalOptions.throwCharge).at(toNumber(props.result.battleState.throwLevel)))
                   : '-'}
               </td>
             </tr>

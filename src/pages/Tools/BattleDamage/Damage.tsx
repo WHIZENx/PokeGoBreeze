@@ -51,16 +51,16 @@ interface IFilter {
   isWeather: boolean;
   isDodge: boolean;
   isTrainer: boolean;
-  fLevel: number;
-  cLevel: number;
+  friendshipLevel: number;
+  throwLevel: number;
 }
 
 class Filter implements IFilter {
   isWeather = false;
   isDodge = false;
   isTrainer = false;
-  fLevel = 0;
-  cLevel = ThrowType.Excellent;
+  friendshipLevel = 0;
+  throwLevel = ThrowType.Excellent;
 
   static create(value: IFilter) {
     const obj = new Filter();
@@ -149,8 +149,8 @@ const Damage = () => {
           isDodge: battleState.isDodge,
           isMega: form?.form.pokemonType === PokemonType.Mega,
           isTrainer: battleState.isTrainer,
-          fLevel: enableFriend ? battleState.fLevel : 0,
-          cLevel: battleState.cLevel,
+          friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
+          throwLevel: battleState.throwLevel,
           effective: getTypeEffective(typeEff, move.type, formObj?.form.types),
         });
         setResult((r) =>
@@ -313,7 +313,7 @@ const Damage = () => {
                             setBattleState(
                               Filter.create({
                                 ...battleState,
-                                fLevel: 0,
+                                friendshipLevel: 0,
                               })
                             );
                           }}
@@ -327,33 +327,33 @@ const Damage = () => {
                         setBattleState(
                           Filter.create({
                             ...battleState,
-                            fLevel: toNumber(value),
+                            friendshipLevel: toNumber(value),
                           })
                         );
                       }}
                       defaultValue={0}
                       max={4}
                       size="large"
-                      value={battleState.fLevel}
+                      value={battleState.friendshipLevel}
                       emptyIcon={<FavoriteBorder fontSize="inherit" />}
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{padding(MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.fLevel), 2)}
+                      x{padding(MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
                     <FormControl sx={{ width: 200 }}>
                       <InputLabel id="demo-simple-select-label">Charge ability</InputLabel>
                       <Select
-                        name="cLevel"
-                        value={battleState.cLevel}
+                        name="throwLevel"
+                        value={battleState.throwLevel}
                         label="Charge ability"
                         onChange={(event) => {
                           setBattleState(
                             Filter.create({
                               ...battleState,
-                              cLevel: toNumber(event.target.value),
+                              throwLevel: toNumber(event.target.value),
                             })
                           );
                         }}

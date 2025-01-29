@@ -1494,21 +1494,9 @@ const Battle = () => {
     return (
       <div className="btn-collapse-battle" onClick={decoratedOnClick}>
         {openBattle ? (
-          <RemoveCircleIcon
-            onClick={() => {
-              setOpenBattle(!openBattle);
-            }}
-            fontSize="large"
-            color="error"
-          />
+          <RemoveCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="error" />
         ) : (
-          <AddCircleIcon
-            onClick={() => {
-              setOpenBattle(!openBattle);
-            }}
-            fontSize="large"
-            color="primary"
-          />
+          <AddCircleIcon onClick={() => setOpenBattle(!openBattle)} fontSize="large" color="primary" />
         )}
       </div>
     );

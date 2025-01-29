@@ -2,23 +2,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { predictCPList } from '../../util/calculate';
-import { MIN_IV, MAX_IV } from '../../util/constants';
 import { IPredictCPCalculate } from '../../util/models/calculate.model';
 import { IDynamicInputCPComponent } from '../models/component.model';
-import { getValueOrDefault } from '../../util/extension';
+import { getValueOrDefault, isNullOrUndefined } from '../../util/extension';
+import { isInvalidIV } from '../../util/utils';
 
 const DynamicInputCP = (props: IDynamicInputCPComponent) => {
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
 
   const findStatsCP = useCallback(() => {
-    if (
-      props.ivAtk < MIN_IV ||
-      props.ivAtk > MAX_IV ||
-      props.ivDef < MIN_IV ||
-      props.ivDef > MAX_IV ||
-      props.ivSta < MIN_IV ||
-      props.ivSta > MAX_IV
-    ) {
+    if (isInvalidIV(props.ivAtk) || isInvalidIV(props.ivDef) || isInvalidIV(props.ivSta)) {
       return;
     }
     if (props.statATK > 0 && props.statDEF > 0 && props.statSTA > 0) {
@@ -54,7 +47,10 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
       clearOnBlur={true}
       handleHomeEndKeys={true}
       renderOption={(props, option) => <li {...props} key={props.key}>{`Level: ${option.level} | CP: ${option.CP}`}</li>}
-      sx={{ width: props.width ?? 'auto', minWidth: props.minWidth ?? 'auto' }}
+      sx={{
+        width: !isNullOrUndefined(props.width) ? props.width : 'auto',
+        minWidth: !isNullOrUndefined(props.minWidth) ? props.minWidth : 'auto',
+      }}
       freeSolo={true}
       renderInput={(params) => <TextField {...params} label={props.label} />}
     />

@@ -12,6 +12,7 @@ import {
   getKeyWithData,
   getMoveType,
   getValidPokemonImgPath,
+  isInvalidIV,
   retrieveMoves,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -43,7 +44,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useSnackbar } from 'notistack';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -89,6 +90,7 @@ import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
+import PopoverConfig from '../../../components/Popover/PopoverConfig';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -262,8 +264,6 @@ const RaidBattle = () => {
     );
   };
 
-  const isInvalidIV = (value: number | undefined) => !value || value < MIN_IV || value > MAX_IV;
-
   const setSortedResult = (primary: IPokemonMoveData, secondary: IPokemonMoveData) => {
     let type = getPropertyName(primary || secondary, (r) => r.dpsAtk);
     if (filters.selected.sortBy === SortType.TDO) {
@@ -304,24 +304,12 @@ const RaidBattle = () => {
   };
 
   const handleCloseSettingPokemon = () => {
-    setShowSettingPokemon(
-      RaidSetting.create({
-        isShow: false,
-        id: 0,
-        pokemon: undefined,
-      })
-    );
+    setShowSettingPokemon(new RaidSetting());
   };
 
   const handleCloseMovePokemon = () => {
     setHoverSlot(undefined);
-    setShowMovePokemon(
-      MovePokemon.create({
-        isShow: false,
-        id: 0,
-        pokemon: undefined,
-      })
-    );
+    setShowMovePokemon(new MovePokemon());
   };
 
   const handleSaveSettingPokemon = () => {
@@ -417,7 +405,7 @@ const RaidBattle = () => {
     fMoveType: MoveType,
     pokemonTarget: boolean,
     pokemonType = PokemonType.Normal
-  ) => {
+  ) =>
     movePoke?.forEach((vc) => {
       const fMoveCurrent = data.combat.find((item) => isEqual(item.name, vf));
       const cMoveCurrent = data.combat.find((item) => isEqual(item.name, vc));
@@ -483,10 +471,9 @@ const RaidBattle = () => {
         }
       }
     });
-  };
 
-  const addFPokeData = (dataList: IPokemonMoveData[], pokemon: IPokemonData, movePoke: string[] | undefined, pokemonTarget: boolean) => {
-    movePoke?.forEach((vf) => {
+  const addFPokeData = (dataList: IPokemonMoveData[], pokemon: IPokemonData, movePoke: string[], pokemonTarget: boolean) =>
+    movePoke.forEach((vf) => {
       const fMoveType = getMoveType(pokemon, vf);
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
       if (!pokemon.forme || pokemon.hasShadowForm) {
@@ -501,18 +488,16 @@ const RaidBattle = () => {
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
-      } else {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
       }
+      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
       addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType, pokemonTarget);
       addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, vf, fMoveType, pokemonTarget);
     });
-  };
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
     let dataList: IPokemonMoveData[] = [];
     data.pokemon.forEach((pokemon) => {
-      if (pokemon && pokemon.pokemonType !== PokemonType.GMax) {
+      if (pokemon.pokemonType !== PokemonType.GMax) {
         addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast), pokemonTarget);
       }
     });
@@ -749,10 +734,14 @@ const RaidBattle = () => {
   };
 
   const resultBattle = (bossHp: number, timer: number) => {
-    const status = enableTimeAllow && timer >= timeAllow ? RaidState.TIMEOUT : bossHp > 0 ? RaidState.LOSS : RaidState.WIN;
+    const status = enableTimeAllow && timer >= timeAllow ? RaidState.TimeOut : bossHp > 0 ? RaidState.Loss : RaidState.Win;
+    const result = getKeyWithData(RaidState, status)
+      ?.split(/(?=[A-Z])/)
+      .join(' ')
+      .toUpperCase();
     return (
-      <td colSpan={3} className={combineClasses('text-center', `bg-${status === RaidState.WIN ? 'success' : 'danger'}`)}>
-        <span className="text-white">{status}</span>
+      <td colSpan={3} className={combineClasses('text-center', `bg-${status === RaidState.Win ? 'success' : 'danger'}`)}>
+        <span className="text-white">{result}</span>
       </td>
     );
   };
@@ -838,7 +827,7 @@ const RaidBattle = () => {
               }
             />
           }
-          label="Mega"
+          label={getKeyWithData(PokemonType, PokemonType.Mega)}
         />
       </div>
       <div className="input-group mb-3">
@@ -923,6 +912,11 @@ const RaidBattle = () => {
             control={
               <Checkbox
                 checked={showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow}
+                disabled={
+                  showSettingPokemon.pokemon?.pokemonType === PokemonType.Mega ||
+                  showSettingPokemon.pokemon?.pokemonType === PokemonType.Primal ||
+                  showSettingPokemon.pokemon?.pokemonType === PokemonType.GMax
+                }
                 onChange={(_, check) => {
                   if (showSettingPokemon.pokemon?.stats) {
                     setShowSettingPokemon(
@@ -1092,27 +1086,22 @@ const RaidBattle = () => {
     setHoverSlot(undefined);
   };
 
-  const onMovePokemon = (trainerId: number, index: number) => {
-    const tempPokemonBattle = [...trainerBattle[trainerId].pokemons];
-    if (!tempPokemonBattle[index]) {
-      tempPokemonBattle[index] = new PokemonRaidModel();
-    }
+  const onMovePokemon = (pokemonBattle: PokemonRaidModel) => {
     if (showMovePokemon.pokemon?.pokemon) {
-      const stats = tempPokemonBattle[index].dataTargetPokemon?.stats ?? initPokemonStats;
-      tempPokemonBattle[index].dataTargetPokemon = showMovePokemon.pokemon.pokemon;
-      tempPokemonBattle[index].dataTargetPokemon.stats = {
+      const stats = pokemonBattle.dataTargetPokemon?.stats ?? initPokemonStats;
+      pokemonBattle.dataTargetPokemon = showMovePokemon.pokemon.pokemon;
+      pokemonBattle.dataTargetPokemon.stats = {
         ...stats,
-        pokemonType: showMovePokemon.pokemon?.pokemonType ?? PokemonType.None,
+        pokemonType: showMovePokemon.pokemon.pokemonType ?? PokemonType.None,
       };
-      tempPokemonBattle[index].fMoveTargetPokemon = {
+      pokemonBattle.fMoveTargetPokemon = {
         name: getValueOrDefault(String, showMovePokemon.pokemon.fMove?.name),
         moveType: showMovePokemon.pokemon.fMoveType ?? MoveType.None,
       };
-      tempPokemonBattle[index].cMoveTargetPokemon = {
+      pokemonBattle.cMoveTargetPokemon = {
         name: getValueOrDefault(String, showMovePokemon.pokemon.cMove?.name),
-        moveType: showMovePokemon.pokemon?.cMoveType ?? MoveType.None,
+        moveType: showMovePokemon.pokemon.cMoveType ?? MoveType.None,
       };
-      setTrainerBattle(update(trainerBattle, { [trainerId]: { pokemons: { $set: tempPokemonBattle } } }));
     }
   };
 
@@ -1129,7 +1118,15 @@ const RaidBattle = () => {
               {pokemon.pokemonType === PokemonType.Shadow && (
                 <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
               )}
-              <img className="pokemon-sprite-battle" alt="img-pokemon" src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, false)} />
+              <img
+                className="pokemon-sprite-battle"
+                alt="img-pokemon"
+                src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, false)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeIconSprite();
+                }}
+              />
             </span>
           </div>
           <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 8 }}>
@@ -1139,12 +1136,12 @@ const RaidBattle = () => {
         </div>
         <p className="element-top">Select slot Pokémon that you want to replace.</p>
         <div className="element-top justify-content-center" style={{ padding: '0 10px' }}>
-          {trainerBattle.map((trainer, i) => (
-            <div className="trainer-battle d-flex align-items-center position-relative" key={i}>
+          {trainerBattle.map((trainer) => (
+            <div className="trainer-battle d-flex align-items-center position-relative" key={trainer.trainerId}>
               <Badge
                 color="primary"
                 overlap="circular"
-                badgeContent={`Trainer ${i + 1}`}
+                badgeContent={`Trainer ${trainer.trainerId}`}
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: 'left',
@@ -1155,26 +1152,31 @@ const RaidBattle = () => {
               <div className="pokemon-battle-group">
                 {trainer.pokemons.map((poke, index) => (
                   <div
-                    onMouseOver={() => onHoverSlot(`${i}-${index}`)}
+                    onMouseOver={() => onHoverSlot(`${trainer.trainerId}-${index}`)}
                     onMouseLeave={onLeaveSlot}
                     onTouchEnd={onLeaveSlot}
                     key={index}
-                    className={combineClasses('pokemon-battle', hoverSlot === `${i}-${index}` ? 'slot-active' : '')}
-                    onClick={() => onMovePokemon(i, index)}
+                    className={combineClasses('pokemon-battle', hoverSlot === `${trainer.trainerId}-${index}` ? 'slot-active' : '')}
+                    onClick={() => onMovePokemon(poke)}
                   >
                     {poke.dataTargetPokemon ? (
                       <span className="position-relative">
-                        {(hoverSlot === `${i}-${index}` ? pokemon.pokemonType : poke.dataTargetPokemon.stats?.pokemonType) ===
-                          PokemonType.Shadow && (
+                        {(hoverSlot === `${trainer.trainerId}-${index}`
+                          ? pokemon.pokemonType
+                          : poke.dataTargetPokemon.stats?.pokemonType) === PokemonType.Shadow && (
                           <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
                         )}
                         <img
                           className="pokemon-sprite-battle"
                           alt="img-pokemon"
                           src={APIService.getPokeIconSprite(
-                            hoverSlot === `${i}-${index}` ? pokemon.pokemon?.sprite : poke.dataTargetPokemon.sprite,
+                            hoverSlot === `${trainer.trainerId}-${index}` ? pokemon.pokemon?.sprite : poke.dataTargetPokemon.sprite,
                             true
                           )}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = APIService.getPokeIconSprite();
+                          }}
                         />
                       </span>
                     ) : (
@@ -1189,6 +1191,18 @@ const RaidBattle = () => {
           ))}
         </div>
       </Fragment>
+    );
+  };
+
+  const modalDetailsPokemon = (pokemon: IPokemonMoveData | undefined) => {
+    if (!pokemon?.pokemon) {
+      return <></>;
+    }
+    return (
+      <div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
+        {renderMove(pokemon.fMove)}
+        {renderMove(pokemon.cMove)}
+      </div>
     );
   };
 
@@ -1365,7 +1379,6 @@ const RaidBattle = () => {
                   return true;
                 }
                 if (obj.pokemon) {
-                  obj.pokemon.name = splitAndCapitalize(obj.pokemon.name, ' ', ' ');
                   const result = checkPokemonGO(
                     obj.pokemon.num,
                     getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId),
@@ -1457,6 +1470,10 @@ const RaidBattle = () => {
                             className="pokemon-sprite-battle"
                             alt="img-pokemon"
                             src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, false)}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = APIService.getPokeIconSprite();
+                            }}
                           />
                         </span>
                       ) : (
@@ -1630,15 +1647,28 @@ const RaidBattle = () => {
                               <tr key={index}>
                                 <td>#{toNumber(data.trainerId) + 1}</td>
                                 <td>
-                                  <div className="d-flex align-items-center table-pokemon">
-                                    <img
-                                      className="pokemon-sprite-battle"
-                                      height={36}
-                                      alt="img-pokemon"
-                                      src={APIService.getPokeIconSprite(data.pokemon?.sprite, false)}
-                                    />
-                                    <span className="caption">{splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}</span>
-                                  </div>
+                                  <OverlayTrigger placement="auto" overlay={<PopoverConfig>{modalDetailsPokemon(data)}</PopoverConfig>}>
+                                    <span className="tooltips-info">
+                                      <div className="d-flex align-items-center table-pokemon">
+                                        {data.pokemon?.stats?.pokemonType === PokemonType.Shadow && (
+                                          <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
+                                        )}
+                                        <img
+                                          className="pokemon-sprite-battle"
+                                          height={36}
+                                          alt="img-pokemon"
+                                          src={APIService.getPokeIconSprite(data.pokemon?.sprite, false)}
+                                          onError={(e) => {
+                                            e.currentTarget.onerror = null;
+                                            e.currentTarget.src = APIService.getPokeIconSprite();
+                                          }}
+                                        />
+                                        <span className="caption link-url">
+                                          {splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}
+                                        </span>
+                                      </div>
+                                    </span>
+                                  </OverlayTrigger>
                                 </td>
                                 <td>{toFloatWithPadding(data.dpsAtk, 2)}</td>
                                 <td>{Math.floor(data.tdoAtk) === 0 ? '-' : toFloatWithPadding(data.tdoAtk, 2)}</td>
@@ -1725,9 +1755,7 @@ const RaidBattle = () => {
             <AddCircleIcon
               className="cursor-pointer link-success"
               fontSize="large"
-              onClick={() => {
-                setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }));
-              }}
+              onClick={() => setPokemonBattle(update(pokemonBattle, { $push: [new PokemonRaidModel()] }))}
             />
           </div>
         </Modal.Body>

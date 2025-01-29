@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 export enum RaidState {
-  WIN = 'WIN',
-  LOSS = 'LOSS',
-  TIMEOUT = 'TIME OUT',
+  Win,
+  Loss,
+  TimeOut,
 }
 
 export enum SortType {

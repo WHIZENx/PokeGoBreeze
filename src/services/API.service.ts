@@ -103,7 +103,7 @@ class APIService {
   }
 
   getPokemonGoIcon(icon: string | undefined) {
-    return `${APIUrl.POGO_ASSET_API_URL}App Icons/${icon ?? 'Standard'}.png`;
+    return `${APIUrl.POGO_ASSET_API_URL}App Icons/${getValueOrDefault(String, icon, 'Standard')}.png`;
   }
 
   getBadgeSprite(name: string) {

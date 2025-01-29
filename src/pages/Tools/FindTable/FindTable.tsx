@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
 import DataTable, { ConditionalStyles, TableColumn } from 'react-data-table-component';
@@ -22,7 +22,7 @@ import {
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { VariantType } from '../../../enums/type.enum';
 
 interface IFindCP {
@@ -119,6 +119,24 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
   },
 ];
 
+const columns: TableColumn<IFindCP>[] = [
+  {
+    name: 'Level',
+    selector: (row) => row.level,
+    sortable: true,
+  },
+  {
+    name: 'MIN CP',
+    selector: (row) => row.minCP,
+    sortable: true,
+  },
+  {
+    name: 'MAX CP',
+    selector: (row) => row.maxCP,
+    sortable: true,
+  },
+];
+
 const FindTable = () => {
   useChangeTitle('Find CP&IV - Tool');
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
@@ -169,14 +187,7 @@ const FindTable = () => {
   };
 
   const findStatsCP = useCallback(() => {
-    if (
-      searchATKIv < MIN_IV ||
-      searchATKIv > MAX_IV ||
-      searchDEFIv < MIN_IV ||
-      searchDEFIv > MAX_IV ||
-      searchSTAIv < MIN_IV ||
-      searchSTAIv > MAX_IV
-    ) {
+    if (isInvalidIV(searchATKIv) || isInvalidIV(searchDEFIv) || isInvalidIV(searchSTAIv)) {
       enqueueSnackbar(`Please input IV between ${MIN_IV} - ${MAX_IV}.`, { variant: VariantType.Error });
       return;
     }
@@ -190,6 +201,23 @@ const FindTable = () => {
       e.preventDefault();
     },
     [findStatsCP]
+  );
+
+  const renderStar = (star: number | undefined, starAmount: number, style: string) => (
+    <div className="d-inline-block text-center">
+      <div className={`${style}-star`}>
+        {isEqual(style, 'four') ? (
+          <HundoRate name="hundo-rate" value={starAmount} max={3} readOnly={true} />
+        ) : (
+          <Rating name={`${style}-rate`} value={starAmount} max={3} readOnly={true} />
+        )}
+        <hr style={{ margin: 0 }} />
+        <div>
+          <b>{star}</b>
+        </div>
+      </div>
+      <p>{toFloatWithPadding((toNumber(star) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
+    </div>
   );
 
   const showResultTableIV = () => {
@@ -215,56 +243,11 @@ const FindTable = () => {
             <p className="element-top">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
-            <div className="d-inline-block text-center">
-              <div className="four-star">
-                <HundoRate name="hundo-rate" value={3} max={3} readOnly={true} />
-                <hr style={{ margin: 0 }} />
-                <div>
-                  <b>{fourStar}</b>
-                </div>
-              </div>
-              <p>{toFloatWithPadding((toNumber(fourStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
-            </div>
-            <div className="d-inline-block text-center">
-              <div className="three-star">
-                <Rating name="three-rate" value={3} max={3} readOnly={true} />
-                <hr style={{ margin: 0 }} />
-                <div>
-                  <b>{threeStar}</b>
-                </div>
-              </div>
-              <p>{toFloatWithPadding((toNumber(threeStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
-            </div>
-            <div className="d-inline-block text-center">
-              <div className="two-star">
-                <Rating name="two-rate" value={2} max={3} readOnly={true} />
-                <hr style={{ margin: 0 }} />
-                <div>
-                  <b>{twoStar}</b>
-                </div>
-              </div>
-              <p>{toFloatWithPadding((toNumber(twoStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
-            </div>
-            <div className="d-inline-block text-center">
-              <div className="one-star">
-                <Rating name="one-rate" value={1} max={3} readOnly={true} />
-                <hr style={{ margin: 0 }} />
-                <div>
-                  <b>{oneStar}</b>
-                </div>
-              </div>
-              <p>{toFloatWithPadding((toNumber(oneStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
-            </div>
-            <div className="d-inline-block text-center">
-              <div className="zero-star">
-                <Rating name="zero-rate" value={0} max={3} readOnly={true} />
-                <hr style={{ margin: 0 }} />
-                <div>
-                  <b>{zeroStar}</b>
-                </div>
-              </div>
-              <p>{toFloatWithPadding((toNumber(zeroStar) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
-            </div>
+            {renderStar(fourStar, 3, 'four')}
+            {renderStar(threeStar, 3, 'three')}
+            {renderStar(twoStar, 2, 'two')}
+            {renderStar(oneStar, 1, 'one')}
+            {renderStar(zeroStar, 0, 'zero')}
           </Fragment>
         )}
         <DataTable
@@ -312,24 +295,6 @@ const FindTable = () => {
   };
 
   const findMinMax = () => {
-    const columns: TableColumn<IFindCP>[] = [
-      {
-        name: 'Level',
-        selector: (row) => row.level,
-        sortable: true,
-      },
-      {
-        name: 'MIN CP',
-        selector: (row) => row.minCP,
-        sortable: true,
-      },
-      {
-        name: 'MAX CP',
-        selector: (row) => row.maxCP,
-        sortable: true,
-      },
-    ];
-
     const dataTable = data.map((item) => {
       return new FindCP({
         level: item.level,

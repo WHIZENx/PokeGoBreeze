@@ -108,7 +108,7 @@ const Counter = (props: ICounterComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
-  const [frame, setFrame] = useState(true);
+  const [showFrame, setShowFrame] = useState(true);
   const [releasedGO, setReleaseGO] = useState(true);
   const [showMega, setShowMega] = useState(false);
 
@@ -223,14 +223,14 @@ const Counter = (props: ICounterComponent) => {
     const controller = new AbortController();
     if (isNotEmpty(counterList)) {
       setCounterFilter([]);
-      setFrame(true);
+      setShowFrame(true);
     }
     if (!isUndefined(props.pokemonType) && isNotEmpty(props.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
         })
-        .catch(() => setFrame(true));
+        .catch(() => setShowFrame(true));
     }
     return () => controller.abort();
   }, [props.def, props.pokemonType, props.types]);
@@ -289,7 +289,7 @@ const Counter = (props: ICounterComponent) => {
             return pokemon.releasedGO;
           })
       );
-      setFrame(false);
+      setShowFrame(false);
     }
   }, [counterList, showMega, releasedGO]);
 
@@ -303,7 +303,7 @@ const Counter = (props: ICounterComponent) => {
             <span className="d-flex align-items-center">
               Released in GO
               <img
-                className={releasedGO && !frame ? '' : 'filter-gray'}
+                className={releasedGO && !showFrame ? '' : 'filter-gray'}
                 width={28}
                 height={28}
                 style={{ marginLeft: 5 }}
@@ -312,11 +312,11 @@ const Counter = (props: ICounterComponent) => {
               />
             </span>
           }
-          disabled={!open}
+          disabled={showFrame}
         />
         <FormControlLabel
           control={<Checkbox disabled={!isNotEmpty(counterList)} checked={showMega} onChange={(_, check) => setShowMega(check)} />}
-          label="Mega/Primal"
+          label={`${getKeyWithData(PokemonType, PokemonType.Mega)}/${getKeyWithData(PokemonType, PokemonType.Primal)}`}
         />
       </div>
       <DataTable
@@ -330,7 +330,7 @@ const Counter = (props: ICounterComponent) => {
         }}
         noDataComponent={null}
         paginationPerPage={100}
-        progressPending={frame}
+        progressPending={showFrame}
         progressComponent={<CounterLoader />}
         data={counterFilter}
       />

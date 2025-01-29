@@ -642,14 +642,14 @@ const checkDefaultStats = (data: PokemonDataGM[], pokemon: PokemonDataGM) => {
       !item.data.pokemonSettings.form &&
       item.templateId.startsWith(`V${id.toString().padStart(4, '0')}_POKEMON_`)
   );
-  if (defaultPokemon && defaultPokemon.data.pokemonSettings.stats && pokemon.data.pokemonSettings.stats) {
-    return (
-      pokemon.data.pokemonSettings.stats.baseAttack !== defaultPokemon.data.pokemonSettings.stats.baseAttack ||
+  return (
+    defaultPokemon &&
+    defaultPokemon.data.pokemonSettings.stats &&
+    pokemon.data.pokemonSettings.stats &&
+    (pokemon.data.pokemonSettings.stats.baseAttack !== defaultPokemon.data.pokemonSettings.stats.baseAttack ||
       pokemon.data.pokemonSettings.stats.baseDefense !== defaultPokemon.data.pokemonSettings.stats.baseDefense ||
-      pokemon.data.pokemonSettings.stats.baseStamina !== defaultPokemon.data.pokemonSettings.stats.baseStamina
-    );
-  }
-  return false;
+      pokemon.data.pokemonSettings.stats.baseStamina !== defaultPokemon.data.pokemonSettings.stats.baseStamina)
+  );
 };
 
 const applyPokemonReleasedGO = (data: PokemonDataGM[], pokemon: PokemonDataGM, forms: string[]) => {

@@ -136,7 +136,7 @@ const CatchChance = () => {
       case BadgeType.Platinum:
         return PLATINUM_INC_CHANCE;
       default:
-        return 1;
+        return POKE_BALL_INC_CHANCE;
     }
   };
 
@@ -180,7 +180,8 @@ const CatchChance = () => {
     const formName = convertPokemonAPIDataName(form.form.name);
     const pokemon = pokemonData.find((data) => data.num === id && isEqual(data.fullName, formName));
     if (!pokemon || !pokemon.encounter) {
-      return setIsEncounter(false);
+      setIsEncounter(false);
+      return;
     }
     setIsEncounter(true);
     if (pokemon) {

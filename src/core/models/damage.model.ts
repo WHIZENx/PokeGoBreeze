@@ -26,8 +26,8 @@ export interface IBattleState {
   isWb: boolean;
   isDodge?: boolean;
   isTrainer?: boolean;
-  fLevel?: number;
-  cLevel?: ThrowType;
+  friendshipLevel?: number;
+  throwLevel?: ThrowType;
   effective: number;
   isMega?: boolean;
 }
@@ -37,8 +37,8 @@ export class BattleState implements IBattleState {
   isWb = false;
   isDodge?: boolean;
   isTrainer?: boolean;
-  fLevel?: number;
-  cLevel?: number;
+  friendshipLevel?: number;
+  throwLevel?: number;
   effective = 0;
 
   static create(value: IBattleState) {
