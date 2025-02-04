@@ -13,7 +13,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { combineClasses, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
+import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
@@ -173,7 +173,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     <Fragment>
       <h5>Pokémon</h5>
       <div className="border-box-battle position-relative">
-        {(score > 0 || !isEmpty(pokemonIcon) || pokemon) && (
+        {(score > 0 || isNotEmpty(pokemonIcon) || pokemon) && (
           <span className="pokemon-select-right">
             {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
               <span
@@ -188,7 +188,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                 {score}
               </span>
             )}
-            {!isEmpty(pokemonIcon) && (
+            {isNotEmpty(pokemonIcon) && (
               <span onClick={() => removePokemon()} className="remove-pokemon-select">
                 <CloseIcon sx={{ color: 'red' }} />
               </span>

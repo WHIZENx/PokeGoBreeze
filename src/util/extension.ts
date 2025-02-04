@@ -36,21 +36,27 @@ export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => col
 
 export const combineClasses = <T>(...classes: (T | null | undefined)[]) => classes.filter((c) => !isNullOrUndefined(c)).join(' ');
 
-export const isNotEmpty = <T>(array: T[] | null | undefined) => Array.isArray(array) && array.length > 0;
+export const isUndefined = <T>(value?: T | null) => typeof value === 'undefined' && value === undefined;
 
-export const isUndefined = <T>(value?: T | null): value is undefined => typeof value === 'undefined' && value === undefined;
+export const isNull = <T>(value?: T | null) => typeof value !== 'undefined' && value === null;
 
-export const isNull = <T>(value?: T | null): value is null => typeof value !== 'undefined' && value === null;
+export const isEmpty = (value?: string | null) => typeof value === 'string' && value === '';
 
-export const isNullOrUndefined = <T>(value?: T | null): value is null | undefined => isNull(value) || isUndefined(value);
+export const isNumber = <T>(value?: T | null) => typeof value === 'number';
 
-export const isEmpty = (value?: string | null): value is '' => !isNullOrUndefined(value) && value.isEmpty();
+export const isNotEmpty = <T>(value: string | T[] | null | undefined) =>
+  Array.isArray(value) ? value.length > 0 : !isNullOrUndefined(value) && !isEmpty(value);
 
-export const isNullOrEmpty = (value?: string | null): value is '' | null => isNull(value) || isEmpty(value);
+export const isNullOrUndefined = <T>(value?: T | null) => isNull(value) || isUndefined(value);
 
-export const isUndefinedOrEmpty = (value?: string | null): value is '' | undefined => isUndefined(value) || isEmpty(value);
+export const isNullOrEmpty = (value?: string | null) => isNull(value) || isEmpty(value);
+
+export const isUndefinedOrEmpty = (value?: string | null) => isUndefined(value) || isEmpty(value);
 
 export const isNotNumber = <T>(value: T | null | undefined) => {
+  if (Array.isArray(value) || isNumber(value)) {
+    return false;
+  }
   const result = getValueOrDefault(String, value?.toString());
   return isEmpty(result) || isNaN(Number(result));
 };
@@ -129,12 +135,12 @@ export const isIncludeList = (
   includesValue: string | number | undefined | null,
   mode: IncludeMode.Include | IncludeMode.IncludeIgnoreCaseSensitive = IncludeMode.Include
 ) => {
-  if (isNullOrUndefined(value)) {
+  if (!isNotEmpty(value)) {
     return false;
   }
   const result = getValueOrDefault(
     Array,
-    value.map((i) => (!isNullOrUndefined(i) ? i.toString() : ''))
+    value?.map((i) => (!isNullOrUndefined(i) ? i.toString() : ''))
   );
   const resultIncludesValue = getValueOrDefault(String, includesValue?.toString());
   switch (mode) {

@@ -351,9 +351,7 @@ const RankingPVP = () => {
               <div
                 className="text-center"
                 style={{ width: 'max-content' }}
-                onClick={() => {
-                  setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC);
-                }}
+                onClick={() => setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC)}
               >
                 <span
                   className={combineClasses('ranking-sort ranking-score', sortedBy.current === SortType.Score ? 'ranking-selected' : '')}

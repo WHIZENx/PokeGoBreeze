@@ -567,7 +567,7 @@ export class PokemonData implements IPokemonData {
     });
     obj.heightm = pokemon.pokedexHeightM;
     obj.weightkg = pokemon.pokedexWeightKg;
-    obj.color = options?.color ?? 'None';
+    obj.color = getValueOrDefault(String, options?.color, 'None');
     obj.evos = getValueOrDefault(
       Array,
       pokemon.evolutionIds?.map((name) => capitalize(name))
@@ -578,11 +578,11 @@ export class PokemonData implements IPokemonData {
     obj.isTransferable = pokemon.isTransferable;
     obj.isDeployable = pokemon.isDeployable;
     obj.isTradable = pokemon.isTradable;
-    obj.pokemonClass = getPokemonClass(pokemon.pokemonClass?.replace('POKEMON_CLASS_', ''));
+    obj.pokemonClass = getPokemonClass(pokemon.pokemonClass);
     obj.disableTransferToPokemonHome = getValueOrDefault(Boolean, pokemon.disableTransferToPokemonHome);
     obj.isBaby = getValueOrDefault(Boolean, options?.isBaby);
-    obj.region = options?.region ?? 'Unknown';
-    obj.version = options?.version ?? 'scarlet-violet';
+    obj.region = getValueOrDefault(String, options?.region, 'Unknown');
+    obj.version = getValueOrDefault(String, options?.version, 'scarlet-violet');
     obj.baseSpecies = capitalize(pokemon.pokemonId);
     obj.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
     obj.encounter = pokemon.encounter;

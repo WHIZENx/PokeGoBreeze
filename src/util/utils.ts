@@ -29,6 +29,7 @@ import {
   FORM_SHADOW,
   FORM_STANDARD,
   MAX_IV,
+  MIN_IV,
   Params,
   PURIFIED_ATK_BONUS,
   PURIFIED_DEF_BONUS,
@@ -74,6 +75,8 @@ class Mask {
 }
 
 export const marks = [...Array(MAX_IV + 1).keys()].map((n) => new Mask(n, n.toString()));
+
+export const isInvalidIV = (value: number | null | undefined) => isNullOrUndefined(value) || value < MIN_IV || value > MAX_IV;
 
 export const PokeGoSlider = styled(Slider)(() => ({
   color: '#ef911d',
@@ -570,10 +573,11 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   const fastMoves = getAllMoves(pokemon, TypeMove.Fast);
   const chargeMoves = getAllMoves(pokemon, TypeMove.Charge);
   const allMoves = fastMoves.concat(chargeMoves);
-  if (allMoves.length <= 2 && (fastMoves[0] === 'STRUGGLE' || isInclude(fastMoves[0], 'SPLASH')) && chargeMoves[0] === 'STRUGGLE') {
-    return false;
-  }
-  return true;
+  return (
+    allMoves.length > 2 ||
+    (!isEqual(fastMoves[0], 'STRUGGLE') && !isInclude(fastMoves[0], 'SPLASH')) ||
+    !isEqual(chargeMoves[0], 'STRUGGLE')
+  );
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) =>

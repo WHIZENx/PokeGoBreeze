@@ -382,8 +382,8 @@ const DpsTdo = () => {
     });
   };
 
-  const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[] | undefined) => {
-    movePoke?.forEach((vf) => {
+  const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[]) => {
+    movePoke.forEach((vf) => {
       const fMoveType = getMoveType(pokemon, vf);
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType);
       if (!pokemon.forme || pokemon.hasShadowForm) {

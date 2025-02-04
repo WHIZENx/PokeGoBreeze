@@ -7,6 +7,9 @@ import bgCandyXL from '../../../assets/bg_CandyXL.png';
 import candy from '../../../data/pokemon_candy_color_data.json';
 import { ICandy } from '../../../core/models/candy.model';
 import { ICandyComponent } from '../../models/component.model';
+import { toNumber } from '../../../util/extension';
+
+const DEFAULT_SIZE = 30;
 
 interface Element {
   candyColor?: string;
@@ -18,14 +21,14 @@ const Background = styled.div<Element>`
   position: absolute;
   background: ${(props) => props.candyBgColor};
   clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
-  width: ${(props) => props.size ?? 30}px;
-  height: ${(props) => props.size ?? 30}px;
+  width: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
+  height: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
 `;
 
 const Fill = styled.div<Element>`
   background: ${(props) => props.candyColor};
-  width: ${(props) => props.size ?? 30}px;
-  height: ${(props) => props.size ?? 30}px;
+  width: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
+  height: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
   mask: url(${bgCandyXL}) center/contain;
 `;
 
