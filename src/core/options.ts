@@ -1101,7 +1101,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         .replace(APIUrl.POGO_PROD_ASSET_URL, '')
         .replace(`${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/`, '');
       result.league = item.data.combatLeague.badgeType.replace('BADGE_', '');
-      if (item.data.combatLeague.bannedPokemon) {
+      if (isNotEmpty(item.data.combatLeague.bannedPokemon)) {
         const banList = result.conditions.banned.concat(
           item.data.combatLeague.bannedPokemon.map((poke) => {
             const item = pokemon.find((item) => isEqual(item.pokemonId, poke));
@@ -1118,7 +1118,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       return result;
     });
 
-  const seasons = data.find((item) => item.templateId === 'COMBAT_COMPETITIVE_SEASON_SETTINGS')?.data.combatCompetitiveSeasonSettings
+  const seasons = data.find((item) => isEqual(item.templateId, 'COMBAT_COMPETITIVE_SEASON_SETTINGS'))?.data.combatCompetitiveSeasonSettings
     .seasonEndTimeTimestamp;
   const rewards = new Reward();
   data
@@ -1195,7 +1195,8 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       rewards,
       settings: getValueOrDefault(
         Array,
-        data.find((item) => item.templateId === `COMBAT_RANKING_SETTINGS_S${seasons.length - 1}`)?.data.combatRankingProtoSettings.rankLevel
+        data.find((item) => isEqual(item.templateId, `COMBAT_RANKING_SETTINGS_S${seasons.length - 1}`))?.data.combatRankingProtoSettings
+          .rankLevel
       ),
     });
   }
@@ -1206,7 +1207,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
 const mappingPokemonEvoInfo = (pokemonData: EvolutionChainData[] | undefined, pokemon: IPokemonData[]) => {
   const result: IEvolutionInfo[] = [];
   pokemonData?.forEach((item) => {
-    const form = item.headerMessage?.replace('_pokedex_header', '').toUpperCase() ?? FORM_NORMAL;
+    const form = getValueOrDefault(String, item.headerMessage?.replace('_pokedex_header', '').toUpperCase(), FORM_NORMAL);
     item.evolutionInfos.forEach((info) => {
       const id = toNumber(pokemon.find((poke) => isEqual(poke.pokemonId, info.pokemon))?.num);
       result.push(
@@ -1247,8 +1248,8 @@ export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IA
 
 const convertMoveName = (combat: ICombat[], moves: string[] | undefined) => {
   return moves?.map((move) => {
-    const id = toNumber(move);
-    if (!isNaN(id)) {
+    if (!isNotNumber(move)) {
+      const id = toNumber(move);
       const result = combat.find((item) => item.id === id);
       if (result) {
         return result.name;

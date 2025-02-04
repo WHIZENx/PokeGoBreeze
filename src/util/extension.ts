@@ -54,10 +54,8 @@ export const isNullOrEmpty = (value?: string | null) => isNull(value) || isEmpty
 export const isUndefinedOrEmpty = (value?: string | null) => isUndefined(value) || isEmpty(value);
 
 export const isNotNumber = <T>(value: T | null | undefined) => {
-  if (Array.isArray(value)) {
+  if (Array.isArray(value) || isNumber(value)) {
     return false;
-  } else if (isNumber(value)) {
-    return true;
   }
   const result = getValueOrDefault(String, value?.toString());
   return isEmpty(result) || isNaN(Number(result));
