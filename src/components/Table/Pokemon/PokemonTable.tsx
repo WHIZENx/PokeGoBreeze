@@ -16,6 +16,12 @@ const PokemonTable = (props: IPokemonTableComponent) => {
     );
   };
 
+  const renderPokemonId = () => (
+    <h5 className="d-flex">
+      <b>#{props.id}</b>
+    </h5>
+  );
+
   return (
     <table className={combineClasses('table-info table-desc', props.className)}>
       <thead />
@@ -24,11 +30,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           <td>
             <h5 className="d-flex">ID</h5>
           </td>
-          <td colSpan={2}>
-            <h5 className="d-flex">
-              <b>{props.id && `#${props.id}`}</b>
-            </h5>
-          </td>
+          <td colSpan={2}>{toNumber(props.id) > 0 ? renderPokemonId() : reload(renderPokemonId())}</td>
         </tr>
         <tr>
           <td>

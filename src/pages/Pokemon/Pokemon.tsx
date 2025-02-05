@@ -112,6 +112,17 @@ const Pokemon = (props: IPokemonPage) => {
   const axiosSource = useRef(APIService.getCancelToken());
   const { enqueueSnackbar } = useSnackbar();
 
+  const getPokemonIdByParam = () => {
+    let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonData)) {
+      const pokemon = pokemonData.find((p) => isEqual(p.pokemonId, params.id, EqualMode.IgnoreCaseSensitive));
+      if (pokemon) {
+        id = pokemon.num;
+      }
+    }
+    return id;
+  };
+
   const convertPokemonForm = (formName: string | undefined | null, formType: string) => {
     if (!isInclude(formName, formType, IncludeMode.IncludeIgnoreCaseSensitive)) {
       return;
@@ -292,22 +303,33 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   useEffect(() => {
-    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    const dataId = toNumber(data?.id);
-    if (id > 0 && dataId !== id && isNotEmpty(pokemonData)) {
-      clearData(true);
-      queryPokemon(id);
-    }
-    return () => {
-      if (dataId > 0) {
-        APIService.cancel(axiosSource.current);
+    if (isNotEmpty(pokemonData)) {
+      let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+      if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonData)) {
+        id = getPokemonIdByParam();
+        if (id === 0) {
+          enqueueSnackbar(`Pokémon ID or name: ${params.id} Not found!`, { variant: VariantType.Error });
+          document.title = `#${id} - Not Found`;
+          setIsFound(false);
+          return;
+        }
       }
-    };
+      const dataId = toNumber(data?.id);
+      if (id > 0 && dataId !== id) {
+        clearData(true);
+        queryPokemon(id);
+      }
+      return () => {
+        if (dataId > 0) {
+          APIService.cancel(axiosSource.current);
+        }
+      };
+    }
   }, [params.id, props.id, pokemonData, data?.id, queryPokemon]);
 
   useEffect(() => {
     if (!data) {
-      const id = toNumber(params.id ?? props.id);
+      const id = getPokemonIdByParam();
       setDataStorePokemon({
         current: new PokemonModel(id),
       });
@@ -316,7 +338,7 @@ const Pokemon = (props: IPokemonPage) => {
   }, [data]);
 
   useEffect(() => {
-    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    const id = getPokemonIdByParam();
     if (id > 0 && isNotEmpty(pokemonData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
         if (!spinner.isLoading) {
@@ -401,7 +423,7 @@ const Pokemon = (props: IPokemonPage) => {
   }, [data?.id, props.id, params.id, formName, currentForm]);
 
   useEffect(() => {
-    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    const id = getPokemonIdByParam();
     if (isNotEmpty(pokeData) && isNotEmpty(formList) && id > 0 && id === toNumber(data?.id)) {
       let form = getValueOrDefault(String, searchParams.get(Params.Form));
       const formType = getValueOrDefault(String, searchParams.get(Params.FormType));
@@ -435,7 +457,7 @@ const Pokemon = (props: IPokemonPage) => {
   }, [pokeData, formList, data?.id, props.id, params.id, searchParams]);
 
   useEffect(() => {
-    const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    const id = getPokemonIdByParam();
     if (id > 0 && isNotEmpty(pokemonData)) {
       const currentPokemon = getPokemonById(pokemonData, id);
       if (currentPokemon) {
