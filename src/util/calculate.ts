@@ -1340,7 +1340,7 @@ export const counterPokemon = (
 ) => {
   const dataList: IPokemonQueryCounter[] = [];
   pokemonList.forEach((pokemon) => {
-    if (pokemon && checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE')) {
+    if (checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE') && !isEqual(pokemon.pokemonType, PokemonType.GMax)) {
       const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
       const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
       const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
