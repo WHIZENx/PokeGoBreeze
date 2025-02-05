@@ -59,6 +59,6 @@ export enum LeagueConditionType {
   PokemonType = 'WITH_POKEMON_TYPE',
   PokemonLevelRange = 'POKEMON_LEVEL_RANGE',
   PokemonLimitCP = 'WITH_POKEMON_CP_LIMIT',
-  Whitelist = 'POKEMON_WHITELIST',
+  WhiteList = 'POKEMON_WHITELIST',
   BanList = 'POKEMON_BANLIST',
 }

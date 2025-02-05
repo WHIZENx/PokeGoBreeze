@@ -262,9 +262,9 @@ const CatchChance = () => {
     } else if (value >= 36) {
       return `rgb(255, ${165 + Math.round(((value - 36) * 165) / 64)}, 0)`;
     } else if (value >= 26) {
-      return `rgb(255, ${(165 / 10) * Math.round(value - 26)}, 0)`;
+      return `rgb(255, ${Math.round((165 / 10) * (value - 26))}, 0)`;
     } else {
-      return 'rgb(255, 0, 0)';
+      return '#ff0000';
     }
   };
 

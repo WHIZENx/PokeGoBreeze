@@ -105,7 +105,7 @@ const Leagues = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleShow = (type: string | undefined, track: LeagueRewardType, step: number) => {
+  const handleShow = (type: RewardType | string, track: LeagueRewardType, step: number) => {
     if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);

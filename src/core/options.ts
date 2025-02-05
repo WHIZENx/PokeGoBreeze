@@ -300,8 +300,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
       optional.baseForme = convertPokemonDataName(pokemonBaseData.baseForme);
       optional.region = pokemonBaseData.region;
       optional.version = pokemonBaseData.version;
-      pokemon.pokedexHeightM = pokemonBaseData.heightm;
-      pokemon.pokedexWeightKg = pokemonBaseData.weightkg;
+      pokemon.pokedexHeightM = pokemonBaseData.heightM;
+      pokemon.pokedexWeightKg = pokemonBaseData.weightKg;
       optional.isBaby = pokemonBaseData.isBaby;
 
       if (!pokemon.stats?.baseAttack && !pokemon.stats?.baseDefense && !pokemon.stats?.baseStamina) {
@@ -1071,30 +1071,36 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       result.allowEvolutions = item.data.combatLeague.allowTempEvos;
       result.combatLeagueTemplate = item.data.combatLeague.battlePartyCombatLeagueTemplateId;
       const leagueType = getDataWithKey<LeagueType>(LeagueType, item.data.combatLeague.leagueType, EqualMode.IgnoreCaseSensitive);
-      if (leagueType) {
+      if (!isNullOrUndefined(leagueType)) {
         result.leagueType = leagueType;
       }
       item.data.combatLeague.pokemonCondition.forEach((con) => {
-        if (con.type === LeagueConditionType.CaughtTime) {
-          result.conditions.timestamp = LeagueTimestamp.create({
-            start: con.pokemonCaughtTimestamp?.afterTimestamp,
-            end: con.pokemonCaughtTimestamp?.beforeTimestamp,
-          });
-        } else if (con.type === LeagueConditionType.UniquePokemon) {
-          result.conditions.uniqueSelected = true;
-        } else if (con.type === LeagueConditionType.PokemonType) {
-          result.conditions.uniqueType = getValueOrDefault(
-            Array,
-            con.withPokemonType?.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''))
-          );
-        } else if (con.type === LeagueConditionType.PokemonLevelRange) {
-          result.conditions.maxLevel = con.pokemonLevelRange?.maxLevel;
-        } else if (con.type === LeagueConditionType.PokemonLimitCP) {
-          result.conditions.maxCp = con.withPokemonCpLimit?.maxCp;
-        } else if (con.type === LeagueConditionType.Whitelist) {
-          result.conditions.whiteList = setPokemonPermission(pokemon, con.pokemonWhiteList?.pokemon);
-        } else if (con.type === LeagueConditionType.BanList) {
-          result.conditions.banned = setPokemonPermission(pokemon, con.pokemonBanList?.pokemon);
+        result.conditions.uniqueSelected = con.type === LeagueConditionType.UniquePokemon;
+        switch (con.type) {
+          case LeagueConditionType.CaughtTime:
+            result.conditions.timestamp = LeagueTimestamp.create({
+              start: con.pokemonCaughtTimestamp?.afterTimestamp,
+              end: con.pokemonCaughtTimestamp?.beforeTimestamp,
+            });
+            break;
+          case LeagueConditionType.PokemonType:
+            result.conditions.uniqueType = getValueOrDefault(
+              Array,
+              con.withPokemonType?.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''))
+            );
+            break;
+          case LeagueConditionType.PokemonLevelRange:
+            result.conditions.maxLevel = con.pokemonLevelRange?.maxLevel;
+            break;
+          case LeagueConditionType.PokemonLimitCP:
+            result.conditions.maxCp = con.withPokemonCpLimit?.maxCp;
+            break;
+          case LeagueConditionType.WhiteList:
+            result.conditions.whiteList = setPokemonPermission(pokemon, con.pokemonWhiteList?.pokemon);
+            break;
+          case LeagueConditionType.BanList:
+            result.conditions.banned = setPokemonPermission(pokemon, con.pokemonBanList?.pokemon);
+            break;
         }
       });
       result.iconUrl = item.data.combatLeague.iconUrl

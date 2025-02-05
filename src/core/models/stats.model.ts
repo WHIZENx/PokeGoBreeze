@@ -242,8 +242,8 @@ export interface IPokemonStatsRanking {
   gen: number;
   region: string | null;
   version: string | null;
-  weightkg: number;
-  heightm: number;
+  weightKg: number;
+  heightM: number;
   atk: IStatsAtk;
   def: IStatsDef;
   sta: IStatsSta;
@@ -265,8 +265,8 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   gen = 0;
   region = '';
   version = '';
-  weightkg = 0;
-  heightm = 0;
+  weightKg = 0;
+  heightM = 0;
   atk = new StatsAtk();
   def = new StatsDef();
   sta = new StatsSta();
