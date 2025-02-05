@@ -34,7 +34,8 @@ export const getValueOrDefault = <T>(
 
 export const convertColumnDataType = <T>(columns: TableColumnModify<T>[]) => columns as TableColumn<T>[];
 
-export const combineClasses = <T>(...classes: (T | null | undefined)[]) => classes.filter((c) => !isNullOrUndefined(c)).join(' ');
+export const combineClasses = <T>(...classes: (T | null | undefined)[]) =>
+  classes.filter((c) => !isNullOrUndefined(c) && isNotEmpty(c?.toString())).join(' ');
 
 export const isUndefined = <T>(value?: T | null) => typeof value === 'undefined' && value === undefined;
 
