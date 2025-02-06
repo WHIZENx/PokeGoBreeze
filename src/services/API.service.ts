@@ -81,17 +81,17 @@ class APIService {
     return item;
   }
 
-  getPokemonModel(item: string | null | undefined) {
+  getPokemonModel(item: string | null | undefined, id?: number) {
     if (!item) {
-      return this.getPokeSprite();
+      return this.getPokeSprite(id);
     }
     item = this.setPokemonModel(item);
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon/${item}.png`;
   }
 
-  getPokemonSqModel(item: string | null | undefined) {
+  getPokemonSqModel(item: string | null | undefined, id?: number) {
     if (!item) {
-      return this.getPokeSprite();
+      return this.getPokeSprite(id);
     }
     item = this.setPokemonModel(item);
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon - 256x256/${item}.png`;

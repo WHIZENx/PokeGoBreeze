@@ -75,7 +75,7 @@ const BodyPVP = (props: BodyComponent) => {
             <img
               alt="img-league"
               className="pokemon-sprite-accordion"
-              src={data.form ? APIService.getPokemonModel(data.form) : APIService.getPokeFullSprite(data.id)}
+              src={APIService.getPokemonModel(data.form, data.id)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, data.id, data.form);
