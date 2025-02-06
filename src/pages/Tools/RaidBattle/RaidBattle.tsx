@@ -1228,7 +1228,7 @@ const RaidBattle = () => {
         <img
           className="pokemon-sprite-raid"
           alt="img-pokemon"
-          src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(value.pokemon?.num)}
+          src={APIService.getPokemonModel(assets, value.pokemon?.num)}
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.num, assets);

@@ -1141,11 +1141,11 @@ export const getItemSpritePath = (itemName: string | null | undefined) => {
 };
 
 export const getValidPokemonImgPath = (src: string | undefined | null, id?: number, form?: string | null) => {
-  if (isInclude(src, `${APIUrl.POGO_ASSET_API_URL}Pokemon - 256x256`) || isInclude(src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
+  if ((isInclude(src, APIUrl.POGO_ASSET_API_URL) && isInclude(src, '256x256')) || isInclude(src, APIUrl.POKE_SPRITES_FULL_API_URL)) {
     return APIService.getPokeFullAsset(id);
-  } else if (isInclude(src, APIUrl.POGO_ASSET_API_URL)) {
-    return APIService.getPokemonSqModel(form);
-  } else {
-    return APIService.getPokeFullSprite();
   }
+  if (isInclude(src, APIUrl.POGO_ASSET_API_URL)) {
+    return APIService.getPokemonSqModel(form, id);
+  }
+  return APIService.getPokeFullSprite();
 };

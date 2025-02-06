@@ -334,7 +334,7 @@ const FindBattle = () => {
         className={className}
         alt="pokemon-model"
         height={height}
-        src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(value.id)}
+        src={APIService.getPokemonModel(assets, value.id)}
         onError={(e) => {
           e.currentTarget.onerror = null;
           e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, assets);

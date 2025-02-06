@@ -261,7 +261,7 @@ const Leagues = () => {
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="img-pokemon"
-                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
@@ -293,7 +293,7 @@ const Leagues = () => {
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="img-pokemon"
-                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));

@@ -222,7 +222,7 @@ const PokemonPVP = () => {
                   <img
                     alt="img-league"
                     className="pokemon-sprite-raid"
-                    src={rankingPoke?.form ? APIService.getPokemonModel(rankingPoke.form) : APIService.getPokeFullSprite(rankingPoke?.id)}
+                    src={APIService.getPokemonModel(rankingPoke?.form, rankingPoke?.id)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, rankingPoke?.id, rankingPoke?.form);

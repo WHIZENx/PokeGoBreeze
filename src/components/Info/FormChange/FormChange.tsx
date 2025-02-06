@@ -54,7 +54,7 @@ const FromChange = (props: IFromChangeComponent) => {
                 <img
                   className="pokemon-sprite-large"
                   alt="pokemon-model"
-                  src={APIService.getPokemonModel(data)}
+                  src={APIService.getPokemonModel(data, props.details?.num)}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.details?.num, data);
@@ -75,7 +75,7 @@ const FromChange = (props: IFromChangeComponent) => {
                       <img
                         className="pokemon-sprite-large"
                         alt="pokemon-model"
-                        src={APIService.getPokemonModel(findPokeAsset(name))}
+                        src={APIService.getPokemonModel(findPokeAsset(name), props.details?.num)}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.details?.num, findPokeAsset(name));

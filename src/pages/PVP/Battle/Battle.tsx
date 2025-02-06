@@ -1162,11 +1162,7 @@ const Battle = () => {
                 <img
                   alt="img-league"
                   className="pokemon-sprite-raid"
-                  src={
-                    pokemon.pokemonData?.form
-                      ? APIService.getPokemonModel(pokemon.pokemonData.form)
-                      : APIService.getPokeFullSprite(pokemon.pokemonData?.id)
-                  }
+                  src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.pokemonData?.id, pokemon.pokemonData?.form);
@@ -1534,11 +1530,7 @@ const Battle = () => {
                             <img
                               alt="img-league"
                               className="sprite-type"
-                              src={
-                                pokemonCurr.pokemonData.form
-                                  ? APIService.getPokemonModel(pokemonCurr.pokemonData.form)
-                                  : APIService.getPokeFullSprite(pokemonCurr.pokemonData.id)
-                              }
+                              src={APIService.getPokemonModel(pokemonCurr.pokemonData.form, pokemonCurr.pokemonData.id)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = getValidPokemonImgPath(
@@ -1561,11 +1553,7 @@ const Battle = () => {
                             <img
                               alt="img-league"
                               className="sprite-type"
-                              src={
-                                pokemonObj.pokemonData.form
-                                  ? APIService.getPokemonModel(pokemonObj.pokemonData.form)
-                                  : APIService.getPokeFullSprite(pokemonObj.pokemonData.id)
-                              }
+                              src={APIService.getPokemonModel(pokemonObj.pokemonData.form, pokemonObj.pokemonData.id)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = getValidPokemonImgPath(

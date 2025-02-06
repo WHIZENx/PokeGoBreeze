@@ -381,7 +381,7 @@ const TeamPVP = () => {
                   <img
                     alt="img-league"
                     className="pokemon-sprite"
-                    src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                    src={APIService.getPokemonModel(value.form, value.id)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
@@ -501,7 +501,7 @@ const TeamPVP = () => {
                               <img
                                 alt="img-league"
                                 className="pokemon-sprite"
-                                src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                                src={APIService.getPokemonModel(value.form, value.id)}
                                 onError={(e) => {
                                   e.currentTarget.onerror = null;
                                   e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
@@ -556,7 +556,7 @@ const TeamPVP = () => {
                             <img
                               alt="img-league"
                               className="pokemon-sprite"
-                              src={value.form ? APIService.getPokemonModel(value.form) : APIService.getPokeFullSprite(value.id)}
+                              src={APIService.getPokemonModel(value.form, value.id)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
