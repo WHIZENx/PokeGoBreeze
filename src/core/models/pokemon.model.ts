@@ -236,8 +236,8 @@ export interface IPokemonData {
   genderRatio: IPokemonGenderRatio;
   baseStats: IStatsPokemon;
   statsGO?: IStatsPokemonGO;
-  heightm: number;
-  weightkg: number;
+  heightM: number;
+  weightKg: number;
   color: string;
   evos: string[];
   baseForme: string | undefined | null;
@@ -473,8 +473,8 @@ export class PokemonData implements IPokemonData {
   genderRatio = new PokemonGenderRatio();
   baseStats = new StatsPokemon();
   statsGO = new StatsPokemonGO();
-  heightm = 0;
-  weightkg = 0;
+  heightM = 0;
+  weightKg = 0;
   color = '';
   evos: string[] = [];
   baseForme: string | undefined | null;
@@ -565,8 +565,8 @@ export class PokemonData implements IPokemonData {
       sta,
       prod: obj.baseStats.atk * obj.baseStats.def * sta,
     });
-    obj.heightm = pokemon.pokedexHeightM;
-    obj.weightkg = pokemon.pokedexWeightKg;
+    obj.heightM = pokemon.pokedexHeightM;
+    obj.weightKg = pokemon.pokedexWeightKg;
     obj.color = getValueOrDefault(String, options?.color, 'None');
     obj.evos = getValueOrDefault(
       Array,

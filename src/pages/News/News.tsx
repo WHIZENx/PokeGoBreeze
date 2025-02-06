@@ -165,7 +165,7 @@ const News = () => {
         <img
           style={{ width: 64 }}
           className="pokemon-sprite-medium"
-          src={value.type === TicketRewardType.Pokemon ? APIService.getPokemonModel(value.imageSrc) : value.imageSrc}
+          src={value.type === TicketRewardType.Pokemon ? APIService.getPokemonModel(value.imageSrc, value.pokemon?.id) : value.imageSrc}
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.id, value.imageSrc);

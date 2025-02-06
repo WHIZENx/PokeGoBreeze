@@ -69,19 +69,17 @@ const FormComponent = (props: IFormInfoComponent) => {
       return;
     }
 
-    let weight = toNumber(props.pokeData[0].weight),
-      height = toNumber(props.pokeData[0].height);
+    let weight = 0;
+    let height = 0;
     if (currentData) {
       weight = currentData.weight;
       height = currentData.height;
-    } else if (currentForm) {
-      const oriForm = props.pokeData[0];
-      if (oriForm) {
-        weight = oriForm.weight;
-        height = oriForm.height;
-      }
+    } else {
+      const defaultPokemon = props.pokeData.find((p) => p.isDefault);
+      weight = toNumber(defaultPokemon?.weight);
+      height = toNumber(defaultPokemon?.height);
     }
-    props.setWH((prevWH) => WeightHeight.create({ ...prevWH, weight, height }));
+    props.setWH(WeightHeight.create({ weight, height }));
   };
 
   useEffect(() => {
@@ -113,8 +111,9 @@ const FormComponent = (props: IFormInfoComponent) => {
         searchParams.delete(Params.FormType);
       }
       setSearchParams(searchParams);
+    } else {
+      findFormData(name);
     }
-    findFormData(name);
   };
 
   return (

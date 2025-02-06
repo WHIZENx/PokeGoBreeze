@@ -135,7 +135,7 @@ const Counter = (props: ICounterComponent) => {
                 <img
                   className="pokemon-sprite-counter"
                   alt="img-pokemon"
-                  src={assets ? APIService.getPokemonModel(assets) : APIService.getPokeFullSprite(row.pokemonId)}
+                  src={APIService.getPokemonModel(assets, row.pokemonId)}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, row.pokemonId, assets);

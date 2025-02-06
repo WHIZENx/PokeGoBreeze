@@ -105,7 +105,7 @@ const Leagues = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleShow = (type: string | undefined, track: LeagueRewardType, step: number) => {
+  const handleShow = (type: RewardType | string, track: LeagueRewardType, step: number) => {
     if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
@@ -261,7 +261,7 @@ const Leagues = () => {
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="img-pokemon"
-                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
@@ -293,7 +293,7 @@ const Leagues = () => {
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="img-pokemon"
-                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));

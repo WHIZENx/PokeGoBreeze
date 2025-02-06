@@ -1,5 +1,5 @@
 import { IAsset } from '../core/models/asset.model';
-import { ICandy } from '../core/models/candy.model';
+import { Color, ICandy } from '../core/models/candy.model';
 import { PokemonClass, PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
 import { FORM_GMAX, FORM_MEGA, FORM_NORMAL } from './constants';
@@ -89,19 +89,6 @@ export const raidEgg = (tier: number, pokemonType?: PokemonType, pokemonClass?: 
   }
 };
 
-export const computeCandyBgColor = (candyData: ICandy[], id: number | undefined) => {
-  const data = candyData.find(
-    (item) =>
-      isIncludeList(
-        item.familyGroup.map((value) => value.id),
-        id
-      ) || item.familyId === toNumber(id)
-  );
-  return `rgb(${Math.round(255 * toNumber(data?.secondaryColor.r))}, ${Math.round(255 * toNumber(data?.secondaryColor.g))}, ${Math.round(
-    255 * toNumber(data?.secondaryColor.b)
-  )}, ${toNumber(data?.secondaryColor.a, 1)})`;
-};
-
 export const computeCandyColor = (candyData: ICandy[], id: number | undefined) => {
   const data = candyData.find(
     (item) =>
@@ -110,9 +97,20 @@ export const computeCandyColor = (candyData: ICandy[], id: number | undefined) =
         id
       ) || item.familyId === toNumber(id)
   );
-  return `rgb(${Math.round(255 * toNumber(data?.primaryColor.r))}, ${Math.round(255 * toNumber(data?.primaryColor.g))}, ${Math.round(
-    255 * toNumber(data?.primaryColor.b)
-  )}, ${toNumber(data?.primaryColor.a, 1)})`;
+  const color = Color.createRgb(data?.primaryColor.r, data?.primaryColor.g, data?.primaryColor.b, data?.primaryColor.a);
+  return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+};
+
+export const computeCandyBgColor = (candyData: ICandy[], id: number | undefined) => {
+  const data = candyData.find(
+    (item) =>
+      isIncludeList(
+        item.familyGroup.map((value) => value.id),
+        id
+      ) || item.familyId === toNumber(id)
+  );
+  const color = Color.createRgb(data?.secondaryColor.r, data?.secondaryColor.g, data?.secondaryColor.b, data?.secondaryColor.a);
+  return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 };
 
 export const computeBgType = (
@@ -121,7 +119,7 @@ export const computeBgType = (
   opacity = 1,
   styleSheet?: CSSStyleSheet,
   defaultColor?: string,
-  defaultBg = `rgb(100, 100, 100)`
+  defaultBg = `#646464`
 ) => {
   if (defaultColor) {
     return `linear-gradient(to bottom right, ${defaultColor}, ${defaultColor})`;
@@ -138,7 +136,7 @@ export const computeBgType = (
   }
   const [priColor, secColor] = colorsPalette;
   if (pokemonType === PokemonType.Shadow) {
-    return `linear-gradient(to bottom right, ${priColor}, rgb(202, 156, 236), ${secColor ?? priColor})`;
+    return `linear-gradient(to bottom right, ${priColor}, #ca9cec, ${secColor ?? priColor})`;
   }
   if (pokemonType === PokemonType.Purified) {
     return `linear-gradient(to bottom right, ${priColor}, white, ${secColor ?? priColor})`;
@@ -211,3 +209,12 @@ export const getPokemonBattleLeagueIcon = (cp = BattleLeagueCPType.Master) => {
       return APIService.getPokeLeague(BattleLeagueIconType.Master);
   }
 };
+
+export const convertHexByRgba = (color: string) =>
+  `#${color
+    .replace(/^rgba?\(|\s+|\)$/gi, '')
+    .split(',')
+    .map((c, i) =>
+      (i < 3 ? toNumber(c).toString(16) : Math.round(Math.max(0, Math.min(toNumber(c, 1), 1)) * 255).toString(16)).padStart(2, '0')
+    )
+    .join('')}`;

@@ -1,7 +1,7 @@
 import { PokemonType } from '../../enums/type.enum';
 import { DynamicObj } from '../../util/extension';
 import { getPokemonType } from '../../util/utils';
-import { LeagueType } from '../enums/league.enum';
+import { LeagueType, RewardType } from '../enums/league.enum';
 import { IPokemonPermission } from './options.model';
 
 interface ILeaguePVP {
@@ -61,7 +61,7 @@ class LeagueCondition implements ILeagueCondition {
 }
 
 interface IRankRewardSetLeague {
-  type: string;
+  type: RewardType | string;
   count: number;
   step: number;
 }
@@ -186,7 +186,7 @@ export class League implements ILeague {
 }
 
 export class RankRewardSetLeague implements IRankRewardSetLeague {
-  type = '';
+  type: RewardType | string = '';
   count = 0;
   step = 0;
 }

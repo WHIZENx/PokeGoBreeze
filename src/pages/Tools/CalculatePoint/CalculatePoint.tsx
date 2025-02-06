@@ -22,7 +22,7 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleState } from '../../../core/models/damage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, toNumber, UniqValueInArray } from '../../../util/extension';
+import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber, UniqValueInArray } from '../../../util/extension';
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
 
@@ -46,6 +46,7 @@ const CalculatePoint = () => {
 
   const [weatherBoosts, setWeatherBoosts] = useState(false);
   const [pvpDmg, setPvpDmg] = useState(false);
+  const [showDiffBorder, setShowDiffBorder] = useState(false);
 
   const [statDefATK, setStatDefATK] = useState(0);
   const [statDefDEF, setStatDefDEF] = useState(0);
@@ -163,7 +164,7 @@ const CalculatePoint = () => {
       b = 100;
     const diff = Math.max(1, 20 - data.length / 2);
     data.forEach((value, index) => {
-      colorTone[value.toString()] = new ColorTone(value, Color.create({ r: Math.max(0, r), g: Math.max(0, g), b: Math.max(0, b) }));
+      colorTone[value.toString()] = new ColorTone(value, Color.create(r, g, b));
       g -= diff;
       if (index % 2 === 0) {
         b -= diff;
@@ -235,64 +236,80 @@ const CalculatePoint = () => {
     enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: VariantType.Success });
   };
 
-  const setIconBattle = (pri: TypeAction, sec: TypeAction) => (
-    <div className="d-flex">
-      <div className="border-type-stat text-center">
-        <Badge color="primary" overlap="circular" badgeContent={isRaid && pri === TypeAction.Def ? `Tier ${tier}` : undefined}>
-          <span className="position-relative" style={{ width: 96 }}>
-            <img className="position-absolute" alt="img-logo" height={36} src={pri === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
-            <img
-              alt="img-pokemon"
-              className="pokemon-sprite-large"
-              src={APIService.getPokeIconSprite(form?.form.name, false)}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeIconSprite();
-              }}
-            />
-          </span>
-        </Badge>
-        <span className="caption">{splitAndCapitalize(form?.form.name, '-', ' ')}</span>
-        <span className="caption">
-          <b>{pri === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
+  const getIconBattle = (action: TypeAction, form: IPokemonFormModify | undefined) => (
+    <div className="border-type-stat text-center">
+      <Badge color="primary" overlap="circular" badgeContent={isRaid && action === TypeAction.Def ? `Tier ${tier}` : undefined}>
+        <span className="position-relative" style={{ width: 96 }}>
+          <img className="position-absolute" alt="img-logo" height={36} src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
+          <img
+            alt="img-pokemon"
+            className="pokemon-sprite-large"
+            src={APIService.getPokeIconSprite(form?.form.name, false)}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = APIService.getPokeIconSprite();
+            }}
+          />
         </span>
-      </div>
-      <div className="border-type-stat text-center">
-        <Badge color="primary" overlap="circular" badgeContent={isRaid && sec === TypeAction.Def ? `Tier ${tier}` : undefined}>
-          <span className="position-relative" style={{ width: 96 }}>
-            <img className="position-absolute" alt="img-logo" height={36} src={sec === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
-            <img
-              alt="img-pokemon"
-              className="pokemon-sprite-large"
-              src={APIService.getPokeIconSprite(formDef?.form.name, false)}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeIconSprite();
-              }}
-            />
-          </span>
-        </Badge>
-        <span className="caption">{splitAndCapitalize(formDef?.form.name, '-', ' ')}</span>
-        <span className="caption">
-          <b>{sec === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
-        </span>
-      </div>
+      </Badge>
+      <span className="caption">{splitAndCapitalize(form?.form.name, '-', ' ')}</span>
+      <span className="caption">
+        <b>{action === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
+      </span>
     </div>
   );
 
+  const setIconBattle = (atk: TypeAction, def: TypeAction) => (
+    <>
+      <div className="d-flex">
+        {getIconBattle(atk, form)}
+        {getIconBattle(def, formDef)}
+      </div>
+      <FormControlLabel
+        control={<Checkbox checked={showDiffBorder} onChange={(_, check) => setShowDiffBorder(check)} />}
+        label="Show different border highlight"
+      />
+    </>
+  );
+
+  const getBorderHighlight = (row: number, column: number, data: number[][] | undefined) => {
+    data = getValueOrDefault(Array, data);
+    const classes: string[] = [];
+    if (isNotEmpty(data)) {
+      const current = data[row][column];
+      const left = data[row]?.[column - 1];
+      const right = data[row]?.[column + 1];
+      const upper = data[row - 1]?.[column];
+      const lower = data[row + 1]?.[column];
+      if (toNumber(left) > 0 && left !== current) {
+        classes.push('bp-left-border');
+      }
+      if (toNumber(right) > 0 && right !== current) {
+        classes.push('bp-right-border');
+      }
+      if (toNumber(upper) > 0 && upper !== current) {
+        classes.push('bp-top-border');
+      }
+      if (toNumber(lower) > 0 && lower !== current) {
+        classes.push('bp-bottom-border');
+      }
+    }
+    return classes.join(' ');
+  };
+
   const getBorderSplit = (row: number, column: number) => {
     const data = getValueOrDefault(Array, resultBulkPointDef?.data);
-    let classes = 'bg-zero';
-    if (data[row][column - 1] > 0) {
-      classes += ' bp-left-border';
+    const classes = ['bg-zero'];
+    if (data[row]?.[column - 1] > 0) {
+      classes.push('bp-left-border');
     }
     if (data[row - 1]?.[column] > 0) {
-      classes += ' bp-top-border';
+      classes.push('bp-top-border');
     }
-    if (data[row + 1][column] > 0) {
-      classes += ' bp-bottom-border';
+    if (data[row + 1]?.[column] > 0) {
+      classes.push('bp-bottom-border');
     }
-    return classes;
+    return classes.join(' ');
   };
 
   return (
@@ -432,9 +449,12 @@ const CalculatePoint = () => {
                         {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
-                            {[...Array(MAX_IV + 1).keys()].map((iv, index) => (
+                            {[...Array(MAX_IV + 1).keys()].map((_, index) => (
                               <td
-                                className="text-iv"
+                                className={combineClasses(
+                                  'text-iv',
+                                  showDiffBorder ? getBorderHighlight(i, index, resultBreakPointAtk?.data) : ''
+                                )}
                                 style={{
                                   backgroundColor: resultBreakPointAtk
                                     ? computeColor(
@@ -558,9 +578,12 @@ const CalculatePoint = () => {
                         {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
-                            {[...Array(MAX_IV + 1).keys()].map((iv, index) => (
+                            {[...Array(MAX_IV + 1).keys()].map((_, index) => (
                               <td
-                                className="text-iv"
+                                className={combineClasses(
+                                  'text-iv',
+                                  showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataDef) : ''
+                                )}
                                 style={{
                                   backgroundColor: resultBreakPointDef
                                     ? computeColor(
@@ -612,7 +635,10 @@ const CalculatePoint = () => {
                             <td>{level}</td>
                             {[...Array(MAX_IV + 1).keys()].map((_, index) => (
                               <td
-                                className="text-iv"
+                                className={combineClasses(
+                                  'text-iv',
+                                  showDiffBorder ? getBorderHighlight(i, index, resultBreakPointDef?.dataSta) : ''
+                                )}
                                 style={{
                                   backgroundColor: resultBreakPointDef
                                     ? computeColor(
@@ -819,7 +845,13 @@ const CalculatePoint = () => {
                             {resultBulkPointDef ? (
                               <Fragment>
                                 {resultBulkPointDef.data[i].map((value, index) => (
-                                  <td className={combineClasses('text-iv-bulk', value === 0 ? getBorderSplit(i, index) : '')} key={index}>
+                                  <td
+                                    className={combineClasses(
+                                      'text-iv-bulk',
+                                      value === 0 && showDiffBorder ? getBorderSplit(i, index) : ''
+                                    )}
+                                    key={index}
+                                  >
                                     {value}
                                   </td>
                                 ))}

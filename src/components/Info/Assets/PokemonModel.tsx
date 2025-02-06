@@ -83,7 +83,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           <img
                             className="pokemon-sprite-model"
                             alt="pokemon-model"
-                            src={APIService.getPokemonModel(value.default)}
+                            src={APIService.getPokemonModel(value.default, value.pokemonId)}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemonId, value.default);
@@ -102,7 +102,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                             <img
                               className="pokemon-sprite-model"
                               alt="pokemon-model"
-                              src={APIService.getPokemonModel(value.shiny)}
+                              src={APIService.getPokemonModel(value.shiny, value.pokemonId)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemonId, value.shiny);

@@ -27,7 +27,7 @@ const Load = styled.div<Element>`
   background-color: ${(props) => props.bgColor};
   padding: 15px;
   border-radius: 5px;
-  box-shadow: 0 8px 8px 0 rgb(0 0 0 / 20%);
+  box-shadow: 0 8px 8px 0 #00000033;
   display: ${(props) => (props.isShow ? (props.isVertical ? 'inline-block' : 'block') : 'none')};
 `;
 

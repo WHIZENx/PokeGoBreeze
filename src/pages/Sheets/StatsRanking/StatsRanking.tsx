@@ -351,8 +351,8 @@ const StatsRanking = () => {
               formName={select?.name}
               region={select?.region}
               version={select?.version}
-              weight={toNumber(select?.weightkg)}
-              height={toNumber(select?.heightm)}
+              weight={toNumber(select?.weightKg)}
+              height={toNumber(select?.heightM)}
               className="table-stats-ranking"
               isLoadedForms={progress.isLoadedForms}
             />
