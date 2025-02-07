@@ -12,7 +12,7 @@ import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { combineClasses, isNotEmpty, isNotNumber, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { combineClasses, isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
 import { useSnackbar } from 'notistack';
@@ -163,7 +163,7 @@ const StatsTable = () => {
   const onSearchStatsPoke = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (isNotNumber(searchCP)) {
+      if (!isNumber(searchCP)) {
         const result = statsBattle.filter((stats) => toNumber(stats.CP) <= battleLeague);
         setFilterStatsBattle(result);
         return;

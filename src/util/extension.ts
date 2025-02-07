@@ -43,8 +43,6 @@ export const isNull = <T>(value?: T | null) => typeof value !== 'undefined' && v
 
 export const isEmpty = (value?: string | null) => typeof value === 'string' && value === '';
 
-export const isNumber = <T>(value?: T | null) => typeof value === 'number';
-
 export const isNotEmpty = <T>(value: string | T[] | null | undefined) =>
   Array.isArray(value) ? value.length > 0 : !isNullOrUndefined(value) && !isEmpty(value);
 
@@ -54,12 +52,12 @@ export const isNullOrEmpty = (value?: string | null) => isNull(value) || isEmpty
 
 export const isUndefinedOrEmpty = (value?: string | null) => isUndefined(value) || isEmpty(value);
 
-export const isNotNumber = <T>(value: T | null | undefined) => {
-  if (Array.isArray(value) || isNumber(value)) {
+export const isNumber = <T>(value: T | null | undefined) => {
+  if (Array.isArray(value)) {
     return false;
   }
   const result = getValueOrDefault(String, value?.toString());
-  return isEmpty(result) || isNaN(Number(result));
+  return !isEmpty(result) && !isNaN(Number(result));
 };
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>

@@ -48,7 +48,7 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
-  isNotNumber,
+  isNumber,
   isNullOrUndefined,
   isUndefined,
   toNumber,
@@ -196,7 +196,7 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
   if (isNullOrUndefined(value)) {
     return value;
   }
-  const date = Moment(new Date(isNotNumber(value) ? value : toNumber(value)));
+  const date = Moment(new Date(isNumber(value) ? toNumber(value) : value));
   return notFull ? date.format('D MMMM YYYY') : date.format('HH:mm D MMMM YYYY');
 };
 

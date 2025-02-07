@@ -83,7 +83,7 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
-  isNotNumber,
+  isNumber,
   isNullOrUndefined,
   toNumber,
   UniqValueInArray,
@@ -1254,7 +1254,7 @@ export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IA
 
 const convertMoveName = (combat: ICombat[], moves: string[] | undefined) => {
   return moves?.map((move) => {
-    if (!isNotNumber(move)) {
+    if (isNumber(move)) {
       const id = toNumber(move);
       const result = combat.find((item) => item.id === id);
       if (result) {
@@ -1341,7 +1341,7 @@ const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
         .replace(/\.[^.]*$/, '')
         .replace(/^PGO_MCS_/, '');
       const [firstText] = srcText.split('_');
-      if (!isNotNumber(firstText) && !itemSettings.globalEventTicket.titleImageUrl) {
+      if (isNumber(firstText) && !itemSettings.globalEventTicket.titleImageUrl) {
         const descKey = itemSettings.globalEventTicket.itemBagDescriptionKey.split('_');
         return descKey[descKey.length - 1]?.split(/(?=[A-Z])/).join(' ');
       }
