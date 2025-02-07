@@ -104,7 +104,7 @@ export class Delay implements IDelay {
   }
 }
 
-interface Specific {
+export interface Specific {
   FDmgEnemy: number;
   CDmgEnemy: number;
 }

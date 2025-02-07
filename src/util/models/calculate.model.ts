@@ -434,3 +434,35 @@ export class PredictCPCalculate implements IPredictCPCalculate {
     this.result = result;
   }
 }
+
+export interface ICalculateDPS {
+  fastDamage: number;
+  chargeDamage: number;
+  fastDuration: number;
+  fastDelay?: number;
+  chargeDuration: number;
+  chargeDelay?: number;
+  fastEnergy: number;
+  chargeDamageWindowStart: number;
+  chargeEnergy: number;
+  y: number;
+  hp?: number;
+}
+
+export class CalculateDPS implements ICalculateDPS {
+  fastDamage = 0;
+  chargeDamage = 0;
+  fastDuration = 0;
+  fastDelay?: number;
+  chargeDuration = 0;
+  chargeDelay?: number;
+  fastEnergy = 0;
+  chargeDamageWindowStart = 0;
+  chargeEnergy = 0;
+  y = 0;
+  hp?: number;
+
+  constructor({ ...props }: ICalculateDPS) {
+    Object.assign(this, props);
+  }
+}
