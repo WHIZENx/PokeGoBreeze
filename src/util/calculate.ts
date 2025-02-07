@@ -24,7 +24,7 @@ import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import data from '../data/cp_multiplier.json';
 import { MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { Delay, IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
+import { Delay, IOptionOtherDPS, OptionOtherDPS, Specific } from '../store/models/options.model';
 import { findStabType } from './compute';
 import {
   CP_DIFF_RATIO,
@@ -41,6 +41,7 @@ import {
   DEFAULT_WEATHER_BOOSTS,
   DODGE_REDUCE,
   FORM_MEGA,
+  MAX_ENERGY,
   MAX_IV,
   MAX_LEVEL,
   MIN_CP,
@@ -71,6 +72,8 @@ import {
   PredictStatsModel,
   BattleLeague,
   IBattleCalculate,
+  ICalculateDPS,
+  CalculateDPS,
 } from './models/calculate.model';
 import {
   IPokemonQueryCounter,
@@ -685,6 +688,38 @@ export const getBarCharge = (energy: number, isRaid = false) => {
   }
 };
 
+const calculateDPS = (data: ICalculateDPS, options: IOptions | undefined, specific?: Specific) => {
+  const fastDPS = data.fastDamage / toNumber(data.fastDuration + toNumber(data.fastDelay), 1);
+  const chargeDPS = data.chargeDamage / toNumber(data.chargeDuration + toNumber(data.chargeDelay), 1);
+
+  const chargeEnergy = data.chargeEnergy === MAX_ENERGY(options) ? 0.5 * data.fastEnergy + 0.5 * data.y * data.chargeDamageWindowStart : 0;
+  const fastEnergyPerSec = data.fastEnergy / toNumber(data.fastDuration + toNumber(data.fastDelay), 1);
+  const chargeEnergyPerSec = (data.chargeEnergy + chargeEnergy) / toNumber(data.chargeDuration + toNumber(data.chargeDelay), 1);
+
+  let x = 0.5 * data.chargeEnergy + 0.5 * data.fastEnergy;
+  if (specific) {
+    const bar = getBarCharge(data.chargeEnergy, true);
+    const λ = 3 / toNumber(bar, 1);
+    x += 0.5 * λ * specific.FDmgEnemy + specific.CDmgEnemy * λ + 1;
+  }
+
+  const baseDPS = (fastDPS * chargeEnergyPerSec + chargeDPS * fastEnergyPerSec) / toNumber(chargeEnergyPerSec + fastEnergyPerSec, 1);
+
+  let DPS = 0;
+  if (fastDPS > chargeDPS) {
+    DPS = baseDPS;
+  } else {
+    DPS = Math.max(
+      0,
+      baseDPS +
+        ((chargeDPS - fastDPS) / toNumber(chargeEnergyPerSec + fastEnergyPerSec, 1)) *
+          (DEFAULT_ENERGY_PER_HP_LOST - x / toNumber(data.hp, 1)) *
+          data.y
+    );
+  }
+  return Math.max(fastDPS, DPS);
+};
+
 export const calculateAvgDPS = (
   globalOptions: IOptions | undefined,
   typeEff: ITypeEff | undefined,
@@ -756,32 +791,23 @@ export const calculateAvgDPS = (
     y = 900 / (def * defBonus);
   }
 
-  const fDelay = toNumber(options?.delay?.fTime);
-  const cDelay = toNumber(options?.delay?.cTime);
-
-  const FDPS = FDmg / (FDur + fDelay);
-  const CDPS = CDmg / (CDur + cDelay);
-
-  const CEPSM = CE === 100 ? 0.5 * FE + 0.5 * y * CDWS : 0;
-  const FEPS = FE / (FDur + fDelay);
-  const CEPS = (CE + CEPSM) / (CDur + cDelay);
-
-  let x = 0.5 * CE + 0.5 * FE;
-  if (options?.specific) {
-    const bar = getBarCharge(CE, true);
-    const λ = 3 / bar;
-    x += 0.5 * λ * options.specific.FDmgEnemy + options.specific.CDmgEnemy * λ + 1;
-  }
-
-  const DPS0 = (FDPS * CEPS + CDPS * FEPS) / (CEPS + FEPS);
-
-  let DPS;
-  if (FDPS > CDPS) {
-    DPS = DPS0;
-  } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / toNumber(hp, 1)) * y);
-  }
-  return Math.max(FDPS, DPS);
+  return calculateDPS(
+    new CalculateDPS({
+      fastDamage: FDmg,
+      chargeDamage: CDmg,
+      fastDuration: FDur,
+      fastDelay: options?.delay?.fTime,
+      chargeDuration: CDur,
+      chargeDelay: options?.delay?.cTime,
+      fastEnergy: FE,
+      chargeEnergy: CE,
+      chargeDamageWindowStart: CDWS,
+      y,
+      hp,
+    }),
+    globalOptions,
+    options?.specific
+  );
 };
 
 export const calculateTDO = (
@@ -896,24 +922,20 @@ export const calculateBattleDPS = (
   const FDmg = Math.floor((FDmgBase * toNumber(attacker.atk) * FTypeEff) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
   const CDmg = Math.floor((CDmgBase * toNumber(attacker.atk) * CTypeEff) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
 
-  const FDPS = FDmg / FDur;
-  const CDPS = CDmg / CDur;
-
-  const CEPSM = CE === 100 ? 0.5 * FE + 0.5 * DPSDef * CDWS : 0;
-  const FEPS = FE / FDur;
-  const CEPS = (CE + CEPSM) / CDur;
-
-  const x = 0.5 * CE + 0.5 * FE;
-
-  const DPS0 = (FDPS * CEPS + CDPS * FEPS) / (CEPS + FEPS);
-
-  let DPS;
-  if (FDPS > CDPS) {
-    DPS = DPS0;
-  } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / toNumber(attacker.hp, 1)) * DPSDef);
-  }
-  DPS = Math.max(FDPS, DPS);
+  const DPS = calculateDPS(
+    new CalculateDPS({
+      fastDamage: FDmg,
+      chargeDamage: CDmg,
+      fastDuration: FDur,
+      chargeDuration: CDur,
+      fastEnergy: FE,
+      chargeEnergy: CE,
+      chargeDamageWindowStart: CDWS,
+      y: DPSDef,
+      hp: attacker?.hp,
+    }),
+    globalOptions
+  );
 
   let DPSSec = 0;
   if (attacker.isDoubleCharge) {
@@ -939,26 +961,22 @@ export const calculateBattleDPS = (
     const CTypeEffSec = getTypeEffective(typeEff, CTypeSec, defender.types);
 
     const CDmgSec = Math.floor((CDmgBaseSec * toNumber(attacker.atk) * CTypeEffSec) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
-    const CDPSSec = CDmgSec / CDurSec;
-
-    const CEPSMSec = CESec === 100 ? 0.5 * FE + 0.5 * DPSDef * CDWSSec : 0;
-    const CEPSSec = (CESec + CEPSMSec) / CDurSec;
-
-    const xSec = 0.5 * CESec + 0.5 * FE;
-
-    const DPS0Sec = (FDPS * CEPSSec + CDPSSec * FEPS) / (CEPSSec + FEPS);
-
-    if (FDPS > CDPSSec) {
-      DPSSec = DPS0Sec;
-    } else {
-      DPSSec = Math.max(
-        0,
-        DPS0Sec + ((CDPSSec - FDPS) / (CEPSSec + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - xSec / toNumber(attacker.hp, 1)) * DPSDef
-      );
-    }
-    DPSSec = Math.max(FDPS, DPSSec);
+    DPSSec = calculateDPS(
+      new CalculateDPS({
+        fastDamage: FDmg,
+        chargeDamage: CDmgSec,
+        fastDuration: FDur,
+        chargeDuration: CDurSec,
+        fastEnergy: FE,
+        chargeEnergy: CESec,
+        chargeDamageWindowStart: CDWSSec,
+        y: DPSDef,
+        hp: attacker?.hp,
+      }),
+      globalOptions
+    );
   }
-  return Math.max(FDPS, DPS, DPSSec);
+  return Math.max(DPS, DPSSec);
 };
 
 export const TimeToKill = (hp: number, dpsDef: number) => hp / dpsDef;

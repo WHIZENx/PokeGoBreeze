@@ -40,6 +40,7 @@ import {
   isEqual,
   isInclude,
   isNotEmpty,
+  isNumber,
   toNumber,
 } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
@@ -154,6 +155,8 @@ class Filter implements IFilter {
   }
 }
 
+const defaultPerPages = 25;
+
 const StatsRanking = () => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   useChangeTitle('Stats Ranking');
@@ -218,6 +221,9 @@ const StatsRanking = () => {
 
   const sortRanking = (pokemon: IPokemonStatsRanking[], id: ColumnType) => {
     const sortBy = setSortBy(id);
+    const statsType = getStatsType(id);
+    searchParams.set(Params.StatsType, statsType.toString());
+    setSearchParams(searchParams);
     return pokemon
       .sort((a, b) => setSortedPokemonRanking(a, b, sortBy))
       .map((data) => {
@@ -240,6 +246,20 @@ const StatsRanking = () => {
       idSort = ColumnType.Sta;
     }
     return idSort;
+  };
+
+  const getStatsType = (id: ColumnType) => {
+    switch (id) {
+      case ColumnType.Atk:
+        return TypeAction.Atk;
+      case ColumnType.Def:
+        return TypeAction.Def;
+      case ColumnType.Sta:
+        return TypeAction.Sta;
+      case ColumnType.Prod:
+      default:
+        return TypeAction.Prod;
+    }
   };
 
   const [page, setPage] = useState(1);
@@ -270,17 +290,19 @@ const StatsRanking = () => {
   }, [select, pokemonList]);
 
   useEffect(() => {
-    const id = toNumber(searchParams.get(Params.Id));
-    if (!isNaN(id) && isNotEmpty(pokemonFilter)) {
-      const form = searchParams.get(Params.Form)?.replaceAll('_', '-');
-      const index = pokemonFilter.findIndex(
-        (row) => row.num === id && isEqual(row.forme, form || FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
-      );
+    const paramId = searchParams.get(Params.Id);
+    if (isNumber(paramId) && isNotEmpty(pokemonFilter)) {
+      const id = toNumber(paramId);
+      const form = getValueOrDefault(String, searchParams.get(Params.Form), FORM_NORMAL).replaceAll('-', '_');
+      const index = pokemonFilter.findIndex((row) => row.num === id && isEqual(row.forme, form, EqualMode.IgnoreCaseSensitive));
       if (index > -1) {
         const result = pokemonFilter[index];
-        setPage(Math.ceil((index + 1) / 25));
+        setPage(Math.ceil((index + 1) / defaultPerPages));
         setSelect(result);
         setSortId(getSortId());
+        searchParams.delete(Params.Id);
+        searchParams.delete(Params.Form);
+        setSearchParams(searchParams);
       }
     }
   }, [searchParams, pokemonFilter]);
@@ -288,7 +310,11 @@ const StatsRanking = () => {
   const setFilterParams = (select: IPokemonStatsRanking) => {
     searchParams.set(Params.Id, select.num.toString());
     const form = select.forme?.replace(FORM_NORMAL, '').toLowerCase().replaceAll('_', '-');
-    searchParams.set(Params.Form, getValueOrDefault(String, form));
+    if (form) {
+      searchParams.set(Params.Form, form);
+    } else {
+      searchParams.delete(Params.Form);
+    }
     setSearchParams(searchParams);
   };
 
@@ -427,16 +453,17 @@ const StatsRanking = () => {
           }
         }}
         onSort={(rows) => {
-          if (sortId !== rows.id) {
-            setPokemonFilter(sortRanking(pokemonFilter, toNumber(rows.id)));
-            setSortId(toNumber(rows.id));
+          const rowsId = toNumber(rows.id);
+          if (sortId !== rowsId) {
+            setPokemonFilter(sortRanking(pokemonFilter, rowsId));
+            setSortId(rowsId);
           }
         }}
         conditionalRowStyles={conditionalRowStyles}
         customStyles={customStyles}
         paginationDefaultPage={page}
-        paginationPerPage={25}
-        paginationRowsPerPageOptions={[25, 50, 100]}
+        paginationPerPage={defaultPerPages}
+        paginationRowsPerPageOptions={Array.from({ length: 3 }, (_, i) => defaultPerPages * Math.max(0, i - 1) + defaultPerPages * (i + 1))}
         progressPending={!isNotEmpty(pokemonList)}
         progressComponent={
           <div style={{ margin: 10 }}>
