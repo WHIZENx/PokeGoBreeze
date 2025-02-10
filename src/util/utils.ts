@@ -612,26 +612,20 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
 
 export const replacePokemonGoForm = (form: string) => form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
 
-export const formIconAssets = (value: IPokemonFormModify, id: number | undefined) =>
-  isInclude(value.form.name, '-totem') ||
-  isInclude(value.form.name, '-hisui') ||
-  isInclude(value.form.name, 'power-construct') ||
-  isInclude(value.form.name, 'own-tempo') ||
-  isInclude(value.form.name, '-meteor') ||
-  value.form.name === 'mewtwo-armor' ||
-  value.form.name === 'arceus-unknown' ||
-  value.form.name === 'dialga-origin' ||
-  value.form.name === 'palkia-origin' ||
-  value.form.name === 'mothim-sandy' ||
-  value.form.name === 'mothim-trash' ||
-  value.form.name === 'basculin-white-striped' ||
-  value.form.name === 'greninja-battle-bond' ||
-  value.form.name === 'urshifu-rapid-strike' ||
-  toNumber(id) >= 899
-    ? APIService.getPokeIconSprite()
-    : isInclude(value.form.name, `-${FORM_SHADOW.toLowerCase()}`) || isInclude(value.form.name, `-${FORM_PURIFIED.toLowerCase()}`)
+export const formIconAssets = (value: IPokemonFormModify) =>
+  isInclude(value.form.name, `-${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) ||
+  isInclude(value.form.name, `-${FORM_PURIFIED}`, IncludeMode.IncludeIgnoreCaseSensitive)
     ? APIService.getPokeIconSprite(value.name)
     : APIService.getPokeIconSprite(value.form.name);
+
+export const convertPokemonAPIDataFormName = (form: string | undefined | null, name: string | undefined | null) => {
+  if (isEqual(name, 'ZACIAN-CROWNED', EqualMode.IgnoreCaseSensitive)) {
+    form += '-SWORD';
+  } else if (isEqual(name, 'ZAMAZENTA-CROWNED', EqualMode.IgnoreCaseSensitive)) {
+    form += '-SHIELD';
+  }
+  return form?.toLowerCase();
+};
 
 // Convert Pokemon from Storage data to GO name
 export const convertPokemonDataName = (text: string | undefined | null, defaultName = '') => {
@@ -729,7 +723,11 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/-Shadow$/, '')
     .replace(/-Purified$/, '')
     .replace(/-Mane$/, '')
-    .replace(/-Wings$/, '');
+    .replace(/-Wings$/, '')
+    .replace(/Crowned-Sword$/, 'Crowned')
+    .replace(/Crowned-Shield$/, 'Crowned')
+    .replace(/^Hero$/, '')
+    .replace(/^Armor$/, '');
 };
 
 export const generatePokemonGoForms = (

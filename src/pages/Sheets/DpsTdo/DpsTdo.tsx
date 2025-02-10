@@ -118,6 +118,15 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   return a - b;
 };
 
+const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+  switch (pokemonType) {
+    case PokemonType.Shadow:
+      return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+    case PokemonType.Purified:
+      return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+  }
+};
+
 const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'ID',
@@ -133,12 +142,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
-        {row.pokemonType === PokemonType.Shadow && (
-          <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-        )}
-        {row.pokemonType === PokemonType.Purified && (
-          <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
-        )}
+        {getPokemonTypeIcon(row.pokemonType, 25)}
         <img
           height={48}
           alt="img-pokemon"

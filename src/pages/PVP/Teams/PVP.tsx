@@ -280,6 +280,15 @@ const TeamPVP = () => {
     return move;
   };
 
+  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+    switch (pokemonType) {
+      case PokemonType.Shadow:
+        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+      case PokemonType.Purified:
+        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+    }
+  };
+
   return (
     <div className="container pvp-container element-bottom">
       {renderLeague()}
@@ -372,12 +381,7 @@ const TeamPVP = () => {
               </Link>
               <div className="d-flex justify-content-center">
                 <span className="position-relative filter-shadow" style={{ width: 96 }}>
-                  {value.pokemonType === PokemonType.Shadow && (
-                    <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                  )}
-                  {value.pokemonType === PokemonType.Purified && (
-                    <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
-                  )}
+                  {getPokemonTypeIcon(value.pokemonType, 48)}
                   <img
                     alt="img-league"
                     className="pokemon-sprite"
@@ -492,12 +496,7 @@ const TeamPVP = () => {
                         <div className="text-center" key={index}>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                              {value.pokemonType === PokemonType.Shadow && (
-                                <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                              )}
-                              {value.pokemonType === PokemonType.Purified && (
-                                <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
-                              )}
+                              {getPokemonTypeIcon(value.pokemonType, 48)}
                               <img
                                 alt="img-league"
                                 className="pokemon-sprite"
@@ -547,12 +546,7 @@ const TeamPVP = () => {
                         </Link>
                         <div className="d-flex justify-content-center">
                           <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                            {value.pokemonType === PokemonType.Shadow && (
-                              <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                            )}
-                            {value.pokemonType === PokemonType.Purified && (
-                              <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
-                            )}
+                            {getPokemonTypeIcon(value.pokemonType, 48)}
                             <img
                               alt="img-league"
                               className="pokemon-sprite"
