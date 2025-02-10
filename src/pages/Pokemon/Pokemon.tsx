@@ -445,7 +445,7 @@ const Pokemon = (props: IPokemonPage) => {
       let form = getValueOrDefault(String, searchParams.get(Params.Form));
       const formType = getValueOrDefault(String, searchParams.get(Params.FormType));
       form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
-      const currentForm = formList
+      let currentForm = formList
         ?.flatMap((item) => item)
         .find((item) => {
           const result = formType
@@ -459,6 +459,11 @@ const Pokemon = (props: IPokemonPage) => {
       let pokemonCurrentData = pokeData.find((item) => isEqual(currentForm?.form.name, item.name));
       if (!pokemonCurrentData) {
         pokemonCurrentData = pokeData.find((item) => item.isDefault);
+        if (!currentForm && pokemonCurrentData) {
+          currentForm = formList
+            ?.flatMap((item) => item)
+            .find((item) => isEqual(item.form.name, pokemonCurrentData?.name, EqualMode.IgnoreCaseSensitive));
+        }
       }
       if (currentForm && pokemonCurrentData) {
         setCurrentForm(currentForm);
