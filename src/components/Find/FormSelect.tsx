@@ -353,7 +353,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                         e.currentTarget.src = APIService.getPokeIconSprite();
                       }}
                       alt="img-icon-form"
-                      src={formIconAssets(value, currentForm.defaultId)}
+                      src={formIconAssets(value)}
                     />
                     <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
                     {toNumber(value.form.id) > 0 && value.form.id === currentForm.defaultId && (

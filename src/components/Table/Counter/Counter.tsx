@@ -112,6 +112,15 @@ const Counter = (props: ICounterComponent) => {
   const [releasedGO, setReleaseGO] = useState(true);
   const [showMega, setShowMega] = useState(false);
 
+  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+    switch (pokemonType) {
+      case PokemonType.Shadow:
+        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+      case PokemonType.Purified:
+        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+    }
+  };
+
   const columns: TableColumnModify<ICounterModel>[] = [
     {
       name: 'Pokémon',
@@ -126,12 +135,7 @@ const Counter = (props: ICounterComponent) => {
                   'position-relative group-pokemon-sprite'
                 )}
               >
-                {row.pokemonType === PokemonType.Shadow && (
-                  <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                )}
-                {row.pokemonType === PokemonType.Purified && (
-                  <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
-                )}
+                {getPokemonTypeIcon(row.pokemonType, 30)}
                 <img
                   className="pokemon-sprite-counter"
                   alt="img-pokemon"
