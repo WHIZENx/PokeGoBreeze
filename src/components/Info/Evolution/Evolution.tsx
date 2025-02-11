@@ -841,7 +841,7 @@ const Evolution = (props: IEvolutionComponent) => {
                 <span className="d-block caption">
                   - <img width={20} height={20} src={getItemSpritePath(ItemName.Incense)} /> : Use Incense.
                 </span>
-                <span className="d-block caption">- Pokemon Battle.</span>
+                <span className="d-block caption">- Pokémon Battle.</span>
               </span>
             </PopoverConfig>
           }

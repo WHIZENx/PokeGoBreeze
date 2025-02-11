@@ -194,10 +194,10 @@ export const getPropertyName = <T extends object>(
   return expression(res);
 };
 
-export const sparseIndexOf = <T>(array: T[], value: T) => {
+export const sparseIndexOf = <T>(array: T[], value: T, defaultOutput = -1) => {
   return toNumber(
     Object.keys(array).find((k) => array[toNumber(k)] === value),
-    -1
+    defaultOutput
   );
 };
 

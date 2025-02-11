@@ -383,7 +383,7 @@ const Pokemon = (props: IPokemonPage) => {
   const checkReleased = (id: number, form: string | undefined, defaultForm: IPokemonFormModify) => {
     if (!form) {
       if (defaultForm) {
-        form = defaultForm.form.formName || defaultForm.defaultName;
+        form = getValueOrDefault(String, defaultForm.form.formName, defaultForm.defaultName);
       } else {
         return false;
       }

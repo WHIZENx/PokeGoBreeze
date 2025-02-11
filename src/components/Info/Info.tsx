@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
 import { IInfoComponent } from '../models/component.model';
-import { isIncludeList, isNotEmpty } from '../../util/extension';
+import { isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import { getMultiplyTypeEffect } from '../../util/utils';
 
@@ -40,7 +40,7 @@ const Info = (props: IInfoComponent) => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= value[type.toUpperCase()] || 1;
+          valueEffective *= toNumber(value[type.toUpperCase()], 1);
         });
         getMultiplyTypeEffect(data, valueEffective, key);
       }

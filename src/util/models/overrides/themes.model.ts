@@ -13,6 +13,7 @@ interface CustomText {
 interface PaletteModify extends Palette {
   constant: Constants;
   background: TypeBackgroundModify;
+  primary: PaletteColorModify;
   secondary: PaletteColorModify;
   customText: CustomText;
 }

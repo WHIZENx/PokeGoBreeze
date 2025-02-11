@@ -627,7 +627,7 @@ export const convertPokemonAPIDataFormName = (form: string | undefined | null, n
   return form?.toLowerCase();
 };
 
-// Convert Pokemon from Storage data to GO name
+// Convert Pokémon from Storage data to GO name
 export const convertPokemonDataName = (text: string | undefined | null, defaultName = '') => {
   if (!text) {
     return defaultName;
@@ -669,7 +669,7 @@ export const convertPokemonDataName = (text: string | undefined | null, defaultN
     .replace(/_A$/, '');
 };
 
-// Convert Pokemon from API data to GO name
+// Convert Pokémon from API data to GO name
 export const convertPokemonAPIDataName = (text: string | undefined | null, defaultName = '') => {
   if (!text) {
     return defaultName;
