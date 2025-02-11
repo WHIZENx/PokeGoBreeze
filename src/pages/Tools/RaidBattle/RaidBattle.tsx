@@ -265,13 +265,14 @@ const RaidBattle = () => {
   };
 
   const setSortedResult = (primary: IPokemonMoveData, secondary: IPokemonMoveData) => {
-    let type = getPropertyName(primary || secondary, (r) => r.dpsAtk);
+    const data = primary || secondary;
+    let type = getPropertyName(data, (r) => r.dpsAtk);
     if (filters.selected.sortBy === SortType.TDO) {
-      type = getPropertyName(primary || secondary, (r) => r.tdoAtk);
+      type = getPropertyName(data, (r) => r.tdoAtk);
     } else if (filters.selected.sortBy === SortType.TTK) {
-      type = getPropertyName(primary || secondary, (r) => r.ttkAtk);
+      type = getPropertyName(data, (r) => r.ttkAtk);
     } else if (filters.selected.sortBy === SortType.TANK) {
-      type = getPropertyName(primary || secondary, (r) => r.ttkDef);
+      type = getPropertyName(data, (r) => r.ttkDef);
     }
     const a = primary as unknown as DynamicObj<SortType>;
     const b = secondary as unknown as DynamicObj<SortType>;

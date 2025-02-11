@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { ILoadGroupComponent } from '../../models/component.model';
 
 import '../../../App.scss';
-import { combineClasses } from '../../../util/extension';
+import { combineClasses, getValueOrDefault } from '../../../util/extension';
 
 interface Element {
   isShow: boolean;
   opacity?: number;
-  bgColor: string;
+  bgColor?: string;
   isVertical?: boolean;
   isHideAttr?: boolean;
 }
@@ -24,7 +24,7 @@ const Load = styled.div<Element>`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
-  background-color: ${(props) => props.bgColor};
+  background-color: ${(props) => getValueOrDefault(String, props.bgColor, 'white')};
   padding: 15px;
   border-radius: 5px;
   box-shadow: 0 8px 8px 0 #00000033;
@@ -50,11 +50,11 @@ const LoadGroup = (props: ILoadGroupComponent) => {
   return (
     <Fragment>
       {props.isHideAttr ? (
-        <LoadHideAttr className={className} bgColor={props.bgColor || 'white'} isShow={props.isShow} isVertical={props.isVertical}>
+        <LoadHideAttr isShow={props.isShow} isVertical={props.isVertical}>
           {ref}
         </LoadHideAttr>
       ) : (
-        <Load className={className} bgColor={props.bgColor || 'white'} isShow={props.isShow} isVertical={props.isVertical}>
+        <Load className={className} bgColor={props.bgColor} isShow={props.isShow} isVertical={props.isVertical}>
           {ref}
         </Load>
       )}

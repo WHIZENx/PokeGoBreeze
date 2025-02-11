@@ -93,6 +93,7 @@ import {
   isIncludeList,
   isNotEmpty,
   isUndefined,
+  sparseIndexOf,
   toFloat,
   toNumber,
   UniqValueInArray,
@@ -122,7 +123,7 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
   const moveType = getValueOrDefault(String, typeMove).toUpperCase();
   typesObj?.forEach((type) => {
     type = getValueOrDefault(String, type).toUpperCase();
-    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[moveType][type] || 1;
+    valueEffective *= toNumber((typeEffective as unknown as DynamicObj<DynamicObj<number>>)[moveType][type], 1);
   });
   return valueEffective;
 };
@@ -216,11 +217,7 @@ export const calBaseSTA = (stats: IStatsPokemon | null | undefined, nerf: boolea
 };
 
 export const sortStatsPokemon = (stats: IArrayStats[]) => {
-  const attackRanking = UniqValueInArray(
-    stats
-      .sort((a, b) => toNumber(a.baseStatsPokeGo?.attack) - toNumber(b.baseStatsPokeGo?.attack))
-      .map((item) => toNumber(item.baseStatsPokeGo?.attack))
-  );
+  const attackRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.attack))).sort((a, b) => a - b);
 
   const minATK = Math.min(...attackRanking);
   const maxATK = Math.max(...attackRanking);
@@ -229,15 +226,11 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
       id: item.id,
       form: item.form,
       attack: toNumber(item.baseStatsPokeGo?.attack),
-      rank: attackRanking.length - attackRanking.indexOf(toNumber(item.baseStatsPokeGo?.attack)),
+      rank: attackRanking.length - sparseIndexOf(attackRanking, item.baseStatsPokeGo?.attack),
     })
   );
 
-  const defenseRanking = UniqValueInArray(
-    stats
-      .sort((a, b) => toNumber(a.baseStatsPokeGo?.defense) - toNumber(b.baseStatsPokeGo?.defense))
-      .map((item) => toNumber(item.baseStatsPokeGo?.defense))
-  );
+  const defenseRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.defense))).sort((a, b) => a - b);
 
   const minDEF = Math.min(...defenseRanking);
   const maxDEF = Math.max(...defenseRanking);
@@ -246,15 +239,11 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
       id: item.id,
       form: item.form,
       defense: toNumber(item.baseStatsPokeGo?.defense),
-      rank: defenseRanking.length - defenseRanking.indexOf(toNumber(item.baseStatsPokeGo?.defense)),
+      rank: defenseRanking.length - sparseIndexOf(defenseRanking, item.baseStatsPokeGo?.defense, 0),
     })
   );
 
-  const staminaRanking = UniqValueInArray(
-    stats
-      .sort((a, b) => toNumber(a.baseStatsPokeGo?.stamina) - toNumber(b.baseStatsPokeGo?.stamina))
-      .map((item) => toNumber(item.baseStatsPokeGo?.stamina))
-  );
+  const staminaRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.stamina))).sort((a, b) => a - b);
 
   const minSTA = Math.min(...staminaRanking);
   const maxSTA = Math.max(...staminaRanking);
@@ -263,7 +252,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
       id: item.id,
       form: item.form,
       stamina: toNumber(item.baseStatsPokeGo?.stamina),
-      rank: staminaRanking.length - staminaRanking.indexOf(toNumber(item.baseStatsPokeGo?.stamina)),
+      rank: staminaRanking.length - sparseIndexOf(staminaRanking, item.baseStatsPokeGo?.stamina, 0),
     })
   );
 
@@ -276,7 +265,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
       id: item.id,
       form: item.form,
       product: item.baseStatsProd,
-      rank: prodRanking.length - prodRanking.indexOf(item.baseStatsProd),
+      rank: prodRanking.length - sparseIndexOf(prodRanking, item.baseStatsProd, 0),
     })
   );
 
@@ -314,7 +303,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) =>
   Math.floor(
-    Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * toNumber(data.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
+    Math.max(MIN_CP, (atk * def ** 0.5 * sta ** 0.5 * toNumber(data.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
   );
 
 export const calculateRaidStat = (stat: number | undefined | null, tier: number) =>
@@ -418,9 +407,9 @@ export const calculateBetweenLevel = (
   atk: number,
   def: number,
   sta: number,
-  IVatk: number,
-  IVdef: number,
-  IVsta: number,
+  IVAtk: number,
+  IVDef: number,
+  IVSta: number,
   fromLV: number,
   toLV: number | undefined,
   pokemonType?: PokemonType
@@ -428,7 +417,7 @@ export const calculateBetweenLevel = (
   toLV = toNumber(toLV) - 0.5;
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
-      CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
+      CP: calculateCP(atk + IVAtk, def + IVDef, sta + IVSta, toLV + 0.5),
       resultBetweenStardust: 0,
       resultBetweenCandy: 0,
       resultBetweenXLCandy: 0,
@@ -458,7 +447,7 @@ export const calculateBetweenLevel = (
     });
 
     const dataList = new BetweenLevelCalculate({
-      CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
+      CP: calculateCP(atk + IVAtk, def + IVDef, sta + IVSta, toLV + 0.5),
       resultBetweenStardust: betweenStardust,
       resultBetweenStardustDiff: betweenStardustDiff,
       resultBetweenCandy: betweenCandy,
@@ -470,11 +459,11 @@ export const calculateBetweenLevel = (
     });
 
     if (pokemonType === PokemonType.Shadow) {
-      const atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Atk));
-      const defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def));
+      const atkStat = calculateStatsBattle(atk, IVAtk, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Atk));
+      const defStat = calculateStatsBattle(def, IVDef, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def));
 
-      const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
-      const defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
+      const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVAtk, toLV + 0.5, true) - atkStat);
+      const defStatDiff = Math.abs(calculateStatsBattle(def, IVDef, toLV + 0.5, true) - defStat);
 
       dataList.atkStat = atkStat;
       dataList.defStat = defStat;
