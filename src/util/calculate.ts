@@ -22,7 +22,7 @@ import {
 } from '../core/models/stats.model';
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
-import data from '../data/cp_multiplier.json';
+import dataCPM from '../data/cp_multiplier.json';
 import { MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import { Delay, IOptionOtherDPS, OptionOtherDPS, Specific } from '../store/models/options.model';
 import { findStabType } from './compute';
@@ -303,7 +303,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) =>
   Math.floor(
-    Math.max(MIN_CP, (atk * def ** 0.5 * sta ** 0.5 * toNumber(data.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
+    Math.max(MIN_CP, (atk * def ** 0.5 * sta ** 0.5 * toNumber(dataCPM.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
   );
 
 export const calculateRaidStat = (stat: number | undefined | null, tier: number) =>
@@ -321,7 +321,7 @@ export const calculateDuelAbility = (dmgOutput: number, tankiness: number) => dm
 export const calculateCatchChance = (baseCaptureRate: number | undefined, level: number, multiplier: number) =>
   1 -
   Math.pow(
-    Math.max(0, 1 - toNumber(baseCaptureRate) / (2 * toNumber(data?.find((data: ICPM) => data.level === level)?.multiplier))),
+    Math.max(0, 1 - toNumber(baseCaptureRate) / (2 * toNumber(dataCPM.find((item: ICPM) => item.level === level)?.multiplier))),
     multiplier
   );
 
@@ -395,7 +395,7 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
 
 export const calculateStatsBattle = (base?: number, iv?: number, level?: number, floor = false, addition = 1) => {
   const result =
-    (toNumber(base) + toNumber(iv)) * toNumber(data.find((item: ICPM) => item.level === toNumber(level))?.multiplier) * addition;
+    (toNumber(base) + toNumber(iv)) * toNumber(dataCPM.find((item: ICPM) => item.level === toNumber(level))?.multiplier) * addition;
   if (floor) {
     return Math.floor(result);
   }
@@ -434,7 +434,7 @@ export const calculateBetweenLevel = (
     let betweenXlCandyDiff = 0;
 
     const typeCost = typeCostPowerUp(pokemonType);
-    data.forEach((ele: CPMData) => {
+    dataCPM.forEach((ele: CPMData) => {
       const result = CPMDetail.mapping(ele);
       if (ele.level >= fromLV && ele.level <= toNumber(toLV)) {
         betweenStardust += Math.ceil(result.stardust * typeCost.stardust);

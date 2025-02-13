@@ -26,8 +26,8 @@ const Background = styled.div<Element>`
 const Loading = (props: ILoadingComponent) => {
   return (
     <Fragment>
-      <Background bgColor={props.bgColor} opacity={props.opacity ?? 0.4} isShow={props.isShow} />
-      <LoadGroup bgColor={props.bgColor} isShow={props.isShow} isVertical={props.isVertical} isHideAttr={false} />
+      <Background {...props} opacity={props.opacity ?? 0.4} />
+      <LoadGroup {...props} isHideAttr={false} />
     </Fragment>
   );
 };

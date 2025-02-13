@@ -230,24 +230,16 @@ const TeamPVP = () => {
   };
 
   const setSortedPokemonPerformers = (primary: IPerformers, secondary: IPerformers) => {
-    const modelColumn = primary || secondary;
-    let sortedColumn = getPropertyName(modelColumn, (o) => o.teamScore) as 'teamScore' | 'individualScore' | 'games';
-    if (sortedBy === SortType.IndividualScore) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.individualScore) as 'individualScore';
-    } else if (sortedBy === SortType.Games) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.games) as 'games';
-    }
+    const sortedColumn = getPropertyName(primary || secondary, (o) =>
+      sortedBy === SortType.IndividualScore ? o.individualScore : sortedBy === SortType.Games ? o.games : o.teamScore
+    );
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
     return sorted === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
   };
 
   const setSortedPokemonTeam = (primary: ITeams, secondary: ITeams) => {
-    const modelColumn = primary || secondary;
-    let sortedColumn = getPropertyName(modelColumn, (o) => o.teamScore) as 'teamScore' | 'games';
-    if (sortedTeamBy === SortType.Games) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.games) as 'games';
-    }
+    const sortedColumn = getPropertyName(primary || secondary, (o) => (sortedBy === SortType.Games ? o.games : o.teamScore));
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
     return sortedTeam === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
