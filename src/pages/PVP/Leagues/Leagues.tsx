@@ -385,7 +385,7 @@ const Leagues = () => {
                   <span className="caption text-black">Premium</span>
                 </Badge>
               </div>
-              {dataStore.leagues.season.rewards.rank[rank].free?.map((value, index) => (
+              {dataStore.leagues.season.rewards.rank[rank].free.map((value, index) => (
                 <Fragment key={index}>
                   <div className="group-rank-league text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
@@ -475,24 +475,24 @@ const Leagues = () => {
                       color="primary"
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
-                      badgeContent={dataStore.leagues.season.rewards.rank[rank].premium?.[index].count}
+                      badgeContent={dataStore.leagues.season.rewards.rank[rank].premium[index].count}
                       max={BattleLeagueCPType.InsMaster}
                       sx={{
                         paddingBottom: `${
-                          dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon ||
-                          dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.ItemLoot
+                          dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
+                          dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
                             ? '0'
                             : '1.5rem'
                         } !important`,
                         minWidth: 64,
                       }}
                     >
-                      {!dataStore.leagues.season.rewards.rank[rank].premium?.[index].type && (
+                      {!dataStore.leagues.season.rewards.rank[rank].premium[index].type && (
                         <Fragment>
                           <CloseIcon fontSize="large" sx={{ color: 'red', height: 82 }} />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -506,7 +506,7 @@ const Leagues = () => {
                             sx={{ fontSize: '1rem', color: 'black' }}
                             onClick={() =>
                               handleShow(
-                                dataStore.leagues.season.rewards.rank[rank].premium?.[index].type,
+                                dataStore.leagues.season.rewards.rank[rank].premium[index].type,
                                 LeagueRewardType.Premium,
                                 value.step
                               )
@@ -514,7 +514,7 @@ const Leagues = () => {
                           />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.ItemLoot && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -528,7 +528,7 @@ const Leagues = () => {
                             sx={{ fontSize: '1rem', color: 'black' }}
                             onClick={() =>
                               handleShow(
-                                dataStore.leagues?.season.rewards.rank[rank].premium?.[index].type,
+                                dataStore.leagues.season.rewards.rank[rank].premium[index].type,
                                 LeagueRewardType.Premium,
                                 value.step
                               )
@@ -536,7 +536,7 @@ const Leagues = () => {
                           />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.RareCandy && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.RareCandy && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -547,7 +547,7 @@ const Leagues = () => {
                           <span className="caption text-black">Rare Candy</span>
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Stardust && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Stardust && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -558,7 +558,7 @@ const Leagues = () => {
                           <span className="caption text-black">Stardust</span>
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.MoveReRoll && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -716,7 +716,11 @@ const Leagues = () => {
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="img-pokemon"
-                        src={getAssetPokeGo(item.id, item.form)}
+                        src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
+                        }}
                       />
                     </span>
                   </div>
@@ -741,7 +745,15 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.form)}
+                            src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = getValidPokemonImgPath(
+                                e.currentTarget.src,
+                                item.id,
+                                getAssetPokeGo(item.id, item.form)
+                              );
+                            }}
                           />
                         </span>
                       </div>

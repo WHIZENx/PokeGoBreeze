@@ -50,11 +50,11 @@ const LoadGroup = (props: ILoadGroupComponent) => {
   return (
     <Fragment>
       {props.isHideAttr ? (
-        <LoadHideAttr isShow={props.isShow} isVertical={props.isVertical}>
+        <LoadHideAttr className={className} {...props}>
           {ref}
         </LoadHideAttr>
       ) : (
-        <Load className={className} bgColor={props.bgColor} isShow={props.isShow} isVertical={props.isVertical}>
+        <Load className={className} {...props}>
           {ref}
         </Load>
       )}

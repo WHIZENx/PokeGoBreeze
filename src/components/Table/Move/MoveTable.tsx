@@ -192,12 +192,10 @@ const TableMove = (props: ITableMoveComponent) => {
   }, [findMove, props.form]);
 
   const renderTable = (table: TableType) => {
-    let tableType = getPropertyName(stateSorted, (o) => o.defensive) as 'defensive' | 'offensive';
-    let max = move.maxDef;
-    if (table === TableType.Offensive) {
-      tableType = getPropertyName(stateSorted, (o) => o.offensive) as 'offensive';
-      max = move.maxOff;
-    }
+    const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
+      table === TableType.Offensive ? o.offensive : o.defensive
+    );
+    const max = table === TableType.Offensive ? move.maxOff : move.maxDef;
     return (
       <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
         <table className="table-info table-moves">
@@ -247,10 +245,9 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const renderBestMovesetTable = (value: IPokemonQueryMove, max: number | undefined, type: TableType) => {
-    let tableType = getPropertyName(stateSorted, (o) => o.defensive) as 'defensive' | 'offensive';
-    if (type === TableType.Offensive) {
-      tableType = getPropertyName(stateSorted, (o) => o.offensive) as 'offensive';
-    }
+    const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
+      type === TableType.Offensive ? o.offensive : o.defensive
+    );
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
@@ -322,13 +319,9 @@ const TableMove = (props: ITableMoveComponent) => {
     if (type !== TypeSorted.Effective && (disableSortFM || disableSortCM)) {
       return;
     }
-    const model = offensive || defensive;
-    let sortedColumn = getPropertyName(model, (o) => o.fast) as 'fast' | 'charged' | 'effective';
-    if (type === TypeSorted.Charge) {
-      sortedColumn = getPropertyName(model, (o) => o.charged) as 'charged';
-    } else if (type === TypeSorted.Effective) {
-      sortedColumn = getPropertyName(model, (o) => o.effective) as 'effective';
-    }
+    const sortedColumn = getPropertyName<SortModel, 'fast' | 'charged' | 'effective'>(offensive || defensive, (o) =>
+      type === TypeSorted.Charge ? o.charged : type === TypeSorted.Effective ? o.effective : o.fast
+    );
     if (table === TableType.Offensive) {
       if (offensive.sortBy === type) {
         const prev = offensive[sortedColumn];
@@ -350,18 +343,15 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const sortFunc = (rowA: IPokemonQueryMove, rowB: IPokemonQueryMove, table: TableType) => {
-    let tableType = getPropertyName(stateSorted, (o) => o.defensive) as 'defensive' | 'offensive';
-    if (table === TableType.Offensive) {
-      tableType = getPropertyName(stateSorted, (o) => o.offensive) as 'offensive';
-    }
+    const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
+      table === TableType.Offensive ? o.offensive : o.defensive
+    );
     const sortedBy = stateSorted[tableType].sortBy;
     const result = stateSorted[tableType] as unknown as DynamicObj<boolean | TypeSorted>;
-    const modelColumn = offensive || defensive;
-    let sortedColumn = getPropertyName(modelColumn, (o) => o.fast) as 'fast' | 'charged' | 'effective';
-    if (sortedBy === TypeSorted.Charge) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.charged) as 'charged';
-    } else if (sortedBy === TypeSorted.Effective) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.effective) as 'effective';
+    const sortedColumn = getPropertyName<SortModel, 'fast' | 'charged' | 'effective'>(offensive || defensive, (o) =>
+      sortedBy === TypeSorted.Charge ? o.charged : sortedBy === TypeSorted.Effective ? o.effective : o.fast
+    );
+    if (sortedBy === TypeSorted.Effective) {
       return result[sortedColumn] ? rowB.eDPS[tableType] - rowA.eDPS[tableType] : rowA.eDPS[tableType] - rowB.eDPS[tableType];
     }
     if (result[sortedColumn]) {
@@ -369,11 +359,9 @@ const TableMove = (props: ITableMoveComponent) => {
       rowA = rowB;
       rowB = tempRowA;
     }
-    const model = rowA || rowB;
-    let combatType = getPropertyName(model, (o) => o.fMove) as 'fMove' | 'cMove';
-    if (sortedBy === TypeSorted.Charge) {
-      combatType = getPropertyName(model, (o) => o.cMove) as 'cMove';
-    }
+    const combatType = getPropertyName<IPokemonQueryMove, 'fMove' | 'cMove'>(rowA || rowB, (o) =>
+      sortedBy === TypeSorted.Charge ? o.cMove : o.fMove
+    );
     const a = rowA[combatType].name.toLowerCase();
     const b = rowB[combatType].name.toLowerCase();
     return a === b ? 0 : a > b ? 1 : -1;

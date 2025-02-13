@@ -288,8 +288,7 @@ const RankingPVP = () => {
   );
 
   const setSortedPokemonBattle = (primary: IPokemonBattleRanking, secondary: IPokemonBattleRanking) => {
-    const modelColumn = primary.data || secondary.data;
-    const sortedColumn = getPropertyName(modelColumn, (o) => o.score) as 'score';
+    const sortedColumn = getPropertyName(primary.data || secondary.data, (o) => o.score);
     const a = primary.data as unknown as DynamicObj<number>;
     const b = secondary.data as unknown as DynamicObj<number>;
     return sorted === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];

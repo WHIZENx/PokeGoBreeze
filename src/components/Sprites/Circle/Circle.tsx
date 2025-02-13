@@ -17,7 +17,7 @@ const Fill = styled.div<Element>`
 `;
 
 const Circle = (props: ICircleComponent) => {
-  return <Fill line={props.line} color={props.color} size={props.size} />;
+  return <Fill {...props} />;
 };
 
 export default Circle;

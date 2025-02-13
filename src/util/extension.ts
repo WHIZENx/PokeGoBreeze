@@ -180,18 +180,18 @@ export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.Ca
 
 // eslint-disable-next-line no-unused-vars
 type DynamicKeyObj<T> = { [Property in keyof T]: string };
-export const getPropertyName = <T extends object>(
+export const getPropertyName = <T extends object, S extends string = ''>(
   obj: T | null | undefined,
   // eslint-disable-next-line no-unused-vars
   expression: (x: DynamicKeyObj<T>) => string
-) => {
-  if (!obj) {
-    return '';
+): S => {
+  if (isNullOrUndefined(obj)) {
+    return '' as S;
   }
   // eslint-disable-next-line no-unused-vars
   const res = {} as DynamicKeyObj<T>;
   Object.keys(obj).map((k) => (res[k as keyof T] = k));
-  return expression(res);
+  return expression(res) as S;
 };
 
 export const sparseIndexOf = <T>(array: T[], value: T, defaultOutput = -1) => {

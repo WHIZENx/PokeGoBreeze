@@ -419,12 +419,9 @@ const DpsTdo = () => {
   };
 
   const filterBestOptions = (result: PokemonSheetData[], best: BestOptionType) => {
-    let bestType = getPropertyName(result?.[0], (r) => r.multiDpsTdo) as 'multiDpsTdo' | 'dps' | 'tdo';
-    if (best === BestOptionType.dps) {
-      bestType = getPropertyName(result?.[0], (r) => r.dps) as 'dps';
-    } else if (best === BestOptionType.tdo) {
-      bestType = getPropertyName(result?.[0], (r) => r.tdo) as 'tdo';
-    }
+    const bestType = getPropertyName<PokemonSheetData, 'multiDpsTdo' | 'dps' | 'tdo'>(result[0], (r) =>
+      best === BestOptionType.dps ? r.dps : best === BestOptionType.tdo ? r.tdo : r.multiDpsTdo
+    );
     const group = result.reduce((result: DynamicObj<PokemonSheetData[]>, obj) => {
       (result[obj.pokemon.name] = getValueOrDefault(Array, result[obj.pokemon.name])).push(obj);
       return result;
@@ -525,7 +522,7 @@ const DpsTdo = () => {
         );
       }
     });
-    if (enableBest) {
+    if (isNotEmpty(result) && enableBest) {
       result = filterBestOptions(result, bestOf);
     }
     setShowSpinner(false);

@@ -4,13 +4,13 @@ import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from 
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
 import DataTable, { ConditionalStyles, TableColumn } from 'react-data-table-component';
-import data from '../../../data/cp_multiplier.json';
+import dataCPM from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
-import { MAX_IV, MIN_CP, MIN_IV } from '../../../util/constants';
+import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import {
   IPredictStatsModel,
   IPredictStatsCalculate,
@@ -295,13 +295,15 @@ const FindTable = () => {
   };
 
   const findMinMax = () => {
-    const dataTable = data.map((item) => {
-      return new FindCP({
-        level: item.level,
-        minCP: calculateCP(statATK, statDEF, statSTA, item.level),
-        maxCP: calculateCP(statATK + MAX_IV, statDEF + MAX_IV, statSTA + MAX_IV, item.level),
+    const dataTable = dataCPM
+      .filter((item) => item.level >= MIN_LEVEL && item.level <= MAX_LEVEL)
+      .map((item) => {
+        return new FindCP({
+          level: item.level,
+          minCP: calculateCP(statATK, statDEF, statSTA, item.level),
+          maxCP: calculateCP(statATK + MAX_IV, statDEF + MAX_IV, statSTA + MAX_IV, item.level),
+        });
       });
-    });
 
     return (
       <DataTable

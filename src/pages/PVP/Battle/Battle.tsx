@@ -1333,10 +1333,7 @@ const Battle = () => {
     // eslint-disable-next-line no-unused-vars
     clearDataPokemon: (removeMove: boolean) => void
   ) => {
-    let pokemonType = getPropertyName(playTimeline, (o) => o.pokemonCurr) as 'pokemonCurr' | 'pokemonObj';
-    if (type === BattleType.Object) {
-      pokemonType = getPropertyName(playTimeline, (o) => o.pokemonObj) as 'pokemonObj';
-    }
+    const pokemonType = getPropertyName(playTimeline, (o) => (type === BattleType.Object ? o.pokemonObj : o.pokemonCurr));
     return (
       <Fragment>
         <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />

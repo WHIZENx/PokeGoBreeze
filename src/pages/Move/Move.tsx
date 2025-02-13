@@ -142,8 +142,8 @@ const Move = (props: IMovePage) => {
         return value;
       }
     });
-    if (isNotEmpty(result)) {
-      return result?.[0];
+    if (result && isNotEmpty(result)) {
+      return result[0];
     }
     return;
   };
