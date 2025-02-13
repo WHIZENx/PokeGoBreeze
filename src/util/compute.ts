@@ -127,22 +127,23 @@ export const computeBgType = (
   const colorsPalette: string[] = [];
   if (typeof types === 'string') {
     const color = getValueOrDefault(String, getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet), defaultBg);
-    return `${color.split(')').at(0)}, ${toNumber(opacity, 1)}`;
+    return `${color.split(')').at(0)}, ${toNumber(opacity, 1)})`;
   } else {
     types?.forEach((type) => {
       const color = getValueOrDefault(String, getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet), defaultBg);
-      colorsPalette.push(`${color.split(')').at(0)}, ${toNumber(opacity, 1)}`);
+      colorsPalette.push(`${color.split(')').at(0)}, ${toNumber(opacity, 1)})`);
     });
   }
   const [priColor, secTempColor] = colorsPalette;
   const secColor = getValueOrDefault(String, secTempColor, priColor);
-  if (pokemonType === PokemonType.Shadow) {
-    return `linear-gradient(to bottom right, ${priColor}, #ca9cec, ${secColor})`;
+  switch (pokemonType) {
+    case PokemonType.Shadow:
+      return `linear-gradient(to bottom right, ${priColor}, #ca9cec, ${secColor})`;
+    case PokemonType.Purified:
+      return `linear-gradient(to bottom right, ${priColor}, white, ${secColor})`;
+    default:
+      return `linear-gradient(to bottom right, ${priColor}, ${secColor})`;
   }
-  if (pokemonType === PokemonType.Purified) {
-    return `linear-gradient(to bottom right, ${priColor}, white, ${secColor})`;
-  }
-  return `linear-gradient(to bottom right, ${priColor}, ${secColor})`;
 };
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
