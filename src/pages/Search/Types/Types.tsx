@@ -316,8 +316,8 @@ const SearchTypes = () => {
               <span className="filter-shadow">{capitalize(currentType)}</span>
             </span>
             <span className="element-top text-white text-shadow">
-              <img height={36} src={getItemSpritePath(ItemName.PokeBall)} />{' '}
-              <b>{`Pokémon: ${result.pokemonList.length} (${
+              <img height={36} src={getItemSpritePath(ItemName.PokeBall)} />
+              <b>{` Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
                 toNumber(allData?.pokemon) > 0 &&
                 Math.round((result.pokemonList.length * 100) / toNumber(allData?.pokemon, 1))
@@ -344,14 +344,14 @@ const SearchTypes = () => {
               </ul>
             </span>
             <span className="element-top text-white text-shadow">
-              <img height={36} src={APIService.getItemSprite('Item_1201')} />{' '}
-              <b>{`Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
+              <img height={36} src={APIService.getItemSprite('Item_1201')} />
+              <b>{` Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
                 (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
-              <img height={36} src={APIService.getItemSprite('Item_1202')} />{' '}
-              <b>{`Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
+              <img height={36} src={APIService.getItemSprite('Item_1202')} />
+              <b>{` Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
                 (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
               )}%)`}</b>
             </span>

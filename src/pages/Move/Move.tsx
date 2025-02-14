@@ -336,8 +336,11 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvePower * 0.2, 2)}</span>
+                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span className="text-success d-inline-block caption">
+                        {' +'}
+                        {toFloatWithPadding(move.pvePower * 0.2, 2)}
+                      </span>
                     </>
                   )}
                 </td>
@@ -374,8 +377,11 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvpPower * 0.2, 2)}</span>
+                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span className="text-success d-inline-block caption">
+                        {' +'}
+                        {toFloatWithPadding(move.pvpPower * 0.2, 2)}
+                      </span>
                     </>
                   )}
                 </td>

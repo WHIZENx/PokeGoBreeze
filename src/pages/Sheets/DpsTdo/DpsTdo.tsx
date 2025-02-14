@@ -180,9 +180,9 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Fast Move',
     selector: (row) => (
       <Link className="d-flex align-items-center" to={`/move/${row.fMove?.id}`} title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}>
-        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove?.type)} />{' '}
+        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove?.type)} />
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.fMove?.name, '_', ' ')}</span>
+          <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
             <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.fMoveType)?.toLowerCase()}-ic`)}>
               {getKeyWithData(MoveType, row.fMoveType)}
@@ -199,9 +199,9 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Charged Move',
     selector: (row) => (
       <Link className="d-flex align-items-center" to={`/move/${row.cMove?.id}`} title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}>
-        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove?.type)} />{' '}
+        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove?.type)} />
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ')}</span>
+          <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
             <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.cMoveType)?.toLowerCase()}-ic`)}>
               {getKeyWithData(MoveType, row.cMoveType)}

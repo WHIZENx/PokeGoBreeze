@@ -1073,7 +1073,7 @@ const Battle = () => {
   ) => {
     e.preventDefault();
     if (!pokemon.pokemonData) {
-      enqueueSnackbar(`Pokémon not found.`, {
+      enqueueSnackbar('Pokémon not found.', {
         variant: VariantType.Error,
       });
       return;
@@ -1198,7 +1198,7 @@ const Battle = () => {
             <h6>
               <b>Stats</b>
             </h6>
-            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | Level:{' '}
+            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | {'Level: '}
             <b>{pokemon.pokemonData?.currentStats?.level ?? MIN_LEVEL}</b>
             <br />
             {'IV: '}
@@ -1681,8 +1681,8 @@ const Battle = () => {
                 <span className="position-relative">
                   <img height={36} alt="atk-left" src={ATK_LOGO} />
                   <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
-                </span>{' '}
-                Battle Simulator
+                </span>
+                {' Battle Simulator'}
               </Fragment>
             )}
           </button>

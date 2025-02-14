@@ -516,7 +516,7 @@ const FindBattle = () => {
                                 </Badge>
                                 <div>
                                   <b>
-                                    #{item.id} {splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}{' '}
+                                    {`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')} `}
                                     {splitAndCapitalize(form?.form.formName, '-', ' ')}
                                   </b>
                                 </div>
@@ -535,8 +535,8 @@ const FindBattle = () => {
                                   {item.battleLeague.little.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />{' '}
-                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />
+                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
                                       </h6>
                                       <li>
                                         Rank: <b>#{item.battleLeague.little.rank}</b>
@@ -544,7 +544,7 @@ const FindBattle = () => {
                                       <li>CP: {item.battleLeague.little.CP}</li>
                                       <li>Level: {item.battleLeague.little.level}</li>
                                       <li>
-                                        Stats Prod (%):{' '}
+                                        {'Stats Prod (%): '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(item.battleLeague.little.ratio)}
@@ -569,15 +569,15 @@ const FindBattle = () => {
                                           alt="img-stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
-                                        />{' '}
-                                        {item.battleLeague.little.resultBetweenStardust}
+                                        />
+                                        {` ${item.battleLeague.little.resultBetweenStardust}`}
                                       </li>
                                     </ul>
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />{' '}
-                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />
+                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
@@ -589,8 +589,8 @@ const FindBattle = () => {
                                   {item.battleLeague.great.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />{' '}
-                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />
+                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
                                       </h6>
                                       <li>
                                         Rank: <b>#{item.battleLeague.great.rank}</b>
@@ -598,7 +598,7 @@ const FindBattle = () => {
                                       <li>CP: {item.battleLeague.great.CP}</li>
                                       <li>Level: {item.battleLeague.great.level}</li>
                                       <li>
-                                        Stats Prod (%):{' '}
+                                        {'Stats Prod (%): '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(item.battleLeague.great.ratio)}
@@ -623,15 +623,15 @@ const FindBattle = () => {
                                           alt="img-stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
-                                        />{' '}
-                                        {item.battleLeague.great.resultBetweenStardust}
+                                        />
+                                        {` ${item.battleLeague.great.resultBetweenStardust}`}
                                       </li>
                                     </ul>
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />{' '}
-                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />
+                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
@@ -643,8 +643,8 @@ const FindBattle = () => {
                                   {item.battleLeague.ultra.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />{' '}
-                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />
+                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
                                       </h6>
                                       <li>
                                         Rank: <b>#{item.battleLeague.ultra.rank}</b>
@@ -652,7 +652,7 @@ const FindBattle = () => {
                                       <li>CP: {item.battleLeague.ultra.CP}</li>
                                       <li>Level: {item.battleLeague.ultra.level}</li>
                                       <li>
-                                        Stats Prod (%):{' '}
+                                        {'Stats Prod (%): '}
                                         <span
                                           style={{ backgroundColor: 'transparent' }}
                                           className={getTextColorRatio(item.battleLeague.ultra.ratio)}
@@ -677,15 +677,15 @@ const FindBattle = () => {
                                           alt="img-stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
-                                        />{' '}
-                                        {item.battleLeague.ultra.resultBetweenStardust}
+                                        />
+                                        {` ${item.battleLeague.ultra.resultBetweenStardust}`}
                                       </li>
                                     </ul>
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />{' '}
-                                        <b>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />
+                                        <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
@@ -697,8 +697,8 @@ const FindBattle = () => {
                                   {item.battleLeague.master.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />{' '}
-                                        <b>{getPokemonBattleLeagueName()}</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />
+                                        <b>{` ${getPokemonBattleLeagueName()}`}</b>
                                       </h6>
                                       <li>
                                         Rank: <b>#{item.battleLeague.master.rank}</b>
@@ -731,15 +731,15 @@ const FindBattle = () => {
                                           alt="img-stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
-                                        />{' '}
-                                        {item.battleLeague.master.resultBetweenStardust}
+                                        />
+                                        {` ${item.battleLeague.master.resultBetweenStardust}`}
                                       </li>
                                     </ul>
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />{' '}
-                                        <b>{getPokemonBattleLeagueName()}</b>
+                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />
+                                        <b>{` ${getPokemonBattleLeagueName()}`}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge

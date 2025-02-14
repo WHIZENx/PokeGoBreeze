@@ -316,8 +316,8 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-purified" src={APIService.getPokePurified()} />{' '}
-                    {getKeyWithData(PokemonType, PokemonType.Purified)}
+                    <img height={32} alt="img-purified" src={APIService.getPokePurified()} />
+                    {` ${getKeyWithData(PokemonType, PokemonType.Purified)}`}
                   </span>
                 }
               />
@@ -501,8 +501,7 @@ const Calculate = () => {
                                 {statData.atkStat}
                                 {toNumber(statData.atkStatDiff) > 0 && (
                                   <span className="text-success" style={{ fontWeight: 500 }}>
-                                    {' '}
-                                    (+{statData.atkStatDiff})
+                                    {` (+${statData.atkStatDiff})`}
                                   </span>
                                 )}
                               </Fragment>
@@ -526,8 +525,7 @@ const Calculate = () => {
                                 {statData.defStat}
                                 {toNumber(statData.defStatDiff) > 0 && (
                                   <span className="text-danger" style={{ fontWeight: 500 }}>
-                                    {' '}
-                                    (-{statData?.defStatDiff})
+                                    {` (-${statData.defStatDiff})`}
                                   </span>
                                 )}
                               </Fragment>

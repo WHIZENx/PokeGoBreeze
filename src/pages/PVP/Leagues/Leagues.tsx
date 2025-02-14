@@ -326,8 +326,11 @@ const Leagues = () => {
       <div className="row" style={{ rowGap: 10, margin: 0 }}>
         <div className="col-md-8 d-flex justify-content-start align-items-center" style={{ padding: 0 }}>
           <span style={{ fontWeight: 500 }}>
-            <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>{' '}
-            <span>- {getTime(dataStore.leagues.season.timestamp.end)}</span>
+            <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>
+            <span>
+              {' - '}
+              {getTime(dataStore.leagues.season.timestamp.end)}
+            </span>
           </span>
         </div>
         <div className="col-md-4 d-flex justify-content-end" style={{ padding: 0 }}>

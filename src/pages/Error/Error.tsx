@@ -32,7 +32,7 @@ const Error = () => {
           </h1>
           <h1>Page Not Found</h1>
           <span>
-            It looks like nothing was found at{' '}
+            {'It looks like nothing was found at '}
             <p style={{ color: 'yellow' }}>
               {location.state?.url && location.state?.id
                 ? `${location.state.url}${location.state.id && `/${location.state.id}`}`

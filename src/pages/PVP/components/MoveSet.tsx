@@ -94,12 +94,12 @@ const MoveSet = (props: MoveSetComponent) => {
               - <SpokeIcon className="filter-shadow" sx={{ color: 'lightskyblue' }} /> {ArcheType.Multipurpose}
             </span>
             <span className="d-block caption">
-              -{' '}
+              {'- '}
               <span className="position-relative filter-shadow" style={{ marginRight: 5 }}>
                 <PersonIcon sx={{ color: 'black' }} />
                 <KeyboardDoubleArrowDownIcon fontSize="small" className="position-absolute" sx={{ color: 'red', left: '50%', bottom: 0 }} />
-              </span>{' '}
-              {ArcheType.SelfDebuff}
+              </span>
+              {` ${ArcheType.SelfDebuff}`}
             </span>
           </span>
         </PopoverConfig>
