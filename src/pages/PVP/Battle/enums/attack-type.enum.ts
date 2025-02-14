@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 export enum AttackType {
-  Block,
+  Block = 1,
   Fast,
   Spin,
   Prepare,

@@ -53,7 +53,16 @@ import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
 import { IPokemonPage } from '../models/page.model';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
+import {
+  combineClasses,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  isNullOrUndefined,
+  isUndefined,
+  toNumber,
+} from '../../util/extension';
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 import { VariantType } from '../../enums/type.enum';
@@ -123,13 +132,17 @@ const Pokemon = (props: IPokemonPage) => {
     return id;
   };
 
-  const convertPokemonForm = (formName: string | undefined | null, formType: string) => {
-    if (!isInclude(formName, formType, IncludeMode.IncludeIgnoreCaseSensitive)) {
-      return;
+  const convertPokemonForm = (formName: string | undefined | null, formType: string | null | undefined) => {
+    let form = formName;
+    if (formType) {
+      formType = getValueOrDefault(String, formType);
+      if (!isInclude(formName, formType, IncludeMode.IncludeIgnoreCaseSensitive)) {
+        return;
+      }
+      [form] = getValueOrDefault(String, formName?.replaceAll('_', '-').toUpperCase()).split(`-${formType.toUpperCase()}`);
     }
-    const [form] = getValueOrDefault(String, formName?.replaceAll('_', '-').toUpperCase()).split(`-${formType.toUpperCase()}`);
     const result = convertPokemonAPIDataName(form).replace(`_${FORM_STANDARD}`, '').replace(FORM_STANDARD, '').replaceAll('_', '-');
-    return `${result}${result ? '-' : ''}${formType.toUpperCase()}`;
+    return formType ? `${result}${result ? '-' : ''}${formType.toUpperCase()}` : result;
   };
 
   const fetchMap = useCallback(
@@ -224,19 +237,16 @@ const Pokemon = (props: IPokemonPage) => {
       // Set Default Form
       let currentForm: IPokemonFormModify | undefined = new PokemonFormModify();
       let formParams = getValueOrDefault(String, searchParams.get(Params.Form)).toUpperCase().replaceAll('_', '-').toLowerCase();
-      const formTypeParams = getValueOrDefault(String, searchParams.get(Params.FormType)).toLowerCase();
-      formParams += isNotEmpty(formParams) && isNotEmpty(formTypeParams) ? `-${formTypeParams}` : formTypeParams;
+      const formTypeParams = searchParams.get(Params.FormType)?.toLowerCase();
+      if (!isNullOrUndefined(formTypeParams)) {
+        formParams += isNotEmpty(formParams) && isNotEmpty(formTypeParams) ? `-${formTypeParams}` : formTypeParams;
+      }
       const defaultForm = formListResult.flatMap((item) => item).filter((item) => item.form.isDefault);
       if (isNotEmpty(formParams)) {
         const defaultFormSearch = formListResult
           .flatMap((form) => form)
           .find((item) => {
-            const result = formTypeParams
-              ? convertPokemonForm(item.form.formName, formTypeParams)
-              : convertPokemonAPIDataName(item.form.formName)
-                  .replace(`_${FORM_STANDARD}`, '')
-                  .replace(FORM_STANDARD, '')
-                  .replaceAll('_', '-');
+            const result = convertPokemonForm(item.form.formName, formTypeParams);
             return isEqual(result, formParams, EqualMode.IgnoreCaseSensitive);
           });
         if (defaultFormSearch) {
@@ -396,13 +406,10 @@ const Pokemon = (props: IPokemonPage) => {
 
   useEffect(() => {
     const id = toNumber(data?.id);
-    if (currentForm && id > 0) {
-      const released = checkReleased(id, formName, currentForm);
-      setReleased(released);
-
+    if (currentForm && id > 0 && data) {
       const formParams = searchParams.get(Params.Form)?.replaceAll('_', '-');
       setVersion(getValueOrDefault(String, currentForm.form.version));
-      const gen = data?.generation.url?.split('/').at(6);
+      const gen = data.generation.url.split('/').at(6);
       setGeneration(getValueOrDefault(String, gen));
       if (!params.id) {
         setRegion(regionList[toNumber(gen)]);
@@ -437,23 +444,20 @@ const Pokemon = (props: IPokemonPage) => {
     } else {
       clearData();
     }
-  }, [data?.id, props.id, params.id, formName, currentForm]);
+  }, [data, props.id, params.id, currentForm]);
 
   useEffect(() => {
     const id = getPokemonIdByParam();
     if (isNotEmpty(pokeData) && isNotEmpty(formList) && id > 0 && id === toNumber(data?.id)) {
       let form = getValueOrDefault(String, searchParams.get(Params.Form));
-      const formType = getValueOrDefault(String, searchParams.get(Params.FormType));
-      form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
+      const formType = searchParams.get(Params.FormType);
+      if (!isNullOrUndefined(formType)) {
+        form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
+      }
       let currentForm = formList
         ?.flatMap((item) => item)
         .find((item) => {
-          const result = formType
-            ? convertPokemonForm(item.form.formName, formType)
-            : convertPokemonAPIDataName(item.form.formName)
-                .replace(`_${FORM_STANDARD}`, '')
-                .replace(FORM_STANDARD, '')
-                .replaceAll('_', '-');
+          const result = convertPokemonForm(item.form.formName, formType);
           return isEqual(result, form, EqualMode.IgnoreCaseSensitive);
         });
       let pokemonCurrentData = pokeData.find((item) => isEqual(currentForm?.form.name, item.name));
@@ -468,8 +472,12 @@ const Pokemon = (props: IPokemonPage) => {
       if (currentForm && pokemonCurrentData) {
         setCurrentForm(currentForm);
         setCurrentData(pokemonCurrentData);
-        const originForm = splitAndCapitalize(currentForm?.form.formName, '-', '-');
+        const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
         setOriginForm(originForm);
+        setFormName(currentForm.form.name.replace(/-f$/, '-female').replace(/-m$/, '-male'));
+
+        const released = checkReleased(id, currentForm.form.name, currentForm);
+        setReleased(released);
 
         const weight = pokemonCurrentData.weight;
         const height = pokemonCurrentData.height;

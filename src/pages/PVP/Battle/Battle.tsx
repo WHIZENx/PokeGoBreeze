@@ -66,7 +66,17 @@ import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from '
 import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getPropertyName, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
+import {
+  DynamicObj,
+  getPropertyName,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  isUndefined,
+  toFloat,
+  toNumber,
+} from '../../../util/extension';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
@@ -635,10 +645,14 @@ const Battle = () => {
           tapSec = false;
           if (immunePri) {
             player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
-            timelinePri[timer].isDmgImmune = true;
+            const lastTapPos = timelinePri.map((timeline) => timeline.isTap && !isUndefined(timeline.type)).lastIndexOf(true);
+            const lastFastAtkPos = timelinePri.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
+            timelinePri[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
           } else if (immuneSec) {
             player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
-            timelineSec[timer].isDmgImmune = true;
+            const lastTapPos = timelineSec.map((timeline) => timeline.isTap && !isUndefined(timeline.type)).lastIndexOf(true);
+            const lastFastAtkPos = timelineSec.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
+            timelineSec[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
           }
           immunePri = false;
           immuneSec = false;
@@ -1467,7 +1481,7 @@ const Battle = () => {
                     <HpBar
                       text="HP"
                       height={15}
-                      hp={Math.floor(toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.hp))}
+                      hp={Math.floor((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType].hp)}
                       maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statsSTA))}
                     />
                   </Fragment>
