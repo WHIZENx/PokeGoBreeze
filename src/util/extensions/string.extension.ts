@@ -5,6 +5,7 @@ declare global {
     isNull(): boolean;
     isUndefined(): boolean;
     isEqual(value: string): boolean;
+    isEqualWithIgnoreCase(value: string): boolean;
     includesWithIgnoreCase(searchElement: string): boolean;
   }
 }
@@ -23,6 +24,10 @@ String.prototype.isUndefined = function () {
 
 String.prototype.isEqual = function (value: string) {
   return this === value;
+};
+
+String.prototype.isEqualWithIgnoreCase = function (value: string) {
+  return this.toUpperCase() === value.toUpperCase();
 };
 
 String.prototype.includesWithIgnoreCase = function (searchElement: string) {

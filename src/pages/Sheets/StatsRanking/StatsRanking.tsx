@@ -20,7 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './StatsRanking.scss';
 import { FormControlLabel, Checkbox, CircularProgress } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
@@ -44,14 +44,15 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
     name: '',
     selector: (row) => (
-      <Link to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
         <VisibilityIcon className="view-pokemon" fontSize="small" sx={{ color: 'black' }} />
-      </Link>
+      </LinkToTop>
     ),
     width: '55px',
   },

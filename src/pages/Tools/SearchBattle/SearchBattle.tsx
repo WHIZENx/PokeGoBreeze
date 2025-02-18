@@ -13,7 +13,6 @@ import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
 import { Accordion, useAccordionButton } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 
-import { Link } from 'react-router-dom';
 import { marks, PokeGoSlider } from '../../../util/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
@@ -43,6 +42,7 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const FindBattle = () => {
   useChangeTitle('Search Battle Leagues Stats - Tool');
@@ -448,7 +448,7 @@ const FindBattle = () => {
             <div>
               <h4 className="text-decoration-underline">Recommend Battle League</h4>
               {bestInLeague.map((value, index) => (
-                <Link
+                <LinkToTop
                   to={`/pokemon/${value.id}${generateParamForm(value.form)}`}
                   className="d-inline-block contain-poke-best-league border-best-poke"
                   key={index}
@@ -488,7 +488,7 @@ const FindBattle = () => {
                       </span>
                     </div>
                   </div>
-                </Link>
+                </LinkToTop>
               ))}
             </div>
             {evoChain.map((value, index) => (
@@ -507,7 +507,7 @@ const FindBattle = () => {
                         {value.map((item, index) => (
                           <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{ padding: 0 }}>
                             <div className="pokemon-best-league">
-                              <Link
+                              <LinkToTop
                                 to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
                                 title={`#${item.id} ${splitAndCapitalize(item.name, '_', ' ')}`}
                               >
@@ -520,7 +520,7 @@ const FindBattle = () => {
                                     {splitAndCapitalize(form?.form.formName, '-', ' ')}
                                   </b>
                                 </div>
-                              </Link>
+                              </LinkToTop>
                             </div>
                             {toNumber(item.maxCP) < maxCP ? (
                               <div className="text-danger">

@@ -10,7 +10,7 @@ import { IFormSpecialComponent } from '../../models/component.model';
 import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
-import { Link } from 'react-router-dom';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => state.store.data.pokemon);
@@ -128,9 +128,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                         alt="img-pokemon"
                         src={APIService.getTypeSprite(getCombatMove(getQuestEvo(value.name).requireMove)?.type)}
                       />
-                      <Link to={`../move/${getCombatMove(getQuestEvo(value.name).requireMove)?.id}`}>
+                      <LinkToTop to={`../move/${getCombatMove(getQuestEvo(value.name).requireMove)?.id}`}>
                         <b>{splitAndCapitalize(getQuestEvo(value.name).requireMove, '_', ' ')}</b>
-                      </Link>
+                      </LinkToTop>
                     </span>
                   )}
                 </li>

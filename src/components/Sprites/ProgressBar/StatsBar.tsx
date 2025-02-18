@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { IStatsBarComponent } from '../../models/component.model';
 import { combineClasses, getValueOrDefault } from '../../../util/extension';
 import { generateParamForm } from '../../../util/utils';
 import { Params } from '../../../util/constants';
 import { PokemonType } from '../../../enums/type.enum';
+import { useNavigateToTop } from '../../../util/hooks/LinkToTop';
 
 interface Element {
   isRank?: boolean;
@@ -32,17 +32,17 @@ const Bar = styled.div.attrs({
 `;
 
 const StatsBar = (props: IStatsBarComponent) => {
-  const navigate = useNavigate();
+  const navigateToTop = useNavigateToTop();
   return (
     <ComponentBar
       className={combineClasses('progress', props.isDisabled ? '' : 'progress-hover')}
       onClick={() =>
         !props.isDisabled &&
-        navigate(
-          `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, PokemonType.None, '&')}&${Params.StatsType}=${
+        navigateToTop({
+          to: `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, PokemonType.None, '&')}&${Params.StatsType}=${
             props.statType
-          }`
-        )
+          }`,
+        })
       }
     >
       <BoxText className="box-text stats-text">

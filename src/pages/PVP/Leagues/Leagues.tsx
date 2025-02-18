@@ -7,7 +7,6 @@ import APIService from '../../../services/API.service';
 
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   getTime,
   splitAndCapitalize,
@@ -35,6 +34,7 @@ import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -250,7 +250,7 @@ const Leagues = () => {
               <li style={{ fontWeight: 500 }}>
                 <h6 className="title-leagues text-success">White List</h6>
                 {league.conditions.whiteList.map((item, index) => (
-                  <Link
+                  <LinkToTop
                     className="img-link text-center"
                     key={index}
                     to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -274,7 +274,7 @@ const Leagues = () => {
                         item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
                       }`}
                     </span>
-                  </Link>
+                  </LinkToTop>
                 ))}
               </li>
             )}
@@ -282,7 +282,7 @@ const Leagues = () => {
               <li style={{ fontWeight: 500 }}>
                 <h6 className="title-leagues text-danger">Ban List</h6>
                 {league.conditions.banned.map((item, index) => (
-                  <Link
+                  <LinkToTop
                     className="img-link text-center"
                     key={index}
                     to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -306,7 +306,7 @@ const Leagues = () => {
                         item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
                       }`}
                     </span>
-                  </Link>
+                  </LinkToTop>
                 ))}
               </li>
             )}
@@ -708,7 +708,7 @@ const Leagues = () => {
             {showData.data
               .filter((item) => !item.guaranteedLimited)
               .map((item, index) => (
-                <Link
+                <LinkToTop
                   className="img-link text-center"
                   key={index}
                   to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -728,7 +728,7 @@ const Leagues = () => {
                     </span>
                   </div>
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
-                </Link>
+                </LinkToTop>
               ))}
             {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
               <Fragment>
@@ -737,7 +737,7 @@ const Leagues = () => {
                 {showData.data
                   .filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)
                   .map((item, index) => (
-                    <Link
+                    <LinkToTop
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -761,7 +761,7 @@ const Leagues = () => {
                         </span>
                       </div>
                       <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
-                    </Link>
+                    </LinkToTop>
                   ))}
               </Fragment>
             )}

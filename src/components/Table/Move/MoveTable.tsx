@@ -4,7 +4,6 @@ import { convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyWithData, splitAn
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
-import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
 import { Tab, Tabs } from 'react-bootstrap';
@@ -33,6 +32,7 @@ import {
 import { EqualMode } from '../../../util/enums/string.enum';
 import { TableType, TypeSorted } from './enums/table-type.enum';
 import { MoveType, PokemonType, TypeAction } from '../../../enums/type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -248,10 +248,11 @@ const TableMove = (props: ITableMoveComponent) => {
     const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
       type === TableType.Offensive ? o.offensive : o.defensive
     );
+    const ratio = toFloatWithPadding((value.eDPS[tableType] * 100) / toNumber(max, 1), 2);
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          <Link to={`../move/${value.fMove.id}`} className="d-block">
+          <LinkToTop to={`../move/${value.fMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.fMove.type)} />
             </div>
@@ -265,10 +266,10 @@ const TableMove = (props: ITableMoveComponent) => {
                 </span>
               )}
             </span>
-          </Link>
+          </LinkToTop>
         </td>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          <Link to={`../move/${value.cMove.id}`} className="d-block">
+          <LinkToTop to={`../move/${value.cMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.cMove.type)} />
             </div>
@@ -282,10 +283,10 @@ const TableMove = (props: ITableMoveComponent) => {
                 </span>
               )}
             </span>
-          </Link>
+          </LinkToTop>
         </td>
         <td className="text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          {toFloatWithPadding((value.eDPS[tableType] * 100) / toNumber(max, 1), 2)}
+          {toNumber(ratio) >= 100 ? 100 : ratio}
         </td>
       </tr>
     );
@@ -296,7 +297,7 @@ const TableMove = (props: ITableMoveComponent) => {
       {data.map((value, index) => (
         <tr key={index}>
           <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-            <Link to={`../move/${value.id}`} className="d-block">
+            <LinkToTop to={`../move/${value.id}`} className="d-block">
               <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                 <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.type)} />
               </div>
@@ -308,7 +309,7 @@ const TableMove = (props: ITableMoveComponent) => {
                   </span>
                 )}
               </span>
-            </Link>
+            </LinkToTop>
           </td>
         </tr>
       ))}

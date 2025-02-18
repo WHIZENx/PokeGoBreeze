@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link, Location, useLocation } from 'react-router-dom';
+import { Location, useLocation } from 'react-router-dom';
 
 import './Error.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import { SpinnerState } from '../../store/models/state.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
 import { LocationState } from '../../core/models/router.model';
+import { LinkToTop } from '../../util/hooks/LinkToTop';
 
 const Error = () => {
   const dispatch = useDispatch();
@@ -41,9 +42,9 @@ const Error = () => {
           </span>
           <span>Maybe try one of the links in the menu or press Back to Home to go to the home page.</span>
           <div style={{ marginTop: 15 }}>
-            <Link className="btn btn-danger" to="/">
+            <LinkToTop className="btn btn-danger" to="/">
               Back to Home
-            </Link>
+            </LinkToTop>
           </div>
         </div>
       </div>

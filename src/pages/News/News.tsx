@@ -20,8 +20,8 @@ import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/informa
 import { FORM_NORMAL } from '../../util/constants';
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { Link } from 'react-router-dom';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
+import { LinkToTop } from '../../util/hooks/LinkToTop';
 
 const News = () => {
   useChangeTitle('News');
@@ -255,12 +255,12 @@ const News = () => {
                                 {value.rewardNews.map((value, i) => (
                                   <div key={i} className="d-inline-block" style={{ margin: '0 10px' }}>
                                     {value.type === TicketRewardType.Pokemon && value.pokemon ? (
-                                      <Link
+                                      <LinkToTop
                                         className="select-evo"
                                         to={`/pokemon/${value.pokemon.id}${generateParamForm(value.pokemon.form)}`}
                                       >
                                         {renderReward(value)}
-                                      </Link>
+                                      </LinkToTop>
                                     ) : (
                                       renderReward(value)
                                     )}

@@ -7,7 +7,6 @@ import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
 import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
-import { Link } from 'react-router-dom';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { CircularProgress, FormControlLabel, Switch, useTheme } from '@mui/material';
 import { PokemonType, TypeMove } from '../../../enums/type.enum';
@@ -26,6 +25,7 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -43,7 +43,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
   {
     name: 'Pokémon Name',
     selector: (row) => (
-      <Link to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
         <img
           height={48}
           alt="img-pokemon"
@@ -55,7 +55,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           }}
         />
         {splitAndCapitalize(row.name, '-', ' ')}
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '300px',
@@ -107,9 +107,9 @@ const columnMove: TableColumnModify<ICombat>[] = [
   {
     name: 'Move Name',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={`/move/${row.id}`} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
+      <LinkToTop className="d-flex align-items-center" to={`/move/${row.id}`} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '300px',

@@ -86,7 +86,7 @@ const Move = (props: IMoveComponent) => {
                 {resultMove && (
                   <Fragment>
                     {resultMove
-                      .filter((value) => props.isSelectDefault || (!props.isSelectDefault && !isEqual(value.name, currentMove?.name)))
+                      .filter((value) => props.isSelectDefault || !isEqual(value.name, currentMove?.name))
                       .map((value, index) => (
                         <Fragment key={index}>
                           {!props.type && index === 0 && (

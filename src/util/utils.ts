@@ -381,10 +381,10 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
   for (let value of moveSet) {
     value = replaceTempMovePvpName(value);
     const m = value.split('_');
-    if (m.length === result?.length) {
+    if (result && isNotEmpty(m) && m.length === result.length) {
       let count = 0;
       for (let i = 0; i < result.length; i++) {
-        if (isInclude(capitalize(m[i].toLowerCase()), result[i])) {
+        if (isInclude(capitalize(m[i]), result[i])) {
           count++;
         }
       }
@@ -405,10 +405,10 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
           .every((m) => isInclude(value.toLowerCase(), m))
       ) {
         const m = value.split('_');
-        if (result && m.length === result.length) {
+        if (result && isNotEmpty(m) && m.length === result.length) {
           let count = 0;
           for (let i = 0; i < result.length; i++) {
-            if (m[i].at(0) === result[i].at(0)) {
+            if (isEqual(m[i][0], result[i][0])) {
               count++;
             }
           }

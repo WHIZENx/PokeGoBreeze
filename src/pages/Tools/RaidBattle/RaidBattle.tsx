@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import SelectMove from '../../../components/Input/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
-import { Link } from 'react-router-dom';
 
 import {
   addSelectMovesByType,
@@ -91,6 +90,7 @@ import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import PopoverConfig from '../../../components/Popover/PopoverConfig';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -1219,7 +1219,7 @@ const RaidBattle = () => {
   const renderPokemon = (value: IPokemonMoveData) => {
     const assets = findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme);
     return (
-      <Link
+      <LinkToTop
         to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
         className="sprite-raid position-relative"
       >
@@ -1235,7 +1235,7 @@ const RaidBattle = () => {
             e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.num, assets);
           }}
         />
-      </Link>
+      </LinkToTop>
     );
   };
 
