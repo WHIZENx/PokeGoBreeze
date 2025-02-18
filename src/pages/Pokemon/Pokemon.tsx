@@ -66,6 +66,7 @@ import {
 import { LocationState } from '../../core/models/router.model';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 import { VariantType } from '../../enums/type.enum';
+import { useNavigateToTop } from '../../util/hooks/LinkToTop';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -90,6 +91,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const params = useParams();
   const navigate = useNavigate();
+  const navigateToTop = useNavigateToTop();
   const location = useLocation() as unknown as Location<LocationState>;
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -303,7 +305,7 @@ const Pokemon = (props: IPokemonPage) => {
             document.title = `#${params.id} - Not Found`;
             setIsFound(false);
           } else {
-            navigate('/error', { replace: true, state: { url: location.pathname, id } });
+            navigateToTop({ to: '/error', replace: true, state: { url: location.pathname, id } });
           }
         });
     },

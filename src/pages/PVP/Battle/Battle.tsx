@@ -40,14 +40,13 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
-import { Link } from 'react-router-dom';
 import { StoreState } from '../../../store/models/state.model';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IBuff, ICombat } from '../../../core/models/combat.model';
@@ -82,6 +81,7 @@ import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { TimelineEvent } from '../../../util/models/overrides/dom.model';
+import { LinkToTop, useNavigateToTop } from '../../../util/hooks/LinkToTop';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -104,7 +104,7 @@ const Battle = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const params = useParams();
-  const navigate = useNavigate();
+  const navigateToTop = useNavigateToTop();
 
   const { enqueueSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
@@ -1073,7 +1073,7 @@ const Battle = () => {
   ) => {
     e.preventDefault();
     if (!pokemon.pokemonData) {
-      enqueueSnackbar(`Pokémon not found.`, {
+      enqueueSnackbar('Pokémon not found.', {
         variant: VariantType.Error,
       });
       return;
@@ -1185,20 +1185,20 @@ const Battle = () => {
               </div>
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
-              <Link
+              <LinkToTop
                 to={`/pvp/${params.cp}/${getKeyWithData(
                   ScoreType,
                   ScoreType.Overall
                 )?.toLowerCase()}/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}
               >
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
-              </Link>
+              </LinkToTop>
               <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
             </div>
             <h6>
               <b>Stats</b>
             </h6>
-            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | Level:{' '}
+            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | {'Level: '}
             <b>{pokemon.pokemonData?.currentStats?.level ?? MIN_LEVEL}</b>
             <br />
             {'IV: '}
@@ -1513,7 +1513,7 @@ const Battle = () => {
     <div className="container element-top battle-body-container">
       <Form.Select
         onChange={(e) => {
-          navigate(`/pvp/battle/${toNumber(e.target.value)}`);
+          navigateToTop({ to: `/pvp/battle/${toNumber(e.target.value)}` });
           setOptions({ ...options, league: toNumber(e.target.value) });
         }}
         defaultValue={league}
@@ -1681,8 +1681,8 @@ const Battle = () => {
                 <span className="position-relative">
                   <img height={36} alt="atk-left" src={ATK_LOGO} />
                   <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
-                </span>{' '}
-                Battle Simulator
+                </span>
+                {' Battle Simulator'}
               </Fragment>
             )}
           </button>

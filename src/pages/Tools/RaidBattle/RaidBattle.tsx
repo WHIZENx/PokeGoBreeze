@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import SelectMove from '../../../components/Input/SelectMove';
 import Raid from '../../../components/Raid/Raid';
 import Find from '../../../components/Find/Find';
-import { Link } from 'react-router-dom';
 
 import {
   addSelectMovesByType,
@@ -91,6 +90,7 @@ import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import PopoverConfig from '../../../components/Popover/PopoverConfig';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -1219,7 +1219,7 @@ const RaidBattle = () => {
   const renderPokemon = (value: IPokemonMoveData) => {
     const assets = findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme);
     return (
-      <Link
+      <LinkToTop
         to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
         className="sprite-raid position-relative"
       >
@@ -1235,7 +1235,7 @@ const RaidBattle = () => {
             e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.num, assets);
           }}
         />
-      </Link>
+      </LinkToTop>
     );
   };
 
@@ -1370,7 +1370,7 @@ const RaidBattle = () => {
                     : used.sortBy === SortType.TTK
                     ? 'Time To Kill'
                     : 'Tankiness'
-                }`}{' '}
+                } `}
                 <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${used.onlyMega ? '*Only Mega' : ''}`}</span>
               </b>
             </p>
@@ -1587,7 +1587,7 @@ const RaidBattle = () => {
                       Average DPS: <b>{toFloatWithPadding((resultBoss.minDPS + resultBoss.maxDPS) / 2, 2)}</b>
                     </span>
                     <span className="d-block">
-                      Total Damage Output:{' '}
+                      {'Total Damage Output: '}
                       <b>
                         {toFloatWithPadding(resultBoss.minTDO, 2)} - {toFloatWithPadding(resultBoss.maxTDO, 2)}
                       </b>
@@ -1596,7 +1596,7 @@ const RaidBattle = () => {
                       Average Total Damage Output: <b>{toFloatWithPadding((resultBoss.minTDO + resultBoss.maxTDO) / 2, 2)}</b>
                     </span>
                     <span className="d-block">
-                      Boss HP Remaining:{' '}
+                      {'Boss HP Remaining: '}
                       <b>
                         {Math.round(resultBoss.minHP)} - {Math.round(resultBoss.maxHP)}
                       </b>
@@ -1687,8 +1687,9 @@ const RaidBattle = () => {
                                   <b>
                                     <span className={Math.floor(toNumber(data.atkHpRemain)) === 0 ? 'text-danger' : 'text-success'}>
                                       {Math.max(0, Math.floor(toNumber(data.atkHpRemain)))}
-                                    </span>{' '}
-                                    / {Math.floor(toNumber(data.hp))}
+                                    </span>
+                                    {' / '}
+                                    {Math.floor(toNumber(data.hp))}
                                   </b>
                                 </td>
                               </tr>
@@ -1712,8 +1713,8 @@ const RaidBattle = () => {
                               (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
                               <tr className="text-summary">
                                 <td colSpan={3}>
-                                  <TimerIcon /> Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}{' '}
-                                  {enableTimeAllow && `/ ${timeAllow}`}
+                                  <TimerIcon /> Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}
+                                  {enableTimeAllow && ` / ${timeAllow}`}
                                 </td>
                                 {resultBattle(Math.floor(result.summary.bossHp - result.summary.tdoAtk), result.summary.timer)}
                               </tr>

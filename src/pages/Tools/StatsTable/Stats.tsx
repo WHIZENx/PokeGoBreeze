@@ -68,7 +68,7 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   },
   {
     name: 'Stat Prod (%)',
-    selector: (row) => toFloatWithPadding(row.ratio, 2),
+    selector: (row) => (toNumber(row.ratio) >= 100 ? 100 : toFloatWithPadding(row.ratio, 2)),
     sortable: true,
     sortFunction: numSortStatsProdsPercent,
   },

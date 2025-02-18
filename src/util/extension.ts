@@ -102,7 +102,7 @@ export const isEqual = (
   compareValue = getValueOrDefault(String, compareValue?.toString());
   switch (mode) {
     case EqualMode.IgnoreCaseSensitive:
-      return value.toUpperCase().isEqual(compareValue.toUpperCase());
+      return value.isEqualWithIgnoreCase(compareValue);
     case EqualMode.CaseSensitive:
     default:
       return value.isEqual(compareValue);

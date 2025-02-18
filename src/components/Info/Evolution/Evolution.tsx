@@ -597,15 +597,16 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.kmBuddyDistanceRequirement && (
                           <span className="caption">
-                            {data.quest.isMustBeBuddy ? (
-                              <div className="d-flex align-items-end">
+                            {`${
+                              data.quest.isMustBeBuddy ? (
+                                <div className="d-flex align-items-end">
+                                  <DirectionsWalkIcon fontSize="small" />
+                                  <PetsIcon sx={{ fontSize: '1rem' }} />
+                                </div>
+                              ) : (
                                 <DirectionsWalkIcon fontSize="small" />
-                                <PetsIcon sx={{ fontSize: '1rem' }} />
-                              </div>
-                            ) : (
-                              <DirectionsWalkIcon fontSize="small" />
-                            )}{' '}
-                            {`${data.quest.kmBuddyDistanceRequirement}km`}
+                              )
+                            } ${data.quest.kmBuddyDistanceRequirement}km`}
                           </span>
                         )}
                         {data?.quest?.isOnlyDaytime && (

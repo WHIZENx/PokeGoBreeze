@@ -32,7 +32,6 @@ import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import './DpsTdo.scss';
-import { Link } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
@@ -68,6 +67,7 @@ import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 import { TypeEff } from '../../../core/models/type-eff.model';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -138,7 +138,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Pokémon Name',
     selector: (row) => (
-      <Link
+      <LinkToTop
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
@@ -154,7 +154,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           }}
         />
         {splitAndCapitalize(row.pokemon.name, '-', ' ')}
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '300px',
@@ -179,17 +179,21 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Fast Move',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={`/move/${row.fMove?.id}`} title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}>
-        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove?.type)} />{' '}
+      <LinkToTop
+        className="d-flex align-items-center"
+        to={`/move/${row.fMove?.id}`}
+        title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}
+      >
+        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove?.type)} />
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.fMove?.name, '_', ' ')}</span>
+          <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
             <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.fMoveType)?.toLowerCase()}-ic`)}>
               {getKeyWithData(MoveType, row.fMoveType)}
             </span>
           )}
         </div>
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '200px',
@@ -198,17 +202,21 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Charged Move',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={`/move/${row.cMove?.id}`} title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}>
-        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove?.type)} />{' '}
+      <LinkToTop
+        className="d-flex align-items-center"
+        to={`/move/${row.cMove?.id}`}
+        title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}
+      >
+        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove?.type)} />
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ')}</span>
+          <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
             <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.cMoveType)?.toLowerCase()}-ic`)}>
               {getKeyWithData(MoveType, row.cMoveType)}
             </span>
           )}
         </div>
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '220px',

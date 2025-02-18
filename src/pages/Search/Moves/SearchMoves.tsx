@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Link } from 'react-router-dom';
 import { capitalize, getCustomThemeDataTable, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 
 import './SearchMoves.scss';
@@ -26,6 +25,7 @@ import {
 import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { Params } from '../../../util/constants';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -60,9 +60,9 @@ const columns: TableColumnModify<ICombat>[] = [
   {
     name: 'Name',
     selector: (row) => (
-      <Link to={`/move/${row.track}${row.isMultipleWithType ? `?${Params.MoveType}=${row.type?.toLowerCase()}` : ''}`}>
+      <LinkToTop to={`/move/${row.track}${row.isMultipleWithType ? `?${Params.MoveType}=${row.type?.toLowerCase()}` : ''}`}>
         {splitAndCapitalize(row.name, '_', ' ')}
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     sortFunction: nameSort,

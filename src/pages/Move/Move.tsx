@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import {
   capitalize,
@@ -45,6 +45,7 @@ import {
 } from '../../util/extension';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 import { PokemonTypeBadge } from '../../core/models/type.model';
+import { LinkToTop } from '../../util/hooks/LinkToTop';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -74,7 +75,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
   {
     name: 'Name',
     selector: (row) => (
-      <Link to={`/pokemon/${row.num}${generateParamForm(row.forme)}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`}>
         <img
           height={48}
           alt="img-pokemon"
@@ -86,7 +87,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
           }}
         />
         {row.name}
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '250px',
@@ -336,8 +337,11 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvePower * 0.2, 2)}</span>
+                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span className="text-success d-inline-block caption">
+                        {' +'}
+                        {toFloatWithPadding(move.pvePower * 0.2, 2)}
+                      </span>
                     </>
                   )}
                 </td>
@@ -374,8 +378,11 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvpPower * 0.2, 2)}</span>
+                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span className="text-success d-inline-block caption">
+                        {' +'}
+                        {toFloatWithPadding(move.pvpPower * 0.2, 2)}
+                      </span>
                     </>
                   )}
                 </td>

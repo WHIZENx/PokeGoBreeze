@@ -279,12 +279,12 @@ const Damage = () => {
                       - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                     </p>
                     <p>
-                      - Move Type:{' '}
+                      {'- Move Type: '}
                       <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                     </p>
                     {findStabType(form?.form.types, move.type)}
                     <p>
-                      - Damage:{' '}
+                      {'- Damage: '}
                       <b>
                         {move.pvePower}
                         {findStabType(form?.form.types, move.type) && <span className="caption-small text-success"> (x1.2)</span>}

@@ -18,7 +18,7 @@ import APIService from '../../../services/API.service';
 import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 
 import update from 'immutability-helper';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -57,6 +57,7 @@ import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -218,14 +219,14 @@ const RankingPVP = () => {
         }}
       >
         <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
-          <Link
+          <LinkToTop
             to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${data.data?.speciesId?.replaceAll(
               '_',
               '-'
             )}`}
           >
             <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
-          </Link>
+          </LinkToTop>
           <div className="d-flex justify-content-center">
             <span className="position-relative" style={{ width: 50 }}>
               {getPokemonTypeIcon(data.pokemonType, 28)}

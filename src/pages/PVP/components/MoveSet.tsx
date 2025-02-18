@@ -20,11 +20,11 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { getMoveType, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import { ArcheType } from '../enums/arche-type.enum';
-import { Link } from 'react-router-dom';
 import { MoveType } from '../../../enums/type.enum';
 import APIService from '../../../services/API.service';
 import { PokemonRankingMove } from '../../../core/models/pvp.model';
 import { IMoveSet, MoveSetModel } from '../models/move-set.model';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const MoveSet = (props: MoveSetComponent) => {
   const [fastMoves, setFastMoves] = useState<IMoveSet[]>();
@@ -94,12 +94,12 @@ const MoveSet = (props: MoveSetComponent) => {
               - <SpokeIcon className="filter-shadow" sx={{ color: 'lightskyblue' }} /> {ArcheType.Multipurpose}
             </span>
             <span className="d-block caption">
-              -{' '}
+              {'- '}
               <span className="position-relative filter-shadow" style={{ marginRight: 5 }}>
                 <PersonIcon sx={{ color: 'black' }} />
                 <KeyboardDoubleArrowDownIcon fontSize="small" className="position-absolute" sx={{ color: 'red', left: '50%', bottom: 0 }} />
-              </span>{' '}
-              {ArcheType.SelfDebuff}
+              </span>
+              {` ${ArcheType.SelfDebuff}`}
             </span>
           </span>
         </PopoverConfig>
@@ -112,7 +112,7 @@ const MoveSet = (props: MoveSetComponent) => {
   );
 
   const renderMove = (move: IMoveSet) => (
-    <Link
+    <LinkToTop
       to={`/move/${move?.id}`}
       className={combineClasses(
         move?.type?.toLowerCase(),
@@ -129,7 +129,7 @@ const MoveSet = (props: MoveSetComponent) => {
         {move?.archetype && findArchetype(move.archetype)}
         <span className="ranking-score score-ic filter-shadow">{move.uses}</span>
       </div>
-    </Link>
+    </LinkToTop>
   );
 
   const setMoves = (moves: PokemonRankingMove[] | undefined) => {

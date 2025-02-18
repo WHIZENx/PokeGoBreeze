@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
 import {
@@ -53,6 +53,7 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -364,13 +365,13 @@ const TeamPVP = () => {
                 backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, 1, styleSheet.current),
               }}
             >
-              <Link
+              <LinkToTop
                 to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${value.speciesId
                   .toString()
                   .replaceAll('_', '-')}`}
               >
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
-              </Link>
+              </LinkToTop>
               <div className="d-flex justify-content-center">
                 <span className="position-relative filter-shadow" style={{ width: 96 }}>
                   {getPokemonTypeIcon(value.pokemonType, 48)}
@@ -529,13 +530,13 @@ const TeamPVP = () => {
                           backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType),
                         }}
                       >
-                        <Link
+                        <LinkToTop
                           to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${value.speciesId
                             .toString()
                             .replaceAll('_', '-')}`}
                         >
                           <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
-                        </Link>
+                        </LinkToTop>
                         <div className="d-flex justify-content-center">
                           <div className="position-relative filter-shadow" style={{ width: 96 }}>
                             {getPokemonTypeIcon(value.pokemonType, 48)}
