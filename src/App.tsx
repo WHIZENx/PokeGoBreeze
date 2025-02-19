@@ -50,6 +50,7 @@ import { LocalTimeStamp } from './store/models/local-storage.model';
 import { RouterState, StoreState } from './store/models/state.model';
 import { isNotEmpty } from './util/extension';
 import { Action } from 'history';
+import { getRedisItem } from './services/redis.service';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -137,6 +138,10 @@ function App() {
       }
     });
   };
+
+  useEffect(() => {
+    getRedisItem('timestamp');
+  }, []);
 
   return (
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
