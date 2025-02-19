@@ -150,7 +150,11 @@ module.exports = {
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     fallback: {
-      'process/browser': require.resolve('process/browser')
+      'process/browser': require.resolve('process/browser'),
+      stream: require.resolve("stream-browserify"),
+      buffer: require.resolve("buffer"),
+      crypto: require.resolve("crypto-browserify"),
+      vm: require.resolve("vm-browserify")
     },
   },
   module: {
