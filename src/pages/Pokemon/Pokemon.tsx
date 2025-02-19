@@ -305,7 +305,10 @@ const Pokemon = (props: IPokemonPage) => {
             document.title = `#${params.id} - Not Found`;
             setIsFound(false);
           } else {
-            navigateToTop({ to: '/error', replace: true, state: { url: location.pathname, id } });
+            navigateToTop('/error', {
+              replace: true,
+              state: { url: location.pathname, id },
+            });
           }
         });
     },

@@ -38,11 +38,11 @@ const StatsBar = (props: IStatsBarComponent) => {
       className={combineClasses('progress', props.isDisabled ? '' : 'progress-hover')}
       onClick={() =>
         !props.isDisabled &&
-        navigateToTop({
-          to: `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, PokemonType.None, '&')}&${Params.StatsType}=${
+        navigateToTop(
+          `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, PokemonType.None, '&')}&${Params.StatsType}=${
             props.statType
-          }`,
-        })
+          }`
+        )
       }
     >
       <BoxText className="box-text stats-text">

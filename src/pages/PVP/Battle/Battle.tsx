@@ -1513,7 +1513,7 @@ const Battle = () => {
     <div className="container element-top battle-body-container">
       <Form.Select
         onChange={(e) => {
-          navigateToTop({ to: `/pvp/battle/${toNumber(e.target.value)}` });
+          navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
           setOptions({ ...options, league: toNumber(e.target.value) });
         }}
         defaultValue={league}
