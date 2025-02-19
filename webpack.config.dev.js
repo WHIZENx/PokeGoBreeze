@@ -33,7 +33,12 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.ProvidePlugin({
-      process: 'process/browser',
+      process: "process/browser",
+      Buffer: ["buffer", "Buffer"],
+      crypto: "crypto-browserify",
+      vm: "vm-browserify",
+      url: "url/",
+      util: "util/"
     }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(
@@ -154,7 +159,9 @@ module.exports = {
       stream: require.resolve("stream-browserify"),
       buffer: require.resolve("buffer"),
       crypto: require.resolve("crypto-browserify"),
-      vm: require.resolve("vm-browserify")
+      vm: require.resolve("vm-browserify"),
+      url: require.resolve("url/"),
+      util: require.resolve("util/")
     },
   },
   module: {
