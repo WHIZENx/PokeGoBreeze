@@ -45,7 +45,7 @@ module.exports = {
         { REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
           REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
           REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
-          REACT_APP_EDGE_CONFIG: process.env.REACT_APP_REDIS_URL,
+          REACT_APP_REDIS_URL: process.env.REACT_APP_REDIS_URL,
           NODE_ENV: JSON.stringify('development'),
           DEBUG: true
         }
