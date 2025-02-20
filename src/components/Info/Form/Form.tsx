@@ -213,8 +213,8 @@ const FormComponent = (props: IFormInfoComponent) => {
               <Raid
                 currForm={props.form}
                 id={props.defaultId}
-                statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
-                statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
+                statATK={toNumber(statsPokemon?.atk?.attack, calBaseATK(convertAllStats(props.data?.stats), true))}
+                statDEF={toNumber(statsPokemon?.def?.defense, calBaseDEF(convertAllStats(props.data?.stats), true))}
                 isLoadedForms={props.isLoadedForms}
               />
             </Fragment>
@@ -228,9 +228,9 @@ const FormComponent = (props: IFormInfoComponent) => {
               types: props.form?.form.types,
             }}
             form={props.form?.form}
-            statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
-            statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
-            statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(convertAllStats(props.data?.stats), true)}
+            statATK={toNumber(statsPokemon?.atk?.attack, calBaseATK(convertAllStats(props.data?.stats), true))}
+            statDEF={toNumber(statsPokemon?.def?.defense, calBaseDEF(convertAllStats(props.data?.stats), true))}
+            statSTA={toNumber(statsPokemon?.sta?.stamina, calBaseSTA(convertAllStats(props.data?.stats), true))}
           />
           <Counter def={statsPokemon?.def?.defense} types={props.form?.form.types} pokemonType={props.form?.form.pokemonType} />
         </div>

@@ -1,6 +1,6 @@
 import React, { MouseEventHandler } from 'react';
-import { Link, LinkProps, To, useNavigate } from 'react-router-dom';
-import { NavigateToTopProps } from '../models/hook.model';
+import { Link, To, useNavigate } from 'react-router-dom';
+import { LinkToTopProps, NavigateToTopProps } from '../models/hook.model';
 import { toNumber } from '../extension';
 
 export const useNavigateToTop = () => {
@@ -16,12 +16,12 @@ export const useNavigateToTop = () => {
   return navigateAndReset;
 };
 
-export const LinkToTop = (props: LinkProps) => {
+export const LinkToTop = (props: LinkToTopProps) => {
   const navigateToTop = useNavigateToTop();
 
   const navigateAndReset: MouseEventHandler<HTMLAnchorElement> = (event) => {
     event.preventDefault();
-    navigateToTop(props.to, props);
+    navigateToTop(props.to, props.options);
   };
 
   return (

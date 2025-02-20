@@ -2,6 +2,7 @@ import { PokemonType } from '../../enums/type.enum';
 import { DynamicObj } from '../../util/extension';
 import { getPokemonType } from '../../util/utils';
 import { ConditionType, LeagueConditionType, QuestType } from '../enums/option.enum';
+import { Cost, IBonusEffect } from './combat.model';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
 import { IStatsBase, StatsBase } from './stats.model';
@@ -364,6 +365,17 @@ interface SourdoughMoveMappingSettings {
   mappings: MoveMapping[];
 }
 
+interface NonCombatMoveSettings {
+  uniqueId: string;
+  cost: Cost;
+  bonusEffect: IBonusEffect;
+  durationMs: string;
+  bonusType: string | number;
+  enableMultiUse?: boolean;
+  extraDurationMs: string;
+  enableNonCombatMove?: boolean;
+}
+
 interface DataGM {
   pokemonSettings: PokemonModel;
   combatSettings: CombatSetting;
@@ -393,6 +405,7 @@ interface DataGM {
   playerLevel: PlayerLevel;
   levelUpRewardSettings: LevelUpRewardSettings;
   sourdoughMoveMappingSettings?: SourdoughMoveMappingSettings;
+  nonCombatMoveSettings?: NonCombatMoveSettings;
 }
 
 export interface PokemonDataGM {

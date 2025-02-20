@@ -1,5 +1,5 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
-import { Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
+import { Bonus, Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
 import {
   EvoList,
   EvolutionQuest,
@@ -27,6 +27,7 @@ import {
   capitalize,
   checkMoveSetAvailable,
   convertPokemonDataName,
+  getBonusType,
   getDataWithKey,
   getKeyWithData,
   getLureItemType,
@@ -1008,6 +1009,28 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       combat.staminaLossScalar = move.staminaLossScalar;
       combat.moveType = MoveType.Dynamax;
       result.push(combat);
+    });
+
+  data
+    .filter((item) => /^NON_COMBAT_V\d{4}_MOVE_*/g.test(item.templateId))
+    .forEach((item) => {
+      const regId = item.templateId.match(/\d{4}/g) as string[];
+      const id = toNumber(regId[0]);
+      const combat = result.find((c) => c.id === id);
+      if (combat) {
+        const settings = item.data.nonCombatMoveSettings;
+        if (settings) {
+          const bonus = new Bonus();
+          bonus.cost = settings.cost;
+          bonus.bonusEffect = settings.bonusEffect;
+          bonus.bonusType = getBonusType(settings.bonusType);
+          bonus.durationMs = toNumber(settings.durationMs);
+          bonus.enableMultiUse = settings.enableMultiUse;
+          bonus.enableNonCombatMove = settings.enableNonCombatMove;
+          bonus.extraDurationMs = toNumber(settings.extraDurationMs);
+          combat.bonus = bonus;
+        }
+      }
     });
 
   return result;

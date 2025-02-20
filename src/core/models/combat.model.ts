@@ -1,5 +1,6 @@
 import { BuffType, MoveType, TypeAction, TypeMove } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
+import { BonusType } from '../enums/bonus-type.enum';
 import { MoveSetting } from './options.model';
 
 export interface IBuff {
@@ -58,6 +59,77 @@ export class Sequence implements ISequence {
   }
 }
 
+interface ICost {
+  candyCost: number;
+  stardustCost: number;
+}
+
+export class Cost implements ICost {
+  candyCost = 0;
+  stardustCost = 0;
+}
+
+interface SpaceBonus {
+  pokemonVisibleRangeMeters: number;
+  encounterRangeMeters: number;
+  serverAllowableEncounterRangeMeters: number;
+}
+
+interface TimeBonus {
+  affectedItems: string[];
+}
+
+interface DayNightBonus {
+  incenseItem: string;
+}
+
+interface SlowFreezeBonus {
+  catchCircleTimeScaleOverride: number;
+  catchRateIncreaseMultiplier: number;
+  catchCircleSpeedChangeThreshold: number;
+  catchCircleOuterTimeScaleOverride: number;
+}
+
+export interface IBonusEffect {
+  spaceBonus?: SpaceBonus;
+  timeBonus?: TimeBonus;
+  dayNightBonus?: DayNightBonus;
+  slowFreezeBonus?: SlowFreezeBonus;
+}
+
+class BonusEffect implements IBonusEffect {
+  spaceBonus?: SpaceBonus;
+  timeBonus?: TimeBonus;
+  dayNightBonus?: DayNightBonus;
+  slowFreezeBonus?: SlowFreezeBonus;
+}
+
+interface IBonus {
+  cost: Cost;
+  bonusEffect: IBonusEffect;
+  durationMs: number;
+  bonusType: BonusType;
+  enableMultiUse?: boolean;
+  extraDurationMs: number;
+  enableNonCombatMove?: boolean;
+}
+
+export class Bonus implements IBonus {
+  cost = new Cost();
+  bonusEffect = new BonusEffect();
+  durationMs = 0;
+  bonusType = BonusType.None;
+  enableMultiUse?: boolean;
+  extraDurationMs = 0;
+  enableNonCombatMove?: boolean;
+
+  static create(value: IBonus) {
+    const obj = new Bonus();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
 export interface ICombat {
   name: string;
   type: string | undefined;
@@ -80,6 +152,7 @@ export interface ICombat {
   abbreviation: string | undefined;
   isMultipleWithType: boolean;
   moveType?: MoveType;
+  bonus?: IBonus;
 }
 
 export class Combat implements ICombat {
@@ -104,6 +177,7 @@ export class Combat implements ICombat {
   abbreviation: string | undefined;
   isMultipleWithType = false;
   moveType?: MoveType;
+  bonus?: IBonus;
 
   static create(value: ICombat) {
     const obj = new Combat();
