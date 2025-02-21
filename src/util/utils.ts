@@ -180,7 +180,7 @@ export const HundoRate = styled(Rating)(() => ({
 export const capitalize = (str: string | undefined | null, defaultText = '') =>
   getValueOrDefault(String, str?.charAt(0).toUpperCase()) + getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
 
-export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') =>
+export const splitAndCapitalize = (str: string | undefined | null, splitBy: string | RegExp, joinBy: string, defaultText = '') =>
   getValueOrDefault(
     String,
     str

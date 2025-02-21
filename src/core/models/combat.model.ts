@@ -90,6 +90,8 @@ interface SlowFreezeBonus {
   catchCircleOuterTimeScaleOverride: number;
 }
 
+export type BonusEffectType = SpaceBonus | TimeBonus | DayNightBonus | SlowFreezeBonus;
+
 export interface IBonusEffect {
   spaceBonus?: SpaceBonus;
   timeBonus?: TimeBonus;
