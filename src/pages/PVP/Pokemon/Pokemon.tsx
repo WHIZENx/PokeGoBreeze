@@ -178,6 +178,15 @@ const PokemonPVP = () => {
     );
   };
 
+  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+    switch (pokemonType) {
+      case PokemonType.Shadow:
+        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+      case PokemonType.Purified:
+        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+    }
+  };
+
   return (
     <Fragment>
       {!found ? (
@@ -213,12 +222,7 @@ const PokemonPVP = () => {
             <div className="w-100 ranking-info element-top">
               <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
                 <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                  {rankingPoke?.pokemonType === PokemonType.Shadow && (
-                    <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                  )}
-                  {rankingPoke?.pokemonType === PokemonType.Purified && (
-                    <img height={64} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
-                  )}
+                  {getPokemonTypeIcon(rankingPoke?.pokemonType, 64)}
                   <img
                     alt="img-league"
                     className="pokemon-sprite-raid"

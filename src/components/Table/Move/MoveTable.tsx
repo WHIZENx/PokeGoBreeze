@@ -4,7 +4,6 @@ import { convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyWithData, splitAn
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
-import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
 import { Tab, Tabs } from 'react-bootstrap';
@@ -33,6 +32,7 @@ import {
 import { EqualMode } from '../../../util/enums/string.enum';
 import { TableType, TypeSorted } from './enums/table-type.enum';
 import { MoveType, PokemonType, TypeAction } from '../../../enums/type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -192,12 +192,10 @@ const TableMove = (props: ITableMoveComponent) => {
   }, [findMove, props.form]);
 
   const renderTable = (table: TableType) => {
-    let tableType = getPropertyName(stateSorted, (o) => o.defensive) as 'defensive' | 'offensive';
-    let max = move.maxDef;
-    if (table === TableType.Offensive) {
-      tableType = getPropertyName(stateSorted, (o) => o.offensive) as 'offensive';
-      max = move.maxOff;
-    }
+    const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
+      table === TableType.Offensive ? o.offensive : o.defensive
+    );
+    const max = table === TableType.Offensive ? move.maxOff : move.maxDef;
     return (
       <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
         <table className="table-info table-moves">
@@ -247,14 +245,14 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const renderBestMovesetTable = (value: IPokemonQueryMove, max: number | undefined, type: TableType) => {
-    let tableType = getPropertyName(stateSorted, (o) => o.defensive) as 'defensive' | 'offensive';
-    if (type === TableType.Offensive) {
-      tableType = getPropertyName(stateSorted, (o) => o.offensive) as 'offensive';
-    }
+    const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
+      type === TableType.Offensive ? o.offensive : o.defensive
+    );
+    const ratio = toFloatWithPadding((value.eDPS[tableType] * 100) / toNumber(max, 1), 2);
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          <Link to={`../move/${value.fMove.id}`} className="d-block">
+          <LinkToTop to={`../move/${value.fMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.fMove.type)} />
             </div>
@@ -268,10 +266,10 @@ const TableMove = (props: ITableMoveComponent) => {
                 </span>
               )}
             </span>
-          </Link>
+          </LinkToTop>
         </td>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          <Link to={`../move/${value.cMove.id}`} className="d-block">
+          <LinkToTop to={`../move/${value.cMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.cMove.type)} />
             </div>
@@ -285,10 +283,10 @@ const TableMove = (props: ITableMoveComponent) => {
                 </span>
               )}
             </span>
-          </Link>
+          </LinkToTop>
         </td>
         <td className="text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          {toFloatWithPadding((value.eDPS[tableType] * 100) / toNumber(max, 1), 2)}
+          {toNumber(ratio) >= 100 ? 100 : ratio}
         </td>
       </tr>
     );
@@ -299,7 +297,7 @@ const TableMove = (props: ITableMoveComponent) => {
       {data.map((value, index) => (
         <tr key={index}>
           <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-            <Link to={`../move/${value.id}`} className="d-block">
+            <LinkToTop to={`../move/${value.id}`} className="d-block">
               <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                 <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.type)} />
               </div>
@@ -311,7 +309,7 @@ const TableMove = (props: ITableMoveComponent) => {
                   </span>
                 )}
               </span>
-            </Link>
+            </LinkToTop>
           </td>
         </tr>
       ))}
@@ -322,13 +320,9 @@ const TableMove = (props: ITableMoveComponent) => {
     if (type !== TypeSorted.Effective && (disableSortFM || disableSortCM)) {
       return;
     }
-    const model = offensive || defensive;
-    let sortedColumn = getPropertyName(model, (o) => o.fast) as 'fast' | 'charged' | 'effective';
-    if (type === TypeSorted.Charge) {
-      sortedColumn = getPropertyName(model, (o) => o.charged) as 'charged';
-    } else if (type === TypeSorted.Effective) {
-      sortedColumn = getPropertyName(model, (o) => o.effective) as 'effective';
-    }
+    const sortedColumn = getPropertyName<SortModel, 'fast' | 'charged' | 'effective'>(offensive || defensive, (o) =>
+      type === TypeSorted.Charge ? o.charged : type === TypeSorted.Effective ? o.effective : o.fast
+    );
     if (table === TableType.Offensive) {
       if (offensive.sortBy === type) {
         const prev = offensive[sortedColumn];
@@ -350,18 +344,15 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const sortFunc = (rowA: IPokemonQueryMove, rowB: IPokemonQueryMove, table: TableType) => {
-    let tableType = getPropertyName(stateSorted, (o) => o.defensive) as 'defensive' | 'offensive';
-    if (table === TableType.Offensive) {
-      tableType = getPropertyName(stateSorted, (o) => o.offensive) as 'offensive';
-    }
+    const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
+      table === TableType.Offensive ? o.offensive : o.defensive
+    );
     const sortedBy = stateSorted[tableType].sortBy;
     const result = stateSorted[tableType] as unknown as DynamicObj<boolean | TypeSorted>;
-    const modelColumn = offensive || defensive;
-    let sortedColumn = getPropertyName(modelColumn, (o) => o.fast) as 'fast' | 'charged' | 'effective';
-    if (sortedBy === TypeSorted.Charge) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.charged) as 'charged';
-    } else if (sortedBy === TypeSorted.Effective) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.effective) as 'effective';
+    const sortedColumn = getPropertyName<SortModel, 'fast' | 'charged' | 'effective'>(offensive || defensive, (o) =>
+      sortedBy === TypeSorted.Charge ? o.charged : sortedBy === TypeSorted.Effective ? o.effective : o.fast
+    );
+    if (sortedBy === TypeSorted.Effective) {
       return result[sortedColumn] ? rowB.eDPS[tableType] - rowA.eDPS[tableType] : rowA.eDPS[tableType] - rowB.eDPS[tableType];
     }
     if (result[sortedColumn]) {
@@ -369,11 +360,9 @@ const TableMove = (props: ITableMoveComponent) => {
       rowA = rowB;
       rowB = tempRowA;
     }
-    const model = rowA || rowB;
-    let combatType = getPropertyName(model, (o) => o.fMove) as 'fMove' | 'cMove';
-    if (sortedBy === TypeSorted.Charge) {
-      combatType = getPropertyName(model, (o) => o.cMove) as 'cMove';
-    }
+    const combatType = getPropertyName<IPokemonQueryMove, 'fMove' | 'cMove'>(rowA || rowB, (o) =>
+      sortedBy === TypeSorted.Charge ? o.cMove : o.fMove
+    );
     const a = rowA[combatType].name.toLowerCase();
     const b = rowB[combatType].name.toLowerCase();
     return a === b ? 0 : a > b ? 1 : -1;

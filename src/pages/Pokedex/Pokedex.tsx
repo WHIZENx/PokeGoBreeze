@@ -506,7 +506,7 @@ const Pokedex = () => {
           </div>
         </div>
       </div>
-      <LoadGroup className={'position-fixed'} isShow={isLoading} isVertical={false} isHideAttr={false} />
+      <LoadGroup className={'position-fixed text-center'} isShow={isLoading} isVertical={false} isHideAttr={false} />
       <div className="text-center bg-white">
         <div className="loading-group-spin-table" style={{ display: !isLoading ? 'none' : 'block' }} />
         <ul className="d-grid pokemon-content">

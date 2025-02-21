@@ -43,8 +43,6 @@ export const isNull = <T>(value?: T | null) => typeof value !== 'undefined' && v
 
 export const isEmpty = (value?: string | null) => typeof value === 'string' && value === '';
 
-export const isNumber = <T>(value?: T | null) => typeof value === 'number';
-
 export const isNotEmpty = <T>(value: string | T[] | null | undefined) =>
   Array.isArray(value) ? value.length > 0 : !isNullOrUndefined(value) && !isEmpty(value);
 
@@ -54,12 +52,12 @@ export const isNullOrEmpty = (value?: string | null) => isNull(value) || isEmpty
 
 export const isUndefinedOrEmpty = (value?: string | null) => isUndefined(value) || isEmpty(value);
 
-export const isNotNumber = <T>(value: T | null | undefined) => {
-  if (Array.isArray(value) || isNumber(value)) {
+export const isNumber = <T>(value: T | null | undefined) => {
+  if (Array.isArray(value)) {
     return false;
   }
   const result = getValueOrDefault(String, value?.toString());
-  return isEmpty(result) || isNaN(Number(result));
+  return !isEmpty(result) && !isNaN(Number(result));
 };
 
 export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>
@@ -104,7 +102,7 @@ export const isEqual = (
   compareValue = getValueOrDefault(String, compareValue?.toString());
   switch (mode) {
     case EqualMode.IgnoreCaseSensitive:
-      return value.toUpperCase().isEqual(compareValue.toUpperCase());
+      return value.isEqualWithIgnoreCase(compareValue);
     case EqualMode.CaseSensitive:
     default:
       return value.isEqual(compareValue);
@@ -182,24 +180,24 @@ export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.Ca
 
 // eslint-disable-next-line no-unused-vars
 type DynamicKeyObj<T> = { [Property in keyof T]: string };
-export const getPropertyName = <T extends object>(
+export const getPropertyName = <T extends object, S extends string = ''>(
   obj: T | null | undefined,
   // eslint-disable-next-line no-unused-vars
   expression: (x: DynamicKeyObj<T>) => string
-) => {
-  if (!obj) {
-    return '';
+): S => {
+  if (isNullOrUndefined(obj)) {
+    return '' as S;
   }
   // eslint-disable-next-line no-unused-vars
   const res = {} as DynamicKeyObj<T>;
   Object.keys(obj).map((k) => (res[k as keyof T] = k));
-  return expression(res);
+  return expression(res) as S;
 };
 
-export const sparseIndexOf = <T>(array: T[], value: T) => {
+export const sparseIndexOf = <T>(array: T[], value: T, defaultOutput = -1) => {
   return toNumber(
     Object.keys(array).find((k) => array[toNumber(k)] === value),
-    -1
+    defaultOutput
   );
 };
 

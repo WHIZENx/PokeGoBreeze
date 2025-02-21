@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 
@@ -10,6 +9,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { ITypeBadgeComponent } from '../../models/component.model';
 import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
 import { MoveType } from '../../../enums/type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data.combat);
@@ -26,7 +26,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
       <span className="caption text-type-border" style={{ color: getValueOrDefault(String, props.color, 'gray') }}>
         {props.title}
       </span>
-      <Link to={`/move/${move?.id}`} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
+      <LinkToTop to={`/move/${move?.id}`} className="d-flex align-items-center position-relative" style={{ width: 'fit-content' }}>
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-border position-relative')}>
           {move && props.moveType !== MoveType.None && (
             <span className="type-badge-border">
@@ -47,7 +47,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
             />
           </div>
         </span>
-      </Link>
+      </LinkToTop>
     </div>
   );
 };

@@ -116,6 +116,15 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   };
 
+  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+    switch (pokemonType) {
+      case PokemonType.Shadow:
+        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+      case PokemonType.Purified:
+        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+    }
+  };
+
   return (
     <Fragment>
       <div className="form-container">
@@ -130,23 +139,12 @@ const FormComponent = (props: IFormInfoComponent) => {
                   {value.map((value, index) => (
                     <button
                       key={index}
-                      className={combineClasses(
-                        'btn btn-form',
-                        (props.defaultId === props.form?.form.id && value.form.id === props.form?.form.id) ||
-                          (props.defaultId !== props.form?.form.id && value.form.id === props.form?.form.id)
-                          ? 'form-selected'
-                          : ''
-                      )}
+                      className={combineClasses('btn btn-form', value.form.id === props.form?.form.id ? 'form-selected' : '')}
                       onClick={() => changeForm(value.form.name, value.form.formName, value.form.pokemonType)}
                     >
                       <div className="d-flex w-100 justify-content-center">
                         <div className="position-relative" style={{ width: 64 }}>
-                          {value.form.pokemonType === PokemonType.Shadow && (
-                            <img height={24} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                          )}
-                          {value.form.pokemonType === PokemonType.Purified && (
-                            <img height={24} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
-                          )}
+                          {getPokemonTypeIcon(value.form.pokemonType)}
                           <img
                             className="pokemon-sprite-medium"
                             onError={(e) => {
@@ -154,7 +152,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                               e.currentTarget.src = APIService.getPokeIconSprite();
                             }}
                             alt="img-icon-form"
-                            src={formIconAssets(value, props.defaultId)}
+                            src={formIconAssets(value)}
                           />
                         </div>
                       </div>
@@ -215,8 +213,8 @@ const FormComponent = (props: IFormInfoComponent) => {
               <Raid
                 currForm={props.form}
                 id={props.defaultId}
-                statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
-                statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
+                statATK={toNumber(statsPokemon?.atk?.attack, calBaseATK(convertAllStats(props.data?.stats), true))}
+                statDEF={toNumber(statsPokemon?.def?.defense, calBaseDEF(convertAllStats(props.data?.stats), true))}
                 isLoadedForms={props.isLoadedForms}
               />
             </Fragment>
@@ -230,9 +228,9 @@ const FormComponent = (props: IFormInfoComponent) => {
               types: props.form?.form.types,
             }}
             form={props.form?.form}
-            statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
-            statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
-            statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(convertAllStats(props.data?.stats), true)}
+            statATK={toNumber(statsPokemon?.atk?.attack, calBaseATK(convertAllStats(props.data?.stats), true))}
+            statDEF={toNumber(statsPokemon?.def?.defense, calBaseDEF(convertAllStats(props.data?.stats), true))}
+            statSTA={toNumber(statsPokemon?.sta?.stamina, calBaseSTA(convertAllStats(props.data?.stats), true))}
           />
           <Counter def={statsPokemon?.def?.defense} types={props.form?.form.types} pokemonType={props.form?.form.pokemonType} />
         </div>

@@ -141,9 +141,9 @@ const FormSelect = (props: IFormSelectComponent) => {
       const cancelToken = axiosSource.current.token;
 
       APIService.getPokeSpices(id, { cancelToken })
-        .then((res) => {
+        .then(async (res) => {
           if (res.data) {
-            fetchMap(res.data);
+            await fetchMap(res.data);
           }
         })
         .catch((e: AxiosError) => {
@@ -353,7 +353,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                         e.currentTarget.src = APIService.getPokeIconSprite();
                       }}
                       alt="img-icon-form"
-                      src={formIconAssets(value, currentForm.defaultId)}
+                      src={formIconAssets(value)}
                     />
                     <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
                     {toNumber(value.form.id) > 0 && value.form.id === currentForm.defaultId && (

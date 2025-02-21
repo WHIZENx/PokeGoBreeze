@@ -40,14 +40,13 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
-import { Link } from 'react-router-dom';
 import { StoreState } from '../../../store/models/state.model';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IBuff, ICombat } from '../../../core/models/combat.model';
@@ -66,12 +65,23 @@ import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from '
 import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
-import { DynamicObj, getPropertyName, getValueOrDefault, isEqual, isInclude, isNotEmpty, toFloat, toNumber } from '../../../util/extension';
+import {
+  DynamicObj,
+  getPropertyName,
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  isUndefined,
+  toFloat,
+  toNumber,
+} from '../../../util/extension';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { TimelineEvent } from '../../../util/models/overrides/dom.model';
+import { LinkToTop, useNavigateToTop } from '../../../util/hooks/LinkToTop';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -94,7 +104,7 @@ const Battle = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const params = useParams();
-  const navigate = useNavigate();
+  const navigateToTop = useNavigateToTop();
 
   const { enqueueSnackbar } = useSnackbar();
   const [openBattle, setOpenBattle] = useState(false);
@@ -635,10 +645,14 @@ const Battle = () => {
           tapSec = false;
           if (immunePri) {
             player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
-            timelinePri[timer].isDmgImmune = true;
+            const lastTapPos = timelinePri.map((timeline) => timeline.isTap && !isUndefined(timeline.type)).lastIndexOf(true);
+            const lastFastAtkPos = timelinePri.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
+            timelinePri[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
           } else if (immuneSec) {
             player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
-            timelineSec[timer].isDmgImmune = true;
+            const lastTapPos = timelineSec.map((timeline) => timeline.isTap && !isUndefined(timeline.type)).lastIndexOf(true);
+            const lastFastAtkPos = timelineSec.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
+            timelineSec[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
           }
           immunePri = false;
           immuneSec = false;
@@ -1059,7 +1073,7 @@ const Battle = () => {
   ) => {
     e.preventDefault();
     if (!pokemon.pokemonData) {
-      enqueueSnackbar(`Pokémon not found.`, {
+      enqueueSnackbar('Pokémon not found.', {
         variant: VariantType.Error,
       });
       return;
@@ -1171,20 +1185,20 @@ const Battle = () => {
               </div>
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
-              <Link
+              <LinkToTop
                 to={`/pvp/${params.cp}/${getKeyWithData(
                   ScoreType,
                   ScoreType.Overall
                 )?.toLowerCase()}/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}
               >
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
-              </Link>
+              </LinkToTop>
               <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
             </div>
             <h6>
               <b>Stats</b>
             </h6>
-            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | Level:{' '}
+            CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | {'Level: '}
             <b>{pokemon.pokemonData?.currentStats?.level ?? MIN_LEVEL}</b>
             <br />
             {'IV: '}
@@ -1333,10 +1347,7 @@ const Battle = () => {
     // eslint-disable-next-line no-unused-vars
     clearDataPokemon: (removeMove: boolean) => void
   ) => {
-    let pokemonType = getPropertyName(playTimeline, (o) => o.pokemonCurr) as 'pokemonCurr' | 'pokemonObj';
-    if (type === BattleType.Object) {
-      pokemonType = getPropertyName(playTimeline, (o) => o.pokemonObj) as 'pokemonObj';
-    }
+    const pokemonType = getPropertyName(playTimeline, (o) => (type === BattleType.Object ? o.pokemonObj : o.pokemonCurr));
     return (
       <Fragment>
         <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
@@ -1470,7 +1481,7 @@ const Battle = () => {
                     <HpBar
                       text="HP"
                       height={15}
-                      hp={Math.floor(toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.hp))}
+                      hp={Math.floor((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType].hp)}
                       maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statsSTA))}
                     />
                   </Fragment>
@@ -1502,7 +1513,7 @@ const Battle = () => {
     <div className="container element-top battle-body-container">
       <Form.Select
         onChange={(e) => {
-          navigate(`/pvp/battle/${toNumber(e.target.value)}`);
+          navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
           setOptions({ ...options, league: toNumber(e.target.value) });
         }}
         defaultValue={league}
@@ -1670,8 +1681,8 @@ const Battle = () => {
                 <span className="position-relative">
                   <img height={36} alt="atk-left" src={ATK_LOGO} />
                   <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
-                </span>{' '}
-                Battle Simulator
+                </span>
+                {' Battle Simulator'}
               </Fragment>
             )}
           </button>

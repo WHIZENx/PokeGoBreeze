@@ -25,12 +25,8 @@ const Fill = styled.div<Element>`
 
 const ProgressBar = (props: IProgressBarComponent) => {
   return (
-    <Bar style={props.style} height={props.height} bgColor={props.bgColor}>
-      <Fill
-        style={{ width: `${(Math.max(1, toNumber(props.value)) * 100) / toNumber(props.maxValue, 1)}%` }}
-        height={props.height}
-        bgColor={props.color}
-      />
+    <Bar {...props}>
+      <Fill {...props} style={{ width: `${(Math.max(1, toNumber(props.value)) * 100) / toNumber(props.maxValue, 1)}%` }} />
     </Bar>
   );
 };

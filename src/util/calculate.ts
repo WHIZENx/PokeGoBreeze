@@ -22,9 +22,9 @@ import {
 } from '../core/models/stats.model';
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
-import data from '../data/cp_multiplier.json';
+import dataCPM from '../data/cp_multiplier.json';
 import { MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { Delay, IOptionOtherDPS, OptionOtherDPS } from '../store/models/options.model';
+import { Delay, IOptionOtherDPS, OptionOtherDPS, Specific } from '../store/models/options.model';
 import { findStabType } from './compute';
 import {
   CP_DIFF_RATIO,
@@ -41,6 +41,7 @@ import {
   DEFAULT_WEATHER_BOOSTS,
   DODGE_REDUCE,
   FORM_MEGA,
+  MAX_ENERGY,
   MAX_IV,
   MAX_LEVEL,
   MIN_CP,
@@ -71,6 +72,8 @@ import {
   PredictStatsModel,
   BattleLeague,
   IBattleCalculate,
+  ICalculateDPS,
+  CalculateDPS,
 } from './models/calculate.model';
 import {
   IPokemonQueryCounter,
@@ -90,6 +93,7 @@ import {
   isIncludeList,
   isNotEmpty,
   isUndefined,
+  sparseIndexOf,
   toFloat,
   toNumber,
   UniqValueInArray,
@@ -119,7 +123,7 @@ export const getTypeEffective = (typeEffective: ITypeEff | undefined, typeMove: 
   const moveType = getValueOrDefault(String, typeMove).toUpperCase();
   typesObj?.forEach((type) => {
     type = getValueOrDefault(String, type).toUpperCase();
-    valueEffective *= (typeEffective as unknown as DynamicObj<DynamicObj<number>>)[moveType][type] || 1;
+    valueEffective *= toNumber((typeEffective as unknown as DynamicObj<DynamicObj<number>>)[moveType][type], 1);
   });
   return valueEffective;
 };
@@ -213,11 +217,7 @@ export const calBaseSTA = (stats: IStatsPokemon | null | undefined, nerf: boolea
 };
 
 export const sortStatsPokemon = (stats: IArrayStats[]) => {
-  const attackRanking = UniqValueInArray(
-    stats
-      .sort((a, b) => toNumber(a.baseStatsPokeGo?.attack) - toNumber(b.baseStatsPokeGo?.attack))
-      .map((item) => toNumber(item.baseStatsPokeGo?.attack))
-  );
+  const attackRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.attack))).sort((a, b) => a - b);
 
   const minATK = Math.min(...attackRanking);
   const maxATK = Math.max(...attackRanking);
@@ -226,15 +226,11 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
       id: item.id,
       form: item.form,
       attack: toNumber(item.baseStatsPokeGo?.attack),
-      rank: attackRanking.length - attackRanking.indexOf(toNumber(item.baseStatsPokeGo?.attack)),
+      rank: attackRanking.length - sparseIndexOf(attackRanking, item.baseStatsPokeGo?.attack),
     })
   );
 
-  const defenseRanking = UniqValueInArray(
-    stats
-      .sort((a, b) => toNumber(a.baseStatsPokeGo?.defense) - toNumber(b.baseStatsPokeGo?.defense))
-      .map((item) => toNumber(item.baseStatsPokeGo?.defense))
-  );
+  const defenseRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.defense))).sort((a, b) => a - b);
 
   const minDEF = Math.min(...defenseRanking);
   const maxDEF = Math.max(...defenseRanking);
@@ -243,15 +239,11 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
       id: item.id,
       form: item.form,
       defense: toNumber(item.baseStatsPokeGo?.defense),
-      rank: defenseRanking.length - defenseRanking.indexOf(toNumber(item.baseStatsPokeGo?.defense)),
+      rank: defenseRanking.length - sparseIndexOf(defenseRanking, item.baseStatsPokeGo?.defense, 0),
     })
   );
 
-  const staminaRanking = UniqValueInArray(
-    stats
-      .sort((a, b) => toNumber(a.baseStatsPokeGo?.stamina) - toNumber(b.baseStatsPokeGo?.stamina))
-      .map((item) => toNumber(item.baseStatsPokeGo?.stamina))
-  );
+  const staminaRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.stamina))).sort((a, b) => a - b);
 
   const minSTA = Math.min(...staminaRanking);
   const maxSTA = Math.max(...staminaRanking);
@@ -260,7 +252,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
       id: item.id,
       form: item.form,
       stamina: toNumber(item.baseStatsPokeGo?.stamina),
-      rank: staminaRanking.length - staminaRanking.indexOf(toNumber(item.baseStatsPokeGo?.stamina)),
+      rank: staminaRanking.length - sparseIndexOf(staminaRanking, item.baseStatsPokeGo?.stamina, 0),
     })
   );
 
@@ -273,7 +265,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
       id: item.id,
       form: item.form,
       product: item.baseStatsProd,
-      rank: prodRanking.length - prodRanking.indexOf(item.baseStatsProd),
+      rank: prodRanking.length - sparseIndexOf(prodRanking, item.baseStatsProd, 0),
     })
   );
 
@@ -311,7 +303,7 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
 
 export const calculateCP = (atk: number, def: number, sta: number, level: number) =>
   Math.floor(
-    Math.max(10, (atk * def ** 0.5 * sta ** 0.5 * toNumber(data.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
+    Math.max(MIN_CP, (atk * def ** 0.5 * sta ** 0.5 * toNumber(dataCPM.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
   );
 
 export const calculateRaidStat = (stat: number | undefined | null, tier: number) =>
@@ -329,7 +321,7 @@ export const calculateDuelAbility = (dmgOutput: number, tankiness: number) => dm
 export const calculateCatchChance = (baseCaptureRate: number | undefined, level: number, multiplier: number) =>
   1 -
   Math.pow(
-    Math.max(0, 1 - toNumber(baseCaptureRate) / (2 * toNumber(data?.find((data: ICPM) => data.level === level)?.multiplier))),
+    Math.max(0, 1 - toNumber(baseCaptureRate) / (2 * toNumber(dataCPM.find((item: ICPM) => item.level === level)?.multiplier))),
     multiplier
   );
 
@@ -403,7 +395,7 @@ export const calculateStats = (atk: number, def: number, sta: number, IVatk: num
 
 export const calculateStatsBattle = (base?: number, iv?: number, level?: number, floor = false, addition = 1) => {
   const result =
-    (toNumber(base) + toNumber(iv)) * toNumber(data.find((item: ICPM) => item.level === toNumber(level))?.multiplier) * addition;
+    (toNumber(base) + toNumber(iv)) * toNumber(dataCPM.find((item: ICPM) => item.level === toNumber(level))?.multiplier) * addition;
   if (floor) {
     return Math.floor(result);
   }
@@ -415,9 +407,9 @@ export const calculateBetweenLevel = (
   atk: number,
   def: number,
   sta: number,
-  IVatk: number,
-  IVdef: number,
-  IVsta: number,
+  IVAtk: number,
+  IVDef: number,
+  IVSta: number,
   fromLV: number,
   toLV: number | undefined,
   pokemonType?: PokemonType
@@ -425,7 +417,7 @@ export const calculateBetweenLevel = (
   toLV = toNumber(toLV) - 0.5;
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
-      CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
+      CP: calculateCP(atk + IVAtk, def + IVDef, sta + IVSta, toLV + 0.5),
       resultBetweenStardust: 0,
       resultBetweenCandy: 0,
       resultBetweenXLCandy: 0,
@@ -442,7 +434,7 @@ export const calculateBetweenLevel = (
     let betweenXlCandyDiff = 0;
 
     const typeCost = typeCostPowerUp(pokemonType);
-    data.forEach((ele: CPMData) => {
+    dataCPM.forEach((ele: CPMData) => {
       const result = CPMDetail.mapping(ele);
       if (ele.level >= fromLV && ele.level <= toNumber(toLV)) {
         betweenStardust += Math.ceil(result.stardust * typeCost.stardust);
@@ -455,7 +447,7 @@ export const calculateBetweenLevel = (
     });
 
     const dataList = new BetweenLevelCalculate({
-      CP: calculateCP(atk + IVatk, def + IVdef, sta + IVsta, toLV + 0.5),
+      CP: calculateCP(atk + IVAtk, def + IVDef, sta + IVSta, toLV + 0.5),
       resultBetweenStardust: betweenStardust,
       resultBetweenStardustDiff: betweenStardustDiff,
       resultBetweenCandy: betweenCandy,
@@ -467,11 +459,11 @@ export const calculateBetweenLevel = (
     });
 
     if (pokemonType === PokemonType.Shadow) {
-      const atkStat = calculateStatsBattle(atk, IVatk, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Atk));
-      const defStat = calculateStatsBattle(def, IVdef, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def));
+      const atkStat = calculateStatsBattle(atk, IVAtk, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Atk));
+      const defStat = calculateStatsBattle(def, IVDef, toLV + 0.5, true, getDmgMultiplyBonus(pokemonType, globalOptions, TypeAction.Def));
 
-      const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVatk, toLV + 0.5, true) - atkStat);
-      const defStatDiff = Math.abs(calculateStatsBattle(def, IVdef, toLV + 0.5, true) - defStat);
+      const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVAtk, toLV + 0.5, true) - atkStat);
+      const defStatDiff = Math.abs(calculateStatsBattle(def, IVDef, toLV + 0.5, true) - defStat);
 
       dataList.atkStat = atkStat;
       dataList.defStat = defStat;
@@ -685,6 +677,38 @@ export const getBarCharge = (energy: number, isRaid = false) => {
   }
 };
 
+const calculateDPS = (data: ICalculateDPS, options: IOptions | undefined, specific?: Specific) => {
+  const fastDPS = data.fastDamage / toNumber(data.fastDuration + toNumber(data.fastDelay), 1);
+  const chargeDPS = data.chargeDamage / toNumber(data.chargeDuration + toNumber(data.chargeDelay), 1);
+
+  const chargeEnergy = data.chargeEnergy === MAX_ENERGY(options) ? 0.5 * data.fastEnergy + 0.5 * data.y * data.chargeDamageWindowStart : 0;
+  const fastEnergyPerSec = data.fastEnergy / toNumber(data.fastDuration + toNumber(data.fastDelay), 1);
+  const chargeEnergyPerSec = (data.chargeEnergy + chargeEnergy) / toNumber(data.chargeDuration + toNumber(data.chargeDelay), 1);
+
+  let x = 0.5 * data.chargeEnergy + 0.5 * data.fastEnergy;
+  if (specific) {
+    const bar = getBarCharge(data.chargeEnergy, true);
+    const λ = 3 / toNumber(bar, 1);
+    x += 0.5 * λ * specific.FDmgEnemy + specific.CDmgEnemy * λ + 1;
+  }
+
+  const baseDPS = (fastDPS * chargeEnergyPerSec + chargeDPS * fastEnergyPerSec) / toNumber(chargeEnergyPerSec + fastEnergyPerSec, 1);
+
+  let DPS = 0;
+  if (fastDPS > chargeDPS) {
+    DPS = baseDPS;
+  } else {
+    DPS = Math.max(
+      0,
+      baseDPS +
+        ((chargeDPS - fastDPS) / toNumber(chargeEnergyPerSec + fastEnergyPerSec, 1)) *
+          (DEFAULT_ENERGY_PER_HP_LOST - x / toNumber(data.hp, 1)) *
+          data.y
+    );
+  }
+  return Math.max(fastDPS, DPS);
+};
+
 export const calculateAvgDPS = (
   globalOptions: IOptions | undefined,
   typeEff: ITypeEff | undefined,
@@ -756,32 +780,23 @@ export const calculateAvgDPS = (
     y = 900 / (def * defBonus);
   }
 
-  const fDelay = toNumber(options?.delay?.fTime);
-  const cDelay = toNumber(options?.delay?.cTime);
-
-  const FDPS = FDmg / (FDur + fDelay);
-  const CDPS = CDmg / (CDur + cDelay);
-
-  const CEPSM = CE === 100 ? 0.5 * FE + 0.5 * y * CDWS : 0;
-  const FEPS = FE / (FDur + fDelay);
-  const CEPS = (CE + CEPSM) / (CDur + cDelay);
-
-  let x = 0.5 * CE + 0.5 * FE;
-  if (options?.specific) {
-    const bar = getBarCharge(CE, true);
-    const λ = 3 / bar;
-    x += 0.5 * λ * options.specific.FDmgEnemy + options.specific.CDmgEnemy * λ + 1;
-  }
-
-  const DPS0 = (FDPS * CEPS + CDPS * FEPS) / (CEPS + FEPS);
-
-  let DPS;
-  if (FDPS > CDPS) {
-    DPS = DPS0;
-  } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / toNumber(hp, 1)) * y);
-  }
-  return Math.max(FDPS, DPS);
+  return calculateDPS(
+    new CalculateDPS({
+      fastDamage: FDmg,
+      chargeDamage: CDmg,
+      fastDuration: FDur,
+      fastDelay: options?.delay?.fTime,
+      chargeDuration: CDur,
+      chargeDelay: options?.delay?.cTime,
+      fastEnergy: FE,
+      chargeEnergy: CE,
+      chargeDamageWindowStart: CDWS,
+      y,
+      hp,
+    }),
+    globalOptions,
+    options?.specific
+  );
 };
 
 export const calculateTDO = (
@@ -896,24 +911,20 @@ export const calculateBattleDPS = (
   const FDmg = Math.floor((FDmgBase * toNumber(attacker.atk) * FTypeEff) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
   const CDmg = Math.floor((CDmgBase * toNumber(attacker.atk) * CTypeEff) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
 
-  const FDPS = FDmg / FDur;
-  const CDPS = CDmg / CDur;
-
-  const CEPSM = CE === 100 ? 0.5 * FE + 0.5 * DPSDef * CDWS : 0;
-  const FEPS = FE / FDur;
-  const CEPS = (CE + CEPSM) / CDur;
-
-  const x = 0.5 * CE + 0.5 * FE;
-
-  const DPS0 = (FDPS * CEPS + CDPS * FEPS) / (CEPS + FEPS);
-
-  let DPS;
-  if (FDPS > CDPS) {
-    DPS = DPS0;
-  } else {
-    DPS = Math.max(0, DPS0 + ((CDPS - FDPS) / (CEPS + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - x / toNumber(attacker.hp, 1)) * DPSDef);
-  }
-  DPS = Math.max(FDPS, DPS);
+  const DPS = calculateDPS(
+    new CalculateDPS({
+      fastDamage: FDmg,
+      chargeDamage: CDmg,
+      fastDuration: FDur,
+      chargeDuration: CDur,
+      fastEnergy: FE,
+      chargeEnergy: CE,
+      chargeDamageWindowStart: CDWS,
+      y: DPSDef,
+      hp: attacker?.hp,
+    }),
+    globalOptions
+  );
 
   let DPSSec = 0;
   if (attacker.isDoubleCharge) {
@@ -939,26 +950,22 @@ export const calculateBattleDPS = (
     const CTypeEffSec = getTypeEffective(typeEff, CTypeSec, defender.types);
 
     const CDmgSec = Math.floor((CDmgBaseSec * toNumber(attacker.atk) * CTypeEffSec) / (defender.def * defBonus)) + DEFAULT_DAMAGE_CONST;
-    const CDPSSec = CDmgSec / CDurSec;
-
-    const CEPSMSec = CESec === 100 ? 0.5 * FE + 0.5 * DPSDef * CDWSSec : 0;
-    const CEPSSec = (CESec + CEPSMSec) / CDurSec;
-
-    const xSec = 0.5 * CESec + 0.5 * FE;
-
-    const DPS0Sec = (FDPS * CEPSSec + CDPSSec * FEPS) / (CEPSSec + FEPS);
-
-    if (FDPS > CDPSSec) {
-      DPSSec = DPS0Sec;
-    } else {
-      DPSSec = Math.max(
-        0,
-        DPS0Sec + ((CDPSSec - FDPS) / (CEPSSec + FEPS)) * (DEFAULT_ENERGY_PER_HP_LOST - xSec / toNumber(attacker.hp, 1)) * DPSDef
-      );
-    }
-    DPSSec = Math.max(FDPS, DPSSec);
+    DPSSec = calculateDPS(
+      new CalculateDPS({
+        fastDamage: FDmg,
+        chargeDamage: CDmgSec,
+        fastDuration: FDur,
+        chargeDuration: CDurSec,
+        fastEnergy: FE,
+        chargeEnergy: CESec,
+        chargeDamageWindowStart: CDWSSec,
+        y: DPSDef,
+        hp: attacker?.hp,
+      }),
+      globalOptions
+    );
   }
-  return Math.max(FDPS, DPS, DPSSec);
+  return Math.max(DPS, DPSSec);
 };
 
 export const TimeToKill = (hp: number, dpsDef: number) => hp / dpsDef;

@@ -16,19 +16,23 @@ export const pvpFindFirstPath = (data: APIPath[], path: string) =>
 export const pvpFindPath = (data: string[], path: string) =>
   data.filter((item) => isInclude(item, path)).map((item) => item.replace(path, ''));
 
+const getLeague = (leagues: ILeague[], league: string) => {
+  let item: ILeague | undefined;
+  if (!isEqual(league, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
+    item = leagues.find((item) => isInclude(item.iconUrl, league, IncludeMode.IncludeIgnoreCaseSensitive));
+    if (!item) {
+      item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));
+    }
+    if (!item) {
+      item = leagues.find((item) => isInclude(item.id, league, IncludeMode.IncludeIgnoreCaseSensitive));
+    }
+  }
+  return item;
+};
+
 export const convertPVPRankings = (data: string[], leagues: ILeague[]) =>
   UniqValueInArray(data.map((league) => league.split('/').at(0))).map((league) => {
-    let item;
-    if (!isEqual(league, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
-      item = leagues.find((item) => isInclude(item.iconUrl, league));
-      if (!item) {
-        item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));
-      }
-      if (!item) {
-        item = leagues.find((item) => isInclude(item.id, league, IncludeMode.IncludeIgnoreCaseSensitive));
-      }
-    }
-
+    const item = getLeague(leagues, league);
     const result = new PVPInfo();
     result.id = getValueOrDefault(String, league);
     result.name = splitAndCapitalize((item ? item.title : league)?.replaceAll('-', '_'), '_', ' ');
@@ -47,16 +51,7 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) =>
 
 export const convertPVPTrain = (data: string[], leagues: ILeague[]) =>
   UniqValueInArray(data.map((league) => league.split('/').at(0))).map((league) => {
-    let item;
-    if (!isEqual(league, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
-      item = leagues.find((item) => isInclude(item.iconUrl, league, IncludeMode.IncludeIgnoreCaseSensitive));
-      if (!item) {
-        item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));
-      }
-      if (!item) {
-        item = leagues.find((item) => isInclude(item.id, league, IncludeMode.IncludeIgnoreCaseSensitive));
-      }
-    }
+    const item = getLeague(leagues, league);
     const result = new PVPInfo();
     result.id = getValueOrDefault(String, league);
     result.name = splitAndCapitalize(item ? item.title : league, '_', ' ');

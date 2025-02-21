@@ -32,7 +32,6 @@ import { Box } from '@mui/system';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import './DpsTdo.scss';
-import { Link } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
@@ -68,6 +67,7 @@ import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 import { TypeEff } from '../../../core/models/type-eff.model';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -118,6 +118,15 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   return a - b;
 };
 
+const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+  switch (pokemonType) {
+    case PokemonType.Shadow:
+      return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+    case PokemonType.Purified:
+      return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+  }
+};
+
 const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'ID',
@@ -129,16 +138,11 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Pokémon Name',
     selector: (row) => (
-      <Link
+      <LinkToTop
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
-        {row.pokemonType === PokemonType.Shadow && (
-          <img height={25} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-        )}
-        {row.pokemonType === PokemonType.Purified && (
-          <img height={25} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />
-        )}
+        {getPokemonTypeIcon(row.pokemonType, 25)}
         <img
           height={48}
           alt="img-pokemon"
@@ -150,7 +154,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           }}
         />
         {splitAndCapitalize(row.pokemon.name, '-', ' ')}
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '300px',
@@ -175,17 +179,21 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Fast Move',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={`/move/${row.fMove?.id}`} title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}>
-        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove?.type)} />{' '}
+      <LinkToTop
+        className="d-flex align-items-center"
+        to={`/move/${row.fMove?.id}`}
+        title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}
+      >
+        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove?.type)} />
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.fMove?.name, '_', ' ')}</span>
+          <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
             <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.fMoveType)?.toLowerCase()}-ic`)}>
               {getKeyWithData(MoveType, row.fMoveType)}
             </span>
           )}
         </div>
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '200px',
@@ -194,17 +202,21 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'Charged Move',
     selector: (row) => (
-      <Link className="d-flex align-items-center" to={`/move/${row.cMove?.id}`} title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}>
-        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove?.type)} />{' '}
+      <LinkToTop
+        className="d-flex align-items-center"
+        to={`/move/${row.cMove?.id}`}
+        title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}
+      >
+        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove?.type)} />
         <div>
-          <span className="text-b-ic">{splitAndCapitalize(row.cMove?.name, '_', ' ')}</span>
+          <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
             <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.cMoveType)?.toLowerCase()}-ic`)}>
               {getKeyWithData(MoveType, row.cMoveType)}
             </span>
           )}
         </div>
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '220px',
@@ -415,12 +427,9 @@ const DpsTdo = () => {
   };
 
   const filterBestOptions = (result: PokemonSheetData[], best: BestOptionType) => {
-    let bestType = getPropertyName(result?.[0], (r) => r.multiDpsTdo) as 'multiDpsTdo' | 'dps' | 'tdo';
-    if (best === BestOptionType.dps) {
-      bestType = getPropertyName(result?.[0], (r) => r.dps) as 'dps';
-    } else if (best === BestOptionType.tdo) {
-      bestType = getPropertyName(result?.[0], (r) => r.tdo) as 'tdo';
-    }
+    const bestType = getPropertyName<PokemonSheetData, 'multiDpsTdo' | 'dps' | 'tdo'>(result[0], (r) =>
+      best === BestOptionType.dps ? r.dps : best === BestOptionType.tdo ? r.tdo : r.multiDpsTdo
+    );
     const group = result.reduce((result: DynamicObj<PokemonSheetData[]>, obj) => {
       (result[obj.pokemon.name] = getValueOrDefault(Array, result[obj.pokemon.name])).push(obj);
       return result;
@@ -521,7 +530,7 @@ const DpsTdo = () => {
         );
       }
     });
-    if (enableBest) {
+    if (isNotEmpty(result) && enableBest) {
       result = filterBestOptions(result, bestOf);
     }
     setShowSpinner(false);

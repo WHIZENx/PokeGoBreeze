@@ -1,6 +1,5 @@
 import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import {
   checkPokemonGO,
@@ -32,6 +31,7 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const customStyles: TableStyles = {
   head: {
@@ -112,13 +112,22 @@ const Counter = (props: ICounterComponent) => {
   const [releasedGO, setReleaseGO] = useState(true);
   const [showMega, setShowMega] = useState(false);
 
+  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+    switch (pokemonType) {
+      case PokemonType.Shadow:
+        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+      case PokemonType.Purified:
+        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+    }
+  };
+
   const columns: TableColumnModify<ICounterModel>[] = [
     {
       name: 'Pokémon',
       selector: (row) => {
         const assets = findAssetForm(data.assets, row.pokemonId, row.pokemonForme);
         return (
-          <Link to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme, row.pokemonType)}`}>
+          <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme, row.pokemonType)}`}>
             <div className="d-flex justify-content-center">
               <div
                 className={combineClasses(
@@ -126,12 +135,7 @@ const Counter = (props: ICounterComponent) => {
                   'position-relative group-pokemon-sprite'
                 )}
               >
-                {row.pokemonType === PokemonType.Shadow && (
-                  <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                )}
-                {row.pokemonType === PokemonType.Purified && (
-                  <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
-                )}
+                {getPokemonTypeIcon(row.pokemonType, 30)}
                 <img
                   className="pokemon-sprite-counter"
                   alt="img-pokemon"
@@ -146,7 +150,7 @@ const Counter = (props: ICounterComponent) => {
             <span className="caption text-overflow" style={{ color: theme.palette.text.primary }}>
               #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
             </span>
-          </Link>
+          </LinkToTop>
         );
       },
       width: '30%',
@@ -154,7 +158,7 @@ const Counter = (props: ICounterComponent) => {
     {
       name: 'Fast',
       selector: (row) => (
-        <Link to={`../move/${row.fMove.id}`} className="d-grid">
+        <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove.type)} />
           </div>
@@ -168,14 +172,14 @@ const Counter = (props: ICounterComponent) => {
               </span>
             )}
           </span>
-        </Link>
+        </LinkToTop>
       ),
       width: '25%',
     },
     {
       name: 'Charged',
       selector: (row) => (
-        <Link to={`../move/${row.cMove.id}`} className="d-grid">
+        <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
             <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove.type)} />
           </div>
@@ -189,13 +193,13 @@ const Counter = (props: ICounterComponent) => {
               </span>
             )}
           </span>
-        </Link>
+        </LinkToTop>
       ),
       width: '25%',
     },
     {
       name: '%',
-      selector: (row) => toFloatWithPadding(row.ratio, 2),
+      selector: (row) => (row.ratio >= 100 ? 100 : toFloatWithPadding(row.ratio, 2)),
       sortable: true,
       sortFunction: numSortRatio,
       width: '20%',

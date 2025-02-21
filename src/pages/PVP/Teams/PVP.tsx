@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
 import {
@@ -53,6 +53,7 @@ import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -230,24 +231,16 @@ const TeamPVP = () => {
   };
 
   const setSortedPokemonPerformers = (primary: IPerformers, secondary: IPerformers) => {
-    const modelColumn = primary || secondary;
-    let sortedColumn = getPropertyName(modelColumn, (o) => o.teamScore) as 'teamScore' | 'individualScore' | 'games';
-    if (sortedBy === SortType.IndividualScore) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.individualScore) as 'individualScore';
-    } else if (sortedBy === SortType.Games) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.games) as 'games';
-    }
+    const sortedColumn = getPropertyName(primary || secondary, (o) =>
+      sortedBy === SortType.IndividualScore ? o.individualScore : sortedBy === SortType.Games ? o.games : o.teamScore
+    );
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
     return sorted === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
   };
 
   const setSortedPokemonTeam = (primary: ITeams, secondary: ITeams) => {
-    const modelColumn = primary || secondary;
-    let sortedColumn = getPropertyName(modelColumn, (o) => o.teamScore) as 'teamScore' | 'games';
-    if (sortedTeamBy === SortType.Games) {
-      sortedColumn = getPropertyName(modelColumn, (o) => o.games) as 'games';
-    }
+    const sortedColumn = getPropertyName(primary || secondary, (o) => (sortedBy === SortType.Games ? o.games : o.teamScore));
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
     return sortedTeam === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
@@ -278,6 +271,15 @@ const TeamPVP = () => {
     );
 
     return move;
+  };
+
+  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+    switch (pokemonType) {
+      case PokemonType.Shadow:
+        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+      case PokemonType.Purified:
+        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+    }
   };
 
   return (
@@ -363,21 +365,16 @@ const TeamPVP = () => {
                 backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, 1, styleSheet.current),
               }}
             >
-              <Link
+              <LinkToTop
                 to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${value.speciesId
                   .toString()
                   .replaceAll('_', '-')}`}
               >
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
-              </Link>
+              </LinkToTop>
               <div className="d-flex justify-content-center">
                 <span className="position-relative filter-shadow" style={{ width: 96 }}>
-                  {value.pokemonType === PokemonType.Shadow && (
-                    <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                  )}
-                  {value.pokemonType === PokemonType.Purified && (
-                    <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
-                  )}
+                  {getPokemonTypeIcon(value.pokemonType, 48)}
                   <img
                     alt="img-league"
                     className="pokemon-sprite"
@@ -492,12 +489,7 @@ const TeamPVP = () => {
                         <div className="text-center" key={index}>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                              {value.pokemonType === PokemonType.Shadow && (
-                                <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                              )}
-                              {value.pokemonType === PokemonType.Purified && (
-                                <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
-                              )}
+                              {getPokemonTypeIcon(value.pokemonType, 48)}
                               <img
                                 alt="img-league"
                                 className="pokemon-sprite"
@@ -538,21 +530,16 @@ const TeamPVP = () => {
                           backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType),
                         }}
                       >
-                        <Link
+                        <LinkToTop
                           to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${value.speciesId
                             .toString()
                             .replaceAll('_', '-')}`}
                         >
                           <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
-                        </Link>
+                        </LinkToTop>
                         <div className="d-flex justify-content-center">
                           <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                            {value.pokemonType === PokemonType.Shadow && (
-                              <img height={48} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                            )}
-                            {value.pokemonType === PokemonType.Purified && (
-                              <img height={48} alt="img-purified" className="shadow-icon" src={APIService.getPokePurified()} />
-                            )}
+                            {getPokemonTypeIcon(value.pokemonType, 48)}
                             <img
                               alt="img-league"
                               className="pokemon-sprite"

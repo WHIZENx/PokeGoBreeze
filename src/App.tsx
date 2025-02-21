@@ -47,8 +47,9 @@ import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/localStorage';
 import { LocalTimeStamp } from './store/models/local-storage.model';
-import { StoreState } from './store/models/state.model';
+import { RouterState, StoreState } from './store/models/state.model';
 import { isNotEmpty } from './util/extension';
+import { Action } from 'history';
 
 // tslint:disable-next-line: no-empty
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -56,6 +57,7 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 function App() {
   const dispatch = useDispatch();
   const data = useSelector((state: StoreState) => state.store.data);
+  const router = useSelector((state: RouterState) => state.router);
 
   const theme = useTheme<ThemeModify>();
   const colorMode = useContext(ColorModeContext);
@@ -65,6 +67,32 @@ function App() {
   const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.Sounds, '');
 
   const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setTimeout(
+      () =>
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'instant',
+        }),
+      400
+    );
+  }, []);
+
+  useEffect(() => {
+    if (router && router.action === Action.Pop) {
+      setTimeout(
+        () =>
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant',
+          }),
+        1
+      );
+    }
+  }, [router]);
 
   useEffect(() => {
     dispatch(DeviceActions.SetDevice.create());

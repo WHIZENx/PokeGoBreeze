@@ -7,7 +7,6 @@ import APIService from '../../../services/API.service';
 
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   getTime,
   splitAndCapitalize,
@@ -35,6 +34,7 @@ import { IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -250,7 +250,7 @@ const Leagues = () => {
               <li style={{ fontWeight: 500 }}>
                 <h6 className="title-leagues text-success">White List</h6>
                 {league.conditions.whiteList.map((item, index) => (
-                  <Link
+                  <LinkToTop
                     className="img-link text-center"
                     key={index}
                     to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -274,7 +274,7 @@ const Leagues = () => {
                         item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
                       }`}
                     </span>
-                  </Link>
+                  </LinkToTop>
                 ))}
               </li>
             )}
@@ -282,7 +282,7 @@ const Leagues = () => {
               <li style={{ fontWeight: 500 }}>
                 <h6 className="title-leagues text-danger">Ban List</h6>
                 {league.conditions.banned.map((item, index) => (
-                  <Link
+                  <LinkToTop
                     className="img-link text-center"
                     key={index}
                     to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -306,7 +306,7 @@ const Leagues = () => {
                         item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
                       }`}
                     </span>
-                  </Link>
+                  </LinkToTop>
                 ))}
               </li>
             )}
@@ -326,8 +326,11 @@ const Leagues = () => {
       <div className="row" style={{ rowGap: 10, margin: 0 }}>
         <div className="col-md-8 d-flex justify-content-start align-items-center" style={{ padding: 0 }}>
           <span style={{ fontWeight: 500 }}>
-            <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>{' '}
-            <span>- {getTime(dataStore.leagues.season.timestamp.end)}</span>
+            <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>
+            <span>
+              {' - '}
+              {getTime(dataStore.leagues.season.timestamp.end)}
+            </span>
           </span>
         </div>
         <div className="col-md-4 d-flex justify-content-end" style={{ padding: 0 }}>
@@ -385,7 +388,7 @@ const Leagues = () => {
                   <span className="caption text-black">Premium</span>
                 </Badge>
               </div>
-              {dataStore.leagues.season.rewards.rank[rank].free?.map((value, index) => (
+              {dataStore.leagues.season.rewards.rank[rank].free.map((value, index) => (
                 <Fragment key={index}>
                   <div className="group-rank-league text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
@@ -475,24 +478,24 @@ const Leagues = () => {
                       color="primary"
                       className="position-relative d-inline-block img-link"
                       overlap="circular"
-                      badgeContent={dataStore.leagues.season.rewards.rank[rank].premium?.[index].count}
+                      badgeContent={dataStore.leagues.season.rewards.rank[rank].premium[index].count}
                       max={BattleLeagueCPType.InsMaster}
                       sx={{
                         paddingBottom: `${
-                          dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon ||
-                          dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.ItemLoot
+                          dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
+                          dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
                             ? '0'
                             : '1.5rem'
                         } !important`,
                         minWidth: 64,
                       }}
                     >
-                      {!dataStore.leagues.season.rewards.rank[rank].premium?.[index].type && (
+                      {!dataStore.leagues.season.rewards.rank[rank].premium[index].type && (
                         <Fragment>
                           <CloseIcon fontSize="large" sx={{ color: 'red', height: 82 }} />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Pokemon && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -506,7 +509,7 @@ const Leagues = () => {
                             sx={{ fontSize: '1rem', color: 'black' }}
                             onClick={() =>
                               handleShow(
-                                dataStore.leagues.season.rewards.rank[rank].premium?.[index].type,
+                                dataStore.leagues.season.rewards.rank[rank].premium[index].type,
                                 LeagueRewardType.Premium,
                                 value.step
                               )
@@ -514,7 +517,7 @@ const Leagues = () => {
                           />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.ItemLoot && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -528,7 +531,7 @@ const Leagues = () => {
                             sx={{ fontSize: '1rem', color: 'black' }}
                             onClick={() =>
                               handleShow(
-                                dataStore.leagues?.season.rewards.rank[rank].premium?.[index].type,
+                                dataStore.leagues.season.rewards.rank[rank].premium[index].type,
                                 LeagueRewardType.Premium,
                                 value.step
                               )
@@ -536,7 +539,7 @@ const Leagues = () => {
                           />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.RareCandy && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.RareCandy && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -547,7 +550,7 @@ const Leagues = () => {
                           <span className="caption text-black">Rare Candy</span>
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.Stardust && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Stardust && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -558,7 +561,7 @@ const Leagues = () => {
                           <span className="caption text-black">Stardust</span>
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium?.[index].type === RewardType.MoveReRoll && (
+                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium"
@@ -705,7 +708,7 @@ const Leagues = () => {
             {showData.data
               .filter((item) => !item.guaranteedLimited)
               .map((item, index) => (
-                <Link
+                <LinkToTop
                   className="img-link text-center"
                   key={index}
                   to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -716,12 +719,16 @@ const Leagues = () => {
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="img-pokemon"
-                        src={getAssetPokeGo(item.id, item.form)}
+                        src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
+                        }}
                       />
                     </span>
                   </div>
                   <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
-                </Link>
+                </LinkToTop>
               ))}
             {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
               <Fragment>
@@ -730,7 +737,7 @@ const Leagues = () => {
                 {showData.data
                   .filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)
                   .map((item, index) => (
-                    <Link
+                    <LinkToTop
                       className="img-link text-center"
                       key={index}
                       to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -741,12 +748,20 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="img-pokemon"
-                            src={getAssetPokeGo(item.id, item.form)}
+                            src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = getValidPokemonImgPath(
+                                e.currentTarget.src,
+                                item.id,
+                                getAssetPokeGo(item.id, item.form)
+                              );
+                            }}
                           />
                         </span>
                       </div>
                       <span className="caption">{splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}</span>
-                    </Link>
+                    </LinkToTop>
                   ))}
               </Fragment>
             )}

@@ -1,13 +1,14 @@
 import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import {
   capitalize,
   checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
+  getItemSpritePath,
   getKeyWithData,
   splitAndCapitalize,
 } from '../../util/utils';
@@ -19,16 +20,19 @@ import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 import APIService from '../../services/API.service';
 import './Move.scss';
 
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
+
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { CircularProgress, FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { Form } from 'react-bootstrap';
+import { Accordion, Form } from 'react-bootstrap';
 import { BuffType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
-import { ICombat } from '../../core/models/combat.model';
+import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
 import { IMovePage } from '../models/page.model';
 import { TableColumnModify } from '../../util/models/overrides/data-table.model';
@@ -45,6 +49,9 @@ import {
 } from '../../util/extension';
 import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
 import { PokemonTypeBadge } from '../../core/models/type.model';
+import { LinkToTop } from '../../util/hooks/LinkToTop';
+import { BonusType } from '../../core/enums/bonus-type.enum';
+import Candy from '../../components/Sprites/Candy/Candy';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -74,7 +81,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
   {
     name: 'Name',
     selector: (row) => (
-      <Link to={`/pokemon/${row.num}${generateParamForm(row.forme)}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`}>
         <img
           height={48}
           alt="img-pokemon"
@@ -86,7 +93,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
           }}
         />
         {row.name}
-      </Link>
+      </LinkToTop>
     ),
     sortable: true,
     minWidth: '250px',
@@ -142,8 +149,8 @@ const Move = (props: IMovePage) => {
         return value;
       }
     });
-    if (isNotEmpty(result)) {
-      return result?.[0];
+    if (result && isNotEmpty(result)) {
+      return result[0];
     }
     return;
   };
@@ -226,6 +233,15 @@ const Move = (props: IMovePage) => {
       setMoveType(type.toUpperCase());
     }
   }, [move?.isMultipleWithType, searchParams, data.combat]);
+
+  const renderReward = (itemName: string) => (
+    <div className="d-flex align-items-center flex-column">
+      <div style={{ width: 35 }}>
+        <img className="sprite-type" src={getItemSpritePath(itemName)} />
+      </div>
+      <span className="caption">{splitAndCapitalize(itemName.replace('ITEM_', ''), '_', ' ')}</span>
+    </div>
+  );
 
   return (
     <div className={combineClasses('element-bottom poke-container', props.id ? '' : 'container')}>
@@ -336,8 +352,11 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvePower * 0.2, 2)}</span>
+                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span className="text-success d-inline-block caption">
+                        {' +'}
+                        {toFloatWithPadding(move.pvePower * 0.2, 2)}
+                      </span>
                     </>
                   )}
                 </td>
@@ -374,8 +393,11 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>{' '}
-                      <span className="text-success d-inline-block caption">+{toFloatWithPadding(move.pvpPower * 0.2, 2)}</span>
+                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span className="text-success d-inline-block caption">
+                        {' +'}
+                        {toFloatWithPadding(move.pvpPower * 0.2, 2)}
+                      </span>
                     </>
                   )}
                 </td>
@@ -533,6 +555,83 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>{move && `${toFloatWithPadding((move.pvpPower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
+              {move?.bonus && (
+                <tr>
+                  <td className="table-sub-header" colSpan={2} style={{ padding: 0 }}>
+                    <Accordion defaultActiveKey="0">
+                      <Accordion.Item key={0} eventKey="0" className="table-sub-bonus">
+                        <Accordion.Header className="table-sub-bonus">
+                          <span>Bonus Combat</span>
+                        </Accordion.Header>
+                        <Accordion.Body>
+                          <tr>
+                            <td>Bonus Type</td>
+                            <td colSpan={2}>{splitAndCapitalize(getKeyWithData(BonusType, move.bonus.bonusType), /(?=[A-Z])/, ' ')}</td>
+                          </tr>
+                          <tr>
+                            <td>Duration</td>
+                            <td colSpan={2}>{`${move.bonus.durationMs} ms (${move.bonus.durationMs / 1000} sec)`}</td>
+                          </tr>
+                          <tr>
+                            <td>Extra Duration</td>
+                            <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${move.bonus.extraDurationMs / 1000} sec)`}</td>
+                          </tr>
+                          <tr>
+                            <td>Multi Use</td>
+                            <td colSpan={2}>
+                              {move.bonus.enableMultiUse ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>None Combat</td>
+                            <td colSpan={2}>
+                              {move.bonus.enableNonCombatMove ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Cost</td>
+                            <td className="table-bonus-cost">
+                              <Candy id={0} /> {move.bonus.cost.candyCost}
+                            </td>
+                            <td className="table-bonus-cost">
+                              <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
+                                <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                              </div>
+                              {move.bonus.cost.stardustCost}
+                            </td>
+                          </tr>
+                          {Object.entries(move.bonus.bonusEffect).map(([k, v]: [string, BonusEffectType], i) => (
+                            <Fragment key={i}>
+                              <tr>
+                                <td colSpan={3} className="text-center">
+                                  {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
+                                </td>
+                              </tr>
+                              {Object.entries(v).map(([key, value], j) => (
+                                <tr key={j}>
+                                  <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
+                                  <td colSpan={2}>
+                                    {isEqual(move.bonus?.bonusType, BonusType.SpaceBonus) ||
+                                    isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
+                                      value
+                                    ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
+                                      <div className="d-flex flex-wrap" style={{ gap: 10 }}>
+                                        {(value as string[]).map((item) => renderReward(item))}
+                                      </div>
+                                    ) : (
+                                      renderReward(value)
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </Fragment>
+                          ))}
+                        </Accordion.Body>
+                      </Accordion.Item>
+                    </Accordion>
+                  </td>
+                </tr>
+              )}
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={2}>
                   <div className="input-group align-items-center justify-content-center">

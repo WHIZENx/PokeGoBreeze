@@ -12,7 +12,7 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../util/utils';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNotNumber, toNumber, UniqValueInArray } from '../../util/extension';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNumber, toNumber, UniqValueInArray } from '../../util/extension';
 import APIService from '../../services/API.service';
 import { DateEvent, TitleName } from './enums/item-type.enum';
 import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
@@ -20,8 +20,8 @@ import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/informa
 import { FORM_NORMAL } from '../../util/constants';
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { Link } from 'react-router-dom';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
+import { LinkToTop } from '../../util/hooks/LinkToTop';
 
 const News = () => {
   useChangeTitle('News');
@@ -113,7 +113,7 @@ const News = () => {
     const currentDate = new Date();
     let date = currentDate;
     if (dateStartString) {
-      if (!isNotNumber(dateStartString)) {
+      if (isNumber(dateStartString)) {
         date = new Date(toNumber(dateStartString) * 1000);
       } else {
         date = new Date(dateStartString);
@@ -122,7 +122,7 @@ const News = () => {
 
     date = currentDate;
     if (dateEndString) {
-      if (!isNotNumber(dateEndString)) {
+      if (isNumber(dateEndString)) {
         date = new Date(toNumber(dateEndString) * 1000);
       } else {
         date = new Date(dateEndString);
@@ -255,12 +255,12 @@ const News = () => {
                                 {value.rewardNews.map((value, i) => (
                                   <div key={i} className="d-inline-block" style={{ margin: '0 10px' }}>
                                     {value.type === TicketRewardType.Pokemon && value.pokemon ? (
-                                      <Link
+                                      <LinkToTop
                                         className="select-evo"
                                         to={`/pokemon/${value.pokemon.id}${generateParamForm(value.pokemon.form)}`}
                                       >
                                         {renderReward(value)}
-                                      </Link>
+                                      </LinkToTop>
                                     ) : (
                                       renderReward(value)
                                     )}

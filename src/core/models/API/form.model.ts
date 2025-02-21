@@ -1,7 +1,7 @@
 import { PokemonType } from '../../../enums/type.enum';
 import { FORM_NORMAL } from '../../../util/constants';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
-import { getPokemonType } from '../../../util/utils';
+import { convertPokemonAPIDataFormName, getPokemonType } from '../../../util/utils';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 import { Path } from './species.model';
@@ -61,15 +61,15 @@ export interface PokemonForm {
 }
 
 export interface IPokemonFormDetail {
-  formName: string;
+  formName: string | null;
   id: number;
   isDefault: boolean;
   pokemonType: PokemonType;
   name: string;
   pokemon: Path;
-  sprites: IPokemonSprit | undefined;
+  sprites?: IPokemonSprit;
   types: string[];
-  version: string;
+  version: string | null;
 }
 
 export class PokemonFormDetail implements IPokemonFormDetail {
@@ -103,7 +103,7 @@ interface SlotType {
   type: Path;
 }
 
-export interface IForm {
+export interface IForm extends Partial<IPokemonFormDetail> {
   formName: string | null | undefined;
   id: number | undefined;
   isDefault: boolean;
@@ -111,7 +111,6 @@ export interface IForm {
   name: string;
   version: string | null | undefined;
   types: string[] | undefined;
-  sprites?: IPokemonSprit;
 }
 
 export interface IPokemonFormModify {
@@ -134,6 +133,12 @@ export class PokemonFormModify implements IPokemonFormModify {
     obj.defaultName = defaultName;
     obj.name = getValueOrDefault(String, name);
     obj.form = form;
+    return obj;
+  }
+
+  static create(value: IPokemonFormModify) {
+    const obj = new PokemonFormModify();
+    Object.assign(obj, value);
     return obj;
   }
 }
@@ -188,7 +193,6 @@ export class Form implements IForm {
   name = '';
   version: string | null | undefined = '';
   types: string[] | undefined = [];
-  sprites?: IPokemonSprit;
 
   static create(value: IForm) {
     const obj = new Form();
@@ -199,7 +203,12 @@ export class Form implements IForm {
 
   static setValue(value: IPokemonFormDetail, name: string) {
     const obj = new Form();
-    obj.formName = isEqual(value.pokemonType, PokemonType.GMax) ? value.name.replace(`${name}-`, '') : value.formName;
+    const formName = isEqual(value.pokemonType, PokemonType.GMax)
+      ? value.name.replace(`${name}-`, '')
+      : convertPokemonAPIDataFormName(value.formName, value.name);
+    if (formName) {
+      value.formName = formName;
+    }
     Object.assign(obj, value);
     return obj;
   }

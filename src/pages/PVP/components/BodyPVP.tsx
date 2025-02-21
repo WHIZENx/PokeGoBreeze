@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { BodyComponent } from '../models/component.model';
 import { BackgroundType } from '../enums/model-type.enum';
-import { Link } from 'react-router-dom';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
@@ -12,6 +11,7 @@ import { convertNameRankingToOri, convertNameRankingToForm, splitAndCapitalize, 
 import { BodyModel, IBody } from '../models/body.model';
 import { FORM_SHADOW } from '../../../util/constants';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const BodyPVP = (props: BodyComponent) => {
   const [matchups, setMatchups] = useState<IBody[]>();
@@ -56,7 +56,7 @@ const BodyPVP = (props: BodyComponent) => {
   }, [matchups, counters, props.data?.matchups, props.data?.counters]);
 
   const renderItemList = (data: IBody, bgType: BackgroundType) => (
-    <Link
+    <LinkToTop
       to={`/pvp/${props.cp}/${props.type}/${data.opponent.replaceAll('_', '-')}`}
       className="list-item-ranking"
       style={{
@@ -98,7 +98,7 @@ const BodyPVP = (props: BodyComponent) => {
           {data.rating}
         </span>
       </div>
-    </Link>
+    </LinkToTop>
   );
 
   return (

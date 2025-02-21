@@ -101,7 +101,7 @@ const PVPHome = () => {
       )}
       <p className="text-danger">
         <b>
-          * Pokémon data source references from{' '}
+          {'* Pokémon data source references from '}
           <a href="https://pvpoke.com/" target="_">
             Pvpoke
           </a>

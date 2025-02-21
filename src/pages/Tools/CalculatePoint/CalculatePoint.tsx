@@ -396,12 +396,12 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                       </p>
                       <p>
-                        - Move Type:{' '}
+                        {'- Move Type: '}
                         <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                       </p>
                       {findStabType(form?.form.types, move.type)}
                       <p>
-                        - Damage:{' '}
+                        {'- Damage: '}
                         <b>
                           {move.pvePower}
                           {findStabType(form?.form.types, move.type) && <span className="caption-small text-success"> (x1.2)</span>}
@@ -525,12 +525,12 @@ const CalculatePoint = () => {
                         - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
                       </p>
                       <p>
-                        - Move Type:{' '}
+                        {'- Move Type: '}
                         <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>{capitalize(moveDef.type)}</span>
                       </p>
                       {findStabType(formDef?.form.types, moveDef.type)}
                       <p>
-                        - Damage:{' '}
+                        {'- Damage: '}
                         <b>
                           {moveDef.pvePower}
                           {findStabType(formDef?.form.types, moveDef.type) && <span className="caption-small text-success"> (x1.2)</span>}
@@ -685,12 +685,12 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                         </p>
                         <p>
-                          - Move Type:{' '}
+                          {'- Move Type: '}
                           <span className={combineClasses('type-icon-small', fMove.type?.toLowerCase())}>{capitalize(fMove.type)}</span>
                         </p>
                         {findStabType(formDef?.form.types, fMove.type)}
                         <p>
-                          - Damage:{' '}
+                          {'- Damage: '}
                           <b>
                             {fMove.pvePower}
                             {findStabType(formDef?.form.types, fMove.type) && <span className="caption-small text-success"> (x1.2)</span>}
@@ -717,12 +717,12 @@ const CalculatePoint = () => {
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                         </p>
                         <p>
-                          - Move Type:{' '}
+                          {'- Move Type: '}
                           <span className={combineClasses('type-icon-small', cMove.type?.toLowerCase())}>{capitalize(cMove.type)}</span>
                         </p>
                         {findStabType(formDef?.form.types, cMove.type)}
                         <p>
-                          - Damage:{' '}
+                          {'- Damage: '}
                           <b>
                             {cMove.pvePower}
                             {findStabType(formDef?.form.types, cMove.type) && <span className="caption-small text-success"> (x1.2)</span>}

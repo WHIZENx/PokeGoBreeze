@@ -5,10 +5,10 @@ import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
-import { Link } from 'react-router-dom';
 import { ICardPokemonInfoComponent } from '../models/component.model';
 import { combineClasses } from '../../util/extension';
 import { PokemonType } from '../../enums/type.enum';
+import { LinkToTop } from '../../util/hooks/LinkToTop';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);
@@ -68,7 +68,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           src={APIService.getShinyIcon()}
         />
       )}
-      <Link className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.forme)}`}>
+      <LinkToTop className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.forme)}`}>
         <div className="d-flex justify-content-center" style={{ padding: 8 }}>
           <span style={{ width: 96 }}>
             <img
@@ -112,7 +112,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
             </b>
           </div>
         </div>
-      </Link>
+      </LinkToTop>
     </li>
   );
 };

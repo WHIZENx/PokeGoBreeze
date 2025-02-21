@@ -492,14 +492,18 @@ const Evolution = (props: IEvolutionComponent) => {
     }
   };
 
+  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
+    switch (pokemonType) {
+      case PokemonType.Shadow:
+        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
+      case PokemonType.Purified:
+        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
+    }
+  };
+
   const renderImgGif = (value: IPokemonEvo) => (
     <>
-      {props.pokemonType === PokemonType.Purified && (
-        <img height={30} alt="img-shadow" className="purified-icon" src={APIService.getPokePurified()} />
-      )}
-      {props.pokemonType === PokemonType.Shadow && (
-        <img height={30} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-      )}
+      {getPokemonTypeIcon(props.pokemonType, 30)}
       <img
         className="pokemon-sprite"
         id="img-pokemon"
@@ -593,15 +597,16 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.kmBuddyDistanceRequirement && (
                           <span className="caption">
-                            {data.quest.isMustBeBuddy ? (
-                              <div className="d-flex align-items-end">
+                            {`${
+                              data.quest.isMustBeBuddy ? (
+                                <div className="d-flex align-items-end">
+                                  <DirectionsWalkIcon fontSize="small" />
+                                  <PetsIcon sx={{ fontSize: '1rem' }} />
+                                </div>
+                              ) : (
                                 <DirectionsWalkIcon fontSize="small" />
-                                <PetsIcon sx={{ fontSize: '1rem' }} />
-                              </div>
-                            ) : (
-                              <DirectionsWalkIcon fontSize="small" />
-                            )}{' '}
-                            {`${data.quest.kmBuddyDistanceRequirement}km`}
+                              )
+                            } ${data.quest.kmBuddyDistanceRequirement}km`}
                           </span>
                         )}
                         {data?.quest?.isOnlyDaytime && (
@@ -837,7 +842,7 @@ const Evolution = (props: IEvolutionComponent) => {
                 <span className="d-block caption">
                   - <img width={20} height={20} src={getItemSpritePath(ItemName.Incense)} /> : Use Incense.
                 </span>
-                <span className="d-block caption">- Pokemon Battle.</span>
+                <span className="d-block caption">- Pokémon Battle.</span>
               </span>
             </PopoverConfig>
           }

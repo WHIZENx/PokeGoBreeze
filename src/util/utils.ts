@@ -48,7 +48,7 @@ import {
   isInclude,
   isIncludeList,
   isNotEmpty,
-  isNotNumber,
+  isNumber,
   isNullOrUndefined,
   isUndefined,
   toNumber,
@@ -63,6 +63,7 @@ import { ItemTicketRewardType, TicketRewardType } from '../core/enums/informatio
 import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 import { ItemName } from '../pages/News/enums/item-type.enum';
 import { APIUrl } from '../services/constants';
+import { BonusType } from '../core/enums/bonus-type.enum';
 
 class Mask {
   value: number;
@@ -179,7 +180,7 @@ export const HundoRate = styled(Rating)(() => ({
 export const capitalize = (str: string | undefined | null, defaultText = '') =>
   getValueOrDefault(String, str?.charAt(0).toUpperCase()) + getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
 
-export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') =>
+export const splitAndCapitalize = (str: string | undefined | null, splitBy: string | RegExp, joinBy: string, defaultText = '') =>
   getValueOrDefault(
     String,
     str
@@ -196,7 +197,7 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
   if (isNullOrUndefined(value)) {
     return value;
   }
-  const date = Moment(new Date(isNotNumber(value) ? value : toNumber(value)));
+  const date = Moment(new Date(isNumber(value) ? toNumber(value) : value));
   return notFull ? date.format('D MMMM YYYY') : date.format('HH:mm D MMMM YYYY');
 };
 
@@ -381,10 +382,10 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
   for (let value of moveSet) {
     value = replaceTempMovePvpName(value);
     const m = value.split('_');
-    if (m.length === result?.length) {
+    if (result && isNotEmpty(m) && m.length === result.length) {
       let count = 0;
       for (let i = 0; i < result.length; i++) {
-        if (isInclude(capitalize(m[i].toLowerCase()), result[i])) {
+        if (isInclude(capitalize(m[i]), result[i])) {
           count++;
         }
       }
@@ -405,10 +406,10 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
           .every((m) => isInclude(value.toLowerCase(), m))
       ) {
         const m = value.split('_');
-        if (result && m.length === result.length) {
+        if (result && isNotEmpty(m) && m.length === result.length) {
           let count = 0;
           for (let i = 0; i < result.length; i++) {
-            if (m[i].at(0) === result[i].at(0)) {
+            if (isEqual(m[i][0], result[i][0])) {
               count++;
             }
           }
@@ -612,28 +613,22 @@ export const convertStatsEffort = (stats: Stats[] | undefined) => {
 
 export const replacePokemonGoForm = (form: string) => form.replace(/_MALE$/, '').replace(/_FEMALE$/, '');
 
-export const formIconAssets = (value: IPokemonFormModify, id: number | undefined) =>
-  isInclude(value.form.name, '-totem') ||
-  isInclude(value.form.name, '-hisui') ||
-  isInclude(value.form.name, 'power-construct') ||
-  isInclude(value.form.name, 'own-tempo') ||
-  isInclude(value.form.name, '-meteor') ||
-  value.form.name === 'mewtwo-armor' ||
-  value.form.name === 'arceus-unknown' ||
-  value.form.name === 'dialga-origin' ||
-  value.form.name === 'palkia-origin' ||
-  value.form.name === 'mothim-sandy' ||
-  value.form.name === 'mothim-trash' ||
-  value.form.name === 'basculin-white-striped' ||
-  value.form.name === 'greninja-battle-bond' ||
-  value.form.name === 'urshifu-rapid-strike' ||
-  toNumber(id) >= 899
-    ? APIService.getPokeIconSprite()
-    : isInclude(value.form.name, `-${FORM_SHADOW.toLowerCase()}`) || isInclude(value.form.name, `-${FORM_PURIFIED.toLowerCase()}`)
+export const formIconAssets = (value: IPokemonFormModify) =>
+  isInclude(value.form.name, `-${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) ||
+  isInclude(value.form.name, `-${FORM_PURIFIED}`, IncludeMode.IncludeIgnoreCaseSensitive)
     ? APIService.getPokeIconSprite(value.name)
     : APIService.getPokeIconSprite(value.form.name);
 
-// Convert Pokemon from Storage data to GO name
+export const convertPokemonAPIDataFormName = (form: string | undefined | null, name: string | undefined | null) => {
+  if (isEqual(name, 'ZACIAN-CROWNED', EqualMode.IgnoreCaseSensitive)) {
+    form += '-SWORD';
+  } else if (isEqual(name, 'ZAMAZENTA-CROWNED', EqualMode.IgnoreCaseSensitive)) {
+    form += '-SHIELD';
+  }
+  return form?.toLowerCase();
+};
+
+// Convert Pokémon from Storage data to GO name
 export const convertPokemonDataName = (text: string | undefined | null, defaultName = '') => {
   if (!text) {
     return defaultName;
@@ -675,7 +670,7 @@ export const convertPokemonDataName = (text: string | undefined | null, defaultN
     .replace(/_A$/, '');
 };
 
-// Convert Pokemon from API data to GO name
+// Convert Pokémon from API data to GO name
 export const convertPokemonAPIDataName = (text: string | undefined | null, defaultName = '') => {
   if (!text) {
     return defaultName;
@@ -729,7 +724,11 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/-Shadow$/, '')
     .replace(/-Purified$/, '')
     .replace(/-Mane$/, '')
-    .replace(/-Wings$/, '');
+    .replace(/-Wings$/, '')
+    .replace(/Crowned-Sword$/, 'Crowned')
+    .replace(/Crowned-Shield$/, 'Crowned')
+    .replace(/^Hero$/, '')
+    .replace(/^Armor$/, '');
 };
 
 export const generatePokemonGoForms = (
@@ -1148,4 +1147,19 @@ export const getValidPokemonImgPath = (src: string | undefined | null, id?: numb
     return APIService.getPokemonSqModel(form, id);
   }
   return APIService.getPokeFullSprite();
+};
+
+export const getBonusType = (bonusType: string | number) => {
+  if (bonusType === BonusType.SlowFreezeBonus || bonusType === 6) {
+    return BonusType.SlowFreezeBonus;
+  } else if (isEqual(bonusType, 'SPACE_BONUS')) {
+    return BonusType.SpaceBonus;
+  } else if (isEqual(bonusType, 'TIME_BONUS')) {
+    return BonusType.TimeBonus;
+  } else if (isEqual(bonusType, 'DAY_BONUS')) {
+    return BonusType.DayBonus;
+  } else if (isEqual(bonusType, 'NIGHT_BONUS')) {
+    return BonusType.NightBonus;
+  }
+  return BonusType.None;
 };

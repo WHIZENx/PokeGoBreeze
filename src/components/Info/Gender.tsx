@@ -5,6 +5,7 @@ import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
 import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { getKeyWithData } from '../../util/utils';
+import { getValueOrDefault } from '../../util/extension';
 
 const Gender = (props: IGenderComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -20,37 +21,50 @@ const Gender = (props: IGenderComponent) => {
           src={APIService.getGenderSprite(getKeyWithData(TypeSex, props.sex))}
         />
         <h6 className="ratio-gender" style={{ margin: 0 }}>
-          {getKeyWithData(TypeSex, props.sex)}{' '}
-          {props.ratio && `ratio: ${props.sex === TypeSex.Male ? props.ratio.M * 100 : props.ratio.F * 100}%`}
+          {`${getKeyWithData(TypeSex, props.sex)} ${
+            props.ratio ? `ratio: ${props.sex === TypeSex.Male ? props.ratio.M * 100 : props.ratio.F * 100}%` : ''
+          }`}
         </h6>
       </div>
       <div className="element-top d-flex" style={{ marginLeft: 30, columnGap: 15 }}>
         <div className="img-form-gender-group">
-          <img
-            width={96}
-            height={96}
-            alt="img-pokemon"
-            src={
-              props.sex === TypeSex.Male
-                ? props.sprit?.frontDefault || props.sprit?.frontFemale || APIService.getPokeSprite()
-                : props.sprit?.frontFemale || props.sprit?.frontDefault || APIService.getPokeSprite()
-            }
-          />
+          <div className="img-gender-group">
+            <img
+              width={96}
+              height={96}
+              alt="img-pokemon"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeSprite();
+              }}
+              src={
+                props.sex === TypeSex.Male
+                  ? getValueOrDefault(String, props.sprit?.frontDefault, props.sprit?.frontFemale) || APIService.getPokeSprite()
+                  : getValueOrDefault(String, props.sprit?.frontFemale, props.sprit?.frontDefault) || APIService.getPokeSprite()
+              }
+            />
+          </div>
           <span className="caption" style={{ color: theme.palette.customText.caption }}>
             Default
           </span>
         </div>
         <div className="img-form-gender-group">
-          <img
-            width={96}
-            height={96}
-            alt="img-pokemon"
-            src={
-              props.sex === TypeSex.Male
-                ? props.sprit?.frontShiny || props.sprit?.frontShinyFemale || APIService.getPokeSprite()
-                : props.sprit?.frontShinyFemale || props.sprit?.frontShiny || APIService.getPokeSprite()
-            }
-          />
+          <div className="img-gender-group">
+            <img
+              width={96}
+              height={96}
+              alt="img-pokemon"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = APIService.getPokeSprite();
+              }}
+              src={
+                props.sex === TypeSex.Male
+                  ? getValueOrDefault(String, props.sprit?.frontShiny, props.sprit?.frontShinyFemale) || APIService.getPokeSprite()
+                  : getValueOrDefault(String, props.sprit?.frontShinyFemale, props.sprit?.frontShiny) || APIService.getPokeSprite()
+              }
+            />
+          </div>
           <span className="caption" style={{ color: theme.palette.customText.caption }}>
             Shiny
           </span>
