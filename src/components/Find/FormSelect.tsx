@@ -141,9 +141,9 @@ const FormSelect = (props: IFormSelectComponent) => {
       const cancelToken = axiosSource.current.token;
 
       APIService.getPokeSpices(id, { cancelToken })
-        .then((res) => {
+        .then(async (res) => {
           if (res.data) {
-            fetchMap(res.data);
+            await fetchMap(res.data);
           }
         })
         .catch((e: AxiosError) => {

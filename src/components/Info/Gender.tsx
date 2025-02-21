@@ -39,8 +39,8 @@ const Gender = (props: IGenderComponent) => {
               }}
               src={
                 props.sex === TypeSex.Male
-                  ? getValueOrDefault(String, props.sprit?.frontDefault, props.sprit?.frontFemale)
-                  : getValueOrDefault(String, props.sprit?.frontFemale, props.sprit?.frontDefault)
+                  ? getValueOrDefault(String, props.sprit?.frontDefault, props.sprit?.frontFemale) || APIService.getPokeSprite()
+                  : getValueOrDefault(String, props.sprit?.frontFemale, props.sprit?.frontDefault) || APIService.getPokeSprite()
               }
             />
           </div>
@@ -60,8 +60,8 @@ const Gender = (props: IGenderComponent) => {
               }}
               src={
                 props.sex === TypeSex.Male
-                  ? getValueOrDefault(String, props.sprit?.frontShiny, props.sprit?.frontShinyFemale)
-                  : getValueOrDefault(String, props.sprit?.frontShinyFemale, props.sprit?.frontShiny)
+                  ? getValueOrDefault(String, props.sprit?.frontShiny, props.sprit?.frontShinyFemale) || APIService.getPokeSprite()
+                  : getValueOrDefault(String, props.sprit?.frontShinyFemale, props.sprit?.frontShiny) || APIService.getPokeSprite()
               }
             />
           </div>

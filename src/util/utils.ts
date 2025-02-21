@@ -63,6 +63,7 @@ import { ItemTicketRewardType, TicketRewardType } from '../core/enums/informatio
 import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 import { ItemName } from '../pages/News/enums/item-type.enum';
 import { APIUrl } from '../services/constants';
+import { BonusType } from '../core/enums/bonus-type.enum';
 
 class Mask {
   value: number;
@@ -179,7 +180,7 @@ export const HundoRate = styled(Rating)(() => ({
 export const capitalize = (str: string | undefined | null, defaultText = '') =>
   getValueOrDefault(String, str?.charAt(0).toUpperCase()) + getValueOrDefault(String, str?.slice(1).toLowerCase(), defaultText);
 
-export const splitAndCapitalize = (str: string | undefined | null, splitBy: string, joinBy: string, defaultText = '') =>
+export const splitAndCapitalize = (str: string | undefined | null, splitBy: string | RegExp, joinBy: string, defaultText = '') =>
   getValueOrDefault(
     String,
     str
@@ -1146,4 +1147,19 @@ export const getValidPokemonImgPath = (src: string | undefined | null, id?: numb
     return APIService.getPokemonSqModel(form, id);
   }
   return APIService.getPokeFullSprite();
+};
+
+export const getBonusType = (bonusType: string | number) => {
+  if (bonusType === BonusType.SlowFreezeBonus || bonusType === 6) {
+    return BonusType.SlowFreezeBonus;
+  } else if (isEqual(bonusType, 'SPACE_BONUS')) {
+    return BonusType.SpaceBonus;
+  } else if (isEqual(bonusType, 'TIME_BONUS')) {
+    return BonusType.TimeBonus;
+  } else if (isEqual(bonusType, 'DAY_BONUS')) {
+    return BonusType.DayBonus;
+  } else if (isEqual(bonusType, 'NIGHT_BONUS')) {
+    return BonusType.NightBonus;
+  }
+  return BonusType.None;
 };

@@ -291,9 +291,9 @@ const Pokemon = (props: IPokemonPage) => {
       const cancelToken = axiosSource.current.token;
 
       APIService.getPokeSpices(id, { cancelToken })
-        .then((res) => {
+        .then(async (res) => {
           if (res.data) {
-            fetchMap(res.data);
+            await fetchMap(res.data);
           }
         })
         .catch((e: AxiosError) => {
@@ -305,7 +305,10 @@ const Pokemon = (props: IPokemonPage) => {
             document.title = `#${params.id} - Not Found`;
             setIsFound(false);
           } else {
-            navigateToTop({ to: '/error', replace: true, state: { url: location.pathname, id } });
+            navigateToTop('/error', {
+              replace: true,
+              state: { url: location.pathname, id },
+            });
           }
         });
     },
