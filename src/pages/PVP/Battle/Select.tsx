@@ -13,7 +13,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
 import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.model';
-import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
@@ -53,8 +53,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       return;
     }
     props.clearData(false);
-    const [fMove] = value.moveset as string[];
-    let [, cMovePri, cMoveSec] = value.moveset as string[];
+    const [fMove] = getValueOrDefault(Array, value.moveset);
+    let [, cMovePri, cMoveSec] = getValueOrDefault(Array, value.moveset);
     setSearch(splitAndCapitalize(value.pokemon.name, '-', ' '));
     setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);

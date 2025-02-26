@@ -9,6 +9,11 @@ const OptionsReducer = (state: OptionsSheetModel | null = null, action: OptionsA
         ...state,
         dpsSheet: action.payload,
       };
+    case OptionsActions.OptionsActionTypes.setCounterOptions:
+      return {
+        ...state,
+        counter: action.payload,
+      };
     default:
       return state;
   }

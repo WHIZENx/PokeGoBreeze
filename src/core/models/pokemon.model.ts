@@ -549,7 +549,7 @@ export class PokemonData implements IPokemonData {
         .replace(`_${FORM_HISUI}AN`, `_${FORM_HISUI}`)
         .replaceAll('_', '-')
         .toLowerCase();
-    obj.sprite = options?.sprite ?? DEFAULT_SPRITE_NAME;
+    obj.sprite = getValueOrDefault(String, options?.sprite, DEFAULT_SPRITE_NAME);
     obj.types = getValueOrDefault(Array, types);
     obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
     obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options.baseStatsGO;

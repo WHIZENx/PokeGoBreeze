@@ -141,14 +141,14 @@ const CatchChance = () => {
   };
 
   const calculateCatch = () => {
-    const result: DynamicObj<DynamicObj<number>> = {};
+    const result = new Object() as DynamicObj<DynamicObj<number>>;
     const medalChance =
       (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
 
     if (data) {
       balls.forEach((ball) => {
         const ballType = getValueOrDefault(String, getKeyWithData(ThrowType, ball.pokeBallType)?.toLowerCase());
-        result[ballType] = {};
+        result[ballType] = new Object() as DynamicObj<number>;
         throws.forEach((type) => {
           const [minThreshold, maxThreshold] = type.threshold;
           const multiplier =

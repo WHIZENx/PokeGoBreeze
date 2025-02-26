@@ -558,7 +558,7 @@ export const getKeyWithData = <T>(data: object, findValue: T) => {
 
 export const getKeysObj = (data: object) =>
   Object.values(data)
-    .map((v) => v.toString() as string)
+    .map((v) => getValueOrDefault<string>(String, v.toString()))
     .filter((_, i) => i < Object.values(data).length / 2);
 
 export const getValuesObj = <T extends object>(data: T) =>
@@ -582,7 +582,7 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) =>
-  pokemon.some((p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
+  pokemon.some((p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), getValueOrDefault(String, p.fullName, p.name)));
 
 const convertNameEffort = (name: string) => {
   switch (name) {
@@ -833,13 +833,16 @@ export const getFormFromForms = (
 export const retrieveMoves = (pokemon: IPokemonData[], id: number | undefined, form: string | null | undefined) => {
   if (isNotEmpty(pokemon)) {
     const resultFirst = pokemon.filter((item) => item.num === id);
-    form =
-      getValueOrDefault(String, form)
-        .toLowerCase()
+    form = getValueOrDefault(
+      String,
+      form
+        ?.toLowerCase()
         .replaceAll('-', '_')
         .replaceAll(`_${FORM_STANDARD.toLowerCase()}`, '')
         .toUpperCase()
-        .replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
+        .replace(FORM_GMAX, FORM_NORMAL),
+      FORM_NORMAL
+    );
     const result = resultFirst.find((item) => isEqual(item.fullName, form) || isEqual(item.forme, form));
     return result ?? resultFirst[0];
   }

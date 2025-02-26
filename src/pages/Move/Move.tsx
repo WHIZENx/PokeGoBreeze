@@ -214,7 +214,7 @@ const Move = (props: IMovePage) => {
         if (!pokemon.releasedGO) {
           const result = checkPokemonGO(
             pokemon.num,
-            convertPokemonDataName(pokemon.sprite ?? pokemon.name.replaceAll(' ', '_')),
+            convertPokemonDataName(getValueOrDefault(String, pokemon.sprite, pokemon.name.replaceAll(' ', '_'))),
             data.pokemon
           );
           return result?.releasedGO;
@@ -616,7 +616,7 @@ const Move = (props: IMovePage) => {
                                       value
                                     ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
                                       <div className="d-flex flex-wrap" style={{ gap: 10 }}>
-                                        {(value as string[]).map((item) => renderReward(item))}
+                                        {getValueOrDefault<string[]>(Array, value).map((item) => renderReward(item))}
                                       </div>
                                     ) : (
                                       renderReward(value)

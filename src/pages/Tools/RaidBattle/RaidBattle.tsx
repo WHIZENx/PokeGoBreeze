@@ -516,11 +516,11 @@ const RaidBattle = () => {
       };
       setResultBoss(result);
     } else {
-      const group = dataList.reduce((result: DynamicObj<IPokemonMoveData[]>, obj) => {
+      const group = dataList.reduce((result, obj) => {
         const name = getValueOrDefault(String, obj.pokemon?.name);
         (result[name] = getValueOrDefault(Array, result[name])).push(obj);
         return result;
-      }, {});
+      }, new Object() as DynamicObj<IPokemonMoveData[]>);
       dataList = Object.values(group)
         .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
         .sort((a, b) => b.dpsAtk - a.dpsAtk);
