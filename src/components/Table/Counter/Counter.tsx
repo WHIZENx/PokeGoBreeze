@@ -13,18 +13,22 @@ import {
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
+import SettingsIcon from '@mui/icons-material/Settings';
+
 import './Counter.scss';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../../store/models/state.model';
+import { useDispatch, useSelector } from 'react-redux';
+import { OptionsSheetState, StoreState } from '../../../store/models/state.model';
 import DataTable, { TableStyles } from 'react-data-table-component';
-import { ICounterModel } from './models/counter.model';
+import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { MoveType, PokemonType, TypeAction, TypeTheme } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeAction, TypeTheme, VariantType } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
   convertColumnDataType,
+  DynamicObj,
+  getValueOrDefault,
   isNotEmpty,
   isUndefined,
   toFloat,
@@ -32,6 +36,8 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { Button, Modal } from 'react-bootstrap';
+import { OptionsActions } from '../../../store/actions';
 
 const customStyles: TableStyles = {
   head: {
@@ -103,14 +109,20 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 };
 
 const Counter = (props: ICounterComponent) => {
+  const dispatch = useDispatch();
   const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
+  const optionStore = useSelector((state: OptionsSheetState) => state.options);
+
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [showFrame, setShowFrame] = useState(true);
-  const [releasedGO, setReleaseGO] = useState(true);
-  const [showMega, setShowMega] = useState(false);
+
+  const [showOption, setShowOption] = useState(false);
+  const [options, setOptions] = useState(optionStore?.counter ?? new OptionFiltersCounter());
+
+  const { showMegaPrimal, releasedGO, enableBest } = options;
 
   const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
     switch (pokemonType) {
@@ -273,11 +285,13 @@ const Counter = (props: ICounterComponent) => {
   };
 
   useEffect(() => {
+    dispatch(OptionsActions.SetCounterOptions.create(options));
     if (isNotEmpty(counterList)) {
+      const result = enableBest ? filterBestOptions(counterList) : counterList;
       setCounterFilter(
-        counterList
+        result
           .filter((pokemon) => {
-            if (showMega) {
+            if (showMegaPrimal) {
               return true;
             }
             return pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal;
@@ -295,33 +309,79 @@ const Counter = (props: ICounterComponent) => {
       );
       setShowFrame(false);
     }
-  }, [counterList, showMega, releasedGO]);
+  }, [dispatch, counterList, showMegaPrimal, releasedGO, enableBest]);
+
+  const filterBestOptions = (result: ICounterModel[]) => {
+    const group = result.reduce((res, obj) => {
+      (res[obj.pokemonName] = getValueOrDefault(Array, res[obj.pokemonName])).push(obj);
+      return res;
+    }, new Object() as DynamicObj<ICounterModel[]>);
+    return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p.ratio > c.ratio ? p : c)));
+  };
+
+  const handleShowOption = () => {
+    setShowOption(true);
+  };
+
+  const handleCloseOption = () => {
+    setShowOption(false);
+  };
+
+  const modalOptions = () => (
+    <form>
+      <FormControlLabel
+        control={
+          <Switch
+            disabled={!isNotEmpty(counterList)}
+            checked={releasedGO}
+            onChange={(_, check) => setOptions({ ...options, releasedGO: check })}
+          />
+        }
+        label={
+          <span className="d-flex align-items-center">
+            Released in GO
+            <img
+              className={releasedGO && !showFrame ? '' : 'filter-gray'}
+              width={28}
+              height={28}
+              style={{ marginLeft: 5 }}
+              alt="pokemon-go-icon"
+              src={APIService.getPokemonGoIcon(icon)}
+            />
+          </span>
+        }
+        disabled={showFrame}
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            disabled={!isNotEmpty(counterList)}
+            checked={showMegaPrimal}
+            onChange={(_, check) => setOptions({ ...options, showMegaPrimal: check })}
+          />
+        }
+        label={`${getKeyWithData(PokemonType, PokemonType.Mega)}/${getKeyWithData(PokemonType, PokemonType.Primal)}`}
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            disabled={!isNotEmpty(counterList)}
+            checked={enableBest}
+            onChange={(_, check) => setOptions({ ...options, enableBest: check })}
+          />
+        }
+        label={'Filter best move sets'}
+      />
+    </form>
+  );
 
   return (
     <div className="table-info">
       <div className="sub-header input-group align-items-center justify-content-center">
         <span className="sub-title">Best Pokémon Counter</span>
-        <FormControlLabel
-          control={<Switch disabled={!isNotEmpty(counterList)} checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={releasedGO && !showFrame ? '' : 'filter-gray'}
-                width={28}
-                height={28}
-                style={{ marginLeft: 5 }}
-                alt="pokemon-go-icon"
-                src={APIService.getPokemonGoIcon(icon)}
-              />
-            </span>
-          }
-          disabled={showFrame}
-        />
-        <FormControlLabel
-          control={<Checkbox disabled={!isNotEmpty(counterList)} checked={showMega} onChange={(_, check) => setShowMega(check)} />}
-          label={`${getKeyWithData(PokemonType, PokemonType.Mega)}/${getKeyWithData(PokemonType, PokemonType.Primal)}`}
-        />
+        <div className="counter-setting" onClick={handleShowOption}>
+          <SettingsIcon sx={{ fontSize: 32 }} />
+        </div>
       </div>
       <DataTable
         className="table-counter-container"
@@ -338,6 +398,20 @@ const Counter = (props: ICounterComponent) => {
         progressComponent={<CounterLoader />}
         data={counterFilter}
       />
+
+      <Modal show={showOption} onHide={handleCloseOption} centered={true}>
+        <Modal.Header closeButton={true}>
+          <Modal.Title>Pokémon counter options</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ overflowY: 'auto', maxHeight: '60vh', maxWidth: 400 }}>{modalOptions()}</div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={VariantType.Secondary} onClick={handleCloseOption}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

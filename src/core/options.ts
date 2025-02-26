@@ -228,8 +228,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
   let result: IPokemonData[] = [];
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
-    const regId = getValueOrDefault(Array, item.templateId.match(/\d{4}/g)) as string[];
-    const pokemon = new PokemonModel(regId[0], undefined, pokemonSettings);
+    const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
+    const pokemon = new PokemonModel(id, undefined, pokemonSettings);
 
     if (!pokemonSettings.form) {
       pokemon.form = FORM_NORMAL;
@@ -326,11 +326,11 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
 
     pokemonSettings.evolutionBranch?.forEach((evo) => {
       const dataEvo = new EvoList();
-      const name = evo.evolution ?? pokemon.name;
+      const name = getValueOrDefault(String, evo.evolution, pokemon.name);
       if (evo.form) {
         dataEvo.evoToForm = convertAndReplaceNameGO(evo.form, name);
       } else {
-        dataEvo.evoToForm = pokemon.form?.toString() ?? FORM_NORMAL;
+        dataEvo.evoToForm = getValueOrDefault(String, pokemon.form?.toString(), FORM_NORMAL);
       }
 
       dataEvo.evoToName = name.replace(`_${FORM_NORMAL}`, '');
@@ -341,7 +341,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
           isEqual(i.data.pokemonSettings.pokemonId, dataEvo.evoToName) &&
           isEqual(
             convertAndReplaceNameGO(
-              i.data.pokemonSettings.form?.toString() ?? pokemon.form?.toString() ?? FORM_NORMAL,
+              getValueOrDefault(String, i.data.pokemonSettings.form?.toString(), pokemon.form?.toString(), FORM_NORMAL),
               i.data.pokemonSettings.pokemonId
             ),
             dataEvo.evoToForm
@@ -349,7 +349,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
       );
 
       if (pokemonGO) {
-        const regEvoId = pokemonGO.templateId.match(/\d{4}/g) as string[];
+        const regEvoId = getValueOrDefault(Array, pokemonGO.templateId.match(/\d{4}/g));
         dataEvo.evoToId = toNumber(regEvoId[0]);
       }
 
@@ -503,12 +503,15 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
   Object.values(pokemonStoreData)
     .filter(
       (pokemon) =>
-        pokemon.num > 0 && !result.some((item) => isEqual(item.fullName, convertPokemonDataName(pokemon.baseFormeSlug ?? pokemon.slug)))
+        pokemon.num > 0 &&
+        !result.some((item) =>
+          isEqual(item.fullName, convertPokemonDataName(getValueOrDefault(String, pokemon.baseFormeSlug, pokemon.slug)))
+        )
     )
     .forEach((item) => {
       const pokemon = new PokemonModel(item.num, convertPokemonDataName(item.name));
 
-      pokemon.pokemonId = convertPokemonDataName(item.baseSpecies ?? item.name);
+      pokemon.pokemonId = convertPokemonDataName(getValueOrDefault(String, item.baseSpecies, item.name));
       pokemon.form = item.forme ? convertPokemonDataName(item.forme) : FORM_NORMAL;
       pokemon.pokedexHeightM = item.heightm;
       pokemon.pokedexWeightKg = item.weightkg;
@@ -528,7 +531,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       const goTemplate = `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
         pokemon.pokemonType === PokemonType.Mega || pokemon.pokemonType === PokemonType.Primal || pokemon.pokemonType === PokemonType.GMax
           ? pokemon.pokemonId
-          : convertPokemonDataName(item.baseFormeSlug ?? item.slug)
+          : convertPokemonDataName(getValueOrDefault(String, item.baseFormeSlug, item.slug))
       )}`;
       const pokemonGO = data.find((i) => isEqual(i.templateId, goTemplate));
 
@@ -578,9 +581,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
       }
 
       optional.genderRatio = PokemonGenderRatio.create(item.genderRatio.M, item.genderRatio.F);
-      optional.slug = convertPokemonDataName(item.baseFormeSlug ?? item.slug)
-        .replaceAll('_', '-')
-        .toLowerCase();
+      optional.slug = convertPokemonDataName(getValueOrDefault(String, item.baseFormeSlug, item.slug)).replaceAll('_', '-').toLowerCase();
       optional.baseForme = item.baseForme?.toUpperCase();
       optional.baseStatsGO = true;
 
@@ -624,7 +625,7 @@ const addPokemonGMaxMove = (data: PokemonDataGM[], result: IPokemonData[]) => {
 };
 
 export const optionPokemonWeather = (data: PokemonDataGM[]) => {
-  const weather: DynamicObj<string[]> = {};
+  const weather = new Object() as DynamicObj<string[]>;
   data
     .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
     .forEach((item) => {
@@ -635,8 +636,7 @@ export const optionPokemonWeather = (data: PokemonDataGM[]) => {
 };
 
 const checkDefaultStats = (data: PokemonDataGM[], pokemon: PokemonDataGM) => {
-  const regId = getValueOrDefault(Array, pokemon.templateId.match(/\d{4}/g)) as string[];
-  const id = toNumber(regId[0]);
+  const id = toNumber(getValueOrDefault(Array, pokemon.templateId.match(/\d{4}/g))[0]);
   const defaultPokemon = data.find(
     (item) =>
       item.data.pokemonSettings &&
@@ -859,10 +859,10 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
   const moves = data
     .filter((item) => /^V\d{4}_MOVE_*/g.test(item.templateId))
     .map((item) => {
-      const regId = item.templateId.match(/\d{4}/g) as string[];
+      const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
       return new Move({
         ...item.data.moveSettings,
-        id: toNumber(regId[0]),
+        id,
         name:
           typeof item.data.moveSettings.movementId === 'string'
             ? item.data.moveSettings.movementId
@@ -969,8 +969,9 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
     });
 
   const result = moveSet;
-  moveSet.forEach((move) => {
-    if (move.id === 281) {
+  moveSet
+    .filter((move) => move.id === 281)
+    .forEach((move) => {
       move.isMultipleWithType = true;
       Object.keys(types)
         .filter(
@@ -988,8 +989,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
             })
           )
         );
-    }
-  });
+    });
 
   data
     .filter((item) => /^VN_BM_\d{3}$/g.test(item.templateId))
@@ -997,8 +997,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       const combat = new Combat();
       const move = item.data.moveSettings;
       combat.id = toNumber(result[result.length - 1].id) + 1 + index;
-      const regId = item.templateId.match(/\d{3}/g) as string[];
-      combat.track = toNumber(regId[0]);
+      combat.track = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{3}/g))[0]);
       combat.name = move.vfxName.replace('max_', '').toUpperCase();
       combat.type = move.pokemonType.replace('POKEMON_TYPE_', '');
       combat.typeMove = TypeMove.Charge;
@@ -1014,8 +1013,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
   data
     .filter((item) => /^NON_COMBAT_V\d{4}_MOVE_*/g.test(item.templateId))
     .forEach((item) => {
-      const regId = item.templateId.match(/\d{4}/g) as string[];
-      const id = toNumber(regId[0]);
+      const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
       const combat = result.find((c) => c.id === id);
       if (combat) {
         const settings = item.data.nonCombatMoveSettings;
@@ -1255,9 +1253,9 @@ export const optionEvolutionChain = (data: PokemonDataGM[], pokemon: IPokemonDat
   return data
     .filter((item) => /^EVOLUTION_V\d{4}_*/g.test(item.templateId))
     .map((item) => {
-      const regId = item.templateId.match(/\d{4}/g) as string[];
+      const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
       return EvolutionChain.create({
-        id: toNumber(regId[0]),
+        id,
         pokemonId: item.data.evolutionChainDisplaySettings.pokemon,
         evolutionInfos: mappingPokemonEvoInfo(item.data.evolutionChainDisplaySettings.evolutionChains, pokemon),
       });
@@ -1285,8 +1283,8 @@ const convertMoveName = (combat: ICombat[], moves: string[] | undefined) => {
       }
     }
     if (/^VN_BM_\d{3}$/g.test(move)) {
-      const id = move.match(/\d{3}/g) as string[];
-      const result = combat.find((item) => item.track === toNumber(id[0]) && isEqual(item.moveType, MoveType.Dynamax));
+      const id = toNumber(getValueOrDefault(Array, move.match(/\d{3}/g))[0]);
+      const result = combat.find((item) => item.track === id && isEqual(item.moveType, MoveType.Dynamax));
       if (result) {
         return result.name;
       }

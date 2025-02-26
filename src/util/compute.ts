@@ -148,7 +148,7 @@ export const computeBgType = (
 
 export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
-  if (!pokemonAssets || isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+  if (!pokemonAssets) {
     return;
   }
   const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
@@ -170,6 +170,9 @@ export const findAssetForm = (
   formName: string | null = FORM_NORMAL,
   formType = FormType.Default
 ) => {
+  if (isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+    return;
+  }
   const form = queryAssetForm(pokemonAssets, id, formName);
   if (form) {
     switch (formType) {
@@ -211,12 +214,3 @@ export const getPokemonBattleLeagueIcon = (cp = BattleLeagueCPType.Master) => {
       return APIService.getPokeLeague(BattleLeagueIconType.Master);
   }
 };
-
-export const convertHexByRgba = (color: string) =>
-  `#${color
-    .replace(/^rgba?\(|\s+|\)$/gi, '')
-    .split(',')
-    .map((c, i) =>
-      (i < 3 ? toNumber(c).toString(16) : Math.round(Math.max(0, Math.min(toNumber(c, 1), 1)) * 255).toString(16)).padStart(2, '0')
-    )
-    .join('')}`;
