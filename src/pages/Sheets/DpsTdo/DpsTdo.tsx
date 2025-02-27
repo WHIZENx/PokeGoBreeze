@@ -430,10 +430,10 @@ const DpsTdo = () => {
     const bestType = getPropertyName<PokemonSheetData, 'multiDpsTdo' | 'dps' | 'tdo'>(result[0], (r) =>
       best === BestOptionType.dps ? r.dps : best === BestOptionType.tdo ? r.tdo : r.multiDpsTdo
     );
-    const group = result.reduce((result: DynamicObj<PokemonSheetData[]>, obj) => {
-      (result[obj.pokemon.name] = getValueOrDefault(Array, result[obj.pokemon.name])).push(obj);
-      return result;
-    }, {});
+    const group = result.reduce((res, obj) => {
+      (res[obj.pokemon.name] = getValueOrDefault(Array, res[obj.pokemon.name])).push(obj);
+      return res;
+    }, new Object() as DynamicObj<PokemonSheetData[]>);
     return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p[bestType] > c[bestType] ? p : c)));
   };
 
@@ -867,12 +867,12 @@ const DpsTdo = () => {
               <div className="row w-100" style={{ margin: 0 }}>
                 <Box className="col-xxl-8" style={{ padding: 0 }}>
                   <div className="input-group">
-                    <span className="input-group-text">Filter best movesets</span>
+                    <span className="input-group-text">Filter best move sets</span>
                     <FormControlLabel
                       className="border-input"
                       style={{ marginRight: 0, paddingRight: 16 }}
                       control={<Switch checked={enableBest} onChange={(_, check) => setFilters({ ...filters, enableBest: check })} />}
-                      label="Best moveset of"
+                      label="Best move set of"
                     />
                     <Form.Select
                       style={{ borderRadius: 0 }}

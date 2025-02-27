@@ -5,13 +5,11 @@ import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
 
 // eslint-disable-next-line no-unused-vars
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
+type Constructor = NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor | DateConstructor;
 
-export const getValueOrDefault = <T>(
-  type: NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor | DateConstructor,
-  value: T | undefined | null,
-  defaultValue?: T | null
-) => {
-  if (isNullOrUndefined(value)) {
+export const getValueOrDefault = <T>(type: Constructor, value: T | undefined | null, ...defaultValues: (T | null | undefined)[]) => {
+  if (isNullOrUndefined(value) || isEmpty(value?.toString())) {
+    const defaultValue = defaultValues.find((v) => !isNullOrUndefined(v));
     switch (type.name) {
       case Number.name:
         return (defaultValue || 0) as T;
@@ -24,7 +22,7 @@ export const getValueOrDefault = <T>(
       case Date.name:
         return (defaultValue || new Date()) as T;
       case Object.name:
-        return (defaultValue || {}) as T;
+        return (defaultValue || new Object()) as T;
       default:
         return (defaultValue || value) as T;
     }
@@ -188,8 +186,7 @@ export const getPropertyName = <T extends object, S extends string = ''>(
   if (isNullOrUndefined(obj)) {
     return '' as S;
   }
-  // eslint-disable-next-line no-unused-vars
-  const res = {} as DynamicKeyObj<T>;
+  const res = new Object() as DynamicKeyObj<T>;
   Object.keys(obj).map((k) => (res[k as keyof T] = k));
   return expression(res) as S;
 };
@@ -202,7 +199,7 @@ export const sparseIndexOf = <T>(array: T[], value: T, defaultOutput = -1) => {
 };
 
 export const UniqValueInArray = <T>(array: (T | null | undefined)[] | null | undefined) => {
-  const seen: DynamicObj<number> = {};
+  const seen = new Object() as DynamicObj<number>;
   const out: T[] = [];
   array = getValueOrDefault(Array, array);
   const len = array.length;

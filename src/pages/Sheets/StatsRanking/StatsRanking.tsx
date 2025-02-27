@@ -176,7 +176,7 @@ const StatsRanking = () => {
   const mappingData = (pokemon: IPokemonData[]) =>
     pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
-      const details = getPokemonDetails(pokemon, data.num, data.fullName, true);
+      const details = getPokemonDetails(pokemon, data.num, data.fullName, data.pokemonType, true);
       return PokemonStatsRanking.create({
         ...data,
         releasedGO: getValueOrDefault(Boolean, details?.releasedGO),

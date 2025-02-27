@@ -131,10 +131,9 @@ export interface IFormSelectComponent {
   setForm?: (form: IPokemonFormModify | undefined) => void;
   stats: IStatsRank | null;
   onHandleSetStats?: (type: TypeAction, value: number) => void;
-  data: IPokemonData[];
+  pokemonData: IPokemonData[];
   setUrlEvo?: React.Dispatch<React.SetStateAction<EvoPath>>;
   isObjective?: boolean;
-  pokemonName: IPokemonData[];
 }
 
 export interface IToolsComponent {

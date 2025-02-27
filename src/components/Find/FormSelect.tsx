@@ -10,6 +10,7 @@ import {
   generatePokemonGoForms,
   getItemSpritePath,
   getPokemonById,
+  getPokemonType,
   getValidPokemonImgPath,
   splitAndCapitalize,
   TypeRadioGroup,
@@ -32,7 +33,7 @@ import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/AP
 import { FORM_NORMAL } from '../../util/constants';
 import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
-import { TypeRaid, VariantType } from '../../enums/type.enum';
+import { PokemonType, TypeRaid, VariantType } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
 import { SearchingModel } from '../../store/models/searching.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
@@ -87,22 +88,27 @@ const FormSelect = (props: IFormSelectComponent) => {
         return;
       });
 
+      const pokemon = props.pokemonData.find((item) => item.num === data.id);
+      const isShadow = Boolean(
+        pokemon?.hasShadowForm && toNumber(pokemon.purified?.candy) >= 0 && toNumber(pokemon.purified?.stardust) >= 0
+      );
       const formListResult = dataFormList
         .map((item) =>
           item
-            .map((item) =>
-              PokemonFormModify.setForm(
+            .map((item) => {
+              item.pokemonType = getPokemonType(item.formName, item.pokemonType === PokemonType.Mega, isShadow);
+              return PokemonFormModify.setForm(
                 data.id,
                 data.name,
                 data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
                 Form.setValue(item, data.name)
-              )
-            )
+              );
+            })
             .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
         )
         .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
-      generatePokemonGoForms(props.data, dataFormList, formListResult, data.id, data.name);
+      generatePokemonGoForms(props.pokemonData, dataFormList, formListResult, data.id, data.name);
 
       setPokeData(dataPokeList);
       setFormList(formListResult);
@@ -164,7 +170,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(props.data)) {
+    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(props.pokemonData)) {
       clearData();
       queryPokemon(id);
     }
@@ -173,7 +179,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         APIService.cancel(axiosSource.current);
       }
     };
-  }, [props.id, props.data, data?.id, queryPokemon]);
+  }, [props.id, props.pokemonData, data?.id, queryPokemon]);
 
   useEffect(() => {
     const id = toNumber(props.id);
@@ -208,17 +214,17 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (isNotEmpty(props.data) && id > 0) {
-      const currentPokemon = getPokemonById(props.data, id);
+    if (isNotEmpty(props.pokemonData) && id > 0) {
+      const currentPokemon = getPokemonById(props.pokemonData, id);
       if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(props.data, currentPokemon.id - 1),
-          current: getPokemonById(props.data, currentPokemon.id),
-          next: getPokemonById(props.data, currentPokemon.id + 1),
+          prev: getPokemonById(props.pokemonData, currentPokemon.id - 1),
+          current: getPokemonById(props.pokemonData, currentPokemon.id),
+          next: getPokemonById(props.pokemonData, currentPokemon.id + 1),
         });
       }
     }
-  }, [props.data, props.id]);
+  }, [props.pokemonData, props.id]);
 
   const clearData = () => {
     setCurrentForm(undefined);

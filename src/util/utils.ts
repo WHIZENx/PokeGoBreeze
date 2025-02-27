@@ -558,7 +558,7 @@ export const getKeyWithData = <T>(data: object, findValue: T) => {
 
 export const getKeysObj = (data: object) =>
   Object.values(data)
-    .map((v) => v.toString() as string)
+    .map((v) => getValueOrDefault<string>(String, v.toString()))
     .filter((_, i) => i < Object.values(data).length / 2);
 
 export const getValuesObj = <T extends object>(data: T) =>
@@ -582,7 +582,7 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 };
 
 export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) =>
-  pokemon.some((p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), p.fullName ?? p.name));
+  pokemon.some((p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), getValueOrDefault(String, p.fullName, p.name)));
 
 const convertNameEffort = (name: string) => {
   switch (name) {
@@ -703,7 +703,7 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/_ORIGINAL$/, '_ORIGINAL_COLOR')
     .replace('ZACIAN_CROWNED', 'ZACIAN_CROWNED_SWORD')
     .replace('ZAMAZENTA_CROWNED', 'ZAMAZENTA_CROWNED_SHIELD')
-    .replace(/_ICE$/, '_ICE_RIDER')
+    .replace(/ICE$/, 'ICE_RIDER')
     .replace(/_SHADOW$/, '_SHADOW_RIDER')
     .replace('BASCULEGION_MALE', 'BASCULEGION')
     .replace(/_PLUMAGE$/, '')
@@ -740,7 +740,9 @@ export const generatePokemonGoForms = (
   index = 0
 ) => {
   const formList: string[] = [];
-  dataFormList.forEach((form) => form.forEach((p) => formList.push(convertPokemonAPIDataName(p.formName || FORM_NORMAL))));
+  dataFormList.forEach((form) =>
+    form.forEach((p) => formList.push(convertPokemonAPIDataName(getValueOrDefault(String, p.formName, FORM_NORMAL))))
+  );
   pokemonData
     .filter((pokemon) => pokemon.num === id)
     .forEach((pokemon) => {
@@ -816,11 +818,12 @@ export const generatePokemonGoShadowForms = (
 export const getFormFromForms = (
   stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined,
   id: number | undefined,
-  formName: string | null | undefined
+  formName: string | null | undefined,
+  pokemonType = PokemonType.None
 ) => {
   const forms = stats?.filter((i) => i.id === id);
-  formName = convertPokemonAPIDataName(formName);
-  let filterForm = forms?.find((item) => isEqual(item.form, formName || FORM_NORMAL));
+  formName = getPokemonFormWithNoneSpecialForm(formName, pokemonType);
+  let filterForm = forms?.find((item) => isEqual(item.form, getValueOrDefault(String, formName, FORM_NORMAL)));
   if (!filterForm && isNotEmpty(forms)) {
     filterForm = forms?.find((item) => item.form === FORM_NORMAL);
     if (!filterForm) {
@@ -833,23 +836,32 @@ export const getFormFromForms = (
 export const retrieveMoves = (pokemon: IPokemonData[], id: number | undefined, form: string | null | undefined) => {
   if (isNotEmpty(pokemon)) {
     const resultFirst = pokemon.filter((item) => item.num === id);
-    form =
-      getValueOrDefault(String, form)
-        .toLowerCase()
+    form = getValueOrDefault(
+      String,
+      form
+        ?.toLowerCase()
         .replaceAll('-', '_')
         .replaceAll(`_${FORM_STANDARD.toLowerCase()}`, '')
         .toUpperCase()
-        .replace(FORM_GMAX, FORM_NORMAL) ?? FORM_NORMAL;
+        .replace(FORM_GMAX, FORM_NORMAL),
+      FORM_NORMAL
+    );
     const result = resultFirst.find((item) => isEqual(item.fullName, form) || isEqual(item.forme, form));
     return result ?? resultFirst[0];
   }
 };
 
-export const getPokemonDetails = (pokemonData: IPokemonData[], id: number, form: string | null | undefined, isDefault = false) => {
+export const getPokemonDetails = (
+  pokemonData: IPokemonData[],
+  id: number,
+  form: string | null | undefined,
+  pokemonType = PokemonType.None,
+  isDefault = false
+) => {
   let pokemonForm: IPokemonData | undefined = new PokemonData();
 
   if (form) {
-    const name = convertPokemonAPIDataName(form.replaceAll(' ', '-'));
+    const name = getPokemonFormWithNoneSpecialForm(form.replaceAll(' ', '-'), pokemonType);
     pokemonForm = pokemonData.find((item) => item.num === id && isEqual(item.fullName, name));
 
     if (isDefault && !pokemonForm) {
@@ -987,12 +999,12 @@ export const getPokemonType = (formName?: string | number | null, isMega = false
     return PokemonType.Shadow;
   } else if (isInclude(formName, FORM_PURIFIED, IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonType.Purified;
-  } else if (isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || isMega) {
-    return PokemonType.Mega;
-  } else if (isInclude(formName, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive)) {
-    return PokemonType.Primal;
   } else if (isInclude(formName, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive)) {
     return PokemonType.GMax;
+  } else if (isInclude(formName, FORM_PRIMAL, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return PokemonType.Primal;
+  } else if (isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || isMega) {
+    return PokemonType.Mega;
   }
   return PokemonType.None;
 };
@@ -1011,13 +1023,17 @@ export const getPokemonClass = (className?: string | number | null) => {
 export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
 
 export const generateParamForm = (form: string | null | undefined, pokemonType = PokemonType.None, prefix = '?') => {
+  const IsNoneSpecialForm = getPokemonIsNoneSpecialForm(form, pokemonType);
   const isSpecialForm = pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
   const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
   if (form) {
-    if (isEqual(form, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) || isEqual(form, FORM_PURIFIED, EqualMode.IgnoreCaseSensitive)) {
+    if (
+      !IsNoneSpecialForm &&
+      (isEqual(form, FORM_SHADOW, EqualMode.IgnoreCaseSensitive) || isEqual(form, FORM_PURIFIED, EqualMode.IgnoreCaseSensitive))
+    ) {
       return `${prefix}${Params.FormType}=${formType}`;
     } else {
-      if (!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)) {
+      if (!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) || IsNoneSpecialForm) {
         return `${prefix}${Params.Form}=${form.toLowerCase().replaceAll('_', '-')}${
           isSpecialForm ? `&${Params.FormType}=${formType}` : ''
         }`;
@@ -1162,4 +1178,18 @@ export const getBonusType = (bonusType: string | number) => {
     return BonusType.NightBonus;
   }
   return BonusType.None;
+};
+
+const getPokemonIsNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) =>
+  pokemonType === PokemonType.None &&
+  (isInclude(form, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive) ||
+    isInclude(form, FORM_PURIFIED, IncludeMode.IncludeIgnoreCaseSensitive));
+
+export const getPokemonFormWithNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) => {
+  const IsNoneSpecialForm = getPokemonIsNoneSpecialForm(form, pokemonType);
+  form = form?.toUpperCase().replaceAll('-', '_');
+  if (!IsNoneSpecialForm) {
+    form = convertPokemonAPIDataName(form);
+  }
+  return form;
 };
