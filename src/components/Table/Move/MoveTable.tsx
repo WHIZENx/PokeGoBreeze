@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { convertPokemonAPIDataName, getDmgMultiplyBonus, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { getDmgMultiplyBonus, getKeyWithData, getPokemonFormWithNoneSpecialForm, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -25,7 +25,6 @@ import {
   getValueOrDefault,
   isEqual,
   isNotEmpty,
-  isUndefined,
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
@@ -139,6 +138,7 @@ const TableMove = (props: ITableMoveComponent) => {
             EqualMode.IgnoreCaseSensitive
           )
     );
+
     if (isNotEmpty(pokemonFilter)) {
       let pokemon: IPokemonData | undefined;
       const isGMax =
@@ -157,12 +157,14 @@ const TableMove = (props: ITableMoveComponent) => {
       } else if (!isNotEmpty(pokemonFilter) && props.id) {
         pokemon = data.pokemon.find((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name));
       } else {
-        const result = pokemonFilter.find((item) => props.form && isEqual(item.fullName, convertPokemonAPIDataName(props.form?.name)));
-        if (isUndefined(result)) {
-          pokemon = pokemonFilter.find((item) => isEqual(item.name, item.baseSpecies));
-        } else {
-          pokemon = result;
-        }
+        let form = props.form?.name?.toUpperCase().replaceAll('-', '_').replace('_RIDER', '');
+        form = getPokemonFormWithNoneSpecialForm(form, props.form?.pokemonType);
+        pokemon = pokemonFilter.find(
+          (item) =>
+            (form && isEqual(item.fullName, form, EqualMode.IgnoreCaseSensitive)) ||
+            (item.baseForme && isEqual(props.form?.formName, item.baseForme, EqualMode.IgnoreCaseSensitive)) ||
+            isEqual(item.name, item.baseSpecies)
+        );
       }
       filterMoveType(pokemon);
       setMove(setRankMove(pokemon));

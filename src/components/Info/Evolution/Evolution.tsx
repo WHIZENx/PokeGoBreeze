@@ -27,6 +27,7 @@ import {
   convertPokemonAPIDataName,
   getDataWithKey,
   getItemSpritePath,
+  getPokemonFormWithNoneSpecialForm,
   getPokemonType,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -115,6 +116,8 @@ const Evolution = (props: IEvolutionComponent) => {
   const evolutionChain = useSelector((state: StoreState) => state.store.data.evolutionChain);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
+  const [idEvoChain, setIdEvoChain] = useState(0);
+
   const recursiveEvoChain = (chain: IInfoEvoChain, evos: IInfoEvoChain[], result: IPokemonEvo[][]) => {
     const currentId = chain.id;
     if (currentId === props.id) {
@@ -155,10 +158,11 @@ const Evolution = (props: IEvolutionComponent) => {
     setArrEvoList(result);
   };
 
-  const queryPokemonEvolutionChain = (url: string, result: IPokemonEvo[][]) =>
+  const queryPokemonEvolutionChain = (url: string, idUrlChain: number, result: IPokemonEvo[][]) =>
     APIService.getFetchUrl<PokemonInfoEvo>(url)
       .then((res) => {
         if (res.data) {
+          setIdEvoChain(idUrlChain);
           fetchEvoChain(PokemonDetailEvoChain.mapping(res.data), result);
         }
       })
@@ -277,7 +281,10 @@ const Evolution = (props: IEvolutionComponent) => {
     getNextEvoChainJSON(pokemon.evos, evo);
     const result = prevEvo.concat(curr, evo);
     if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
-      queryPokemonEvolutionChain(props.urlEvolutionChain, result);
+      const idUrlChain = toNumber(props.urlEvolutionChain?.split('/')[6]);
+      if (idUrlChain !== idEvoChain) {
+        queryPokemonEvolutionChain(props.urlEvolutionChain, idUrlChain, result);
+      }
     } else {
       setArrEvoList(result);
     }
@@ -431,7 +438,10 @@ const Evolution = (props: IEvolutionComponent) => {
         getCombineEvoChainFromPokeGo(result, id, form);
       }
       if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
-        queryPokemonEvolutionChain(props.urlEvolutionChain, result);
+        const idUrlChain = toNumber(props.urlEvolutionChain?.split('/')[6]);
+        if (idUrlChain !== idEvoChain) {
+          queryPokemonEvolutionChain(props.urlEvolutionChain, idUrlChain, result);
+        }
       } else {
         setArrEvoList(result);
       }
@@ -766,11 +776,16 @@ const Evolution = (props: IEvolutionComponent) => {
         </span>
         {value.isBaby && <span className="caption text-danger">(Baby)</span>}
         <p>
-          {value.id === props.id && isEqual(form, convertPokemonAPIDataName(props.forme?.formName) || FORM_NORMAL) && (
-            <span className="caption" style={{ color: theme.palette.customText.caption }}>
-              Current
-            </span>
-          )}
+          {value.id === props.id &&
+            isEqual(
+              form,
+              getValueOrDefault(String, getPokemonFormWithNoneSpecialForm(props.forme?.formName, props.forme?.pokemonType), FORM_NORMAL),
+              EqualMode.IgnoreCaseSensitive
+            ) && (
+              <span className="caption" style={{ color: theme.palette.customText.caption }}>
+                Current
+              </span>
+            )}
         </p>
       </Fragment>
     );

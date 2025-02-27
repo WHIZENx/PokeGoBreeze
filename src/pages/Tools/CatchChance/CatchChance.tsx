@@ -25,7 +25,7 @@ import {
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/constants';
-import { convertPokemonAPIDataName, getItemSpritePath, getKeyWithData, LevelSlider, splitAndCapitalize } from '../../../util/utils';
+import { getItemSpritePath, getKeyWithData, getPokemonFormWithNoneSpecialForm, LevelSlider, splitAndCapitalize } from '../../../util/utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
@@ -177,35 +177,33 @@ const CatchChance = () => {
   };
 
   const findCatchCapture = (id: number, form: IPokemonFormModify) => {
-    const formName = convertPokemonAPIDataName(form.form.name);
+    const formName = getPokemonFormWithNoneSpecialForm(form.form.name, form.form.pokemonType);
     const pokemon = pokemonData.find((data) => data.num === id && isEqual(data.fullName, formName));
     if (!pokemon || !pokemon.encounter) {
       setIsEncounter(false);
       return;
     }
     setIsEncounter(true);
-    if (pokemon) {
-      let medalType = new Medal();
-      const [typePri, typeSec] = pokemon.types;
+    let medalType = new Medal();
+    const [typePri, typeSec] = pokemon.types;
+    medalType = Medal.create({
+      ...medalType,
+      typePri: MedalType.create({
+        type: typePri,
+        priority: medal && medal.typePri ? medal.typePri.priority : BadgeType.None,
+      }),
+    });
+    if (typeSec) {
       medalType = Medal.create({
         ...medalType,
-        typePri: MedalType.create({
-          type: typePri,
-          priority: medal && medal.typePri ? medal.typePri.priority : BadgeType.None,
+        typeSec: MedalType.create({
+          type: typeSec,
+          priority: medal && medal.typeSec ? medal.typeSec.priority : BadgeType.None,
         }),
       });
-      if (typeSec) {
-        medalType = Medal.create({
-          ...medalType,
-          typeSec: MedalType.create({
-            type: typeSec,
-            priority: medal && medal.typeSec ? medal.typeSec.priority : BadgeType.None,
-          }),
-        });
-      }
-      setMedal(medalType);
-      setData(pokemon.encounter);
     }
+    setMedal(medalType);
+    setData(pokemon.encounter);
   };
 
   const onSetForm = (form: IPokemonFormModify | undefined) => {
@@ -347,7 +345,8 @@ const CatchChance = () => {
           {!isEncounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
-                <b>{splitAndCapitalize(convertPokemonAPIDataName(form?.form.name), '_', ' ')}</b> cannot be encountered in wild.
+                <b>{splitAndCapitalize(getPokemonFormWithNoneSpecialForm(form?.form.name, form?.form.pokemonType), '_', ' ')}</b> cannot be
+                encountered in wild.
               </h5>
             </div>
           )}

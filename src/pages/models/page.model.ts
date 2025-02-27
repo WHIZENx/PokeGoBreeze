@@ -16,6 +16,7 @@ export interface IMovePage {
 export interface IAlertReleasedComponent {
   isReleased: boolean;
   formName: string | undefined;
+  pokemonType?: PokemonType;
   icon: string | undefined;
 }
 

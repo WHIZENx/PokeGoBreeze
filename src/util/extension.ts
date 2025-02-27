@@ -8,7 +8,7 @@ export type DynamicObj<S, T extends string | number = string | number> = { [x in
 type Constructor = NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor | DateConstructor;
 
 export const getValueOrDefault = <T>(type: Constructor, value: T | undefined | null, ...defaultValues: (T | null | undefined)[]) => {
-  if (isNullOrUndefined(value)) {
+  if (isNullOrUndefined(value) || isEmpty(value?.toString())) {
     const defaultValue = defaultValues.find((v) => !isNullOrUndefined(v));
     switch (type.name) {
       case Number.name:
