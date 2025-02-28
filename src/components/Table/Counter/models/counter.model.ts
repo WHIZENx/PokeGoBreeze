@@ -45,6 +45,6 @@ interface IOptionFiltersCounter {
 
 export class OptionFiltersCounter implements IOptionFiltersCounter {
   showMegaPrimal = false;
-  releasedGO = false;
+  releasedGO = true;
   enableBest = false;
 }

@@ -183,7 +183,7 @@ const Find = (props: IFindComponent) => {
             id={id}
             setName={props.setName}
             name={pokemonList.find((item) => item.id === id)?.name}
-            data={pokemonData}
+            pokemonData={pokemonData}
             stats={stats}
             onHandleSetStats={handleSetStats}
             onClearStats={props.clearStats}
@@ -191,7 +191,6 @@ const Find = (props: IFindComponent) => {
             onSetNext={incId}
             setUrlEvo={props.setUrlEvo}
             isObjective={props.isObjective}
-            pokemonName={pokemonData}
           />
         )}
       </div>

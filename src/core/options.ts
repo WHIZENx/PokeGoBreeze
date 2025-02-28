@@ -491,7 +491,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
     }
   });
 
-  addPokemonFromData(data, result);
+  addPokemonFromData(data, result, encounter);
   result = cleanPokemonDupForm(result);
 
   addPokemonGMaxMove(data, result);
@@ -499,7 +499,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
   return result.sort((a, b) => a.num - b.num);
 };
 
-const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
+const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encounter?: PokemonEncounter[]) => {
   Object.values(pokemonStoreData)
     .filter(
       (pokemon) =>
@@ -549,6 +549,15 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[]) => {
         pokemon.eliteCinematicMove = pokemonSettings.eliteCinematicMove;
         pokemon.obSpecialAttackMoves = pokemonSettings.obSpecialAttackMoves;
         pokemon.nonTmCinematicMoves = pokemonSettings.nonTmCinematicMoves;
+
+        const defaultName = pokemonSettings.form ? pokemonSettings.form.toString() : pokemonSettings.pokemonId;
+        const pokemonEncounter = encounter?.find((e) => isEqual(defaultName, e.name));
+
+        pokemon.encounter = new Encounter({
+          ...pokemon.encounter,
+          baseCaptureRate: pokemonEncounter?.basecapturerate,
+          baseFleeRate: pokemonEncounter?.basecapturerate,
+        });
 
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
         if (tempEvo) {

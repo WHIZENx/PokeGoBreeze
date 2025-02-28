@@ -5,11 +5,11 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_NORMAL, Params } from '../../../util/constants';
 import {
   capitalize,
-  convertPokemonAPIDataName,
   convertStatsEffort,
   formIconAssets,
   getDataWithKey,
   getFormFromForms,
+  getPokemonFormWithNoneSpecialForm,
   splitAndCapitalize,
 } from '../../../util/utils';
 import APIService from '../../../services/API.service';
@@ -42,7 +42,8 @@ const FormComponent = (props: IFormInfoComponent) => {
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
   const filterFormList = useCallback(
-    (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) => getFormFromForms(stats, props.defaultId, props.form?.form.formName),
+    (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
+      getFormFromForms(stats, props.defaultId, props.form?.form.formName, props.form?.form.pokemonType),
     [props.defaultId, props.form?.form.formName]
   );
 
@@ -84,7 +85,7 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   useEffect(() => {
     if (props.pokemonRouter.action === Action.Pop) {
-      const form = searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-') || FORM_NORMAL;
+      const form = getValueOrDefault(String, searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'), FORM_NORMAL);
       const currentData = props.pokeData.find(
         (i) => isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) || (isEqual(form, FORM_NORMAL) && i.isDefault)
       );
@@ -97,7 +98,7 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const changeForm = (name: string, form: string | null | undefined, pokemonType = PokemonType.None) => {
     if (params.id) {
-      form = convertPokemonAPIDataName(form).toLowerCase().replaceAll('_', '-');
+      form = getPokemonFormWithNoneSpecialForm(form, pokemonType)?.toLowerCase().replaceAll('_', '-');
       if (form) {
         searchParams.set(Params.Form, form);
       } else {
@@ -198,7 +199,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         pokemonStats={stats}
         stats={convertStatsEffort(props.data?.stats)}
         id={props.defaultId}
-        form={convertPokemonAPIDataName(props.form?.form.formName)}
+        form={getPokemonFormWithNoneSpecialForm(props.form?.form.formName, props.form?.form.pokemonType)?.replaceAll('-', '_')}
         isDisabled={!stats}
       />
       <hr className="w-100" />

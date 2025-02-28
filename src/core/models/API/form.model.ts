@@ -194,9 +194,9 @@ export class Form implements IForm {
   version: string | null | undefined = '';
   types: string[] | undefined = [];
 
-  static create(value: IForm) {
+  static create(value: IForm, isMega = false, isShadow = true) {
     const obj = new Form();
-    obj.pokemonType = getPokemonType(value.formName);
+    obj.pokemonType = getPokemonType(value.formName, isMega, isShadow);
     Object.assign(obj, value);
     return obj;
   }
