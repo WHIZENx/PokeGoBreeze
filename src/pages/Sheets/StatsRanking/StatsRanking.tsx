@@ -177,9 +177,10 @@ const StatsRanking = () => {
     pokemon.map((data) => {
       const statsTag = calculateStatsByTag(data, data?.baseStats, data?.slug);
       const details = getPokemonDetails(pokemon, data.num, data.fullName, data.pokemonType, true);
+      const product = statsTag.atk * statsTag.def * statsTag.sta;
       return PokemonStatsRanking.create({
         ...data,
-        releasedGO: getValueOrDefault(Boolean, details?.releasedGO),
+        releasedGO: details.releasedGO,
         atk: {
           attack: statsTag.atk,
           rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank),
@@ -193,25 +194,25 @@ const StatsRanking = () => {
           rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
         },
         prod: {
-          product: statsTag.atk * statsTag.def * statsTag.sta,
-          rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === statsTag.atk * statsTag.def * statsTag.sta)?.rank),
+          product,
+          rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === product)?.rank),
         },
       });
     });
 
   const setSortBy = (id: ColumnType) => {
-    let sortBy: string[] = [];
     const stats = new PokemonStatsRanking();
-    if (id === ColumnType.Atk) {
-      sortBy = [getPropertyName(stats, (o) => o.atk), getPropertyName(stats.atk, (o) => o.attack)];
-    } else if (id === ColumnType.Def) {
-      sortBy = [getPropertyName(stats, (o) => o.def), getPropertyName(stats.def, (o) => o.defense)];
-    } else if (id === ColumnType.Sta) {
-      sortBy = [getPropertyName(stats, (o) => o.sta), getPropertyName(stats.sta, (o) => o.stamina)];
-    } else if (id === ColumnType.Prod) {
-      sortBy = [getPropertyName(stats, (o) => o.prod), getPropertyName(stats.prod, (o) => o.product)];
+    switch (id) {
+      case ColumnType.Atk:
+        return [getPropertyName(stats, (o) => o.atk), getPropertyName(stats.atk, (o) => o.attack)];
+      case ColumnType.Def:
+        return [getPropertyName(stats, (o) => o.def), getPropertyName(stats.def, (o) => o.defense)];
+      case ColumnType.Sta:
+        return [getPropertyName(stats, (o) => o.sta), getPropertyName(stats.sta, (o) => o.stamina)];
+      case ColumnType.Prod:
+      default:
+        return [getPropertyName(stats, (o) => o.prod), getPropertyName(stats.prod, (o) => o.product)];
     }
-    return sortBy;
   };
 
   const setSortedPokemonRanking = (primary: IPokemonStatsRanking, secondary: IPokemonStatsRanking, sortBy: string[]) => {

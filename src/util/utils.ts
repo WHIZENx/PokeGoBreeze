@@ -838,15 +838,10 @@ export const retrieveMoves = (pokemon: IPokemonData[], id: number | undefined, f
     const resultFirst = pokemon.filter((item) => item.num === id);
     form = getValueOrDefault(
       String,
-      form
-        ?.toLowerCase()
-        .replaceAll('-', '_')
-        .replaceAll(`_${FORM_STANDARD.toLowerCase()}`, '')
-        .toUpperCase()
-        .replace(FORM_GMAX, FORM_NORMAL),
+      form?.replaceAll('-', '_').toUpperCase().replace(`_${FORM_STANDARD}`, '').replace(FORM_GMAX, FORM_NORMAL),
       FORM_NORMAL
     );
-    const result = resultFirst.find((item) => isEqual(item.fullName, form) || isEqual(item.forme, form));
+    const result = resultFirst.find((item) => isEqual(item.fullName?.replace('_RIDER', ''), form) || isEqual(item.forme, form));
     return result ?? resultFirst[0];
   }
 };
@@ -858,7 +853,7 @@ export const getPokemonDetails = (
   pokemonType = PokemonType.None,
   isDefault = false
 ) => {
-  let pokemonForm: IPokemonData | undefined = new PokemonData();
+  let pokemonForm: IPokemonData | undefined;
 
   if (form) {
     const name = getPokemonFormWithNoneSpecialForm(form.replaceAll(' ', '-'), pokemonType);
@@ -870,7 +865,7 @@ export const getPokemonDetails = (
       );
     }
   }
-  return pokemonForm;
+  return pokemonForm ?? new PokemonData();
 };
 
 export const replaceTempMoveName = (name: string | number) => {
@@ -1181,7 +1176,8 @@ export const getBonusType = (bonusType: string | number) => {
 };
 
 const getPokemonIsNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) =>
-  pokemonType === PokemonType.None &&
+  pokemonType !== PokemonType.Shadow &&
+  pokemonType !== PokemonType.Purified &&
   (isInclude(form, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive) ||
     isInclude(form, FORM_PURIFIED, IncludeMode.IncludeIgnoreCaseSensitive));
 
