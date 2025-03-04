@@ -159,12 +159,14 @@ const TableMove = (props: ITableMoveComponent) => {
       } else {
         let form = props.form?.name?.toUpperCase().replaceAll('-', '_').replace('_RIDER', '');
         form = getPokemonFormWithNoneSpecialForm(form, props.form?.pokemonType);
-        pokemon = pokemonFilter.find(
-          (item) =>
-            (form && isEqual(item.fullName, form, EqualMode.IgnoreCaseSensitive)) ||
-            (item.baseForme && isEqual(props.form?.formName, item.baseForme, EqualMode.IgnoreCaseSensitive)) ||
-            isEqual(item.name, item.baseSpecies)
-        );
+        pokemon = pokemonFilter.find((item) => form && isEqual(item.fullName, form, EqualMode.IgnoreCaseSensitive));
+        if (!pokemon) {
+          pokemon = pokemonFilter.find(
+            (item) =>
+              (item.baseForme && isEqual(props.form?.formName, item.baseForme, EqualMode.IgnoreCaseSensitive)) ||
+              isEqual(item.name, item.baseSpecies)
+          );
+        }
       }
       filterMoveType(pokemon);
       setMove(setRankMove(pokemon));
