@@ -113,7 +113,7 @@ const TeamPVP = () => {
     }
 
     let pokemonType = PokemonType.Normal;
-    if (isInclude(speciesId, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    if (isInclude(speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
       pokemonType = PokemonType.Shadow;
     } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {
       pokemonType = PokemonType.Purified;
@@ -152,6 +152,9 @@ const TeamPVP = () => {
       try {
         const cp = toNumber(params.cp);
         const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp))).data;
+        if (!file) {
+          return;
+        }
         if (params.serie === LeagueBattleType.All) {
           document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
         } else {

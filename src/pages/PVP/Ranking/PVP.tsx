@@ -113,7 +113,7 @@ const RankingPVP = () => {
     try {
       const cp = toNumber(params.cp);
       const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))).data;
-      if (!file) {
+      if (!isNotEmpty(file)) {
         return;
       }
       if (params.serie === LeagueBattleType.All) {

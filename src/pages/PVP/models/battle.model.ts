@@ -180,7 +180,9 @@ export class PokemonTeamData implements IPokemonTeamData {
   pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonTeamData) {
-    props.pokemonType = getPokemonType(props.form);
+    if (props.pokemonType === PokemonType.Normal || props.pokemonType === PokemonType.None) {
+      props.pokemonType = getPokemonType(props.speciesId);
+    }
     Object.assign(this, props);
   }
 }
@@ -221,7 +223,9 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   pokemonType = PokemonType.Normal;
 
   constructor({ ...props }: IPokemonBattleRanking) {
-    props.pokemonType = getPokemonType(props.form);
+    if (props.pokemonType === PokemonType.Normal || props.pokemonType === PokemonType.None) {
+      props.pokemonType = getPokemonType(props.form);
+    }
     Object.assign(this, props);
   }
 }
