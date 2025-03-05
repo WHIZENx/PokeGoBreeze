@@ -627,8 +627,7 @@ export const calculateStatsByTag = (
     if (pokemon?.baseStatsGO) {
       return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, pokemon.baseStats.sta);
     }
-    const form = tag?.toLowerCase();
-    const checkNerf = !isInclude(form, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || pokemon?.pokemonType !== PokemonType.Mega;
+    const checkNerf = !isInclude(tag, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || pokemon?.pokemonType !== PokemonType.Mega;
 
     atk = calBaseATK(baseStats, checkNerf);
     def = calBaseDEF(baseStats, checkNerf);
@@ -642,7 +641,7 @@ export const calculateDamagePVE = (
   atk: number,
   defObj: number,
   power: number,
-  battleState: IBattleState,
+  battleState: IBattleState | undefined,
   notPure?: boolean,
   isStab?: boolean
 ) => {

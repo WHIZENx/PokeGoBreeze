@@ -59,6 +59,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 import { IInfoEvoChain, IPokemonDetailEvoChain, PokemonDetailEvoChain, PokemonInfoEvo } from '../../../core/models/API/info.model';
 import { ItemName } from '../../../pages/News/enums/item-type.enum';
+import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 
 interface IPokemonEvo {
   prev?: string;
@@ -502,18 +503,8 @@ const Evolution = (props: IEvolutionComponent) => {
     }
   };
 
-  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-    switch (pokemonType) {
-      case PokemonType.Shadow:
-        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-      case PokemonType.Purified:
-        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-    }
-  };
-
   const renderImgGif = (value: IPokemonEvo) => (
-    <>
-      {getPokemonTypeIcon(props.pokemonType, 30)}
+    <PokemonIconType pokemonType={props.pokemonType} size={30}>
       <img
         className="pokemon-sprite"
         id="img-pokemon"
@@ -524,7 +515,7 @@ const Evolution = (props: IEvolutionComponent) => {
           e.currentTarget.src = APIService.getPokeSprite(value.id);
         }}
       />
-    </>
+    </PokemonIconType>
   );
 
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {

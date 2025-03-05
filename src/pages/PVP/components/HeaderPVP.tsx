@@ -15,7 +15,7 @@ const HeaderPVP = (props: HeaderComponent) => {
             </b>
           </h3>
         )}
-        <TypeInfo isShadow={true} isBlock={true} color="white" arr={props.data?.pokemon?.types} />
+        <TypeInfo isShowShadow={true} isBlock={true} color="white" arr={props.data?.pokemon?.types} />
       </div>
       <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
         Recommend Moveset in PVP

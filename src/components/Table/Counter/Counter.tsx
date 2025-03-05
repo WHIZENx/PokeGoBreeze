@@ -38,6 +38,7 @@ import {
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { Button, Modal } from 'react-bootstrap';
 import { OptionsActions } from '../../../store/actions';
+import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 
 const customStyles: TableStyles = {
   head: {
@@ -124,15 +125,6 @@ const Counter = (props: ICounterComponent) => {
 
   const { showMegaPrimal, releasedGO, enableBest } = options;
 
-  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-    switch (pokemonType) {
-      case PokemonType.Shadow:
-        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-      case PokemonType.Purified:
-        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-    }
-  };
-
   const columns: TableColumnModify<ICounterModel>[] = [
     {
       name: 'Pokémon',
@@ -147,16 +139,17 @@ const Counter = (props: ICounterComponent) => {
                   'position-relative group-pokemon-sprite'
                 )}
               >
-                {getPokemonTypeIcon(row.pokemonType, 30)}
-                <img
-                  className="pokemon-sprite-counter"
-                  alt="img-pokemon"
-                  src={APIService.getPokemonModel(assets, row.pokemonId)}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, row.pokemonId, assets);
-                  }}
-                />
+                <PokemonIconType pokemonType={row.pokemonType} size={30}>
+                  <img
+                    className="pokemon-sprite-counter"
+                    alt="img-pokemon"
+                    src={APIService.getPokemonModel(assets, row.pokemonId)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, row.pokemonId, assets);
+                    }}
+                  />
+                </PokemonIconType>
               </div>
             </div>
             <span className="caption text-overflow" style={{ color: theme.palette.text.primary }}>

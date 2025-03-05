@@ -12,7 +12,7 @@ import { TypeAction } from '../../../enums/type.enum';
 import { TimelineElement } from '../../../util/models/overrides/dom.model';
 
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, isHide = false) => {
-  const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShadow = false) => {
+  const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShowShadow = false) => {
     if (!move) {
       return <></>;
     }
@@ -26,12 +26,12 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
         >
           <div style={{ display: 'contents', width: 16 }}>
             <img
-              className={combineClasses('pokemon-sprite-small sprite-type-select', isShadow ? 'filter-shadow' : '')}
+              className={combineClasses('pokemon-sprite-small sprite-type-select', isShowShadow ? 'filter-shadow' : '')}
               alt="img-type-pokemon"
               src={APIService.getTypeHqSprite(move.type)}
             />
           </div>
-          <span className={combineClasses(!isShadow ? 'text-black' : 'filter-shadow')} style={{ fontSize: 14 }}>
+          <span className={combineClasses(!isShowShadow ? 'text-black' : 'filter-shadow')} style={{ fontSize: 14 }}>
             {splitAndCapitalize(move.name, '_', ' ')}
           </span>
         </span>

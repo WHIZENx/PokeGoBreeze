@@ -68,6 +68,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -118,15 +119,6 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   return a - b;
 };
 
-const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-  switch (pokemonType) {
-    case PokemonType.Shadow:
-      return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-    case PokemonType.Purified:
-      return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-  }
-};
-
 const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'ID',
@@ -142,17 +134,18 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
-        {getPokemonTypeIcon(row.pokemonType, 25)}
-        <img
-          height={48}
-          alt="img-pokemon"
-          style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon.baseSpecies);
-          }}
-        />
+        <PokemonIconType pokemonType={row.pokemonType} size={25}>
+          <img
+            height={48}
+            alt="img-pokemon"
+            style={{ marginRight: 10 }}
+            src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon.baseSpecies);
+            }}
+          />
+        </PokemonIconType>
         {splitAndCapitalize(row.pokemon.name, '-', ' ')}
       </LinkToTop>
     ),
