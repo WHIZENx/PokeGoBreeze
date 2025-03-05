@@ -91,6 +91,7 @@ import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.
 import { ICombat } from '../../../core/models/combat.model';
 import PopoverConfig from '../../../components/Popover/PopoverConfig';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -893,18 +894,17 @@ const RaidBattle = () => {
       <Fragment>
         <div className="w-100 d-flex flex-column align-items-center">
           <div className="position-relative" style={{ width: 96 }}>
-            {showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow && (
-              <img height={36} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-            )}
-            <img
-              alt="img-pokemon"
-              className="pokemon-sprite-large"
-              src={APIService.getPokeIconSprite(pokemon.sprite)}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = APIService.getPokeIconSprite();
-              }}
-            />
+            <PokemonIconType pokemonType={showSettingPokemon.pokemon?.stats?.pokemonType} size={36}>
+              <img
+                alt="img-pokemon"
+                className="pokemon-sprite-large"
+                src={APIService.getPokeIconSprite(pokemon.sprite)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = APIService.getPokeIconSprite();
+                }}
+              />
+            </PokemonIconType>
           </div>
           <div>
             <b>{splitAndCapitalize(pokemon.name, '-', ' ')}</b>
@@ -1125,18 +1125,17 @@ const RaidBattle = () => {
         <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 5, paddingLeft: 10 }}>
           <div className="pokemon-battle">
             <span className="position-relative">
-              {pokemon.pokemonType === PokemonType.Shadow && (
-                <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-              )}
-              <img
-                className="pokemon-sprite-battle"
-                alt="img-pokemon"
-                src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, false)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = APIService.getPokeIconSprite();
-                }}
-              />
+              <PokemonIconType pokemonType={pokemon.pokemonType} size={18}>
+                <img
+                  className="pokemon-sprite-battle"
+                  alt="img-pokemon"
+                  src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, false)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = APIService.getPokeIconSprite();
+                  }}
+                />
+              </PokemonIconType>
             </span>
           </div>
           <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 8 }}>
@@ -1171,23 +1170,25 @@ const RaidBattle = () => {
                   >
                     {poke.dataTargetPokemon ? (
                       <span className="position-relative">
-                        {(hoverSlot === `${trainer.trainerId}-${index}`
-                          ? pokemon.pokemonType
-                          : poke.dataTargetPokemon.stats?.pokemonType) === PokemonType.Shadow && (
-                          <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                        )}
-                        <img
-                          className="pokemon-sprite-battle"
-                          alt="img-pokemon"
-                          src={APIService.getPokeIconSprite(
-                            hoverSlot === `${trainer.trainerId}-${index}` ? pokemon.pokemon?.sprite : poke.dataTargetPokemon.sprite,
-                            true
-                          )}
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = APIService.getPokeIconSprite();
-                          }}
-                        />
+                        <PokemonIconType
+                          pokemonType={
+                            hoverSlot === `${trainer.trainerId}-${index}` ? pokemon.pokemonType : poke.dataTargetPokemon.stats?.pokemonType
+                          }
+                          size={18}
+                        >
+                          <img
+                            className="pokemon-sprite-battle"
+                            alt="img-pokemon"
+                            src={APIService.getPokeIconSprite(
+                              hoverSlot === `${trainer.trainerId}-${index}` ? pokemon.pokemon?.sprite : poke.dataTargetPokemon.sprite,
+                              true
+                            )}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = APIService.getPokeIconSprite();
+                            }}
+                          />
+                        </PokemonIconType>
                       </span>
                     ) : (
                       <span>
@@ -1223,18 +1224,17 @@ const RaidBattle = () => {
         to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
         className="sprite-raid position-relative"
       >
-        {value.pokemonType === PokemonType.Shadow && (
-          <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-        )}
-        <img
-          className="pokemon-sprite-raid"
-          alt="img-pokemon"
-          src={APIService.getPokemonModel(assets, value.pokemon?.num)}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.num, assets);
-          }}
-        />
+        <PokemonIconType pokemonType={value.pokemonType} size={64}>
+          <img
+            className="pokemon-sprite-raid"
+            alt="img-pokemon"
+            src={APIService.getPokemonModel(assets, value.pokemon?.num)}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.num, assets);
+            }}
+          />
+        </PokemonIconType>
       </LinkToTop>
     );
   };
@@ -1473,18 +1473,17 @@ const RaidBattle = () => {
                     <div key={index} className="pokemon-battle">
                       {pokemon.dataTargetPokemon ? (
                         <span className="position-relative">
-                          {pokemon.dataTargetPokemon.stats?.pokemonType === PokemonType.Shadow && (
-                            <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                          )}
-                          <img
-                            className="pokemon-sprite-battle"
-                            alt="img-pokemon"
-                            src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, false)}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = APIService.getPokeIconSprite();
-                            }}
-                          />
+                          <PokemonIconType pokemonType={pokemon.dataTargetPokemon.stats?.pokemonType} size={18}>
+                            <img
+                              className="pokemon-sprite-battle"
+                              alt="img-pokemon"
+                              src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, false)}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = APIService.getPokeIconSprite();
+                              }}
+                            />
+                          </PokemonIconType>
                         </span>
                       ) : (
                         <span>
@@ -1660,19 +1659,18 @@ const RaidBattle = () => {
                                   <OverlayTrigger placement="auto" overlay={<PopoverConfig>{modalDetailsPokemon(data)}</PopoverConfig>}>
                                     <span className="tooltips-info">
                                       <div className="d-flex align-items-center table-pokemon">
-                                        {data.pokemon?.stats?.pokemonType === PokemonType.Shadow && (
-                                          <img height={18} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                                        )}
-                                        <img
-                                          className="pokemon-sprite-battle"
-                                          height={36}
-                                          alt="img-pokemon"
-                                          src={APIService.getPokeIconSprite(data.pokemon?.sprite, false)}
-                                          onError={(e) => {
-                                            e.currentTarget.onerror = null;
-                                            e.currentTarget.src = APIService.getPokeIconSprite();
-                                          }}
-                                        />
+                                        <PokemonIconType pokemonType={data.pokemon?.stats?.pokemonType} size={18}>
+                                          <img
+                                            className="pokemon-sprite-battle"
+                                            height={36}
+                                            alt="img-pokemon"
+                                            src={APIService.getPokeIconSprite(data.pokemon?.sprite, false)}
+                                            onError={(e) => {
+                                              e.currentTarget.onerror = null;
+                                              e.currentTarget.src = APIService.getPokeIconSprite();
+                                            }}
+                                          />
+                                        </PokemonIconType>
                                         <span className="caption link-url">
                                           {splitAndCapitalize(data.pokemon?.name.replaceAll('_', '-'), '-', ' ')}
                                         </span>

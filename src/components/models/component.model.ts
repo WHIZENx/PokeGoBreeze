@@ -376,7 +376,7 @@ export interface IStatsBarComponent {
 export interface ITypeComponent {
   arr: string[] | undefined;
   isBlock?: boolean;
-  isShadow?: boolean;
+  isShowShadow?: boolean;
   style?: React.CSSProperties;
   text?: string;
   isHideText?: boolean;
@@ -417,6 +417,13 @@ export interface ILoadGroupComponent {
   bgColor?: string;
   isVertical?: boolean;
   isHideAttr?: boolean;
+}
+
+export interface IPokemonIconTypeComponent {
+  pokemonType?: PokemonType;
+  size: number;
+  children?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 export interface IWeatherComponent {

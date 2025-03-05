@@ -59,7 +59,7 @@ import {
   IPokemonBattle,
   ChargeType,
 } from '../models/battle.model';
-import { BattleBaseStats, IBattleBaseStats } from '../../../util/models/calculate.model';
+import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
@@ -82,6 +82,7 @@ import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { TimelineEvent } from '../../../util/models/overrides/dom.model';
 import { LinkToTop, useNavigateToTop } from '../../../util/hooks/LinkToTop';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -1088,8 +1089,9 @@ const Battle = () => {
     const level = toNumber((document.getElementById(`level${battleType}`) as HTMLInputElement).value);
     const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
 
-    if (cp > toNumber(params?.cp)) {
-      enqueueSnackbar(`This stats Pokémon CP is greater than ${params.cp}, which is not permitted by the league.`, {
+    const paramCP = toNumber(params?.cp);
+    if (cp > paramCP) {
+      enqueueSnackbar(`This stats Pokémon CP is greater than ${paramCP}, which is not permitted by the league.`, {
         variant: VariantType.Error,
       });
       return;
@@ -1109,6 +1111,15 @@ const Battle = () => {
     );
   };
 
+  const randomCP = (atk: number, def: number, sta: number) => {
+    const atkIV = getRandomInt(MIN_IV, MAX_IV);
+    const defIV = getRandomInt(MIN_IV, MAX_IV);
+    const staIV = getRandomInt(MIN_IV, MAX_IV);
+    const level = getRandomInt(MIN_LEVEL, MAX_LEVEL);
+    const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
+    return new StatsCalculate(atkIV, defIV, staIV, cp, level);
+  };
+
   const onSetStats = (
     type: BattleType,
     pokemon: IPokemonBattle,
@@ -1121,20 +1132,26 @@ const Battle = () => {
 
     let stats: IBattleBaseStats | undefined = new BattleBaseStats();
     if (isRandom) {
-      let cp = 0;
       const maxCP = toNumber(params?.cp);
-      while (cp < MIN_CP || cp > maxCP) {
-        const id = toNumber(pokemon.pokemonData.pokemon?.num);
-        const atk = toNumber(pokemon.pokemonData.stats?.atk);
-        const def = toNumber(pokemon.pokemonData.stats?.def);
-        const sta = toNumber(pokemon.pokemonData.stats?.sta);
-        const atkIV = getRandomInt(MIN_IV, MAX_IV);
-        const defIV = getRandomInt(MIN_IV, MAX_IV);
-        const staIV = getRandomInt(MIN_IV, MAX_IV);
-        const level = getRandomInt(MIN_LEVEL, MAX_LEVEL);
-        cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
-        stats = getBaseStatsByIVandLevel(atk, def, sta, cp, id, level, atkIV, defIV, staIV);
+      const id = toNumber(pokemon.pokemonData.pokemon?.num);
+      const atk = toNumber(pokemon.pokemonData.stats?.atk);
+      const def = toNumber(pokemon.pokemonData.stats?.def);
+      const sta = toNumber(pokemon.pokemonData.stats?.sta);
+      let statsCalculate = randomCP(atk, def, sta);
+      while (statsCalculate.CP < MIN_CP || statsCalculate.CP > maxCP) {
+        statsCalculate = randomCP(atk, def, sta);
       }
+      stats = getBaseStatsByIVandLevel(
+        atk,
+        def,
+        sta,
+        statsCalculate.CP,
+        id,
+        statsCalculate.level,
+        statsCalculate.IV.atk,
+        statsCalculate.IV.def,
+        statsCalculate.IV.sta
+      );
     } else {
       stats = pokemon.pokemonData.bestStats;
     }
@@ -1170,18 +1187,17 @@ const Battle = () => {
           <Accordion.Body>
             <div className="w-100 d-flex justify-content-center">
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                {pokemon.pokemonType === PokemonType.Shadow && (
-                  <img height={64} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-                )}
-                <img
-                  alt="img-league"
-                  className="pokemon-sprite-raid"
-                  src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.pokemonData?.id, pokemon.pokemonData?.form);
-                  }}
-                />
+                <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
+                  <img
+                    alt="img-league"
+                    className="pokemon-sprite-raid"
+                    src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.pokemonData?.id, pokemon.pokemonData?.form);
+                    }}
+                  />
+                </PokemonIconType>
               </div>
             </div>
             <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
