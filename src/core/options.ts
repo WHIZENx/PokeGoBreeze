@@ -218,7 +218,7 @@ const findPokemonData = (id: number, name: string, isDefault = false) =>
   ) as IPokemonData | undefined;
 
 const convertAndReplaceNameGO = (name: string, defaultName = '') =>
-  name
+  getValueOrDefault(String, name)
     .replace(`${replacePokemonGoForm(defaultName)}_`, '')
     .replace(/^S$/gi, FORM_SHADOW)
     .replace(/^A$/gi, FORM_ARMOR)
@@ -689,15 +689,15 @@ export const optionSticker = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     .filter((item) => /^STICKER_*/g.test(item.templateId))
     .forEach((item) => {
       if (item.data.iapItemDisplay) {
-        const id = item.data.iapItemDisplay.sku.replace('STICKER_', '');
+        const id = item.data.iapItemDisplay.sku?.replace('STICKER_', '');
         const sticker = stickers.find((sticker) => isEqual(sticker.id, id.split('.')[0]));
         if (sticker) {
           sticker.isShop = true;
-          sticker.pack.push(toNumber(id.replace(`${sticker.id}.`, '')));
+          sticker.pack.push(toNumber(id?.replace(`${sticker.id}.`, '')));
         }
       } else if (item.data.stickerMetadata) {
         const sticker = new Sticker();
-        sticker.id = item.data.stickerMetadata.stickerId.replace('STICKER_', '');
+        sticker.id = item.data.stickerMetadata.stickerId?.replace('STICKER_', '');
         sticker.maxCount = toNumber(item.data.stickerMetadata.maxCount);
         sticker.stickerUrl = item.data.stickerMetadata.stickerUrl;
         if (item.data.stickerMetadata.pokemonId) {
@@ -1007,8 +1007,8 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       const move = item.data.moveSettings;
       combat.id = toNumber(result[result.length - 1].id) + 1 + index;
       combat.track = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{3}/g))[0]);
-      combat.name = move.vfxName.replace('max_', '').toUpperCase();
-      combat.type = move.pokemonType.replace('POKEMON_TYPE_', '');
+      combat.name = move.vfxName?.replace('max_', '').toUpperCase();
+      combat.type = move.pokemonType?.replace('POKEMON_TYPE_', '');
       combat.typeMove = TypeMove.Charge;
       combat.durationMs = move.durationMs;
       combat.damageWindowStartMs = move.damageWindowStartMs;
@@ -1054,7 +1054,7 @@ const setPokemonPermission = (
       currentPokemon.forms
         ?.filter((form) => !isEqual(form, 'FORM_UNSET'))
         .forEach((form) => {
-          form = form.replace(`${currentPokemon.id}_`, '');
+          form = form?.replace(`${currentPokemon.id}_`, '');
           pokemonPermission.push(
             new PokemonPermission({
               id: item?.num,
@@ -1095,7 +1095,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     .map((item) => {
       const result = new League();
       result.id = item.templateId.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '');
-      result.title = item.data.combatLeague.title.replace('combat_', '').replace('_title', '').toUpperCase();
+      result.title = item.data.combatLeague.title?.replace('combat_', '').replace('_title', '').toUpperCase();
       result.enabled = item.data.combatLeague.enabled;
       result.pokemonCount = item.data.combatLeague.pokemonCount;
       result.allowEvolutions = item.data.combatLeague.allowTempEvos;
@@ -1134,9 +1134,9 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         }
       });
       result.iconUrl = item.data.combatLeague.iconUrl
-        .replace(APIUrl.POGO_PROD_ASSET_URL, '')
-        .replace(`${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/`, '');
-      result.league = item.data.combatLeague.badgeType.replace('BADGE_', '');
+        ?.replace(APIUrl.POGO_PROD_ASSET_URL, '')
+        ?.replace(`${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/`, '');
+      result.league = item.data.combatLeague.badgeType?.replace('BADGE_', '');
       if (isNotEmpty(item.data.combatLeague.bannedPokemon)) {
         const banList = result.conditions.banned.concat(
           item.data.combatLeague.bannedPokemon.map((poke) => {
@@ -1208,7 +1208,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         result.id = toNumber(pokemon.find((item) => isEqual(item.pokemonId, poke.pokemonId))?.num);
         result.name = poke.pokemonId;
         if (poke.pokemonDisplay) {
-          result.form = poke.pokemonDisplay.form.replace(`${poke.pokemonId}_`, '');
+          result.form = poke.pokemonDisplay.form?.replace(`${poke.pokemonId}_`, '');
         } else {
           result.form = FORM_NORMAL;
         }
@@ -1366,7 +1366,7 @@ const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
     if (itemSettings.globalEventTicket.eventBannerUrl) {
       let descKey = itemSettings.globalEventTicket.eventBannerUrl.split('/');
       let srcText = descKey[descKey.length - 1];
-      srcText = srcText
+      srcText = getValueOrDefault(String, srcText)
         .replaceAll('-', '_')
         .replace(/\.[^.]*$/, '')
         .replace(/^PGO_MCS_/, '');
@@ -1385,7 +1385,7 @@ const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
           msgList.push(text);
         }
         return msgList
-          .map((text) => text.replace(/^S/i, 'Season '))
+          .map((text) => text?.replace(/^S/i, 'Season '))
           .map((text) => capitalize(text))
           .join(' ');
       } else {
@@ -1393,7 +1393,7 @@ const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
           .filter(
             (text) => /^S[\d*]/i.test(text) || isInclude(itemSettings.descriptionOverride, text, IncludeMode.IncludeIgnoreCaseSensitive)
           )
-          .map((text) => text.replace(/^S/i, 'Season '));
+          .map((text) => text?.replace(/^S/i, 'Season '));
       }
       if (!isNotEmpty(descKey)) {
         const descriptionOverride = getValueOrDefault(Array, itemSettings.descriptionOverride?.split('_'));
