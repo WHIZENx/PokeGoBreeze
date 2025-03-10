@@ -135,7 +135,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
     case StoreActions.StoreActionTypes.setPVPMoves: {
       const result = state.data.combat.map((move) => {
         const movePVP = action.payload.find((data) =>
-          isEqual(data.moveId, move.name === 'HIDDEN_POWER' ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
+          isEqual(data.moveId, isEqual(move.name, 'HIDDEN_POWER') ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
         );
         move.archetype = movePVP?.archetype;
         move.abbreviation = movePVP?.abbreviation;

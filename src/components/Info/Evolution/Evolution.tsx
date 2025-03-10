@@ -27,6 +27,7 @@ import {
   convertPokemonAPIDataName,
   getDataWithKey,
   getItemSpritePath,
+  getPokemonFormWithNoneSpecialForm,
   getPokemonType,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -58,6 +59,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 import { IInfoEvoChain, IPokemonDetailEvoChain, PokemonDetailEvoChain, PokemonInfoEvo } from '../../../core/models/API/info.model';
 import { ItemName } from '../../../pages/News/enums/item-type.enum';
+import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 
 interface IPokemonEvo {
   prev?: string;
@@ -115,6 +117,8 @@ const Evolution = (props: IEvolutionComponent) => {
   const evolutionChain = useSelector((state: StoreState) => state.store.data.evolutionChain);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
+  const [idEvoChain, setIdEvoChain] = useState(0);
+
   const recursiveEvoChain = (chain: IInfoEvoChain, evos: IInfoEvoChain[], result: IPokemonEvo[][]) => {
     const currentId = chain.id;
     if (currentId === props.id) {
@@ -155,10 +159,11 @@ const Evolution = (props: IEvolutionComponent) => {
     setArrEvoList(result);
   };
 
-  const queryPokemonEvolutionChain = (url: string, result: IPokemonEvo[][]) =>
+  const queryPokemonEvolutionChain = (url: string, idUrlChain: number, result: IPokemonEvo[][]) =>
     APIService.getFetchUrl<PokemonInfoEvo>(url)
       .then((res) => {
         if (res.data) {
+          setIdEvoChain(idUrlChain);
           fetchEvoChain(PokemonDetailEvoChain.mapping(res.data), result);
         }
       })
@@ -245,12 +250,12 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getEvoChainJSON = (id: number | undefined, forme: IForm) => {
     let form = isEmpty(forme.formName) || forme.pokemonType !== PokemonType.Mega ? FORM_NORMAL : forme.formName;
-    if (forme.formName === '10') {
+    if (isEqual(forme.formName, '10')) {
       form += '%';
     }
-    if (forme.name === 'necrozma-dawn') {
+    if (isEqual(forme.name, 'necrozma-dawn')) {
       form += '-wings';
-    } else if (forme.name === 'necrozma-dusk') {
+    } else if (isEqual(forme.name, 'necrozma-dusk')) {
       form += '-mane';
     }
     if (!form) {
@@ -277,7 +282,10 @@ const Evolution = (props: IEvolutionComponent) => {
     getNextEvoChainJSON(pokemon.evos, evo);
     const result = prevEvo.concat(curr, evo);
     if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
-      queryPokemonEvolutionChain(props.urlEvolutionChain, result);
+      const idUrlChain = toNumber(props.urlEvolutionChain?.split('/')[6]);
+      if (idUrlChain !== idEvoChain) {
+        queryPokemonEvolutionChain(props.urlEvolutionChain, idUrlChain, result);
+      }
     } else {
       setArrEvoList(result);
     }
@@ -431,7 +439,10 @@ const Evolution = (props: IEvolutionComponent) => {
         getCombineEvoChainFromPokeGo(result, id, form);
       }
       if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
-        queryPokemonEvolutionChain(props.urlEvolutionChain, result);
+        const idUrlChain = toNumber(props.urlEvolutionChain?.split('/')[6]);
+        if (idUrlChain !== idEvoChain) {
+          queryPokemonEvolutionChain(props.urlEvolutionChain, idUrlChain, result);
+        }
       } else {
         setArrEvoList(result);
       }
@@ -492,18 +503,8 @@ const Evolution = (props: IEvolutionComponent) => {
     }
   };
 
-  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-    switch (pokemonType) {
-      case PokemonType.Shadow:
-        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-      case PokemonType.Purified:
-        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-    }
-  };
-
   const renderImgGif = (value: IPokemonEvo) => (
-    <>
-      {getPokemonTypeIcon(props.pokemonType, 30)}
+    <PokemonIconType pokemonType={props.pokemonType} size={30}>
       <img
         className="pokemon-sprite"
         id="img-pokemon"
@@ -514,7 +515,7 @@ const Evolution = (props: IEvolutionComponent) => {
           e.currentTarget.src = APIService.getPokeSprite(value.id);
         }}
       />
-    </>
+    </PokemonIconType>
   );
 
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
@@ -766,11 +767,16 @@ const Evolution = (props: IEvolutionComponent) => {
         </span>
         {value.isBaby && <span className="caption text-danger">(Baby)</span>}
         <p>
-          {value.id === props.id && isEqual(form, convertPokemonAPIDataName(props.forme?.formName) || FORM_NORMAL) && (
-            <span className="caption" style={{ color: theme.palette.customText.caption }}>
-              Current
-            </span>
-          )}
+          {value.id === props.id &&
+            isEqual(
+              form,
+              getValueOrDefault(String, getPokemonFormWithNoneSpecialForm(props.forme?.formName, props.forme?.pokemonType), FORM_NORMAL),
+              EqualMode.IgnoreCaseSensitive
+            ) && (
+              <span className="caption" style={{ color: theme.palette.customText.caption }}>
+                Current
+              </span>
+            )}
         </p>
       </Fragment>
     );

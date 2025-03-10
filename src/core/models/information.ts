@@ -12,6 +12,12 @@ export interface RewardPokemon {
   form?: string;
 }
 
+export interface RewardCandy {
+  id: number | undefined;
+  pokemonId: string;
+  amount: number;
+}
+
 interface NeutralAvatarItem {
   neutralAvatarItemTemplateString1: string;
   neutralAvatarItemTemplateString2: string;
@@ -26,6 +32,7 @@ export interface ITicketReward {
   exp?: number;
   avatarTemplateId?: string;
   neutralAvatarItemTemplate?: NeutralAvatarItem;
+  candy?: RewardCandy;
 }
 
 export class TicketReward implements ITicketReward {
@@ -37,6 +44,7 @@ export class TicketReward implements ITicketReward {
   exp?: number;
   avatarTemplateId?: string;
   neutralAvatarItemTemplate?: NeutralAvatarItem;
+  candy?: RewardCandy;
 
   static create(value: ITicketReward) {
     const obj = new TicketReward();

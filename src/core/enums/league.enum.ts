@@ -13,6 +13,7 @@ export enum LeagueRewardType {
 }
 
 export enum LeagueBattleType {
+  None = 'none',
   All = 'all',
   Remix = 'remix',
   Little = 'little',

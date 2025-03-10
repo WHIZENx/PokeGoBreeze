@@ -37,6 +37,7 @@ import MoveSet from '../components/MoveSet';
 import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../util/enums/constants.enum';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -178,15 +179,6 @@ const PokemonPVP = () => {
     );
   };
 
-  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-    switch (pokemonType) {
-      case PokemonType.Shadow:
-        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-      case PokemonType.Purified:
-        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-    }
-  };
-
   return (
     <Fragment>
       {!found ? (
@@ -222,16 +214,17 @@ const PokemonPVP = () => {
             <div className="w-100 ranking-info element-top">
               <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
                 <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                  {getPokemonTypeIcon(rankingPoke?.pokemonType, 64)}
-                  <img
-                    alt="img-league"
-                    className="pokemon-sprite-raid"
-                    src={APIService.getPokemonModel(rankingPoke?.form, rankingPoke?.id)}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, rankingPoke?.id, rankingPoke?.form);
-                    }}
-                  />
+                  <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
+                    <img
+                      alt="img-league"
+                      className="pokemon-sprite-raid"
+                      src={APIService.getPokemonModel(rankingPoke?.form, rankingPoke?.id)}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, rankingPoke?.id, rankingPoke?.form);
+                      }}
+                    />
+                  </PokemonIconType>
                 </div>
                 <div>
                   <HeaderPVP data={rankingPoke} />

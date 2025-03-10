@@ -34,7 +34,7 @@ export const createDbCpMultiply = async (cpm: CPMData) => {
 };
 
 export const getDbPokemonName = async () => {
-  return await db.sql<IPokemonName>`SELECT * from tblPokemonName`;
+  return await db.sql<IPokemonName>`SELECT Id, Name from tblPokemonName`;
 };
 
 export const createDbPokemonName = async (pokemon: IPokemonName) => {
@@ -48,7 +48,7 @@ export const createDbPokemonName = async (pokemon: IPokemonName) => {
 };
 
 export const getDbPokemonEncounter = async () => {
-  return await db.sql<PokemonEncounter>`SELECT * from tblPokemonEncounter`;
+  return await db.sql<PokemonEncounter>`SELECT Name, Basecapturerate, Basefleerate from tblPokemonEncounter`;
 };
 
 export const createDbPokemonEncounter = async (pokemon: PokemonEncounter, index: number) => {

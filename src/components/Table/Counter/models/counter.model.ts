@@ -36,3 +36,15 @@ export class CounterModel implements ICounterModel {
     Object.assign(this, props);
   }
 }
+
+interface IOptionFiltersCounter {
+  showMegaPrimal: boolean;
+  releasedGO: boolean;
+  enableBest: boolean;
+}
+
+export class OptionFiltersCounter implements IOptionFiltersCounter {
+  showMegaPrimal = false;
+  releasedGO = true;
+  enableBest = false;
+}

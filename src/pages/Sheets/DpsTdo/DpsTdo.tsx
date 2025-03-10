@@ -68,6 +68,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -118,15 +119,6 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
   return a - b;
 };
 
-const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-  switch (pokemonType) {
-    case PokemonType.Shadow:
-      return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-    case PokemonType.Purified:
-      return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-  }
-};
-
 const columns: TableColumnModify<PokemonSheetData>[] = [
   {
     name: 'ID',
@@ -142,17 +134,18 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
-        {getPokemonTypeIcon(row.pokemonType, 25)}
-        <img
-          height={48}
-          alt="img-pokemon"
-          style={{ marginRight: 10 }}
-          src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon.baseSpecies);
-          }}
-        />
+        <PokemonIconType pokemonType={row.pokemonType} size={25}>
+          <img
+            height={48}
+            alt="img-pokemon"
+            style={{ marginRight: 10 }}
+            src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = APIService.getPokeIconSprite(row.pokemon.baseSpecies);
+            }}
+          />
+        </PokemonIconType>
         {splitAndCapitalize(row.pokemon.name, '-', ' ')}
       </LinkToTop>
     ),
@@ -430,10 +423,10 @@ const DpsTdo = () => {
     const bestType = getPropertyName<PokemonSheetData, 'multiDpsTdo' | 'dps' | 'tdo'>(result[0], (r) =>
       best === BestOptionType.dps ? r.dps : best === BestOptionType.tdo ? r.tdo : r.multiDpsTdo
     );
-    const group = result.reduce((result: DynamicObj<PokemonSheetData[]>, obj) => {
-      (result[obj.pokemon.name] = getValueOrDefault(Array, result[obj.pokemon.name])).push(obj);
-      return result;
-    }, {});
+    const group = result.reduce((res, obj) => {
+      (res[obj.pokemon.name] = getValueOrDefault(Array, res[obj.pokemon.name])).push(obj);
+      return res;
+    }, new Object() as DynamicObj<PokemonSheetData[]>);
     return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p[bestType] > c[bestType] ? p : c)));
   };
 
@@ -867,12 +860,12 @@ const DpsTdo = () => {
               <div className="row w-100" style={{ margin: 0 }}>
                 <Box className="col-xxl-8" style={{ padding: 0 }}>
                   <div className="input-group">
-                    <span className="input-group-text">Filter best movesets</span>
+                    <span className="input-group-text">Filter best move sets</span>
                     <FormControlLabel
                       className="border-input"
                       style={{ marginRight: 0, paddingRight: 16 }}
                       control={<Switch checked={enableBest} onChange={(_, check) => setFilters({ ...filters, enableBest: check })} />}
-                      label="Best moveset of"
+                      label="Best move set of"
                     />
                     <Form.Select
                       style={{ borderRadius: 0 }}

@@ -158,7 +158,7 @@ const CalculatePoint = () => {
   };
 
   const computeColorTone = (data: number[]) => {
-    const colorTone: DynamicObj<ColorTone> = {};
+    const colorTone = new Object() as DynamicObj<ColorTone>;
     let r = 50,
       g = 255,
       b = 100;
@@ -180,7 +180,7 @@ const CalculatePoint = () => {
     if (!color) {
       color = new Color();
     }
-    return `rgb(${Math.max(0, color.r)}, ${Math.max(0, color.g)}, ${Math.max(0, color.b)})`;
+    return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
   };
 
   const getMoveDamagePVE = (

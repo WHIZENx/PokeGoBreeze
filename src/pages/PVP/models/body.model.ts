@@ -1,4 +1,5 @@
 import { IPokemonData } from '../../../core/models/pokemon.model';
+import { PokemonType } from '../../../enums/type.enum';
 
 export interface IBody {
   name: string | undefined;
@@ -7,6 +8,7 @@ export interface IBody {
   pokemon: IPokemonData | undefined;
   opponent: string;
   rating: number;
+  pokemonType: PokemonType;
 }
 
 export class BodyModel implements IBody {
@@ -16,6 +18,7 @@ export class BodyModel implements IBody {
   pokemon: IPokemonData | undefined;
   opponent = '';
   rating = 0;
+  pokemonType = PokemonType.None;
 
   static create(value: IBody) {
     const obj = new BodyModel();

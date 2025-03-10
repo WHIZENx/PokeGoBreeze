@@ -152,20 +152,20 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const currentForm = form?.form.formName ? form.form.formName.replaceAll('-', '_').toUpperCase() : FORM_NORMAL;
+      const currentForm = getValueOrDefault(String, form?.form.formName?.replaceAll('-', '_').toUpperCase(), FORM_NORMAL);
       let curr = dataStore.pokemon.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
       if (!isNotEmpty(curr)) {
         if (currentForm === FORM_NORMAL) {
           curr = dataStore.pokemon.filter((item) => id === item.num && isEqual(currentForm, item.forme));
         } else {
-          curr = dataStore.pokemon.filter((item) => id === item.num && isInclude(item.forme, currentForm ?? FORM_NORMAL));
+          curr = dataStore.pokemon.filter((item) => id === item.num && isInclude(item.forme, currentForm));
         }
       }
       if (!isNotEmpty(curr)) {
         curr = dataStore.pokemon.filter((item) => id === item.num && item.forme === FORM_NORMAL);
       }
       const result: IEvolution[][] = [];
-      curr?.forEach((item) => prevEvoChain(item, currentForm ?? FORM_NORMAL, [], result));
+      curr?.forEach((item) => prevEvoChain(item, currentForm, [], result));
       return result;
     },
     [prevEvoChain, form, dataStore.pokemon]

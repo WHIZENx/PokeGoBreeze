@@ -58,6 +58,7 @@ import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -112,7 +113,7 @@ const RankingPVP = () => {
     try {
       const cp = toNumber(params.cp);
       const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))).data;
-      if (!file) {
+      if (!isNotEmpty(file)) {
         return;
       }
       if (params.serie === LeagueBattleType.All) {
@@ -200,15 +201,6 @@ const RankingPVP = () => {
     };
   }, [fetchPokemonRanking, rankingData, pvp, router.action, dispatch]);
 
-  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-    switch (pokemonType) {
-      case PokemonType.Shadow:
-        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-      case PokemonType.Purified:
-        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-    }
-  };
-
   const renderItem = (data: IPokemonBattleRanking, key: number) => (
     <Accordion.Item eventKey={key.toString()}>
       <Accordion.Header
@@ -229,16 +221,17 @@ const RankingPVP = () => {
           </LinkToTop>
           <div className="d-flex justify-content-center">
             <span className="position-relative" style={{ width: 50 }}>
-              {getPokemonTypeIcon(data.pokemonType, 28)}
-              <img
-                alt="img-league"
-                className="pokemon-sprite-accordion"
-                src={APIService.getPokemonModel(data.form, data.id)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, data.id, data.form);
-                }}
-              />
+              <PokemonIconType pokemonType={data.pokemonType} size={28}>
+                <img
+                  alt="img-league"
+                  className="pokemon-sprite-accordion"
+                  src={APIService.getPokemonModel(data.form, data.id)}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, data.id, data.form);
+                  }}
+                />
+              </PokemonIconType>
             </span>
           </div>
           <div className="ranking-group w-100">

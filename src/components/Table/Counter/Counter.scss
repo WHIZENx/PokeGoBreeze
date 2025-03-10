@@ -21,13 +21,24 @@
 }
 
 .sub-header {
+  position: relative;
   background-color: #f1f1ff !important;
   color: #0571c2;
   border: 1px solid #b8d4da;
   font-size: 16px;
-  padding: 5px 10px;
+  padding: 10px;
 
   span.sub-title {
     font-weight: bold;
+  }
+}
+
+.counter-setting {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+
+  svg:hover {
+    opacity: 0.8;
   }
 }

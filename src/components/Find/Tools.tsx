@@ -10,7 +10,7 @@ import DEF_LOGO from '../../assets/defense.png';
 import HP_LOGO from '../../assets/hp.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { convertPokemonAPIDataName, convertStatsEffort, getFormFromForms } from '../../util/utils';
+import { convertStatsEffort, getFormFromForms, getPokemonFormWithNoneSpecialForm } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import {
@@ -38,7 +38,7 @@ const Tools = (props: IToolsComponent) => {
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined) =>
-      getFormFromForms(stats, props.id, props.currForm?.form.formName),
+      getFormFromForms(stats, props.id, props.currForm?.form.formName, props.currForm?.form.pokemonType),
     [props.id, props.currForm?.form.formName]
   );
 
@@ -210,7 +210,7 @@ const Tools = (props: IToolsComponent) => {
           pokemonStats={props.stats}
           stats={currDataPoke}
           id={props.id}
-          form={convertPokemonAPIDataName(props.currForm?.form.formName)}
+          form={getPokemonFormWithNoneSpecialForm(props.currForm?.form.formName, props.currForm?.form.pokemonType)?.replaceAll('-', '_')}
         />
       )}
     </Fragment>

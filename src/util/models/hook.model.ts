@@ -6,8 +6,9 @@ export interface NavigateToTopProps extends NavigateOptions {
   behavior?: ScrollBehavior;
 }
 
-export interface LinkPropsToTopProps extends LinkProps {
+export interface LinkToTopProps extends LinkProps {
   top?: number;
   left?: number;
   behavior?: ScrollBehavior;
+  options?: NavigateToTopProps;
 }

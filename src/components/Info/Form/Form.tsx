@@ -5,11 +5,11 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_NORMAL, Params } from '../../../util/constants';
 import {
   capitalize,
-  convertPokemonAPIDataName,
   convertStatsEffort,
   formIconAssets,
   getDataWithKey,
   getFormFromForms,
+  getPokemonFormWithNoneSpecialForm,
   splitAndCapitalize,
 } from '../../../util/utils';
 import APIService from '../../../services/API.service';
@@ -32,6 +32,7 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNu
 import { WeightHeight } from '../../../core/models/pokemon.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
+import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -42,7 +43,8 @@ const FormComponent = (props: IFormInfoComponent) => {
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
   const filterFormList = useCallback(
-    (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) => getFormFromForms(stats, props.defaultId, props.form?.form.formName),
+    (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
+      getFormFromForms(stats, props.defaultId, props.form?.form.formName, props.form?.form.pokemonType),
     [props.defaultId, props.form?.form.formName]
   );
 
@@ -84,7 +86,7 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   useEffect(() => {
     if (props.pokemonRouter.action === Action.Pop) {
-      const form = searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-') || FORM_NORMAL;
+      const form = getValueOrDefault(String, searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'), FORM_NORMAL);
       const currentData = props.pokeData.find(
         (i) => isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) || (isEqual(form, FORM_NORMAL) && i.isDefault)
       );
@@ -97,7 +99,7 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const changeForm = (name: string, form: string | null | undefined, pokemonType = PokemonType.None) => {
     if (params.id) {
-      form = convertPokemonAPIDataName(form).toLowerCase().replaceAll('_', '-');
+      form = getPokemonFormWithNoneSpecialForm(form, pokemonType)?.toLowerCase().replaceAll('_', '-');
       if (form) {
         searchParams.set(Params.Form, form);
       } else {
@@ -113,15 +115,6 @@ const FormComponent = (props: IFormInfoComponent) => {
       setSearchParams(searchParams);
     } else {
       findFormData(name);
-    }
-  };
-
-  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-    switch (pokemonType) {
-      case PokemonType.Shadow:
-        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-      case PokemonType.Purified:
-        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
     }
   };
 
@@ -144,16 +137,17 @@ const FormComponent = (props: IFormInfoComponent) => {
                     >
                       <div className="d-flex w-100 justify-content-center">
                         <div className="position-relative" style={{ width: 64 }}>
-                          {getPokemonTypeIcon(value.form.pokemonType)}
-                          <img
-                            className="pokemon-sprite-medium"
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = APIService.getPokeIconSprite();
-                            }}
-                            alt="img-icon-form"
-                            src={formIconAssets(value)}
-                          />
+                          <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
+                            <img
+                              className="pokemon-sprite-medium"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = APIService.getPokeIconSprite();
+                              }}
+                              alt="img-icon-form"
+                              src={formIconAssets(value)}
+                            />
+                          </PokemonIconType>
                         </div>
                       </div>
                       <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
@@ -198,7 +192,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         pokemonStats={stats}
         stats={convertStatsEffort(props.data?.stats)}
         id={props.defaultId}
-        form={convertPokemonAPIDataName(props.form?.form.formName)}
+        form={getPokemonFormWithNoneSpecialForm(props.form?.form.formName, props.form?.form.pokemonType)?.replaceAll('-', '_')}
         isDisabled={!stats}
       />
       <hr className="w-100" />
@@ -213,8 +207,8 @@ const FormComponent = (props: IFormInfoComponent) => {
               <Raid
                 currForm={props.form}
                 id={props.defaultId}
-                statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
-                statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
+                statATK={toNumber(statsPokemon?.atk?.attack, calBaseATK(convertAllStats(props.data?.stats), true))}
+                statDEF={toNumber(statsPokemon?.def?.defense, calBaseDEF(convertAllStats(props.data?.stats), true))}
                 isLoadedForms={props.isLoadedForms}
               />
             </Fragment>
@@ -228,9 +222,9 @@ const FormComponent = (props: IFormInfoComponent) => {
               types: props.form?.form.types,
             }}
             form={props.form?.form}
-            statATK={statsPokemon?.atk?.attack ?? calBaseATK(convertAllStats(props.data?.stats), true)}
-            statDEF={statsPokemon?.def?.defense ?? calBaseDEF(convertAllStats(props.data?.stats), true)}
-            statSTA={statsPokemon?.sta?.stamina ?? calBaseSTA(convertAllStats(props.data?.stats), true)}
+            statATK={toNumber(statsPokemon?.atk?.attack, calBaseATK(convertAllStats(props.data?.stats), true))}
+            statDEF={toNumber(statsPokemon?.def?.defense, calBaseDEF(convertAllStats(props.data?.stats), true))}
+            statSTA={toNumber(statsPokemon?.sta?.stamina, calBaseSTA(convertAllStats(props.data?.stats), true))}
           />
           <Counter def={statsPokemon?.def?.defense} types={props.form?.form.types} pokemonType={props.form?.form.pokemonType} />
         </div>

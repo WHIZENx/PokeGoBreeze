@@ -81,7 +81,9 @@ export class Performers implements IPerformers {
   usageTrend: string[] = [];
 
   constructor({ ...props }: IPerformers) {
-    props.pokemonType = getPokemonType(props.form);
+    if (props.pokemonType === PokemonType.Normal || props.pokemonType === PokemonType.None) {
+      props.pokemonType = getPokemonType(props.speciesId);
+    }
     Object.assign(this, props);
   }
 }

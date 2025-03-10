@@ -31,14 +31,17 @@ const TypeInfo = (props: ITypeComponent) => {
       ) : (
         <>
           {isNotEmpty(props.arr) && (
-            <div className={combineClasses(props.isBlock ? '' : 'element-top', props.isShadow ? 'filter-shadow' : '')} style={props.style}>
+            <div
+              className={combineClasses(props.isBlock ? '' : 'element-top', props.isShowShadow ? 'filter-shadow' : '')}
+              style={props.style}
+            >
               {props.text && <p>{props.text}</p>}
               <div className="d-inline-flex flex-wrap type-list align-items-center">
                 {props.arr?.map((value, index) => (
                   <div className="text-center d-flex" key={index}>
                     {props.isHideText ? (
                       <img
-                        className={props.isShadow ? 'filter-shadow' : ''}
+                        className={props.isShowShadow ? 'filter-shadow' : ''}
                         width={props.height}
                         height={props.height}
                         alt="img-pokemon"
@@ -51,7 +54,7 @@ const TypeInfo = (props: ITypeComponent) => {
                     ) : (
                       <div>
                         <img
-                          className={props.isShadow ? 'filter-shadow' : ''}
+                          className={props.isShowShadow ? 'filter-shadow' : ''}
                           width={36}
                           height={36}
                           alt="img-pokemon"
@@ -60,7 +63,7 @@ const TypeInfo = (props: ITypeComponent) => {
                         <span
                           className={combineClasses(
                             'caption',
-                            props.isShadow ? `text-shadow${theme.palette.mode === TypeTheme.Dark ? '-white' : ''}` : ''
+                            props.isShowShadow ? `text-shadow${theme.palette.mode === TypeTheme.Dark ? '-white' : ''}` : ''
                           )}
                           style={{ color: props.color ?? theme.palette.text.primary }}
                         >

@@ -54,6 +54,7 @@ import { PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -112,7 +113,7 @@ const TeamPVP = () => {
     }
 
     let pokemonType = PokemonType.Normal;
-    if (isInclude(speciesId, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    if (isInclude(speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
       pokemonType = PokemonType.Shadow;
     } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {
       pokemonType = PokemonType.Purified;
@@ -151,6 +152,9 @@ const TeamPVP = () => {
       try {
         const cp = toNumber(params.cp);
         const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp))).data;
+        if (!file) {
+          return;
+        }
         if (params.serie === LeagueBattleType.All) {
           document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
         } else {
@@ -273,15 +277,6 @@ const TeamPVP = () => {
     return move;
   };
 
-  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-    switch (pokemonType) {
-      case PokemonType.Shadow:
-        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-      case PokemonType.Purified:
-        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-    }
-  };
-
   return (
     <div className="container pvp-container element-bottom">
       {renderLeague()}
@@ -374,23 +369,31 @@ const TeamPVP = () => {
               </LinkToTop>
               <div className="d-flex justify-content-center">
                 <span className="position-relative filter-shadow" style={{ width: 96 }}>
-                  {getPokemonTypeIcon(value.pokemonType, 48)}
-                  <img
-                    alt="img-league"
-                    className="pokemon-sprite"
-                    src={APIService.getPokemonModel(value.form, value.id)}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
-                    }}
-                  />
+                  <PokemonIconType pokemonType={value.pokemonType} size={48}>
+                    <img
+                      alt="img-league"
+                      className="pokemon-sprite"
+                      src={APIService.getPokemonModel(value.form, value.id)}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                      }}
+                    />
+                  </PokemonIconType>
                 </span>
               </div>
               <div className="ranking-group w-100" style={{ columnGap: 15 }}>
                 <div>
                   <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
                     <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
-                    <TypeInfo isHideText={true} isBlock={true} isShadow={true} height={20} color="white" arr={value.pokemonData?.types} />
+                    <TypeInfo
+                      isHideText={true}
+                      isBlock={true}
+                      isShowShadow={true}
+                      height={20}
+                      color="white"
+                      arr={value.pokemonData?.types}
+                    />
                   </div>
                   <div className="d-flex" style={{ columnGap: 10 }}>
                     <TypeBadge
@@ -489,16 +492,17 @@ const TeamPVP = () => {
                         <div className="text-center" key={index}>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                              {getPokemonTypeIcon(value.pokemonType, 48)}
-                              <img
-                                alt="img-league"
-                                className="pokemon-sprite"
-                                src={APIService.getPokemonModel(value.form, value.id)}
-                                onError={(e) => {
-                                  e.currentTarget.onerror = null;
-                                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
-                                }}
-                              />
+                              <PokemonIconType pokemonType={value.pokemonType} size={48}>
+                                <img
+                                  alt="img-league"
+                                  className="pokemon-sprite"
+                                  src={APIService.getPokemonModel(value.form, value.id)}
+                                  onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                                  }}
+                                />
+                              </PokemonIconType>
                             </div>
                           </div>
                           <b className="text-black">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
@@ -539,16 +543,17 @@ const TeamPVP = () => {
                         </LinkToTop>
                         <div className="d-flex justify-content-center">
                           <div className="position-relative filter-shadow" style={{ width: 96 }}>
-                            {getPokemonTypeIcon(value.pokemonType, 48)}
-                            <img
-                              alt="img-league"
-                              className="pokemon-sprite"
-                              src={APIService.getPokemonModel(value.form, value.id)}
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
-                              }}
-                            />
+                            <PokemonIconType pokemonType={value.pokemonType} size={48}>
+                              <img
+                                alt="img-league"
+                                className="pokemon-sprite"
+                                src={APIService.getPokemonModel(value.form, value.id)}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                                }}
+                              />
+                            </PokemonIconType>
                           </div>
                         </div>
                         <div className="ranking-group">
@@ -558,7 +563,7 @@ const TeamPVP = () => {
                               <TypeInfo
                                 isHideText={true}
                                 isBlock={true}
-                                isShadow={true}
+                                isShowShadow={true}
                                 height={20}
                                 color="white"
                                 arr={value.pokemonData?.types}

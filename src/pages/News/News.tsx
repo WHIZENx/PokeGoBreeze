@@ -22,6 +22,7 @@ import { PokemonModelComponent } from '../../components/Info/Assets/models/pokem
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
 import { LinkToTop } from '../../util/hooks/LinkToTop';
+import Candy from '../../components/Sprites/Candy/Candy';
 
 const News = () => {
   useChangeTitle('News');
@@ -84,6 +85,8 @@ const News = () => {
           .replace('N_DISPLAY_n_', '')
           .replace(/_\d{1}$/, '');
       }
+    } else if (reward?.type === TicketRewardType.Candy) {
+      result = `#${reward.candy?.id}_${reward.candy?.pokemonId}`.replace(/_MR_/i, '_MR._');
     }
     return splitAndCapitalize(result, '_', ' ');
   };
@@ -154,6 +157,8 @@ const News = () => {
         return toNumber(value.exp);
       case TicketRewardType.PokeCoin:
         return toNumber(value.pokeCoin);
+      case TicketRewardType.Candy:
+        return toNumber(value.candy?.amount);
       default:
         return;
     }
@@ -162,15 +167,21 @@ const News = () => {
   const renderReward = (value: IRewardNews) => (
     <div>
       <div className="w-100 h-100">
-        <img
-          style={{ width: 64 }}
-          className="pokemon-sprite-medium"
-          src={value.type === TicketRewardType.Pokemon ? APIService.getPokemonModel(value.imageSrc, value.pokemon?.id) : value.imageSrc}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.id, value.imageSrc);
-          }}
-        />
+        {value.type === TicketRewardType.Candy ? (
+          <div className="d-flex w-100 justify-content-center">
+            <Candy id={value.candy?.id} size={48} />
+          </div>
+        ) : (
+          <img
+            style={{ width: 64 }}
+            className="pokemon-sprite-medium"
+            src={value.type === TicketRewardType.Pokemon ? APIService.getPokemonModel(value.imageSrc, value.pokemon?.id) : value.imageSrc}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.id, value.imageSrc);
+            }}
+          />
+        )}
       </div>
       <p className="element-top" style={{ fontWeight: 'bold' }}>
         <span className={value.type === TicketRewardType.Pokemon ? 'select-evo' : ''}>{value.title}</span>

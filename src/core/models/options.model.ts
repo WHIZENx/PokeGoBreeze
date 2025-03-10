@@ -2,6 +2,7 @@ import { PokemonType } from '../../enums/type.enum';
 import { DynamicObj } from '../../util/extension';
 import { getPokemonType } from '../../util/utils';
 import { ConditionType, LeagueConditionType, QuestType } from '../enums/option.enum';
+import { Cost, IBonusEffect } from './combat.model';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
 import { IStatsBase, StatsBase } from './stats.model';
@@ -250,7 +251,7 @@ interface CombatLeague {
   enabled: boolean;
   pokemonCondition: PokemonCondition[];
   iconUrl: string;
-  badgeType: string;
+  badgeType: string | undefined;
   bannedPokemon: string[];
   pokemonCount: number;
   leagueType: string;
@@ -299,6 +300,11 @@ interface NeutralAvatarItem {
   neutralAvatarItemTemplateString2: string;
 }
 
+interface IconCandyReward {
+  pokemonId: string;
+  amount: number;
+}
+
 interface IconReward {
   type: string;
   item?: IconRewardItem;
@@ -308,6 +314,7 @@ interface IconReward {
   exp?: number;
   avatarTemplateId?: string;
   neutralAvatarItemTemplate?: NeutralAvatarItem;
+  candy?: IconCandyReward;
 }
 
 export interface GlobalEventTicket {
@@ -364,6 +371,17 @@ interface SourdoughMoveMappingSettings {
   mappings: MoveMapping[];
 }
 
+interface NonCombatMoveSettings {
+  uniqueId: string;
+  cost: Cost;
+  bonusEffect: IBonusEffect;
+  durationMs: string;
+  bonusType: string | number;
+  enableMultiUse?: boolean;
+  extraDurationMs: string;
+  enableNonCombatMove?: boolean;
+}
+
 interface DataGM {
   pokemonSettings: PokemonModel;
   combatSettings: CombatSetting;
@@ -393,6 +411,7 @@ interface DataGM {
   playerLevel: PlayerLevel;
   levelUpRewardSettings: LevelUpRewardSettings;
   sourdoughMoveMappingSettings?: SourdoughMoveMappingSettings;
+  nonCombatMoveSettings?: NonCombatMoveSettings;
 }
 
 export interface PokemonDataGM {
