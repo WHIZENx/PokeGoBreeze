@@ -251,7 +251,7 @@ interface CombatLeague {
   enabled: boolean;
   pokemonCondition: PokemonCondition[];
   iconUrl: string;
-  badgeType: string;
+  badgeType: string | undefined;
   bannedPokemon: string[];
   pokemonCount: number;
   leagueType: string;
@@ -300,6 +300,11 @@ interface NeutralAvatarItem {
   neutralAvatarItemTemplateString2: string;
 }
 
+interface IconCandyReward {
+  pokemonId: string;
+  amount: number;
+}
+
 interface IconReward {
   type: string;
   item?: IconRewardItem;
@@ -309,6 +314,7 @@ interface IconReward {
   exp?: number;
   avatarTemplateId?: string;
   neutralAvatarItemTemplate?: NeutralAvatarItem;
+  candy?: IconCandyReward;
 }
 
 export interface GlobalEventTicket {

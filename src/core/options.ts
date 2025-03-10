@@ -30,11 +30,13 @@ import {
   getBonusType,
   getDataWithKey,
   getKeyWithData,
+  getLeagueBattleType,
   getLureItemType,
   getPokemonType,
   getTicketRewardType,
   replacePokemonGoForm,
   replaceTempMoveName,
+  splitAndCapitalize,
 } from '../util/utils';
 import { ITypeSet, PokemonTypeBadge, TypeSet } from './models/type.model';
 import { BuffType, MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
@@ -117,7 +119,7 @@ export const optionSettings = (data: PokemonDataGM[]) => {
   const settings = new Options();
 
   data.forEach((item) => {
-    if (item.templateId === 'PLAYER_LEVEL_SETTINGS') {
+    if (isEqual(item.templateId, 'PLAYER_LEVEL_SETTINGS')) {
       settings.playerSetting.maxEncounterPlayerLevel = item.data.playerLevel.maxEncounterPlayerLevel;
       settings.playerSetting.maxQuestEncounterPlayerLevel = item.data.playerLevel.maxQuestEncounterPlayerLevel;
       settings.playerSetting.levelUps = item.data.playerLevel.rankNum.map((value, index) => ({
@@ -136,7 +138,7 @@ export const optionSettings = (data: PokemonDataGM[]) => {
           settings.playerSetting.cpMultipliers[level + 0.5] = multiplier;
         }
       }
-    } else if (item.templateId === 'COMBAT_SETTINGS') {
+    } else if (isEqual(item.templateId, 'COMBAT_SETTINGS')) {
       settings.combatOptions.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
       settings.combatOptions.shadowBonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
       settings.combatOptions.shadowBonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
@@ -147,7 +149,7 @@ export const optionSettings = (data: PokemonDataGM[]) => {
       settings.throwCharge.nice = item.data.combatSettings.chargeScoreNice;
       settings.throwCharge.great = item.data.combatSettings.chargeScoreGreat;
       settings.throwCharge.excellent = item.data.combatSettings.chargeScoreExcellent;
-    } else if (item.templateId === 'BATTLE_SETTINGS') {
+    } else if (isEqual(item.templateId, 'BATTLE_SETTINGS')) {
       settings.battleOptions.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
       settings.battleOptions.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
       settings.battleOptions.shadowBonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
@@ -723,7 +725,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
       let [, form] = formSet[count].split('.');
       if (isInclude(form, 'GIGANTAMAX')) {
         form = FORM_GMAX;
-      } else if (form === 'icon' || form === 'g2') {
+      } else if (isEqual(form, 'icon') || isEqual(form, 'g2')) {
         form = FORM_NORMAL;
       } else {
         form = form.replace('_NOEVOLVE', '').replace(/[a-z]/g, '');
@@ -817,7 +819,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     let soundForm = sounds.filter((sound) => isInclude(sound, `/pm${result.id}.`) && isInclude(sound, 'cry'));
     result.sound.cry = soundForm.map((sound) => {
       let [, form] = sound.split('.');
-      if (form === 'cry') {
+      if (isEqual(form, 'cry')) {
         form = FORM_NORMAL;
       } else {
         form = form.replace(/[a-z]/g, '');
@@ -957,7 +959,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       }
       const move = moves.find((move) => isEqual(move.name, result.name));
       result.name = replaceTempMoveName(result.name);
-      if (result.name === 'STRUGGLE') {
+      if (isEqual(result.name, 'STRUGGLE')) {
         result.pveEnergy = -33;
       }
       if (move) {
@@ -1084,9 +1086,9 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
   result.allowLeagues = getValueOrDefault(
     Array,
     data
-      .find((item) => item.templateId === 'VS_SEEKER_CLIENT_SETTINGS')
+      .find((item) => isEqual(item.templateId, 'VS_SEEKER_CLIENT_SETTINGS'))
       ?.data.vsSeekerClientSettings.allowedVsSeekerLeagueTemplateId.map((item) =>
-        item.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '')
+        item.replace('COMBAT_LEAGUE', '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '')
       )
   );
 
@@ -1094,8 +1096,13 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     .filter((item) => isInclude(item.templateId, 'COMBAT_LEAGUE_') && !isInclude(item.templateId, 'SETTINGS'))
     .map((item) => {
       const result = new League();
-      result.id = item.templateId.replace('COMBAT_LEAGUE_', '').replace('DEFAULT_', '');
-      result.title = item.data.combatLeague.title?.replace('combat_', '').replace('_title', '').toUpperCase();
+      result.id = item.templateId.replace('COMBAT_LEAGUE', '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '');
+      const title = getTextWithKey<string>(textEng, item.data.combatLeague.title);
+      if (title) {
+        result.title = splitAndCapitalize(title, ' ', ' ');
+      } else {
+        result.title = splitAndCapitalize(item.data.combatLeague.title.replace('combat_', '').replace('_title', ''), '_', ' ');
+      }
       result.enabled = item.data.combatLeague.enabled;
       result.pokemonCount = item.data.combatLeague.pokemonCount;
       result.allowEvolutions = item.data.combatLeague.allowTempEvos;
@@ -1133,10 +1140,15 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
             break;
         }
       });
+      result.leagueBattleType = getLeagueBattleType(toNumber(result.conditions.maxCp));
       result.iconUrl = item.data.combatLeague.iconUrl
-        ?.replace(APIUrl.POGO_PROD_ASSET_URL, '')
-        ?.replace(`${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/`, '');
-      result.league = item.data.combatLeague.badgeType?.replace('BADGE_', '');
+        .replace(APIUrl.POGO_PROD_ASSET_URL, '')
+        .replace(`${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/`, '');
+      if (!item.data.combatLeague.badgeType && isInclude(item.templateId, 'COMBAT_LEAGUE_VS_SEEKER_')) {
+        result.league = `${result.id.replace(/[^GREAT|^ULTRA|^MASTER].*/, '')}_LEAGUE`;
+      } else if (item.data.combatLeague.badgeType) {
+        result.league = item.data.combatLeague.badgeType.replace('BADGE_', '');
+      }
       if (isNotEmpty(item.data.combatLeague.bannedPokemon)) {
         const banList = result.conditions.banned.concat(
           item.data.combatLeague.bannedPokemon.map((poke) => {
@@ -1343,6 +1355,13 @@ const getInformationReward = (ticket: GlobalEventTicket | undefined, pokemonData
           pokemonId: result.pokemonEncounter.pokemonId,
           form: result.pokemonEncounter.pokemonDisplay?.form?.replace(`${result.pokemonEncounter.pokemonId}_`, ''),
           costume: result.pokemonEncounter.pokemonDisplay?.costume,
+        };
+      } else if (result.candy) {
+        const id = pokemonData.find((poke) => poke.pokemonId === result.candy?.pokemonId)?.num;
+        reward.candy = {
+          id,
+          pokemonId: result.candy.pokemonId,
+          amount: result.candy.amount,
         };
       }
       rewards.push(reward);

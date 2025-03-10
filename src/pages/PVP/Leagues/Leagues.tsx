@@ -10,7 +10,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import {
   getTime,
   splitAndCapitalize,
-  capitalize,
   getPokemonType,
   generateParamForm,
   getItemSpritePath,
@@ -25,13 +24,12 @@ import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
 import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
-import { leaguesDefault } from '../../../util/constants';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { LeagueRewardType, LeagueBattleType, RewardType, LeagueType } from '../../../core/enums/league.enum';
-import { IncludeMode } from '../../../util/enums/string.enum';
-import { BattleLeagueCPType, BattleLeagueTag } from '../../../util/enums/compute.enum';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
@@ -86,19 +84,11 @@ const Leagues = () => {
             if (isIncludeList(dataStore.leagues.allowLeagues, value.id)) {
               return false;
             }
-            let textTitle = '';
-            if (isInclude(value.id, 'SEEKER') && isIncludeList(['GREAT_LEAGUE', 'ULTRA_LEAGUE', 'MASTER_LEAGUE'], value.title)) {
-              textTitle = splitAndCapitalize(value.id?.replace('VS_', '').toLowerCase(), '_', ' ');
-            } else {
-              textTitle = splitAndCapitalize(value.title.toLowerCase(), '_', ' ');
-            }
-            if (isInclude(value.id, 'SAFARI_ZONE')) {
-              textTitle += ` ${value.id?.split('_').at(3)} ${capitalize(value.id?.split('_').at(4))}`;
-            }
+            const textTitle = splitAndCapitalize(value.id?.toLowerCase(), '_', ' ');
             return isEmpty(search) || isInclude(textTitle, search, IncludeMode.IncludeIgnoreCaseSensitive);
           })
         );
-      }, 300);
+      }, 500);
       return () => clearTimeout(timeOutId);
     }
   }, [leagues, search]);
@@ -155,15 +145,7 @@ const Leagues = () => {
         <div className="d-flex justify-content-between w-100" style={{ marginRight: 15, columnGap: 10 }}>
           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
             <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl)} />
-            <b className={league.enabled ? '' : 'text-danger'}>
-              {(isInclude(league.id, BattleLeagueTag.Seeker, IncludeMode.IncludeIgnoreCaseSensitive) &&
-              isIncludeList(leaguesDefault, league.title, IncludeMode.IncludeIgnoreCaseSensitive)
-                ? splitAndCapitalize(league.id?.replace('VS_', '').toLowerCase(), '_', ' ')
-                : splitAndCapitalize(league.title.toLowerCase(), '_', ' ')) +
-                (isInclude(league.id, BattleLeagueTag.SafariZone, IncludeMode.IncludeIgnoreCaseSensitive)
-                  ? ` ${league.id?.split('_').at(3)} ${capitalize(league.id).split('_').at(4)}`
-                  : '')}
-            </b>
+            <b className={league.enabled ? '' : 'text-danger'}>{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</b>
           </div>
           {isEqual(league.leagueType, LeagueType.Premier) && (
             <div className="d-flex align-items-center flex-end">
@@ -176,16 +158,19 @@ const Leagues = () => {
       </Accordion.Header>
       <Accordion.Body className="league-body">
         <div className="sub-body">
-          <h4 className="title-leagues">{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</h4>
+          <h4 className="title-leagues">{league.title}</h4>
           <div className="text-center">
-            {!isEqual(league.league, league.title) &&
+            {!isEqual(league.leagueBattleType, LeagueBattleType.None) &&
+            !isEqual(league.leagueBattleType, LeagueBattleType.Little) &&
             !isInclude(league.title, LeagueBattleType.Remix, IncludeMode.IncludeIgnoreCaseSensitive) &&
             !isInclude(league.iconUrl, 'pogo') ? (
               <div className="league">
                 <img
                   alt="img-league"
                   height={140}
-                  src={APIService.getAssetPokeGo(dataStore.leagues.data.find((item) => isEqual(item.title, league.league))?.iconUrl)}
+                  src={APIService.getAssetPokeGo(
+                    dataStore.leagues.data.find((item) => isEqual(item.id, league.leagueBattleType, EqualMode.IgnoreCaseSensitive))?.iconUrl
+                  )}
                 />
                 <span className={combineClasses('badge-league', league.league?.toLowerCase()?.replaceAll('_', '-'))}>
                   <div className="sub-badge">
