@@ -17,7 +17,7 @@ export interface ILeague {
   enabled: boolean;
   conditions: ILeagueCondition;
   iconUrl?: string;
-  league: string;
+  league: string | undefined;
   pokemonCount: number;
   leagueType: LeagueType;
   combatLeagueTemplate?: string;
