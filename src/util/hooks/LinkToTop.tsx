@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from 'react';
-import { Link, LinkProps, To, useNavigate } from 'react-router-dom';
+import { Link, To, useNavigate } from 'react-router-dom';
 import { LinkToTopProps, NavigateToTopProps } from '../models/hook.model';
 import { toNumber } from '../extension';
 
