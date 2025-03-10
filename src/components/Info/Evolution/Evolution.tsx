@@ -250,12 +250,12 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getEvoChainJSON = (id: number | undefined, forme: IForm) => {
     let form = isEmpty(forme.formName) || forme.pokemonType !== PokemonType.Mega ? FORM_NORMAL : forme.formName;
-    if (forme.formName === '10') {
+    if (isEqual(forme.formName, '10')) {
       form += '%';
     }
-    if (forme.name === 'necrozma-dawn') {
+    if (isEqual(forme.name, 'necrozma-dawn')) {
       form += '-wings';
-    } else if (forme.name === 'necrozma-dusk') {
+    } else if (isEqual(forme.name, 'necrozma-dusk')) {
       form += '-mane';
     }
     if (!form) {

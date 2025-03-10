@@ -64,6 +64,8 @@ import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 import { ItemName } from '../pages/News/enums/item-type.enum';
 import { APIUrl } from '../services/constants';
 import { BonusType } from '../core/enums/bonus-type.enum';
+import { LeagueBattleType } from '../core/enums/league.enum';
+import { BattleLeagueCPType } from './enums/compute.enum';
 
 class Mask {
   value: number;
@@ -260,11 +262,11 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     return '';
   }
   const formOri = form;
-  if (text === 'lanturnw') {
+  if (isEqual(text, 'lanturnw')) {
     text = 'lanturn';
-  } else if (text === 'unown') {
+  } else if (isEqual(text, 'unown')) {
     text = 'unown-a';
-  } else if (text === 'clodsiresb') {
+  } else if (isEqual(text, 'clodsiresb')) {
     text = 'clodsire';
   }
   if (isInclude(text, 'pyroar') || isInclude(text, 'frillish') || isInclude(text, 'jellicent') || isInclude(text, 'urshifu')) {
@@ -272,7 +274,7 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
   }
   if (
     isInclude(text, `_${FORM_MEGA}`.toLowerCase()) ||
-    text === 'ho_oh' ||
+    isEqual(text, 'ho_oh') ||
     isInclude(text, 'castform') ||
     isInclude(text, 'tapu') ||
     isInclude(text, 'basculin_blue')
@@ -431,9 +433,9 @@ export const checkPokemonGO = (id: number, name: string | undefined, details: IP
   details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name));
 
 export const convertFormGif = (name: string | undefined) => {
-  if (name === 'nidoran') {
+  if (isEqual(name, 'nidoran')) {
     name = 'nidoran_m';
-  } else if (name === 'zygarde') {
+  } else if (isEqual(name, 'zygarde')) {
     name = 'zygarde-10';
   }
 
@@ -490,11 +492,7 @@ export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, ran
 export const mappingPokemonName = (pokemonData: IPokemonData[]) =>
   pokemonData
     .filter(
-      (pokemon) =>
-        pokemon.num > 0 &&
-        (pokemon.forme === FORM_NORMAL ||
-          (pokemon.num === 744 && pokemon.forme === 'DUSK') ||
-          (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.forme)))
+      (pokemon) => pokemon.num > 0 && (pokemon.forme === FORM_NORMAL || (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.forme)))
     )
     .map((pokemon) => new PokemonSearching(pokemon))
     .sort((a, b) => a.id - b.id);
@@ -882,18 +880,18 @@ export const replaceTempMoveName = (name: string | number) => {
 export const replaceTempMovePvpName = (name: string) => {
   if (isInclude(name, '_BLASTOISE')) {
     name = name.replace('_BLASTOISE', '');
-  } else if (name === 'TECHNO_BLAST_WATER') {
+  } else if (isEqual(name, 'TECHNO_BLAST_WATER')) {
     name = name = 'TECHNO_BLAST_DOUSE';
-  } else if (name === 'FUTURE_SIGHT') {
+  } else if (isEqual(name, 'FUTURE_SIGHT')) {
     name = name = 'FUTURESIGHT';
-  } else if (name === 'ROLLOUT') {
+  } else if (isEqual(name, 'ROLLOUT')) {
     name = 'ROLL_OUT';
   }
   return name;
 };
 
 export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
-  if (name === 'ROLL_OUT') {
+  if (isEqual(name, 'ROLL_OUT')) {
     name = 'ROLLOUT';
   }
   return name;
@@ -1071,6 +1069,8 @@ export const getTicketRewardType = (type?: string | number | null) => {
     return TicketRewardType.Pokemon;
   } else if (isInclude(type, ItemTicketRewardType.Stardust, IncludeMode.IncludeIgnoreCaseSensitive)) {
     return TicketRewardType.Stardust;
+  } else if (isInclude(type, ItemTicketRewardType.Candy, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    return TicketRewardType.Candy;
   }
   return TicketRewardType.None;
 };
@@ -1188,4 +1188,15 @@ export const getPokemonFormWithNoneSpecialForm = (form: string | null | undefine
     form = convertPokemonAPIDataName(form);
   }
   return form;
+};
+
+export const getLeagueBattleType = (maxCp: number) => {
+  if (maxCp > BattleLeagueCPType.Ultra) {
+    return LeagueBattleType.Master;
+  } else if (maxCp > BattleLeagueCPType.Great) {
+    return LeagueBattleType.Ultra;
+  } else if (maxCp > BattleLeagueCPType.Little) {
+    return LeagueBattleType.Great;
+  }
+  return LeagueBattleType.Little;
 };
