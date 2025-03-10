@@ -30,7 +30,7 @@ import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
 import { SetValue } from '../models/state.model';
 import { SpinnerActions, StatsActions, StoreActions } from '../actions';
 import { LocalTimeStamp } from '../models/local-storage.model';
-import { DynamicObj, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 
 interface Timestamp {
   images: boolean;
@@ -214,16 +214,16 @@ export const loadAssets = async (
     APIService.getFetchUrl<APITree>(imageRoot[0].commit.tree.url, options),
     APIService.getFetchUrl<APITree>(soundsRoot[0].commit.tree.url, options),
   ]).then(async ([imageFolder, soundFolder]) => {
-    const imageFolderPath = imageFolder.data.tree.find((item) => item.path === 'Images');
-    const soundFolderPath = soundFolder.data.tree.find((item) => item.path === 'Sounds');
+    const imageFolderPath = imageFolder.data.tree.find((item) => isEqual(item.path, 'Images'));
+    const soundFolderPath = soundFolder.data.tree.find((item) => isEqual(item.path, 'Sounds'));
 
     if (imageFolderPath && soundFolderPath) {
       await Promise.all([
         APIService.getFetchUrl<APITree>(imageFolderPath.url, options),
         APIService.getFetchUrl<APITree>(soundFolderPath.url, options),
       ]).then(async ([image, sound]) => {
-        const imagePath = image.data.tree.find((item) => item.path === 'Pokemon - 256x256');
-        const soundPath = sound.data.tree.find((item) => item.path === 'Pokemon Cries');
+        const imagePath = image.data.tree.find((item) => isEqual(item.path, 'Pokemon - 256x256'));
+        const soundPath = sound.data.tree.find((item) => isEqual(item.path, 'Pokemon Cries'));
 
         if (imagePath && soundPath) {
           await Promise.all([
@@ -270,11 +270,11 @@ export const loadPVP = (
       if (pvpUrl) {
         APIService.getFetchUrl<APITree>(pvpUrl, options)
           .then((pvpRoot) => {
-            const pvpRootPath = pvpRoot.data.tree.find((item) => item.path === 'src');
+            const pvpRootPath = pvpRoot.data.tree.find((item) => isEqual(item.path, 'src'));
             return APIService.getFetchUrl<APITree>(`${pvpRootPath?.url}`, options);
           })
           .then((pvpFolder) => {
-            const pvpFolderPath = pvpFolder.data.tree.find((item) => item.path === 'data');
+            const pvpFolderPath = pvpFolder.data.tree.find((item) => isEqual(item.path, 'data'));
             return APIService.getFetchUrl<APITree>(`${pvpFolderPath?.url}?recursive=1`, options);
           })
           .then((pvp) => {

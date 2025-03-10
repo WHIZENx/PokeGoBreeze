@@ -70,6 +70,9 @@ const StatsTable = (props: IStatsTableComponent) => {
 
   const onHandleType = useCallback(
     (v: PokemonType) => {
+      if (props.setStatType) {
+        props.setStatType(v);
+      }
       setCurrStatType(v);
       if (props.setStatLevel) {
         props.setStatLevel(1);

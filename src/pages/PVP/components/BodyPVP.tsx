@@ -7,11 +7,18 @@ import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/API.service';
 import { findAssetForm, computeBgType } from '../../../util/compute';
 import { isEqual, isInclude, isNotEmpty } from '../../../util/extension';
-import { convertNameRankingToOri, convertNameRankingToForm, splitAndCapitalize, getValidPokemonImgPath } from '../../../util/utils';
+import {
+  convertNameRankingToOri,
+  convertNameRankingToForm,
+  splitAndCapitalize,
+  getValidPokemonImgPath,
+  getPokemonType,
+} from '../../../util/utils';
 import { BodyModel, IBody } from '../models/body.model';
 import { FORM_SHADOW } from '../../../util/constants';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 
 const BodyPVP = (props: BodyComponent) => {
   const [matchups, setMatchups] = useState<IBody[]>();
@@ -25,6 +32,12 @@ const BodyPVP = (props: BodyComponent) => {
         const pokemon = props.pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
         const form = findAssetForm(props.assets, pokemon?.num, pokemon?.forme);
+        let pokemonType;
+        if (isInclude(versus.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+          pokemonType = PokemonType.Shadow;
+        } else {
+          pokemonType = getPokemonType(versus.opponent);
+        }
 
         return BodyModel.create({
           name,
@@ -33,6 +46,7 @@ const BodyPVP = (props: BodyComponent) => {
           form,
           opponent: versus.opponent,
           rating: versus.rating,
+          pokemonType,
         });
       });
   };
@@ -69,25 +83,24 @@ const BodyPVP = (props: BodyComponent) => {
       <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
         <div className="d-flex justify-content-center">
           <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
-            {isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) && (
-              <img height={28} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />
-            )}
-            <img
-              alt="img-league"
-              className="pokemon-sprite-accordion"
-              src={APIService.getPokemonModel(data.form, data.id)}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, data.id, data.form);
-              }}
-            />
+            <PokemonIconType pokemonType={data.pokemonType} size={28}>
+              <img
+                alt="img-league"
+                className="pokemon-sprite-accordion"
+                src={APIService.getPokemonModel(data.form, data.id)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, data.id, data.form);
+                }}
+              />
+            </PokemonIconType>
           </span>
         </div>
         <div>
           <b className="text-white text-shadow">
             #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
           </b>
-          <TypeInfo isShadow={true} isHideText={true} height={20} arr={data.pokemon?.types} />
+          <TypeInfo isShowShadow={true} isHideText={true} height={20} arr={data.pokemon?.types} />
         </div>
       </div>
       <div style={{ marginRight: 15 }}>

@@ -111,21 +111,30 @@ const TableMove = (props: ITableMoveComponent) => {
     );
   };
 
-  const filterMoveType = (combat: IPokemonData | undefined) => {
-    if (!combat) {
-      return setMoveOrigin(undefined);
+  const filterMoveType = (pokemon: IPokemonData | undefined) => {
+    if (!pokemon) {
+      setMoveOrigin(undefined);
+      setMove(setRankMove(undefined));
+      return;
     }
-    return setMoveOrigin({
-      fastMoves: filterUnknownMove(combat.quickMoves),
-      chargedMoves: filterUnknownMove(combat.cinematicMoves),
-      eliteFastMoves: filterUnknownMove(combat.eliteQuickMoves),
-      eliteChargedMoves: filterUnknownMove(combat.eliteCinematicMoves),
-      purifiedMoves: props.form?.pokemonType === PokemonType.Shadow ? [] : filterUnknownMove(combat.purifiedMoves),
-      shadowMoves: props.form?.pokemonType === PokemonType.Purified ? [] : filterUnknownMove(combat.shadowMoves),
-      specialMoves: filterUnknownMove(combat.specialMoves),
-      exclusiveMoves: filterUnknownMove(combat.exclusiveMoves),
-      dynamaxMoves: filterUnknownMove(combat.dynamaxMoves),
+    setMoveOrigin({
+      fastMoves: filterUnknownMove(pokemon.quickMoves),
+      chargedMoves: filterUnknownMove(pokemon.cinematicMoves),
+      eliteFastMoves: filterUnknownMove(pokemon.eliteQuickMoves),
+      eliteChargedMoves: filterUnknownMove(pokemon.eliteCinematicMoves),
+      purifiedMoves: props.form?.pokemonType === PokemonType.Shadow ? [] : filterUnknownMove(pokemon.purifiedMoves),
+      shadowMoves: props.form?.pokemonType === PokemonType.Purified ? [] : filterUnknownMove(pokemon.shadowMoves),
+      specialMoves: filterUnknownMove(pokemon.specialMoves),
+      exclusiveMoves: filterUnknownMove(pokemon.exclusiveMoves),
+      dynamaxMoves: filterUnknownMove(pokemon.dynamaxMoves),
     });
+    setMove(
+      setRankMove({
+        ...pokemon,
+        purifiedMoves: props.form?.pokemonType === PokemonType.Shadow ? [] : pokemon.purifiedMoves,
+        shadowMoves: props.form?.pokemonType === PokemonType.Purified ? [] : pokemon.shadowMoves,
+      })
+    );
   };
 
   const findMove = useCallback(() => {
@@ -159,15 +168,16 @@ const TableMove = (props: ITableMoveComponent) => {
       } else {
         let form = props.form?.name?.toUpperCase().replaceAll('-', '_').replace('_RIDER', '');
         form = getPokemonFormWithNoneSpecialForm(form, props.form?.pokemonType);
-        pokemon = pokemonFilter.find(
-          (item) =>
-            (form && isEqual(item.fullName, form, EqualMode.IgnoreCaseSensitive)) ||
-            (item.baseForme && isEqual(props.form?.formName, item.baseForme, EqualMode.IgnoreCaseSensitive)) ||
-            isEqual(item.name, item.baseSpecies)
-        );
+        pokemon = pokemonFilter.find((item) => form && isEqual(item.fullName, form, EqualMode.IgnoreCaseSensitive));
+        if (!pokemon) {
+          pokemon = pokemonFilter.find(
+            (item) =>
+              (item.baseForme && isEqual(props.form?.formName, item.baseForme, EqualMode.IgnoreCaseSensitive)) ||
+              isEqual(item.name, item.baseSpecies)
+          );
+        }
       }
       filterMoveType(pokemon);
-      setMove(setRankMove(pokemon));
     }
   }, [data, props.data, props.statATK, props.statDEF, props.statSTA]);
 

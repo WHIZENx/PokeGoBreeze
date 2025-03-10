@@ -32,6 +32,7 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNu
 import { WeightHeight } from '../../../core/models/pokemon.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
+import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const stats = useSelector((state: StatsState) => state.stats);
@@ -117,15 +118,6 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   };
 
-  const getPokemonTypeIcon = (pokemonType?: PokemonType | undefined, height = 24) => {
-    switch (pokemonType) {
-      case PokemonType.Shadow:
-        return <img height={height} alt="img-shadow" className="shadow-icon" src={APIService.getPokeShadow()} />;
-      case PokemonType.Purified:
-        return <img height={height} alt="img-purified" className="purified-icon" src={APIService.getPokePurified()} />;
-    }
-  };
-
   return (
     <Fragment>
       <div className="form-container">
@@ -145,16 +137,17 @@ const FormComponent = (props: IFormInfoComponent) => {
                     >
                       <div className="d-flex w-100 justify-content-center">
                         <div className="position-relative" style={{ width: 64 }}>
-                          {getPokemonTypeIcon(value.form.pokemonType)}
-                          <img
-                            className="pokemon-sprite-medium"
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = APIService.getPokeIconSprite();
-                            }}
-                            alt="img-icon-form"
-                            src={formIconAssets(value)}
-                          />
+                          <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
+                            <img
+                              className="pokemon-sprite-medium"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = APIService.getPokeIconSprite();
+                              }}
+                              alt="img-icon-form"
+                              src={formIconAssets(value)}
+                            />
+                          </PokemonIconType>
                         </div>
                       </div>
                       <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
