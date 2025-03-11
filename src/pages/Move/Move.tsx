@@ -564,68 +564,76 @@ const Move = (props: IMovePage) => {
                           <span>Bonus Combat</span>
                         </Accordion.Header>
                         <Accordion.Body>
-                          <tr>
-                            <td>Bonus Type</td>
-                            <td colSpan={2}>{splitAndCapitalize(getKeyWithData(BonusType, move.bonus.bonusType), /(?=[A-Z])/, ' ')}</td>
-                          </tr>
-                          <tr>
-                            <td>Duration</td>
-                            <td colSpan={2}>{`${move.bonus.durationMs} ms (${move.bonus.durationMs / 1000} sec)`}</td>
-                          </tr>
-                          <tr>
-                            <td>Extra Duration</td>
-                            <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${move.bonus.extraDurationMs / 1000} sec)`}</td>
-                          </tr>
-                          <tr>
-                            <td>Multi Use</td>
-                            <td colSpan={2}>
-                              {move.bonus.enableMultiUse ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>None Combat</td>
-                            <td colSpan={2}>
-                              {move.bonus.enableNonCombatMove ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Cost</td>
-                            <td className="table-bonus-cost">
-                              <Candy id={0} /> {move.bonus.cost.candyCost}
-                            </td>
-                            <td className="table-bonus-cost">
-                              <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
-                                <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                              </div>
-                              {move.bonus.cost.stardustCost}
-                            </td>
-                          </tr>
-                          {Object.entries(move.bonus.bonusEffect).map(([k, v]: [string, BonusEffectType], i) => (
-                            <Fragment key={i}>
+                          <table>
+                            <tbody>
                               <tr>
-                                <td colSpan={3} className="text-center">
-                                  {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
+                                <td>Bonus Type</td>
+                                <td colSpan={2}>{splitAndCapitalize(getKeyWithData(BonusType, move.bonus.bonusType), /(?=[A-Z])/, ' ')}</td>
+                              </tr>
+                              <tr>
+                                <td>Duration</td>
+                                <td colSpan={2}>{`${move.bonus.durationMs} ms (${move.bonus.durationMs / 1000} sec)`}</td>
+                              </tr>
+                              <tr>
+                                <td>Extra Duration</td>
+                                <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${move.bonus.extraDurationMs / 1000} sec)`}</td>
+                              </tr>
+                              <tr>
+                                <td>Multi Use</td>
+                                <td colSpan={2}>
+                                  {move.bonus.enableMultiUse ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
                                 </td>
                               </tr>
-                              {Object.entries(v).map(([key, value], j) => (
-                                <tr key={j}>
-                                  <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
-                                  <td colSpan={2}>
-                                    {isEqual(move.bonus?.bonusType, BonusType.SpaceBonus) ||
-                                    isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
-                                      value
-                                    ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
-                                      <div className="d-flex flex-wrap" style={{ gap: 10 }}>
-                                        {getValueOrDefault<string[]>(Array, value).map((item) => renderReward(item))}
-                                      </div>
-                                    ) : (
-                                      renderReward(value)
-                                    )}
-                                  </td>
-                                </tr>
+                              <tr>
+                                <td>None Combat</td>
+                                <td colSpan={2}>
+                                  {move.bonus.enableNonCombatMove ? (
+                                    <DoneIcon sx={{ color: 'green' }} />
+                                  ) : (
+                                    <CloseIcon sx={{ color: 'red' }} />
+                                  )}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Cost</td>
+                                <td className="table-bonus-cost">
+                                  <Candy id={0} /> {move.bonus.cost.candyCost}
+                                </td>
+                                <td className="table-bonus-cost">
+                                  <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
+                                    <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                                  </div>
+                                  {move.bonus.cost.stardustCost}
+                                </td>
+                              </tr>
+                              {Object.entries(move.bonus.bonusEffect).map(([k, v]: [string, BonusEffectType], i) => (
+                                <Fragment key={i}>
+                                  <tr>
+                                    <td colSpan={3} className="text-center">
+                                      {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
+                                    </td>
+                                  </tr>
+                                  {Object.entries(v).map(([key, value], j) => (
+                                    <tr key={j}>
+                                      <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
+                                      <td colSpan={2}>
+                                        {isEqual(move.bonus?.bonusType, BonusType.SpaceBonus) ||
+                                        isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
+                                          value
+                                        ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
+                                          <div className="d-flex flex-wrap" style={{ gap: 10 }}>
+                                            {getValueOrDefault<string[]>(Array, value).map((item) => renderReward(item))}
+                                          </div>
+                                        ) : (
+                                          renderReward(value)
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </Fragment>
                               ))}
-                            </Fragment>
-                          ))}
+                            </tbody>
+                          </table>
                         </Accordion.Body>
                       </Accordion.Item>
                     </Accordion>

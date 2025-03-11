@@ -39,6 +39,7 @@ import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { Button, Modal } from 'react-bootstrap';
 import { OptionsActions } from '../../../store/actions';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
+import { FloatPaddingOption } from '../../../util/models/extension.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -204,7 +205,7 @@ const Counter = (props: ICounterComponent) => {
     },
     {
       name: '%',
-      selector: (row) => (row.ratio >= 100 ? 100 : toFloatWithPadding(row.ratio, 2)),
+      selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100 })),
       sortable: true,
       sortFunction: numSortRatio,
       width: '20%',

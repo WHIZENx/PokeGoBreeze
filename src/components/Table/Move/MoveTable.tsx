@@ -32,6 +32,7 @@ import { EqualMode } from '../../../util/enums/string.enum';
 import { TableType, TypeSorted } from './enums/table-type.enum';
 import { MoveType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { FloatPaddingOption } from '../../../util/models/extension.model';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -260,7 +261,7 @@ const TableMove = (props: ITableMoveComponent) => {
     const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
       type === TableType.Offensive ? o.offensive : o.defensive
     );
-    const ratio = toFloatWithPadding((value.eDPS[tableType] * 100) / toNumber(max, 1), 2);
+    const ratio = toFloatWithPadding((value.eDPS[tableType] * 100) / toNumber(max, 1), 2, FloatPaddingOption.setOptions({ maxValue: 100 }));
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
@@ -298,7 +299,7 @@ const TableMove = (props: ITableMoveComponent) => {
           </LinkToTop>
         </td>
         <td className="text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          {toNumber(ratio) >= 100 ? 100 : ratio}
+          {ratio}
         </td>
       </tr>
     );
@@ -385,7 +386,7 @@ const TableMove = (props: ITableMoveComponent) => {
       <Tab eventKey="movesList" title="Moves List">
         <div className="row w-100" style={{ margin: 0, border: '2px solid #b8d4da', background: '#f1ffff' }}>
           <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
-            <table className="table-info table-movesets">
+            <table className="table-info table-moves">
               <colgroup className="main-move" />
               <thead>
                 <tr className="text-center">

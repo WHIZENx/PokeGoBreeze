@@ -2,6 +2,7 @@ import './extensions/string.extension';
 import { TableColumn } from 'react-data-table-component';
 import { TableColumnModify } from './models/overrides/data-table.model';
 import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
+import { FloatPaddingOption } from './models/extension.model';
 
 // eslint-disable-next-line no-unused-vars
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
@@ -83,12 +84,27 @@ export const padding = (num: number, plusLength: number, mode = PaddingMode.End,
   return result;
 };
 
-export const toFloatWithPadding = (value: string | number | null | undefined, fixedRounding: number, defaultValue = 0) => {
-  const result = parseFloat((value || defaultValue).toString());
-  if (result === 0) {
+export const toFloatWithPadding = (
+  value: string | number | null | undefined,
+  fixedRounding: number,
+  options = new FloatPaddingOption()
+) => {
+  const result = parseFloat((value || options.defaultValue).toString());
+  if (
+    result === 0 ||
+    (!isNullOrUndefined(options.minValue) && result <= options.minValue) ||
+    (!isNullOrUndefined(options.maxValue) && result >= options.maxValue)
+  ) {
     return result.toString();
   }
-  return padding(parseFloat(result.toFixed(fixedRounding)), fixedRounding);
+  const paddingResult = padding(parseFloat(result.toFixed(fixedRounding)), fixedRounding);
+  if (
+    (!isNullOrUndefined(options.minLength) && paddingResult.length <= options.minLength) ||
+    (!isNullOrUndefined(options.maxLength) && paddingResult.length >= options.maxLength)
+  ) {
+    return result.toString();
+  }
+  return paddingResult;
 };
 
 export const isEqual = (

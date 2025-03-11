@@ -16,6 +16,7 @@ import { combineClasses, isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNu
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
 import { useSnackbar } from 'notistack';
+import { FloatPaddingOption } from '../../../util/models/extension.model';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.statsProds) / 1000);
@@ -68,7 +69,7 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   },
   {
     name: 'Stat Prod (%)',
-    selector: (row) => (toNumber(row.ratio) >= 100 ? 100 : toFloatWithPadding(row.ratio, 2)),
+    selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100 })),
     sortable: true,
     sortFunction: numSortStatsProdsPercent,
   },
