@@ -497,6 +497,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
   result = cleanPokemonDupForm(result);
 
   addPokemonGMaxMove(data, result);
+  addPokemonFormChangeMove(result);
 
   return result.sort((a, b) => a.num - b.num);
 };
@@ -619,6 +620,42 @@ const cleanPokemonDupForm = (result: IPokemonData[]) =>
     }
     return true;
   });
+
+const addPokemonFormChangeMove = (result: IPokemonData[]) => {
+  result
+    .filter((pokemon) => pokemon.formChange)
+    .forEach((pokemon) => {
+      pokemon.formChange?.forEach((form) => {
+        if (form.componentPokemonSettings) {
+          const id = result.find((r) => isEqual(r.pokemonId, form.componentPokemonSettings?.pokedexId))?.num;
+          form.componentPokemonSettings.id = toNumber(id);
+        }
+        if (form.moveReassignment && isNotEmpty(form.availableForm)) {
+          form.availableForm.forEach((availableForm) => {
+            const pokemonChange = result.find((pc) => isEqual(pc.fullName, availableForm));
+            if (pokemonChange) {
+              form.moveReassignment?.quickMoves?.forEach((move) => {
+                pokemonChange.quickMoves = pokemonChange.quickMoves?.filter(
+                  (pm) => !move.existingMoves || !move.existingMoves.includes(pm)
+                );
+                if (move.replacementMoves) {
+                  pokemonChange.quickMoves?.push(...move.replacementMoves);
+                }
+              });
+              form.moveReassignment?.cinematicMoves?.forEach((move) => {
+                pokemonChange.cinematicMoves = pokemonChange.cinematicMoves?.filter(
+                  (pm) => !move.existingMoves || !move.existingMoves.includes(pm)
+                );
+                if (move.replacementMoves) {
+                  pokemonChange.cinematicMoves?.push(...move.replacementMoves);
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+};
 
 const addPokemonGMaxMove = (data: PokemonDataGM[], result: IPokemonData[]) => {
   const template = data.find((gm) => isEqual(gm.templateId, 'SOURDOUGH_MOVE_MAPPING_SETTINGS'));

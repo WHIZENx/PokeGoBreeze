@@ -200,7 +200,7 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
     return value;
   }
   const date = Moment(new Date(isNumber(value) ? toNumber(value) : value));
-  return notFull ? date.format('D MMMM YYYY') : date.format('HH:mm D MMMM YYYY');
+  return date.format(notFull ? 'D MMMM YYYY' : 'HH:mm D MMMM YYYY');
 };
 
 export const convertModelSpritName = (text: string | undefined) =>

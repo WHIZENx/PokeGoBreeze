@@ -96,14 +96,16 @@ const FromChange = (props: IFromChangeComponent) => {
                 <Xarrow
                   labels={{
                     end: (
-                      <div className="position-absolute" style={{ left: -50 }}>
+                      <div className="position-absolute" style={{ left: '-5rem' }}>
                         {value.candyCost && (
                           <span
                             className="d-flex align-items-center caption"
                             style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                           >
-                            <Candy id={props.details?.num} />
-                            <span style={{ marginLeft: 2 }}> {`x${value.candyCost}`}</span>
+                            <Candy id={value.componentPokemonSettings?.id} />
+                            <span style={{ marginLeft: 2 }}>
+                              {`${splitAndCapitalize(value.componentPokemonSettings?.pokedexId, '_', ' ')} x${value.candyCost}`}
+                            </span>
                           </span>
                         )}
                         {value.stardustCost && (
@@ -124,6 +126,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           {value.item && (
                             <>
                               <span>Required Item</span>
+                              <span>{splitAndCapitalize(value.item, '_', ' ')}</span>
                               <span>{`Cost count: ${value.itemCostCount}`}</span>
                             </>
                           )}

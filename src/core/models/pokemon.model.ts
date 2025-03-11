@@ -27,9 +27,21 @@ export interface IPokemonDataStats {
 }
 
 interface ComponentPokemonSettings {
+  id: number;
   pokedexId: string;
   componentCandyCost: number;
   formChangeType: string;
+  familyId: string;
+}
+
+interface MoveReassignType {
+  existingMoves?: string[];
+  replacementMoves?: string[];
+}
+
+interface MoveReassignment {
+  quickMoves?: MoveReassignType[];
+  cinematicMoves?: MoveReassignType[];
 }
 
 interface IPokemonFormChange {
@@ -39,6 +51,7 @@ interface IPokemonFormChange {
   item?: string;
   itemCostCount?: number;
   componentPokemonSettings?: ComponentPokemonSettings;
+  moveReassignment?: MoveReassignment;
 }
 
 interface QuestDisplay {
