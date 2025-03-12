@@ -40,14 +40,13 @@ interface MoveReassignType {
 }
 
 interface MoveReassignment {
-  quickMoves?: MoveReassignType[];
   cinematicMoves?: MoveReassignType[];
 }
 
 interface IPokemonFormChange {
   availableForm: string[];
-  candyCost: string;
-  stardustCost: string;
+  candyCost?: string;
+  stardustCost?: string;
   item?: string;
   itemCostCount?: number;
   componentPokemonSettings?: ComponentPokemonSettings;

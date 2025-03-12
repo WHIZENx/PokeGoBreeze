@@ -191,8 +191,8 @@ export interface IFormInfoComponent {
 }
 
 export interface IFromChangeComponent {
-  details: IPokemonData | undefined;
-  defaultName: string | undefined;
+  currentId: number | undefined;
+  form: IPokemonFormModify | undefined;
 }
 
 export interface IFormSpecialComponent {

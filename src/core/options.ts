@@ -630,24 +630,19 @@ const addPokemonFormChangeMove = (result: IPokemonData[]) => {
           const id = result.find((r) => isEqual(r.pokemonId, form.componentPokemonSettings?.pokedexId))?.num;
           form.componentPokemonSettings.id = toNumber(id);
         }
-        if (form.moveReassignment && isNotEmpty(form.availableForm)) {
+        if (form.moveReassignment && isNotEmpty(form.availableForm) && isNotEmpty(form.moveReassignment.cinematicMoves)) {
           form.availableForm.forEach((availableForm) => {
             const pokemonChange = result.find((pc) => isEqual(pc.fullName, availableForm));
             if (pokemonChange) {
-              form.moveReassignment?.quickMoves?.forEach((move) => {
-                pokemonChange.quickMoves = pokemonChange.quickMoves?.filter(
-                  (pm) => !move.existingMoves || !move.existingMoves.includes(pm)
-                );
-                if (move.replacementMoves) {
-                  pokemonChange.quickMoves?.push(...move.replacementMoves);
-                }
-              });
               form.moveReassignment?.cinematicMoves?.forEach((move) => {
-                pokemonChange.cinematicMoves = pokemonChange.cinematicMoves?.filter(
-                  (pm) => !move.existingMoves || !move.existingMoves.includes(pm)
-                );
-                if (move.replacementMoves) {
-                  pokemonChange.cinematicMoves?.push(...move.replacementMoves);
+                if (move.existingMoves && isNotEmpty(move.existingMoves)) {
+                  pokemonChange.cinematicMoves = pokemonChange.cinematicMoves?.filter((pm) => !move.existingMoves?.includes(pm));
+                }
+                if (move.replacementMoves && isNotEmpty(move.replacementMoves)) {
+                  if (isNullOrUndefined(pokemonChange.exclusiveMoves)) {
+                    pokemonChange.exclusiveMoves = [];
+                  }
+                  pokemonChange.exclusiveMoves.push(...move.replacementMoves);
                 }
               });
             }

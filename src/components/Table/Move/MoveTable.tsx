@@ -167,7 +167,7 @@ const TableMove = (props: ITableMoveComponent) => {
       } else if (!isNotEmpty(pokemonFilter) && props.id) {
         pokemon = data.pokemon.find((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name));
       } else {
-        let form = props.form?.name?.toUpperCase().replaceAll('-', '_').replace('_RIDER', '');
+        let form = props.form?.name?.toUpperCase().replaceAll('-', '_');
         form = getPokemonFormWithNoneSpecialForm(form, props.form?.pokemonType);
         pokemon = pokemonFilter.find((item) => form && isEqual(item.fullName, form, EqualMode.IgnoreCaseSensitive));
         if (!pokemon) {

@@ -260,7 +260,7 @@ const FormComponent = (props: IFormInfoComponent) => {
           urlEvolutionChain={props.urlEvolutionChain}
         />
       )}
-      {isNotEmpty(props.pokemonDetail?.formChange) && <FromChange details={props.pokemonDetail} defaultName={props.form?.defaultName} />}
+      {isNotEmpty(props.pokemonDetail?.formChange) && <FromChange currentId={props.defaultId} form={props.form} />}
     </Fragment>
   );
 };

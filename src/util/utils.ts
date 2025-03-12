@@ -622,6 +622,16 @@ export const convertPokemonAPIDataFormName = (form: string | undefined | null, n
     form += '-SWORD';
   } else if (isEqual(name, 'ZAMAZENTA-CROWNED', EqualMode.IgnoreCaseSensitive)) {
     form += '-SHIELD';
+  } else if (isEqual(name, 'NECROZMA-DUSK', EqualMode.IgnoreCaseSensitive)) {
+    form += '-MANE';
+  } else if (isEqual(name, 'NECROZMA-DAWN', EqualMode.IgnoreCaseSensitive)) {
+    form += '-WINGS';
+  } else if (isEqual(name, 'CALYREX-ICE', EqualMode.IgnoreCaseSensitive)) {
+    form += '-RIDER';
+  } else if (isEqual(name, 'ZYGARDE-10', EqualMode.IgnoreCaseSensitive)) {
+    form = 'TEN-PERCENT';
+  } else if (isEqual(name, 'ZYGARDE-50', EqualMode.IgnoreCaseSensitive)) {
+    form = 'FIFTY-PERCENT';
   }
   return form?.toLowerCase();
 };
@@ -690,14 +700,16 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/_PALDEA_BLAZE_BREED$/, '')
     .replace(/_PALDEA_AQUA_BREED$/, '')
     .replace(/_NORMAL$/, '')
+    .replace(/_POWER_CONSTRUCT$/, '')
+    .replace('TEN_PERCENT', 'COMPLETE_TEN_PERCENT')
+    .replace('FIFTY_PERCENT', 'COMPLETE_FIFTY_PERCENT')
     .replace(/10$/, 'TEN_PERCENT')
     .replace(/50$/, 'FIFTY_PERCENT')
     .replace(/_BATTLE_BOND$/, '')
-    .replace(/_POWER_CONSTRUCT$/, '')
     .replace(/_POM_POM$/, 'POMPOM')
     .replace(/_OWN_TEMPO$/, '')
-    .replace(/_WINGS$/, '')
-    .replace(/_MANE$/, 'MANE')
+    .replace('NECROZMA_DAWN', 'NECROZMA_DAWN_WINGS')
+    .replace('NECROZMA_DUSK', 'NECROZMA_DUSK_MANE')
     .replace(/_ORIGINAL$/, '_ORIGINAL_COLOR')
     .replace('ZACIAN_CROWNED', 'ZACIAN_CROWNED_SWORD')
     .replace('ZAMAZENTA_CROWNED', 'ZAMAZENTA_CROWNED_SHIELD')
@@ -726,7 +738,8 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/Crowned-Sword$/, 'Crowned')
     .replace(/Crowned-Shield$/, 'Crowned')
     .replace(/^Hero$/, '')
-    .replace(/^Armor$/, '');
+    .replace(/^Armor$/, '')
+    .replace(/-Rider$/, '');
 };
 
 export const generatePokemonGoForms = (
@@ -737,10 +750,7 @@ export const generatePokemonGoForms = (
   name: string,
   index = 0
 ) => {
-  const formList: string[] = [];
-  dataFormList.forEach((form) =>
-    form.forEach((p) => formList.push(convertPokemonAPIDataName(getValueOrDefault(String, p.formName, FORM_NORMAL))))
-  );
+  const formList = dataFormList.flatMap((form) => form).map((p) => convertPokemonAPIDataName(p.formName, FORM_NORMAL));
   pokemonData
     .filter((pokemon) => pokemon.num === id)
     .forEach((pokemon) => {
@@ -839,14 +849,14 @@ export const retrieveMoves = (pokemon: IPokemonData[], id: number | undefined, f
       form?.replaceAll('-', '_').toUpperCase().replace(`_${FORM_STANDARD}`, '').replace(FORM_GMAX, FORM_NORMAL),
       FORM_NORMAL
     );
-    const result = resultFirst.find((item) => isEqual(item.fullName?.replace('_RIDER', ''), form) || isEqual(item.forme, form));
+    const result = resultFirst.find((item) => isEqual(item.fullName, form) || isEqual(item.forme, form));
     return result ?? resultFirst[0];
   }
 };
 
 export const getPokemonDetails = (
   pokemonData: IPokemonData[],
-  id: number,
+  id: number | undefined,
   form: string | null | undefined,
   pokemonType = PokemonType.None,
   isDefault = false
@@ -854,7 +864,10 @@ export const getPokemonDetails = (
   let pokemonForm: IPokemonData | undefined;
 
   if (form) {
-    const name = getPokemonFormWithNoneSpecialForm(form.replaceAll(' ', '-'), pokemonType);
+    const name = getPokemonFormWithNoneSpecialForm(
+      form.replace(/10$/, 'TEN_PERCENT').replace(/50$/, 'FIFTY_PERCENT').replaceAll(' ', '-'),
+      pokemonType
+    );
     pokemonForm = pokemonData.find((item) => item.num === id && isEqual(item.fullName, name));
 
     if (isDefault && !pokemonForm) {
