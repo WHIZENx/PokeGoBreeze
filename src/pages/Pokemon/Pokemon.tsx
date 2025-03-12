@@ -408,11 +408,7 @@ const Pokemon = (props: IPokemonPage) => {
     if (!form) {
       return false;
     }
-    let formName = form.form.name;
-    if (!formName) {
-      formName = getValueOrDefault(String, form.form.formName, form.defaultName);
-    }
-
+    const formName = getValueOrDefault(String, form.form.name, form.form.formName, form.defaultName);
     const details = getPokemonDetails(pokemonData, id, formName, form.form.pokemonType, form.form.isDefault);
     setPokemonDetails(details);
     return getValueOrDefault(Boolean, details?.releasedGO);

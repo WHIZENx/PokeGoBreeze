@@ -442,6 +442,8 @@ const Evolution = (props: IEvolutionComponent) => {
         const idUrlChain = toNumber(props.urlEvolutionChain?.split('/')[6]);
         if (idUrlChain !== idEvoChain) {
           queryPokemonEvolutionChain(props.urlEvolutionChain, idUrlChain, result);
+        } else {
+          setArrEvoList(result);
         }
       } else {
         setArrEvoList(result);
