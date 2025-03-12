@@ -616,7 +616,7 @@ const Move = (props: IMovePage) => {
                                   {Object.entries(v).map(([key, value], j) => (
                                     <tr key={j}>
                                       <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
-                                      <td colSpan={2}>
+                                      <td colSpan={2} key={j}>
                                         {isEqual(move.bonus?.bonusType, BonusType.SpaceBonus) ||
                                         isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
                                           value
