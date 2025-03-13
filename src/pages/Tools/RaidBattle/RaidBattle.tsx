@@ -52,13 +52,11 @@ import {
   IPokemonData,
   IPokemonMoveData,
   IPokemonRaidModel,
-  PokemonData,
   PokemonDPSBattle,
-  PokemonModel,
   PokemonMoveData,
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
-import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -382,8 +380,8 @@ const RaidBattle = () => {
     );
   };
 
-  const findMove = (id: number, form: string) => {
-    const result = retrieveMoves(data.pokemon, id, form);
+  const findMove = (id: number, form: string, pokemonType = PokemonType.None) => {
+    const result = retrieveMoves(data.pokemon, id, form, pokemonType);
     if (result) {
       const simpleFMove = addSelectMovesByType(result, TypeMove.Fast);
       setFMove(simpleFMove.at(0));
@@ -682,7 +680,7 @@ const RaidBattle = () => {
 
   useEffect(() => {
     if (form && isNotEmpty(data.pokemon)) {
-      findMove(id, form.form.name);
+      findMove(id, form.form.name, form.form.pokemonType);
     }
   }, [data.pokemon, id, form]);
 
@@ -1270,7 +1268,7 @@ const RaidBattle = () => {
                     <b>Fast Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={PokemonData.create(new PokemonModel(id, form?.form.formName), form?.form.types)}
+                    pokemon={new SelectMovePokemonModel(id, form?.form.formName, form?.form.pokemonType)}
                     clearData={clearData}
                     move={fMove}
                     setMovePokemon={setFMove}
@@ -1284,7 +1282,7 @@ const RaidBattle = () => {
                     <b>Charged Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={PokemonData.create(new PokemonModel(id, form?.form.formName), form?.form.types)}
+                    pokemon={new SelectMovePokemonModel(id, form?.form.formName, form?.form.pokemonType)}
                     clearData={clearData}
                     move={cMove}
                     setMovePokemon={setCMove}

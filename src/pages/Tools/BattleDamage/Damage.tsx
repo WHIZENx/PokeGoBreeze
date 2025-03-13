@@ -271,6 +271,7 @@ const Damage = () => {
                 setMove={setMove}
                 move={move}
                 isHighlight={true}
+                pokemonType={form?.form.pokemonType}
               />
               <div className="element-top">
                 {move && (

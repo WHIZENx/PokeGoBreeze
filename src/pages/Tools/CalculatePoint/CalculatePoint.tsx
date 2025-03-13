@@ -363,6 +363,7 @@ const CalculatePoint = () => {
                     move={move}
                     clearData={clearDataAtk}
                     isHighlight={true}
+                    pokemonType={form?.form.pokemonType}
                   />
                   <FormControlLabel
                     control={
@@ -492,6 +493,7 @@ const CalculatePoint = () => {
                     move={moveDef}
                     clearData={clearDataDef}
                     isHighlight={true}
+                    pokemonType={formDef?.form.pokemonType}
                   />
                   <FormControlLabel
                     control={
@@ -678,6 +680,7 @@ const CalculatePoint = () => {
                       type={TypeMove.Fast}
                       clearData={clearDataBulk}
                       isHighlight={true}
+                      pokemonType={formDef?.form.pokemonType}
                     />
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -710,6 +713,7 @@ const CalculatePoint = () => {
                       type={TypeMove.Charge}
                       clearData={clearDataBulk}
                       isHighlight={true}
+                      pokemonType={formDef?.form.pokemonType}
                     />
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>

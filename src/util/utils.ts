@@ -841,16 +841,24 @@ export const getFormFromForms = (
   return filterForm;
 };
 
-export const retrieveMoves = (pokemon: IPokemonData[], id: number | undefined, form: string | null | undefined) => {
+export const retrieveMoves = (
+  pokemon: IPokemonData[],
+  id: number | undefined,
+  form: string | null | undefined,
+  pokemonType = PokemonType.None
+) => {
   if (isNotEmpty(pokemon)) {
-    const resultFirst = pokemon.filter((item) => item.num === id);
+    if (pokemonType === PokemonType.GMax) {
+      return pokemon.find((item) => item.num === id && isEqual(item.forme, FORM_GMAX));
+    }
+    const resultFilter = pokemon.filter((item) => item.num === id);
     form = getValueOrDefault(
       String,
       form?.replaceAll('-', '_').toUpperCase().replace(`_${FORM_STANDARD}`, '').replace(FORM_GMAX, FORM_NORMAL),
       FORM_NORMAL
     );
-    const result = resultFirst.find((item) => isEqual(item.fullName, form) || isEqual(item.forme, form));
-    return result ?? resultFirst[0];
+    const result = resultFilter.find((item) => isEqual(item.fullName, form) || isEqual(item.forme, form));
+    return result ?? resultFilter[0];
   }
 };
 
