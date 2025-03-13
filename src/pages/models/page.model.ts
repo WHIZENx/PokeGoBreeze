@@ -54,6 +54,7 @@ export interface IDamageTableComponent {
 }
 
 export interface IStatsTableComponent {
+  pokemonType?: PokemonType;
   setStatType?: React.Dispatch<React.SetStateAction<PokemonType>>;
   setStatLevel?: React.Dispatch<React.SetStateAction<number>>;
   statATK: number;

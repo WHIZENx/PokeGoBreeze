@@ -1,5 +1,5 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { LevelSlider, TypeRadioGroup, getDmgMultiplyBonus, getKeyWithData } from '../../../util/utils';
 import { calculateStatsBattle } from '../../../util/calculate';
@@ -21,6 +21,17 @@ const StatsTable = (props: IStatsTableComponent) => {
 
   const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
+
+  useEffect(() => {
+    if (
+      props.setStatType &&
+      currStatType === PokemonType.Shadow &&
+      (props.pokemonType === PokemonType.Mega || props.pokemonType === PokemonType.Primal)
+    ) {
+      setCurrStatType(PokemonType.Normal);
+      props.setStatType(PokemonType.Normal);
+    }
+  }, [props.setStatType, currStatType, props.pokemonType]);
 
   const onHandleLevel = useCallback(
     (v: number) => {
@@ -90,7 +101,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             row={true}
             aria-labelledby="row-types-group-label"
             name="row-types-group"
-            defaultValue={PokemonType.Normal}
+            value={currStatType}
             onChange={(e) => onHandleType(toNumber(e.target.value))}
           >
             <FormControlLabel
@@ -109,6 +120,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             />
             <FormControlLabel
               value={PokemonType.Shadow}
+              disabled={props.pokemonType === PokemonType.Mega || props.pokemonType === PokemonType.Primal}
               control={<Radio />}
               label={
                 <span>

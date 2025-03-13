@@ -219,6 +219,7 @@ const Damage = () => {
             statATK={statATK}
             statDEF={statDEF}
             statSTA={statSTA}
+            pokemonType={form?.form.pokemonType}
           />
         </div>
         <div className="col-lg border-window">
@@ -241,6 +242,7 @@ const Damage = () => {
             statATK={statATKObj}
             statDEF={statDEFObj}
             statSTA={statSTAObj}
+            pokemonType={formObj?.form.pokemonType}
           />
         </div>
       </div>
