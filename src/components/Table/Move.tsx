@@ -6,7 +6,7 @@ import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
-import { combineClasses, isEqual } from '../../util/extension';
+import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../util/extension';
 
 const Move = (props: IMoveComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
@@ -24,8 +24,8 @@ const Move = (props: IMoveComponent) => {
   );
 
   const findMove = useCallback(
-    (id: number, form: string) => {
-      const result = retrieveMoves(data.pokemon, id, form);
+    (value: IMoveComponent) => {
+      const result = retrieveMoves(data.pokemon, value.id, value.form, value.pokemonType);
       if (result) {
         let simpleMove: ISelectMoveModel[] = [];
         if (!props.type || props.type === TypeMove.Fast) {
@@ -35,18 +35,30 @@ const Move = (props: IMoveComponent) => {
         if (!props.type || props.type === TypeMove.Charge) {
           simpleMove = addSelectMovesByType(result, TypeMove.Charge, simpleMove);
         }
+        if (
+          currentMove &&
+          isNotEmpty(simpleMove) &&
+          !isIncludeList(
+            simpleMove.map((m) => m.name),
+            currentMove.name
+          )
+        ) {
+          setCurrentMove(undefined);
+          props.setMove(undefined);
+        }
         return setResultMove(simpleMove);
       }
     },
-    [props.type, data.pokemon]
+    [props.type, data.pokemon, currentMove]
   );
 
   useEffect(() => {
-    findMove(props.id, props.form);
+    findMove(props);
     if (!props.move) {
       setCurrentMove(undefined);
+      props.setMove(undefined);
     }
-  }, [props.id, props.form, findMove, props.move]);
+  }, [props, findMove]);
 
   const findType = (move: string) => {
     return findMoveData(move)?.type;

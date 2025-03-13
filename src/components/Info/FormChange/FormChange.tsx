@@ -95,7 +95,7 @@ const FromChange = (props: IFromChangeComponent) => {
                 </div>
               </div>
               <div className="d-flex flex-column align-items-center justify-content-center w-50" style={{ rowGap: 15 }}>
-                {pokemon?.formChange?.map((value, key) => (
+                {pokemon.formChange.map((value, key) => (
                   <Fragment key={key}>
                     {value.availableForm.map((name, index) => (
                       <div key={index} className="d-flex flex-column align-items-center justify-content-center" id={`form-${key}-${index}`}>
@@ -103,22 +103,22 @@ const FromChange = (props: IFromChangeComponent) => {
                           <img
                             className="pokemon-sprite-large"
                             alt="pokemon-model"
-                            src={APIService.getPokemonModel(findPokeAsset(name), pokemon?.num)}
+                            src={APIService.getPokemonModel(findPokeAsset(name), pokemon.num)}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
-                              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon?.num, findPokeAsset(name));
+                              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.num, findPokeAsset(name));
                             }}
                           />
                         </div>
                         <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                          {splitAndCapitalize(name, '_', ' ')}
+                          {splitAndCapitalize(name.replace(`_${FORM_NORMAL}`, ''), '_', ' ')}
                         </span>
                       </div>
                     ))}
                   </Fragment>
                 ))}
               </div>
-              {pokemon?.formChange?.map((value, key) => (
+              {pokemon.formChange.map((value, key) => (
                 <Fragment key={key}>
                   {value.availableForm.map((_, index) => (
                     <Xarrow
@@ -133,7 +133,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                 <Candy id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.num} />
                                 <LinkToTop
                                   style={{ marginLeft: 2 }}
-                                  to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(pokemon?.forme)}`}
+                                  to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(pokemon.forme)}`}
                                 >
                                   {splitAndCapitalize(value.componentPokemonSettings?.pokedexId, '_', ' ')}
                                 </LinkToTop>

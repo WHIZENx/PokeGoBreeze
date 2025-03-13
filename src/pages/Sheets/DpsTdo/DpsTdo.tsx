@@ -41,7 +41,7 @@ import { MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/ty
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -167,7 +167,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           src={APIService.getTypeSprite(value)}
         />
       )),
-    width: '150px',
+    width: '140px',
   },
   {
     name: 'Fast Move',
@@ -189,7 +189,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
       </LinkToTop>
     ),
     sortable: true,
-    minWidth: '200px',
+    minWidth: '210px',
     sortFunction: fMoveSort,
   },
   {
@@ -212,7 +212,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
       </LinkToTop>
     ),
     sortable: true,
-    minWidth: '220px',
+    minWidth: '230px',
     sortFunction: cMoveSort,
   },
   {
@@ -380,7 +380,7 @@ const DpsTdo = () => {
             cMoveType,
             fMoveType,
             pokemonType,
-            cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, toNumber(stats.sta) + ivHp, pokemonLevel),
+            cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, stats.sta + ivHp, pokemonLevel),
           });
         }
       }
@@ -922,7 +922,7 @@ const DpsTdo = () => {
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
                       inputType={InputType.Small}
-                      pokemon={dataTargetPokemon}
+                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.forme, dataTargetPokemon?.pokemonType)}
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
                       moveType={TypeMove.Fast}
@@ -935,7 +935,7 @@ const DpsTdo = () => {
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
                       inputType={InputType.Small}
-                      pokemon={dataTargetPokemon}
+                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.forme, dataTargetPokemon?.pokemonType)}
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}
                       moveType={TypeMove.Charge}

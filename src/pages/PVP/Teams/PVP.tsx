@@ -128,7 +128,7 @@ const TeamPVP = () => {
       stats,
       atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
       def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === toNumber(stats.sta)),
+      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === stats.sta),
       fMove,
       cMovePri,
       cMoveSec,

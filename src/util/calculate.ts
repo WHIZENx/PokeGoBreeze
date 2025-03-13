@@ -619,21 +619,18 @@ export const calculateStatsByTag = (
   baseStats: IStatsPokemon | undefined,
   tag: string | null | undefined
 ) => {
-  let atk = 0,
-    def = 0,
-    sta = 0;
-
+  const result = new StatsBase();
   if (pokemon || (baseStats && tag)) {
     if (pokemon?.baseStatsGO) {
       return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, pokemon.baseStats.sta);
     }
     const checkNerf = !isInclude(tag, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || pokemon?.pokemonType !== PokemonType.Mega;
 
-    atk = calBaseATK(baseStats, checkNerf);
-    def = calBaseDEF(baseStats, checkNerf);
-    sta = !isEqual(tag, 'shedinja', EqualMode.IgnoreCaseSensitive) ? calBaseSTA(baseStats, checkNerf) : 1;
+    result.atk = calBaseATK(baseStats, checkNerf);
+    result.def = calBaseDEF(baseStats, checkNerf);
+    result.sta = !isEqual(tag, 'shedinja', EqualMode.IgnoreCaseSensitive) ? calBaseSTA(baseStats, checkNerf) : 1;
   }
-  return StatsBase.setValue(atk, def, sta);
+  return result;
 };
 
 export const calculateDamagePVE = (
@@ -1369,7 +1366,7 @@ export const calculateStatsTopRank = (stats: IStatsBase | undefined, id: number,
   const atk = toNumber(stats?.atk);
   const def = toNumber(stats?.def);
   const sta = toNumber(stats?.sta);
-  if (maxCP === BattleLeagueCPType.InsMaster) {
+  if (maxCP > BattleLeagueCPType.Ultra) {
     const maxPokeCP = calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level);
     return getBaseStatsByIVandLevel(atk, def, sta, maxPokeCP, id, level);
   } else {

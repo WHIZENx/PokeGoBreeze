@@ -4,12 +4,13 @@ import { DateEvent } from '../enums/item-type.enum';
 export interface IRewardNews extends Partial<ITicketReward> {
   imageSrc: string | undefined;
   title: string;
-  count?: number;
+  count: number;
 }
 
 export class RewardNews implements IRewardNews {
   imageSrc: string | undefined;
   title = '';
+  count = 0;
 
   static create(value: IRewardNews) {
     const obj = new RewardNews();

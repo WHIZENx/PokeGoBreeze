@@ -28,7 +28,7 @@ import {
   IStatsRankProd,
 } from '../../core/models/stats.model';
 import { ITypeEffChart } from '../../core/models/type-eff.model';
-import { ISelectMoveModel } from '../Input/models/select-move.model';
+import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail } from '../../core/models/API/info.model';
 import { EvoPath } from '../../core/models/API/species.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
@@ -249,7 +249,7 @@ export interface ISelectMoveComponent {
   move: ISelectMoveModel | ICombat | undefined;
   setMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   clearData?: () => void;
-  pokemon: IPokemonData | undefined;
+  pokemon: ISelectMovePokemonModel | undefined;
   moveType: TypeMove;
   inputType?: InputType;
   isSelected?: boolean;
@@ -470,4 +470,5 @@ export interface IMoveComponent {
   isSelectDefault: boolean;
   clearData?: (option?: boolean) => void;
   isHighlight?: boolean;
+  pokemonType?: PokemonType;
 }

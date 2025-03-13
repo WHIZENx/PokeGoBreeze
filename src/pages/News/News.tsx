@@ -158,9 +158,9 @@ const News = () => {
       case TicketRewardType.PokeCoin:
         return toNumber(value.pokeCoin);
       case TicketRewardType.Candy:
-        return toNumber(value.candy?.amount);
+        return toNumber(value.candy?.amount, 1);
       default:
-        return;
+        return 0;
     }
   };
 
@@ -185,7 +185,7 @@ const News = () => {
       </div>
       <p className="element-top" style={{ fontWeight: 'bold' }}>
         <span className={value.type === TicketRewardType.Pokemon ? 'select-evo' : ''}>{value.title}</span>
-        {value.count && ` x${value.count}`}
+        {value.count > 0 && ` x${value.count}`}
       </p>
     </div>
   );

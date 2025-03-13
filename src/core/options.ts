@@ -563,7 +563,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         });
 
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
-        if (tempEvo) {
+        if (tempEvo && isNotEmpty(types)) {
           pokemon.stats = tempEvo.stats;
           types[0] = tempEvo.typeOverride1.replace('POKEMON_TYPE_', '');
           if (tempEvo.typeOverride2) {
@@ -575,7 +575,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
             pokemon.stats = StatsGO.create({
               baseAttack: stats.atk,
               baseDefense: stats.def,
-              baseStamina: toNumber(stats.sta),
+              baseStamina: stats.sta,
             });
           } else {
             pokemon.stats = pokemonSettings.stats;
@@ -588,7 +588,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         pokemon.stats = StatsGO.create({
           baseAttack: stats.atk,
           baseDefense: stats.def,
-          baseStamina: toNumber(stats.sta),
+          baseStamina: stats.sta,
         });
       }
 
