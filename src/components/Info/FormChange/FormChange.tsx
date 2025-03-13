@@ -111,7 +111,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           />
                         </div>
                         <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                          {splitAndCapitalize(name, '_', ' ')}
+                          {splitAndCapitalize(name.replace(`_${FORM_NORMAL}`, ''), '_', ' ')}
                         </span>
                       </div>
                     ))}

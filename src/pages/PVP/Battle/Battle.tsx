@@ -1554,19 +1554,21 @@ const Battle = () => {
                           style={{ gap: 10 }}
                         >
                           <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                            <img
-                              alt="img-league"
-                              className="sprite-type"
-                              src={APIService.getPokemonModel(pokemonCurr.pokemonData.form, pokemonCurr.pokemonData.id)}
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = getValidPokemonImgPath(
-                                  e.currentTarget.src,
-                                  pokemonCurr.pokemonData?.id,
-                                  pokemonCurr.pokemonData?.form
-                                );
-                              }}
-                            />
+                            <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
+                              <img
+                                alt="img-league"
+                                className="sprite-type"
+                                src={APIService.getPokemonModel(pokemonCurr.pokemonData.form, pokemonCurr.pokemonData.id)}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = getValidPokemonImgPath(
+                                    e.currentTarget.src,
+                                    pokemonCurr.pokemonData?.id,
+                                    pokemonCurr.pokemonData?.form
+                                  );
+                                }}
+                              />
+                            </PokemonIconType>
                           </div>
                           <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
                         </div>
@@ -1577,19 +1579,21 @@ const Battle = () => {
                           style={{ gap: 10 }}
                         >
                           <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                            <img
-                              alt="img-league"
-                              className="sprite-type"
-                              src={APIService.getPokemonModel(pokemonObj.pokemonData.form, pokemonObj.pokemonData.id)}
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = getValidPokemonImgPath(
-                                  e.currentTarget.src,
-                                  pokemonObj.pokemonData?.id,
-                                  pokemonObj.pokemonData?.form
-                                );
-                              }}
-                            />
+                            <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
+                              <img
+                                alt="img-league"
+                                className="sprite-type"
+                                src={APIService.getPokemonModel(pokemonObj.pokemonData.form, pokemonObj.pokemonData.id)}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = getValidPokemonImgPath(
+                                    e.currentTarget.src,
+                                    pokemonObj.pokemonData?.id,
+                                    pokemonObj.pokemonData?.form
+                                  );
+                                }}
+                              />
+                            </PokemonIconType>
                           </div>
                           <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>
                         </div>

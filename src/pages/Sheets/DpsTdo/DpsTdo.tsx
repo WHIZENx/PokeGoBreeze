@@ -380,7 +380,7 @@ const DpsTdo = () => {
             cMoveType,
             fMoveType,
             pokemonType,
-            cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, toNumber(stats.sta) + ivHp, pokemonLevel),
+            cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, stats.sta + ivHp, pokemonLevel),
           });
         }
       }

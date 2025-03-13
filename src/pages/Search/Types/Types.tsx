@@ -91,7 +91,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
   },
   {
     name: 'STA',
-    selector: (row) => toNumber(calculateStatsByTag(row, row.baseStats, row.slug).sta),
+    selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).sta,
     sortable: true,
     width: '100px',
   },
