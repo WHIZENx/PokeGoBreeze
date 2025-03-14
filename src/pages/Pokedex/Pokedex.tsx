@@ -138,9 +138,9 @@ const Pokedex = () => {
   }, [data.typeEff]);
 
   useEffect(() => {
-    if (isNotEmpty(data.assets) && isNotEmpty(data.pokemon)) {
+    if (isNotEmpty(data.assets) && isNotEmpty(data.pokemons)) {
       setDataList(
-        data.pokemon
+        data.pokemons
           .map((item) => {
             const assetForm = queryAssetForm(data.assets, item.num, item.forme);
             return new PokemonHomeModel(item, assetForm);
@@ -148,7 +148,7 @@ const Pokedex = () => {
           .sort((a, b) => a.id - b.id)
       );
     }
-  }, [data.assets, data.pokemon]);
+  }, [data.assets, data.pokemons]);
 
   useEffect(() => {
     setIsLoading(true);

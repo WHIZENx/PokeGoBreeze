@@ -29,7 +29,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const getImageList = (id: number) => {
     sound.current = data.assets.find((item) => item.id === id);
     const model = sound.current;
-    const detail = data.pokemon.find((item) => item.num === id);
+    const detail = data.pokemons.find((item) => item.num === id);
     gender.current = {
       malePercent: detail?.genderRatio.M,
       femalePercent: detail?.genderRatio.F,
@@ -41,10 +41,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (id > 0 && isNotEmpty(data.assets) && isNotEmpty(data.pokemon)) {
+    if (id > 0 && isNotEmpty(data.assets) && isNotEmpty(data.pokemons)) {
       setPokeAssets(getImageList(id));
     }
-  }, [data.assets, data.pokemon, props.id]);
+  }, [data.assets, data.pokemons, props.id]);
 
   return (
     <div className="element-top position-relative">

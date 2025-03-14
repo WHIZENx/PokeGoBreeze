@@ -29,7 +29,7 @@ import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
 import { isNotEmpty, toNumber } from '../../util/extension';
 
 const Tools = (props: IToolsComponent) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const [currDataPoke, setCurrDataPoke] = useState<IStatsPokemon>();
   const [currTier, setCurrTier] = useState(props.tier);
   const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);

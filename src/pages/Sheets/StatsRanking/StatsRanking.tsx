@@ -170,7 +170,7 @@ const StatsRanking = () => {
   ];
 
   const stats = useSelector((state: StatsState) => state.stats);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: IPokemonData[]) =>

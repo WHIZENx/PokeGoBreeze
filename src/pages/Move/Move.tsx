@@ -157,8 +157,8 @@ const Move = (props: IMovePage) => {
 
   const queryMoveData = useCallback(
     (id: number) => {
-      if (isNotEmpty(data.combat)) {
-        const moves = data.combat.filter((item) => item.track === id || item.id === id);
+      if (isNotEmpty(data.combats)) {
+        const moves = data.combats.filter((item) => item.track === id || item.id === id);
         let move = moves.find((item) => item.id === id);
         if (move?.isMultipleWithType) {
           let type = searchParams.get(Params.MoveType);
@@ -185,7 +185,7 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, data.combat]
+    [enqueueSnackbar, data.combats]
   );
 
   useEffect(() => {
@@ -198,12 +198,12 @@ const Move = (props: IMovePage) => {
   }, [params.id, props.id, queryMoveData, move]);
 
   useEffect(() => {
-    if (move && isNotEmpty(data.pokemon)) {
-      const result = queryTopMove(data.options, data.pokemon, data.typeEff, data.weatherBoost, move);
+    if (move && isNotEmpty(data.pokemons)) {
+      const result = queryTopMove(data.options, data.pokemons, data.typeEff, data.weatherBoost, move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, data.options, data.pokemon, data.typeEff, data.weatherBoost]);
+  }, [move, data.options, data.pokemons, data.typeEff, data.weatherBoost]);
 
   useEffect(() => {
     setTopListFilter(
@@ -215,7 +215,7 @@ const Move = (props: IMovePage) => {
           const result = checkPokemonGO(
             pokemon.num,
             convertPokemonDataName(getValueOrDefault(String, pokemon.sprite, pokemon.name.replaceAll(' ', '_'))),
-            data.pokemon
+            data.pokemons
           );
           return result?.releasedGO;
         }
@@ -226,13 +226,13 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     const type = searchParams.get(Params.MoveType);
-    if (isNotEmpty(data.combat) && move?.isMultipleWithType && type) {
+    if (isNotEmpty(data.combats) && move?.isMultipleWithType && type) {
       searchParams.set(Params.MoveType, type.toLowerCase());
       setSearchParams(searchParams);
-      setMove(data.combat.find((item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)));
+      setMove(data.combats.find((item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)));
       setMoveType(type.toUpperCase());
     }
-  }, [move?.isMultipleWithType, searchParams, data.combat]);
+  }, [move?.isMultipleWithType, searchParams, data.combats]);
 
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">

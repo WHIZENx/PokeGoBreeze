@@ -260,12 +260,12 @@ const Counter = (props: ICounterComponent) => {
         }
         result = counterPokemon(
           data.options,
-          data.pokemon,
+          data.pokemons,
           data.typeEff,
           data.weatherBoost,
           toNumber(props.def) * getDmgMultiplyBonus(props.pokemonType, data.options, TypeAction.Def),
           props.types,
-          data.combat
+          data.combats
         );
         resolve(result);
       };
@@ -295,7 +295,7 @@ const Counter = (props: ICounterComponent) => {
               return true;
             }
             if (!pokemon.releasedGO) {
-              const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemon);
+              const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemons);
               return result?.releasedGO;
             }
             return pokemon.releasedGO;

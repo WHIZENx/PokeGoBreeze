@@ -60,7 +60,7 @@ const throws: ThrowThreshold[] = [
 
 const CatchChance = () => {
   const playerSetting = useSelector((state: StoreState) => state.store.data.options.playerSetting);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const circleDistance = useRef(200);

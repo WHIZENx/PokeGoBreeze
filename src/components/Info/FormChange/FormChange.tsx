@@ -17,7 +17,7 @@ import { FORM_NORMAL } from '../../../util/constants';
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);

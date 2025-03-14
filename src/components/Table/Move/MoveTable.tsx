@@ -108,7 +108,7 @@ const TableMove = (props: ITableMoveComponent) => {
   const filterUnknownMove = (moves: string[] | undefined) => {
     return getValueOrDefault(
       Array,
-      moves?.map((move) => data.combat.find((item) => isEqual(item.name, move)) ?? new Combat()).filter((move) => move.id > 0)
+      moves?.map((move) => data.combats.find((item) => isEqual(item.name, move)) ?? new Combat()).filter((move) => move.id > 0)
     );
   };
 
@@ -139,7 +139,7 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const findMove = useCallback(() => {
-    const pokemonFilter = data.pokemon.filter((item) =>
+    const pokemonFilter = data.pokemons.filter((item) =>
       props.form?.id || props.form?.pokemonType === PokemonType.Shadow || props.form?.pokemonType === PokemonType.Purified
         ? item.num === toNumber(props.data?.num)
         : isEqual(
@@ -165,7 +165,7 @@ const TableMove = (props: ITableMoveComponent) => {
           pokemon = pokemonFilter.at(0);
         }
       } else if (!isNotEmpty(pokemonFilter) && props.id) {
-        pokemon = data.pokemon.find((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name));
+        pokemon = data.pokemons.find((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name));
       } else {
         let form = props.form?.name?.toUpperCase().replaceAll('-', '_');
         form = getPokemonFormWithNoneSpecialForm(form, props.form?.pokemonType);
@@ -187,7 +187,7 @@ const TableMove = (props: ITableMoveComponent) => {
       data.options,
       data.typeEff,
       data.weatherBoost,
-      data.combat,
+      data.combats,
       result,
       props.statATK * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.Atk),
       props.statDEF * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.Def),

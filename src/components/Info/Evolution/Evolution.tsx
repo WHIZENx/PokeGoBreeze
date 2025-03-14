@@ -113,8 +113,8 @@ const customTheme = createTheme({
 
 const Evolution = (props: IEvolutionComponent) => {
   const theme = useTheme<ThemeModify>();
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
-  const evolutionChain = useSelector((state: StoreState) => state.store.data.evolutionChain);
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
+  const evolutionChains = useSelector((state: StoreState) => state.store.data.evolutionChains);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const [idEvoChain, setIdEvoChain] = useState(0);
@@ -391,7 +391,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string | undefined) => {
-    const pokemonChain = evolutionChain.find((chain) => chain.id === id);
+    const pokemonChain = evolutionChains.find((chain) => chain.id === id);
     if (pokemonChain) {
       const chainForms = pokemonChain.evolutionInfos.filter((info) => isEqual(info.form, form, EqualMode.IgnoreCaseSensitive));
       chainForms.forEach((poke) => {
@@ -489,7 +489,7 @@ const Evolution = (props: IEvolutionComponent) => {
     if (pokemon) {
       return pokemon.evoList?.find((item) => isInclude(item.evoToForm, form) && item.evoToId === prevId);
     } else {
-      const pokemonChain = evolutionChain.find((chain) => chain.id === prevId);
+      const pokemonChain = evolutionChains.find((chain) => chain.id === prevId);
       if (pokemonChain) {
         const chainForm = pokemonChain.evolutionInfos.find(
           (info) => info.id !== prevId && isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)

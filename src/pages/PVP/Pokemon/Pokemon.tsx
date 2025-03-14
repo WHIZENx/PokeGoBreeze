@@ -80,7 +80,7 @@ const PokemonPVP = () => {
       }
 
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-      const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
+      const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
       const id = pokemon?.num;
       const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
       document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(
@@ -94,11 +94,11 @@ const PokemonPVP = () => {
       cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
       cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
-      const fMove = dataStore.combat.find((item) => isEqual(item.name, fMoveData));
-      const cMovePri = dataStore.combat.find((item) => isEqual(item.name, cMoveDataPri));
+      const fMove = dataStore.combats.find((item) => isEqual(item.name, fMoveData));
+      const cMovePri = dataStore.combats.find((item) => isEqual(item.name, cMoveDataPri));
       let cMoveSec;
       if (cMoveDataSec) {
-        cMoveSec = dataStore.combat.find((item) => isEqual(item.name, cMoveDataSec));
+        cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
       }
 
       let pokemonType = PokemonType.Normal;
@@ -136,15 +136,15 @@ const PokemonPVP = () => {
         })
       );
     }
-  }, [params.type, params.pokemon, params.cp, statsRanking, dataStore.combat, dataStore.pokemon, dataStore.assets, dispatch]);
+  }, [params.type, params.pokemon, params.cp, statsRanking, dataStore.combats, dataStore.pokemons, dataStore.assets, dispatch]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
       router.action = null as AnyAction[''];
     };
-    if (statsRanking && isNotEmpty(dataStore.combat) && isNotEmpty(dataStore.pokemon) && isNotEmpty(dataStore.assets)) {
-      if (dataStore.combat.every((combat) => !combat.archetype)) {
+    if (statsRanking && isNotEmpty(dataStore.combats) && isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.assets)) {
+      if (dataStore.combats.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
       } else if (router.action) {
         fetchPokemon();
@@ -233,7 +233,7 @@ const PokemonPVP = () => {
               <hr />
               <BodyPVP
                 assets={dataStore.assets}
-                pokemonData={dataStore.pokemon}
+                pokemonData={dataStore.pokemons}
                 data={rankingPoke?.data}
                 cp={params.cp}
                 type={params.type}
@@ -250,7 +250,7 @@ const PokemonPVP = () => {
               <TypeEffectivePVP types={rankingPoke?.pokemon?.types} />
             </div>
             <div className="container">
-              <MoveSet moves={rankingPoke?.data?.moves} pokemon={rankingPoke?.pokemon} combatData={dataStore.combat} />
+              <MoveSet moves={rankingPoke?.data?.moves} pokemon={rankingPoke?.pokemon} combatData={dataStore.combats} />
             </div>
           </div>
         </div>
