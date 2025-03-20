@@ -28,7 +28,6 @@ import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { ColumnType } from './enums/column-type.enum';
 import { FORM_NORMAL, Params } from '../../../util/constants';
-import { Form } from '../../../core/models/API/form.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
@@ -170,7 +169,8 @@ const StatsRanking = () => {
   ];
 
   const stats = useSelector((state: StatsState) => state.stats);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
+  const pokemons = useSelector((state: StoreState) => state.store.data.pokemons);
+  const [pokemon, setPokemon] = useState<IPokemonData>();
   const [search, setSearch] = useState('');
 
   const mappingData = (pokemon: IPokemonData[]) =>
@@ -277,13 +277,13 @@ const StatsRanking = () => {
   const [progress, setProgress] = useState(new PokemonProgress());
 
   useEffect(() => {
-    if (isNotEmpty(pokemonData) && !isNotEmpty(pokemonList)) {
-      const pokemon = sortRanking(mappingData(pokemonData.filter((pokemon) => pokemon.num > 0)), sortId);
+    if (isNotEmpty(pokemons) && !isNotEmpty(pokemonList)) {
+      const pokemon = sortRanking(mappingData(pokemons.filter((pokemon) => pokemon.num > 0)), sortId);
       setPokemonList(pokemon);
       setPokemonFilter(pokemon);
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     }
-  }, [pokemonList, pokemonData]);
+  }, [pokemonList, pokemons]);
 
   useEffect(() => {
     if (!select && isNotEmpty(pokemonList)) {
@@ -341,16 +341,6 @@ const StatsRanking = () => {
     }
   }, [search, isMatch, releasedGO, pokemonList]);
 
-  const convertToPokemonForm = (pokemon: IPokemonStatsRanking) =>
-    Form.create({
-      formName: pokemon.forme,
-      id: pokemon.num,
-      isDefault: true,
-      name: pokemon.name,
-      types: pokemon.types,
-      version: pokemon.version,
-    });
-
   return (
     <div className="element-bottom position-relative poke-container container">
       <div className="w-100 d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
@@ -387,15 +377,7 @@ const StatsRanking = () => {
           </div>
           {select && (
             <div className="col-xl-7" style={{ padding: 0 }}>
-              <TableMove
-                data={select}
-                id={select.num}
-                form={convertToPokemonForm(select)}
-                statATK={toNumber(select.atk.attack)}
-                statDEF={toNumber(select.def.defense)}
-                statSTA={toNumber(select.sta.stamina)}
-                maxHeight={400}
-              />
+              <TableMove pokemonData={pokemon} maxHeight={400} />
             </div>
           )}
         </div>
@@ -452,6 +434,7 @@ const StatsRanking = () => {
         onRowClicked={(row) => {
           if (!isEqual(select?.name, row.name)) {
             setFilterParams(row);
+            setPokemon(pokemons.find((pokemon) => pokemon.num === row.num && isEqual(row.forme, pokemon.forme)));
           }
         }}
         onSort={(rows) => {

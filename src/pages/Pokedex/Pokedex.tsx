@@ -44,7 +44,7 @@ const versionProps: Partial<MenuProps> = {
 interface IFilter {
   isMatch: boolean;
   releasedGO: boolean;
-  allShiny: boolean;
+  isShiny: boolean;
   gen: number[];
   version: number[];
   isMega: boolean;
@@ -58,7 +58,7 @@ interface IFilter {
 class Filter implements IFilter {
   isMatch = false;
   releasedGO = false;
-  allShiny = false;
+  isShiny = false;
   gen: number[] = [];
   version: number[] = [];
   isMega = false;
@@ -114,7 +114,7 @@ const Pokedex = () => {
     )
   );
 
-  const { isMatch, releasedGO, allShiny, gen, version, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast } = filters;
+  const { isMatch, releasedGO, isShiny, gen, version, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast } = filters;
 
   const [btnSelected, setBtnSelected] = useState(
     new BtnSelect({
@@ -327,12 +327,12 @@ const Pokedex = () => {
                 </div>
                 <div className="d-flex" style={{ paddingLeft: 8, paddingRight: 8 }}>
                   <FormControlLabel
-                    control={<Switch checked={allShiny} onChange={(_, check) => setFilters({ ...filters, allShiny: check })} />}
+                    control={<Switch checked={isShiny} onChange={(_, check) => setFilters({ ...filters, isShiny: check })} />}
                     label={
                       <span className="d-flex align-items-center">
                         Show All Shiny Pokémon (Only Possible)
                         <img
-                          className={allShiny ? 'filter-shiny' : 'filter-gray'}
+                          className={isShiny ? 'filter-shiny' : 'filter-gray'}
                           width={28}
                           height={28}
                           style={{ marginLeft: 5 }}
@@ -515,7 +515,7 @@ const Pokedex = () => {
               key={index}
               name={row.name}
               forme={row.forme}
-              isDefaultImg={allShiny}
+              isDefaultImg={isShiny}
               image={row.image}
               id={row.id}
               types={row.types}

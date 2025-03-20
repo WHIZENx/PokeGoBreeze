@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { getDmgMultiplyBonus, getKeyWithData, getPokemonFormWithNoneSpecialForm, splitAndCapitalize } from '../../../util/utils';
+import React, { Fragment, useEffect, useState } from 'react';
+import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -13,7 +13,6 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, ICombat } from '../../../core/models/combat.model';
-import { FORM_GMAX } from '../../../util/constants';
 import { IPokemonQueryMove, IPokemonQueryRankMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
@@ -24,13 +23,11 @@ import {
   getPropertyName,
   getValueOrDefault,
   isEqual,
-  isNotEmpty,
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { EqualMode } from '../../../util/enums/string.enum';
 import { TableType, TypeSorted } from './enums/table-type.enum';
-import { MoveType, PokemonType, TypeAction } from '../../../enums/type.enum';
+import { MoveType, PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 
@@ -115,7 +112,7 @@ const TableMove = (props: ITableMoveComponent) => {
   const filterMoveType = (pokemon: IPokemonData | undefined) => {
     if (!pokemon) {
       setMoveOrigin(undefined);
-      setMove(setRankMove(undefined));
+      setMove(new PokemonQueryRankMove());
       return;
     }
     setMoveOrigin({
@@ -123,8 +120,8 @@ const TableMove = (props: ITableMoveComponent) => {
       chargedMoves: filterUnknownMove(pokemon.cinematicMoves),
       eliteFastMoves: filterUnknownMove(pokemon.eliteQuickMoves),
       eliteChargedMoves: filterUnknownMove(pokemon.eliteCinematicMoves),
-      purifiedMoves: props.form?.pokemonType === PokemonType.Shadow ? [] : filterUnknownMove(pokemon.purifiedMoves),
-      shadowMoves: props.form?.pokemonType === PokemonType.Purified ? [] : filterUnknownMove(pokemon.shadowMoves),
+      purifiedMoves: pokemon.pokemonType === PokemonType.Shadow ? [] : filterUnknownMove(pokemon.purifiedMoves),
+      shadowMoves: pokemon.pokemonType === PokemonType.Purified ? [] : filterUnknownMove(pokemon.shadowMoves),
       specialMoves: filterUnknownMove(pokemon.specialMoves),
       exclusiveMoves: filterUnknownMove(pokemon.exclusiveMoves),
       dynamaxMoves: filterUnknownMove(pokemon.dynamaxMoves),
@@ -132,77 +129,33 @@ const TableMove = (props: ITableMoveComponent) => {
     setMove(
       setRankMove({
         ...pokemon,
-        purifiedMoves: props.form?.pokemonType === PokemonType.Shadow ? [] : pokemon.purifiedMoves,
-        shadowMoves: props.form?.pokemonType === PokemonType.Purified ? [] : pokemon.shadowMoves,
+        purifiedMoves: pokemon.pokemonType === PokemonType.Shadow ? [] : pokemon.purifiedMoves,
+        shadowMoves: pokemon.pokemonType === PokemonType.Purified ? [] : pokemon.shadowMoves,
       })
     );
   };
 
-  const findMove = useCallback(() => {
-    const pokemonFilter = data.pokemons.filter((item) =>
-      props.form?.id || props.form?.pokemonType === PokemonType.Shadow || props.form?.pokemonType === PokemonType.Purified
-        ? item.num === toNumber(props.data?.num)
-        : isEqual(
-            item.fullName,
-            (typeof props.form === 'string' ? props.form : props.form?.name)?.replaceAll('-', '_'),
-            EqualMode.IgnoreCaseSensitive
-          )
-    );
-
-    if (isNotEmpty(pokemonFilter)) {
-      let pokemon: IPokemonData | undefined;
-      const isGMax =
-        typeof props.form === 'string'
-          ? isEqual(props.form, FORM_GMAX, EqualMode.IgnoreCaseSensitive)
-          : props.form?.pokemonType === PokemonType.GMax;
-      if (pokemonFilter.length === 1) {
-        pokemon = pokemonFilter.at(0);
-      } else if (isGMax) {
-        const pokemonDynamax = pokemonFilter.find((item) => isEqual(item.pokemonType, PokemonType.GMax));
-        if (pokemonDynamax && isNotEmpty(pokemonDynamax.dynamaxMoves)) {
-          pokemon = pokemonDynamax;
-        } else {
-          pokemon = pokemonFilter.at(0);
-        }
-      } else if (!isNotEmpty(pokemonFilter) && props.id) {
-        pokemon = data.pokemons.find((item) => item.num === toNumber(props.id) && isEqual(item.baseSpecies, item.name));
-      } else {
-        let form = props.form?.name?.toUpperCase().replaceAll('-', '_');
-        form = getPokemonFormWithNoneSpecialForm(form, props.form?.pokemonType);
-        pokemon = pokemonFilter.find((item) => form && isEqual(item.fullName, form, EqualMode.IgnoreCaseSensitive));
-        if (!pokemon) {
-          pokemon = pokemonFilter.find(
-            (item) =>
-              (item.baseForme && isEqual(props.form?.formName, item.baseForme, EqualMode.IgnoreCaseSensitive)) ||
-              isEqual(item.name, item.baseSpecies)
-          );
-        }
-      }
-      filterMoveType(pokemon);
-    }
-  }, [data, props.data, props.statATK, props.statDEF, props.statSTA]);
-
-  const setRankMove = (result: IPokemonData | undefined) => {
+  const setRankMove = (result: IPokemonData) => {
     return rankMove(
       data.options,
       data.typeEff,
       data.weatherBoost,
       data.combats,
       result,
-      props.statATK * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.Atk),
-      props.statDEF * getDmgMultiplyBonus(props.form?.pokemonType, data.options, TypeAction.Def),
-      props.statSTA,
-      props.data?.types
+      toNumber(result.statsGO?.atk),
+      toNumber(result.statsGO?.def),
+      toNumber(result.statsGO?.sta),
+      result.types
     );
   };
 
   useEffect(() => {
     setMoveOrigin(undefined);
     setMove(new PokemonQueryRankMove());
-    if (props.form) {
-      findMove();
+    if (props.pokemonData) {
+      filterMoveType(props.pokemonData);
     }
-  }, [findMove, props.form]);
+  }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
   const renderTable = (table: TableType) => {
     const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>

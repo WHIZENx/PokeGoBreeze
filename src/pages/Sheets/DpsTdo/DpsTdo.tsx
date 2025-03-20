@@ -544,7 +544,16 @@ const DpsTdo = () => {
       }, 300);
       return () => clearTimeout(timeOutId);
     }
-  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, data.pokemons, data.combats, data.options, data.typeEff, data.weatherBoost]);
+  }, [
+    dataTargetPokemon,
+    fMoveTargetPokemon,
+    cMoveTargetPokemon,
+    data.pokemons,
+    data.combats,
+    data.options,
+    data.typeEff,
+    data.weatherBoost,
+  ]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {

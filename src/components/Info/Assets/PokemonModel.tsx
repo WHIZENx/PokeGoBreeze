@@ -8,48 +8,47 @@ import APIService from '../../../services/API.service';
 import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material';
-import { StoreState } from '../../../store/models/state.model';
+import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { isNotEmpty, toNumber, UniqValueInArray } from '../../../util/extension';
+import { isNotEmpty, UniqValueInArray } from '../../../util/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
+  const assets = useSelector((state: StoreState) => state.store.data.assets);
+  const pokemonData = useSelector((state: SearchingState) => state.searching.pokemon);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const gender = useRef<PokemonGender>();
   const sound = useRef<IAsset>();
 
-  const getImageList = (id: number) => {
-    sound.current = data.assets.find((item) => item.id === id);
+  const getImageList = () => {
+    sound.current = assets.find((item) => item.id === pokemonData?.num);
     const model = sound.current;
-    const detail = data.pokemons.find((item) => item.num === id);
     gender.current = {
-      malePercent: detail?.genderRatio.M,
-      femalePercent: detail?.genderRatio.F,
-      genderlessPercent: Number(detail?.genderRatio.M === 0 && detail?.genderRatio.F === 0),
+      malePercent: pokemonData?.genderRatio.M,
+      femalePercent: pokemonData?.genderRatio.F,
+      genderlessPercent: Number(pokemonData?.genderRatio.M === 0 && pokemonData?.genderRatio.F === 0),
     };
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map((value) => new PokemonModelComponent(value, model?.image));
     return result;
   };
 
   useEffect(() => {
-    const id = toNumber(props.id);
-    if (id > 0 && isNotEmpty(data.assets) && isNotEmpty(data.pokemons)) {
-      setPokeAssets(getImageList(id));
+    if (isNotEmpty(assets) && pokemonData) {
+      setPokeAssets(getImageList());
     }
-  }, [data.assets, data.pokemons, props.id]);
+  }, [assets, pokemonData]);
 
   return (
     <div className="element-top position-relative">
       <h4 className="title-evo">
-        <b>{`Assets of ${splitAndCapitalize(props.name, '-', ' ')} in Pokémon GO`}</b>
+        <b>{`Assets of ${splitAndCapitalize(pokemonData?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
         <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon)} />
       </h4>
       {!props.isLoadedForms ? (
@@ -129,7 +128,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         </div>
       )}
       <h4 className="title-evo">
-        <b>{`Sound of ${splitAndCapitalize(props.name, '_', ' ')}`}</b>
+        <b>{`Sound of ${splitAndCapitalize(pokemonData?.pokemonId, '_', ' ')}`}</b>
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (

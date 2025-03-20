@@ -5,7 +5,6 @@ import {
   checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
-  getDmgMultiplyBonus,
   getKeyWithData,
   getValidPokemonImgPath,
   splitAndCapitalize,
@@ -21,7 +20,7 @@ import { OptionsSheetState, StoreState } from '../../../store/models/state.model
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { MoveType, PokemonType, TypeAction, TypeTheme, VariantType } from '../../../enums/type.enum';
+import { MoveType, PokemonType, TypeTheme, VariantType } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
@@ -30,7 +29,7 @@ import {
   DynamicObj,
   getValueOrDefault,
   isNotEmpty,
-  isUndefined,
+  isNullOrUndefined,
   toFloat,
   toFloatWithPadding,
   toNumber,
@@ -235,7 +234,7 @@ const Counter = (props: ICounterComponent) => {
       setCounterFilter([]);
       setShowFrame(true);
     }
-    if (!isUndefined(props.pokemonType) && isNotEmpty(props.types)) {
+    if (!isNullOrUndefined(props.pokemonData) && isNotEmpty(props.pokemonData.types)) {
       calculateCounter(controller.signal)
         .then((data) => {
           setCounterList(data);
@@ -243,7 +242,7 @@ const Counter = (props: ICounterComponent) => {
         .catch(() => setShowFrame(true));
     }
     return () => controller.abort();
-  }, [props.def, props.pokemonType, props.types]);
+  }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
   const calculateCounter = (signal: AbortSignal, delay = 3000) => {
     return new Promise<ICounterModel[]>((resolve, reject) => {
@@ -258,15 +257,18 @@ const Counter = (props: ICounterComponent) => {
         if (signal instanceof AbortSignal) {
           signal.removeEventListener('abort', abortHandler);
         }
-        result = counterPokemon(
-          data.options,
-          data.pokemons,
-          data.typeEff,
-          data.weatherBoost,
-          toNumber(props.def) * getDmgMultiplyBonus(props.pokemonType, data.options, TypeAction.Def),
-          props.types,
-          data.combats
-        );
+        if (props.pokemonData) {
+          result = counterPokemon(
+            data.options,
+            data.pokemons,
+            data.typeEff,
+            data.weatherBoost,
+            toNumber(props.pokemonData.statsGO?.def),
+            props.pokemonData.types,
+            data.combats
+          );
+        }
+
         resolve(result);
       };
 

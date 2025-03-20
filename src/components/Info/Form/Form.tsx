@@ -1,11 +1,10 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { FORM_NORMAL, Params } from '../../../util/constants';
 import {
   capitalize,
-  convertStatsEffort,
   formIconAssets,
   getDataWithKey,
   getFormFromForms,
@@ -17,25 +16,28 @@ import APIService from '../../../services/API.service';
 import './Form.scss';
 import Gender from '../Gender';
 import Stats from '../Stats/Stats';
-import { calBaseATK, calBaseDEF, calBaseSTA, convertAllStats } from '../../../util/calculate';
 import Raid from '../../Raid/Raid';
 import Counter from '../../Table/Counter/Counter';
 import TableMove from '../../Table/Move/MoveTable';
 import Info from '../Info';
 import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
-import { StatsState } from '../../../store/models/state.model';
+import { SearchingState, StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
-import { WeightHeight } from '../../../core/models/pokemon.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
+import { SearchingActions } from '../../../store/actions';
+import { SearchingModel } from '../../../store/models/searching.model';
 
 const FormComponent = (props: IFormInfoComponent) => {
+  const dispatch = useDispatch();
   const stats = useSelector((state: StatsState) => state.stats);
+  const pokemonData = useSelector((state: SearchingState) => state.searching.pokemon);
+  const form = useSelector((state: SearchingState) => state.searching.form);
 
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,8 +46,8 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
-      getFormFromForms(stats, props.defaultId, props.form?.form.formName, props.form?.form.pokemonType),
-    [props.defaultId, props.form?.form.formName]
+      getFormFromForms(stats, props.defaultId, form?.form.formName, form?.form.pokemonType),
+    [props.defaultId, form?.form.formName]
   );
 
   useEffect(() => {
@@ -62,26 +64,31 @@ const FormComponent = (props: IFormInfoComponent) => {
   const findFormData = (name: string) => {
     const currentData = props.pokeData.find((item) => isEqual(name, item.name));
     const currentForm = props.formList?.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
-    props.setData(currentData);
-    props.setForm(currentForm);
-    const originForm = splitAndCapitalize(currentForm?.form.formName, '-', '-');
-    props.setOriginForm(originForm);
+    if (currentForm) {
+      dispatch(SearchingActions.SetPokemonForm.create(currentForm));
+      const searching = new SearchingModel({
+        id: currentForm.defaultId,
+        name: currentForm.defaultName,
+        form: currentForm.form.formName,
+        pokemonType: currentForm.form.pokemonType,
+        fullName: currentForm.form.name,
+        timestamp: new Date(),
+      });
+      dispatch(SearchingActions.SetPokemonMainSearch.create(searching));
+    }
 
     if (!isNotEmpty(props.pokeData)) {
       return;
     }
 
-    let weight = 0;
-    let height = 0;
     if (currentData) {
-      weight = currentData.weight;
-      height = currentData.height;
+      dispatch(SearchingActions.SetPokemonDetails.create(currentData));
     } else {
       const defaultPokemon = props.pokeData.find((p) => p.isDefault);
-      weight = toNumber(defaultPokemon?.weight);
-      height = toNumber(defaultPokemon?.height);
+      if (defaultPokemon) {
+        dispatch(SearchingActions.SetPokemonDetails.create(defaultPokemon));
+      }
     }
-    props.setWH(WeightHeight.create({ weight, height }));
   };
 
   useEffect(() => {
@@ -132,7 +139,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                   {value.map((value, index) => (
                     <button
                       key={index}
-                      className={combineClasses('btn btn-form', value.form.id === props.form?.form.id ? 'form-selected' : '')}
+                      className={combineClasses('btn btn-form', value.form.id === form?.form.id ? 'form-selected' : '')}
                       onClick={() => changeForm(value.form.name, value.form.formName, value.form.pokemonType)}
                     >
                       <div className="d-flex w-100 justify-content-center">
@@ -175,72 +182,61 @@ const FormComponent = (props: IFormInfoComponent) => {
           )}
         </div>
       </div>
-      {props.ratio?.M !== 0 || props.ratio?.F !== 0 ? (
+      {pokemonData?.genderRatio?.M !== 0 || pokemonData?.genderRatio?.F !== 0 ? (
         <div className="d-flex flex-wrap" style={{ columnGap: 50, rowGap: 15 }}>
-          {props.ratio?.M !== 0 && <Gender ratio={props.ratio} sex={TypeSex.Male} sprit={props.form?.form.sprites} />}
-          {props.ratio?.F !== 0 && <Gender ratio={props.ratio} sex={TypeSex.Female} sprit={props.form?.form.sprites} />}
+          {pokemonData?.genderRatio?.M !== 0 && <Gender ratio={pokemonData?.genderRatio} sex={TypeSex.Male} sprit={form?.form.sprites} />}
+          {pokemonData?.genderRatio?.F !== 0 && <Gender ratio={pokemonData?.genderRatio} sex={TypeSex.Female} sprit={form?.form.sprites} />}
         </div>
       ) : (
         <Gender sex={TypeSex.Genderless} />
       )}
       <Stats
-        pokemonType={props.form?.form.pokemonType}
+        pokemonType={form?.form.pokemonType}
         statATK={statsPokemon?.atk}
         statDEF={statsPokemon?.def}
         statSTA={statsPokemon?.sta}
         statProd={statsPokemon?.prod}
         pokemonStats={stats}
-        stats={convertStatsEffort(props.data?.stats)}
+        stats={pokemonData?.baseStats}
         id={props.defaultId}
-        form={getPokemonFormWithNoneSpecialForm(props.form?.form.formName, props.form?.form.pokemonType)?.replaceAll('-', '_')}
+        form={pokemonData?.forme}
         isDisabled={!stats}
       />
       <hr className="w-100" />
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
-          <Info currForm={props.form} />
-          {props.form?.form.pokemonType !== PokemonType.Shadow && props.form?.form.pokemonType !== PokemonType.Purified && (
+          <Info />
+          {form?.form.pokemonType !== PokemonType.Shadow && form?.form.pokemonType !== PokemonType.Purified && (
             <Fragment>
               <h5>
                 <li>Raid</li>
               </h5>
               <Raid
-                currForm={props.form}
+                currForm={form}
                 id={props.defaultId}
-                statATK={toNumber(statsPokemon?.atk?.attack, calBaseATK(convertAllStats(props.data?.stats), true))}
-                statDEF={toNumber(statsPokemon?.def?.defense, calBaseDEF(convertAllStats(props.data?.stats), true))}
+                statATK={toNumber(pokemonData?.statsGO?.atk)}
+                statDEF={toNumber(pokemonData?.statsGO?.def)}
                 isLoadedForms={props.isLoadedForms}
               />
             </Fragment>
           )}
         </div>
         <div className="col-md-7" style={{ padding: 0 }}>
-          <TableMove
-            data={{
-              stats: convertStatsEffort(props.data?.stats),
-              num: toNumber(props.defaultId),
-              types: props.form?.form.types,
-            }}
-            form={props.form?.form}
-            statATK={toNumber(statsPokemon?.atk?.attack, calBaseATK(convertAllStats(props.data?.stats), true))}
-            statDEF={toNumber(statsPokemon?.def?.defense, calBaseDEF(convertAllStats(props.data?.stats), true))}
-            statSTA={toNumber(statsPokemon?.sta?.stamina, calBaseSTA(convertAllStats(props.data?.stats), true))}
-          />
-          <Counter def={statsPokemon?.def?.defense} types={props.form?.form.types} pokemonType={props.form?.form.pokemonType} />
+          <TableMove pokemonData={pokemonData} />
+          <Counter pokemonData={pokemonData} />
         </div>
       </div>
       <hr className="w-100" />
-      {props.form?.form.pokemonType !== PokemonType.GMax ? (
+      {pokemonData?.pokemonType !== PokemonType.GMax &&
+      pokemonData?.pokemonType !== PokemonType.Shadow &&
+      pokemonData?.pokemonType !== PokemonType.Purified ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl h-100 position-relative" style={{ padding: 0 }}>
             <Evolution
-              setId={props.setId}
+              pokemonData={pokemonData}
               id={props.defaultId}
-              forme={props.form?.form}
-              isFormDefault={props.defaultId === props.form?.form.id}
-              region={props.region}
+              setId={props.setId}
               pokemonRouter={props.pokemonRouter}
-              pokemonType={props.form?.form.pokemonType}
               isLoadedForms={props.isLoadedForms}
               urlEvolutionChain={props.urlEvolutionChain}
             />
@@ -249,18 +245,15 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       ) : (
         <Evolution
-          setId={props.setId}
+          pokemonData={pokemonData}
           id={props.defaultId}
-          forme={props.form?.form}
-          isFormDefault={props.defaultId === props.form?.form.id}
-          region={props.region}
+          setId={props.setId}
           pokemonRouter={props.pokemonRouter}
-          pokemonType={props.form?.form.pokemonType}
           isLoadedForms={props.isLoadedForms}
           urlEvolutionChain={props.urlEvolutionChain}
         />
       )}
-      {isNotEmpty(props.pokemonDetail?.formChange) && <FromChange currentId={props.defaultId} form={props.form} />}
+      {isNotEmpty(pokemonData?.formChange) && <FromChange currentId={props.defaultId} pokemonData={pokemonData} />}
     </Fragment>
   );
 };

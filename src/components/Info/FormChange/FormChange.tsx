@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import { useTheme } from '@mui/material';
-import { generateParamForm, getPokemonDetails, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
+import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
@@ -17,7 +17,6 @@ import { FORM_NORMAL } from '../../../util/constants';
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
@@ -32,7 +31,7 @@ const FromChange = (props: IFromChangeComponent) => {
   };
 
   useEffect(() => {
-    if (props.currentId && props.form && props.currentId !== props.form.defaultId) {
+    if (props.currentId && props.pokemonData && props.currentId !== props.pokemonData.num) {
       setPokeAssets([]);
       setDataSrc(undefined);
       setPokemon(undefined);
@@ -41,35 +40,28 @@ const FromChange = (props: IFromChangeComponent) => {
     if (toNumber(props.currentId) > 0 && isNotEmpty(assets)) {
       setPokeAssets(getImageList(props.currentId));
     }
-  }, [assets, props.currentId, props.form?.defaultId]);
+  }, [assets, props.currentId, props.pokemonData]);
 
   useEffect(() => {
-    if (isNotEmpty(pokeAssets) && isNotEmpty(pokemonData) && props.form) {
-      const formName = getValueOrDefault(String, props.form.form.name, props.form.form.formName, props.form.defaultName);
-      const defaultForm = getValueOrDefault(String, props.form?.form.formName?.replaceAll('-', '_'), FORM_NORMAL);
+    if (isNotEmpty(pokeAssets) && props.pokemonData) {
+      const defaultForm = getValueOrDefault(String, props.pokemonData.forme?.replaceAll('-', '_'), FORM_NORMAL);
       setDataSrc(
         pokeAssets.find((pokemon) => isInclude(pokemon.form, defaultForm, IncludeMode.IncludeIgnoreCaseSensitive))?.image?.at(0)?.default
       );
-
-      const details = getPokemonDetails(
-        pokemonData,
-        props.form.defaultId,
-        formName,
-        props.form.form.pokemonType,
-        props.form.form.isDefault
-      );
-      setPokemon(details);
+      setPokemon(props.pokemonData);
     }
-  }, [pokeAssets, pokemonData, props.form]);
+  }, [pokeAssets, props.pokemonData]);
 
   const findPokeAsset = (name: string) =>
     pokeAssets
-      ?.find((pokemon) => isEqual(pokemon.form, name.replace('_COMPLETE_', '_').replace(`${props.form?.defaultName.toUpperCase()}_`, '')))
+      ?.find((pokemon) =>
+        isEqual(pokemon.form, name.replace('_COMPLETE_', '_').replace(`${props.pokemonData?.pokemonId?.toUpperCase()}_`, ''))
+      )
       ?.image.at(0)?.default;
 
   return (
     <Fragment>
-      {props.currentId && props.form && props.currentId === props.form.defaultId && pokemon && pokemon.formChange && (
+      {props.currentId && props.pokemonData && props.currentId === props.pokemonData.num && pokemon && pokemon.formChange && (
         <>
           <h4 className="title-evo">
             <b>Form Change</b>
@@ -82,15 +74,15 @@ const FromChange = (props: IFromChangeComponent) => {
                     <img
                       className="pokemon-sprite-large"
                       alt="pokemon-model"
-                      src={APIService.getPokemonModel(dataSrc, props.form?.defaultId)}
+                      src={APIService.getPokemonModel(dataSrc, props.pokemonData.num)}
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.form?.defaultId, dataSrc);
+                        e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.pokemonData?.num, dataSrc);
                       }}
                     />
                   </div>
                   <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                    {splitAndCapitalize(props.form?.form.name?.replaceAll('-', '_'), '_', ' ')}
+                    {splitAndCapitalize(props.pokemonData.name.replaceAll('-', '_'), '_', ' ')}
                   </span>
                 </div>
               </div>

@@ -93,6 +93,9 @@ class APIService {
     if (!item) {
       return this.getPokeSprite(id);
     }
+    if (!isEqual(item[0], '/')) {
+      item = `/${item}`;
+    }
     item = this.setPokemonModel(item);
     return `${APIUrl.POGO_ASSET_API_URL}Pokemon - 256x256/${item}.png`;
   }

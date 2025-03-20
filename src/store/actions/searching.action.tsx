@@ -2,12 +2,19 @@
 import { Action } from 'redux';
 import { IToolSearching } from '../../core/models/searching.model';
 import { ISearchingModel } from '../models/searching.model';
+import { IPokemonData } from '../../core/models/pokemon.model';
+import { IPokemonFormModify } from '../../core/models/API/form.model';
+import { IPokemonDetail } from '../../core/models/API/info.model';
 
 export enum SearchingActionTypes {
   setPokemonMainSearch = '[Searching] SetPokemonMainSearch',
   resetPokemonMainSearch = '[Searching] ResetPokemonMainSearch',
   setPokemonToolSearch = '[Searching] SetPokemonToolSearch',
   resetPokemonToolSearch = '[Searching] ResetPokemonToolSearch',
+  setPokemon = '[Searching] SetPokemon',
+  setPokemonForm = '[Searching] SetPokemonForm',
+  setPokemonDetails = '[Searching] SetPokemonDetails',
+  resetPokemon = '[Searching] ResetPokemon',
 }
 
 export class SetPokemonMainSearch implements Action {
@@ -60,4 +67,65 @@ export class ResetPokemonToolSearch implements Action {
   }
 }
 
-export type SearchingActionsUnion = SetPokemonMainSearch | ResetPokemonMainSearch | SetPokemonToolSearch | ResetPokemonToolSearch;
+export class SetPokemon implements Action {
+  readonly type = SearchingActionTypes.setPokemon;
+
+  constructor(public payload: IPokemonData) {}
+
+  static create(value: IPokemonData) {
+    const { type, payload } = new SetPokemon(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+export class SetPokemonForm implements Action {
+  readonly type = SearchingActionTypes.setPokemonForm;
+
+  constructor(public payload: IPokemonFormModify | undefined) {}
+
+  static create(value: IPokemonFormModify | undefined) {
+    const { type, payload } = new SetPokemonForm(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+export class SetPokemonDetails implements Action {
+  readonly type = SearchingActionTypes.setPokemonDetails;
+
+  constructor(public payload: IPokemonDetail) {}
+
+  static create(value: IPokemonDetail) {
+    const { type, payload } = new SetPokemonDetails(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+export class ResetPokemon implements Action {
+  readonly type = SearchingActionTypes.resetPokemon;
+
+  static create() {
+    const { type } = new ResetPokemon();
+    return {
+      type,
+    };
+  }
+}
+
+export type SearchingActionsUnion =
+  | SetPokemonMainSearch
+  | ResetPokemonMainSearch
+  | SetPokemonToolSearch
+  | ResetPokemonToolSearch
+  | SetPokemon
+  | SetPokemonForm
+  | SetPokemonDetails
+  | ResetPokemon;

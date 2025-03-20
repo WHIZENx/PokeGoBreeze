@@ -247,6 +247,8 @@ export const convertModelSpritName = (text: string | undefined) =>
     .replace('-single-strike', '')
     .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
     .replace('-armor', '')
+    .replace('-mega-x', '-megax')
+    .replace('-mega-y', '-megay')
     .replace(`-${FORM_NORMAL.toLowerCase()}`, '');
 
 export const convertNameRankingToForm = (text: string) => {
