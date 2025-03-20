@@ -24,9 +24,9 @@ import {
   capitalize,
   convertFormGif,
   convertModelSpritName,
+  generateParamForm,
   getDataWithKey,
   getItemSpritePath,
-  getPokemonType,
   splitAndCapitalize,
 } from '../../../util/utils';
 
@@ -65,7 +65,7 @@ class PokemonEvo implements IPokemonEvo {
   id = 0;
   isBaby = false;
   form = '';
-  pokemonType = PokemonType.None;
+  pokemonType = PokemonType.Normal;
   sprite = '';
 
   static create(
@@ -73,7 +73,7 @@ class PokemonEvo implements IPokemonEvo {
     id: number | undefined,
     form: string | null | undefined,
     sprite: string,
-    pokemonType = PokemonType.None,
+    pokemonType = PokemonType.Normal,
     prev = '',
     isBaby = false
   ) {
@@ -118,7 +118,7 @@ const Evolution = (props: IEvolutionComponent) => {
             evo.id,
             FORM_NORMAL,
             convertModelSpritName(name),
-            PokemonType.None,
+            PokemonType.Normal,
             undefined,
             evo.isBaby
           );
@@ -134,7 +134,7 @@ const Evolution = (props: IEvolutionComponent) => {
         currentId,
         FORM_NORMAL,
         convertModelSpritName(name),
-        PokemonType.None,
+        PokemonType.Normal,
         undefined,
         chain.isBaby
       );
@@ -175,8 +175,7 @@ const Evolution = (props: IEvolutionComponent) => {
       sprite = convertModelSpritName(form ? `${name}_${form}` : name);
     }
 
-    const pokemonType = getPokemonType(form);
-    return PokemonEvo.create(name, pokemon.id, form, sprite, pokemonType, pokemon.prev, pokemon.isBaby);
+    return PokemonEvo.create(name, pokemon.id, form, sprite, props.pokemonData?.pokemonType, pokemon.prev, pokemon.isBaby);
   };
 
   const getPrevEvoChainStore = (poke: IPokemonData, result: IPokemonEvo[][]) => {
@@ -418,6 +417,18 @@ const Evolution = (props: IEvolutionComponent) => {
           : { x: -8 },
     };
     const data = getQuestEvo(value.id, form.toUpperCase());
+    const isCurrent =
+      value.id === props.id &&
+      value.pokemonType === props.pokemonData?.pokemonType &&
+      isEqual(
+        form,
+        getValueOrDefault(
+          String,
+          props.pokemonData?.forme?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI),
+          FORM_NORMAL
+        ),
+        EqualMode.IgnoreCaseSensitive
+      );
     return (
       <Fragment>
         <span id={`evo-${evo}-${index}`}>
@@ -647,21 +658,11 @@ const Evolution = (props: IEvolutionComponent) => {
         </span>
         {value.isBaby && <span className="caption text-danger">(Baby)</span>}
         <p>
-          {value.id === props.id &&
-            value.pokemonType === props.pokemonData?.pokemonType &&
-            isEqual(
-              form,
-              getValueOrDefault(
-                String,
-                props.pokemonData?.forme?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI),
-                FORM_NORMAL
-              ),
-              EqualMode.IgnoreCaseSensitive
-            ) && (
-              <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                Current
-              </span>
-            )}
+          {isCurrent && (
+            <span className="caption" style={{ color: theme.palette.customText.caption }}>
+              Current
+            </span>
+          )}
         </p>
       </Fragment>
     );
@@ -772,7 +773,7 @@ const Evolution = (props: IEvolutionComponent) => {
                       ) : (
                         <Link
                           className="select-evo"
-                          to={`/pokemon/${value.id}`}
+                          to={`/pokemon/${value.id}${generateParamForm(props.pokemonData?.forme, value.pokemonType)}`}
                           title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
                         >
                           {renderImageEvo(value, values, evo, index, arrEvoList.length)}
