@@ -95,14 +95,14 @@ export const toFloatWithPadding = (
     (!isNullOrUndefined(options.minValue) && result <= options.minValue) ||
     (!isNullOrUndefined(options.maxValue) && result >= options.maxValue)
   ) {
-    return result.toString();
+    return Math.round(result).toString();
   }
   const paddingResult = padding(parseFloat(result.toFixed(fixedRounding)), fixedRounding);
   if (
     (!isNullOrUndefined(options.minLength) && paddingResult.length <= options.minLength) ||
     (!isNullOrUndefined(options.maxLength) && paddingResult.length >= options.maxLength)
   ) {
-    return result.toString();
+    return Math.round(result).toString();
   }
   return paddingResult;
 };

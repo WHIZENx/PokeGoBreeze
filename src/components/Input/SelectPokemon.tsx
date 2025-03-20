@@ -16,7 +16,7 @@ import { IncludeMode } from '../../util/enums/string.enum';
 import { SelectPosition } from './enums/input-type.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);

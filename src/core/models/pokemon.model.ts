@@ -633,22 +633,6 @@ export class PokemonModel implements IPokemonName {
   }
 }
 
-export interface IWeightHeight {
-  weight: number;
-  height: number;
-}
-
-export class WeightHeight implements IWeightHeight {
-  weight = -1;
-  height = -1;
-
-  static create(value: IWeightHeight) {
-    const obj = new WeightHeight();
-    Object.assign(obj, value);
-    return obj;
-  }
-}
-
 export interface IPokemonProgress {
   isLoadedForms: boolean;
 }

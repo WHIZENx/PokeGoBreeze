@@ -13,7 +13,7 @@ import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../.
 import { InputType, SelectPosition } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
-  const pokemon = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemon = useSelector((state: StoreState) => state.store.data.pokemons);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
 

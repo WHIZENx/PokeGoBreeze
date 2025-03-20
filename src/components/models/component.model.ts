@@ -1,21 +1,13 @@
 /* eslint-disable no-unused-vars */
 import { ReduxRouterState } from '@lagunovsky/redux-react-router';
-import { IForm, IFormSoundCry, IPokemonFormModify, IPokemonSprit, PokemonDataForm } from '../../core/models/API/form.model';
+import { IFormSoundCry, IPokemonFormModify, IPokemonSprit } from '../../core/models/API/form.model';
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
-import {
-  IPokemonData,
-  IPokemonDataStats,
-  IPokemonGenderRatio,
-  IPokemonProgress,
-  IWeightHeight,
-  PokemonRaidModel,
-} from '../../core/models/pokemon.model';
+import { IPokemonData, IPokemonDataStats, IPokemonGenderRatio, PokemonRaidModel } from '../../core/models/pokemon.model';
 import { IToolSearching } from '../../core/models/searching.model';
 import {
   IStatsPokemon,
   IStatsRank,
-  IPokemonStatsRanking,
   IStatsAtk,
   IStatsDef,
   IStatsProd,
@@ -138,11 +130,8 @@ export interface IFormSelectComponent {
 
 export interface IToolsComponent {
   id: number | undefined;
-  currForm: IPokemonFormModify | undefined;
-  formList: IPokemonFormModify[][];
   dataPoke: IPokemonDetail[];
   stats: IStatsRank | null;
-  setForm: ((form: IPokemonFormModify | undefined) => void) | undefined;
   onSetStats: ((type: TypeAction, value: number) => void) | undefined;
   onClearStats: ((reset?: boolean) => void) | undefined;
   isRaid: boolean | undefined;
@@ -152,47 +141,32 @@ export interface IToolsComponent {
 }
 
 export interface IAssetPokemonModelComponent {
-  id: number | undefined;
-  name: string | undefined;
   originSoundCry: IFormSoundCry[];
   isLoadedForms: boolean;
 }
 
 export interface IEvolutionComponent {
-  forme: IForm | undefined;
-  region: string;
-  isFormDefault: boolean;
+  pokemonData: IPokemonData | undefined | null;
   id: number | undefined;
   setId?: (id: number) => void;
   pokemonRouter: ReduxRouterState;
-  pokemonType?: PokemonType;
   isLoadedForms: boolean;
   urlEvolutionChain?: string;
 }
 
 export interface IFormInfoComponent {
   pokemonRouter: ReduxRouterState;
-  form: IPokemonFormModify | undefined;
-  setForm: React.Dispatch<React.SetStateAction<IPokemonFormModify | undefined>>;
-  setOriginForm: React.Dispatch<React.SetStateAction<string | undefined>>;
-  data: IPokemonDetail | undefined;
-  setData: React.Dispatch<React.SetStateAction<IPokemonDetail | undefined>>;
-  setWH: React.Dispatch<React.SetStateAction<IWeightHeight>>;
   pokeData: IPokemonDetail[];
   formList: IPokemonFormModify[][] | undefined;
-  ratio: IPokemonGenderRatio | undefined;
   setId?: (id: number) => void;
-  pokemonDetail: IPokemonData | undefined;
   defaultId: number | undefined;
-  region: string;
-  setProgress: React.Dispatch<React.SetStateAction<IPokemonProgress>>;
   urlEvolutionChain?: string;
   isLoadedForms: boolean;
 }
 
 export interface IFromChangeComponent {
+  pokemonData: IPokemonData | undefined | null;
   currentId: number | undefined;
-  form: IPokemonFormModify | undefined;
 }
 
 export interface IFormSpecialComponent {
@@ -219,10 +193,6 @@ export interface IGenderComponent {
   sex: TypeSex;
   ratio?: IPokemonGenderRatio;
   sprit?: IPokemonSprit;
-}
-
-export interface IInfoComponent {
-  currForm: IPokemonFormModify | undefined;
 }
 
 export interface IDynamicInputCPComponent {
@@ -433,18 +403,11 @@ export interface IWeatherComponent {
 }
 
 export interface ICounterComponent {
-  def: number | undefined;
-  types?: string[];
-  pokemonType?: PokemonType;
+  pokemonData: IPokemonData | undefined | null;
 }
 
 export interface ITableMoveComponent {
-  data: PokemonDataForm | IPokemonStatsRanking | undefined;
-  statATK: number;
-  statDEF: number;
-  statSTA: number;
-  form: IForm | undefined;
-  id?: number;
+  pokemonData: IPokemonData | undefined | null;
   maxHeight?: number | string;
 }
 
@@ -454,8 +417,8 @@ export interface IPokemonTableComponent {
   gen: number | string | undefined;
   region: string | null | undefined;
   version: string | null | undefined;
-  weight: number;
-  height: number;
+  weight: number | undefined;
+  height: number | undefined;
   className?: string;
   isLoadedForms?: boolean;
 }

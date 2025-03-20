@@ -10,13 +10,12 @@ import DEF_LOGO from '../../assets/defense.png';
 import HP_LOGO from '../../assets/hp.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { convertStatsEffort, getFormFromForms, getPokemonFormWithNoneSpecialForm } from '../../util/utils';
+import { getFormFromForms } from '../../util/utils';
 import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
+import { SearchingState } from '../../store/models/state.model';
 import {
   IStatsAtk,
   IStatsDef,
-  IStatsPokemon,
   IStatsProd,
   StatsRankingPokemonGO,
   IStatsSta,
@@ -26,91 +25,90 @@ import {
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
-import { isNotEmpty, toNumber } from '../../util/extension';
+import { isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 
 const Tools = (props: IToolsComponent) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
-  const [currDataPoke, setCurrDataPoke] = useState<IStatsPokemon>();
+  const pokemonData = useSelector((state: SearchingState) => state.searching.pokemon);
+  const currentForm = useSelector((state: SearchingState) => state.searching.form);
   const [currTier, setCurrTier] = useState(props.tier);
-  const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
   const filterFormList = useCallback(
-    (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined) =>
-      getFormFromForms(stats, props.id, props.currForm?.form.formName, props.currForm?.form.pokemonType),
-    [props.id, props.currForm?.form.formName]
+    (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
+      getFormFromForms(stats, props.id, currentForm?.form.formName, currentForm?.form.pokemonType),
+    [props.id, currentForm?.form.formName]
   );
 
   useEffect(() => {
-    const pokemonClass = pokemonData.find((item) => item.num === props.id)?.pokemonClass;
-    if (pokemonClass) {
-      setPokemonClass(pokemonClass);
-    }
-  }, [props.id]);
-
-  useEffect(() => {
-    if (props.tier > 5 && props.currForm?.form.pokemonType !== PokemonType.Mega) {
+    if (props.tier > 5 && currentForm?.form.pokemonType !== PokemonType.Mega) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
-    } else if (props.tier === 5 && props.currForm?.form.pokemonType === PokemonType.Mega && pokemonClass !== PokemonClass.None) {
+    } else if (props.tier === 5 && currentForm?.form.pokemonType === PokemonType.Mega && pokemonData?.pokemonClass !== PokemonClass.None) {
       setCurrTier(6);
       if (props.setTier) {
         props.setTier(6);
       }
     }
-  }, [props.currForm?.form.formName, props.id, props.setTier, props.tier, pokemonClass]);
+  }, [currentForm?.form.formName, props.id, props.setTier, props.tier, pokemonData?.pokemonClass]);
 
   useEffect(() => {
-    const formATK = filterFormList(props.stats?.attack.ranking) as IStatsAtk | undefined;
-    const formDEF = filterFormList(props.stats?.defense.ranking) as IStatsDef | undefined;
-    const formSTA = filterFormList(props.stats?.stamina.ranking) as IStatsSta;
-    const formProd = filterFormList(props.stats?.statProd.ranking) as IStatsProd;
+    if (props.stats) {
+      const formResult: StatsRankingPokemonGO = {
+        atk: filterFormList(props.stats.attack.ranking),
+        def: filterFormList(props.stats.defense.ranking),
+        sta: filterFormList(props.stats.stamina.ranking),
+        prod: filterFormList(props.stats.statProd.ranking),
+      };
 
-    setStatsPokemon({
-      atk:
-        props.isRaid && props.tier > 0 && !props.isHide && formATK
-          ? StatsAtk.create({ ...formATK, attack: calculateRaidStat(formATK.attack, props.tier) })
-          : formATK,
-      def:
-        props.isRaid && props.tier > 0 && !props.isHide && formDEF
-          ? StatsDef.create({ ...formDEF, defense: calculateRaidStat(formDEF.defense, props.tier) })
-          : formDEF,
-      sta:
-        props.isRaid && props.tier > 0 && !props.isHide
-          ? StatsSta.create({ ...formSTA, stamina: RAID_BOSS_TIER[props.tier]?.sta })
-          : formSTA,
-      prod: props.isRaid && props.tier && !props.isHide ? undefined : formProd,
-    });
-    if (props.currForm && isNotEmpty(props.dataPoke)) {
-      setCurrDataPoke(convertStatsEffort(props.dataPoke.find((item) => item.id === props.id)?.stats));
-
-      if (props.onSetStats && formATK && formDEF && formSTA) {
+      setStatsPokemon({
+        atk:
+          props.isRaid && props.tier > 0 && !props.isHide && formResult.atk
+            ? StatsAtk.create({ ...formResult.atk, attack: calculateRaidStat(formResult.atk.attack, props.tier) })
+            : formResult.atk,
+        def:
+          props.isRaid && props.tier > 0 && !props.isHide && formResult.def
+            ? StatsDef.create({ ...formResult.def, defense: calculateRaidStat(formResult.def.defense, props.tier) })
+            : formResult.def,
+        sta:
+          props.isRaid && props.tier > 0 && !props.isHide && formResult.sta
+            ? StatsSta.create({ ...formResult.sta, stamina: RAID_BOSS_TIER[props.tier]?.sta })
+            : formResult.sta,
+        prod: props.isRaid && props.tier && !props.isHide ? undefined : formResult.prod,
+      });
+      if (
+        currentForm &&
+        isNotEmpty(props.dataPoke) &&
+        props.onSetStats &&
+        !isUndefined(formResult.atk) &&
+        !isUndefined(formResult.def) &&
+        !isUndefined(formResult.sta)
+      ) {
         props.onSetStats(
           TypeAction.Atk,
-          props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formATK.attack, props.tier) : toNumber(formATK.attack)
+          props.isRaid && props.tier && !props.isHide
+            ? calculateRaidStat(formResult.atk.attack, props.tier)
+            : toNumber(formResult.atk.attack)
         );
         props.onSetStats(
           TypeAction.Def,
-          props.isRaid && props.tier && !props.isHide ? calculateRaidStat(formDEF.defense, props.tier) : toNumber(formDEF.defense)
+          props.isRaid && props.tier && !props.isHide
+            ? calculateRaidStat(formResult.def.defense, props.tier)
+            : toNumber(formResult.def.defense)
         );
         props.onSetStats(
           TypeAction.Sta,
-          props.isRaid && props.tier && !props.isHide ? RAID_BOSS_TIER[props.tier].sta : toNumber(formSTA.stamina)
+          props.isRaid && props.tier && !props.isHide ? RAID_BOSS_TIER[props.tier].sta : toNumber(formResult.sta.stamina)
         );
-        if (props.setForm) {
-          props.setForm(props.currForm);
-        }
       }
     }
   }, [
     filterFormList,
-    props.currForm,
+    currentForm,
     props.dataPoke,
     props.id,
-    props.setForm,
     props.stats?.attack.ranking,
     props.stats?.defense.ranking,
     props.stats?.stamina.ranking,
@@ -140,15 +138,15 @@ const Tools = (props: IToolsComponent) => {
             <optgroup label="Normal Tiers">
               <option value={1}>Tier 1</option>
               <option value={3}>Tier 3</option>
-              {props.currForm?.form.pokemonType !== PokemonType.Mega && <option value={5}>Tier 5</option>}
+              {currentForm?.form.pokemonType !== PokemonType.Mega && <option value={5}>Tier 5</option>}
             </optgroup>
             <optgroup label="Legacy Tiers">
               <option value={2}>Tier 2</option>
               <option value={4}>Tier 4</option>
             </optgroup>
-            {props.currForm?.form.pokemonType === PokemonType.Mega && (
+            {currentForm?.form.pokemonType === PokemonType.Mega && (
               <Fragment>
-                {pokemonClass !== PokemonClass.None ? (
+                {pokemonData?.pokemonClass !== PokemonClass.None ? (
                   <optgroup label="Legendary Mega Tiers">
                     <option value={6}>Tier Mega</option>
                   </optgroup>
@@ -208,9 +206,9 @@ const Tools = (props: IToolsComponent) => {
           statSTA={statsPokemon?.sta}
           statProd={statsPokemon?.prod}
           pokemonStats={props.stats}
-          stats={currDataPoke}
+          stats={pokemonData?.baseStats}
           id={props.id}
-          form={getPokemonFormWithNoneSpecialForm(props.currForm?.form.formName, props.currForm?.form.pokemonType)?.replaceAll('-', '_')}
+          form={pokemonData?.forme}
         />
       )}
     </Fragment>

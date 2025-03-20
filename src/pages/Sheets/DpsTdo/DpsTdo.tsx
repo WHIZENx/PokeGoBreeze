@@ -317,8 +317,8 @@ const DpsTdo = () => {
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc: string) => {
-      const fMove = data.combat.find((item) => isEqual(item.name, vf));
-      const cMove = data.combat.find((item) => isEqual(item.name, vc));
+      const fMove = data.combats.find((item) => isEqual(item.name, vf));
+      const cMove = data.combats.find((item) => isEqual(item.name, vc));
 
       if (fMove && cMove) {
         const cMoveType = getMoveType(pokemon, vc);
@@ -345,8 +345,8 @@ const DpsTdo = () => {
               atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
               def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
               hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
-              fMove: data.combat.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
-              cMove: data.combat.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
+              fMove: data.combats.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
+              cMove: data.combats.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
               types: dataTargetPokemon.types,
               weatherBoosts: options.weatherBoosts,
             });
@@ -412,7 +412,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
-    data.pokemon.forEach((pokemon) => {
+    data.pokemons.forEach((pokemon) => {
       addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
     setShowSpinner(false);
@@ -467,7 +467,7 @@ const DpsTdo = () => {
         const result = checkPokemonGO(
           item.pokemon.num,
           getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
-          data.pokemon
+          data.pokemons
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, result?.releasedGO);
       }
@@ -537,14 +537,23 @@ const DpsTdo = () => {
   }, [data.typeEff]);
 
   useEffect(() => {
-    if (isNotEmpty(data.pokemon) && isNotEmpty(data.combat)) {
+    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDpsTable(calculateDPSTable());
       }, 300);
       return () => clearTimeout(timeOutId);
     }
-  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, data.pokemon, data.combat, data.options, data.typeEff, data.weatherBoost]);
+  }, [
+    dataTargetPokemon,
+    fMoveTargetPokemon,
+    cMoveTargetPokemon,
+    data.pokemons,
+    data.combats,
+    data.options,
+    data.typeEff,
+    data.weatherBoost,
+  ]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {

@@ -9,7 +9,7 @@ import { combineClasses, isEqual, isNotEmpty } from '../../util/extension';
 import { MoveType } from '../../enums/type.enum';
 
 const CardMove = (props: ICardMoveComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data.combat);
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
 
   const [move, setMove] = useState<ICombat>();
 

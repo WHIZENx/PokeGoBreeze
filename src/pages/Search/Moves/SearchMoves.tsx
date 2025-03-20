@@ -105,7 +105,7 @@ class Filter implements IFilter {
 const Search = () => {
   useChangeTitle('Moves - Search');
   const theme = useTheme<ThemeModify>();
-  const combat = useSelector((state: StoreState) => state.store.data.combat);
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
   const types = useSelector((state: StoreState) => state.store.data.typeEff);
 
   const [filters, setFilters] = useState(new Filter());

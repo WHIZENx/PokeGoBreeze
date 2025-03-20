@@ -59,7 +59,7 @@ import PokemonIconType from '../../../components/Sprites/PokemonIconType/Pokemon
 const TeamPVP = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
-  const allMoves = useSelector((state: StoreState) => state.store.data.combat.map((c) => c.name));
+  const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
@@ -79,7 +79,7 @@ const TeamPVP = () => {
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-    const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
+    const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
     const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
 
@@ -141,10 +141,10 @@ const TeamPVP = () => {
     if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
       loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
     }
-    if (isNotEmpty(dataStore.combat) && dataStore.combat.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [pvp, dataStore.combat]);
+  }, [pvp, dataStore.combats]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -198,8 +198,8 @@ const TeamPVP = () => {
       !rankingData &&
       isNotEmpty(pvp.rankings) &&
       isNotEmpty(pvp.trains) &&
-      isNotEmpty(dataStore.combat) &&
-      isNotEmpty(dataStore.pokemon) &&
+      isNotEmpty(dataStore.combats) &&
+      isNotEmpty(dataStore.pokemons) &&
       isNotEmpty(dataStore.assets) &&
       statsRanking
     ) {
@@ -208,7 +208,7 @@ const TeamPVP = () => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore.combat, dataStore.pokemon, dataStore.assets, statsRanking]);
+  }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore.combats, dataStore.pokemons, dataStore.assets, statsRanking]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
@@ -257,7 +257,7 @@ const TeamPVP = () => {
     }
 
     for (const name of nameSet) {
-      move = dataStore.combat.find(
+      move = dataStore.combats.find(
         (item) =>
           (item.abbreviation && isEqual(item.abbreviation, tag)) ||
           (!item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(name)))
@@ -268,7 +268,7 @@ const TeamPVP = () => {
     }
 
     nameSet = findMoveTeam(tag, allMoves, true);
-    move = dataStore.combat.find(
+    move = dataStore.combats.find(
       (item) =>
         (item.abbreviation && isEqual(item.abbreviation, tag)) ||
         (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))

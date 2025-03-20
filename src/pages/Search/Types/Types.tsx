@@ -198,16 +198,16 @@ const SearchTypes = () => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data.combat) && isNotEmpty(data.pokemon)) {
+    if (isNotEmpty(data.combats) && isNotEmpty(data.pokemons)) {
       setAllData(
         PokemonTypeData.create({
-          pokemon: data.pokemon.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-          fastMoves: data.combat.filter((type) => type.typeMove === TypeMove.Fast).length,
-          chargedMoves: data.combat.filter((type) => type.typeMove === TypeMove.Charge).length,
+          pokemon: data.pokemons.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+          fastMoves: data.combats.filter((type) => type.typeMove === TypeMove.Fast).length,
+          chargedMoves: data.combats.filter((type) => type.typeMove === TypeMove.Charge).length,
         })
       );
     }
-  }, [releasedGO, data.combat, data.pokemon]);
+  }, [releasedGO, data.combats, data.pokemons]);
 
   useEffect(() => {
     setTypeList(Object.keys(data.typeEff));
@@ -220,18 +220,18 @@ const SearchTypes = () => {
   }, [typeList, currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data.pokemon) && isNotEmpty(data.combat)) {
+    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
       setResult(
         PokemonTypeMove.create({
-          pokemonList: data.pokemon
+          pokemonList: data.pokemons
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
-          fastMove: data.combat.filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
-          chargedMove: data.combat.filter((type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)),
+          fastMove: data.combats.filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
+          chargedMove: data.combats.filter((type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)),
         })
       );
     }
-  }, [currentType, releasedGO, data.pokemon, data.combat]);
+  }, [currentType, releasedGO, data.pokemons, data.combats]);
 
   const changeType = (value: string) => {
     setShowType(false);
