@@ -1,3 +1,5 @@
+import { PokemonType } from '../../enums/type.enum';
+
 export interface OptionsRank {
   minRank: number;
   maxRank: number;
@@ -251,6 +253,8 @@ export interface IPokemonStatsRanking {
   types: string[] | undefined;
   url?: string;
   releasedGO: boolean;
+  fullName?: string;
+  pokemonType?: PokemonType;
 }
 
 export class PokemonStatsRanking implements IPokemonStatsRanking {
@@ -274,6 +278,8 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   types: string[] | undefined = [];
   url?: string;
   releasedGO = false;
+  fullName?: string;
+  pokemonType?: PokemonType;
 
   static create(value: IPokemonStatsRanking) {
     const obj = new PokemonStatsRanking();

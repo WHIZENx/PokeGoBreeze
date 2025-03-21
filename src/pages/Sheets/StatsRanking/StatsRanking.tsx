@@ -23,7 +23,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
 import { StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
-import { IPokemonStatsRanking, PokemonStatsRanking } from '../../../core/models/stats.model';
+import { IPokemonStatsRanking, PokemonStatsRanking, StatsAtk, StatsDef, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { ColumnType } from './enums/column-type.enum';
@@ -181,22 +181,24 @@ const StatsRanking = () => {
       return PokemonStatsRanking.create({
         ...data,
         releasedGO: details.releasedGO,
-        atk: {
+        pokemonType: details.pokemonType,
+        fullName: details.fullName,
+        atk: StatsAtk.create({
           attack: statsTag.atk,
           rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === statsTag.atk)?.rank),
-        },
-        def: {
+        }),
+        def: StatsDef.create({
           defense: statsTag.def,
           rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === statsTag.def)?.rank),
-        },
-        sta: {
+        }),
+        sta: StatsSta.create({
           stamina: statsTag.sta,
           rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === statsTag.sta)?.rank),
-        },
-        prod: {
+        }),
+        prod: StatsProd.create({
           product,
           rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === product)?.rank),
-        },
+        }),
       });
     });
 
@@ -278,9 +280,11 @@ const StatsRanking = () => {
 
   useEffect(() => {
     if (isNotEmpty(pokemons) && !isNotEmpty(pokemonList)) {
-      const pokemon = sortRanking(mappingData(pokemons.filter((pokemon) => pokemon.num > 0)), sortId);
-      setPokemonList(pokemon);
-      setPokemonFilter(pokemon);
+      const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
+      const mapping = mappingData(pokemon);
+      const pokemonList = sortRanking(mapping, sortId);
+      setPokemonList(pokemonList);
+      setPokemonFilter(pokemonList);
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     }
   }, [pokemonList, pokemons]);
@@ -299,6 +303,11 @@ const StatsRanking = () => {
       const index = pokemonFilter.findIndex((row) => row.num === id && isEqual(row.forme, form, EqualMode.IgnoreCaseSensitive));
       if (index > -1) {
         const result = pokemonFilter[index];
+
+        const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
+        const details = getPokemonDetails(pokemon, id, result.fullName, result.pokemonType, true);
+        setPokemon(details);
+
         setPage(Math.ceil((index + 1) / defaultPerPages));
         setSelect(result);
         setSortId(getSortId());
