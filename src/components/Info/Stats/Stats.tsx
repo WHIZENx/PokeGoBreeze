@@ -37,7 +37,7 @@ class CurrentStats implements ICurrentStats {
 
 const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
-  const theme: ThemeModify = useTheme();
+  const theme = useTheme<ThemeModify>();
   const [isAvailable, setIsAvailable] = useState(new StatsRankPokemonGO());
 
   const [currentStats, setCurrentStats] = useState(new CurrentStats());
