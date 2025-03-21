@@ -233,6 +233,7 @@ export class StatsProd implements IStatsProd {
 }
 
 export interface IPokemonStatsRanking {
+  id?: number;
   num: number;
   name: string;
   slug: string;
@@ -258,6 +259,7 @@ export interface IPokemonStatsRanking {
 }
 
 export class PokemonStatsRanking implements IPokemonStatsRanking {
+  id?: number;
   num = 0;
   name = '';
   slug = '';
