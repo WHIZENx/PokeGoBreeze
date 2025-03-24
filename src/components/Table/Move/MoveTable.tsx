@@ -214,7 +214,11 @@ const TableMove = (props: ITableMoveComponent) => {
     const tableType = getPropertyName<TableSort, 'defensive' | 'offensive'>(stateSorted, (o) =>
       type === TableType.Offensive ? o.offensive : o.defensive
     );
-    const ratio = toFloatWithPadding((value.eDPS[tableType] * 100) / toNumber(max, 1), 2, FloatPaddingOption.setOptions({ maxValue: 100 }));
+    const ratio = toFloatWithPadding(
+      (value.eDPS[tableType] * 100) / toNumber(max, 1),
+      2,
+      FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })
+    );
     return (
       <tr>
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>

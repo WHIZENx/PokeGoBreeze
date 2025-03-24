@@ -160,7 +160,8 @@ export const loadGameMaster = (
 
       dispatch(SpinnerActions.SetPercent.create(60));
 
-      dispatch(StoreActions.SetOptions.create(optionSettings(gm.data)));
+      const options = optionSettings(gm.data);
+      dispatch(StoreActions.SetOptions.create(options));
       dispatch(StoreActions.SetTrainer.create(optionTrainer(gm.data)));
       dispatch(StoreActions.SetTypeEff.create(typeEff));
       dispatch(StoreActions.SetWeatherBoost.create(weatherBoost));
@@ -183,7 +184,7 @@ export const loadGameMaster = (
       }
 
       dispatch(SpinnerActions.SetPercent.create(90));
-      dispatch(StatsActions.SetStats.create(pokemon));
+      dispatch(StatsActions.SetStats.create({ pokemon, options }));
 
       dispatch(SpinnerActions.SetPercent.create(100));
       setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);

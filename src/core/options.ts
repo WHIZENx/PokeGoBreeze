@@ -217,7 +217,7 @@ const findPokemonData = (id: number, name: string, isDefault = false) =>
   Object.values(pokemonStoreData).find(
     (pokemon) =>
       pokemon.num === id && isEqual(name, convertPokemonDataName(isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug))
-  ) as IPokemonData | undefined;
+  );
 
 const convertAndReplaceNameGO = (name: string, defaultName = '') =>
   getValueOrDefault(String, name)
@@ -303,8 +303,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
       optional.baseForme = convertPokemonDataName(pokemonBaseData.baseForme);
       optional.region = pokemonBaseData.region;
       optional.version = pokemonBaseData.version;
-      pokemon.pokedexHeightM = pokemonBaseData.heightM;
-      pokemon.pokedexWeightKg = pokemonBaseData.weightKg;
+      pokemon.pokedexHeightM = pokemonBaseData.heightm;
+      pokemon.pokedexWeightKg = pokemonBaseData.weightkg;
       optional.isBaby = pokemonBaseData.isBaby;
 
       if (!pokemon.stats?.baseAttack && !pokemon.stats?.baseDefense && !pokemon.stats?.baseStamina) {
