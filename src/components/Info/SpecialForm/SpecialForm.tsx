@@ -13,8 +13,8 @@ import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
-  const evoData = useSelector((state: StoreState) => state.store.data.pokemon);
-  const combat = useSelector((state: StoreState) => state.store.data.combat);
+  const evoData = useSelector((state: StoreState) => state.store.data.pokemons);
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
 
   const [pokemonType, setPokemonType] = useState(PokemonType.None);
   const [arrEvoList, setArrEvoList] = useState<IForm[]>();

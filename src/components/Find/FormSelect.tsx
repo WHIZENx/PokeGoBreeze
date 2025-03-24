@@ -10,6 +10,7 @@ import {
   generatePokemonGoForms,
   getItemSpritePath,
   getPokemonById,
+  getPokemonDetails,
   getPokemonType,
   getValidPokemonImgPath,
   splitAndCapitalize,
@@ -189,7 +190,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         id,
         name: currentForm.defaultName,
         form: currentForm.form.formName,
-        formType: currentForm.form.pokemonType,
+        pokemonType: currentForm.form.pokemonType,
         fullName: currentForm.form.name,
         timestamp: new Date(),
       });
@@ -209,6 +210,10 @@ const FormSelect = (props: IFormSelectComponent) => {
         });
         dispatch(SearchingActions.SetPokemonToolSearch.create(result));
       }
+      const formName = getValueOrDefault(String, currentForm.form.name, currentForm.form.formName, currentForm.defaultName);
+      const details = getPokemonDetails(props.pokemonData, id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
+      details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
+      dispatch(SearchingActions.SetPokemon.create(details));
     }
   }, [currentForm, dispatch]);
 
@@ -242,6 +247,9 @@ const FormSelect = (props: IFormSelectComponent) => {
     setCurrentForm(undefined);
     const findForm = formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
     setCurrentForm(findForm);
+    if (findForm) {
+      dispatch(SearchingActions.SetPokemonForm.create(findForm));
+    }
     if (props.onClearStats) {
       props.onClearStats();
     }
@@ -416,11 +424,8 @@ const FormSelect = (props: IFormSelectComponent) => {
         isRaid={isRaid}
         tier={tier}
         setTier={onSetTier}
-        setForm={props.setForm}
         id={dataStorePokemon?.current?.id}
         dataPoke={pokeData}
-        currForm={currentForm}
-        formList={formList}
         stats={props.stats}
         onSetStats={props.onHandleSetStats}
         onClearStats={props.onClearStats}

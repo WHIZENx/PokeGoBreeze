@@ -93,7 +93,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                   <h6>Weight:</h6>
                 </div>
                 <div className="d-inline-block">
-                  {reload(<h6>{props.weight >= 0 && `${toFloatWithPadding(props.weight / 10, 2)} kg`}</h6>)}
+                  {reload(<h6>{!isUndefined(props.weight) && `${toFloatWithPadding(props.weight / 10, 2)} kg`}</h6>)}
                 </div>
               </div>
             </div>
@@ -103,7 +103,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                   <h6>Height:</h6>
                 </div>
                 <div className="d-inline-block">
-                  {reload(<h6>{props.height >= 0 && `${toFloatWithPadding(props.height / 10, 2)} m`}</h6>)}
+                  {reload(<h6>{!isUndefined(props.height) && `${toFloatWithPadding(props.height / 10, 2)} m`}</h6>)}
                 </div>
               </div>
             </div>

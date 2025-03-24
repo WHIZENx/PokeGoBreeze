@@ -1,5 +1,5 @@
-import { DynamicObj, toNumber } from '../../../util/extension';
-import { splitAndCapitalize } from '../../../util/utils';
+import { DynamicObj } from '../../../util/extension';
+import { getGenerationPokemon, splitAndCapitalize } from '../../../util/utils';
 import { IPokemonSprit, PokemonSprit } from './form.model';
 import { Path } from './species.model';
 
@@ -337,7 +337,7 @@ class InfoEvoChain implements IInfoEvoChain {
 
   static mapping(value: PokemonInfoEvoChain) {
     const obj = new InfoEvoChain();
-    obj.id = toNumber(value.species.url.split('/')[6]);
+    obj.id = getGenerationPokemon(value.species.url);
     obj.name = splitAndCapitalize(value.species.name, '-', ' ');
     obj.evolutionDetails = value.evolution_details;
     obj.evolvesTo = value.evolves_to.map((v) => this.mapping(v));

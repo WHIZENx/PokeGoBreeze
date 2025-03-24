@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 import { IPokemonData } from '../../core/models/pokemon.model';
+import { IOptions } from '../../core/models/options.model';
 
 export enum StatsActionTypes {
   setStats = '[Stats] SetStats',
@@ -10,9 +11,9 @@ export enum StatsActionTypes {
 export class SetStats implements Action {
   readonly type = StatsActionTypes.setStats;
 
-  constructor(public payload: IPokemonData[]) {}
+  constructor(public payload: { pokemon: IPokemonData[]; options?: IOptions }) {}
 
-  static create(value: IPokemonData[]) {
+  static create(value: { pokemon: IPokemonData[]; options?: IOptions }) {
     const { type, payload } = new SetStats(value);
     return {
       type,

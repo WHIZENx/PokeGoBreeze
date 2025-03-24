@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { OptionsPokemon } from '../../core/models/pokemon.model';
 import { ISearchingModel } from '../../store/models/searching.model';
 import { IBattlePokemonData } from '../../core/models/pvp.model';
@@ -14,7 +13,6 @@ export interface IMovePage {
 }
 
 export interface IAlertReleasedComponent {
-  isReleased: boolean;
   formName: string | undefined;
   pokemonType?: PokemonType;
   icon: string | undefined;
@@ -22,7 +20,6 @@ export interface IAlertReleasedComponent {
 
 export interface ISearchBarComponent {
   data: OptionsPokemon | undefined;
-  router: ReduxRouterState;
   onDecId?: () => void;
   onIncId?: () => void;
 }
@@ -32,7 +29,6 @@ export interface ISearchBarMainComponent {
 }
 
 export interface IPokemonPage {
-  prevRouter?: ReduxRouterState;
   searching?: ISearchingModel | null;
   id?: string;
   onDecId?: () => void;
@@ -54,6 +50,7 @@ export interface IDamageTableComponent {
 }
 
 export interface IStatsTableComponent {
+  pokemonType?: PokemonType;
   setStatType?: React.Dispatch<React.SetStateAction<PokemonType>>;
   setStatLevel?: React.Dispatch<React.SetStateAction<number>>;
   statATK: number;

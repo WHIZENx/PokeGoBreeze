@@ -23,7 +23,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
     const maxCP = toNumber(props.cp);
     id = toNumber(id);
     let prevCurrentStats = new BattleBaseStats();
-    if (maxCP === BattleLeagueCPType.InsMaster) {
+    if (maxCP > BattleLeagueCPType.Ultra) {
       prevCurrentStats = calculateStatsTopRank(stats, id, maxCP, MAX_LEVEL - 1);
     }
     const currentStats = calculateStatsTopRank(stats, id, maxCP);
@@ -51,14 +51,14 @@ const OverAllStats = (props: OverAllStatsComponent) => {
       <li className="element-top">
         {'CP: '}
         <b>
-          {data?.maxCP === BattleLeagueCPType.InsMaster
-            ? `${data.prevCurrentStats.CP}-${data.currentStats.CP}`
+          {toNumber(data?.maxCP) > BattleLeagueCPType.Ultra
+            ? `${data?.prevCurrentStats.CP}-${data?.currentStats.CP}`
             : `${toNumber(data?.currentStats.CP)}`}
         </b>
       </li>
       <li className={toNumber(data?.level) <= 40 ? 'element-top' : ''}>
-        Level: <b>{data?.maxCP === BattleLeagueCPType.InsMaster ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${toNumber(data?.level)}`} </b>
-        {(toNumber(data?.level) > 40 || data?.maxCP === BattleLeagueCPType.InsMaster) && (
+        Level: <b>{toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${toNumber(data?.level)}`} </b>
+        {(toNumber(data?.level) > 40 || toNumber(data?.maxCP) > BattleLeagueCPType.Ultra) && (
           <b>
             (
             <CandyXL id={data?.id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
@@ -69,17 +69,17 @@ const OverAllStats = (props: OverAllStatsComponent) => {
       <li className="element-top">
         <IVBar
           title="Attack"
-          iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.atk)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.atk)}
           style={{ maxWidth: 500 }}
         />
         <IVBar
           title="Defense"
-          iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.def)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.def)}
           style={{ maxWidth: 500 }}
         />
         <IVBar
           title="HP"
-          iv={data?.maxCP === BattleLeagueCPType.InsMaster ? MAX_IV : toNumber(data?.currentStats.IV?.sta)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.sta)}
           style={{ maxWidth: 500 }}
         />
       </li>
@@ -101,11 +101,11 @@ const OverAllStats = (props: OverAllStatsComponent) => {
               size={180}
               stats={HexagonStats.create({
                 lead: toNumber(props.data?.data?.scores?.at(0)),
+                closer: toNumber(props.data?.data?.scores?.at(1)),
+                switching: toNumber(props.data?.data?.scores?.at(2)),
+                charger: toNumber(props.data?.data?.scores?.at(3)),
                 atk: toNumber(props.data?.data?.scores?.at(4)),
                 cons: toNumber(props.data?.data?.scores?.at(5)),
-                closer: toNumber(props.data?.data?.scores?.at(1)),
-                charger: toNumber(props.data?.data?.scores?.at(3)),
-                switching: toNumber(props.data?.data?.scores?.at(2)),
               })}
             />
           </div>

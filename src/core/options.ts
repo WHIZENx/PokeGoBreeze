@@ -217,7 +217,7 @@ const findPokemonData = (id: number, name: string, isDefault = false) =>
   Object.values(pokemonStoreData).find(
     (pokemon) =>
       pokemon.num === id && isEqual(name, convertPokemonDataName(isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug))
-  ) as IPokemonData | undefined;
+  );
 
 const convertAndReplaceNameGO = (name: string, defaultName = '') =>
   getValueOrDefault(String, name)
@@ -303,8 +303,8 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
       optional.baseForme = convertPokemonDataName(pokemonBaseData.baseForme);
       optional.region = pokemonBaseData.region;
       optional.version = pokemonBaseData.version;
-      pokemon.pokedexHeightM = pokemonBaseData.heightM;
-      pokemon.pokedexWeightKg = pokemonBaseData.weightKg;
+      pokemon.pokedexHeightM = pokemonBaseData.heightm;
+      pokemon.pokedexWeightKg = pokemonBaseData.weightkg;
       optional.isBaby = pokemonBaseData.isBaby;
 
       if (!pokemon.stats?.baseAttack && !pokemon.stats?.baseDefense && !pokemon.stats?.baseStamina) {
@@ -497,6 +497,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
   result = cleanPokemonDupForm(result);
 
   addPokemonGMaxMove(data, result);
+  addPokemonFormChangeMove(result);
 
   return result.sort((a, b) => a.num - b.num);
 };
@@ -562,7 +563,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         });
 
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
-        if (tempEvo) {
+        if (tempEvo && isNotEmpty(types)) {
           pokemon.stats = tempEvo.stats;
           types[0] = tempEvo.typeOverride1.replace('POKEMON_TYPE_', '');
           if (tempEvo.typeOverride2) {
@@ -574,7 +575,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
             pokemon.stats = StatsGO.create({
               baseAttack: stats.atk,
               baseDefense: stats.def,
-              baseStamina: toNumber(stats.sta),
+              baseStamina: stats.sta,
             });
           } else {
             pokemon.stats = pokemonSettings.stats;
@@ -587,7 +588,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         pokemon.stats = StatsGO.create({
           baseAttack: stats.atk,
           baseDefense: stats.def,
-          baseStamina: toNumber(stats.sta),
+          baseStamina: stats.sta,
         });
       }
 
@@ -619,6 +620,37 @@ const cleanPokemonDupForm = (result: IPokemonData[]) =>
     }
     return true;
   });
+
+const addPokemonFormChangeMove = (result: IPokemonData[]) => {
+  result
+    .filter((pokemon) => pokemon.formChange)
+    .forEach((pokemon) => {
+      pokemon.formChange?.forEach((form) => {
+        if (form.componentPokemonSettings) {
+          const id = result.find((r) => isEqual(r.pokemonId, form.componentPokemonSettings?.pokedexId))?.num;
+          form.componentPokemonSettings.id = toNumber(id);
+        }
+        if (form.moveReassignment && isNotEmpty(form.availableForm) && isNotEmpty(form.moveReassignment.cinematicMoves)) {
+          form.availableForm.forEach((availableForm) => {
+            const pokemonChange = result.find((pc) => isEqual(pc.fullName, availableForm));
+            if (pokemonChange) {
+              form.moveReassignment?.cinematicMoves?.forEach((move) => {
+                if (move.existingMoves && isNotEmpty(move.existingMoves)) {
+                  pokemonChange.cinematicMoves = pokemonChange.cinematicMoves?.filter((pm) => !move.existingMoves?.includes(pm));
+                }
+                if (move.replacementMoves && isNotEmpty(move.replacementMoves)) {
+                  if (isNullOrUndefined(pokemonChange.exclusiveMoves)) {
+                    pokemonChange.exclusiveMoves = [];
+                  }
+                  pokemonChange.exclusiveMoves.push(...move.replacementMoves);
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+};
 
 const addPokemonGMaxMove = (data: PokemonDataGM[], result: IPokemonData[]) => {
   const template = data.find((gm) => isEqual(gm.templateId, 'SOURDOUGH_MOVE_MAPPING_SETTINGS'));

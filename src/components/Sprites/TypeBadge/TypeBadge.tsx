@@ -12,7 +12,7 @@ import { MoveType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data.combat);
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {

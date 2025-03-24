@@ -87,9 +87,9 @@ const FindBattle = () => {
       }
       let curr;
       if (form === FORM_NORMAL) {
-        curr = dataStore.pokemon.find((item) => isIncludeList(currId, item.num) && isEqual(form, item.forme));
+        curr = dataStore.pokemons.find((item) => isIncludeList(currId, item.num) && isEqual(form, item.forme));
       } else {
-        curr = dataStore.pokemon.find((item) => isIncludeList(currId, item.num) && isInclude(item.forme, form));
+        curr = dataStore.pokemons.find((item) => isIncludeList(currId, item.num) && isInclude(item.forme, form));
       }
       if (
         !isIncludeList(
@@ -115,7 +115,7 @@ const FindBattle = () => {
         arr
       );
     },
-    [dataStore.pokemon]
+    [dataStore.pokemons]
   );
 
   const prevEvoChain = useCallback(
@@ -138,7 +138,7 @@ const FindBattle = () => {
       obj.evoList?.forEach((i) => {
         currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = dataStore.pokemon.filter((item) =>
+      const curr = dataStore.pokemons.filter((item) =>
         item.evoList?.find((i) => obj.num === i.evoToId && isEqual(i.evoToForm, defaultForm))
       );
       if (isNotEmpty(curr)) {
@@ -147,28 +147,28 @@ const FindBattle = () => {
         result.push(arr);
       }
     },
-    [currEvoChain, dataStore.pokemon]
+    [currEvoChain, dataStore.pokemons]
   );
 
   const getEvoChain = useCallback(
     (id: number) => {
       const currentForm = getValueOrDefault(String, form?.form.formName?.replaceAll('-', '_').toUpperCase(), FORM_NORMAL);
-      let curr = dataStore.pokemon.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
+      let curr = dataStore.pokemons.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
       if (!isNotEmpty(curr)) {
         if (currentForm === FORM_NORMAL) {
-          curr = dataStore.pokemon.filter((item) => id === item.num && isEqual(currentForm, item.forme));
+          curr = dataStore.pokemons.filter((item) => id === item.num && isEqual(currentForm, item.forme));
         } else {
-          curr = dataStore.pokemon.filter((item) => id === item.num && isInclude(item.forme, currentForm));
+          curr = dataStore.pokemons.filter((item) => id === item.num && isInclude(item.forme, currentForm));
         }
       }
       if (!isNotEmpty(curr)) {
-        curr = dataStore.pokemon.filter((item) => id === item.num && item.forme === FORM_NORMAL);
+        curr = dataStore.pokemons.filter((item) => id === item.num && item.forme === FORM_NORMAL);
       }
       const result: IEvolution[][] = [];
       curr?.forEach((item) => prevEvoChain(item, currentForm, [], result));
       return result;
     },
-    [prevEvoChain, form, dataStore.pokemon]
+    [prevEvoChain, form, dataStore.pokemons]
   );
 
   const searchStatsPoke = useCallback(
@@ -177,7 +177,7 @@ const FindBattle = () => {
       getEvoChain(id).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(dataStore.options, dataStore.pokemon, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(dataStore.options, dataStore.pokemons, value, level, ATKIv, DEFIv, STAIv);
           if (data.id === id) {
             setMaxCP(data.maxCP);
           }

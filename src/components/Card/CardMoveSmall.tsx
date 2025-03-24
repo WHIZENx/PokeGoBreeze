@@ -12,7 +12,7 @@ import { MoveType } from '../../enums/type.enum';
 import { ICombat } from '../../core/models/combat.model';
 
 const CardMoveSmall = (props: ICardSmallComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data.combat);
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
 
   const [move, setMove] = useState<ICombat>();
 

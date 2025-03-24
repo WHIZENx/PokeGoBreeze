@@ -20,7 +20,7 @@ import { SpinnerActions } from '../../../store/actions';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const dispatch = useDispatch();
-  const combat = useSelector((state: StoreState) => state.store.data.combat);
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);

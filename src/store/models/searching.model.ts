@@ -4,7 +4,7 @@ export interface ISearchingModel {
   id: number;
   name?: string;
   form?: string | null;
-  formType?: PokemonType;
+  pokemonType?: PokemonType;
   fullName?: string;
   timestamp: Date;
 }
@@ -13,7 +13,7 @@ export class SearchingModel implements ISearchingModel {
   id = 0;
   name?: string;
   form?: string | null;
-  formType?: PokemonType;
+  pokemonType?: PokemonType;
   fullName?: string;
   timestamp = new Date();
 

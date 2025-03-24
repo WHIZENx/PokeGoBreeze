@@ -77,11 +77,13 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               alt="pokemon-img"
               src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
               onError={(e) => {
+                const form = props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default;
+                const formList = form.split('/');
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = getValidPokemonImgPath(
                   e.currentTarget.src,
                   props.id,
-                  props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default
+                  formList[formList.length - 1].replace('.png', '')
                 );
               }}
             />

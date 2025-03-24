@@ -6,14 +6,14 @@ import CardMove from '../Card/CardMove';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
-import { ISelectMoveModel } from './models/select-move.model';
+import { ISelectMoveModel, ISelectMovePokemonModel } from './models/select-move.model';
 import { addSelectMovesByType, retrieveMoves } from '../../util/utils';
 import { ISelectMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 import { InputType, SelectPosition } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {
-  const pokemon = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemon = useSelector((state: StoreState) => state.store.data.pokemons);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
   const [showMove, setShowMove] = useState(false);
 
@@ -28,8 +28,8 @@ const SelectMove = (props: ISelectMoveComponent) => {
   };
 
   const findMove = useCallback(
-    (id: number | undefined, form: string | null | undefined, type: TypeMove, selected = false) => {
-      const result = retrieveMoves(pokemon, id, form);
+    (selectPokemon: ISelectMovePokemonModel | undefined, type: TypeMove, selected = false) => {
+      const result = retrieveMoves(pokemon, selectPokemon?.id, selectPokemon?.form, selectPokemon?.pokemonType);
       if (result) {
         const simpleMove = addSelectMovesByType(result, type);
         if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
@@ -43,13 +43,13 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   useEffect(() => {
     if (isNotEmpty(pokemon)) {
-      if (toNumber(props.pokemon?.num) > 0) {
-        findMove(props.pokemon?.num, props.pokemon?.forme, props.moveType, props.isSelected);
+      if (toNumber(props.pokemon?.id) > 0) {
+        findMove(props.pokemon, props.moveType, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
     }
-  }, [props.pokemon?.num, props.pokemon?.forme, props.isSelected, resultMove.length, pokemon, findMove]);
+  }, [props.pokemon, props.isSelected, resultMove.length, pokemon, findMove]);
 
   const smallCardInput = () => (
     <CardMoveSmall value={props.move} isShow={Boolean(props.pokemon)} isDisable={props.isDisable} isSelect={resultMove.length > 1} />

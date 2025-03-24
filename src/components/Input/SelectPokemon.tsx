@@ -16,7 +16,7 @@ import { IncludeMode } from '../../util/enums/string.enum';
 import { SelectPosition } from './enums/input-type.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -49,10 +49,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
         props.setCurrentPokemon(value);
       }
       if (props.isSelected && props.setFMovePokemon) {
-        props.setFMovePokemon(findMove(value.num, value.forme, TypeMove.Fast));
+        props.setFMovePokemon(findMove(value, TypeMove.Fast));
       }
       if (props.isSelected && props.setCMovePokemon) {
-        props.setCMovePokemon(findMove(value.num, value.forme, TypeMove.Charge));
+        props.setCMovePokemon(findMove(value, TypeMove.Charge));
       }
       if (props.clearData) {
         props.clearData();
@@ -77,8 +77,8 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
     }
   };
 
-  const findMove = (id: number, form: string | null | undefined, type: TypeMove) => {
-    const result = retrieveMoves(pokemonData, id, form);
+  const findMove = (value: IPokemonData, type: TypeMove) => {
+    const result = retrieveMoves(pokemonData, value.num, value.forme, value.pokemonType);
     if (result) {
       const simpleMove = addSelectMovesByType(result, type);
       return simpleMove[0];

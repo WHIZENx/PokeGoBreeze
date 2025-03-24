@@ -23,7 +23,7 @@ const Search = () => {
   const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
-  const pokemonName = useSelector((state: StoreState) => state.store.data.pokemon);
+  const pokemonName = useSelector((state: StoreState) => state.store.data.pokemons);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -167,15 +167,7 @@ const Search = () => {
             ))}
           </Fragment>
         </div>
-        <Pokemon
-          id={id.toString()}
-          setId={setId}
-          onIncId={incId}
-          onDecId={decId}
-          isSearch={true}
-          prevRouter={router}
-          searching={searching}
-        />
+        <Pokemon id={id.toString()} setId={setId} onIncId={incId} onDecId={decId} isSearch={true} searching={searching} />
       </div>
     </Fragment>
   );

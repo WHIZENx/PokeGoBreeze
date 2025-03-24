@@ -27,18 +27,30 @@ export interface IPokemonDataStats {
 }
 
 interface ComponentPokemonSettings {
+  id: number;
   pokedexId: string;
   componentCandyCost: number;
   formChangeType: string;
+  familyId: string;
+}
+
+interface MoveReassignType {
+  existingMoves?: string[];
+  replacementMoves?: string[];
+}
+
+interface MoveReassignment {
+  cinematicMoves?: MoveReassignType[];
 }
 
 interface IPokemonFormChange {
   availableForm: string[];
-  candyCost: string;
-  stardustCost: string;
+  candyCost?: string;
+  stardustCost?: string;
   item?: string;
   itemCostCount?: number;
   componentPokemonSettings?: ComponentPokemonSettings;
+  moveReassignment?: MoveReassignment;
 }
 
 interface QuestDisplay {
@@ -618,22 +630,6 @@ export class PokemonModel implements IPokemonName {
     if (settings) {
       Object.assign(this, { ...settings });
     }
-  }
-}
-
-export interface IWeightHeight {
-  weight: number;
-  height: number;
-}
-
-export class WeightHeight implements IWeightHeight {
-  weight = -1;
-  height = -1;
-
-  static create(value: IWeightHeight) {
-    const obj = new WeightHeight();
-    Object.assign(obj, value);
-    return obj;
   }
 }
 

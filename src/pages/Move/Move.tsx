@@ -157,8 +157,8 @@ const Move = (props: IMovePage) => {
 
   const queryMoveData = useCallback(
     (id: number) => {
-      if (isNotEmpty(data.combat)) {
-        const moves = data.combat.filter((item) => item.track === id || item.id === id);
+      if (isNotEmpty(data.combats)) {
+        const moves = data.combats.filter((item) => item.track === id || item.id === id);
         let move = moves.find((item) => item.id === id);
         if (move?.isMultipleWithType) {
           let type = searchParams.get(Params.MoveType);
@@ -185,7 +185,7 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, data.combat]
+    [enqueueSnackbar, data.combats]
   );
 
   useEffect(() => {
@@ -198,12 +198,12 @@ const Move = (props: IMovePage) => {
   }, [params.id, props.id, queryMoveData, move]);
 
   useEffect(() => {
-    if (move && isNotEmpty(data.pokemon)) {
-      const result = queryTopMove(data.options, data.pokemon, data.typeEff, data.weatherBoost, move);
+    if (move && isNotEmpty(data.pokemons)) {
+      const result = queryTopMove(data.options, data.pokemons, data.typeEff, data.weatherBoost, move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, data.options, data.pokemon, data.typeEff, data.weatherBoost]);
+  }, [move, data.options, data.pokemons, data.typeEff, data.weatherBoost]);
 
   useEffect(() => {
     setTopListFilter(
@@ -215,7 +215,7 @@ const Move = (props: IMovePage) => {
           const result = checkPokemonGO(
             pokemon.num,
             convertPokemonDataName(getValueOrDefault(String, pokemon.sprite, pokemon.name.replaceAll(' ', '_'))),
-            data.pokemon
+            data.pokemons
           );
           return result?.releasedGO;
         }
@@ -226,13 +226,13 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     const type = searchParams.get(Params.MoveType);
-    if (isNotEmpty(data.combat) && move?.isMultipleWithType && type) {
+    if (isNotEmpty(data.combats) && move?.isMultipleWithType && type) {
       searchParams.set(Params.MoveType, type.toLowerCase());
       setSearchParams(searchParams);
-      setMove(data.combat.find((item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)));
+      setMove(data.combats.find((item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)));
       setMoveType(type.toUpperCase());
     }
-  }, [move?.isMultipleWithType, searchParams, data.combat]);
+  }, [move?.isMultipleWithType, searchParams, data.combats]);
 
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
@@ -564,68 +564,76 @@ const Move = (props: IMovePage) => {
                           <span>Bonus Combat</span>
                         </Accordion.Header>
                         <Accordion.Body>
-                          <tr>
-                            <td>Bonus Type</td>
-                            <td colSpan={2}>{splitAndCapitalize(getKeyWithData(BonusType, move.bonus.bonusType), /(?=[A-Z])/, ' ')}</td>
-                          </tr>
-                          <tr>
-                            <td>Duration</td>
-                            <td colSpan={2}>{`${move.bonus.durationMs} ms (${move.bonus.durationMs / 1000} sec)`}</td>
-                          </tr>
-                          <tr>
-                            <td>Extra Duration</td>
-                            <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${move.bonus.extraDurationMs / 1000} sec)`}</td>
-                          </tr>
-                          <tr>
-                            <td>Multi Use</td>
-                            <td colSpan={2}>
-                              {move.bonus.enableMultiUse ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>None Combat</td>
-                            <td colSpan={2}>
-                              {move.bonus.enableNonCombatMove ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Cost</td>
-                            <td className="table-bonus-cost">
-                              <Candy id={0} /> {move.bonus.cost.candyCost}
-                            </td>
-                            <td className="table-bonus-cost">
-                              <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
-                                <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                              </div>
-                              {move.bonus.cost.stardustCost}
-                            </td>
-                          </tr>
-                          {Object.entries(move.bonus.bonusEffect).map(([k, v]: [string, BonusEffectType], i) => (
-                            <Fragment key={i}>
+                          <table>
+                            <tbody>
                               <tr>
-                                <td colSpan={3} className="text-center">
-                                  {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
+                                <td>Bonus Type</td>
+                                <td colSpan={2}>{splitAndCapitalize(getKeyWithData(BonusType, move.bonus.bonusType), /(?=[A-Z])/, ' ')}</td>
+                              </tr>
+                              <tr>
+                                <td>Duration</td>
+                                <td colSpan={2}>{`${move.bonus.durationMs} ms (${move.bonus.durationMs / 1000} sec)`}</td>
+                              </tr>
+                              <tr>
+                                <td>Extra Duration</td>
+                                <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${move.bonus.extraDurationMs / 1000} sec)`}</td>
+                              </tr>
+                              <tr>
+                                <td>Multi Use</td>
+                                <td colSpan={2}>
+                                  {move.bonus.enableMultiUse ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
                                 </td>
                               </tr>
-                              {Object.entries(v).map(([key, value], j) => (
-                                <tr key={j}>
-                                  <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
-                                  <td colSpan={2}>
-                                    {isEqual(move.bonus?.bonusType, BonusType.SpaceBonus) ||
-                                    isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
-                                      value
-                                    ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
-                                      <div className="d-flex flex-wrap" style={{ gap: 10 }}>
-                                        {getValueOrDefault<string[]>(Array, value).map((item) => renderReward(item))}
-                                      </div>
-                                    ) : (
-                                      renderReward(value)
-                                    )}
-                                  </td>
-                                </tr>
+                              <tr>
+                                <td>None Combat</td>
+                                <td colSpan={2}>
+                                  {move.bonus.enableNonCombatMove ? (
+                                    <DoneIcon sx={{ color: 'green' }} />
+                                  ) : (
+                                    <CloseIcon sx={{ color: 'red' }} />
+                                  )}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Cost</td>
+                                <td className="table-bonus-cost">
+                                  <Candy id={0} /> {move.bonus.cost.candyCost}
+                                </td>
+                                <td className="table-bonus-cost">
+                                  <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
+                                    <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                                  </div>
+                                  {move.bonus.cost.stardustCost}
+                                </td>
+                              </tr>
+                              {Object.entries(move.bonus.bonusEffect).map(([k, v]: [string, BonusEffectType], i) => (
+                                <Fragment key={i}>
+                                  <tr>
+                                    <td colSpan={3} className="text-center">
+                                      {`Bonus Effect (${splitAndCapitalize(k, /(?=[A-Z])/, ' ')})`}
+                                    </td>
+                                  </tr>
+                                  {Object.entries(v).map(([key, value], j) => (
+                                    <tr key={j}>
+                                      <td>{splitAndCapitalize(key, /(?=[A-Z])/, ' ')}</td>
+                                      <td colSpan={2} key={j}>
+                                        {isEqual(move.bonus?.bonusType, BonusType.SpaceBonus) ||
+                                        isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
+                                          value
+                                        ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
+                                          <div className="d-flex flex-wrap" style={{ gap: 10 }}>
+                                            {getValueOrDefault<string[]>(Array, value).map((item) => renderReward(item))}
+                                          </div>
+                                        ) : (
+                                          renderReward(value)
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </Fragment>
                               ))}
-                            </Fragment>
-                          ))}
+                            </tbody>
+                          </table>
                         </Accordion.Body>
                       </Accordion.Item>
                     </Accordion>

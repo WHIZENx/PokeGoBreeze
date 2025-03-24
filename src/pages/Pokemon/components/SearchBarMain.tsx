@@ -14,12 +14,12 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
       {props.data?.prev && (
         <div
           title="Previous Pokémon"
-          className={combineClasses('prev-block', `col${props.data.next ? '-6' : ''}`)}
+          className={combineClasses('prev-block', 'h-100', `col${props.data.next ? '-6' : ''}`)}
           style={{ float: 'left', padding: 0 }}
         >
           <Link
             to={`/pokemon/${props.data.prev.id}`}
-            className="d-flex justify-content-start align-items-center"
+            className="d-flex justify-content-start align-items-center h-100"
             title={`#${props.data.prev.id} ${splitAndCapitalize(props.data.prev.name, '-', ' ')}`}
           >
             <div style={{ cursor: 'pointer' }}>
@@ -27,7 +27,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
                 <NavigateBeforeIcon fontSize="large" />
               </b>
             </div>
-            <div style={{ width: 60, cursor: 'pointer' }}>
+            <div className="h-100" style={{ width: 60, cursor: 'pointer' }}>
               <img
                 style={{ padding: '5px 5px 5px 0' }}
                 className="pokemon-navigate-sprite"
@@ -51,12 +51,12 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
       {props.data?.next && (
         <div
           title="Next Pokémon"
-          className={combineClasses('next-block', `col${props.data.prev ? '-6' : ''}`)}
+          className={combineClasses('next-block', 'h-100', `col${props.data.prev ? '-6' : ''}`)}
           style={{ float: 'right', padding: 0 }}
         >
           <Link
             to={`/pokemon/${props.data.next.id}`}
-            className="d-flex justify-content-end align-items-center"
+            className="d-flex justify-content-end align-items-center h-100"
             title={`#${props.data.next.id} ${splitAndCapitalize(props.data.next.name, '-', ' ')}`}
           >
             <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end', overflow: 'hidden' }}>
@@ -65,7 +65,7 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
               </div>
               <div className="text-navigate">{splitAndCapitalize(props.data.next.name, '-', ' ')}</div>
             </div>
-            <div style={{ width: 60, cursor: 'pointer' }}>
+            <div className="h-100" style={{ width: 60, cursor: 'pointer' }}>
               <img
                 style={{ padding: '5px 0 5px 5px' }}
                 className="pokemon-navigate-sprite"

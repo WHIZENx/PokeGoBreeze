@@ -41,7 +41,7 @@ import { MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/ty
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { ISelectMoveModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -167,7 +167,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           src={APIService.getTypeSprite(value)}
         />
       )),
-    width: '150px',
+    width: '140px',
   },
   {
     name: 'Fast Move',
@@ -189,7 +189,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
       </LinkToTop>
     ),
     sortable: true,
-    minWidth: '200px',
+    minWidth: '210px',
     sortFunction: fMoveSort,
   },
   {
@@ -212,7 +212,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
       </LinkToTop>
     ),
     sortable: true,
-    minWidth: '220px',
+    minWidth: '230px',
     sortFunction: cMoveSort,
   },
   {
@@ -317,8 +317,8 @@ const DpsTdo = () => {
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc: string) => {
-      const fMove = data.combat.find((item) => isEqual(item.name, vf));
-      const cMove = data.combat.find((item) => isEqual(item.name, vc));
+      const fMove = data.combats.find((item) => isEqual(item.name, vf));
+      const cMove = data.combats.find((item) => isEqual(item.name, vc));
 
       if (fMove && cMove) {
         const cMoveType = getMoveType(pokemon, vc);
@@ -345,8 +345,8 @@ const DpsTdo = () => {
               atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
               def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
               hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
-              fMove: data.combat.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
-              cMove: data.combat.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
+              fMove: data.combats.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
+              cMove: data.combats.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
               types: dataTargetPokemon.types,
               weatherBoosts: options.weatherBoosts,
             });
@@ -380,7 +380,7 @@ const DpsTdo = () => {
             cMoveType,
             fMoveType,
             pokemonType,
-            cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, toNumber(stats.sta) + ivHp, pokemonLevel),
+            cp: calculateCP(stats.atk + ivAtk, stats.def + ivDef, stats.sta + ivHp, pokemonLevel),
           });
         }
       }
@@ -412,7 +412,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
-    data.pokemon.forEach((pokemon) => {
+    data.pokemons.forEach((pokemon) => {
       addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
     setShowSpinner(false);
@@ -467,7 +467,7 @@ const DpsTdo = () => {
         const result = checkPokemonGO(
           item.pokemon.num,
           getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
-          data.pokemon
+          data.pokemons
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, result?.releasedGO);
       }
@@ -537,14 +537,23 @@ const DpsTdo = () => {
   }, [data.typeEff]);
 
   useEffect(() => {
-    if (isNotEmpty(data.pokemon) && isNotEmpty(data.combat)) {
+    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
       setShowSpinner(true);
       const timeOutId = setTimeout(() => {
         setDpsTable(calculateDPSTable());
       }, 300);
       return () => clearTimeout(timeOutId);
     }
-  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, data.pokemon, data.combat, data.options, data.typeEff, data.weatherBoost]);
+  }, [
+    dataTargetPokemon,
+    fMoveTargetPokemon,
+    cMoveTargetPokemon,
+    data.pokemons,
+    data.combats,
+    data.options,
+    data.typeEff,
+    data.weatherBoost,
+  ]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
@@ -922,7 +931,7 @@ const DpsTdo = () => {
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
                       inputType={InputType.Small}
-                      pokemon={dataTargetPokemon}
+                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.forme, dataTargetPokemon?.pokemonType)}
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
                       moveType={TypeMove.Fast}
@@ -935,7 +944,7 @@ const DpsTdo = () => {
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
                       inputType={InputType.Small}
-                      pokemon={dataTargetPokemon}
+                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.forme, dataTargetPokemon?.pokemonType)}
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}
                       moveType={TypeMove.Charge}

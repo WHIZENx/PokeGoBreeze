@@ -59,7 +59,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
         ...state,
         data: {
           ...state.data,
-          pokemon: action.payload,
+          pokemons: action.payload,
         },
       };
     case StoreActions.StoreActionTypes.setSticker:
@@ -75,7 +75,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
         ...state,
         data: {
           ...state.data,
-          combat: action.payload,
+          combats: action.payload,
         },
       };
     case StoreActions.StoreActionTypes.setEvolutionChain:
@@ -83,7 +83,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
         ...state,
         data: {
           ...state.data,
-          evolutionChain: action.payload,
+          evolutionChains: action.payload,
         },
       };
     case StoreActions.StoreActionTypes.setInformation:
@@ -133,7 +133,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
         },
       };
     case StoreActions.StoreActionTypes.setPVPMoves: {
-      const result = state.data.combat.map((move) => {
+      const result = state.data.combats.map((move) => {
         const movePVP = action.payload.find((data) =>
           isEqual(data.moveId, isEqual(move.name, 'HIDDEN_POWER') ? 'HIDDEN_POWER_BUG' : replaceTempMovePvpName(move.name))
         );
@@ -145,7 +145,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
         ...state,
         data: {
           ...state.data,
-          combat: result,
+          combats: result,
         },
       };
     }

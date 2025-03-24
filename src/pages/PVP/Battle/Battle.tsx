@@ -721,7 +721,7 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = dataStore.pokemon.find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
             if (!pokemon) {
               return new BattlePokemonData();
             }
@@ -753,14 +753,14 @@ const Battle = () => {
         );
       }
     },
-    [dataStore.options, dataStore.pokemon, dataStore.assets, dispatch]
+    [dataStore.options, dataStore.pokemons, dataStore.assets, dispatch]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (isNotEmpty(dataStore.pokemon) && isNotEmpty(dataStore.assets)) {
+    if (isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.assets)) {
       fetchPokemon(league);
     }
     return () => {
@@ -769,10 +769,10 @@ const Battle = () => {
   }, [fetchPokemonBattle, league, dispatch]);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combat) && dataStore.combat.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [dataStore.combat, dispatch]);
+  }, [dataStore.combats, dispatch]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
@@ -1554,19 +1554,21 @@ const Battle = () => {
                           style={{ gap: 10 }}
                         >
                           <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                            <img
-                              alt="img-league"
-                              className="sprite-type"
-                              src={APIService.getPokemonModel(pokemonCurr.pokemonData.form, pokemonCurr.pokemonData.id)}
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = getValidPokemonImgPath(
-                                  e.currentTarget.src,
-                                  pokemonCurr.pokemonData?.id,
-                                  pokemonCurr.pokemonData?.form
-                                );
-                              }}
-                            />
+                            <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
+                              <img
+                                alt="img-league"
+                                className="sprite-type"
+                                src={APIService.getPokemonModel(pokemonCurr.pokemonData.form, pokemonCurr.pokemonData.id)}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = getValidPokemonImgPath(
+                                    e.currentTarget.src,
+                                    pokemonCurr.pokemonData?.id,
+                                    pokemonCurr.pokemonData?.form
+                                  );
+                                }}
+                              />
+                            </PokemonIconType>
                           </div>
                           <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
                         </div>
@@ -1577,19 +1579,21 @@ const Battle = () => {
                           style={{ gap: 10 }}
                         >
                           <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                            <img
-                              alt="img-league"
-                              className="sprite-type"
-                              src={APIService.getPokemonModel(pokemonObj.pokemonData.form, pokemonObj.pokemonData.id)}
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = getValidPokemonImgPath(
-                                  e.currentTarget.src,
-                                  pokemonObj.pokemonData?.id,
-                                  pokemonObj.pokemonData?.form
-                                );
-                              }}
-                            />
+                            <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
+                              <img
+                                alt="img-league"
+                                className="sprite-type"
+                                src={APIService.getPokemonModel(pokemonObj.pokemonData.form, pokemonObj.pokemonData.id)}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = getValidPokemonImgPath(
+                                    e.currentTarget.src,
+                                    pokemonObj.pokemonData?.id,
+                                    pokemonObj.pokemonData?.form
+                                  );
+                                }}
+                              />
+                            </PokemonIconType>
                           </div>
                           <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>
                         </div>
