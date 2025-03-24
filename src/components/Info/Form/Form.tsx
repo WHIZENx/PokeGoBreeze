@@ -22,7 +22,7 @@ import TableMove from '../../Table/Move/MoveTable';
 import Info from '../Info';
 import Evolution from '../Evolution/Evolution';
 import FromChange from '../FormChange/FormChange';
-import { SearchingState, StatsState } from '../../../store/models/state.model';
+import { RouterState, SearchingState, StatsState } from '../../../store/models/state.model';
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
@@ -35,6 +35,7 @@ import { SearchingModel } from '../../../store/models/searching.model';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
+  const router = useSelector((state: RouterState) => state.router);
   const stats = useSelector((state: StatsState) => state.stats);
   const pokemonData = useSelector((state: SearchingState) => state.searching.pokemon);
   const form = useSelector((state: SearchingState) => state.searching.form);
@@ -92,7 +93,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   };
 
   useEffect(() => {
-    if (props.pokemonRouter.action === Action.Pop) {
+    if (router.action === Action.Pop) {
       const form = getValueOrDefault(String, searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'), FORM_NORMAL);
       const currentData = props.pokeData.find(
         (i) => isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) || (isEqual(form, FORM_NORMAL) && i.isDefault)
@@ -102,7 +103,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         findFormData(currentData.name);
       }
     }
-  }, [props.pokemonRouter]);
+  }, [router]);
 
   const changeForm = (name: string, form: string | null | undefined, pokemonType = PokemonType.None) => {
     if (params.id) {
@@ -124,6 +125,16 @@ const FormComponent = (props: IFormInfoComponent) => {
       findFormData(name);
     }
   };
+
+  const renderEvolution = () => (
+    <Evolution
+      pokemonData={pokemonData}
+      id={props.defaultId}
+      setId={props.setId}
+      isLoadedForms={props.isLoadedForms}
+      urlEvolutionChain={props.urlEvolutionChain}
+    />
+  );
 
   return (
     <Fragment>
@@ -232,26 +243,12 @@ const FormComponent = (props: IFormInfoComponent) => {
       pokemonData?.pokemonType !== PokemonType.Purified ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl h-100 position-relative" style={{ padding: 0 }}>
-            <Evolution
-              pokemonData={pokemonData}
-              id={props.defaultId}
-              setId={props.setId}
-              pokemonRouter={props.pokemonRouter}
-              isLoadedForms={props.isLoadedForms}
-              urlEvolutionChain={props.urlEvolutionChain}
-            />
+            {renderEvolution()}
           </div>
           <SpecialForm className="col-xl h-100 position-relative" style={{ padding: 0 }} formList={props.formList} id={props.defaultId} />
         </div>
       ) : (
-        <Evolution
-          pokemonData={pokemonData}
-          id={props.defaultId}
-          setId={props.setId}
-          pokemonRouter={props.pokemonRouter}
-          isLoadedForms={props.isLoadedForms}
-          urlEvolutionChain={props.urlEvolutionChain}
-        />
+        renderEvolution()
       )}
       {isNotEmpty(pokemonData?.formChange) && <FromChange currentId={props.defaultId} pokemonData={pokemonData} />}
     </Fragment>

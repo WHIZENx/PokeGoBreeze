@@ -27,6 +27,7 @@ import {
   generatePokemonGoForms,
   generatePokemonGoShadowForms,
   getDmgMultiplyBonus,
+  getGenerationPokemon,
   getPokemonById,
   getPokemonDetails,
   getPokemonFormWithNoneSpecialForm,
@@ -110,7 +111,6 @@ const Pokemon = (props: IPokemonPage) => {
   const [formName, setFormName] = useState<string>();
   const [originForm, setOriginForm] = useState<string>();
   const [originSoundCry, setOriginSoundCry] = useState<IFormSoundCry[]>([]);
-  const [released, setReleased] = useState(true);
   const [isFound, setIsFound] = useState(true);
 
   const [costModifier, setCostModifier] = useState<ITypeCost>();
@@ -330,17 +330,16 @@ const Pokemon = (props: IPokemonPage) => {
 
   const clearData = (isForceClear = false) => {
     setOriginForm(undefined);
-    setReleased(true);
     setFormName(undefined);
     setVersion('');
     setRegion('');
     setGeneration('');
+    dispatch(SearchingActions.ResetPokemon.create());
+    dispatch(SearchingActions.ResetPokemonMainSearch.create());
     if (isForceClear) {
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: false }));
       setFormList([]);
       setPokeData([]);
-      dispatch(SearchingActions.ResetPokemon.create());
-      dispatch(SearchingActions.ResetPokemonMainSearch.create());
       setCostModifier(undefined);
     }
   };
@@ -413,14 +412,12 @@ const Pokemon = (props: IPokemonPage) => {
     const formName = getValueOrDefault(String, form.form.name, form.form.formName, form.defaultName);
     const details = getPokemonDetails(pokemonData, id, formName, form.form.pokemonType, form.form.isDefault);
     details.pokemonType = form.form.pokemonType || PokemonType.Normal;
-    let atk = details.baseStats.atk;
-    let def = details.baseStats.def;
+    const atk = details.baseStats.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
+    const def = details.baseStats.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
     const sta = toNumber(details.baseStats.sta);
-    atk *= getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
-    def *= getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
     details.statsGO = StatsPokemonGO.create({ atk, def, sta, prod: atk * def * sta });
     dispatch(SearchingActions.SetPokemon.create(details));
-    return getValueOrDefault(Boolean, details?.releasedGO);
+    return details.releasedGO;
   };
 
   useEffect(() => {
@@ -428,10 +425,10 @@ const Pokemon = (props: IPokemonPage) => {
     if (currentForm && id > 0 && data) {
       const formParams = searchParams.get(Params.Form)?.replaceAll('_', '-');
       setVersion(getValueOrDefault(String, currentForm.form.version));
-      const gen = data.generation.url.split('/').at(6);
-      setGeneration(getValueOrDefault(String, gen));
+      const gen = getGenerationPokemon(data.generation.url);
+      setGeneration(getValueOrDefault(String, gen.toString()));
       if (!params.id) {
-        setRegion(regionList[toNumber(gen)]);
+        setRegion(regionList[gen]);
       } else {
         const currentRegion = Object.values(regionList).find((item) =>
           isInclude(currentForm.form.formName, item, IncludeMode.IncludeIgnoreCaseSensitive)
@@ -439,7 +436,7 @@ const Pokemon = (props: IPokemonPage) => {
         if (isNotEmpty(currentForm.form.formName) && currentRegion) {
           setRegion(!region || !isEqual(region, currentRegion) ? currentRegion : region);
         } else {
-          setRegion(regionList[toNumber(gen)]);
+          setRegion(regionList[gen]);
         }
       }
       const nameInfo =
@@ -460,9 +457,7 @@ const Pokemon = (props: IPokemonPage) => {
       if (params.id) {
         document.title = `#${data?.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
       }
-
-      const released = checkReleased(id, currentForm);
-      setReleased(released);
+      checkReleased(id, currentForm);
     } else {
       clearData();
     }
@@ -508,9 +503,7 @@ const Pokemon = (props: IPokemonPage) => {
         const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
         setOriginForm(originForm);
         setFormName(currentForm.form.name.replace(/-f$/, '-female').replace(/-m$/, '-male'));
-
-        const released = checkReleased(id, currentForm);
-        setReleased(released);
+        checkReleased(id, currentForm);
       }
     }
   }, [pokeData, formList, data?.id, props.id, params.id, searchParams]);
@@ -550,7 +543,7 @@ const Pokemon = (props: IPokemonPage) => {
             {params.id ? (
               <SearchBarMain data={dataStorePokemon} />
             ) : (
-              <SearchBar data={dataStorePokemon} router={router} onDecId={props.onDecId} onIncId={props.onIncId} />
+              <SearchBar data={dataStorePokemon} onDecId={props.onDecId} onIncId={props.onIncId} />
             )}
           </div>
           <div
@@ -558,7 +551,7 @@ const Pokemon = (props: IPokemonPage) => {
             className={combineClasses('element-bottom position-relative poke-container', props.isSearch ? '' : 'container')}
           >
             <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-              <AlertReleased isReleased={released} formName={formName} pokemonType={currentForm?.form.pokemonType} icon={icon} />
+              <AlertReleased formName={formName} pokemonType={currentForm?.form.pokemonType} icon={icon} />
               <div className="d-inline-block img-desc">
                 <img
                   className="pokemon-main-sprite"
@@ -653,7 +646,6 @@ const Pokemon = (props: IPokemonPage) => {
               </div>
             </div>
             <FormComponent
-              pokemonRouter={router}
               formList={formList}
               pokeData={pokeData}
               setId={props.setId}

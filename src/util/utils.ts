@@ -1223,3 +1223,7 @@ export const getLeagueBattleType = (maxCp: number) => {
   }
   return LeagueBattleType.Little;
 };
+
+export const getGenerationPokemon = (text: string) => {
+  return toNumber(text.match(/[^v]\d+/)?.[0]?.replaceAll('/', ''));
+};
