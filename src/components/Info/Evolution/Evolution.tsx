@@ -26,6 +26,7 @@ import {
   convertModelSpritName,
   generateParamForm,
   getDataWithKey,
+  getGenerationPokemon,
   getItemSpritePath,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -34,7 +35,7 @@ import { OverlayTrigger } from 'react-bootstrap';
 import PopoverConfig from '../../Popover/PopoverConfig';
 import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
-import { StoreState } from '../../../store/models/state.model';
+import { RouterState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvolution } from '../../../core/models/evolution.model';
 import { FORM_GALAR, FORM_GMAX, FORM_HISUI, FORM_NORMAL, FORM_STANDARD } from '../../../util/constants';
@@ -101,6 +102,7 @@ const customTheme = createTheme({
 
 const Evolution = (props: IEvolutionComponent) => {
   const theme = useTheme<ThemeModify>();
+  const router = useSelector((state: RouterState) => state.router);
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const evolutionChains = useSelector((state: StoreState) => state.store.data.evolutionChains);
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
@@ -152,7 +154,8 @@ const Evolution = (props: IEvolutionComponent) => {
       .then((res) => {
         if (res.data) {
           setIdEvoChain(idUrlChain);
-          fetchEvoChain(PokemonDetailEvoChain.mapping(res.data), result);
+          const data = PokemonDetailEvoChain.mapping(res.data);
+          fetchEvoChain(data, result);
         }
       })
       .catch();
@@ -227,7 +230,7 @@ const Evolution = (props: IEvolutionComponent) => {
     } else {
       evoList = getValueOrDefault(
         Array,
-        pokemon?.evoList
+        pokemon.evoList
           ?.map((evo) =>
             modelEvoChain(
               new EvolutionModel({
@@ -310,7 +313,7 @@ const Evolution = (props: IEvolutionComponent) => {
       getCombineEvoChainFromPokeGo(result, pokemon.num, form);
     }
     if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
-      const idUrlChain = toNumber(props.urlEvolutionChain?.split('/')[6]);
+      const idUrlChain = getGenerationPokemon(props.urlEvolutionChain);
       if (idUrlChain !== idEvoChain) {
         queryPokemonEvolutionChain(props.urlEvolutionChain, idUrlChain, result);
       } else {
@@ -761,8 +764,8 @@ const Evolution = (props: IEvolutionComponent) => {
                         <div
                           className="select-evo"
                           onClick={() => {
-                            if (props.pokemonRouter.action === Action.Pop) {
-                              props.pokemonRouter.action = Action.Replace;
+                            if (router.action === Action.Pop) {
+                              router.action = Action.Replace;
                             }
                             props.setId?.(value.id);
                           }}

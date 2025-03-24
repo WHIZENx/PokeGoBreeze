@@ -167,15 +167,7 @@ const Search = () => {
             ))}
           </Fragment>
         </div>
-        <Pokemon
-          id={id.toString()}
-          setId={setId}
-          onIncId={incId}
-          onDecId={decId}
-          isSearch={true}
-          prevRouter={router}
-          searching={searching}
-        />
+        <Pokemon id={id.toString()} setId={setId} onIncId={incId} onDecId={decId} isSearch={true} searching={searching} />
       </div>
     </Fragment>
   );

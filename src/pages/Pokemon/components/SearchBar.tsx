@@ -8,21 +8,24 @@ import { ISearchBarComponent } from '../../models/page.model';
 import { Action } from 'history';
 import { AnyAction } from 'redux';
 import { combineClasses } from '../../../util/extension';
+import { RouterState } from '../../../store/models/state.model';
+import { useSelector } from 'react-redux';
 
 const SearchBar = (props: ISearchBarComponent) => {
+  const router = useSelector((state: RouterState) => state.router);
   return (
     <>
       {props.data?.prev && (
         <div
           title="Previous Pokémon"
-          className={combineClasses('prev-block', `col${props.data.next ? '-6' : ''}`)}
+          className={combineClasses('prev-block', 'h-100', `col${props.data.next ? '-6' : ''}`)}
           style={{ float: 'left', padding: 0 }}
         >
           <div
-            className="d-flex justify-content-start align-items-center"
+            className="d-flex justify-content-start align-items-center h-100"
             onClick={() => {
-              if (props.router.action === Action.Pop) {
-                props.router.action = null as AnyAction[''];
+              if (router.action === Action.Pop) {
+                router.action = null as AnyAction[''];
               }
               props.onDecId?.();
             }}
@@ -33,7 +36,7 @@ const SearchBar = (props: ISearchBarComponent) => {
                 <NavigateBeforeIcon fontSize="large" />
               </b>
             </div>
-            <div style={{ width: 60, cursor: 'pointer' }}>
+            <div className="h-100" style={{ width: 60, cursor: 'pointer' }}>
               <img
                 style={{ padding: '5px 5px 5px 0' }}
                 className="pokemon-navigate-sprite"
@@ -57,14 +60,14 @@ const SearchBar = (props: ISearchBarComponent) => {
       {props.data?.next && (
         <div
           title="Next Pokémon"
-          className={combineClasses('next-block', `col${props.data.prev ? '-6' : ''}`)}
+          className={combineClasses('next-block', 'h-100', `col${props.data.prev ? '-6' : ''}`)}
           style={{ float: 'right', padding: 0 }}
         >
           <div
-            className="d-flex justify-content-end align-items-center"
+            className="d-flex justify-content-end align-items-center h-100"
             onClick={() => {
-              if (props.router.action === Action.Pop) {
-                props.router.action = null as AnyAction[''];
+              if (router.action === Action.Pop) {
+                router.action = null as AnyAction[''];
               }
               props.onIncId?.();
             }}
@@ -76,7 +79,7 @@ const SearchBar = (props: ISearchBarComponent) => {
               </div>
               <div className="text-navigate">{splitAndCapitalize(props.data.next.name, '-', ' ')}</div>
             </div>
-            <div style={{ width: 60, cursor: 'pointer' }}>
+            <div className="h-100" style={{ width: 60, cursor: 'pointer' }}>
               <img
                 style={{ padding: '5px 0 5px 5px' }}
                 className="pokemon-navigate-sprite"

@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-import { ReduxRouterState } from '@lagunovsky/redux-react-router';
 import { IFormSoundCry, IPokemonFormModify, IPokemonSprit } from '../../core/models/API/form.model';
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
@@ -149,13 +148,11 @@ export interface IEvolutionComponent {
   pokemonData: IPokemonData | undefined | null;
   id: number | undefined;
   setId?: (id: number) => void;
-  pokemonRouter: ReduxRouterState;
   isLoadedForms: boolean;
   urlEvolutionChain?: string;
 }
 
 export interface IFormInfoComponent {
-  pokemonRouter: ReduxRouterState;
   pokeData: IPokemonDetail[];
   formList: IPokemonFormModify[][] | undefined;
   setId?: (id: number) => void;
