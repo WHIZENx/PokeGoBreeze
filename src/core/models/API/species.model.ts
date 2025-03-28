@@ -1,4 +1,4 @@
-export interface EvoPath {
+interface EvoPath {
   url: string;
 }
 
@@ -64,7 +64,7 @@ interface Pokedex {
   pokedex: Path;
 }
 
-interface Variety {
+export interface Variety {
   is_default: boolean;
   pokemon: Path;
 }

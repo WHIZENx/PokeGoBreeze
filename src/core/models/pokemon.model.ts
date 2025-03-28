@@ -1,4 +1,4 @@
-import { capitalize, getPokemonClass, replaceTempMoveName } from '../../util/utils';
+import { capitalize, getGenerationPokemon, getPokemonClass, replaceTempMoveName } from '../../util/utils';
 import { ICombat } from './combat.model';
 import { DEFAULT_SPRITE_NAME, FORM_GALAR, FORM_HISUI, FORM_NORMAL, genList } from '../../util/constants';
 import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
@@ -7,6 +7,7 @@ import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 import { MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
+import { Species, Variety } from './API/species.model';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -179,8 +180,8 @@ export interface PokemonModel {
   tempEvoOverrides?: TempEvoOverrides[];
   pokemonId: string;
   modelScale: number;
-  type: string;
-  type2: string;
+  type?: string;
+  type2?: string;
   camera: Camera;
   encounter: IEncounter;
   stats?: IStatsGO;
@@ -643,6 +644,67 @@ export class PokemonProgress implements IPokemonProgress {
   static create(value: IPokemonProgress) {
     const obj = new PokemonProgress();
     Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IPokemonVariety {
+  isDefault: boolean;
+  path: string;
+  name: string;
+}
+
+class PokemonVariety implements IPokemonVariety {
+  isDefault = false;
+  path = '';
+  name = '';
+
+  static create(value: Variety) {
+    const obj = new PokemonVariety();
+    obj.isDefault = value.is_default;
+    obj.path = value.pokemon.url;
+    obj.name = value.pokemon.name;
+    return obj;
+  }
+}
+
+export interface IPokemonSpecie {
+  evolutionChainPath?: string;
+  generation: number;
+  hasGenderDifferences: boolean;
+  id: number;
+  isBaby: boolean;
+  isLegendary: boolean;
+  isMythical: boolean;
+  name: string;
+  order: number;
+  varieties: PokemonVariety[];
+}
+
+export class PokemonSpecie implements IPokemonSpecie {
+  evolutionChainPath?: string;
+  generation = 0;
+  hasGenderDifferences = false;
+  id = 0;
+  isBaby = false;
+  isLegendary = false;
+  isMythical = false;
+  name = '';
+  order = 0;
+  varieties: IPokemonVariety[] = [];
+
+  static create(value: Species) {
+    const obj = new PokemonSpecie();
+    obj.evolutionChainPath = value.evolution_chain.url;
+    obj.generation = getGenerationPokemon(value.generation.url);
+    obj.hasGenderDifferences = value.has_gender_differences;
+    obj.id = value.id;
+    obj.isBaby = value.is_baby;
+    obj.isLegendary = value.is_legendary;
+    obj.isMythical = value.is_mythical;
+    obj.name = value.name;
+    obj.order = value.order;
+    obj.varieties = value.varieties.map((v) => PokemonVariety.create(v));
     return obj;
   }
 }

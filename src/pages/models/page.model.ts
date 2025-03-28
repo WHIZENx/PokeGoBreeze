@@ -7,6 +7,7 @@ import { IPokemonDmgOption } from '../../core/models/damage.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { PokemonType } from '../../enums/type.enum';
+import { SearchOption } from '../Search/Pokemon/models/pokemon-search.model';
 
 export interface IMovePage {
   id?: number;
@@ -30,11 +31,11 @@ export interface ISearchBarMainComponent {
 
 export interface IPokemonPage {
   searching?: ISearchingModel | null;
-  id?: string;
+  searchOption?: SearchOption;
   onDecId?: () => void;
   onIncId?: () => void;
   isSearch?: boolean;
-  setId?: (id: number) => void;
+  setSearchOption?: (searchOption: SearchOption) => void;
 }
 
 export interface ISelectPokeComponent {

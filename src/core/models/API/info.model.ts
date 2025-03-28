@@ -237,33 +237,31 @@ export interface Type {
 }
 
 export interface IPokemonDetail {
-  cries: DynamicObj<string>;
+  cries?: DynamicObj<string>;
   forms: Path[];
   height: number;
   id: number;
   isDefault: boolean;
-  moves: Move[];
   name: string;
-  species: Path;
+  speciesName?: string;
   sprites: IPokemonSprit;
   stats: Stats[];
-  types: Type[];
+  types: string[];
   weight: number;
   isIncludeShadow?: boolean;
 }
 
 export class PokemonDetail implements IPokemonDetail {
-  cries!: DynamicObj<string>;
+  cries?: DynamicObj<string>;
   forms: Path[] = [];
   height = 0;
   id = 0;
   isDefault = false;
-  moves: Move[] = [];
   name = '';
-  species!: Path;
+  speciesName?: string;
   sprites = new PokemonSprit();
   stats: Stats[] = [];
-  types: Type[] = [];
+  types: string[] = [];
   weight = 0;
   isIncludeShadow?: boolean;
 
@@ -273,12 +271,11 @@ export class PokemonDetail implements IPokemonDetail {
     obj.forms = info.forms;
     obj.height = info.height;
     obj.id = info.id;
-    obj.moves = info.moves;
     obj.name = info.name;
-    obj.species = info.species;
+    obj.speciesName = info.species?.name;
     obj.sprites = PokemonSprit.setDetails(info.sprites);
     obj.stats = info.stats;
-    obj.types = info.types;
+    obj.types = info.types.map((item) => item.type.name);
     obj.weight = info.weight;
     obj.isDefault = info.is_default;
     obj.isIncludeShadow = info.isIncludeShadow;

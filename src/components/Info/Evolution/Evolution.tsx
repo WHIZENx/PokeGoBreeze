@@ -24,6 +24,7 @@ import {
   capitalize,
   convertFormGif,
   convertModelSpritName,
+  generateFormName,
   generateParamForm,
   getDataWithKey,
   getGenerationPokemon,
@@ -83,7 +84,7 @@ class PokemonEvo implements IPokemonEvo {
     obj.name = getValueOrDefault(String, name);
     obj.id = toNumber(id);
     obj.isBaby = isBaby;
-    obj.form = getValueOrDefault(String, form);
+    obj.form = generateFormName(form, pokemonType, '-').toUpperCase();
     obj.pokemonType = pokemonType;
     obj.sprite = sprite;
     return obj;
@@ -425,10 +426,10 @@ const Evolution = (props: IEvolutionComponent) => {
       value.pokemonType === props.pokemonData?.pokemonType &&
       isEqual(
         form,
-        getValueOrDefault(
-          String,
+        generateFormName(
           props.pokemonData?.forme?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI),
-          FORM_NORMAL
+          value.pokemonType,
+          '-'
         ),
         EqualMode.IgnoreCaseSensitive
       );
@@ -760,14 +761,14 @@ const Evolution = (props: IEvolutionComponent) => {
                 <ul className="ul-evo d-flex flex-column">
                   {values.map((value, index) => (
                     <li key={index} className="img-form-gender-group img-evo-group li-evo">
-                      {props.setId ? (
+                      {props.setSearchOption ? (
                         <div
                           className="select-evo"
                           onClick={() => {
                             if (router.action === Action.Pop) {
                               router.action = Action.Replace;
                             }
-                            props.setId?.(value.id);
+                            props.setSearchOption?.({ id: value.id, form: value.form, pokemonType: value.pokemonType });
                           }}
                           title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
                         >

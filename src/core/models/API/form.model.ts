@@ -216,16 +216,16 @@ export class Form implements IForm {
 
 export interface IFormSoundCry {
   form: string;
-  cries: DynamicObj<string>;
+  cries?: DynamicObj<string>;
 }
 
 export class FormSoundCry implements IFormSoundCry {
   form: string;
-  cries: DynamicObj<string>;
+  cries?: DynamicObj<string>;
 
   constructor(pokemon: IPokemonDetail) {
     const fullName = isNotEmpty(pokemon.forms) ? pokemon.forms[0].name : '';
-    const speciesName = pokemon.species.name;
+    const speciesName = pokemon.speciesName;
     this.form = isEqual(fullName, speciesName) ? FORM_NORMAL : fullName.replace(`${speciesName}-`, '').replaceAll('-', '_').toUpperCase();
     this.cries = pokemon.cries;
   }

@@ -189,7 +189,6 @@ const Find = (props: IFindComponent) => {
             onClearStats={props.clearStats}
             onSetPrev={decId}
             onSetNext={incId}
-            setUrlEvo={props.setUrlEvo}
             isObjective={props.isObjective}
           />
         )}

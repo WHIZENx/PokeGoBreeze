@@ -13,10 +13,11 @@ import { RouterState, SearchingState, StoreState } from '../../../store/models/s
 import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { TypeTheme } from '../../../enums/type.enum';
+import { PokemonType, TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import { SearchOption } from './models/pokemon-search.model';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');
@@ -29,7 +30,11 @@ const Search = () => {
   const firstInit = useRef(20);
   const eachCounter = useRef(10);
 
-  const [id, setId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
+  const [searchOption, setSearchOption] = useState<SearchOption>({
+    id: router.action === Action.Pop && searching ? searching.id : 1,
+    form: router.action === Action.Pop && searching ? searching.form : '',
+    pokemonType: PokemonType.Normal,
+  });
   const [selectId, setSelectId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,8 +63,8 @@ const Search = () => {
   }, [pokemonList, searchTerm]);
 
   useEffect(() => {
-    setSelectId(id);
-  }, [id]);
+    setSelectId(searchOption.id);
+  }, [searchOption.id]);
 
   const listenScrollEvent = (ele: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = ele.currentTarget.scrollTop;
@@ -71,7 +76,7 @@ const Search = () => {
 
   const getInfoPoke = (value: IPokemonSearching) => {
     setShowResult(false);
-    setId(value.id);
+    setSearchOption({ id: value.id });
     setSelectId(value.id);
   };
 
@@ -79,7 +84,7 @@ const Search = () => {
     const currentPokemon = getPokemonById(pokemonName, selectId - 1);
     if (currentPokemon) {
       setSelectId(selectId - 1);
-      setId(toNumber(currentPokemon.id));
+      setSearchOption({ id: toNumber(currentPokemon.id) });
     }
   };
 
@@ -87,7 +92,7 @@ const Search = () => {
     const currentPokemon = getPokemonById(pokemonName, selectId + 1);
     if (currentPokemon) {
       setSelectId(selectId + 1);
-      setId(toNumber(currentPokemon.id));
+      setSearchOption({ id: toNumber(currentPokemon.id) });
     }
   };
 
@@ -98,7 +103,7 @@ const Search = () => {
       const next = getPokemonById(pokemonName, currentPokemon.id + 1);
       if (event.keyCode === KEY_ENTER) {
         setShowResult(false);
-        setId(selectId);
+        setSearchOption({ id: selectId });
       } else if (prev && event.keyCode === KEY_UP) {
         setSelectId(prev.id);
       } else if (next && event.keyCode === KEY_DOWN) {
@@ -143,7 +148,7 @@ const Search = () => {
               <div
                 className={combineClasses(
                   'container card-pokemon',
-                  value.id === id ? 'highlight-select-pokemon' : '',
+                  value.id === searchOption.id ? 'highlight-select-pokemon' : '',
                   value.id === selectId ? 'current-select-pokemon' : ''
                 )}
                 key={index}
@@ -167,7 +172,14 @@ const Search = () => {
             ))}
           </Fragment>
         </div>
-        <Pokemon id={id.toString()} setId={setId} onIncId={incId} onDecId={decId} isSearch={true} searching={searching} />
+        <Pokemon
+          searchOption={searchOption}
+          setSearchOption={setSearchOption}
+          onIncId={incId}
+          onDecId={decId}
+          isSearch={true}
+          searching={searching}
+        />
       </div>
     </Fragment>
   );

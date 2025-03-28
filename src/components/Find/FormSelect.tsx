@@ -20,7 +20,7 @@ import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { ToolSearching } from '../../core/models/searching.model';
-import { IPokemonName } from '../../core/models/pokemon.model';
+import { IPokemonName, IPokemonSpecie, PokemonSpecie } from '../../core/models/pokemon.model';
 import {
   Form,
   PokemonForm,
@@ -29,7 +29,6 @@ import {
   PokemonFormDetail,
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
-import { Species } from '../../core/models/API/species.model';
 import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
 import { FORM_NORMAL } from '../../util/constants';
 import { AxiosError } from 'axios';
@@ -57,7 +56,7 @@ const FormSelect = (props: IFormSelectComponent) => {
   const [isRaid, setIsRaid] = useState(props.isRaid);
   const [tier, setTier] = useState(toNumber(props.tier, 1));
 
-  const [data, setData] = useState<Species>();
+  const [data, setData] = useState<IPokemonSpecie>();
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
 
   const [currentForm, setCurrentForm] = useState<IPokemonFormModify>();
@@ -66,15 +65,15 @@ const FormSelect = (props: IFormSelectComponent) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const fetchMap = useCallback(
-    async (data: Species) => {
+    async (specie: IPokemonSpecie) => {
       setFormList([]);
       setPokeData([]);
       const dataPokeList: IPokemonDetail[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       const cancelToken = axiosSource.current.token;
       await Promise.all(
-        data.varieties.map(async (value) => {
-          const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.pokemon.url, { cancelToken })).data;
+        specie.varieties.map(async (value) => {
+          const pokeInfo = (await APIService.getFetchUrl<PokemonInfo>(value.path, { cancelToken })).data;
           const pokeForm = await Promise.all(
             pokeInfo.forms.map(async (item) => {
               const form = (await APIService.getFetchUrl<PokemonForm>(item.url, { cancelToken })).data;
@@ -89,7 +88,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         return;
       });
 
-      const pokemon = props.pokemonData.find((item) => item.num === data.id);
+      const pokemon = props.pokemonData.find((item) => item.num === specie.id);
       const isShadow = Boolean(
         pokemon?.hasShadowForm && toNumber(pokemon.purified?.candy) >= 0 && toNumber(pokemon.purified?.stardust) >= 0
       );
@@ -99,23 +98,23 @@ const FormSelect = (props: IFormSelectComponent) => {
             .map((item) => {
               item.pokemonType = getPokemonType(item.formName, item.pokemonType === PokemonType.Mega, isShadow);
               return PokemonFormModify.setForm(
-                data.id,
-                data.name,
-                data.varieties.find((v) => isInclude(item.pokemon.name, v.pokemon.name))?.pokemon.name,
-                Form.setValue(item, data.name)
+                specie.id,
+                specie.name,
+                specie.varieties.find((v) => isInclude(item.pokemon.name, v.name))?.name,
+                Form.setValue(item, specie.name)
               );
             })
             .sort((a, b) => toNumber(a.form.id) - toNumber(b.form.id))
         )
         .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
-      generatePokemonGoForms(props.pokemonData, dataFormList, formListResult, data.id, data.name);
+      generatePokemonGoForms(props.pokemonData, dataFormList, formListResult, specie.id, specie.name);
 
       setPokeData(dataPokeList);
       setFormList(formListResult);
 
       const defaultForm = formListResult.flatMap((value) => value).filter((item) => item.form.isDefault);
-      let currentForm = defaultForm.find((item) => item.form.id === data.id);
+      let currentForm = defaultForm.find((item) => item.form.id === specie.id);
       if (props.searching) {
         const defaultFormSearch = formListResult
           .flatMap((value) => value)
@@ -125,11 +124,11 @@ const FormSelect = (props: IFormSelectComponent) => {
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
         } else {
-          currentForm = defaultForm.find((item) => item.form.id === data.id);
+          currentForm = defaultForm.find((item) => item.form.id === specie.id);
         }
       }
       if (!currentForm) {
-        currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === data.id);
+        currentForm = formListResult.flatMap((item) => item).find((item) => item.form.id === specie.id);
       }
       if (!currentForm && isNotEmpty(defaultForm)) {
         currentForm = defaultForm.at(0);
@@ -137,7 +136,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       if (currentForm) {
         setCurrentForm(currentForm);
       }
-      setData(data);
+      setData(specie);
     },
     [props.searching]
   );
@@ -150,7 +149,8 @@ const FormSelect = (props: IFormSelectComponent) => {
       APIService.getPokeSpices(id, { cancelToken })
         .then(async (res) => {
           if (res.data) {
-            await fetchMap(res.data);
+            const result = PokemonSpecie.create(res.data);
+            await fetchMap(result);
           }
         })
         .catch((e: AxiosError) => {
