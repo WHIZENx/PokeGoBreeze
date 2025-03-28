@@ -145,19 +145,20 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                 <li key={index} style={{ listStyleType: 'disc' }}>
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
                   <ul style={{ margin: 0 }}>
-                    {Object.entries(value.cries).map(([k, v], i) => (
-                      <Fragment key={i}>
-                        {v && (
-                          <li style={{ listStyleType: 'circle' }}>
-                            <h6>Type: {capitalize(k)}</h6>
-                            <audio src={v} className="w-100" controls={true} style={{ height: 30 }}>
-                              <source type="audio/ogg" />
-                              Your browser does not support the audio element.
-                            </audio>
-                          </li>
-                        )}
-                      </Fragment>
-                    ))}
+                    {value.cries &&
+                      Object.entries(value.cries).map(([k, v], i) => (
+                        <Fragment key={i}>
+                          {v && (
+                            <li style={{ listStyleType: 'circle' }}>
+                              <h6>Type: {capitalize(k)}</h6>
+                              <audio src={v} className="w-100" controls={true} style={{ height: 30 }}>
+                                <source type="audio/ogg" />
+                                Your browser does not support the audio element.
+                              </audio>
+                            </li>
+                          )}
+                        </Fragment>
+                      ))}
                   </ul>
                 </li>
               ))}
