@@ -1092,7 +1092,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
   );
 
   result.data = data
-    .filter((item) => isInclude(item.templateId, 'COMBAT_LEAGUE_') && !isInclude(item.templateId, 'SETTINGS'))
+    .filter((item) => item.templateId.startsWith('COMBAT_LEAGUE_') && !isInclude(item.templateId, 'SETTINGS'))
     .map((item) => {
       const result = new League();
       result.id = item.templateId.replace('COMBAT_LEAGUE', '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '');
