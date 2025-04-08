@@ -130,7 +130,7 @@ const FormComponent = (props: IFormInfoComponent) => {
     <Evolution
       pokemonData={pokemonData}
       id={props.defaultId}
-      setId={props.setId}
+      setSearchOption={props.setSearchOption}
       isLoadedForms={props.isLoadedForms}
       urlEvolutionChain={props.urlEvolutionChain}
     />

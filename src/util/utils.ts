@@ -60,7 +60,7 @@ import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/se
 import { TypeEffChart } from '../core/models/type-eff.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
-import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
+import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 import { ItemName } from '../pages/News/enums/item-type.enum';
 import { APIUrl } from '../services/constants';
 import { BonusType } from '../core/enums/bonus-type.enum';
@@ -573,9 +573,8 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 
   const fastMoves = getAllMoves(pokemon, TypeMove.Fast);
   const chargeMoves = getAllMoves(pokemon, TypeMove.Charge);
-  const allMoves = fastMoves.concat(chargeMoves);
   return (
-    allMoves.length > 2 ||
+    (isNotEmpty(fastMoves) && isNotEmpty(chargeMoves)) ||
     (!isEqual(fastMoves[0], 'STRUGGLE') && !isInclude(fastMoves[0], 'SPLASH')) ||
     !isEqual(chargeMoves[0], 'STRUGGLE')
   );
@@ -744,6 +743,18 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/-Rider$/, '');
 };
 
+export const generateFormName = (form: string | null | undefined, pokemonType: PokemonType, concatBy = '') => {
+  form = getValueOrDefault(String, form);
+  if (pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified) {
+    const formType = getKeyWithData(PokemonType, pokemonType)?.toLowerCase();
+    if (isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)) {
+      return getValueOrDefault(String, formType, FORM_NORMAL);
+    }
+    return `${form}${concatBy}${formType}`;
+  }
+  return form;
+};
+
 export const generatePokemonGoForms = (
   pokemonData: IPokemonData[],
   dataFormList: IPokemonFormDetail[][],
@@ -798,10 +809,10 @@ export const generatePokemonGoShadowForms = (
         id,
         name,
         p.name,
-        `${form}${FORM_SHADOW.toLowerCase()}`,
-        `${p.name}-${FORM_SHADOW.toLowerCase()}`,
+        generateFormName(form, PokemonType.Shadow),
+        generateFormName(p.name, PokemonType.Shadow, '-'),
         'Pokémon-GO',
-        p.types.map((item) => item.type.name),
+        p.types,
         new PokemonSprit(),
         index,
         PokemonType.Shadow
@@ -811,10 +822,10 @@ export const generatePokemonGoShadowForms = (
         id,
         name,
         p.name,
-        `${form}${FORM_PURIFIED.toLowerCase()}`,
-        `${p.name}-${FORM_PURIFIED.toLowerCase()}`,
+        generateFormName(form, PokemonType.Purified),
+        generateFormName(p.name, PokemonType.Purified, '-'),
         'Pokémon-GO',
-        p.types.map((item) => item.type.name),
+        p.types,
         new PokemonSprit(),
         index,
         PokemonType.Purified
@@ -1113,6 +1124,29 @@ export const getLureItemType = (lureItem: string | undefined | null) => {
   }
 };
 
+export const getItemEvolutionType = (itemEvolution: ItemEvolutionType) => {
+  switch (itemEvolution) {
+    case ItemEvolutionType.SunStone:
+      return ItemEvolutionRequireType.SunStone;
+    case ItemEvolutionType.KingsRock:
+      return ItemEvolutionRequireType.KingsRock;
+    case ItemEvolutionType.MetalCoat:
+      return ItemEvolutionRequireType.MetalCoat;
+    case ItemEvolutionType.Gen4Stone:
+      return ItemEvolutionRequireType.Gen4Stone;
+    case ItemEvolutionType.DragonScale:
+      return ItemEvolutionRequireType.DragonScale;
+    case ItemEvolutionType.Upgrade:
+      return ItemEvolutionRequireType.Upgrade;
+    case ItemEvolutionType.Gen5Stone:
+      return ItemEvolutionRequireType.Gen5Stone;
+    case ItemEvolutionType.OtherStone:
+      return ItemEvolutionRequireType.OtherStone;
+    case ItemEvolutionType.Beans:
+      return ItemEvolutionRequireType.Beans;
+  }
+};
+
 export const getItemSpritePath = (itemName: string | null | undefined) => {
   if (isEqual(itemName, ItemName.RaidTicket)) {
     return APIService.getItemSprite('Item_1401');
@@ -1226,4 +1260,16 @@ export const getLeagueBattleType = (maxCp: number) => {
 
 export const getGenerationPokemon = (text: string) => {
   return toNumber(text.match(/[^v]\d+/)?.[0]?.replaceAll('/', ''));
+};
+
+export const updateSpecificForm = (id: number, form: string | null | undefined) => {
+  let result = getValueOrDefault(String, form)
+    .toUpperCase()
+    .replaceAll('-', '_')
+    .replace(/_GALAR$/, `_${FORM_GALAR}IAN`)
+    .replace(/_HISUI$/, `_${FORM_HISUI}AN`);
+  if (!isInclude(result, FORM_STANDARD) && (id === 554 || id === 555)) {
+    result += `_${FORM_STANDARD}`;
+  }
+  return result;
 };

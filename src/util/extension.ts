@@ -59,8 +59,16 @@ export const isNumber = <T>(value: T | null | undefined) => {
   return !isEmpty(result) && !isNaN(Number(result));
 };
 
-export const toNumber = (value: string | number | null | undefined, defaultValue = 0) =>
-  parseFloat((value || defaultValue).toString()) || defaultValue;
+export const toNumber = (value: string | number | null | undefined, defaultValue = 0) => {
+  if (isNullOrUndefined(value)) {
+    return defaultValue;
+  }
+  const result = parseFloat(value.toString());
+  if (isNaN(result)) {
+    return defaultValue;
+  }
+  return result;
+};
 
 export const toFloat = (value: string | number | null | undefined, fixedRounding = -1, defaultValue = 0) => {
   const result = toNumber(value, defaultValue);

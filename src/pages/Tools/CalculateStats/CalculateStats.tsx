@@ -31,7 +31,6 @@ import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from 
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { isUndefined, toNumber } from '../../../util/extension';
-import { EvoPath } from '../../../core/models/API/species.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
@@ -65,8 +64,6 @@ const Calculate = () => {
   const [dataGreatLeague, setDataGreatLeague] = useState<IBattleLeagueCalculate>();
   const [dataUltraLeague, setDataUltraLeague] = useState<IBattleLeagueCalculate>();
   const [dataMasterLeague, setDataMasterLeague] = useState<IBattleLeagueCalculate>();
-
-  const [urlEvo, setUrlEvo] = useState<EvoPath>({ url: '' });
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -178,8 +175,6 @@ const Calculate = () => {
           setStatSTA={setStatSTA}
           setId={setId}
           setName={setName}
-          urlEvo={urlEvo}
-          setUrlEvo={setUrlEvo}
         />
         <h1 id="main" className="text-center">
           Calculate Stats

@@ -247,7 +247,7 @@ interface PokemonCondition {
 }
 
 interface CombatLeague {
-  title: string;
+  title?: string;
   enabled: boolean;
   pokemonCondition: PokemonCondition[];
   iconUrl: string;
@@ -404,7 +404,7 @@ interface DataGM {
   combatCompetitiveSeasonSettings: CombatCompetitiveSeasonSetting;
   combatRankingProtoSettings: CombatRankingProtoSetting;
   vsSeekerLoot: VsSeekerLoot;
-  combatLeague: CombatLeague;
+  combatLeague?: CombatLeague;
   evolutionQuestTemplate?: EvolutionQuestTemplate;
   evolutionChainDisplaySettings: EvolutionChainDisplaySettings;
   itemSettings?: ItemSettings;
