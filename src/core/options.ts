@@ -1096,21 +1096,22 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
     .map((item) => {
       const result = new League();
       result.id = item.templateId.replace('COMBAT_LEAGUE', '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '');
-      const title = getTextWithKey<string>(textEng, item.data.combatLeague.title);
+      const combatTitle = getValueOrDefault(String, item.data.combatLeague?.title);
+      const title = getTextWithKey<string>(textEng, combatTitle);
       if (title) {
         result.title = splitAndCapitalize(title, ' ', ' ');
       } else {
-        result.title = splitAndCapitalize(item.data.combatLeague.title.replace('combat_', '').replace('_title', ''), '_', ' ');
+        result.title = splitAndCapitalize(combatTitle.replace('combat_', '').replace('_title', ''), '_', ' ');
       }
-      result.enabled = item.data.combatLeague.enabled;
-      result.pokemonCount = item.data.combatLeague.pokemonCount;
-      result.allowEvolutions = item.data.combatLeague.allowTempEvos;
-      result.combatLeagueTemplate = item.data.combatLeague.battlePartyCombatLeagueTemplateId;
-      const leagueType = getDataWithKey<LeagueType>(LeagueType, item.data.combatLeague.leagueType, EqualMode.IgnoreCaseSensitive);
+      result.enabled = getValueOrDefault(Boolean, item.data.combatLeague?.enabled);
+      result.pokemonCount = toNumber(item.data.combatLeague?.pokemonCount);
+      result.allowEvolutions = item.data.combatLeague?.allowTempEvos;
+      result.combatLeagueTemplate = item.data.combatLeague?.battlePartyCombatLeagueTemplateId;
+      const leagueType = getDataWithKey<LeagueType>(LeagueType, item.data.combatLeague?.leagueType, EqualMode.IgnoreCaseSensitive);
       if (!isNullOrUndefined(leagueType)) {
         result.leagueType = leagueType;
       }
-      item.data.combatLeague.pokemonCondition.forEach((con) => {
+      item.data.combatLeague?.pokemonCondition.forEach((con) => {
         result.conditions.uniqueSelected = con.type === LeagueConditionType.UniquePokemon;
         switch (con.type) {
           case LeagueConditionType.CaughtTime:
@@ -1140,15 +1141,15 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
         }
       });
       result.leagueBattleType = getLeagueBattleType(toNumber(result.conditions.maxCp));
-      result.iconUrl = item.data.combatLeague.iconUrl
+      result.iconUrl = item.data.combatLeague?.iconUrl
         .replace(APIUrl.POGO_PROD_ASSET_URL, '')
         .replace(`${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/`, '');
-      if (!item.data.combatLeague.badgeType && isInclude(item.templateId, 'COMBAT_LEAGUE_VS_SEEKER_')) {
+      if (!item.data.combatLeague?.badgeType && isInclude(item.templateId, 'COMBAT_LEAGUE_VS_SEEKER_')) {
         result.league = `${result.id.replace(/[^GREAT|^ULTRA|^MASTER].*/, '')}_LEAGUE`;
-      } else if (item.data.combatLeague.badgeType) {
+      } else if (item.data.combatLeague?.badgeType) {
         result.league = item.data.combatLeague.badgeType.replace('BADGE_', '');
       }
-      if (isNotEmpty(item.data.combatLeague.bannedPokemon)) {
+      if (item.data.combatLeague && isNotEmpty(item.data.combatLeague.bannedPokemon)) {
         const banList = result.conditions.banned.concat(
           item.data.combatLeague.bannedPokemon.map((poke) => {
             const item = pokemon.find((item) => isEqual(item.pokemonId, poke));
