@@ -1020,12 +1020,11 @@ export const queryTopMove = (
   return dataPri;
 };
 
-const queryMove = (data: QueryMovesPokemon, vf: string, cMove: string[], fMoveType: MoveType) => {
+const queryMove = (data: QueryMovesPokemon, mf: ICombat, cMove: string[], fMoveType: MoveType) => {
   cMove.forEach((vc) => {
-    const mf = data.combat.find((item) => isEqual(item.name, vf));
-    const mc = data.combat.find((item) => isEqual(item.name, vc));
+    const mc = data.combats.find((item) => isEqual(item.name, vc));
 
-    if (mf && mc) {
+    if (mc) {
       const cMoveType = getMoveType(data.pokemon, vc);
       if (!isEqual(cMoveType, MoveType.Dynamax)) {
         mf.moveType = fMoveType;
@@ -1085,7 +1084,7 @@ export const rankMove = (
   globalOptions: IOptions | undefined,
   typeEff: ITypeEff | undefined,
   weatherBoost: IWeatherBoost | undefined,
-  combat: ICombat[],
+  combats: ICombat[],
   pokemon: IPokemonData | undefined,
   atk: number,
   def: number,
@@ -1095,7 +1094,7 @@ export const rankMove = (
   if (!pokemon) {
     return new PokemonQueryRankMove();
   }
-  const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, atk, def, sta, types);
+  const data = new QueryMovesPokemon(globalOptions, typeEff, weatherBoost, combats, pokemon, atk, def, sta, types);
   const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
   const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
   setQueryMove(data, fastMoveSet, chargedMoveSet);
@@ -1109,8 +1108,12 @@ export const rankMove = (
 
 const setQueryMove = (data: QueryMovesPokemon, fastMoveSet: string[], chargedMoveSet: string[]) => {
   fastMoveSet.forEach((vf) => {
+    const fMove = data.combats.find((item) => isEqual(item.name, vf));
+    if (!fMove) {
+      return;
+    }
     const quickMoveType = getMoveType(data.pokemon, vf);
-    queryMove(data, vf, chargedMoveSet, quickMoveType);
+    queryMove(data, fMove, chargedMoveSet, quickMoveType);
   });
 };
 
@@ -1283,12 +1286,11 @@ export const queryStatesEvoChain = (
   });
 };
 
-const queryMoveCounter = (data: QueryMovesCounterPokemon, vf: string, cMove: string[], fMoveType: MoveType) => {
+const queryMoveCounter = (data: QueryMovesCounterPokemon, mf: ICombat, cMove: string[], fMoveType: MoveType) => {
   cMove.forEach((vc) => {
-    const mf = data.combat.find((item) => isEqual(item.name, vf));
-    const mc = data.combat.find((item) => isEqual(item.name, vc));
+    const mc = data.combats.find((item) => isEqual(item.name, vc));
 
-    if (mf && mc) {
+    if (mc) {
       const cMoveType = getMoveType(data.pokemon, vc);
       if (!isEqual(cMoveType, MoveType.Dynamax)) {
         const options = OptionOtherDPS.create({
@@ -1339,12 +1341,12 @@ export const counterPokemon = (
   weatherBoost: IWeatherBoost | undefined,
   def: number,
   types: string[] | undefined,
-  combat: ICombat[]
+  combats: ICombat[]
 ) => {
   const dataList: IPokemonQueryCounter[] = [];
   pokemonList.forEach((pokemon) => {
     if (checkMoveSetAvailable(pokemon) && !isInclude(pokemon.fullName, '_FEMALE') && !isEqual(pokemon.pokemonType, PokemonType.GMax)) {
-      const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combat, pokemon, def, types, dataList);
+      const data = new QueryMovesCounterPokemon(globalOptions, typeEff, weatherBoost, combats, pokemon, def, types, dataList);
       const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
       const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
       setQueryMoveCounter(data, fastMoveSet, chargedMoveSet);
@@ -1357,8 +1359,12 @@ export const counterPokemon = (
 
 const setQueryMoveCounter = (data: QueryMovesCounterPokemon, fastMoveSet: string[], chargedMoveSet: string[]) => {
   fastMoveSet.forEach((vf) => {
+    const fMove = data.combats.find((item) => isEqual(item.name, vf));
+    if (!fMove) {
+      return;
+    }
     const fMoveType = getMoveType(data.pokemon, vf);
-    queryMoveCounter(data, vf, chargedMoveSet, fMoveType);
+    queryMoveCounter(data, fMove, chargedMoveSet, fMoveType);
   });
 };
 

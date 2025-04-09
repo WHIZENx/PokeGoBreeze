@@ -401,15 +401,14 @@ const RaidBattle = () => {
     dataList: IPokemonMoveData[],
     movePoke: string[] | undefined,
     value: IPokemonData | undefined,
-    vf: string,
+    fMove: ICombat,
     fMoveType: MoveType,
     pokemonTarget: boolean,
     pokemonType = PokemonType.Normal
   ) =>
     movePoke?.forEach((vc) => {
-      const fMoveCurrent = data.combats.find((item) => isEqual(item.name, vf));
       const cMoveCurrent = data.combats.find((item) => isEqual(item.name, vc));
-      if (fMoveCurrent && cMoveCurrent) {
+      if (cMoveCurrent) {
         const cMoveType = getMoveType(value, vc);
         if (!isEqual(cMoveType, MoveType.Dynamax)) {
           const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
@@ -417,7 +416,7 @@ const RaidBattle = () => {
             atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
             def: calculateStatsBattle(stats.def, used.iv.def, used.level),
             hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
-            fMove: fMoveCurrent,
+            fMove,
             cMove: cMoveCurrent,
             types: value?.types,
             pokemonType,
@@ -474,24 +473,28 @@ const RaidBattle = () => {
 
   const addFPokeData = (dataList: IPokemonMoveData[], pokemon: IPokemonData, movePoke: string[], pokemonTarget: boolean) =>
     movePoke.forEach((vf) => {
+      const fMove = data.combats.find((item) => isEqual(item.name, vf));
+      if (!fMove) {
+        return;
+      }
       const fMoveType = getMoveType(pokemon, vf);
-      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
+      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, pokemonTarget);
       if (!pokemon.forme || pokemon.hasShadowForm) {
         if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
+          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
         }
-        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
-        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Purified);
+        addCPokeData(dataList, pokemon.shadowMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
+        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Purified);
       }
       if (
         (!pokemon.forme || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget, PokemonType.Shadow);
+        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
       }
-      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, pokemonTarget);
-      addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType, pokemonTarget);
-      addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, vf, fMoveType, pokemonTarget);
+      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, pokemonTarget);
+      addCPokeData(dataList, pokemon.specialMoves, pokemon, fMove, fMoveType, pokemonTarget);
+      addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, fMove, fMoveType, pokemonTarget);
     });
 
   const calculateTopBattle = (pokemonTarget: boolean) => {
