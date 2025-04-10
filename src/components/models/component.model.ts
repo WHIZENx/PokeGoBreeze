@@ -335,6 +335,7 @@ export interface IStatsBarComponent {
   form?: string | null;
   statType: TypeAction;
   isDisabled?: boolean;
+  pokemonType?: PokemonType;
 }
 
 export interface ITypeComponent {

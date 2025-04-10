@@ -745,7 +745,7 @@ export const convertPokemonImageName = (text: string | undefined | null, default
 
 export const generateFormName = (form: string | null | undefined, pokemonType: PokemonType, concatBy = '') => {
   form = getValueOrDefault(String, form);
-  if (pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified) {
+  if (isSpecialFormType(pokemonType)) {
     const formType = getKeyWithData(PokemonType, pokemonType)?.toLowerCase();
     if (isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)) {
       return getValueOrDefault(String, formType, FORM_NORMAL);
@@ -1050,8 +1050,8 @@ export const getPokemonClass = (className?: string | number | null) => {
 export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
 
 export const generateParamForm = (form: string | null | undefined, pokemonType = PokemonType.None, prefix = '?') => {
-  const IsNoneSpecialForm = getPokemonIsNoneSpecialForm(form, pokemonType);
-  const isSpecialForm = pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
+  const IsNoneSpecialForm = isPokemonNoneSpecialForm(form, pokemonType);
+  const isSpecialForm = isSpecialFormType(pokemonType);
   const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
   if (form) {
     if (
@@ -1232,14 +1232,13 @@ export const getBonusType = (bonusType: string | number) => {
   return BonusType.None;
 };
 
-const getPokemonIsNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) =>
-  pokemonType !== PokemonType.Shadow &&
-  pokemonType !== PokemonType.Purified &&
+const isPokemonNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) =>
+  !isSpecialFormType(pokemonType) &&
   (isInclude(form, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive) ||
     isInclude(form, FORM_PURIFIED, IncludeMode.IncludeIgnoreCaseSensitive));
 
 export const getPokemonFormWithNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) => {
-  const IsNoneSpecialForm = getPokemonIsNoneSpecialForm(form, pokemonType);
+  const IsNoneSpecialForm = isPokemonNoneSpecialForm(form, pokemonType);
   form = form?.toUpperCase().replaceAll('-', '_');
   if (!IsNoneSpecialForm) {
     form = convertPokemonAPIDataName(form);
@@ -1273,3 +1272,6 @@ export const updateSpecificForm = (id: number, form: string | null | undefined) 
   }
   return result;
 };
+
+export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
+  pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
