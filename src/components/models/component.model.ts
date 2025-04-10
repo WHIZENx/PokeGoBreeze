@@ -213,7 +213,7 @@ export interface ISelectMoveComponent {
   move: ISelectMoveModel | ICombat | undefined;
   setMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   clearData?: () => void;
-  pokemon: ISelectMovePokemonModel | undefined;
+  pokemon: ISelectMovePokemonModel;
   moveType: TypeMove;
   inputType?: InputType;
   isSelected?: boolean;

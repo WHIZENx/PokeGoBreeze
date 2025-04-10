@@ -136,6 +136,10 @@ const FormSelect = (props: IFormSelectComponent) => {
       if (currentForm) {
         setCurrentForm(currentForm);
       }
+      if (props.setForm) {
+        props.setForm(currentForm);
+      }
+
       setData(specie);
     },
     [props.searching]
@@ -255,6 +259,9 @@ const FormSelect = (props: IFormSelectComponent) => {
     }
     if (props.setName) {
       props.setName(splitAndCapitalize(findForm?.form.name, '-', ' '));
+    }
+    if (props.setForm) {
+      props.setForm(findForm);
     }
   };
 
