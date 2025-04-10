@@ -60,7 +60,7 @@ import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/se
 import { TypeEffChart } from '../core/models/type-eff.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
-import { ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
+import { ItemEvolutionRequireType, ItemEvolutionType, ItemLureRequireType, ItemLureType } from '../core/enums/option.enum';
 import { ItemName } from '../pages/News/enums/item-type.enum';
 import { APIUrl } from '../services/constants';
 import { BonusType } from '../core/enums/bonus-type.enum';
@@ -573,9 +573,8 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
 
   const fastMoves = getAllMoves(pokemon, TypeMove.Fast);
   const chargeMoves = getAllMoves(pokemon, TypeMove.Charge);
-  const allMoves = fastMoves.concat(chargeMoves);
   return (
-    allMoves.length > 2 ||
+    (isNotEmpty(fastMoves) && isNotEmpty(chargeMoves)) ||
     (!isEqual(fastMoves[0], 'STRUGGLE') && !isInclude(fastMoves[0], 'SPLASH')) ||
     !isEqual(chargeMoves[0], 'STRUGGLE')
   );
@@ -744,6 +743,18 @@ export const convertPokemonImageName = (text: string | undefined | null, default
     .replace(/-Rider$/, '');
 };
 
+export const generateFormName = (form: string | null | undefined, pokemonType: PokemonType, concatBy = '') => {
+  form = getValueOrDefault(String, form);
+  if (isSpecialFormType(pokemonType)) {
+    const formType = getKeyWithData(PokemonType, pokemonType)?.toLowerCase();
+    if (isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)) {
+      return getValueOrDefault(String, formType, FORM_NORMAL);
+    }
+    return `${form}${concatBy}${formType}`;
+  }
+  return form;
+};
+
 export const generatePokemonGoForms = (
   pokemonData: IPokemonData[],
   dataFormList: IPokemonFormDetail[][],
@@ -798,10 +809,10 @@ export const generatePokemonGoShadowForms = (
         id,
         name,
         p.name,
-        `${form}${FORM_SHADOW.toLowerCase()}`,
-        `${p.name}-${FORM_SHADOW.toLowerCase()}`,
+        generateFormName(form, PokemonType.Shadow),
+        generateFormName(p.name, PokemonType.Shadow, '-'),
         'Pokémon-GO',
-        p.types.map((item) => item.type.name),
+        p.types,
         new PokemonSprit(),
         index,
         PokemonType.Shadow
@@ -811,10 +822,10 @@ export const generatePokemonGoShadowForms = (
         id,
         name,
         p.name,
-        `${form}${FORM_PURIFIED.toLowerCase()}`,
-        `${p.name}-${FORM_PURIFIED.toLowerCase()}`,
+        generateFormName(form, PokemonType.Purified),
+        generateFormName(p.name, PokemonType.Purified, '-'),
         'Pokémon-GO',
-        p.types.map((item) => item.type.name),
+        p.types,
         new PokemonSprit(),
         index,
         PokemonType.Purified
@@ -1039,8 +1050,8 @@ export const getPokemonClass = (className?: string | number | null) => {
 export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
 
 export const generateParamForm = (form: string | null | undefined, pokemonType = PokemonType.None, prefix = '?') => {
-  const IsNoneSpecialForm = getPokemonIsNoneSpecialForm(form, pokemonType);
-  const isSpecialForm = pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
+  const IsNoneSpecialForm = isPokemonNoneSpecialForm(form, pokemonType);
+  const isSpecialForm = isSpecialFormType(pokemonType);
   const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
   if (form) {
     if (
@@ -1110,6 +1121,29 @@ export const getLureItemType = (lureItem: string | undefined | null) => {
       return ItemLureRequireType.Rainy;
     case ItemLureType.Sparkly:
       return ItemLureRequireType.Sparkly;
+  }
+};
+
+export const getItemEvolutionType = (itemEvolution: ItemEvolutionType) => {
+  switch (itemEvolution) {
+    case ItemEvolutionType.SunStone:
+      return ItemEvolutionRequireType.SunStone;
+    case ItemEvolutionType.KingsRock:
+      return ItemEvolutionRequireType.KingsRock;
+    case ItemEvolutionType.MetalCoat:
+      return ItemEvolutionRequireType.MetalCoat;
+    case ItemEvolutionType.Gen4Stone:
+      return ItemEvolutionRequireType.Gen4Stone;
+    case ItemEvolutionType.DragonScale:
+      return ItemEvolutionRequireType.DragonScale;
+    case ItemEvolutionType.Upgrade:
+      return ItemEvolutionRequireType.Upgrade;
+    case ItemEvolutionType.Gen5Stone:
+      return ItemEvolutionRequireType.Gen5Stone;
+    case ItemEvolutionType.OtherStone:
+      return ItemEvolutionRequireType.OtherStone;
+    case ItemEvolutionType.Beans:
+      return ItemEvolutionRequireType.Beans;
   }
 };
 
@@ -1198,14 +1232,13 @@ export const getBonusType = (bonusType: string | number) => {
   return BonusType.None;
 };
 
-const getPokemonIsNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) =>
-  pokemonType !== PokemonType.Shadow &&
-  pokemonType !== PokemonType.Purified &&
+const isPokemonNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) =>
+  !isSpecialFormType(pokemonType) &&
   (isInclude(form, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive) ||
     isInclude(form, FORM_PURIFIED, IncludeMode.IncludeIgnoreCaseSensitive));
 
 export const getPokemonFormWithNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) => {
-  const IsNoneSpecialForm = getPokemonIsNoneSpecialForm(form, pokemonType);
+  const IsNoneSpecialForm = isPokemonNoneSpecialForm(form, pokemonType);
   form = form?.toUpperCase().replaceAll('-', '_');
   if (!IsNoneSpecialForm) {
     form = convertPokemonAPIDataName(form);
@@ -1227,3 +1260,18 @@ export const getLeagueBattleType = (maxCp: number) => {
 export const getGenerationPokemon = (text: string) => {
   return toNumber(text.match(/[^v]\d+/)?.[0]?.replaceAll('/', ''));
 };
+
+export const updateSpecificForm = (id: number, form: string | null | undefined) => {
+  let result = getValueOrDefault(String, form)
+    .toUpperCase()
+    .replaceAll('-', '_')
+    .replace(/_GALAR$/, `_${FORM_GALAR}IAN`)
+    .replace(/_HISUI$/, `_${FORM_HISUI}AN`);
+  if (!isInclude(result, FORM_STANDARD) && (id === 554 || id === 555)) {
+    result += `_${FORM_STANDARD}`;
+  }
+  return result;
+};
+
+export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
+  pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;

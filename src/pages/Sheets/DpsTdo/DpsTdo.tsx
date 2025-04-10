@@ -212,7 +212,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
       </LinkToTop>
     ),
     sortable: true,
-    minWidth: '230px',
+    minWidth: '240px',
     sortFunction: cMoveSort,
   },
   {
@@ -312,12 +312,11 @@ const DpsTdo = () => {
     dataList: PokemonSheetData[],
     movePoke: string[] | undefined,
     pokemon: IPokemonData,
-    vf: string,
+    fMove: ICombat,
     fMoveType: MoveType,
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc: string) => {
-      const fMove = data.combats.find((item) => isEqual(item.name, vf));
       const cMove = data.combats.find((item) => isEqual(item.name, vc));
 
       if (fMove && cMove) {
@@ -389,24 +388,28 @@ const DpsTdo = () => {
 
   const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[]) => {
     movePoke.forEach((vf) => {
+      const fMove = data.combats.find((item) => isEqual(item.name, vf));
+      if (!fMove) {
+        return;
+      }
       const fMoveType = getMoveType(pokemon, vf);
-      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType);
+      addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType);
       if (!pokemon.forme || pokemon.hasShadowForm) {
         if (isNotEmpty(pokemon.shadowMoves)) {
-          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
+          addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
         }
-        addCPokeData(dataList, pokemon.shadowMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
-        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, vf, fMoveType, PokemonType.Purified);
+        addCPokeData(dataList, pokemon.shadowMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
+        addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, PokemonType.Purified);
       }
       if (
         (!pokemon.forme || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType, PokemonType.Shadow);
+        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
       }
-      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, vf, fMoveType);
-      addCPokeData(dataList, pokemon.specialMoves, pokemon, vf, fMoveType);
-      addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, vf, fMoveType);
+      addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType);
+      addCPokeData(dataList, pokemon.specialMoves, pokemon, fMove, fMoveType);
+      addCPokeData(dataList, pokemon.exclusiveMoves, pokemon, fMove, fMoveType);
     });
   };
 
@@ -471,57 +474,27 @@ const DpsTdo = () => {
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, result?.releasedGO);
       }
-      if (
-        enableShadow ||
-        enableSpecial ||
-        enableMega ||
-        enableGMax ||
-        enablePrimal ||
-        enableLegendary ||
-        enableMythic ||
-        enableUltraBeast
-      ) {
-        return (
-          boolFilterType &&
-          boolFilterPoke &&
-          boolReleaseGO &&
-          !(
-            boolShowShadow ||
-            boolShowElite ||
-            boolShowMega ||
-            boolShowGMax ||
-            boolShowPrimal ||
-            boolShowLegend ||
-            boolShowMythic ||
-            boolShowUltra
-          ) &&
-          boolReleaseGO &&
-          (boolOnlyShadow ||
-            boolOnlyElite ||
-            boolOnlyMega ||
-            boolOnlyGMax ||
-            boolOnlyPrimal ||
-            boolOnlyLegend ||
-            boolOnlyMythic ||
-            boolOnlyUltra)
-        );
-      } else {
-        return (
-          boolFilterType &&
-          boolFilterPoke &&
-          boolReleaseGO &&
-          !(
-            boolShowShadow ||
-            boolShowElite ||
-            boolShowMega ||
-            boolShowGMax ||
-            boolShowPrimal ||
-            boolShowLegend ||
-            boolShowMythic ||
-            boolShowUltra
-          )
-        );
-      }
+      const isEnableOptions =
+        enableShadow || enableSpecial || enableMega || enableGMax || enablePrimal || enableLegendary || enableMythic || enableUltraBeast;
+      const isShowOptions =
+        boolShowShadow ||
+        boolShowElite ||
+        boolShowMega ||
+        boolShowGMax ||
+        boolShowPrimal ||
+        boolShowLegend ||
+        boolShowMythic ||
+        boolShowUltra;
+      const isOnlyOptions =
+        boolOnlyShadow ||
+        boolOnlyElite ||
+        boolOnlyMega ||
+        boolOnlyGMax ||
+        boolOnlyPrimal ||
+        boolOnlyLegend ||
+        boolOnlyMythic ||
+        boolOnlyUltra;
+      return boolFilterType && boolFilterPoke && boolReleaseGO && !isShowOptions && (!isEnableOptions || (boolReleaseGO && isOnlyOptions));
     });
     if (isNotEmpty(result) && enableBest) {
       result = filterBestOptions(result, bestOf);

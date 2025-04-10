@@ -21,12 +21,12 @@ import {
 import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail } from '../../core/models/API/info.model';
-import { EvoPath } from '../../core/models/API/species.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
 import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
 import { BadgeType } from '../Input/enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
+import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -99,8 +99,6 @@ export interface IFindComponent {
   tier?: number;
   setTier?: React.Dispatch<React.SetStateAction<number>>;
   setForm?: (form: IPokemonFormModify | undefined) => void;
-  urlEvo?: EvoPath;
-  setUrlEvo?: React.Dispatch<React.SetStateAction<EvoPath>>;
   title?: string;
   isSwap?: boolean;
   isObjective?: boolean;
@@ -123,7 +121,6 @@ export interface IFormSelectComponent {
   stats: IStatsRank | null;
   onHandleSetStats?: (type: TypeAction, value: number) => void;
   pokemonData: IPokemonData[];
-  setUrlEvo?: React.Dispatch<React.SetStateAction<EvoPath>>;
   isObjective?: boolean;
 }
 
@@ -147,7 +144,7 @@ export interface IAssetPokemonModelComponent {
 export interface IEvolutionComponent {
   pokemonData: IPokemonData | undefined | null;
   id: number | undefined;
-  setId?: (id: number) => void;
+  setSearchOption?: (searchOption: SearchOption) => void;
   isLoadedForms: boolean;
   urlEvolutionChain?: string;
 }
@@ -155,7 +152,7 @@ export interface IEvolutionComponent {
 export interface IFormInfoComponent {
   pokeData: IPokemonDetail[];
   formList: IPokemonFormModify[][] | undefined;
-  setId?: (id: number) => void;
+  setSearchOption?: (searchOption: SearchOption) => void;
   defaultId: number | undefined;
   urlEvolutionChain?: string;
   isLoadedForms: boolean;
@@ -216,7 +213,7 @@ export interface ISelectMoveComponent {
   move: ISelectMoveModel | ICombat | undefined;
   setMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   clearData?: () => void;
-  pokemon: ISelectMovePokemonModel | undefined;
+  pokemon: ISelectMovePokemonModel;
   moveType: TypeMove;
   inputType?: InputType;
   isSelected?: boolean;
@@ -338,6 +335,7 @@ export interface IStatsBarComponent {
   form?: string | null;
   statType: TypeAction;
   isDisabled?: boolean;
+  pokemonType?: PokemonType;
 }
 
 export interface ITypeComponent {

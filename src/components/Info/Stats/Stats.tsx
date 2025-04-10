@@ -97,6 +97,7 @@ const Stats = (props: IStatsComponent) => {
         form={props.form}
         statType={TypeAction.Atk}
         isDisabled={props.isDisabled}
+        pokemonType={props.pokemonType}
       />
       <StatsBar
         tag="DEF"
@@ -109,6 +110,7 @@ const Stats = (props: IStatsComponent) => {
         form={props.form}
         statType={TypeAction.Def}
         isDisabled={props.isDisabled}
+        pokemonType={props.pokemonType}
       />
       <StatsBar
         tag="STA"
@@ -121,6 +123,7 @@ const Stats = (props: IStatsComponent) => {
         form={props.form}
         statType={TypeAction.Sta}
         isDisabled={props.isDisabled}
+        pokemonType={props.pokemonType}
       />
       <StatsBar
         tag="Stat Prod"
@@ -134,6 +137,7 @@ const Stats = (props: IStatsComponent) => {
         form={props.form}
         statType={TypeAction.Prod}
         isDisabled={props.isDisabled}
+        pokemonType={props.pokemonType}
       />
     </div>
   );

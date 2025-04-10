@@ -9,6 +9,7 @@ import {
   getDataWithKey,
   getFormFromForms,
   getPokemonFormWithNoneSpecialForm,
+  isSpecialFormType,
   splitAndCapitalize,
 } from '../../../util/utils';
 import APIService from '../../../services/API.service';
@@ -113,7 +114,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       } else {
         searchParams.delete(Params.Form);
       }
-      const isSpecialForm = pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
+      const isSpecialForm = isSpecialFormType(pokemonType);
       if (isSpecialForm) {
         const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
         searchParams.set(Params.FormType, getValueOrDefault(String, formType));
@@ -130,7 +131,7 @@ const FormComponent = (props: IFormInfoComponent) => {
     <Evolution
       pokemonData={pokemonData}
       id={props.defaultId}
-      setId={props.setId}
+      setSearchOption={props.setSearchOption}
       isLoadedForms={props.isLoadedForms}
       urlEvolutionChain={props.urlEvolutionChain}
     />
@@ -217,7 +218,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       <div className="row w-100" style={{ margin: 0 }}>
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
           <Info />
-          {form?.form.pokemonType !== PokemonType.Shadow && form?.form.pokemonType !== PokemonType.Purified && (
+          {!isSpecialFormType(form?.form.pokemonType) && (
             <Fragment>
               <h5>
                 <li>Raid</li>
@@ -238,9 +239,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       </div>
       <hr className="w-100" />
-      {pokemonData?.pokemonType !== PokemonType.GMax &&
-      pokemonData?.pokemonType !== PokemonType.Shadow &&
-      pokemonData?.pokemonType !== PokemonType.Purified ? (
+      {pokemonData?.pokemonType !== PokemonType.GMax && !isSpecialFormType(pokemonData?.pokemonType) ? (
         <div className="row w-100" style={{ margin: 0 }}>
           <div className="col-xl h-100 position-relative" style={{ padding: 0 }}>
             {renderEvolution()}
