@@ -8,6 +8,8 @@ import {
   generateParamForm,
   getValidPokemonImgPath,
   getDmgMultiplyBonus,
+  getPokemonType,
+  isSpecialFormType,
 } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
@@ -169,7 +171,7 @@ const StatsRanking = () => {
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
-      when: (row) => !isNullOrUndefined(select) && row.id === select.id,
+      when: (row) => !isNullOrUndefined(select) && row.id === select.id && row.pokemonType === select.pokemonType,
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -373,10 +375,17 @@ const StatsRanking = () => {
 
   useEffect(() => {
     const paramId = searchParams.get(Params.Id);
-    if (isNumber(paramId) && isNotEmpty(pokemonFilter)) {
+    if (!select && isNumber(paramId) && isNotEmpty(pokemonFilter)) {
       const id = toNumber(paramId);
       const form = getValueOrDefault(String, searchParams.get(Params.Form), FORM_NORMAL).replaceAll('-', '_');
-      const index = pokemonFilter.findIndex((row) => row.num === id && isEqual(row.forme, form, EqualMode.IgnoreCaseSensitive));
+      const formType = searchParams.get(Params.FormType);
+      const pokemonType = getPokemonType(formType);
+      const index = pokemonFilter.findIndex(
+        (row) =>
+          row.num === id &&
+          isEqual(row.forme, form, EqualMode.IgnoreCaseSensitive) &&
+          ((!formType && !isSpecialFormType(row.pokemonType)) || row.pokemonType === pokemonType)
+      );
       if (index > -1) {
         const result = pokemonFilter[index];
 
@@ -389,10 +398,11 @@ const StatsRanking = () => {
         setSortId(getSortId());
         searchParams.delete(Params.Id);
         searchParams.delete(Params.Form);
+        searchParams.delete(Params.FormType);
         setSearchParams(searchParams);
       }
     }
-  }, [searchParams, pokemonFilter]);
+  }, [searchParams, pokemonFilter, select]);
 
   const setFilterParams = (select: IPokemonStatsRanking) => {
     setSelect(select);

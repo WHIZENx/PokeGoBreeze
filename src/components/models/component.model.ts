@@ -213,7 +213,7 @@ export interface ISelectMoveComponent {
   move: ISelectMoveModel | ICombat | undefined;
   setMovePokemon: React.Dispatch<React.SetStateAction<ISelectMoveModel | undefined>>;
   clearData?: () => void;
-  pokemon: ISelectMovePokemonModel | undefined;
+  pokemon: ISelectMovePokemonModel;
   moveType: TypeMove;
   inputType?: InputType;
   isSelected?: boolean;
@@ -335,6 +335,7 @@ export interface IStatsBarComponent {
   form?: string | null;
   statType: TypeAction;
   isDisabled?: boolean;
+  pokemonType?: PokemonType;
 }
 
 export interface ITypeComponent {

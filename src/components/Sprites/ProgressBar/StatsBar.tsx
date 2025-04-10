@@ -4,7 +4,6 @@ import { IStatsBarComponent } from '../../models/component.model';
 import { combineClasses, getValueOrDefault } from '../../../util/extension';
 import { generateParamForm } from '../../../util/utils';
 import { Params } from '../../../util/constants';
-import { PokemonType } from '../../../enums/type.enum';
 import { useNavigateToTop } from '../../../util/hooks/LinkToTop';
 
 interface Element {
@@ -39,7 +38,7 @@ const StatsBar = (props: IStatsBarComponent) => {
       onClick={() =>
         !props.isDisabled &&
         navigateToTop(
-          `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, PokemonType.None, '&')}&${Params.StatsType}=${
+          `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, props.pokemonType, '&')}&${Params.StatsType}=${
             props.statType
           }`
         )

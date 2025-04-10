@@ -258,7 +258,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
     pokemon.encounter = new Encounter({
       ...pokemon.encounter,
       baseCaptureRate: pokemonEncounter?.basecapturerate,
-      baseFleeRate: pokemonEncounter?.basecapturerate,
+      baseFleeRate: pokemonEncounter?.basefleerate,
     });
 
     const optional = new PokemonDataOptional({

@@ -307,7 +307,7 @@ export class QueryMovesCounterPokemon {
   globalOptions: IOptions | undefined;
   typeEff: ITypeEff | undefined;
   weatherBoost: IWeatherBoost | undefined;
-  combat: ICombat[] = [];
+  combats: ICombat[] = [];
   pokemon: IPokemonData;
   def: number;
   types: string[] | undefined = [];
@@ -317,7 +317,7 @@ export class QueryMovesCounterPokemon {
     globalOptions: IOptions | undefined,
     typeEff: ITypeEff | undefined,
     weatherBoost: IWeatherBoost | undefined,
-    combat: ICombat[],
+    combats: ICombat[],
     pokemon: IPokemonData,
     def: number,
     types: string[] | undefined,
@@ -326,7 +326,7 @@ export class QueryMovesCounterPokemon {
     this.globalOptions = globalOptions;
     this.typeEff = typeEff;
     this.weatherBoost = weatherBoost;
-    this.combat = combat;
+    this.combats = combats;
     this.pokemon = pokemon;
     this.def = def;
     this.types = getValueOrDefault(Array, types);
@@ -338,7 +338,7 @@ export class QueryMovesPokemon {
   globalOptions: IOptions | undefined;
   typeEff: ITypeEff | undefined;
   weatherBoost: IWeatherBoost | undefined;
-  combat: ICombat[] = [];
+  combats: ICombat[] = [];
   pokemon: IPokemonData;
   atk: number;
   def: number;
@@ -350,7 +350,7 @@ export class QueryMovesPokemon {
     globalOptions: IOptions | undefined,
     typeEff: ITypeEff | undefined,
     weatherBoost: IWeatherBoost | undefined,
-    combat: ICombat[],
+    combats: ICombat[],
     pokemon: IPokemonData,
     atk: number,
     def: number,
@@ -361,7 +361,7 @@ export class QueryMovesPokemon {
     this.globalOptions = globalOptions;
     this.typeEff = typeEff;
     this.weatherBoost = weatherBoost;
-    this.combat = combat;
+    this.combats = combats;
     this.pokemon = pokemon;
     this.atk = atk;
     this.def = def;

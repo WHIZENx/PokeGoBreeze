@@ -29,8 +29,7 @@ import { getItemSpritePath, getKeyWithData, getPokemonFormWithNoneSpecialForm, L
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { IPokemonFormModify } from '../../../core/models/API/form.model';
-import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { DynamicObj, getValueOrDefault, isNotEmpty, isUndefined, toFloatWithPadding, toNumber } from '../../../util/extension';
 import {
   Medal,
   MedalType,
@@ -45,6 +44,8 @@ import { PokeBallType } from './enums/poke-ball.enum';
 import { PokemonType, ThrowType } from '../../../enums/type.enum';
 import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
+import { IPokemonData } from '../../../core/models/pokemon.model';
+import { IPokemonFormModify } from '../../../core/models/API/form.model';
 
 const balls: PokeBallThreshold[] = [
   { name: 'Poké Ball', itemName: ItemName.PokeBall, threshold: POKE_BALL_INC_CHANCE, pokeBallType: PokeBallType.PokeBall },
@@ -60,12 +61,10 @@ const throws: ThrowThreshold[] = [
 
 const CatchChance = () => {
   const playerSetting = useSelector((state: StoreState) => state.store.data.options.playerSetting);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
+  const pokemon = useSelector((state: SearchingState) => state.searching.pokemon);
 
   const circleDistance = useRef(200);
 
-  const [id, setId] = useState(toNumber(searching?.id, 1));
   const [form, setForm] = useState<IPokemonFormModify>();
 
   const [statATK, setStatATK] = useState(0);
@@ -91,10 +90,10 @@ const CatchChance = () => {
   }, []);
 
   useEffect(() => {
-    if (form) {
-      findCatchCapture(id, form);
+    if (pokemon) {
+      findCatchCapture(pokemon);
     }
-  }, [form]);
+  }, [pokemon]);
 
   useEffect(() => {
     if (!isAdvance && data && medal) {
@@ -176,10 +175,8 @@ const CatchChance = () => {
     });
   };
 
-  const findCatchCapture = (id: number, form: IPokemonFormModify) => {
-    const formName = getPokemonFormWithNoneSpecialForm(form.form.name, form.form.pokemonType);
-    const pokemon = pokemonData.find((data) => data.num === id && isEqual(data.fullName, formName));
-    if (!pokemon || !pokemon.encounter) {
+  const findCatchCapture = (pokemon: IPokemonData) => {
+    if (!pokemon || !pokemon.encounter || isUndefined(pokemon.encounter.movementTimerS)) {
       setIsEncounter(false);
       return;
     }
@@ -204,10 +201,6 @@ const CatchChance = () => {
     }
     setMedal(medalType);
     setData(pokemon.encounter);
-  };
-
-  const onSetForm = (form: IPokemonFormModify | undefined) => {
-    setForm(form);
   };
 
   const onSetPriorityPri = (priority: BadgeType) => {
@@ -336,8 +329,7 @@ const CatchChance = () => {
               setStatATK={setStatATK}
               setStatDEF={setStatDEF}
               setStatSTA={setStatSTA}
-              setForm={onSetForm}
-              setId={setId}
+              setForm={setForm}
             />
           </div>
         </div>
