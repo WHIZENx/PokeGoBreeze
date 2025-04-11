@@ -1,16 +1,4 @@
 /* eslint-disable no-unused-vars */
-export enum ColumnSelectType {
-  Id = 1,
-  Name,
-  Type,
-  FastMove,
-  ChargedMove,
-  DPS,
-  TDO,
-  Total,
-  CP,
-}
-
 export enum SortDirectionType {
   ASC,
   DESC,

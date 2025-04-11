@@ -23,7 +23,7 @@ import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
-import { VariantType } from '../../../enums/type.enum';
+import { ColumnType, VariantType } from '../../../enums/type.enum';
 
 interface IFindCP {
   level: number;
@@ -43,31 +43,37 @@ class FindCP implements IFindCP {
 
 const columnsIV: TableColumn<IPredictStatsModel>[] = [
   {
+    id: ColumnType.Level,
     name: 'Level',
     selector: (row) => row.level,
     sortable: true,
   },
   {
+    id: ColumnType.Atk,
     name: 'ATK',
     selector: (row) => row.atk,
     sortable: true,
   },
   {
+    id: ColumnType.Def,
     name: 'DEF',
     selector: (row) => row.def,
     sortable: true,
   },
   {
+    id: ColumnType.Sta,
     name: 'STA',
     selector: (row) => row.sta,
     sortable: true,
   },
   {
+    id: ColumnType.Hp,
     name: 'HP',
     selector: (row) => row.hp,
     sortable: true,
   },
   {
+    id: ColumnType.Percent,
     name: 'Percent',
     selector: (row) => row.percent,
     sortable: true,
@@ -76,16 +82,19 @@ const columnsIV: TableColumn<IPredictStatsModel>[] = [
 
 const columnsCP: TableColumn<IPredictCPModel>[] = [
   {
+    id: ColumnType.Level,
     name: 'Level',
     selector: (row) => row.level,
     sortable: true,
   },
   {
+    id: ColumnType.CP,
     name: 'CP',
     selector: (row) => row.CP,
     sortable: true,
   },
   {
+    id: ColumnType.Hp,
     name: 'HP',
     selector: (row) => row.hp,
     sortable: true,
@@ -121,16 +130,19 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
 
 const columns: TableColumn<IFindCP>[] = [
   {
+    id: ColumnType.Level,
     name: 'Level',
     selector: (row) => row.level,
     sortable: true,
   },
   {
+    id: ColumnType.MinCP,
     name: 'MIN CP',
     selector: (row) => row.minCP,
     sortable: true,
   },
   {
+    id: ColumnType.MaxCP,
     name: 'MAX CP',
     selector: (row) => row.maxCP,
     sortable: true,
@@ -255,7 +267,7 @@ const FindTable = () => {
           columns={columnsIV}
           data={getValueOrDefault(Array, preIvArr?.result)}
           pagination={true}
-          defaultSortFieldId={6}
+          defaultSortFieldId={ColumnType.Percent}
           defaultSortAsc={false}
           conditionalRowStyles={conditionalRowStyles}
           highlightOnHover={true}
@@ -284,7 +296,7 @@ const FindTable = () => {
               columns={columnsCP}
               data={getValueOrDefault(Array, preCpArr?.result)}
               pagination={true}
-              defaultSortFieldId={1}
+              defaultSortFieldId={ColumnType.Level}
               highlightOnHover={true}
               striped={true}
             />
@@ -311,7 +323,7 @@ const FindTable = () => {
         columns={columns}
         data={dataTable}
         pagination={true}
-        defaultSortFieldId={1}
+        defaultSortFieldId={ColumnType.Level}
         striped={true}
         highlightOnHover={true}
       />

@@ -20,7 +20,7 @@ import { OptionsSheetState, StoreState } from '../../../store/models/state.model
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { MoveType, PokemonType, TypeTheme, VariantType } from '../../../enums/type.enum';
+import { ColumnType, MoveType, PokemonType, TypeTheme, VariantType } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
@@ -127,6 +127,7 @@ const Counter = (props: ICounterComponent) => {
 
   const columns: TableColumnModify<ICounterModel>[] = [
     {
+      id: ColumnType.Pokemon,
       name: 'Pokémon',
       selector: (row) => {
         const assets = findAssetForm(data.assets, row.pokemonId, row.pokemonForme);
@@ -161,6 +162,7 @@ const Counter = (props: ICounterComponent) => {
       width: '30%',
     },
     {
+      id: ColumnType.FastMove,
       name: 'Fast',
       selector: (row) => (
         <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
@@ -182,6 +184,7 @@ const Counter = (props: ICounterComponent) => {
       width: '25%',
     },
     {
+      id: ColumnType.ChargedMove,
       name: 'Charged',
       selector: (row) => (
         <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
@@ -203,6 +206,7 @@ const Counter = (props: ICounterComponent) => {
       width: '25%',
     },
     {
+      id: ColumnType.Percent,
       name: '%',
       selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100 })),
       sortable: true,

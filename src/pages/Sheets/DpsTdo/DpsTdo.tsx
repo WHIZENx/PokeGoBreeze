@@ -37,7 +37,7 @@ import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'history';
-import { MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
+import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -121,6 +121,7 @@ const numSortMulti = (rowA: PokemonSheetData, rowB: PokemonSheetData) => {
 
 const columns: TableColumnModify<PokemonSheetData>[] = [
   {
+    id: ColumnType.Id,
     name: 'ID',
     selector: (row) => row.pokemon.num,
     sortable: true,
@@ -128,6 +129,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     maxWidth: '120px',
   },
   {
+    id: ColumnType.Name,
     name: 'Pokémon Name',
     selector: (row) => (
       <LinkToTop
@@ -154,6 +156,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     sortFunction: nameSort,
   },
   {
+    id: ColumnType.Type,
     name: 'Type(s)',
     selector: (row) =>
       row.pokemon.types.map((value, index) => (
@@ -170,6 +173,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     width: '140px',
   },
   {
+    id: ColumnType.FastMove,
     name: 'Fast Move',
     selector: (row) => (
       <LinkToTop
@@ -193,6 +197,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     sortFunction: fMoveSort,
   },
   {
+    id: ColumnType.ChargedMove,
     name: 'Charged Move',
     selector: (row) => (
       <LinkToTop
@@ -216,6 +221,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     sortFunction: cMoveSort,
   },
   {
+    id: ColumnType.DPS,
     name: 'DPS',
     selector: (row) => toFloatWithPadding(row.dps, 3),
     sortable: true,
@@ -223,6 +229,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     minWidth: '80px',
   },
   {
+    id: ColumnType.TDO,
     name: 'TDO',
     selector: (row) => toFloatWithPadding(row.tdo, 3),
     sortable: true,
@@ -230,6 +237,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     minWidth: '100px',
   },
   {
+    id: ColumnType.Total,
     name: 'DPS^3*TDO',
     selector: (row) => toFloatWithPadding(row.multiDpsTdo, 3),
     sortable: true,
@@ -237,6 +245,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     minWidth: '140px',
   },
   {
+    id: ColumnType.CP,
     name: 'CP',
     selector: (row) => row.cp,
     sortable: true,
@@ -1188,7 +1197,7 @@ const DpsTdo = () => {
           onSort={(selectedColumn, sortDirection) => {
             setDefaultSorted(
               OptionDPSSort.create({
-                selectedColumn: toNumber(selectedColumn.id, 1),
+                selectedColumn: toNumber(selectedColumn.id, ColumnType.Id),
                 sortDirection: isEqual(sortDirection, SortOrderType.ASC) ? SortDirectionType.ASC : SortDirectionType.DESC,
               })
             );
