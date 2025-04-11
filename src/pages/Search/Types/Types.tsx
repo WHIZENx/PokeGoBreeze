@@ -9,7 +9,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { CircularProgress, FormControlLabel, Switch, useTheme } from '@mui/material';
-import { PokemonType, TypeMove } from '../../../enums/type.enum';
+import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -35,12 +35,14 @@ const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) =>
 
 const columnPokemon: TableColumnModify<IPokemonData>[] = [
   {
+    id: ColumnType.Id,
     name: 'ID',
     selector: (row) => row.num,
     sortable: true,
     width: '100px',
   },
   {
+    id: ColumnType.Name,
     name: 'Pokémon Name',
     selector: (row) => (
       <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
@@ -62,6 +64,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     sortFunction: nameSort,
   },
   {
+    id: ColumnType.Type,
     name: 'Type(s)',
     selector: (row) =>
       row.types.map((value, index) => (
@@ -78,18 +81,21 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     width: '150px',
   },
   {
+    id: ColumnType.Atk,
     name: 'ATK',
     selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).atk,
     sortable: true,
     width: '100px',
   },
   {
+    id: ColumnType.Def,
     name: 'DEF',
     selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).def,
     sortable: true,
     width: '100px',
   },
   {
+    id: ColumnType.Sta,
     name: 'STA',
     selector: (row) => calculateStatsByTag(row, row.baseStats, row.slug).sta,
     sortable: true,
@@ -364,7 +370,7 @@ const SearchTypes = () => {
                 columns={convertColumnDataType(columnPokemon)}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
                 pagination={true}
-                defaultSortFieldId={1}
+                defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
@@ -381,7 +387,7 @@ const SearchTypes = () => {
                 columns={convertColumnDataType(columnPokemon)}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
                 pagination={true}
-                defaultSortFieldId={1}
+                defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
@@ -398,7 +404,7 @@ const SearchTypes = () => {
                 columns={convertColumnDataType(columnMove)}
                 data={result.fastMove}
                 pagination={true}
-                defaultSortFieldId={1}
+                defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}
@@ -415,7 +421,7 @@ const SearchTypes = () => {
                 columns={convertColumnDataType(columnMove)}
                 data={result.chargedMove}
                 pagination={true}
-                defaultSortFieldId={1}
+                defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
                 customStyles={getCustomThemeDataTable(theme)}

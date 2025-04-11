@@ -6,7 +6,7 @@ import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd, sortStatsProd } from '../../../util/calculate';
 
 import Find from '../../../components/Find/Find';
-import { MIN_IV, MAX_IV, MIN_CP, leaguesTeamBattle } from '../../../util/constants';
+import { MIN_IV, MAX_IV, MIN_CP, leaguesTeamBattle, STATS_DELAY } from '../../../util/constants';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { combineClasses, isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
-import { VariantType } from '../../../enums/type.enum';
+import { ColumnType, VariantType } from '../../../enums/type.enum';
 import { useSnackbar } from 'notistack';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 
@@ -32,42 +32,50 @@ const numSortStatsProdsPercent = (rowA: IBattleBaseStats, rowB: IBattleBaseStats
 
 export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
+    id: ColumnType.Ranking,
     name: 'Rank',
     selector: (row) => toNumber(row.rank),
     sortable: true,
   },
   {
+    id: ColumnType.Level,
     name: 'Level',
     selector: (row) => toNumber(row.level),
     sortable: true,
   },
   {
+    id: ColumnType.Atk,
     name: 'IV ATK',
     selector: (row) => toNumber(row.IV?.atk),
     sortable: true,
   },
   {
+    id: ColumnType.Def,
     name: 'IV DEF',
     selector: (row) => toNumber(row.IV?.def),
     sortable: true,
   },
   {
+    id: ColumnType.Sta,
     name: 'IV STA',
     selector: (row) => toNumber(row.IV?.sta),
     sortable: true,
   },
   {
+    id: ColumnType.CP,
     name: 'CP',
     selector: (row) => toNumber(row.CP),
     sortable: true,
   },
   {
+    id: ColumnType.Prod,
     name: 'Stat Prod (*1000)',
     selector: (row) => toFloatWithPadding(toNumber(row.statsProds) / 1000, 2),
     sortable: true,
     sortFunction: numSortStatsProd,
   },
   {
+    id: ColumnType.PercentProd,
     name: 'Stat Prod (%)',
     selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100 })),
     sortable: true,
@@ -115,7 +123,7 @@ const StatsTable = () => {
     return () => controller.abort();
   }, [statATK, statDEF, statSTA]);
 
-  const calculateStats = (signal: AbortSignal, delay = 3000) => {
+  const calculateStats = (signal: AbortSignal, delay = STATS_DELAY) => {
     return new Promise<IBattleBaseStats[]>((resolve, reject) => {
       let result: IBattleBaseStats[] = [];
       let timeout: NodeJS.Timeout | number;
@@ -310,7 +318,7 @@ const StatsTable = () => {
         columns={columnsStats}
         data={filterStatsBattle}
         pagination={true}
-        defaultSortFieldId={1}
+        defaultSortFieldId={ColumnType.Level}
         striped={true}
         highlightOnHover={true}
         progressPending={isLoading}

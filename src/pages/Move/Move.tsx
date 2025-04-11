@@ -29,7 +29,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { CircularProgress, FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Accordion, Form } from 'react-bootstrap';
-import { BuffType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
+import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
@@ -73,12 +73,14 @@ const numSortTdo = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
 
 const columns: TableColumnModify<IPokemonTopMove>[] = [
   {
+    id: ColumnType.Id,
     name: 'Id',
     selector: (row) => row.num,
     sortable: true,
     minWidth: '40px',
   },
   {
+    id: ColumnType.Name,
     name: 'Name',
     selector: (row) => (
       <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`}>
@@ -100,6 +102,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     sortFunction: nameSort,
   },
   {
+    id: ColumnType.Type,
     name: 'Type',
     selector: (row) => (
       <>
@@ -113,6 +116,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     minWidth: '100px',
   },
   {
+    id: ColumnType.DPS,
     name: 'DPS',
     selector: (row) => toFloatWithPadding(row.dps, 2),
     sortable: true,
@@ -120,6 +124,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     minWidth: '90px',
   },
   {
+    id: ColumnType.TDO,
     name: 'TDO',
     selector: (row) => toFloatWithPadding(row.tdo, 2),
     sortable: true,
@@ -669,7 +674,7 @@ const Move = (props: IMovePage) => {
                     columns={convertColumnDataType(columns)}
                     data={topListFilter}
                     pagination={true}
-                    defaultSortFieldId={4}
+                    defaultSortFieldId={ColumnType.DPS}
                     defaultSortAsc={false}
                     highlightOnHover={true}
                     striped={true}

@@ -8,6 +8,12 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './comput
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType, ThrowType } from '../enums/type.enum';
 
+// Delay
+export const BATTLE_DELAY = 1;
+export const LOAD_DATA_DELAY = 100;
+export const COUNTER_DELAY = 3000;
+export const STATS_DELAY = 3000;
+
 // Parameters
 export class Params {
   public static Id = 'id';

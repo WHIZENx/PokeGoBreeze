@@ -28,9 +28,8 @@ import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.mode
 import { IPokemonStatsRanking, PokemonStatsRanking, StatsAtk, StatsDef, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { ColumnType } from './enums/column-type.enum';
 import { FORM_NORMAL, Params } from '../../../util/constants';
-import { PokemonType, TypeAction } from '../../../enums/type.enum';
+import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   convertColumnDataType,
@@ -51,6 +50,7 @@ import PokemonIconType from '../../../components/Sprites/PokemonIconType/Pokemon
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
+    id: ColumnType.None,
     name: '',
     selector: (row) => (
       <LinkToTop
@@ -63,21 +63,25 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     width: '55px',
   },
   {
+    id: ColumnType.Ranking,
     name: 'Ranking',
     selector: (row) => toNumber(row.rank),
     width: '80px',
   },
   {
+    id: ColumnType.Id,
     name: 'ID',
     selector: (row) => row.num,
     width: '80px',
   },
   {
+    id: ColumnType.Released,
     name: 'Released',
     selector: (row) => (row.releasedGO ? <DoneIcon color="success" /> : <CloseIcon color="error" />),
     width: '80px',
   },
   {
+    id: ColumnType.Name,
     name: 'Pokémon Name',
     selector: (row) => (
       <PokemonIconType pokemonType={row.pokemonType} size={24}>
@@ -97,6 +101,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     minWidth: '200px',
   },
   {
+    id: ColumnType.Type,
     name: 'Type(s)',
     selector: (row) =>
       getValueOrDefault(Array, row.types).map((value, index) => (
@@ -113,24 +118,28 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     width: '150px',
   },
   {
+    id: ColumnType.Atk,
     name: 'ATK',
     selector: (row) => toNumber(row.atk.attack),
     sortable: true,
     width: '100px',
   },
   {
+    id: ColumnType.Def,
     name: 'DEF',
     selector: (row) => toNumber(row.def.defense),
     sortable: true,
     width: '100px',
   },
   {
+    id: ColumnType.Sta,
     name: 'STA',
     selector: (row) => toNumber(row.sta.stamina),
     sortable: true,
     width: '100px',
   },
   {
+    id: ColumnType.Prod,
     name: 'Stat Prod',
     selector: (row) => toNumber(row.prod.product),
     sortable: true,
@@ -242,6 +251,9 @@ const StatsRanking = () => {
     const result: IPokemonStatsRanking[] = [];
     pokemon.forEach((data) => {
       const details = getPokemonDetails(pokemon, data.num, data.fullName, data.pokemonType, true);
+      if (isSpecialFormType(data.pokemonType)) {
+        details.pokemonType = PokemonType.Normal;
+      }
       const product = details.baseStats.atk * details.baseStats.def * toNumber(details.baseStats.sta);
       result.push(
         PokemonStatsRanking.create({

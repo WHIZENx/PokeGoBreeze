@@ -218,6 +218,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       const details = getPokemonDetails(props.pokemonData, id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
       details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
       dispatch(SearchingActions.SetPokemon.create(details));
+      dispatch(SearchingActions.SetPokemonForm.create(currentForm));
     }
   }, [currentForm, dispatch]);
 

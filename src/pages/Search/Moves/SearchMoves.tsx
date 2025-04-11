@@ -22,7 +22,7 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { SelectType } from './enums/select-type.enum';
+import { ColumnSearchMoveType, SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { Params } from '../../../util/constants';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
@@ -47,17 +47,20 @@ const numSortDps = (rowA: ICombat, rowB: ICombat) => {
 
 const columns: TableColumnModify<ICombat>[] = [
   {
+    id: ColumnSearchMoveType.Id,
     name: 'id',
     selector: (row) => row.track,
     sortable: true,
   },
   {
+    id: ColumnSearchMoveType.Type,
     name: 'Type',
     selector: (row) => <div className={combineClasses('type-icon-small', row.type?.toLowerCase())}>{capitalize(row.type)}</div>,
     sortable: true,
     sortFunction: moveSort,
   },
   {
+    id: ColumnSearchMoveType.Name,
     name: 'Name',
     selector: (row) => (
       <LinkToTop to={`/move/${row.track}${row.isMultipleWithType ? `?${Params.MoveType}=${row.type?.toLowerCase()}` : ''}`}>
@@ -69,12 +72,14 @@ const columns: TableColumnModify<ICombat>[] = [
     width: '180px',
   },
   {
+    id: ColumnSearchMoveType.Power,
     name: 'Power (PVE/PVP)',
     selector: (row) => `${row.pvePower}/${row.pvpPower}`,
     sortable: true,
     width: '150px',
   },
   {
+    id: ColumnSearchMoveType.DPS,
     name: 'DPS',
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
     sortFunction: numSortDps,
@@ -200,7 +205,7 @@ const Search = () => {
                   <DataTable
                     columns={convertColumnDataType(columns)}
                     data={resultFMove}
-                    defaultSortFieldId={3}
+                    defaultSortFieldId={ColumnSearchMoveType.Name}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable(theme)}
@@ -262,7 +267,7 @@ const Search = () => {
                   <DataTable
                     columns={convertColumnDataType(columns)}
                     data={resultCMove}
-                    defaultSortFieldId={3}
+                    defaultSortFieldId={ColumnSearchMoveType.Name}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable(theme)}
