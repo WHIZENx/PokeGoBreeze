@@ -19,7 +19,7 @@ import {
   getBaseStatsByIVandLevel,
   getTypeEffective,
 } from '../../../util/calculate';
-import { MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
+import { BATTLE_DELAY, MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -513,7 +513,7 @@ const Battle = () => {
       }
     }, 1);
     let isDelay = false,
-      delay = 1;
+      delay = BATTLE_DELAY;
     turnInterval = setInterval(() => {
       if (!isDelay) {
         if (chargedPri) {
@@ -564,7 +564,7 @@ const Battle = () => {
               });
             }
             isDelay = true;
-            delay = 1;
+            delay = BATTLE_DELAY;
           }
         } else if (preChargePri) {
           if (chargedPriCount === DEFAULT_AMOUNT) {
@@ -620,7 +620,7 @@ const Battle = () => {
               });
             }
             isDelay = true;
-            delay = 1;
+            delay = BATTLE_DELAY;
           }
         } else if (preChargeSec) {
           if (chargedSecCount === DEFAULT_AMOUNT) {
@@ -630,7 +630,7 @@ const Battle = () => {
           }
         }
       } else {
-        if (delay === 0) {
+        if (delay <= 0) {
           isDelay = false;
           if (chargedPri) {
             chargedPri = false;
@@ -658,7 +658,7 @@ const Battle = () => {
           immunePri = false;
           immuneSec = false;
         } else {
-          delay -= 1;
+          delay -= BATTLE_DELAY;
         }
       }
       if (player1.hp <= 0 || player2.hp <= 0) {

@@ -39,6 +39,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { OptionsActions } from '../../../store/actions';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
+import { COUNTER_DELAY } from '../../../util/constants';
 
 const customStyles: TableStyles = {
   head: {
@@ -248,7 +249,7 @@ const Counter = (props: ICounterComponent) => {
     return () => controller.abort();
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
-  const calculateCounter = (signal: AbortSignal, delay = 3000) => {
+  const calculateCounter = (signal: AbortSignal, delay = COUNTER_DELAY) => {
     return new Promise<ICounterModel[]>((resolve, reject) => {
       let result: ICounterModel[] = [];
       let timeout: NodeJS.Timeout | number;

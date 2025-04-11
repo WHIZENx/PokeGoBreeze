@@ -10,7 +10,6 @@ interface Element {
   isShow: boolean;
   opacity?: number;
   bgColor?: string;
-  isVertical?: boolean;
 }
 
 const Background = styled.div<Element>`

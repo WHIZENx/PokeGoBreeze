@@ -6,7 +6,7 @@ import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd, sortStatsProd } from '../../../util/calculate';
 
 import Find from '../../../components/Find/Find';
-import { MIN_IV, MAX_IV, MIN_CP, leaguesTeamBattle } from '../../../util/constants';
+import { MIN_IV, MAX_IV, MIN_CP, leaguesTeamBattle, STATS_DELAY } from '../../../util/constants';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
@@ -123,7 +123,7 @@ const StatsTable = () => {
     return () => controller.abort();
   }, [statATK, statDEF, statSTA]);
 
-  const calculateStats = (signal: AbortSignal, delay = 3000) => {
+  const calculateStats = (signal: AbortSignal, delay = STATS_DELAY) => {
     return new Promise<IBattleBaseStats[]>((resolve, reject) => {
       let result: IBattleBaseStats[] = [];
       let timeout: NodeJS.Timeout | number;

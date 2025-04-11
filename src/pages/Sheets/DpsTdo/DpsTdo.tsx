@@ -328,7 +328,7 @@ const DpsTdo = () => {
     movePoke?.forEach((vc: string) => {
       const cMove = data.combats.find((item) => isEqual(item.name, vc));
 
-      if (fMove && cMove) {
+      if (cMove) {
         const cMoveType = getMoveType(pokemon, vc);
         if (!isEqual(cMoveType, MoveType.Dynamax)) {
           const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);

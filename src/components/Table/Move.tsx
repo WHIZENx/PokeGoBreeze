@@ -17,7 +17,7 @@ const Move = (props: IMoveComponent) => {
   const [showMove, setShowMove] = useState(false);
 
   const findMoveData = useCallback(
-    (move: string) => {
+    (move: string | undefined) => {
       return data.combats.find((item) => isEqual(item.name, move));
     },
     [data.combats]
@@ -60,7 +60,10 @@ const Move = (props: IMoveComponent) => {
     }
   }, [props, findMove]);
 
-  const findType = (move: string) => {
+  const findType = (move: string | undefined) => {
+    if (!move) {
+      return;
+    }
     return findMoveData(move)?.type;
   };
 
@@ -82,15 +85,11 @@ const Move = (props: IMoveComponent) => {
       <div className="d-flex justify-content-center">
         <div className="card-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
           <div className="card-select">
-            {currentMove ? (
-              <CardType
-                value={findType(currentMove.name)}
-                name={splitAndCapitalize(currentMove.name, '_', ' ')}
-                moveType={currentMove.moveType}
-              />
-            ) : (
-              <CardType />
-            )}
+            <CardType
+              value={findType(currentMove?.name)}
+              name={splitAndCapitalize(currentMove?.name, '_', ' ')}
+              moveType={currentMove?.moveType}
+            />
           </div>
           {showMove && (
             <div className="result-type result-move">
