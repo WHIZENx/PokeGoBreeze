@@ -1,6 +1,7 @@
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { BestOptionType, ColumnSelectType, SortDirectionType } from '../../pages/Sheets/DpsTdo/enums/column-select-type.enum';
+import { ColumnType } from '../../enums/type.enum';
+import { BestOptionType, SortDirectionType } from '../../pages/Sheets/DpsTdo/enums/column-select-type.enum';
 import { DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_LEVEL, MAX_IV } from '../../util/constants';
 
 interface IOptionDPSSort {
@@ -9,7 +10,7 @@ interface IOptionDPSSort {
 }
 
 export class OptionDPSSort implements IOptionDPSSort {
-  selectedColumn = ColumnSelectType.Total;
+  selectedColumn = ColumnType.Total;
   sortDirection = SortDirectionType.DESC;
 
   static create(value: IOptionDPSSort) {

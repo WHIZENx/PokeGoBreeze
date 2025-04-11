@@ -42,7 +42,7 @@ import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes, ThemeModify } from './util/models/overrides/themes.model';
-import { TRANSITION_TIME } from './util/constants';
+import { LOAD_DATA_DELAY, TRANSITION_TIME } from './util/constants';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/localStorage';
@@ -117,7 +117,7 @@ function App() {
     }
   }, [data]);
 
-  const loadData = (signal: AbortSignal, delay = 100) => {
+  const loadData = (signal: AbortSignal, delay = LOAD_DATA_DELAY) => {
     return new Promise<void>((resolve, reject) => {
       let timeout: NodeJS.Timeout | number;
       const abortHandler = () => {
