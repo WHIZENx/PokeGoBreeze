@@ -1,3 +1,4 @@
+import { IPokemonDetail } from '../../core/models/API/info.model';
 import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IOptions } from '../../core/models/options.model';
@@ -339,7 +340,7 @@ export class QueryMovesPokemon {
   typeEff: ITypeEff | undefined;
   weatherBoost: IWeatherBoost | undefined;
   combats: ICombat[] = [];
-  pokemon: IPokemonData;
+  pokemon: Partial<IPokemonDetail>;
   atk: number;
   def: number;
   sta: number;
@@ -351,7 +352,7 @@ export class QueryMovesPokemon {
     typeEff: ITypeEff | undefined,
     weatherBoost: IWeatherBoost | undefined,
     combats: ICombat[],
-    pokemon: IPokemonData,
+    pokemon: Partial<IPokemonDetail>,
     atk: number,
     def: number,
     sta: number,

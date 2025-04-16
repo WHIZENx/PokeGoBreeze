@@ -1,5 +1,5 @@
 import { CounterModel } from '../components/Table/Counter/models/counter.model';
-import { Stats } from '../core/models/API/info.model';
+import { IPokemonDetail, Stats } from '../core/models/API/info.model';
 import { Combat, ICombat } from '../core/models/combat.model';
 import { CPMData, CPMDetail, ICPM } from '../core/models/cpm.model';
 import { IEvolution } from '../core/models/evolution.model';
@@ -1085,7 +1085,7 @@ export const rankMove = (
   typeEff: ITypeEff | undefined,
   weatherBoost: IWeatherBoost | undefined,
   combats: ICombat[],
-  pokemon: IPokemonData | undefined,
+  pokemon: Partial<IPokemonDetail> | undefined,
   atk: number,
   def: number,
   sta: number,

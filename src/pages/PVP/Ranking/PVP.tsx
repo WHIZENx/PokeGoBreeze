@@ -5,11 +5,11 @@ import {
   convertNameRankingToOri,
   splitAndCapitalize,
   capitalize,
-  getStyleSheet,
   replaceTempMovePvpName,
   getKeyWithData,
   getKeysObj,
   getValidPokemonImgPath,
+  getStyleList,
 } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
@@ -59,6 +59,7 @@ import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import { IStyleData } from '../../../util/models/util.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -75,7 +76,7 @@ const RankingPVP = () => {
   const sortedBy = useRef(SortType.Score);
   const [sorted, setSorted] = useState(SortDirectionType.DESC);
 
-  const styleSheet = useRef<CSSStyleSheet>();
+  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   const [search, setSearch] = useState('');
   const statsRanking = useSelector((state: StatsState) => state.stats);
@@ -130,10 +131,6 @@ const RankingPVP = () => {
         const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-
-        if (!styleSheet.current) {
-          styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
-        }
 
         const [fMoveData] = item.moveset;
         let [, cMoveDataPri, cMoveDataSec] = item.moveset;
@@ -245,7 +242,7 @@ const RankingPVP = () => {
       <Accordion.Body
         style={{
           padding: 0,
-          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, 0.8, styleSheet.current),
+          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, styleSheet.current, 0.8),
         }}
       >
         {storeStats && storeStats[key] && (
@@ -254,7 +251,14 @@ const RankingPVP = () => {
               <div className="w-100 ranking-info element-top">
                 <HeaderPVP data={data} />
                 <hr />
-                <BodyPVP assets={dataStore.assets} pokemonData={dataStore.pokemons} data={data.data} cp={params.cp} type={params.type} />
+                <BodyPVP
+                  assets={dataStore.assets}
+                  pokemonData={dataStore.pokemons}
+                  data={data.data}
+                  cp={params.cp}
+                  type={params.type}
+                  styleList={styleSheet.current}
+                />
               </div>
               <div className="container">
                 <hr />

@@ -1,5 +1,9 @@
+import { PokemonClass, PokemonType } from '../../../enums/type.enum';
 import { DynamicObj } from '../../../util/extension';
 import { getGenerationPokemon, splitAndCapitalize } from '../../../util/utils';
+import { IEvoList, ITempEvo } from '../evolution.model';
+import { Encounter, IPokemonData, IPokemonFormChange, IPokemonGenderRatio, PokemonGenderRatio } from '../pokemon.model';
+import { StatsPokemonGO } from '../stats.model';
 import { IPokemonSprit, PokemonSprit } from './form.model';
 import { Path } from './species.model';
 
@@ -249,6 +253,29 @@ export interface IPokemonDetail {
   types: string[];
   weight: number;
   isIncludeShadow?: boolean;
+  encounter?: Encounter;
+  fullName: string | undefined;
+  statsGO: StatsPokemonGO;
+  forme?: string | null;
+  pokemonClass?: PokemonClass;
+  pokemonType?: PokemonType;
+  formChange?: IPokemonFormChange[];
+  genderRatio: IPokemonGenderRatio;
+  pokemonId?: string;
+  evoList?: IEvoList[];
+  tempEvo?: ITempEvo[];
+  prevEvo: string | null;
+  sprite?: string;
+  releasedGO: boolean;
+  quickMoves?: string[];
+  cinematicMoves?: string[];
+  specialMoves?: string[];
+  exclusiveMoves?: string[];
+  dynamaxMoves?: string[];
+  eliteQuickMoves?: string[];
+  eliteCinematicMoves?: string[];
+  shadowMoves?: string[];
+  purifiedMoves?: string[];
 }
 
 export class PokemonDetail implements IPokemonDetail {
@@ -264,6 +291,67 @@ export class PokemonDetail implements IPokemonDetail {
   types: string[] = [];
   weight = 0;
   isIncludeShadow?: boolean;
+  encounter?: Encounter;
+  fullName: string | undefined;
+  statsGO = new StatsPokemonGO();
+  forme?: string | null;
+  pokemonClass?: PokemonClass;
+  pokemonType?: PokemonType;
+  formChange?: IPokemonFormChange[];
+  genderRatio = new PokemonGenderRatio();
+  pokemonId?: string;
+  evoList?: IEvoList[];
+  tempEvo?: ITempEvo[];
+  prevEvo: string | null = null;
+  sprite?: string;
+  releasedGO = true;
+  quickMoves?: string[];
+  cinematicMoves?: string[];
+  specialMoves?: string[];
+  exclusiveMoves?: string[];
+  dynamaxMoves?: string[];
+  eliteQuickMoves?: string[];
+  eliteCinematicMoves?: string[];
+  shadowMoves?: string[];
+  purifiedMoves?: string[];
+
+  static setData(data: IPokemonData, info?: PokemonInfo) {
+    let obj = new PokemonDetail();
+    if (info) {
+      obj = this.setDetails(info);
+    } else {
+      obj.id = data.num;
+      obj.types = data.types;
+      obj.weight = data.weightKg;
+      obj.height = data.heightM;
+    }
+    obj.encounter = data.encounter;
+    obj.fullName = data.fullName;
+    if (data.statsGO) {
+      obj.statsGO = data.statsGO;
+    }
+    obj.forme = data.forme;
+    obj.pokemonClass = data.pokemonClass;
+    obj.pokemonType = data.pokemonType;
+    obj.formChange = data.formChange;
+    obj.genderRatio = data.genderRatio;
+    obj.pokemonId = data.pokemonId;
+    obj.evoList = data.evoList;
+    obj.tempEvo = data.tempEvo;
+    obj.prevEvo = data.prevo;
+    obj.sprite = data.sprite;
+    obj.releasedGO = data.releasedGO;
+    obj.quickMoves = data.quickMoves;
+    obj.cinematicMoves = data.cinematicMoves;
+    obj.specialMoves = data.specialMoves;
+    obj.exclusiveMoves = data.exclusiveMoves;
+    obj.dynamaxMoves = data.dynamaxMoves;
+    obj.eliteQuickMoves = data.eliteQuickMoves;
+    obj.eliteCinematicMoves = data.eliteCinematicMoves;
+    obj.purifiedMoves = data.purifiedMoves;
+    obj.shadowMoves = data.shadowMoves;
+    return obj;
+  }
 
   static setDetails(info: PokemonInfo) {
     const obj = new PokemonDetail();

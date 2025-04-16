@@ -1,7 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, generateParamForm, getCustomThemeDataTable, getItemSpritePath, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  generateParamForm,
+  getCustomThemeDataTable,
+  getItemSpritePath,
+  getStyleList,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
@@ -26,6 +33,7 @@ import {
 } from '../../../util/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { IStyleData } from '../../../util/models/util.model';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -196,6 +204,7 @@ const SearchTypes = () => {
   const [allData, setAllData] = useState<IPokemonTypeData>();
 
   const [showType, setShowType] = useState(false);
+  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
     if (currentType) {
@@ -298,7 +307,7 @@ const SearchTypes = () => {
         <div className="col-xl-4 element-top">
           <div
             className={combineClasses('d-flex flex-column align-items-center type-info-container', `${currentType.toLowerCase()}-border`)}
-            style={{ background: computeBgType(currentType, PokemonType.Normal, 1) }}
+            style={{ background: computeBgType(currentType, PokemonType.Normal, styleSheet.current) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img

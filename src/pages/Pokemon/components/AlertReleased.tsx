@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 
 const AlertReleased = (props: IAlertReleasedComponent) => {
-  const pokemon = useSelector((state: SearchingState) => state.searching.pokemon);
+  const pokemon = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
   return (
     <>
       {pokemon && !pokemon.releasedGO && (

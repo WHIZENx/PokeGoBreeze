@@ -28,31 +28,31 @@ import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
 import { isNotEmpty, isUndefined, toNumber } from '../../util/extension';
 
 const Tools = (props: IToolsComponent) => {
-  const pokemonData = useSelector((state: SearchingState) => state.searching.pokemon);
-  const currentForm = useSelector((state: SearchingState) => state.searching.form);
+  const pokemonData = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
+  const currentForm = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.form);
   const [currTier, setCurrTier] = useState(props.tier);
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
-      getFormFromForms(stats, props.id, currentForm?.form.formName, currentForm?.form.pokemonType),
-    [props.id, currentForm?.form.formName]
+      getFormFromForms(stats, props.id, currentForm?.form?.formName, currentForm?.form?.pokemonType),
+    [props.id, currentForm?.form?.formName]
   );
 
   useEffect(() => {
-    if (props.tier > 5 && currentForm?.form.pokemonType !== PokemonType.Mega) {
+    if (props.tier > 5 && currentForm?.form?.pokemonType !== PokemonType.Mega) {
       setCurrTier(5);
       if (props.setTier) {
         props.setTier(5);
       }
-    } else if (props.tier === 5 && currentForm?.form.pokemonType === PokemonType.Mega && pokemonData?.pokemonClass !== PokemonClass.None) {
+    } else if (props.tier === 5 && currentForm?.form?.pokemonType === PokemonType.Mega && pokemonData?.pokemonClass !== PokemonClass.None) {
       setCurrTier(6);
       if (props.setTier) {
         props.setTier(6);
       }
     }
-  }, [currentForm?.form.formName, props.id, props.setTier, props.tier, pokemonData?.pokemonClass]);
+  }, [currentForm?.form?.formName, props.id, props.setTier, props.tier, pokemonData?.pokemonClass]);
 
   useEffect(() => {
     if (props.stats) {
@@ -138,13 +138,13 @@ const Tools = (props: IToolsComponent) => {
             <optgroup label="Normal Tiers">
               <option value={1}>Tier 1</option>
               <option value={3}>Tier 3</option>
-              {currentForm?.form.pokemonType !== PokemonType.Mega && <option value={5}>Tier 5</option>}
+              {currentForm?.form?.pokemonType !== PokemonType.Mega && <option value={5}>Tier 5</option>}
             </optgroup>
             <optgroup label="Legacy Tiers">
               <option value={2}>Tier 2</option>
               <option value={4}>Tier 4</option>
             </optgroup>
-            {currentForm?.form.pokemonType === PokemonType.Mega && (
+            {currentForm?.form?.pokemonType === PokemonType.Mega && (
               <Fragment>
                 {pokemonData?.pokemonClass !== PokemonClass.None ? (
                   <optgroup label="Legendary Mega Tiers">
@@ -206,7 +206,7 @@ const Tools = (props: IToolsComponent) => {
           statSTA={statsPokemon?.sta}
           statProd={statsPokemon?.prod}
           pokemonStats={props.stats}
-          stats={pokemonData?.baseStats}
+          stats={pokemonData?.statsGO}
           id={props.id}
           form={pokemonData?.forme}
         />

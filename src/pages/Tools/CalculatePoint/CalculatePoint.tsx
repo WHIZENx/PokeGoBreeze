@@ -32,14 +32,7 @@ const CalculatePoint = () => {
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
-  const [id, setId] = useState(toNumber(searching?.id, 1));
-  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm] = useState<IPokemonFormModify>();
   const [move, setMove] = useState<ICombat>();
-
-  const [statATK, setStatATK] = useState(0);
-  const [statDEF, setStatDEF] = useState(0);
-  const [statSTA, setStatSTA] = useState(0);
 
   const [DEFIv, setDEFIv] = useState(0);
   const [STAIv, setSTAIv] = useState(0);
@@ -48,15 +41,9 @@ const CalculatePoint = () => {
   const [pvpDmg, setPvpDmg] = useState(false);
   const [showDiffBorder, setShowDiffBorder] = useState(false);
 
-  const [statDefATK, setStatDefATK] = useState(0);
-  const [statDefDEF, setStatDefDEF] = useState(0);
-
   const [isRaid, setIsRaid] = useState(true);
   const [tier, setTier] = useState(1);
 
-  const [idDef, setIdDef] = useState(toNumber(searching?.obj?.id, 1));
-  const [nameDef, setNameDef] = useState(splitAndCapitalize(searching?.obj?.fullName, '-', ' '));
-  const [formDef, setFormDef] = useState<IPokemonFormModify>();
   const [moveDef, setMoveDef] = useState<ICombat>();
 
   const [fMove, setFMove] = useState<ICombat>();
@@ -96,14 +83,6 @@ const CalculatePoint = () => {
     }
   };
 
-  const onSetForm = (form: IPokemonFormModify | undefined) => {
-    setForm(form);
-  };
-
-  const onSetFormDef = (form: IPokemonFormModify | undefined) => {
-    setFormDef(form);
-  };
-
   const calculateBreakpointAtk = () => {
     setResultBreakPointAtk(undefined);
     const dataList: number[][] = [];
@@ -112,8 +91,14 @@ const CalculatePoint = () => {
     for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
       dataList[level] = getValueOrDefault(Array, dataList[level]);
       for (let j = MIN_IV; j <= MAX_IV; j += 1) {
-        const atk = calculateStatsBattle(statATK, j, i, true);
-        const result = getMoveDamagePVE(atk, statDefDEF, formDef, form, move);
+        const atk = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.atk, j, i, true);
+        const result = getMoveDamagePVE(
+          atk,
+          toNumber(searching?.object?.pokemon?.statsGO?.def, 1),
+          searching?.object?.form,
+          searching?.current?.form,
+          move
+        );
         dataList[level].push(result);
         group.push(result);
       }
@@ -135,11 +120,17 @@ const CalculatePoint = () => {
       dataListDef[level] ??= [];
       dataListSta[level] ??= [];
       for (let j = MIN_IV; j <= MAX_IV; j += 1) {
-        const def = calculateStatsBattle(statDEF, j, i, true);
-        const resultDef = getMoveDamagePVE(statDefATK, def, form, formDef, moveDef);
+        const def = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.def, j, i, true);
+        const resultDef = getMoveDamagePVE(
+          toNumber(searching?.object?.pokemon?.statsGO?.atk, 1),
+          def,
+          searching?.current?.form,
+          searching?.object?.form,
+          moveDef
+        );
         dataListDef[level].push(resultDef);
         groupDef.push(resultDef);
-        const resultSta = calculateStatsBattle(statSTA, j, i, true);
+        const resultSta = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.sta, j, i, true);
         dataListSta[level].push(resultSta);
         groupSta.push(resultSta);
       }
@@ -186,8 +177,8 @@ const CalculatePoint = () => {
   const getMoveDamagePVE = (
     atk: number,
     def: number,
-    pokemon: IPokemonFormModify | undefined,
-    pokemonDef: IPokemonFormModify | undefined,
+    pokemon: Partial<IPokemonFormModify> | undefined,
+    pokemonDef: Partial<IPokemonFormModify> | undefined,
     move: ICombat | undefined
   ) => {
     return calculateDamagePVE(
@@ -196,8 +187,8 @@ const CalculatePoint = () => {
       def,
       toNumber(!isRaid && pvpDmg ? move?.pvpPower : move?.pvePower),
       BattleState.create({
-        effective: getTypeEffective(typeEff, move?.type, pokemon?.form.types),
-        isStab: findStabType(pokemonDef?.form.types, move?.type),
+        effective: getTypeEffective(typeEff, move?.type, pokemon?.form?.types),
+        isStab: findStabType(pokemonDef?.form?.types, move?.type),
         isWb: (!pvpDmg || isRaid) && weatherBoosts,
       }),
       false
@@ -205,12 +196,26 @@ const CalculatePoint = () => {
   };
 
   const computeBulk = (count: number, level: number) => {
-    const def = calculateStatsBattle(statDEF, DEFIv, level, true);
+    const def = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.def, DEFIv, level, true);
     return Math.max(
       0,
       Math.ceil(
-        (calculateStatsBattle(statSTA, STAIv, level, true) - count * getMoveDamagePVE(statDefATK, def, form, formDef, cMove)) /
-          getMoveDamagePVE(statDefATK, def, form, formDef, fMove)
+        (calculateStatsBattle(searching?.current?.pokemon?.statsGO?.sta, STAIv, level, true) -
+          count *
+            getMoveDamagePVE(
+              toNumber(searching?.object?.pokemon?.statsGO?.atk),
+              def,
+              searching?.current?.form,
+              searching?.object?.form,
+              cMove
+            )) /
+          getMoveDamagePVE(
+            toNumber(searching?.object?.pokemon?.statsGO?.atk),
+            def,
+            searching?.current?.form,
+            searching?.object?.form,
+            fMove
+          )
       )
     );
   };
@@ -236,7 +241,7 @@ const CalculatePoint = () => {
     enqueueSnackbar('Calculate bulkpoint defender successfully!', { variant: VariantType.Success });
   };
 
-  const getIconBattle = (action: TypeAction, form: IPokemonFormModify | undefined) => (
+  const getIconBattle = (action: TypeAction, form: Partial<IPokemonFormModify> | undefined) => (
     <div className="border-type-stat text-center">
       <Badge color="primary" overlap="circular" badgeContent={isRaid && action === TypeAction.Def ? `Tier ${tier}` : undefined}>
         <span className="position-relative" style={{ width: 96 }}>
@@ -244,7 +249,7 @@ const CalculatePoint = () => {
           <img
             alt="img-pokemon"
             className="pokemon-sprite-large"
-            src={APIService.getPokeIconSprite(form?.form.name, false)}
+            src={APIService.getPokeIconSprite(form?.form?.name, false)}
             onError={(e) => {
               e.currentTarget.onerror = null;
               e.currentTarget.src = APIService.getPokeIconSprite();
@@ -252,7 +257,7 @@ const CalculatePoint = () => {
           />
         </span>
       </Badge>
-      <span className="caption">{splitAndCapitalize(form?.form.name, '-', ' ')}</span>
+      <span className="caption">{splitAndCapitalize(form?.form?.name, '-', ' ')}</span>
       <span className="caption">
         <b>{action === TypeAction.Atk ? 'Attacker' : 'Defender'}</b>
       </span>
@@ -262,8 +267,8 @@ const CalculatePoint = () => {
   const setIconBattle = (atk: TypeAction, def: TypeAction) => (
     <>
       <div className="d-flex">
-        {getIconBattle(atk, form)}
-        {getIconBattle(def, formDef)}
+        {getIconBattle(atk, searching?.current?.form)}
+        {getIconBattle(def, searching?.object?.form)}
       </div>
       <FormControlLabel
         control={<Checkbox checked={showDiffBorder} onChange={(_, check) => setShowDiffBorder(check)} />}
@@ -316,17 +321,7 @@ const CalculatePoint = () => {
     <Fragment>
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
         <div className="col-lg" style={{ padding: 0 }}>
-          <Find
-            isHide={true}
-            title="Attacker Pokémon"
-            clearStats={clearData}
-            setStatATK={setStatATK}
-            setStatDEF={setStatDEF}
-            setStatSTA={setStatSTA}
-            setForm={onSetForm}
-            setName={setName}
-            setId={setId}
-          />
+          <Find isHide={true} title="Attacker Pokémon" clearStats={clearData} />
         </div>
         <div className="col-lg d-flex justify-content-center" style={{ padding: 0 }}>
           <Find
@@ -337,11 +332,6 @@ const CalculatePoint = () => {
             setTier={setTier}
             title="Defender Pokémon"
             clearStats={clearData}
-            setStatATK={setStatDefATK}
-            setStatDEF={setStatDefDEF}
-            setForm={onSetFormDef}
-            setName={setNameDef}
-            setId={setIdDef}
             isObjective={true}
           />
         </div>
@@ -356,14 +346,14 @@ const CalculatePoint = () => {
                   <h2 className="text-center text-decoration-underline">Attacker move</h2>
                   <Move
                     text="Select Moves"
-                    id={id}
+                    id={searching?.current?.pokemon?.id}
                     isSelectDefault={true}
-                    form={form ? form.form.name : name.toLowerCase()}
+                    form={searching?.current?.form ? searching?.current?.form.form?.name : searching?.current?.pokemon?.fullName}
                     setMove={setMove}
                     move={move}
                     clearData={clearDataAtk}
                     isHighlight={true}
-                    pokemonType={form?.form.pokemonType}
+                    pokemonType={searching?.current?.form?.form?.pokemonType}
                   />
                   <FormControlLabel
                     control={
@@ -400,12 +390,14 @@ const CalculatePoint = () => {
                         {'- Move Type: '}
                         <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
                       </p>
-                      {findStabType(form?.form.types, move.type)}
+                      {findStabType(searching?.current?.form?.form?.types, move.type)}
                       <p>
                         {'- Damage: '}
                         <b>
                           {move.pvePower}
-                          {findStabType(form?.form.types, move.type) && <span className="caption-small text-success"> (x1.2)</span>}
+                          {findStabType(searching?.current?.form?.form?.types, move.type) && (
+                            <span className="caption-small text-success"> (x1.2)</span>
+                          )}
                         </b>
                       </p>
                     </div>
@@ -486,14 +478,14 @@ const CalculatePoint = () => {
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
                   <Move
                     text="Select Moves"
-                    id={idDef}
+                    id={searching?.object?.pokemon?.id}
                     isSelectDefault={true}
-                    form={formDef ? formDef.form.name : nameDef.toLowerCase()}
+                    form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
                     setMove={setMoveDef}
                     move={moveDef}
                     clearData={clearDataDef}
                     isHighlight={true}
-                    pokemonType={formDef?.form.pokemonType}
+                    pokemonType={searching?.object?.form?.form?.pokemonType}
                   />
                   <FormControlLabel
                     control={
@@ -530,12 +522,14 @@ const CalculatePoint = () => {
                         {'- Move Type: '}
                         <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>{capitalize(moveDef.type)}</span>
                       </p>
-                      {findStabType(formDef?.form.types, moveDef.type)}
+                      {findStabType(searching?.object?.form?.form?.types, moveDef.type)}
                       <p>
                         {'- Damage: '}
                         <b>
                           {moveDef.pvePower}
-                          {findStabType(formDef?.form.types, moveDef.type) && <span className="caption-small text-success"> (x1.2)</span>}
+                          {findStabType(searching?.object?.form?.form?.types, moveDef.type) && (
+                            <span className="caption-small text-success"> (x1.2)</span>
+                          )}
                         </b>
                       </p>
                     </div>
@@ -672,15 +666,15 @@ const CalculatePoint = () => {
                   <div style={{ marginBottom: 15 }}>
                     <Move
                       text="Fast Moves"
-                      id={idDef}
+                      id={searching?.object?.pokemon?.id}
                       isSelectDefault={true}
-                      form={formDef ? formDef.form.name : nameDef.toLowerCase()}
+                      form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
                       setMove={setFMove}
                       move={fMove}
                       type={TypeMove.Fast}
                       clearData={clearDataBulk}
                       isHighlight={true}
-                      pokemonType={formDef?.form.pokemonType}
+                      pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {fMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -691,12 +685,14 @@ const CalculatePoint = () => {
                           {'- Move Type: '}
                           <span className={combineClasses('type-icon-small', fMove.type?.toLowerCase())}>{capitalize(fMove.type)}</span>
                         </p>
-                        {findStabType(formDef?.form.types, fMove.type)}
+                        {findStabType(searching?.object?.form?.form?.types, fMove.type)}
                         <p>
                           {'- Damage: '}
                           <b>
                             {fMove.pvePower}
-                            {findStabType(formDef?.form.types, fMove.type) && <span className="caption-small text-success"> (x1.2)</span>}
+                            {findStabType(searching?.object?.form?.form?.types, fMove.type) && (
+                              <span className="caption-small text-success"> (x1.2)</span>
+                            )}
                           </b>
                         </p>
                       </div>
@@ -705,15 +701,15 @@ const CalculatePoint = () => {
                   <div>
                     <Move
                       text="Charged Moves"
-                      id={idDef}
+                      id={searching?.object?.pokemon?.id}
                       isSelectDefault={true}
-                      form={formDef ? formDef.form.name : nameDef.toLowerCase()}
+                      form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
                       setMove={setCMove}
                       move={cMove}
                       type={TypeMove.Charge}
                       clearData={clearDataBulk}
                       isHighlight={true}
-                      pokemonType={formDef?.form.pokemonType}
+                      pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {cMove && (
                       <div className="element-top" style={{ width: 300, margin: 'auto' }}>
@@ -724,12 +720,14 @@ const CalculatePoint = () => {
                           {'- Move Type: '}
                           <span className={combineClasses('type-icon-small', cMove.type?.toLowerCase())}>{capitalize(cMove.type)}</span>
                         </p>
-                        {findStabType(formDef?.form.types, cMove.type)}
+                        {findStabType(searching?.object?.form?.form?.types, cMove.type)}
                         <p>
                           {'- Damage: '}
                           <b>
                             {cMove.pvePower}
-                            {findStabType(formDef?.form.types, cMove.type) && <span className="caption-small text-success"> (x1.2)</span>}
+                            {findStabType(searching?.object?.form?.form?.types, cMove.type) && (
+                              <span className="caption-small text-success"> (x1.2)</span>
+                            )}
                           </b>
                         </p>
                       </div>

@@ -151,8 +151,7 @@ const columns: TableColumn<IFindCP>[] = [
 
 const FindTable = () => {
   useChangeTitle('Find CP&IV - Tool');
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
+  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');
 
@@ -160,26 +159,26 @@ const FindTable = () => {
   const [searchDEFIv, setSearchDEFIv] = useState(0);
   const [searchSTAIv, setSearchSTAIv] = useState(0);
 
-  const [statATK, setStatATK] = useState(0);
-  const [statDEF, setStatDEF] = useState(0);
-  const [statSTA, setStatSTA] = useState(0);
-
   const [preIvArr, setPreIvArr] = useState<IPredictStatsCalculate>();
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();
 
   const { enqueueSnackbar } = useSnackbar();
 
   const findStatsIv = useCallback(() => {
+    if (!pokemon) {
+      return;
+    }
     if (toNumber(searchCP) < MIN_CP) {
       return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
     }
-    const result = predictStat(statATK, statDEF, statSTA, searchCP);
+    const result = predictStat(toNumber(pokemon.statsGO?.atk), toNumber(pokemon.statsGO?.def), toNumber(pokemon.statsGO?.sta), searchCP);
     if (!isNotEmpty(result.result)) {
       setPreIvArr(undefined);
+      const name = splitAndCapitalize(pokemon.fullName, '_', ' ');
       return enqueueSnackbar(`At CP: ${result.CP} impossible found in ${name}`, { variant: VariantType.Error });
     }
     setPreIvArr(result);
-  }, [enqueueSnackbar, name, searchCP, statATK, statDEF, statSTA]);
+  }, [enqueueSnackbar, pokemon, searchCP]);
 
   const onFindStats = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -199,13 +198,23 @@ const FindTable = () => {
   };
 
   const findStatsCP = useCallback(() => {
+    if (!pokemon) {
+      return;
+    }
     if (isInvalidIV(searchATKIv) || isInvalidIV(searchDEFIv) || isInvalidIV(searchSTAIv)) {
       enqueueSnackbar(`Please input IV between ${MIN_IV} - ${MAX_IV}.`, { variant: VariantType.Error });
       return;
     }
-    const result = predictCPList(statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv);
+    const result = predictCPList(
+      toNumber(pokemon.statsGO?.atk),
+      toNumber(pokemon.statsGO?.def),
+      toNumber(pokemon.statsGO?.sta),
+      searchATKIv,
+      searchDEFIv,
+      searchSTAIv
+    );
     setPreCpArr(result);
-  }, [enqueueSnackbar, statATK, statDEF, statSTA, searchATKIv, searchDEFIv, searchSTAIv]);
+  }, [enqueueSnackbar, pokemon, searchATKIv, searchDEFIv, searchSTAIv]);
 
   const onFindCP = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -307,6 +316,12 @@ const FindTable = () => {
   };
 
   const findMinMax = () => {
+    if (!pokemon) {
+      return;
+    }
+    const statATK = toNumber(pokemon.statsGO?.atk);
+    const statDEF = toNumber(pokemon.statsGO?.def);
+    const statSTA = toNumber(pokemon.statsGO?.sta);
     const dataTable = dataCPM
       .filter((item) => item.level >= MIN_LEVEL && item.level <= MAX_LEVEL)
       .map((item) => {
@@ -333,14 +348,7 @@ const FindTable = () => {
   return (
     <Fragment>
       <div className="container element-top">
-        <Find
-          isHide={true}
-          clearStats={clearArrStats}
-          setStatATK={setStatATK}
-          setStatDEF={setStatDEF}
-          setStatSTA={setStatSTA}
-          setName={setName}
-        />
+        <Find isHide={true} clearStats={clearArrStats} />
         <h1 id="main" className="text-center">
           Find IV
         </h1>

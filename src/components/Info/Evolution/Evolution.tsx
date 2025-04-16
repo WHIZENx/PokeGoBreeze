@@ -37,8 +37,7 @@ import PopoverConfig from '../../Popover/PopoverConfig';
 import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { RouterState, StoreState } from '../../../store/models/state.model';
-import { IPokemonData } from '../../../core/models/pokemon.model';
-import { EvoList, EvolutionModel, EvolutionQuest, IEvolution } from '../../../core/models/evolution.model';
+import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
 import { FORM_GALAR, FORM_GMAX, FORM_HISUI, FORM_NORMAL, FORM_STANDARD } from '../../../util/constants';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
@@ -47,7 +46,13 @@ import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
-import { IInfoEvoChain, IPokemonDetailEvoChain, PokemonDetailEvoChain, PokemonInfoEvo } from '../../../core/models/API/info.model';
+import {
+  IInfoEvoChain,
+  IPokemonDetail,
+  IPokemonDetailEvoChain,
+  PokemonDetailEvoChain,
+  PokemonInfoEvo,
+} from '../../../core/models/API/info.model';
 import { ItemName } from '../../../pages/News/enums/item-type.enum';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 
@@ -182,11 +187,9 @@ const Evolution = (props: IEvolutionComponent) => {
     return PokemonEvo.create(name, pokemon.id, form, sprite, props.pokemonData?.pokemonType, pokemon.prev, pokemon.isBaby);
   };
 
-  const getPrevEvoChainStore = (poke: IPokemonData, result: IPokemonEvo[][]) => {
+  const getPrevEvoChainStore = (id: number | undefined, form: string | null | undefined, result: IPokemonEvo[][]) => {
     const evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonData.filter((pokemon) =>
-      pokemon.evoList?.find((evo) => evo.evoToId === poke.num && isEqual(evo.evoToForm, poke.forme))
-    );
+    const pokemon = pokemonData.filter((pokemon) => pokemon.evoList?.find((evo) => evo.evoToId === id && isEqual(evo.evoToForm, form)));
     if (!isNotEmpty(pokemon)) {
       return;
     }
@@ -205,15 +208,15 @@ const Evolution = (props: IEvolutionComponent) => {
             })
           )
         );
-        getPrevEvoChainStore(evo, result);
+        getPrevEvoChainStore(evo.num, evo.forme, result);
       });
     return result.push(evoList);
   };
 
-  const getCurrEvoChainStore = (poke: IPokemonData, result: IPokemonEvo[][]) => {
+  const getCurrEvoChainStore = (poke: Partial<IPokemonDetail>, result: IPokemonEvo[][]) => {
     let evoList: IPokemonEvo[] = [];
     const pokemon = pokemonData.find((pokemon) =>
-      pokemon.evoList?.find((evo) => evo.evoToId === poke.num && isEqual(evo.evoToForm, poke.forme?.replace(`_${FORM_STANDARD}`, '')))
+      pokemon.evoList?.find((evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.forme?.replace(`_${FORM_STANDARD}`, '')))
     );
     if (!pokemon) {
       evoList.push(
@@ -221,7 +224,7 @@ const Evolution = (props: IEvolutionComponent) => {
           new EvolutionModel({
             ...poke,
             name: getValueOrDefault(String, poke.fullName),
-            id: poke.num,
+            id: toNumber(poke.id),
             form: getValueOrDefault(String, poke.forme, FORM_NORMAL),
             evoList: [],
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
@@ -243,39 +246,39 @@ const Evolution = (props: IEvolutionComponent) => {
               })
             )
           )
-          .filter((pokemon) => pokemon.id === poke.num)
+          .filter((pokemon) => pokemon.id === poke.id)
       );
     }
     return result.push(evoList);
   };
 
-  const getNextEvoChainStore = (poke: IPokemonData | undefined, result: IPokemonEvo[][]) => {
-    if (!isNotEmpty(poke?.evoList)) {
+  const getNextEvoChainStore = (name: string | undefined, evoList: IEvoList[] | undefined, result: IPokemonEvo[][]) => {
+    if (!isNotEmpty(evoList)) {
       return;
     }
-    const evoList = poke?.evoList?.map((evo) =>
+    const pokemonEvoList = evoList?.map((evo) =>
       modelEvoChain(
         new EvolutionModel({
           id: evo.evoToId,
           name: evo.evoToName,
           form: evo.evoToForm,
-          prev: poke.name,
+          prev: name,
           evoList: [],
           tempEvo: [],
         })
       )
     );
-    if (evoList && isNotEmpty(evoList)) {
+    if (pokemonEvoList && isNotEmpty(pokemonEvoList)) {
       if (result.length === 3) {
-        result.at(2)?.push(...evoList);
+        result.at(2)?.push(...pokemonEvoList);
       } else {
-        result.push(evoList);
+        result.push(pokemonEvoList);
       }
     }
 
-    poke?.evoList?.forEach((evo) => {
+    evoList?.forEach((evo) => {
       const pokemon = pokemonData.find((pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.forme, evo.evoToForm));
-      getNextEvoChainStore(pokemon, result);
+      getNextEvoChainStore(pokemon?.name, pokemon?.evoList, result);
     });
 
     return result;
@@ -304,14 +307,14 @@ const Evolution = (props: IEvolutionComponent) => {
     }
   };
 
-  const getEvoChainStore = (pokemon: IPokemonData) => {
+  const getEvoChainStore = (pokemon: Partial<IPokemonDetail>) => {
     const result: IPokemonEvo[][] = [];
-    getPrevEvoChainStore(pokemon, result);
+    getPrevEvoChainStore(pokemon.id, pokemon.forme, result);
     getCurrEvoChainStore(pokemon, result);
-    getNextEvoChainStore(pokemon, result);
+    getNextEvoChainStore(pokemon.name, pokemon.evoList, result);
     const form = getValueOrDefault(String, pokemon.forme, FORM_NORMAL);
-    if (pokemon.prevo && result.length === 1 && result[0].length === 1) {
-      getCombineEvoChainFromPokeGo(result, pokemon.num, form);
+    if (pokemon.prevEvo && result.length === 1 && result[0].length === 1) {
+      getCombineEvoChainFromPokeGo(result, pokemon.id, form);
     }
     if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
       const idUrlChain = getGenerationPokemon(props.urlEvolutionChain);
@@ -325,28 +328,28 @@ const Evolution = (props: IEvolutionComponent) => {
     }
   };
 
-  const getGMaxChain = (pokemon: IPokemonData) => {
+  const getGMaxChain = (pokemon: Partial<IPokemonDetail>) => {
     return setArrEvoList([
-      [PokemonEvo.create(pokemon.pokemonId, pokemon.num, FORM_NORMAL, convertModelSpritName(pokemon.pokemonId), PokemonType.Normal)],
+      [PokemonEvo.create(pokemon.pokemonId, pokemon.id, FORM_NORMAL, convertModelSpritName(pokemon.pokemonId), PokemonType.Normal)],
       [
         PokemonEvo.create(
           pokemon.pokemonId,
-          pokemon.num,
+          pokemon.id,
           FORM_GMAX.toLowerCase(),
-          convertModelSpritName(pokemon.sprite.replace(`-${FORM_GMAX.toLowerCase()}`, '-gigantamax').replace('-low-key', '')),
+          convertModelSpritName(pokemon.sprite?.replace(`-${FORM_GMAX.toLowerCase()}`, '-gigantamax').replace('-low-key', '')),
           pokemon.pokemonType
         ),
       ],
     ]);
   };
 
-  const getMegaPrimalChain = (pokemon: IPokemonData) => {
+  const getMegaPrimalChain = (pokemon: Partial<IPokemonDetail>) => {
     return setArrEvoList([
-      [PokemonEvo.create(pokemon.pokemonId, pokemon.num, FORM_NORMAL, convertModelSpritName(pokemon.pokemonId), PokemonType.Normal)],
+      [PokemonEvo.create(pokemon.pokemonId, pokemon.id, FORM_NORMAL, convertModelSpritName(pokemon.pokemonId), PokemonType.Normal)],
       [
         PokemonEvo.create(
           pokemon.pokemonId,
-          pokemon.num,
+          pokemon.id,
           pokemon.forme?.toLowerCase(),
           convertModelSpritName(pokemon.sprite),
           pokemon.pokemonType

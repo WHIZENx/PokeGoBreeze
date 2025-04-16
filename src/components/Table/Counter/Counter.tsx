@@ -209,7 +209,7 @@ const Counter = (props: ICounterComponent) => {
     {
       id: ColumnType.Percent,
       name: '%',
-      selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100 })),
+      selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
       sortable: true,
       sortFunction: numSortRatio,
       width: '20%',
@@ -387,6 +387,8 @@ const Counter = (props: ICounterComponent) => {
       <DataTable
         className="table-counter-container"
         columns={convertColumnDataType(columns)}
+        defaultSortFieldId={ColumnType.Percent}
+        defaultSortAsc={false}
         pagination={true}
         customStyles={customStyles}
         fixedHeader={true}

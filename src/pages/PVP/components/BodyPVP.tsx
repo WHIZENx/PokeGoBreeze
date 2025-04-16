@@ -76,7 +76,8 @@ const BodyPVP = (props: BodyComponent) => {
       style={{
         backgroundImage: computeBgType(
           data.pokemon?.types,
-          isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) ? PokemonType.Shadow : PokemonType.Normal
+          isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive) ? PokemonType.Shadow : PokemonType.Normal,
+          props.styleList
         ),
       }}
     >
