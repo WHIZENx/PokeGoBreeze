@@ -14,7 +14,14 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
     if (isInvalidIV(props.ivAtk) || isInvalidIV(props.ivDef) || isInvalidIV(props.ivSta)) {
       return;
     }
-    if (props.statATK > 0 && props.statDEF > 0 && props.statSTA > 0) {
+    if (
+      !isNullOrUndefined(props.statATK) &&
+      !isNullOrUndefined(props.statDEF) &&
+      !isNullOrUndefined(props.statSTA) &&
+      props.statATK > 0 &&
+      props.statDEF > 0 &&
+      props.statSTA > 0
+    ) {
       const result = predictCPList(props.statATK, props.statDEF, props.statSTA, props.ivAtk, props.ivDef, props.ivSta);
       setPreCpArr(result);
     }

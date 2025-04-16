@@ -21,19 +21,19 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
-  const pokemonData = useSelector((state: SearchingState) => state.searching.pokemon);
+  const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const gender = useRef<PokemonGender>();
   const sound = useRef<IAsset>();
 
   const getImageList = () => {
-    sound.current = assets.find((item) => item.id === pokemonData?.num);
+    sound.current = assets.find((item) => item.id === pokemonData?.id);
     const model = sound.current;
     gender.current = {
-      malePercent: pokemonData?.genderRatio.M,
-      femalePercent: pokemonData?.genderRatio.F,
-      genderlessPercent: Number(pokemonData?.genderRatio.M === 0 && pokemonData?.genderRatio.F === 0),
+      malePercent: pokemonData?.genderRatio?.M,
+      femalePercent: pokemonData?.genderRatio?.F,
+      genderlessPercent: Number(pokemonData?.genderRatio?.M === 0 && pokemonData?.genderRatio.F === 0),
     };
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map((value) => new PokemonModelComponent(value, model?.image));
     return result;

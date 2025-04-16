@@ -58,7 +58,6 @@ import {
 } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
-import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
@@ -156,14 +155,7 @@ const RaidBattle = () => {
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-
-  const [id, setId] = useState(toNumber(searching?.id, 1));
-  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
-  const [form, setForm] = useState<IPokemonFormModify>();
-
-  const [statATK, setStatATK] = useState(0);
-  const [statDEF, setStatDEF] = useState(0);
+  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [statBossATK, setStatBossATK] = useState(0);
   const [statBossDEF, setStatBossDEF] = useState(0);
@@ -344,10 +336,6 @@ const RaidBattle = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const resetData = () => {
-    clearData();
-  };
-
   const clearData = () => {
     setResult([]);
     setIsLoadedForms(false);
@@ -355,11 +343,6 @@ const RaidBattle = () => {
 
   const clearDataTarget = () => {
     setResultRaid(undefined);
-  };
-
-  const onSetForm = (form: IPokemonFormModify | undefined) => {
-    setForm(form);
-    setIsLoadedForms(true);
   };
 
   const onCopyPokemon = (index: number) => {
@@ -427,7 +410,7 @@ const RaidBattle = () => {
             hp: statBossHP,
             fMove: data.combats.find((item) => isEqual(item.name, fMove?.name)),
             cMove: data.combats.find((item) => isEqual(item.name, cMove?.name)),
-            types: form?.form.types,
+            types: pokemon?.form?.form?.types,
             isStab: isWeatherBoss,
           });
           const statsAttacker = pokemonTarget ? statsDefender : statsAttackerTemp;
@@ -536,22 +519,26 @@ const RaidBattle = () => {
     calculateTopBattle(false);
   };
 
-  const calculateDPSBattle = (pokemon: IPokemonRaidModel, hpRemain: number, timer: number) => {
-    const fMoveCurrent = data.combats.find((item) => isEqual(item.name, pokemon.fMoveTargetPokemon?.name));
-    const cMoveCurrent = data.combats.find((item) => isEqual(item.name, pokemon.cMoveTargetPokemon?.name));
+  const calculateDPSBattle = (pokemonRaid: IPokemonRaidModel, hpRemain: number, timer: number) => {
+    const fMoveCurrent = data.combats.find((item) => isEqual(item.name, pokemonRaid.fMoveTargetPokemon?.name));
+    const cMoveCurrent = data.combats.find((item) => isEqual(item.name, pokemonRaid.cMoveTargetPokemon?.name));
 
     if (fMoveCurrent && cMoveCurrent) {
-      fMoveCurrent.moveType = pokemon.fMoveTargetPokemon?.moveType;
-      cMoveCurrent.moveType = pokemon.cMoveTargetPokemon?.moveType;
-      const stats = calculateStatsByTag(pokemon.dataTargetPokemon, pokemon.dataTargetPokemon?.baseStats, pokemon.dataTargetPokemon?.slug);
-      const statsGO = pokemon.dataTargetPokemon?.stats ?? used;
+      fMoveCurrent.moveType = pokemonRaid.fMoveTargetPokemon?.moveType;
+      cMoveCurrent.moveType = pokemonRaid.cMoveTargetPokemon?.moveType;
+      const stats = calculateStatsByTag(
+        pokemonRaid.dataTargetPokemon,
+        pokemonRaid.dataTargetPokemon?.baseStats,
+        pokemonRaid.dataTargetPokemon?.slug
+      );
+      const statsGO = pokemonRaid.dataTargetPokemon?.stats ?? used;
       const statsAttacker = new BattleCalculate({
         atk: calculateStatsBattle(stats.atk, statsGO.iv.atk, statsGO.level),
         def: calculateStatsBattle(stats.def, statsGO.iv.def, statsGO.level),
         hp: calculateStatsBattle(stats?.sta, statsGO.iv.sta, statsGO.level),
         fMove: fMoveCurrent,
         cMove: cMoveCurrent,
-        types: pokemon.dataTargetPokemon?.types,
+        types: pokemonRaid.dataTargetPokemon?.types,
         pokemonType: statsGO.pokemonType,
       });
       const statsDefender = new BattleCalculate({
@@ -560,7 +547,7 @@ const RaidBattle = () => {
         hp: Math.floor(hpRemain),
         fMove: data.combats.find((item) => isEqual(item.name, fMove?.name)),
         cMove: data.combats.find((item) => isEqual(item.name, cMove?.name)),
-        types: form?.form.types,
+        types: pokemon?.form?.form?.types,
         isStab: isWeatherBoss,
       });
 
@@ -580,7 +567,7 @@ const RaidBattle = () => {
       const tdoDef = dpsDef * (enableTimeAllow ? timeKill : ttkAtk);
 
       return PokemonDPSBattle.create({
-        pokemon: pokemon.dataTargetPokemon,
+        pokemon: pokemonRaid.dataTargetPokemon,
         fMove: statsAttacker.fMove,
         cMove: statsAttacker.cMove,
         atk: statsAttacker.atk,
@@ -682,10 +669,18 @@ const RaidBattle = () => {
   };
 
   useEffect(() => {
-    if (form && isNotEmpty(data.pokemons)) {
-      findMove(id, form.form.name, form.form.pokemonType);
+    if (pokemon) {
+      setIsLoadedForms(true);
+    } else {
+      setIsLoadedForms(false);
     }
-  }, [data.pokemons, id, form]);
+  }, [pokemon]);
+
+  useEffect(() => {
+    if (pokemon?.form && isNotEmpty(data.pokemons)) {
+      findMove(toNumber(pokemon?.form.defaultId, 1), getValueOrDefault(String, pokemon?.form.form?.name), pokemon?.form.form?.pokemonType);
+    }
+  }, [data.pokemons, pokemon?.form]);
 
   const handleCalculate = () => {
     dispatch(SpinnerActions.ShowSpinner.create());
@@ -1244,16 +1239,7 @@ const RaidBattle = () => {
     <Fragment>
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
         <div className="col-lg" style={{ padding: 0 }}>
-          <Find
-            isHide={true}
-            title="Raid Boss"
-            clearStats={resetData}
-            setStatATK={setStatATK}
-            setStatDEF={setStatDEF}
-            setForm={onSetForm}
-            setName={setName}
-            setId={setId}
-          />
+          <Find isHide={true} title="Raid Boss" clearStats={clearData} />
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
           <div className="element-top position-relative">
@@ -1271,7 +1257,9 @@ const RaidBattle = () => {
                     <b>Fast Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={new SelectMovePokemonModel(id, form?.form.formName, form?.form.pokemonType)}
+                    pokemon={
+                      new SelectMovePokemonModel(pokemon?.form?.defaultId, pokemon?.form?.form?.formName, pokemon?.form?.form?.pokemonType)
+                    }
                     clearData={clearData}
                     move={fMove}
                     setMovePokemon={setFMove}
@@ -1285,7 +1273,9 @@ const RaidBattle = () => {
                     <b>Charged Moves</b>
                   </h6>
                   <SelectMove
-                    pokemon={new SelectMovePokemonModel(id, form?.form.formName, form?.form.pokemonType)}
+                    pokemon={
+                      new SelectMovePokemonModel(pokemon?.form?.defaultId, pokemon?.form?.form?.formName, pokemon?.form?.form?.pokemonType)
+                    }
                     clearData={clearData}
                     move={cMove}
                     setMovePokemon={setCMove}
@@ -1299,10 +1289,10 @@ const RaidBattle = () => {
               clearData={clearData}
               setTierBoss={setTier}
               setTimeAllow={setTimeAllow}
-              currForm={form}
-              id={id}
-              statATK={statATK}
-              statDEF={statDEF}
+              currForm={pokemon?.form}
+              id={pokemon?.form?.defaultId}
+              statATK={pokemon?.pokemon?.statsGO?.atk}
+              statDEF={pokemon?.pokemon?.statsGO?.def}
               setStatBossATK={setStatBossATK}
               setStatBossDEF={setStatBossDEF}
               setStatBossHP={setStatBossHP}
@@ -1563,10 +1553,14 @@ const RaidBattle = () => {
             <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
               <h3>
                 <b>
-                  {form ? `#${id}` : ''} {form ? splitAndCapitalize(form.form.name, '-', ' ') : name.toLowerCase()} Tier {tier}
+                  {pokemon?.form ? `#${pokemon?.form?.defaultId}` : ''}{' '}
+                  {pokemon?.form
+                    ? splitAndCapitalize(pokemon?.form.form?.name, '-', ' ')
+                    : splitAndCapitalize(pokemon?.pokemon?.fullName, '_', ' ')}{' '}
+                  Tier {tier}
                 </b>
               </h3>
-              <TypeInfo arr={form?.form.types} />
+              <TypeInfo arr={pokemon?.form?.form?.types} />
             </div>
             <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
               <TypeBadge title="Fast Move" move={fMove} moveType={fMove?.moveType ?? MoveType.None} />

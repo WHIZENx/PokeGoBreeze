@@ -1,4 +1,5 @@
 import { PokemonType } from '../../enums/type.enum';
+import { toNumber } from '../../util/extension';
 
 export interface OptionsRank {
   minRank: number;
@@ -114,9 +115,16 @@ export class StatsPokemonGO implements IStatsPokemonGO {
   sta = 0;
   prod = 0;
 
-  static create(value: IStatsPokemonGO) {
+  constructor() {
+    this.prod = this.atk * this.def * this.sta;
+  }
+
+  static create(atk?: number, def?: number, sta?: number) {
     const obj = new StatsPokemonGO();
-    Object.assign(obj, value);
+    obj.atk = toNumber(atk);
+    obj.def = toNumber(def);
+    obj.sta = toNumber(sta);
+    obj.prod = obj.atk * obj.def * obj.sta;
     return obj;
   }
 }

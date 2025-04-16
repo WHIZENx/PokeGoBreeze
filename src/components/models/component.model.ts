@@ -142,7 +142,7 @@ export interface IAssetPokemonModelComponent {
 }
 
 export interface IEvolutionComponent {
-  pokemonData: IPokemonData | undefined | null;
+  pokemonData: Partial<IPokemonDetail> | undefined | null;
   id: number | undefined;
   setSearchOption?: (searchOption: SearchOption) => void;
   isLoadedForms: boolean;
@@ -159,7 +159,7 @@ export interface IFormInfoComponent {
 }
 
 export interface IFromChangeComponent {
-  pokemonData: IPokemonData | undefined | null;
+  pokemonData: Partial<IPokemonDetail> | undefined | null;
   currentId: number | undefined;
 }
 
@@ -190,9 +190,9 @@ export interface IGenderComponent {
 }
 
 export interface IDynamicInputCPComponent {
-  statATK: number;
-  statDEF: number;
-  statSTA: number;
+  statATK: number | undefined;
+  statDEF: number | undefined;
+  statSTA: number | undefined;
   ivAtk: number;
   ivDef: number;
   ivSta: number;
@@ -251,10 +251,10 @@ export interface IPokemonRaidComponent {
 export interface IRaidComponent {
   clearData?: () => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
-  currForm: IPokemonFormModify | undefined;
+  currForm: Partial<IPokemonFormModify> | undefined;
   id: number | undefined;
-  statATK: number;
-  statDEF: number;
+  statATK: number | undefined;
+  statDEF: number | undefined;
   setStatBossATK?: React.Dispatch<React.SetStateAction<number>>;
   setStatBossDEF?: React.Dispatch<React.SetStateAction<number>>;
   setStatBossHP?: React.Dispatch<React.SetStateAction<number>>;
@@ -398,11 +398,11 @@ export interface IWeatherComponent {
 }
 
 export interface ICounterComponent {
-  pokemonData: IPokemonData | undefined | null;
+  pokemonData: Partial<IPokemonDetail> | undefined | null;
 }
 
 export interface ITableMoveComponent {
-  pokemonData: IPokemonData | undefined | null;
+  pokemonData: Partial<IPokemonDetail> | undefined | null;
   maxHeight?: number | string;
 }
 
@@ -420,8 +420,8 @@ export interface IPokemonTableComponent {
 
 export interface IMoveComponent {
   type?: TypeMove;
-  id: number;
-  form: string;
+  id: number | undefined;
+  form: string | null | undefined;
   move: ICombat | undefined;
   setMove: (move: ICombat | undefined) => void | React.Dispatch<React.SetStateAction<ICombat | undefined>>;
   text: string;

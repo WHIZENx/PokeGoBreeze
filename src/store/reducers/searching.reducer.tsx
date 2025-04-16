@@ -5,8 +5,6 @@ import { SearchingActionsUnion } from '../actions/searching.action';
 const initialize: SearchingOptionsModel = {
   mainSearching: null,
   toolSearching: null,
-  pokemonDetails: null,
-  pokemon: null,
 };
 
 const SearchingReducer = (state: SearchingOptionsModel = initialize, action: SearchingActionsUnion) => {
@@ -31,27 +29,86 @@ const SearchingReducer = (state: SearchingOptionsModel = initialize, action: Sea
         ...state,
         toolSearching: null,
       };
-    case SearchingActions.SearchingActionTypes.setPokemon:
+    case SearchingActions.SearchingActionTypes.setMainPokemonForm:
       return {
         ...state,
-        pokemon: action.payload,
+        mainSearching: {
+          ...state.mainSearching,
+          form: action.payload,
+        },
       };
-    case SearchingActions.SearchingActionTypes.setPokemonForm:
+    case SearchingActions.SearchingActionTypes.setMainPokemonDetails:
       return {
         ...state,
-        form: action.payload,
+        mainSearching: {
+          ...state.mainSearching,
+          pokemon: action.payload,
+        },
       };
-    case SearchingActions.SearchingActionTypes.setPokemonDetails:
+    case SearchingActions.SearchingActionTypes.resetMainPokemon:
       return {
         ...state,
-        pokemonDetails: action.payload,
+        mainSearching: null,
       };
-    case SearchingActions.SearchingActionTypes.resetPokemon:
+    case SearchingActions.SearchingActionTypes.setToolPokemonForm:
       return {
         ...state,
-        pokemonDetails: null,
-        pokemon: null,
-        form: null,
+        toolSearching: {
+          ...state.toolSearching,
+          current: {
+            ...state.toolSearching?.current,
+            form: action.payload,
+          },
+        },
+      };
+    case SearchingActions.SearchingActionTypes.setToolPokemonDetails:
+      return {
+        ...state,
+        toolSearching: {
+          ...state.toolSearching,
+          current: {
+            ...state.toolSearching?.current,
+            pokemon: action.payload,
+          },
+        },
+      };
+    case SearchingActions.SearchingActionTypes.resetToolPokemon:
+      return {
+        ...state,
+        toolSearching: {
+          ...state.toolSearching,
+          current: null,
+        },
+      };
+    case SearchingActions.SearchingActionTypes.setToolObjectPokemonForm:
+      return {
+        ...state,
+        toolSearching: {
+          ...state.toolSearching,
+          object: {
+            ...state.toolSearching?.object,
+            form: action.payload,
+          },
+        },
+      };
+    case SearchingActions.SearchingActionTypes.setToolObjectPokemonDetails:
+      return {
+        ...state,
+        toolSearching: {
+          ...state.toolSearching,
+          object: {
+            ...state.toolSearching?.object,
+            pokemon: action.payload,
+          },
+        },
+      };
+    case SearchingActions.SearchingActionTypes.resetToolObjectPokemon:
+      return {
+        ...state,
+        toolSearching: {
+          ...state.toolSearching,
+          object: null,
+        },
       };
     default:
       return state;

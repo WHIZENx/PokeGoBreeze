@@ -1476,7 +1476,7 @@ const Battle = () => {
                     type={pokemon.cMovePri?.type}
                     size={80}
                     maxEnergy={MAX_ENERGY(dataStore.options)}
-                    moveEnergy={toNumber(Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy)))}
+                    moveEnergy={Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy))}
                     energy={toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy, pokemon.energy)}
                     isDisable={pokemon.disableCMovePri}
                   />

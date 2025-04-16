@@ -44,7 +44,7 @@ interface MoveReassignment {
   cinematicMoves?: MoveReassignType[];
 }
 
-interface IPokemonFormChange {
+export interface IPokemonFormChange {
   availableForm: string[];
   candyCost?: string;
   stardustCost?: string;
@@ -571,13 +571,7 @@ export class PokemonData implements IPokemonData {
       def: toNumber(pokemon.stats?.baseDefense),
       sta: pokemon.stats?.baseStamina,
     });
-    const sta = toNumber(obj.baseStats.sta);
-    obj.statsGO = StatsPokemonGO.create({
-      atk: obj.baseStats.atk,
-      def: obj.baseStats.def,
-      sta,
-      prod: obj.baseStats.atk * obj.baseStats.def * sta,
-    });
+    obj.statsGO = StatsPokemonGO.create(obj.baseStats.atk, obj.baseStats.def, obj.baseStats.sta);
     obj.heightM = pokemon.pokedexHeightM;
     obj.weightKg = pokemon.pokedexWeightKg;
     obj.color = getValueOrDefault(String, options?.color, 'None');

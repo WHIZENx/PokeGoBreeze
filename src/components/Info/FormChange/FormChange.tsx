@@ -12,8 +12,8 @@ import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber, UniqValueInArray } from '../../../util/extension';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { IncludeMode } from '../../../util/enums/string.enum';
-import { IPokemonData } from '../../../core/models/pokemon.model';
 import { FORM_NORMAL } from '../../../util/constants';
+import { IPokemonDetail } from '../../../core/models/API/info.model';
 
 const FromChange = (props: IFromChangeComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -22,7 +22,7 @@ const FromChange = (props: IFromChangeComponent) => {
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [dataSrc, setDataSrc] = useState<string>();
 
-  const [pokemon, setPokemon] = useState<IPokemonData>();
+  const [pokemon, setPokemon] = useState<Partial<IPokemonDetail>>();
 
   const getImageList = (id: number | undefined) => {
     const model = assets.find((item) => item.id === id);
@@ -31,7 +31,7 @@ const FromChange = (props: IFromChangeComponent) => {
   };
 
   useEffect(() => {
-    if (props.currentId && props.pokemonData && props.currentId !== props.pokemonData.num) {
+    if (props.currentId && props.pokemonData && props.currentId !== props.pokemonData.id) {
       setPokeAssets([]);
       setDataSrc(undefined);
       setPokemon(undefined);
@@ -61,7 +61,7 @@ const FromChange = (props: IFromChangeComponent) => {
 
   return (
     <Fragment>
-      {props.currentId && props.pokemonData && props.currentId === props.pokemonData.num && pokemon && pokemon.formChange && (
+      {props.currentId && props.pokemonData && props.currentId === props.pokemonData.id && pokemon && pokemon.formChange && (
         <>
           <h4 className="title-evo">
             <b>Form Change</b>
@@ -74,15 +74,15 @@ const FromChange = (props: IFromChangeComponent) => {
                     <img
                       className="pokemon-sprite-large"
                       alt="pokemon-model"
-                      src={APIService.getPokemonModel(dataSrc, props.pokemonData.num)}
+                      src={APIService.getPokemonModel(dataSrc, props.pokemonData.id)}
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.pokemonData?.num, dataSrc);
+                        e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.pokemonData?.id, dataSrc);
                       }}
                     />
                   </div>
                   <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                    {splitAndCapitalize(props.pokemonData.name.replaceAll('-', '_'), '_', ' ')}
+                    {splitAndCapitalize(props.pokemonData.name?.replaceAll('-', '_'), '_', ' ')}
                   </span>
                 </div>
               </div>
@@ -95,10 +95,10 @@ const FromChange = (props: IFromChangeComponent) => {
                           <img
                             className="pokemon-sprite-large"
                             alt="pokemon-model"
-                            src={APIService.getPokemonModel(findPokeAsset(name), pokemon.num)}
+                            src={APIService.getPokemonModel(findPokeAsset(name), pokemon.id)}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
-                              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.num, findPokeAsset(name));
+                              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.id, findPokeAsset(name));
                             }}
                           />
                         </div>
@@ -122,7 +122,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                 className="d-flex align-items-center caption"
                                 style={{ color: theme.palette.customText.caption, width: 'max-content' }}
                               >
-                                <Candy id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.num} />
+                                <Candy id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id} />
                                 <LinkToTop
                                   style={{ marginLeft: 2 }}
                                   to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(pokemon.forme)}`}

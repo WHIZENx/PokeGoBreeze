@@ -49,9 +49,9 @@ export class BattleState implements IBattleState {
 }
 
 export interface IPokemonDmgOption {
-  objPoke?: IPokemonFormModify;
+  objPoke?: Partial<IPokemonFormModify>;
   type?: PokemonType;
-  currPoke?: IPokemonFormModify;
+  currPoke?: Partial<IPokemonFormModify>;
   currLevel: number;
   typeObj?: PokemonType;
   objLevel: number;
@@ -62,9 +62,9 @@ export interface IPokemonDmgOption {
 }
 
 export class PokemonDmgOption implements IPokemonDmgOption {
-  objPoke?: IPokemonFormModify;
+  objPoke?: Partial<IPokemonFormModify>;
   type?: PokemonType;
-  currPoke?: IPokemonFormModify;
+  currPoke?: Partial<IPokemonFormModify>;
   currLevel = MIN_LEVEL;
   typeObj?: PokemonType;
   objLevel = MIN_LEVEL;

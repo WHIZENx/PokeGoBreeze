@@ -39,20 +39,13 @@ import { ItemName } from '../../News/enums/item-type.enum';
 const Calculate = () => {
   useChangeTitle('Calculate CP&IV - Tool');
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-
-  const [id, setId] = useState(toNumber(searching?.id, 1));
-  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
+  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');
 
   const [ATKIv, setATKIv] = useState(0);
   const [DEFIv, setDEFIv] = useState(0);
   const [STAIv, setSTAIv] = useState(0);
-
-  const [statATK, setStatATK] = useState(0);
-  const [statDEF, setStatDEF] = useState(0);
-  const [statSTA, setStatSTA] = useState(0);
 
   const [typePoke, setTypePoke] = useState(PokemonType.Normal);
 
@@ -86,6 +79,10 @@ const Calculate = () => {
       enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
       return;
     }
+    const statATK = toNumber(pokemon?.statsGO?.atk);
+    const statDEF = toNumber(pokemon?.statsGO?.def);
+    const statSTA = toNumber(pokemon?.statsGO?.sta);
+    const name = splitAndCapitalize(pokemon?.fullName, '_', ' ');
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
     if (!result.level) {
       enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`, {
@@ -147,7 +144,19 @@ const Calculate = () => {
     setDataMasterLeague(
       calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke)
     );
-  }, [enqueueSnackbar, globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP, name, typePoke]);
+  }, [
+    enqueueSnackbar,
+    globalOptions,
+    pokemon?.statsGO?.atk,
+    pokemon?.statsGO?.def,
+    pokemon?.statsGO?.sta,
+    ATKIv,
+    DEFIv,
+    STAIv,
+    searchCP,
+    pokemon?.fullName,
+    typePoke,
+  ]);
 
   const onCalculateStatsPoke = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -160,6 +169,9 @@ const Calculate = () => {
   const onHandleLevel = (level: number) => {
     if (pokeStats) {
       setStatLevel(level);
+      const statATK = toNumber(pokemon?.statsGO?.atk);
+      const statDEF = toNumber(pokemon?.statsGO?.def);
+      const statSTA = toNumber(pokemon?.statsGO?.sta);
       setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, level, typePoke));
     }
   };
@@ -167,15 +179,7 @@ const Calculate = () => {
   return (
     <Fragment>
       <div className="container element-top">
-        <Find
-          isHide={true}
-          clearStats={clearArrStats}
-          setStatATK={setStatATK}
-          setStatDEF={setStatDEF}
-          setStatSTA={setStatSTA}
-          setId={setId}
-          setName={setName}
-        />
+        <Find isHide={true} clearStats={clearArrStats} />
         <h1 id="main" className="text-center">
           Calculate Stats
         </h1>
@@ -184,9 +188,9 @@ const Calculate = () => {
             <Box sx={{ width: '50%', minWidth: 350 }}>
               <div style={{ justifyContent: 'center' }} className="input-group mb-3">
                 <DynamicInputCP
-                  statATK={statATK}
-                  statDEF={statDEF}
-                  statSTA={statSTA}
+                  statATK={pokemon?.statsGO?.atk}
+                  statDEF={pokemon?.statsGO?.def}
+                  statSTA={pokemon?.statsGO?.sta}
                   ivAtk={ATKIv}
                   ivDef={DEFIv}
                   ivSta={STAIv}
@@ -408,7 +412,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           {statData ? (
-                            <Candy id={id} style={{ marginRight: 8 }} />
+                            <Candy id={pokemon?.id} style={{ marginRight: 8 }} />
                           ) : (
                             <img style={{ marginRight: 8 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                           )}
@@ -444,7 +448,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           {statData ? (
-                            <CandyXL id={id} />
+                            <CandyXL id={pokemon?.id} />
                           ) : (
                             <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.XlRareCandy)} />
                           )}
@@ -490,7 +494,7 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(statATK, pokeStats?.IV.atk, statLevel, true)
+                              calculateStatsBattle(toNumber(pokemon?.statsGO?.atk), pokeStats?.IV.atk, statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData.atkStat}
@@ -514,7 +518,7 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(statDEF, pokeStats?.IV.def, statLevel, true)
+                              calculateStatsBattle(toNumber(pokemon?.statsGO?.def), pokeStats?.IV.def, statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData.defStat}
@@ -535,7 +539,9 @@ const Calculate = () => {
                           <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
                           HP
                         </td>
-                        <td>{statData ? calculateStatsBattle(statSTA, pokeStats?.IV.sta, statLevel, true) : '-'}</td>
+                        <td>
+                          {statData ? calculateStatsBattle(toNumber(pokemon?.statsGO?.sta), pokeStats?.IV.sta, statLevel, true) : '-'}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -603,7 +609,7 @@ const Calculate = () => {
                             }}
                           >
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <Candy id={id} style={{ marginRight: 10 }} />
+                              <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
                             ) : (
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                             )}
@@ -623,7 +629,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <CandyXL id={id} />
+                              <CandyXL id={pokemon?.id} />
                             ) : (
                               <img
                                 style={{ marginRight: 10 }}
@@ -730,7 +736,7 @@ const Calculate = () => {
                             }}
                           >
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <Candy id={id} style={{ marginRight: 10 }} />
+                              <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
                             ) : (
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                             )}
@@ -750,7 +756,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <CandyXL id={id} />
+                              <CandyXL id={pokemon?.id} />
                             ) : (
                               <img
                                 style={{ marginRight: 10 }}
@@ -857,7 +863,7 @@ const Calculate = () => {
                             }}
                           >
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <Candy id={id} style={{ marginRight: 10 }} />
+                              <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
                             ) : (
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                             )}
@@ -877,7 +883,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <CandyXL id={id} />
+                              <CandyXL id={pokemon?.id} />
                             ) : (
                               <img
                                 style={{ marginRight: 10 }}
@@ -975,7 +981,7 @@ const Calculate = () => {
                             }}
                           >
                             {dataMasterLeague ? (
-                              <Candy id={id} style={{ marginRight: 10 }} />
+                              <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
                             ) : (
                               <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
                             )}
@@ -995,7 +1001,7 @@ const Calculate = () => {
                           </div>
                           <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
                             {dataMasterLeague ? (
-                              <CandyXL id={id} />
+                              <CandyXL id={pokemon?.id} />
                             ) : (
                               <img
                                 style={{ marginRight: 10 }}

@@ -31,11 +31,11 @@ const Search = () => {
   const eachCounter = useRef(10);
 
   const [searchOption, setSearchOption] = useState<SearchOption>({
-    id: router.action === Action.Pop && searching ? searching.id : 1,
-    form: router.action === Action.Pop && searching ? searching.form : '',
+    id: router.action === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1,
+    form: router.action === Action.Pop && searching ? searching.form?.form?.formName : '',
     pokemonType: PokemonType.Normal,
   });
-  const [selectId, setSelectId] = useState(router.action === Action.Pop && searching ? searching.id : 1);
+  const [selectId, setSelectId] = useState(router.action === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
