@@ -27,6 +27,7 @@ import { BadgeType } from '../Input/enums/badge-type.enum';
 import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
+import { IStyleData } from '../../util/models/util.model';
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -60,6 +61,7 @@ export interface ICardPokemonInfoComponent {
   staMaxStats: number | undefined;
   icon: string | undefined;
   releasedGO: boolean;
+  styleList: IStyleData[];
 }
 
 export interface ICardTypeComponent {

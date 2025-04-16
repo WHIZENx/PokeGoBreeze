@@ -66,6 +66,7 @@ import { APIUrl } from '../services/constants';
 import { BonusType } from '../core/enums/bonus-type.enum';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { BattleLeagueCPType } from './enums/compute.enum';
+import { IStyleData } from './models/util.model';
 
 class Mask {
   value: number;
@@ -358,6 +359,30 @@ export const getStyleSheet = (selector: string) => {
     }
   }
   return;
+};
+
+export const getStyleList = () => {
+  const result: IStyleData[] = [];
+  const sheets = document.styleSheets;
+  for (let i = 0, l = sheets.length; i < l; i++) {
+    const sheet = sheets[i];
+    if (!sheet || !sheet.cssRules) {
+      continue;
+    }
+    for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
+      const rule = sheet.cssRules[j] as CSSRuleSelector;
+      if (rule.selectorText && rule.style) {
+        const classList = rule.selectorText.split(',');
+        classList.forEach((classStyle) => {
+          result.push({
+            style: classStyle.trim(),
+            property: rule.style,
+          });
+        });
+      }
+    }
+  }
+  return result;
 };
 
 export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet) => {
