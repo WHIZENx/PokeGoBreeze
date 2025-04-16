@@ -101,9 +101,12 @@ const Search = () => {
     if (currentPokemon) {
       const prev = getPokemonById(pokemonName, currentPokemon.id - 1);
       const next = getPokemonById(pokemonName, currentPokemon.id + 1);
-      if (event.keyCode === KEY_ENTER) {
+      if (isNotEmpty(pokemonListFilter) && event.keyCode === KEY_ENTER) {
+        const input = document.getElementById('input-search-pokemon');
+        input?.blur();
         setShowResult(false);
-        setSearchOption({ id: selectId });
+        setSearchOption({ id: pokemonListFilter[0].id });
+        setSelectId(pokemonListFilter[0].id);
       } else if (prev && event.keyCode === KEY_UP) {
         setSelectId(prev.id);
       } else if (next && event.keyCode === KEY_DOWN) {
@@ -127,6 +130,7 @@ const Search = () => {
             </span>
           </div>
           <input
+            id="input-search-pokemon"
             type="text"
             className={combineClasses('form-control', `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
             style={{ backgroundColor: theme.palette.background.input, color: theme.palette.text.primary, zIndex: 1 }}
