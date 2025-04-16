@@ -478,7 +478,7 @@ const CalculatePoint = () => {
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
                   <Move
                     text="Select Moves"
-                    id={searching?.current?.pokemon?.id}
+                    id={searching?.object?.pokemon?.id}
                     isSelectDefault={true}
                     form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
                     setMove={setMoveDef}
@@ -666,7 +666,7 @@ const CalculatePoint = () => {
                   <div style={{ marginBottom: 15 }}>
                     <Move
                       text="Fast Moves"
-                      id={searching?.current?.pokemon?.id}
+                      id={searching?.object?.pokemon?.id}
                       isSelectDefault={true}
                       form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
                       setMove={setFMove}
@@ -701,7 +701,7 @@ const CalculatePoint = () => {
                   <div>
                     <Move
                       text="Charged Moves"
-                      id={searching?.current?.pokemon?.id}
+                      id={searching?.object?.pokemon?.id}
                       isSelectDefault={true}
                       form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
                       setMove={setCMove}
