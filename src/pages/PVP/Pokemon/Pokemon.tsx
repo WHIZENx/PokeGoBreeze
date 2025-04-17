@@ -40,6 +40,7 @@ import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IStyleData } from '../../../util/models/util.model';
+import { HexagonStats } from '../../../core/models/stats.model';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -110,6 +111,8 @@ const PokemonPVP = () => {
       } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {
         pokemonType = PokemonType.Purified;
       }
+
+      data.scorePVP = HexagonStats.create(data.scores);
 
       setRankingPoke(
         new PokemonBattleRanking({

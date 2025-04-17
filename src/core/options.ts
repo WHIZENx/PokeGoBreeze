@@ -100,6 +100,7 @@ import { StatsBase } from './models/stats.model';
 import { EvolutionChain, EvolutionInfo, IEvolutionInfo } from './models/evolution-chain.model';
 import { Information, ITicketReward, TicketReward } from './models/information';
 import { TrainerLevelUp } from './models/trainer.model';
+import { TemplateId } from './constants/template-id';
 
 export const getOption = <T>(options: any, args: string[], defaultValue?: T): T => {
   if (!options) {
@@ -118,7 +119,7 @@ export const getOption = <T>(options: any, args: string[], defaultValue?: T): T 
 
 export const optionSettings = (data: PokemonDataGM[], settings = new Options()) => {
   data.forEach((item) => {
-    if (isEqual(item.templateId, 'PLAYER_LEVEL_SETTINGS')) {
+    if (isEqual(item.templateId, TemplateId.PlayerSetting)) {
       settings.playerSetting.maxEncounterPlayerLevel = item.data.playerLevel.maxEncounterPlayerLevel;
       settings.playerSetting.maxQuestEncounterPlayerLevel = item.data.playerLevel.maxQuestEncounterPlayerLevel;
       settings.playerSetting.levelUps = item.data.playerLevel.rankNum.map((value, index) => ({
@@ -137,7 +138,7 @@ export const optionSettings = (data: PokemonDataGM[], settings = new Options()) 
           settings.playerSetting.cpMultipliers[level + 0.5] = multiplier;
         }
       }
-    } else if (isEqual(item.templateId, 'COMBAT_SETTINGS')) {
+    } else if (isEqual(item.templateId, TemplateId.CombatSetting)) {
       settings.combatOptions.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
       settings.combatOptions.shadowBonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
       settings.combatOptions.shadowBonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
@@ -148,7 +149,7 @@ export const optionSettings = (data: PokemonDataGM[], settings = new Options()) 
       settings.throwCharge.nice = item.data.combatSettings.chargeScoreNice;
       settings.throwCharge.great = item.data.combatSettings.chargeScoreGreat;
       settings.throwCharge.excellent = item.data.combatSettings.chargeScoreExcellent;
-    } else if (isEqual(item.templateId, 'BATTLE_SETTINGS')) {
+    } else if (isEqual(item.templateId, TemplateId.BattleSetting)) {
       settings.battleOptions.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
       settings.battleOptions.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
       settings.battleOptions.shadowBonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
@@ -156,14 +157,14 @@ export const optionSettings = (data: PokemonDataGM[], settings = new Options()) 
       settings.battleOptions.purifiedBonus = StatsBase.setValue(item.data.battleSettings.purifiedPokemonAttackMultiplierVsShadow);
       settings.battleOptions.maxEnergy = item.data.battleSettings.maximumEnergy;
       settings.battleOptions.dodgeDamageReductionPercent = item.data.battleSettings.dodgeDamageReductionPercent;
-    } else if (isInclude(item.templateId, 'BUDDY_LEVEL_')) {
-      const level = item.templateId.replace('BUDDY_LEVEL_', '');
+    } else if (isInclude(item.templateId, `${TemplateId.BuddyLevel}_`)) {
+      const level = item.templateId.replace(`${TemplateId.BuddyLevel}_`, '');
       settings.buddyFriendship[level] = new BuddyFriendship();
       settings.buddyFriendship[level].level = toNumber(level);
       settings.buddyFriendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired;
       settings.buddyFriendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
-    } else if (isInclude(item.templateId, 'FRIENDSHIP_LEVEL_')) {
-      const level = item.templateId.replace('FRIENDSHIP_LEVEL_', '');
+    } else if (isInclude(item.templateId, `${TemplateId.FriendshipLevel}_`)) {
+      const level = item.templateId.replace(`${TemplateId.FriendshipLevel}_`, '');
       settings.trainerFriendship[level] = new TrainerFriendship();
       settings.trainerFriendship[level].level = toNumber(level);
       settings.trainerFriendship[level].atkBonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
@@ -1085,17 +1086,17 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
   result.allowLeagues = getValueOrDefault(
     Array,
     data
-      .find((item) => isEqual(item.templateId, 'VS_SEEKER_CLIENT_SETTINGS'))
+      .find((item) => isEqual(item.templateId, TemplateId.BattleClientSetting))
       ?.data.vsSeekerClientSettings.allowedVsSeekerLeagueTemplateId.map((item) =>
-        item.replace('COMBAT_LEAGUE', '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '')
+        item.replace(TemplateId.CombatLeague, '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '')
       )
   );
 
   result.data = data
-    .filter((item) => item.templateId.startsWith('COMBAT_LEAGUE_') && !isInclude(item.templateId, 'SETTINGS'))
+    .filter((item) => item.templateId.startsWith(`${TemplateId.CombatLeague}_`) && !isInclude(item.templateId, 'SETTINGS'))
     .map((item) => {
       const result = new League();
-      result.id = item.templateId.replace('COMBAT_LEAGUE', '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '');
+      result.id = item.templateId.replace(TemplateId.CombatLeague, '').replace('_VS_SEEKER_', '').replace('DEFAULT_', '');
       const combatTitle = getValueOrDefault(String, item.data.combatLeague?.title);
       const title = getTextWithKey<string>(textEng, combatTitle);
       if (title) {
@@ -1144,7 +1145,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       result.iconUrl = item.data.combatLeague?.iconUrl
         .replace(APIUrl.POGO_PROD_ASSET_URL, '')
         .replace(`${APIUrl.POGO_PRODHOLOHOLO_ASSET_URL}LeagueIcons/`, '');
-      if (!item.data.combatLeague?.badgeType && isInclude(item.templateId, 'COMBAT_LEAGUE_VS_SEEKER_')) {
+      if (!item.data.combatLeague?.badgeType && isInclude(item.templateId, `${TemplateId.CombatLeagueSeeker}`)) {
         result.league = `${result.id.replace(/[^GREAT|^ULTRA|^MASTER].*/, '')}_LEAGUE`;
       } else if (item.data.combatLeague?.badgeType) {
         result.league = item.data.combatLeague.badgeType.replace('BADGE_', '');
@@ -1166,7 +1167,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
       return result;
     });
 
-  const seasons = data.find((item) => isEqual(item.templateId, 'COMBAT_COMPETITIVE_SEASON_SETTINGS'))?.data.combatCompetitiveSeasonSettings
+  const seasons = data.find((item) => isEqual(item.templateId, TemplateId.CombatSeasonSetting))?.data.combatCompetitiveSeasonSettings
     .seasonEndTimeTimestamp;
   const rewards = new Reward();
   data

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { OverAllStatsComponent } from '../models/component.model';
-import { HexagonStats, IStatsBase } from '../../../core/models/stats.model';
+import { IStatsBase } from '../../../core/models/stats.model';
 import { toNumber, combineClasses, isEqual } from '../../../util/extension';
 import Stats from '../../../components/Info/Stats/Stats';
 import Hexagon from '../../../components/Sprites/Hexagon/Hexagon';
@@ -94,20 +94,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             <h5>
               <b>Overall Performance</b>
             </h5>
-            <Hexagon
-              name={props.data?.name}
-              animation={AnimationType.On}
-              borderSize={320}
-              size={180}
-              stats={HexagonStats.create({
-                lead: toNumber(props.data?.data?.scores?.at(0)),
-                closer: toNumber(props.data?.data?.scores?.at(1)),
-                switching: toNumber(props.data?.data?.scores?.at(2)),
-                charger: toNumber(props.data?.data?.scores?.at(3)),
-                atk: toNumber(props.data?.data?.scores?.at(4)),
-                cons: toNumber(props.data?.data?.scores?.at(5)),
-              })}
-            />
+            <Hexagon name={props.data?.name} animation={AnimationType.On} borderSize={320} size={180} stats={props.data?.data?.scorePVP} />
           </div>
         </div>
       )}
@@ -130,6 +117,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             id={props.data?.pokemon?.num}
             form={props.data?.pokemon?.forme}
             isDisabled={!props.data}
+            pokemonType={props.data?.pokemonType}
           />
         </div>
         <div>

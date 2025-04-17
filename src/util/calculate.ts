@@ -1086,9 +1086,9 @@ export const rankMove = (
   weatherBoost: IWeatherBoost | undefined,
   combats: ICombat[],
   pokemon: Partial<IPokemonDetail> | undefined,
-  atk: number,
-  def: number,
-  sta: number,
+  atk: number | undefined,
+  def: number | undefined,
+  sta: number | undefined,
   types: string[] | undefined
 ) => {
   if (!pokemon) {

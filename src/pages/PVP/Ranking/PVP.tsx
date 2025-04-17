@@ -60,6 +60,7 @@ import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IStyleData } from '../../../util/models/util.model';
+import { HexagonStats } from '../../../core/models/stats.model';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -124,16 +125,16 @@ const RankingPVP = () => {
           params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
         } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
       }
-      const filePVP = file.map((item) => {
-        const name = convertNameRankingToOri(item.speciesId, item.speciesName);
+      const filePVP = file.map((data) => {
+        const name = convertNameRankingToOri(data.speciesId, data.speciesName);
         const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
         const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
-        const [fMoveData] = item.moveset;
-        let [, cMoveDataPri, cMoveDataSec] = item.moveset;
+        const [fMoveData] = data.moveset;
+        let [, cMoveDataPri, cMoveDataSec] = data.moveset;
         cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
         cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
@@ -144,15 +145,16 @@ const RankingPVP = () => {
           cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
         }
 
+        data.scorePVP = HexagonStats.create(data.scores);
         let pokemonType = PokemonType.Normal;
-        if (isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+        if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;
         } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveDataSec)) {
           pokemonType = PokemonType.Purified;
         }
 
         return new PokemonBattleRanking({
-          data: item,
+          data,
           id,
           name,
           form,

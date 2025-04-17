@@ -353,9 +353,9 @@ export class QueryMovesPokemon {
     weatherBoost: IWeatherBoost | undefined,
     combats: ICombat[],
     pokemon: Partial<IPokemonDetail>,
-    atk: number,
-    def: number,
-    sta: number,
+    atk: number | undefined,
+    def: number | undefined,
+    sta: number | undefined,
     types: string[] | undefined,
     dataList: IPokemonQueryMove[] = []
   ) {
@@ -364,9 +364,9 @@ export class QueryMovesPokemon {
     this.weatherBoost = weatherBoost;
     this.combats = combats;
     this.pokemon = pokemon;
-    this.atk = atk;
-    this.def = def;
-    this.sta = sta;
+    this.atk = toNumber(atk);
+    this.def = toNumber(def);
+    this.sta = toNumber(sta);
     this.types = getValueOrDefault(Array, types);
     this.dataList = dataList;
   }
