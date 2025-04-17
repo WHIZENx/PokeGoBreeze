@@ -5,7 +5,7 @@ import { BattleLeagueCPType } from '../../util/enums/compute.enum';
 import { getPokemonType } from '../../util/utils';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
-import { IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';
+import { IHexagonStats, IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';
 
 export interface IPVPDataModel {
   rankings: IPVPInfo[];
@@ -122,6 +122,7 @@ export interface RankingsPVP {
   rating: number;
   score: number;
   scores: number[];
+  scorePVP: IHexagonStats;
   speciesId?: string;
   speciesName: string;
   stats: PokemonRankingStats;

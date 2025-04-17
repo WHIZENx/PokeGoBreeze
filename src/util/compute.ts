@@ -126,13 +126,13 @@ export const computeBgType = (
   }
   const colorsPalette: string[] = [];
   if (typeof types === 'string') {
-    const property = styleList.find((style) => isEqual(style.style, `.${types.toLowerCase()}`));
-    const color = getValueOrDefault(String, property?.property?.['background-color'], defaultBg);
+    const style = styleList.find((style) => isIncludeList(style.style.split(','), `.${types.toLowerCase()}`));
+    const color = getValueOrDefault(String, style?.property?.['background-color'], defaultBg);
     return `${color.split(')').at(0)}, ${toNumber(opacity, 1)})`;
   } else {
     types?.forEach((type) => {
-      const property = styleList.find((style) => isEqual(style.style, `.${type.toLowerCase()}`));
-      const color = getValueOrDefault(String, property?.property?.['background-color'], defaultBg);
+      const style = styleList.find((style) => isIncludeList(style.style.split(','), `.${type.toLowerCase()}`));
+      const color = getValueOrDefault(String, style?.property?.['background-color'], defaultBg);
       colorsPalette.push(`${color.split(')').at(0)}, ${toNumber(opacity, 1)})`);
     });
   }

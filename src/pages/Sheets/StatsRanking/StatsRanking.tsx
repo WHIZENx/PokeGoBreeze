@@ -406,6 +406,7 @@ const StatsRanking = () => {
 
         const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
         const details = getPokemonDetails(pokemon, id, result.fullName, result.pokemonType, true);
+        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
 

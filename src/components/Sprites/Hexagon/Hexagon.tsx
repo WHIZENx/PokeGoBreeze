@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
-import { DynamicObj, toFloatWithPadding } from '../../../util/extension';
+import { DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { AnimationType } from './enums/hexagon.enum';
 
 interface IPointer {
@@ -79,7 +79,9 @@ const Hexagon = (props: IHexagonComponent) => {
     ctx.closePath();
   };
 
-  const loop = (animationType: AnimationType, startStat: number, endStat: number) => {
+  const loop = (animationType: AnimationType, startStat: number | undefined, endStat: number | undefined) => {
+    startStat = toNumber(startStat);
+    endStat = toNumber(endStat);
     return animationType === AnimationType.On
       ? Math.min(startStat + endStat / 30, endStat)
       : endStat > startStat
@@ -111,7 +113,7 @@ const Hexagon = (props: IHexagonComponent) => {
 
   const equalStats = (initStats: HexagonStats) => {
     return (
-      initStats.lead === props.stats.lead &&
+      initStats.lead === props.stats?.lead &&
       initStats.charger === props.stats.charger &&
       initStats.closer === props.stats.closer &&
       initStats.cons === props.stats.cons &&
@@ -124,7 +126,7 @@ const Hexagon = (props: IHexagonComponent) => {
     if (props.name && props.animation === AnimationType.On) {
       setDefaultStats(new HexagonStats());
     } else {
-      setDefaultStats(props.defaultStats ?? props.stats);
+      setDefaultStats(props.defaultStats ?? props.stats ?? new HexagonStats());
     }
   }, [props.name, props.animation, props.defaultStats, props.stats]);
 
@@ -132,13 +134,13 @@ const Hexagon = (props: IHexagonComponent) => {
     if (props.animation === AnimationType.On) {
       animateId.current = requestAnimationFrame(function animate() {
         setDefaultStats(
-          HexagonStats.create({
-            lead: loop(props.animation, defaultStats.lead, props.stats.lead),
-            charger: loop(props.animation, defaultStats.charger, props.stats.charger),
-            closer: loop(props.animation, defaultStats.closer, props.stats.closer),
-            cons: loop(props.animation, defaultStats.cons, props.stats.cons),
-            atk: loop(props.animation, defaultStats.atk, props.stats.atk),
-            switching: loop(props.animation, defaultStats.switching, props.stats.switching),
+          HexagonStats.render({
+            lead: loop(props.animation, defaultStats.lead, props.stats?.lead),
+            charger: loop(props.animation, defaultStats.charger, props.stats?.charger),
+            closer: loop(props.animation, defaultStats.closer, props.stats?.closer),
+            cons: loop(props.animation, defaultStats.cons, props.stats?.cons),
+            atk: loop(props.animation, defaultStats.atk, props.stats?.atk),
+            switching: loop(props.animation, defaultStats.switching, props.stats?.switching),
           })
         );
         animateId.current = requestAnimationFrame(animate);
@@ -148,7 +150,7 @@ const Hexagon = (props: IHexagonComponent) => {
     if (!equalStats(defaultStats)) {
       drawHexagon(defaultStats);
     } else {
-      drawHexagon(props.stats);
+      drawHexagon(props.stats ?? new HexagonStats());
     }
     return () => {
       if (props.animation === AnimationType.On && animateId.current) {
@@ -168,13 +170,13 @@ const Hexagon = (props: IHexagonComponent) => {
     if (props.animation === AnimationType.On) {
       let initStats = new HexagonStats();
       animateId.current = requestAnimationFrame(function animate() {
-        initStats = HexagonStats.create({
-          lead: loop(props.animation, initStats.lead, props.stats.lead),
-          charger: loop(props.animation, initStats.charger, props.stats.charger),
-          closer: loop(props.animation, initStats.closer, props.stats.closer),
-          cons: loop(props.animation, initStats.cons, props.stats.cons),
-          atk: loop(props.animation, initStats.atk, props.stats.atk),
-          switching: loop(props.animation, initStats.switching, props.stats.switching),
+        initStats = HexagonStats.render({
+          lead: loop(props.animation, initStats.lead, props.stats?.lead),
+          charger: loop(props.animation, initStats.charger, props.stats?.charger),
+          closer: loop(props.animation, initStats.closer, props.stats?.closer),
+          cons: loop(props.animation, initStats.cons, props.stats?.cons),
+          atk: loop(props.animation, initStats.atk, props.stats?.atk),
+          switching: loop(props.animation, initStats.switching, props.stats?.switching),
         });
 
         drawHexagon(initStats);
@@ -191,32 +193,32 @@ const Hexagon = (props: IHexagonComponent) => {
       {initHex && (
         <Fragment>
           <div className="position-absolute text-center leader-text">
-            {toFloatWithPadding(props.stats.lead, 1)}
+            {toFloatWithPadding(props.stats?.lead, 1)}
             <br />
             <b>Leader</b>
           </div>
           <div className="position-absolute text-center attacker-text">
-            {toFloatWithPadding(props.stats.atk, 1)}
+            {toFloatWithPadding(props.stats?.atk, 1)}
             <br />
             <b>Attacker</b>
           </div>
           <div className="position-absolute text-center consistence-text">
-            {toFloatWithPadding(props.stats.cons, 1)}
+            {toFloatWithPadding(props.stats?.cons, 1)}
             <br />
             <b>Consistence</b>
           </div>
           <div className="position-absolute text-center closer-text">
-            {toFloatWithPadding(props.stats.closer, 1)}
+            {toFloatWithPadding(props.stats?.closer, 1)}
             <br />
             <b>Closer</b>
           </div>
           <div className="position-absolute text-center charger-text">
-            {toFloatWithPadding(props.stats.charger, 1)}
+            {toFloatWithPadding(props.stats?.charger, 1)}
             <br />
             <b>Charger</b>
           </div>
           <div className="position-absolute text-center switch-text">
-            {toFloatWithPadding(props.stats.switching, 1)}
+            {toFloatWithPadding(props.stats?.switching, 1)}
             <br />
             <b>Switch</b>
           </div>

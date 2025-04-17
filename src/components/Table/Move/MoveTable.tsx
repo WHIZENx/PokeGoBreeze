@@ -23,6 +23,7 @@ import {
   getValueOrDefault,
   isEqual,
   isNotEmpty,
+  isUndefined,
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
@@ -143,18 +144,20 @@ const TableMove = (props: ITableMoveComponent) => {
       data.weatherBoost,
       data.combats,
       result,
-      toNumber(result.statsGO?.atk),
-      toNumber(result.statsGO?.def),
-      toNumber(result.statsGO?.sta),
+      result.statsGO?.atk,
+      result.statsGO?.def,
+      result.statsGO?.sta,
       result.types
     );
   };
 
   useEffect(() => {
-    setMoveOrigin(undefined);
-    setMove(new PokemonQueryRankMove());
-    if (props.pokemonData && isNotEmpty(getAllMoves(props.pokemonData))) {
-      filterMoveType(props.pokemonData);
+    if (!isUndefined(props.pokemonData?.pokemonType)) {
+      setMoveOrigin(undefined);
+      setMove(new PokemonQueryRankMove());
+      if (props.pokemonData && isNotEmpty(getAllMoves(props.pokemonData))) {
+        filterMoveType(props.pokemonData);
+      }
     }
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 

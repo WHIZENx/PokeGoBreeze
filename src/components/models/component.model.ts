@@ -286,7 +286,7 @@ export interface ICircleComponent {
 export interface IHexagonComponent {
   name?: string;
   defaultStats?: IHexagonStats;
-  stats: IHexagonStats;
+  stats: IHexagonStats | undefined;
   size: number;
   animation: AnimationType;
   borderSize: number;

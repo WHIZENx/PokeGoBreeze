@@ -372,12 +372,9 @@ export const getStyleList = () => {
     for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
       const rule = sheet.cssRules[j] as CSSRuleSelector;
       if (rule.selectorText && rule.style) {
-        const classList = rule.selectorText.split(',');
-        classList.forEach((classStyle) => {
-          result.push({
-            style: classStyle.trim(),
-            property: rule.style,
-          });
+        result.push({
+          style: rule.selectorText,
+          property: rule.style,
         });
       }
     }
@@ -722,9 +719,9 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/GALAR_/, `${`${FORM_GALAR}IAN`}_`)
     .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`)
     .replace(/_TOTEM$/, '')
-    .replace(/_PALDEA_COMBAT_BREED$/, '')
-    .replace(/_PALDEA_BLAZE_BREED$/, '')
-    .replace(/_PALDEA_AQUA_BREED$/, '')
+    .replace(/PALDEA_COMBAT_BREED$/, 'PALDEA_COMBAT')
+    .replace(/PALDEA_BLAZE_BREED$/, 'PALDEA_BLAZE')
+    .replace(/PALDEA_AQUA_BREED$/, 'PALDEA_AQUA')
     .replace(/_NORMAL$/, '')
     .replace(/_POWER_CONSTRUCT$/, '')
     .replace('TEN_PERCENT', 'COMPLETE_TEN_PERCENT')
