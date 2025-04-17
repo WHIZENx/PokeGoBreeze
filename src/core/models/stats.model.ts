@@ -1,4 +1,5 @@
 import { PokemonType } from '../../enums/type.enum';
+import { toNumber } from '../../util/extension';
 
 export interface OptionsRank {
   minRank: number;
@@ -114,9 +115,16 @@ export class StatsPokemonGO implements IStatsPokemonGO {
   sta = 0;
   prod = 0;
 
-  static create(value: IStatsPokemonGO) {
+  constructor() {
+    this.prod = this.atk * this.def * this.sta;
+  }
+
+  static create(atk?: number, def?: number, sta?: number) {
     const obj = new StatsPokemonGO();
-    Object.assign(obj, value);
+    obj.atk = toNumber(atk);
+    obj.def = toNumber(def);
+    obj.sta = toNumber(sta);
+    obj.prod = obj.atk * obj.def * obj.sta;
     return obj;
   }
 }
@@ -155,7 +163,18 @@ export class HexagonStats implements IHexagonStats {
   charger = 0;
   switching = 0;
 
-  static create(value: IHexagonStats) {
+  static create(scores: number[] | undefined) {
+    const obj = new HexagonStats();
+    obj.lead = toNumber(scores?.at(0));
+    obj.closer = toNumber(scores?.at(1));
+    obj.switching = toNumber(scores?.at(2));
+    obj.charger = toNumber(scores?.at(3));
+    obj.atk = toNumber(scores?.at(4));
+    obj.cons = toNumber(scores?.at(5));
+    return obj;
+  }
+
+  static render(value: IHexagonStats) {
     const obj = new HexagonStats();
     Object.assign(obj, value);
     return obj;

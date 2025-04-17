@@ -6,7 +6,7 @@ import { FORM_GMAX, FORM_MEGA, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType, FormType } from './enums/compute.enum';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from './extension';
-import { getStyleRuleValue } from './utils';
+import { IStyleData } from './models/util.model';
 
 export const priorityBadge = (priority: number) => {
   if (priority === 0) {
@@ -116,8 +116,8 @@ export const computeCandyBgColor = (candyData: ICandy[], id: number | undefined)
 export const computeBgType = (
   types: string[] | string | undefined,
   pokemonType = PokemonType.Normal,
+  styleList: IStyleData[],
   opacity = 1,
-  styleSheet?: CSSStyleSheet,
   defaultColor?: string,
   defaultBg = `#646464`
 ) => {
@@ -126,11 +126,13 @@ export const computeBgType = (
   }
   const colorsPalette: string[] = [];
   if (typeof types === 'string') {
-    const color = getValueOrDefault(String, getStyleRuleValue('background-color', `.${types.toLowerCase()}`, styleSheet), defaultBg);
+    const style = styleList.find((style) => isIncludeList(style.style.split(','), `.${types.toLowerCase()}`));
+    const color = getValueOrDefault(String, style?.property?.['background-color'], defaultBg);
     return `${color.split(')').at(0)}, ${toNumber(opacity, 1)})`;
   } else {
     types?.forEach((type) => {
-      const color = getValueOrDefault(String, getStyleRuleValue('background-color', `.${type.toLowerCase()}`, styleSheet), defaultBg);
+      const style = styleList.find((style) => isIncludeList(style.style.split(','), `.${type.toLowerCase()}`));
+      const color = getValueOrDefault(String, style?.property?.['background-color'], defaultBg);
       colorsPalette.push(`${color.split(')').at(0)}, ${toNumber(opacity, 1)})`);
     });
   }

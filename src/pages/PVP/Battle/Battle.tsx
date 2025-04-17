@@ -19,7 +19,17 @@ import {
   getBaseStatsByIVandLevel,
   getTypeEffective,
 } from '../../../util/calculate';
-import { BATTLE_DELAY, MAX_ENERGY, MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL, STAB_MULTIPLY } from '../../../util/constants';
+import {
+  BATTLE_DELAY,
+  FORM_SHADOW,
+  MAX_ENERGY,
+  MAX_IV,
+  MAX_LEVEL,
+  MIN_CP,
+  MIN_IV,
+  MIN_LEVEL,
+  STAB_MULTIPLY,
+} from '../../../util/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -83,6 +93,8 @@ import { ScoreType } from '../../../util/enums/constants.enum';
 import { TimelineEvent } from '../../../util/models/overrides/dom.model';
 import { LinkToTop, useNavigateToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import { HexagonStats } from '../../../core/models/stats.model';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -731,6 +743,13 @@ const Battle = () => {
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
+            item.scorePVP = HexagonStats.create(item.scores);
+
+            let pokemonType = PokemonType.Normal;
+            if (isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+              pokemonType = PokemonType.Shadow;
+            }
+
             return BattlePokemonData.create({
               ...item,
               name,
@@ -738,7 +757,7 @@ const Battle = () => {
               id,
               form,
               stats,
-              pokemonType: PokemonType.Normal,
+              pokemonType,
             });
           })
           .filter((pokemon) => pokemon.id > 0);
@@ -1476,7 +1495,7 @@ const Battle = () => {
                     type={pokemon.cMovePri?.type}
                     size={80}
                     maxEnergy={MAX_ENERGY(dataStore.options)}
-                    moveEnergy={toNumber(Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy)))}
+                    moveEnergy={Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy))}
                     energy={toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy, pokemon.energy)}
                     isDisable={pokemon.disableCMovePri}
                   />

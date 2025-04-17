@@ -1,4 +1,5 @@
 import { IStatsPokemon, StatsPokemon } from '../../core/models/stats.model';
+import { DynamicObj } from '../extension';
 
 interface IBaseStatsPokeGo {
   attack: number;
@@ -34,6 +35,20 @@ export class ArrayStats implements IArrayStats {
   baseStatsProd = 0;
 
   constructor({ ...props }: IArrayStats) {
+    Object.assign(this, props);
+  }
+}
+
+export interface IStyleData {
+  style: string;
+  property: DynamicObj<string> | undefined;
+}
+
+export class StyleData implements IStyleData {
+  style = '';
+  property: DynamicObj<string> | undefined;
+
+  constructor({ ...props }: IStyleData) {
     Object.assign(this, props);
   }
 }

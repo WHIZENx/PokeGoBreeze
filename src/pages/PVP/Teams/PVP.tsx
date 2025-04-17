@@ -9,7 +9,7 @@ import {
   getAllMoves,
   getKeyWithData,
   getMoveType,
-  getStyleSheet,
+  getStyleList,
   getValidPokemonImgPath,
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
@@ -55,6 +55,7 @@ import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import { IStyleData } from '../../../util/models/util.model';
 
 const TeamPVP = () => {
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ const TeamPVP = () => {
   const [sortedTeamBy, setSortedTeamBy] = useState(SortType.TeamScore);
   const [sortedTeam, setSortedTeam] = useState(SortDirectionType.DESC);
 
-  const styleSheet = useRef<CSSStyleSheet>();
+  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
@@ -84,10 +85,6 @@ const TeamPVP = () => {
     const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-
-    if (!styleSheet.current) {
-      styleSheet.current = getStyleSheet(`.${pokemon?.types.at(0)?.toLowerCase()}`);
-    }
 
     let fMoveText: string, cMove: string, cMovePriText: string, cMoveSecText: string;
     if (isInclude(moveSet, '+')) {
@@ -357,7 +354,7 @@ const TeamPVP = () => {
               key={index}
               style={{
                 columnGap: '1rem',
-                backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, 1, styleSheet.current),
+                backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, styleSheet.current),
               }}
             >
               <LinkToTop
@@ -531,7 +528,7 @@ const TeamPVP = () => {
                         style={{
                           padding: 15,
                           gap: '1rem',
-                          backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType),
+                          backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, styleSheet.current),
                         }}
                       >
                         <LinkToTop

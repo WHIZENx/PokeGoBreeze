@@ -70,7 +70,7 @@ const DamageTable = (props: IDamageTableComponent) => {
                     {props.result.type === PokemonType.Shadow && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
-                    {`${splitAndCapitalize(props.result.currPoke?.form.name, '-', ' ')} `}
+                    {`${splitAndCapitalize(props.result.currPoke?.form?.name, '-', ' ')} `}
                     <span className="d-inline-block caption">(LV. {props.result.currLevel})</span>
                   </Fragment>
                 ) : (
@@ -89,7 +89,7 @@ const DamageTable = (props: IDamageTableComponent) => {
                     {props.result.typeObj === PokemonType.Shadow && (
                       <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
                     )}
-                    {`${splitAndCapitalize(props.result.objPoke.form.name, '-', ' ')} `}
+                    {`${splitAndCapitalize(props.result.objPoke.form?.name, '-', ' ')} `}
                     <span className="d-inline-block caption">(LV. {props.result.objLevel})</span>
                   </Fragment>
                 ) : (

@@ -66,6 +66,7 @@ import { APIUrl } from '../services/constants';
 import { BonusType } from '../core/enums/bonus-type.enum';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { BattleLeagueCPType } from './enums/compute.enum';
+import { IStyleData } from './models/util.model';
 
 class Mask {
   value: number;
@@ -358,6 +359,27 @@ export const getStyleSheet = (selector: string) => {
     }
   }
   return;
+};
+
+export const getStyleList = () => {
+  const result: IStyleData[] = [];
+  const sheets = document.styleSheets;
+  for (let i = 0, l = sheets.length; i < l; i++) {
+    const sheet = sheets[i];
+    if (!sheet || !sheet.cssRules) {
+      continue;
+    }
+    for (let j = 0, k = sheet.cssRules.length; j < k; j++) {
+      const rule = sheet.cssRules[j] as CSSRuleSelector;
+      if (rule.selectorText && rule.style) {
+        result.push({
+          style: rule.selectorText,
+          property: rule.style,
+        });
+      }
+    }
+  }
+  return result;
 };
 
 export const getStyleRuleValue = (style: string, selector: string, sheet?: CSSStyleSheet) => {
@@ -697,9 +719,9 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/GALAR_/, `${`${FORM_GALAR}IAN`}_`)
     .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`)
     .replace(/_TOTEM$/, '')
-    .replace(/_PALDEA_COMBAT_BREED$/, '')
-    .replace(/_PALDEA_BLAZE_BREED$/, '')
-    .replace(/_PALDEA_AQUA_BREED$/, '')
+    .replace(/PALDEA_COMBAT_BREED$/, 'PALDEA_COMBAT')
+    .replace(/PALDEA_BLAZE_BREED$/, 'PALDEA_BLAZE')
+    .replace(/PALDEA_AQUA_BREED$/, 'PALDEA_AQUA')
     .replace(/_NORMAL$/, '')
     .replace(/_POWER_CONSTRUCT$/, '')
     .replace('TEN_PERCENT', 'COMPLETE_TEN_PERCENT')
@@ -865,12 +887,12 @@ export const retrieveMoves = (
       return pokemon.find((item) => item.num === id && isEqual(item.forme, FORM_GMAX));
     }
     const resultFilter = pokemon.filter((item) => item.num === id);
-    form = getValueOrDefault(
+    const pokemonForm = getValueOrDefault(
       String,
       form?.replaceAll('-', '_').toUpperCase().replace(`_${FORM_STANDARD}`, '').replace(FORM_GMAX, FORM_NORMAL),
       FORM_NORMAL
     );
-    const result = resultFilter.find((item) => isEqual(item.fullName, form) || isEqual(item.forme, form));
+    const result = resultFilter.find((item) => isEqual(item.fullName, pokemonForm) || isEqual(item.forme, pokemonForm));
     return result ?? resultFilter[0];
   }
 };
@@ -882,22 +904,21 @@ export const getPokemonDetails = (
   pokemonType = PokemonType.None,
   isDefault = false
 ) => {
-  let pokemonForm: IPokemonData | undefined;
-
   if (form) {
     const name = getPokemonFormWithNoneSpecialForm(
       form.replace(/10$/, 'TEN_PERCENT').replace(/50$/, 'FIFTY_PERCENT').replaceAll(' ', '-'),
       pokemonType
     );
-    pokemonForm = pokemonData.find((item) => item.num === id && isEqual(item.fullName, name));
+    let pokemonForm = pokemonData.find((item) => item.num === id && isEqual(item.fullName, name));
 
     if (isDefault && !pokemonForm) {
       pokemonForm = pokemonData.find(
         (item) => item.num === id && (item.forme === FORM_NORMAL || (item.baseForme && isEqual(item.baseForme, item.forme)))
       );
     }
+    return pokemonForm ?? new PokemonData();
   }
-  return pokemonForm ?? new PokemonData();
+  return new PokemonData();
 };
 
 export const replaceTempMoveName = (name: string | number) => {
@@ -931,7 +952,7 @@ export const reverseReplaceTempMovePvpName = (name: string | undefined) => {
   return name;
 };
 
-export const getAllMoves = (pokemon: IPokemonData | undefined | null, moveType = TypeMove.All) => {
+export const getAllMoves = (pokemon: Partial<IPokemonData | IPokemonDetail> | undefined | null, moveType = TypeMove.All) => {
   const fastMove = getValueOrDefault(Array, pokemon?.quickMoves).concat(getValueOrDefault(Array, pokemon?.eliteQuickMoves));
   const chargeMoves = getValueOrDefault(Array, pokemon?.cinematicMoves).concat(
     getValueOrDefault(Array, pokemon?.eliteCinematicMoves),
@@ -1000,7 +1021,7 @@ export const addSelectMovesByType = (pokemonData: IPokemonData, moveType: TypeMo
   return selectMoves;
 };
 
-export const getMoveType = (pokemonData?: IPokemonData, moveName?: string) => {
+export const getMoveType = (pokemonData?: Partial<IPokemonData | IPokemonDetail>, moveName?: string) => {
   if (isIncludeList(pokemonData?.eliteQuickMoves, moveName) || isIncludeList(pokemonData?.eliteCinematicMoves, moveName)) {
     return MoveType.Elite;
   } else if (isIncludeList(pokemonData?.shadowMoves, moveName)) {

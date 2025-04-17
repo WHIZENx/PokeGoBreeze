@@ -44,8 +44,8 @@ import { PokeBallType } from './enums/poke-ball.enum';
 import { PokemonType, ThrowType } from '../../../enums/type.enum';
 import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { IPokemonData } from '../../../core/models/pokemon.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
+import { IPokemonDetail } from '../../../core/models/API/info.model';
 
 const balls: PokeBallThreshold[] = [
   { name: 'Poké Ball', itemName: ItemName.PokeBall, threshold: POKE_BALL_INC_CHANCE, pokeBallType: PokeBallType.PokeBall },
@@ -61,7 +61,7 @@ const throws: ThrowThreshold[] = [
 
 const CatchChance = () => {
   const playerSetting = useSelector((state: StoreState) => state.store.data.options.playerSetting);
-  const pokemon = useSelector((state: SearchingState) => state.searching.pokemon);
+  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const circleDistance = useRef(200);
 
@@ -175,8 +175,8 @@ const CatchChance = () => {
     });
   };
 
-  const findCatchCapture = (pokemon: IPokemonData) => {
-    if (!pokemon || !pokemon.encounter || isUndefined(pokemon.encounter.movementTimerS)) {
+  const findCatchCapture = (pokemon: Partial<IPokemonDetail>) => {
+    if (!pokemon || !pokemon.encounter || isUndefined(pokemon.encounter.movementTimerS) || !pokemon.types) {
       setIsEncounter(false);
       return;
     }

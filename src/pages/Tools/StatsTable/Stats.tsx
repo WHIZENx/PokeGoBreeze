@@ -77,7 +77,7 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
     id: ColumnType.PercentProd,
     name: 'Stat Prod (%)',
-    selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100 })),
+    selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
     sortable: true,
     sortFunction: numSortStatsProdsPercent,
   },
@@ -85,18 +85,13 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
 
 const StatsTable = () => {
   useChangeTitle('Stats Battle League - Tool');
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const [name, setName] = useState(splitAndCapitalize(searching?.fullName, '-', ' '));
+  const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');
 
   const [ATKIv, setATKIv] = useState(0);
   const [DEFIv, setDEFIv] = useState(0);
   const [STAIv, setSTAIv] = useState(0);
-
-  const [statATK, setStatATK] = useState(0);
-  const [statDEF, setStatDEF] = useState(0);
-  const [statSTA, setStatSTA] = useState(0);
 
   const [battleLeague, setBattleLeague] = useState(BattleLeagueCPType.Little);
 
@@ -113,7 +108,7 @@ const StatsTable = () => {
       setStatsBattle([]);
       setIsLoading(true);
     }
-    if (statATK > 0 && statDEF > 0 && statSTA > 0) {
+    if (toNumber(pokemon?.statsGO?.atk) > 0 && toNumber(pokemon?.statsGO?.def) > 0 && toNumber(pokemon?.statsGO?.sta) > 0) {
       calculateStats(controller.signal)
         .then((data) => {
           setStatsBattle(data);
@@ -121,7 +116,7 @@ const StatsTable = () => {
         .catch(() => setStatsBattle([]));
     }
     return () => controller.abort();
-  }, [statATK, statDEF, statSTA]);
+  }, [pokemon?.statsGO?.atk, pokemon?.statsGO?.def, pokemon?.statsGO?.sta]);
 
   const calculateStats = (signal: AbortSignal, delay = STATS_DELAY) => {
     return new Promise<IBattleBaseStats[]>((resolve, reject) => {
@@ -136,7 +131,14 @@ const StatsTable = () => {
         if (signal instanceof AbortSignal) {
           signal.removeEventListener('abort', abortHandler);
         }
-        result = calStatsProd(statATK, statDEF, statSTA, MIN_CP, BattleLeagueCPType.InsMaster, true);
+        result = calStatsProd(
+          toNumber(pokemon?.statsGO?.atk),
+          toNumber(pokemon?.statsGO?.def),
+          toNumber(pokemon?.statsGO?.sta),
+          MIN_CP,
+          BattleLeagueCPType.InsMaster,
+          true
+        );
         resolve(result);
       };
 
@@ -198,14 +200,7 @@ const StatsTable = () => {
 
   return (
     <div className="container" style={{ minHeight: 1650 }}>
-      <Find
-        isHide={true}
-        clearStats={clearStats}
-        setStatATK={setStatATK}
-        setStatDEF={setStatDEF}
-        setStatSTA={setStatSTA}
-        setName={setName}
-      />
+      <Find isHide={true} clearStats={clearStats} />
       <h1 id="main" className="text-center">
         Stats Battle Table
       </h1>
@@ -234,9 +229,9 @@ const StatsTable = () => {
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="input-group mb-3" style={{ justifyContent: 'center' }}>
               <DynamicInputCP
-                statATK={statATK}
-                statDEF={statDEF}
-                statSTA={statSTA}
+                statATK={pokemon?.statsGO?.atk}
+                statDEF={pokemon?.statsGO?.def}
+                statSTA={pokemon?.statsGO?.sta}
                 ivAtk={ATKIv}
                 ivDef={DEFIv}
                 ivSta={STAIv}
@@ -314,7 +309,7 @@ const StatsTable = () => {
         </div>
       </form>
       <DataTable
-        title={`Stat Battle for ${name}`}
+        title={`Stat Battle for ${splitAndCapitalize(pokemon?.fullName, '_', ' ')}`}
         columns={columnsStats}
         data={filterStatsBattle}
         pagination={true}

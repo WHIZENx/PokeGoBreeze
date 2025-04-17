@@ -1,10 +1,11 @@
 import '../PVP.scss';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   capitalize,
   convertNameRankingToOri,
   getKeysObj,
+  getStyleList,
   getValidPokemonImgPath,
   replaceTempMovePvpName,
   splitAndCapitalize,
@@ -38,6 +39,8 @@ import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import { IStyleData } from '../../../util/models/util.model';
+import { HexagonStats } from '../../../core/models/stats.model';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -52,6 +55,7 @@ const PokemonPVP = () => {
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [found, setFound] = useState(true);
+  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
     if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
@@ -107,6 +111,8 @@ const PokemonPVP = () => {
       } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {
         pokemonType = PokemonType.Purified;
       }
+
+      data.scorePVP = HexagonStats.create(data.scores);
 
       setRankingPoke(
         new PokemonBattleRanking({
@@ -189,8 +195,8 @@ const PokemonPVP = () => {
             backgroundImage: computeBgType(
               rankingPoke?.pokemon?.types,
               rankingPoke?.pokemonType,
+              styleSheet.current,
               0.8,
-              undefined,
               rankingPoke ? undefined : '#646464'
             ),
             paddingTop: 15,
@@ -237,6 +243,7 @@ const PokemonPVP = () => {
                 data={rankingPoke?.data}
                 cp={params.cp}
                 type={params.type}
+                styleList={styleSheet.current}
               />
             </div>
             <div className="container">

@@ -1,3 +1,4 @@
+import { IPokemonDetail } from '../../core/models/API/info.model';
 import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IOptions } from '../../core/models/options.model';
@@ -339,7 +340,7 @@ export class QueryMovesPokemon {
   typeEff: ITypeEff | undefined;
   weatherBoost: IWeatherBoost | undefined;
   combats: ICombat[] = [];
-  pokemon: IPokemonData;
+  pokemon: Partial<IPokemonDetail>;
   atk: number;
   def: number;
   sta: number;
@@ -351,10 +352,10 @@ export class QueryMovesPokemon {
     typeEff: ITypeEff | undefined,
     weatherBoost: IWeatherBoost | undefined,
     combats: ICombat[],
-    pokemon: IPokemonData,
-    atk: number,
-    def: number,
-    sta: number,
+    pokemon: Partial<IPokemonDetail>,
+    atk: number | undefined,
+    def: number | undefined,
+    sta: number | undefined,
     types: string[] | undefined,
     dataList: IPokemonQueryMove[] = []
   ) {
@@ -363,9 +364,9 @@ export class QueryMovesPokemon {
     this.weatherBoost = weatherBoost;
     this.combats = combats;
     this.pokemon = pokemon;
-    this.atk = atk;
-    this.def = def;
-    this.sta = sta;
+    this.atk = toNumber(atk);
+    this.def = toNumber(def);
+    this.sta = toNumber(sta);
     this.types = getValueOrDefault(Array, types);
     this.dataList = dataList;
   }

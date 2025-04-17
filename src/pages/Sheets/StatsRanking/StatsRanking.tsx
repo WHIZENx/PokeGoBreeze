@@ -47,6 +47,7 @@ import {
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -188,7 +189,7 @@ const StatsRanking = () => {
   const stats = useSelector((state: StatsState) => state.stats);
   const pokemons = useSelector((state: StoreState) => state.store.data.pokemons);
   const options = useSelector((state: StoreState) => state.store.data.options);
-  const [pokemon, setPokemon] = useState<IPokemonData>();
+  const [pokemon, setPokemon] = useState<IPokemonDetail>();
   const [search, setSearch] = useState('');
 
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
@@ -326,16 +327,17 @@ const StatsRanking = () => {
   };
 
   const getSortId = () => {
-    let idSort = ColumnType.Prod;
     const statsBy = toNumber(searchParams.get(Params.StatsType));
-    if (statsBy === TypeAction.Atk) {
-      idSort = ColumnType.Atk;
-    } else if (statsBy === TypeAction.Def) {
-      idSort = ColumnType.Def;
-    } else if (statsBy === TypeAction.Sta) {
-      idSort = ColumnType.Sta;
+    switch (statsBy) {
+      case TypeAction.Atk:
+        return ColumnType.Atk;
+      case TypeAction.Def:
+        return ColumnType.Def;
+      case TypeAction.Sta:
+        return ColumnType.Sta;
+      default:
+        return ColumnType.Prod;
     }
-    return idSort;
   };
 
   const getStatsType = (id: ColumnType) => {
@@ -379,7 +381,8 @@ const StatsRanking = () => {
 
       const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
       const details = getPokemonDetails(pokemon, result.num, result.fullName, result.pokemonType, true);
-      setPokemon(details);
+      const pokemonDetails = PokemonDetail.setData(details);
+      setPokemon(pokemonDetails);
 
       setSelect(result);
     }
@@ -403,7 +406,9 @@ const StatsRanking = () => {
 
         const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
         const details = getPokemonDetails(pokemon, id, result.fullName, result.pokemonType, true);
-        setPokemon(details);
+        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        const pokemonDetails = PokemonDetail.setData(details);
+        setPokemon(pokemonDetails);
 
         setPage(Math.ceil((index + 1) / defaultPerPages));
         setSelect(result);
@@ -477,8 +482,8 @@ const StatsRanking = () => {
               formName={select?.name}
               region={select?.region}
               version={select?.version}
-              weight={toNumber(select?.weightKg)}
-              height={toNumber(select?.heightM)}
+              weight={select?.weightKg}
+              height={select?.heightM}
               className="table-stats-ranking"
               isLoadedForms={progress.isLoadedForms}
             />
@@ -545,7 +550,8 @@ const StatsRanking = () => {
             const pokemon = pokemons.find((pokemon) => pokemon.num === row.num && isEqual(row.forme, pokemon.forme));
             if (pokemon) {
               pokemon.pokemonType = row.pokemonType || PokemonType.Normal;
-              setPokemon(pokemon);
+              const pokemonDetails = PokemonDetail.setData(pokemon);
+              setPokemon(pokemonDetails);
             }
           }
         }}

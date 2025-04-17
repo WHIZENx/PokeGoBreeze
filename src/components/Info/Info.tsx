@@ -14,7 +14,7 @@ const Info = () => {
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
   const weatherEffective = useSelector((state: StoreState) => state.store.data.weatherBoost);
 
-  const formTypes = useSelector((state: SearchingState) => state.searching.form?.form.types);
+  const formTypes = useSelector((state: SearchingState) => state.searching.mainSearching?.form?.form?.types);
 
   const getWeatherEffective = (types: string[] | undefined) => {
     const data: string[] = [];

@@ -19,7 +19,6 @@ import {
 import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { ToolSearching } from '../../core/models/searching.model';
 import { IPokemonName, IPokemonSpecie, PokemonSpecie } from '../../core/models/pokemon.model';
 import {
   Form,
@@ -35,7 +34,6 @@ import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
 import { PokemonType, TypeRaid, VariantType } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
-import { SearchingModel } from '../../store/models/searching.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
@@ -119,7 +117,14 @@ const FormSelect = (props: IFormSelectComponent) => {
         const defaultFormSearch = formListResult
           .flatMap((value) => value)
           .find((item) =>
-            isEqual(item.form.formName, props.isObjective ? (props.searching?.obj ? props.searching.obj.form : '') : props.searching?.form)
+            isEqual(
+              item.form.formName,
+              props.isObjective
+                ? props.searching?.object
+                  ? props.searching.object.form?.form?.formName
+                  : ''
+                : props.searching?.current?.form?.form?.formName
+            )
           );
         if (defaultFormSearch) {
           currentForm = defaultFormSearch;
@@ -189,38 +194,24 @@ const FormSelect = (props: IFormSelectComponent) => {
   useEffect(() => {
     const id = toNumber(props.id);
     if (currentForm && toNumber(data?.id) > 0 && id > 0) {
-      const obj = ToolSearching.create(props.searching);
-      const searching = new SearchingModel({
-        id,
-        name: currentForm.defaultName,
-        form: currentForm.form.formName,
-        pokemonType: currentForm.form.pokemonType,
-        fullName: currentForm.form.name,
-        timestamp: new Date(),
-      });
-      if (props.isObjective && (props.searching?.obj?.id !== props.id || !isEqual(props.searching?.obj?.form, currentForm.form.formName))) {
-        const result = ToolSearching.create({
-          ...obj,
-          obj: {
-            ...searching,
-          },
-        });
-        dispatch(SearchingActions.SetPokemonToolSearch.create(result));
-      }
-      if (!props.isObjective && (props.searching?.id !== props.id || !isEqual(props.searching?.form, currentForm.form.formName))) {
-        const result = ToolSearching.create({
-          ...obj,
-          ...searching,
-        });
-        dispatch(SearchingActions.SetPokemonToolSearch.create(result));
-      }
       const formName = getValueOrDefault(String, currentForm.form.name, currentForm.form.formName, currentForm.defaultName);
       const details = getPokemonDetails(props.pokemonData, id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
       details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
-      dispatch(SearchingActions.SetPokemon.create(details));
-      dispatch(SearchingActions.SetPokemonForm.create(currentForm));
+      if (
+        props.searching?.object?.pokemon?.id !== props.id ||
+        !isEqual(props.searching?.object?.form?.form?.formName, currentForm.form.formName)
+      ) {
+        const pokemonDetails = PokemonDetail.setData(details);
+        if (props.isObjective) {
+          dispatch(SearchingActions.SetToolObjectPokemonDetails.create(pokemonDetails));
+          dispatch(SearchingActions.SetToolObjectPokemonForm.create(currentForm));
+        } else {
+          dispatch(SearchingActions.SetToolPokemonDetails.create(pokemonDetails));
+          dispatch(SearchingActions.SetToolPokemonForm.create(currentForm));
+        }
+      }
     }
-  }, [currentForm, dispatch]);
+  }, [currentForm, props.isObjective, dispatch]);
 
   useEffect(() => {
     const id = toNumber(props.id);
@@ -248,12 +239,15 @@ const FormSelect = (props: IFormSelectComponent) => {
     }
   };
 
-  const changeForm = (name: string) => {
+  const changeForm = (isSelected: boolean, name: string) => {
+    if (isSelected) {
+      return;
+    }
     setCurrentForm(undefined);
     const findForm = formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
     setCurrentForm(findForm);
     if (findForm) {
-      dispatch(SearchingActions.SetPokemonForm.create(findForm));
+      dispatch(SearchingActions.SetToolPokemonForm.create(findForm));
     }
     if (props.onClearStats) {
       props.onClearStats();
@@ -365,7 +359,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                   <button
                     key={index}
                     className={combineClasses('btn btn-form', value.form.id === currentForm.form.id ? 'form-selected' : '')}
-                    onClick={() => changeForm(value.form.name)}
+                    onClick={() => changeForm(value.form.id === currentForm.form.id, value.form.name)}
                   >
                     <img
                       width={64}

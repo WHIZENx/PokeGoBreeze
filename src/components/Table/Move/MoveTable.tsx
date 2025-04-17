@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { Fragment, useEffect, useState } from 'react';
-import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
@@ -14,7 +14,6 @@ import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, ICombat } from '../../../core/models/combat.model';
 import { IPokemonQueryMove, IPokemonQueryRankMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
-import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import {
@@ -23,6 +22,8 @@ import {
   getPropertyName,
   getValueOrDefault,
   isEqual,
+  isNotEmpty,
+  isUndefined,
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
@@ -30,6 +31,7 @@ import { TableType, TypeSorted } from './enums/table-type.enum';
 import { MoveType, PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
+import { IPokemonDetail } from '../../../core/models/API/info.model';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -109,7 +111,7 @@ const TableMove = (props: ITableMoveComponent) => {
     );
   };
 
-  const filterMoveType = (pokemon: IPokemonData | undefined) => {
+  const filterMoveType = (pokemon: Partial<IPokemonDetail> | undefined) => {
     if (!pokemon) {
       setMoveOrigin(undefined);
       setMove(new PokemonQueryRankMove());
@@ -135,25 +137,27 @@ const TableMove = (props: ITableMoveComponent) => {
     );
   };
 
-  const setRankMove = (result: IPokemonData) => {
+  const setRankMove = (result: Partial<IPokemonDetail>) => {
     return rankMove(
       data.options,
       data.typeEff,
       data.weatherBoost,
       data.combats,
       result,
-      toNumber(result.statsGO?.atk),
-      toNumber(result.statsGO?.def),
-      toNumber(result.statsGO?.sta),
+      result.statsGO?.atk,
+      result.statsGO?.def,
+      result.statsGO?.sta,
       result.types
     );
   };
 
   useEffect(() => {
-    setMoveOrigin(undefined);
-    setMove(new PokemonQueryRankMove());
-    if (props.pokemonData) {
-      filterMoveType(props.pokemonData);
+    if (!isUndefined(props.pokemonData?.pokemonType)) {
+      setMoveOrigin(undefined);
+      setMove(new PokemonQueryRankMove());
+      if (props.pokemonData && isNotEmpty(getAllMoves(props.pokemonData))) {
+        filterMoveType(props.pokemonData);
+      }
     }
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 

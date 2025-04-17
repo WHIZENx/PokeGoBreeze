@@ -35,14 +35,14 @@ const Raid = (props: IRaidComponent) => {
     if (
       tier > 5 &&
       props.currForm &&
-      props.currForm.form.pokemonType !== PokemonType.Mega &&
-      props.currForm.form.pokemonType !== PokemonType.Primal
+      props.currForm.form?.pokemonType !== PokemonType.Mega &&
+      props.currForm.form?.pokemonType !== PokemonType.Primal
     ) {
       setTier(5);
     } else if (
       tier === 5 &&
       props.currForm &&
-      (props.currForm.form.pokemonType === PokemonType.Mega || props.currForm.form.pokemonType === PokemonType.Primal) &&
+      (props.currForm.form?.pokemonType === PokemonType.Mega || props.currForm.form?.pokemonType === PokemonType.Primal) &&
       pokemonClass !== PokemonClass.None
     ) {
       setTier(6);
@@ -99,18 +99,18 @@ const Raid = (props: IRaidComponent) => {
           <optgroup label="Normal Tiers">
             <option value={1}>Tier 1</option>
             <option value={3}>Tier 3</option>
-            {(props.currForm?.form.pokemonType !== PokemonType.Mega || pokemonClass === PokemonClass.None) && (
+            {(props.currForm?.form?.pokemonType !== PokemonType.Mega || pokemonClass === PokemonClass.None) && (
               <option value={5}>Tier 5</option>
             )}
           </optgroup>
           <optgroup label="Legacy Tiers">
             <option value={2}>Tier 2</option>
-            {(props.currForm?.form.pokemonType !== PokemonType.Mega || pokemonClass !== PokemonClass.None) && (
+            {(props.currForm?.form?.pokemonType !== PokemonType.Mega || pokemonClass !== PokemonClass.None) && (
               <option value={4}>Tier 4</option>
             )}
           </optgroup>
           {props.currForm &&
-            (props.currForm.form.pokemonType === PokemonType.Mega || props.currForm.form.pokemonType === PokemonType.Primal) && (
+            (props.currForm.form?.pokemonType === PokemonType.Mega || props.currForm.form?.pokemonType === PokemonType.Primal) && (
               <Fragment>
                 {pokemonClass !== PokemonClass.None ? (
                   <optgroup
@@ -141,7 +141,7 @@ const Raid = (props: IRaidComponent) => {
         <div className="col-4 text-center d-inline-block">
           <h1>CP</h1>
           <hr className="w-100" />
-          <h5>{calculateRaidCP(props.statATK, props.statDEF, tier)}</h5>
+          <h5>{calculateRaidCP(toNumber(props.statATK), toNumber(props.statDEF), tier)}</h5>
         </div>
         <div className="col-4 text-center d-inline-block">
           <h1>HP</h1>
@@ -159,7 +159,7 @@ const Raid = (props: IRaidComponent) => {
           <img
             className={tier === 2 ? 'img-type-icon' : ''}
             alt="img-raid-egg"
-            src={raidEgg(tier, props.currForm?.form.pokemonType, pokemonClass)}
+            src={raidEgg(tier, props.currForm?.form?.pokemonType, pokemonClass)}
           />
         </div>
         <div className="col d-flex justify-content-center" style={{ marginBottom: 15 }}>
