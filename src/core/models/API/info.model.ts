@@ -379,7 +379,7 @@ export class PokemonDetail implements IPokemonDetail {
     obj.pokemonId = data.pokemonId;
     obj.evoList = data.evoList;
     obj.tempEvo = data.tempEvo;
-    obj.prevEvo = data.prevo;
+    obj.prevEvo = data.prevEvo;
     obj.sprite = data.sprite;
     obj.releasedGO = data.releasedGO;
     obj.quickMoves = data.quickMoves;

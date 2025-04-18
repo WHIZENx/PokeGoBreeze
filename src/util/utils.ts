@@ -19,6 +19,7 @@ import {
   CLASS_MYTHIC,
   CLASS_ULTRA_BEAST,
   FORM_ALOLA,
+  FORM_ALOLAN,
   FORM_GALAR,
   FORM_GALARIAN,
   FORM_GMAX,
@@ -297,7 +298,7 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .toLowerCase()
     .replaceAll('_', '-')
     .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
-    .replace('alolan', FORM_ALOLA.toLowerCase())
+    .replace(FORM_ALOLAN.toLowerCase(), FORM_ALOLA.toLowerCase())
     .replace('-xs', '')
     .replace('-male', '')
     .replace(/^meowstic$/, 'meowstic-male')

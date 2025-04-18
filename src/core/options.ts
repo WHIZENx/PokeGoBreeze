@@ -305,6 +305,9 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
       pokemon.pokedexHeightM = pokemonBaseData.heightm;
       pokemon.pokedexWeightKg = pokemonBaseData.weightkg;
       optional.isBaby = pokemonBaseData.isBaby;
+      if (pokemonBaseData.prevo) {
+        optional.prevEvo = pokemonBaseData.prevo;
+      }
 
       if (!pokemon.stats?.baseAttack && !pokemon.stats?.baseDefense && !pokemon.stats?.baseStamina) {
         const stats = calculateStatsByTag(undefined, pokemonBaseData.baseStats, pokemonBaseData.slug);

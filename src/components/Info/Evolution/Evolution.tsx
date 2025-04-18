@@ -394,7 +394,7 @@ const Evolution = (props: IEvolutionComponent) => {
         index > 0
           ? {
               x: arrEvoList[Math.max(0, evo - 1)].length > 1 ? 40 : 0,
-              y: arrEvoList[Math.max(0, evo - 1)].length > 1 ? offsetY + 82.33 : offsetY,
+              y: arrEvoList[Math.max(0, evo - 1)].length > 1 ? offsetY + 246 / 3 : offsetY,
             }
           : { x: -8 },
     };
