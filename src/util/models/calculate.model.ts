@@ -169,15 +169,15 @@ export interface IPredictCPCalculate {
 }
 
 interface IStatsBaseCalculate {
-  statsATK: number;
-  statsDEF: number;
-  statsSTA: number;
+  statATK: number;
+  statDEF: number;
+  statSTA: number;
 }
 
 export class StatsBaseCalculate implements IStatsBaseCalculate {
-  statsATK = 0;
-  statsDEF = 0;
-  statsSTA = 0;
+  statATK = 0;
+  statDEF = 0;
+  statSTA = 0;
 
   static create(value: IStatsBaseCalculate) {
     const obj = new StatsBaseCalculate();

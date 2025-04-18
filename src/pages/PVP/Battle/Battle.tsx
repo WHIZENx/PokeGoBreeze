@@ -185,7 +185,7 @@ const Battle = () => {
   const Pokemon = (poke: IPokemonBattle) =>
     PokemonBattleData.create({
       ...poke,
-      hp: toNumber(poke.pokemonData?.currentStats?.stats?.statsSTA),
+      hp: toNumber(poke.pokemonData?.currentStats?.stats?.statSTA),
       stats: poke.pokemonData?.stats,
       currentStats: poke.pokemonData?.currentStats,
       bestStats: poke.pokemonData?.bestStats,
@@ -975,12 +975,9 @@ const Battle = () => {
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(
         pokemonCurr.energy,
-        Math.floor(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statsSTA))
+        Math.floor(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA))
       ),
-      pokemonObj: PokemonBattleData.setValue(
-        pokemonObj.energy,
-        Math.floor(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statsSTA))
-      ),
+      pokemonObj: PokemonBattleData.setValue(pokemonObj.energy, Math.floor(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statSTA))),
     });
   };
 
@@ -1179,7 +1176,7 @@ const Battle = () => {
     (document.getElementById(`level${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.level?.toString());
     (document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.atk.toString());
     (document.getElementById(`defIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.def.toString());
-    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.sta?.toString());
+    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.sta.toString());
 
     setPokemon(
       PokemonBattle.create({
@@ -1246,7 +1243,7 @@ const Battle = () => {
             {'Attack: '}
             <b>
               {Math.floor(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsATK) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Atk)
               )}
             </b>
@@ -1255,20 +1252,20 @@ const Battle = () => {
             {'Defense: '}
             <b>
               {Math.floor(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Def)
               )}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
-            HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statsSTA)))}</b>
+            HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
             <br />
             {'Stats Prod: '}
             <b>
               {Math.round(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsATK) *
-                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
-                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statsSTA) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
+                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
+                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Prod)
               )}
             </b>
@@ -1517,7 +1514,7 @@ const Battle = () => {
                       text="HP"
                       height={15}
                       hp={Math.floor((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType].hp)}
-                      maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statsSTA))}
+                      maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statSTA))}
                     />
                   </Fragment>
                 )}

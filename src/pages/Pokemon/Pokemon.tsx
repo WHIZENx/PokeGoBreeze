@@ -15,7 +15,7 @@ import {
   PokemonFormDetail,
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
-import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
+import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
 import { IPokemonSpecie, OptionsPokemon, PokemonModel, PokemonProgress, PokemonSpecie } from '../../core/models/pokemon.model';
 import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState, SearchingState } from '../../store/models/state.model';
@@ -97,8 +97,8 @@ const Pokemon = (props: IPokemonPage) => {
   const location = useLocation() as unknown as Location<LocationState>;
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);
-  const [formList, setFormList] = useState<IPokemonFormModify[][]>();
+  const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
+  const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
   const [data, setData] = useState<IPokemonSpecie>();
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
@@ -122,7 +122,7 @@ const Pokemon = (props: IPokemonPage) => {
   const getPokemonIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
     if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonData)) {
-      const pokemon = pokemonData.find((p) => isEqual(p.pokemonId, params.id, EqualMode.IgnoreCaseSensitive));
+      const pokemon = pokemonData.find((p) => isEqual(p.pokemonId?.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive));
       if (pokemon) {
         id = pokemon.num;
       }
@@ -148,7 +148,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const fetchMap = useCallback(
     async (specie: IPokemonSpecie) => {
-      const dataPokeList: IPokemonDetail[] = [];
+      const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       const soundCries: IFormSoundCry[] = [];
       const cancelToken = axiosSource.current.token;
@@ -162,7 +162,7 @@ const Pokemon = (props: IPokemonPage) => {
             })
           );
           pokeInfo.isIncludeShadow = checkPokemonIncludeShadowForm(pokemonData, pokeInfo.name);
-          const pokeDetail = PokemonDetail.setDetails(pokeInfo);
+          const pokeDetail = PokemonDetailInfo.setDetails(pokeInfo);
           soundCries.push(new FormSoundCry(pokeDetail));
           dataPokeList.push(pokeDetail);
           dataFormList.push(pokeForm);
@@ -286,7 +286,8 @@ const Pokemon = (props: IPokemonPage) => {
       let defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.form.name));
       defaultData ??= dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
       if (defaultData) {
-        dispatch(SearchingActions.SetMainPokemonDetails.create(defaultData));
+        const pokemonDetails = PokemonDetail.setDetails(defaultData);
+        dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
       }
       currentForm ??= defaultForm.at(0);
       if (currentForm) {
@@ -484,7 +485,7 @@ const Pokemon = (props: IPokemonPage) => {
         form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
       }
       let currentForm = formList
-        ?.flatMap((item) => item)
+        .flatMap((item) => item)
         .find((item) => {
           const result = convertPokemonForm(item.form.formName, formType, item.form.pokemonType);
           return isEqual(result, form, EqualMode.IgnoreCaseSensitive);
@@ -494,12 +495,13 @@ const Pokemon = (props: IPokemonPage) => {
         pokemonCurrentData = pokeData.find((item) => item.isDefault);
         if (!currentForm && pokemonCurrentData) {
           currentForm = formList
-            ?.flatMap((item) => item)
+            .flatMap((item) => item)
             .find((item) => isEqual(item.form.name, pokemonCurrentData?.name, EqualMode.IgnoreCaseSensitive));
         }
       }
       if (currentForm && pokemonCurrentData) {
-        dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonCurrentData));
+        const pokemonDetails = PokemonDetail.setDetails(pokemonCurrentData);
+        dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
         dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
         const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
         setOriginForm(originForm);

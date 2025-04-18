@@ -96,6 +96,9 @@ export const FORM_ALOLA = 'ALOLA';
 export const FORM_HISUI = 'HISUI';
 export const FORM_GALAR = 'GALAR';
 
+export const FORM_GALARIAN = `${FORM_GALAR}IAN`;
+export const FORM_HISUIAN = `${FORM_HISUI}AN`;
+
 // Forms special
 export const FORM_HERO = 'HERO';
 export const FORM_STANDARD = 'STANDARD';

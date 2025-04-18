@@ -193,14 +193,25 @@ const Move = (props: IMovePage) => {
     [enqueueSnackbar, data.combats]
   );
 
+  const getMoveIdByParam = () => {
+    let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(data.combats)) {
+      const move = data.combats.find((m) => isEqual(m.name.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive));
+      if (move) {
+        id = move.id;
+      }
+    }
+    return id;
+  };
+
   useEffect(() => {
     if (!move) {
-      const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+      const id = getMoveIdByParam();
       if (id > 0) {
         queryMoveData(id);
       }
     }
-  }, [params.id, props.id, queryMoveData, move]);
+  }, [params.id, props.id, queryMoveData, move, data.combats]);
 
   useEffect(() => {
     if (move && isNotEmpty(data.pokemons)) {

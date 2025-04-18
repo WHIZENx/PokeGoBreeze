@@ -13,15 +13,17 @@ import {
   OptionsRank,
   IStatsPokemonGO,
 } from '../core/models/stats.model';
-import { IPokemonDetail, Stats } from '../core/models/API/info.model';
+import { IPokemonDetail, IPokemonDetailInfo, Stats } from '../core/models/API/info.model';
 import {
   CLASS_LEGENDARY,
   CLASS_MYTHIC,
   CLASS_ULTRA_BEAST,
   FORM_ALOLA,
   FORM_GALAR,
+  FORM_GALARIAN,
   FORM_GMAX,
   FORM_HISUI,
+  FORM_HISUIAN,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PRIMAL,
@@ -250,7 +252,11 @@ export const convertModelSpritName = (text: string | undefined) =>
     .replace('-armor', '')
     .replace('-mega-x', '-megax')
     .replace('-mega-y', '-megay')
-    .replace(`-${FORM_NORMAL.toLowerCase()}`, '');
+    .replace(`-${FORM_NORMAL.toLowerCase()}`, '')
+    .replace(FORM_GALARIAN.toLowerCase(), FORM_GALAR.toLowerCase())
+    .replace(FORM_HISUIAN.toLowerCase(), FORM_HISUI.toLowerCase())
+    .replace(`-${FORM_GMAX.toLowerCase()}`, '-gigantamax')
+    .replace('-low-key', '');
 
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
@@ -331,8 +337,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     '-speed',
     '-dusk',
     '-dawn',
-    `-${`${FORM_GALAR}IAN`.toLowerCase()}`,
-    `-${`${FORM_HISUI}AN`.toLowerCase()}`,
+    `-${FORM_HISUIAN.toLowerCase()}`,
+    `-${FORM_GALARIAN.toLowerCase()}`,
   ];
   return isInclude(formOri, '(') && isInclude(formOri, ')') && !isIncludeList(invalidForm, form)
     ? text.replaceAll(form.toLowerCase(), '')
@@ -677,9 +683,9 @@ export const convertPokemonDataName = (text: string | undefined | null, defaultN
     .replace(/_M$/, '_MALE')
     .replace(/^F$/, 'FEMALE')
     .replace(/^M$/, 'MALE')
-    .replace(/GALAR/, `${FORM_GALAR}IAN`)
-    .replace(/HISUI/, `${FORM_HISUI}AN`)
-    .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`)
+    .replace(/GALAR/, FORM_GALARIAN)
+    .replace(/HISUI/, FORM_HISUIAN)
+    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
     .replace(/_SUNSHINE$/, '_SUNNY')
     .replace(/_TOTEM$/, '')
     .replace(/_CAP$/, '')
@@ -714,11 +720,12 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/^PURIFIED$/, '')
     .replace(/^SHADOW$/, '')
     .replace(/_MALE$/, '')
-    .replace(/GALAR$/, `${FORM_GALAR}IAN`)
-    .replace(/HISUI$/, `${FORM_HISUI}AN`)
-    .replace(/GALAR_/, `${`${FORM_GALAR}IAN`}_`)
-    .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`)
+    .replace(/GALAR$/, FORM_GALARIAN)
+    .replace(/HISUI$/, FORM_HISUIAN)
+    .replace(/GALAR_/, `${FORM_GALARIAN}_`)
+    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
     .replace(/_TOTEM$/, '')
+    .replace(/_CAP$/, '')
     .replace(/PALDEA_COMBAT_BREED$/, 'PALDEA_COMBAT')
     .replace(/PALDEA_BLAZE_BREED$/, 'PALDEA_BLAZE')
     .replace(/PALDEA_AQUA_BREED$/, 'PALDEA_AQUA')
@@ -813,7 +820,7 @@ export const generatePokemonGoForms = (
 };
 
 export const generatePokemonGoShadowForms = (
-  dataPokeList: IPokemonDetail[],
+  dataPokeList: IPokemonDetailInfo[],
   formListResult: IPokemonFormModify[][],
   id: number,
   name: string,
@@ -1286,8 +1293,8 @@ export const updateSpecificForm = (id: number, form: string | null | undefined) 
   let result = getValueOrDefault(String, form)
     .toUpperCase()
     .replaceAll('-', '_')
-    .replace(/_GALAR$/, `_${FORM_GALAR}IAN`)
-    .replace(/_HISUI$/, `_${FORM_HISUI}AN`);
+    .replace(/_GALAR$/, `_${FORM_GALARIAN}`)
+    .replace(/_HISUI$/, `_${FORM_HISUIAN}`);
   if (!isInclude(result, FORM_STANDARD) && (id === 554 || id === 555)) {
     result += `_${FORM_STANDARD}`;
   }
