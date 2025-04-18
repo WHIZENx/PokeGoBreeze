@@ -38,7 +38,7 @@ import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { RouterState, StoreState } from '../../../store/models/state.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
-import { FORM_GALAR, FORM_GMAX, FORM_HISUI, FORM_NORMAL, FORM_STANDARD } from '../../../util/constants';
+import { FORM_NORMAL, FORM_STANDARD } from '../../../util/constants';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
@@ -172,17 +172,14 @@ const Evolution = (props: IEvolutionComponent) => {
     const name = pokeSetName(
       !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name
     );
-    let form =
+    const form =
       pokemon.id === 718 && isEmpty(pokemon.form)
         ? 'TEN_PERCENT'
         : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
-    form = form?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI);
-    let sprite = '';
-    if (pokemon.id === 664 || pokemon.id === 665) {
-      sprite = getValueOrDefault(String, pokemon.pokemonId?.toLowerCase(), pokemon.name);
-    } else {
-      sprite = convertModelSpritName(form ? `${name}_${form}` : name);
-    }
+    const sprite =
+      pokemon.id === 664 || pokemon.id === 665
+        ? getValueOrDefault(String, pokemon.pokemonId?.toLowerCase(), pokemon.name)
+        : convertModelSpritName(form ? `${name}_${form}` : name);
 
     return PokemonEvo.create(name, pokemon.id, form, sprite, props.pokemonData?.pokemonType, pokemon.prev, pokemon.isBaby);
   };
@@ -328,42 +325,20 @@ const Evolution = (props: IEvolutionComponent) => {
     }
   };
 
-  const getGMaxChain = (pokemon: Partial<IPokemonDetail>) => {
-    return setArrEvoList([
+  const getSpecialEvoChain = (pokemon: Partial<IPokemonDetail>) =>
+    setArrEvoList([
       [PokemonEvo.create(pokemon.pokemonId, pokemon.id, FORM_NORMAL, convertModelSpritName(pokemon.pokemonId), PokemonType.Normal)],
-      [
-        PokemonEvo.create(
-          pokemon.pokemonId,
-          pokemon.id,
-          FORM_GMAX.toLowerCase(),
-          convertModelSpritName(pokemon.sprite?.replace(`-${FORM_GMAX.toLowerCase()}`, '-gigantamax').replace('-low-key', '')),
-          pokemon.pokemonType
-        ),
-      ],
+      [PokemonEvo.create(pokemon.pokemonId, pokemon.id, pokemon.forme, convertModelSpritName(pokemon.sprite), pokemon.pokemonType)],
     ]);
-  };
-
-  const getMegaPrimalChain = (pokemon: Partial<IPokemonDetail>) => {
-    return setArrEvoList([
-      [PokemonEvo.create(pokemon.pokemonId, pokemon.id, FORM_NORMAL, convertModelSpritName(pokemon.pokemonId), PokemonType.Normal)],
-      [
-        PokemonEvo.create(
-          pokemon.pokemonId,
-          pokemon.id,
-          pokemon.forme?.toLowerCase(),
-          convertModelSpritName(pokemon.sprite),
-          pokemon.pokemonType
-        ),
-      ],
-    ]);
-  };
 
   useEffect(() => {
-    if (props.pokemonData) {
-      if (props.pokemonData.pokemonType === PokemonType.GMax) {
-        getGMaxChain(props.pokemonData);
-      } else if (props.pokemonData.pokemonType === PokemonType.Mega || props.pokemonData.pokemonType === PokemonType.Primal) {
-        getMegaPrimalChain(props.pokemonData);
+    if (props.pokemonData?.fullName) {
+      if (
+        props.pokemonData.pokemonType === PokemonType.GMax ||
+        props.pokemonData.pokemonType === PokemonType.Mega ||
+        props.pokemonData.pokemonType === PokemonType.Primal
+      ) {
+        getSpecialEvoChain(props.pokemonData);
       } else {
         getEvoChainStore(props.pokemonData);
       }
@@ -427,15 +402,7 @@ const Evolution = (props: IEvolutionComponent) => {
     const isCurrent =
       value.id === props.id &&
       value.pokemonType === props.pokemonData?.pokemonType &&
-      isEqual(
-        form,
-        generateFormName(
-          props.pokemonData?.forme?.replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI),
-          value.pokemonType,
-          '-'
-        ),
-        EqualMode.IgnoreCaseSensitive
-      );
+      isEqual(form, generateFormName(props.pokemonData?.forme, value.pokemonType, '-'), EqualMode.IgnoreCaseSensitive);
     return (
       <Fragment>
         <span id={`evo-${evo}-${index}`}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TypeEffective from '../Effective/TypeEffective';
 import WeatherTypeEffective from '../Effective/WeatherTypeEffective';
 import TypeInfo from '../Sprites/Type/Type';
@@ -15,6 +15,14 @@ const Info = () => {
   const weatherEffective = useSelector((state: StoreState) => state.store.data.weatherBoost);
 
   const formTypes = useSelector((state: SearchingState) => state.searching.mainSearching?.form?.form?.types);
+
+  const [types, setTypes] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (formTypes && isNotEmpty(formTypes)) {
+      setTypes(formTypes);
+    }
+  }, [formTypes]);
 
   const getWeatherEffective = (types: string[] | undefined) => {
     const data: string[] = [];
@@ -57,9 +65,9 @@ const Info = () => {
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={formTypes} style={{ marginLeft: 15 }} isShow={true} />
-      <WeatherTypeEffective weatherEffective={getWeatherEffective(formTypes)} />
-      <TypeEffective typeEffective={getTypeEffective(formTypes)} />
+      <TypeInfo arr={types} style={{ marginLeft: 15 }} isShow={true} />
+      <WeatherTypeEffective weatherEffective={getWeatherEffective(types)} />
+      <TypeEffective typeEffective={getTypeEffective(types)} />
     </div>
   );
 };

@@ -20,7 +20,7 @@ import {
 } from '../../core/models/stats.model';
 import { ITypeEffChart } from '../../core/models/type-eff.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
-import { IPokemonDetail } from '../../core/models/API/info.model';
+import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
 import { MoveType, PokemonType, TypeAction, TypeMove, TypeSex } from '../../enums/type.enum';
 import { BadgeType } from '../Input/enums/badge-type.enum';
@@ -128,7 +128,7 @@ export interface IFormSelectComponent {
 
 export interface IToolsComponent {
   id: number | undefined;
-  dataPoke: IPokemonDetail[];
+  dataPoke: IPokemonDetailInfo[];
   stats: IStatsRank | null;
   onSetStats: ((type: TypeAction, value: number) => void) | undefined;
   onClearStats: ((reset?: boolean) => void) | undefined;
@@ -152,8 +152,8 @@ export interface IEvolutionComponent {
 }
 
 export interface IFormInfoComponent {
-  pokeData: IPokemonDetail[];
-  formList: IPokemonFormModify[][] | undefined;
+  pokeData: IPokemonDetailInfo[];
+  formList: IPokemonFormModify[][];
   setSearchOption?: (searchOption: SearchOption) => void;
   defaultId: number | undefined;
   urlEvolutionChain?: string;
@@ -166,7 +166,7 @@ export interface IFromChangeComponent {
 }
 
 export interface IFormSpecialComponent {
-  formList: IPokemonFormModify[][] | undefined;
+  formList: IPokemonFormModify[][];
   id: number | undefined;
   className?: string;
   style?: React.CSSProperties;

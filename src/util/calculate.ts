@@ -574,15 +574,15 @@ export const getBaseStatsByIVandLevel = (
   defIV = MAX_IV,
   staIV = MAX_IV
 ) => {
-  const statsATK = calculateStatsBattle(atk, atkIV, level);
-  const statsDEF = calculateStatsBattle(def, defIV, level);
-  const statsSTA = calculateStatsBattle(sta, staIV, level);
+  const statATK = calculateStatsBattle(atk, atkIV, level);
+  const statDEF = calculateStatsBattle(def, defIV, level);
+  const statSTA = calculateStatsBattle(sta, staIV, level);
   return BattleBaseStats.create({
     IV: { atk: atkIV, def: defIV, sta: staIV },
     CP,
     level,
-    stats: { statsATK, statsDEF, statsSTA },
-    statsProds: statsATK * statsDEF * statsSTA,
+    stats: { statATK, statDEF, statSTA },
+    statsProds: statATK * statDEF * statSTA,
     id,
   });
 };

@@ -54,7 +54,7 @@ import {
 import { ITypeEff } from './models/type-eff.model';
 import {
   FORM_ARMOR,
-  FORM_GALAR,
+  FORM_GALARIAN,
   FORM_GMAX,
   FORM_MEGA,
   FORM_MEGA_X,
@@ -101,6 +101,7 @@ import { EvolutionChain, EvolutionInfo, IEvolutionInfo } from './models/evolutio
 import { Information, ITicketReward, TicketReward } from './models/information';
 import { TrainerLevelUp } from './models/trainer.model';
 import { TemplateId } from './constants/template-id';
+import { PokemonConfig } from './constants/type';
 
 export const getOption = <T>(options: any, args: string[], defaultValue?: T): T => {
   if (!options) {
@@ -190,7 +191,7 @@ export const optionPokemonTypes = (data: PokemonDataGM[]) => {
   data
     .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId))
     .forEach((item) => {
-      const rootType = item.templateId.replace('POKEMON_TYPE_', '');
+      const rootType = item.templateId.replace(`${PokemonConfig.Type}_`, '');
       typeSet.forEach((type, index) => {
         types[rootType][type] = item.data.typeEffective.attackScalar[index];
       });
@@ -223,7 +224,7 @@ const convertAndReplaceNameGO = (name: string, defaultName = '') =>
     .replace(`${replacePokemonGoForm(defaultName)}_`, '')
     .replace(/^S$/gi, FORM_SHADOW)
     .replace(/^A$/gi, FORM_ARMOR)
-    .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`);
+    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN);
 
 export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEncounter[], result: IPokemonData[] = []) => {
   pokemonDefaultForm(data).forEach((item) => {
@@ -247,10 +248,10 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
 
     const types: string[] = [];
     if (pokemonSettings.type) {
-      types.push(pokemonSettings.type.replace('POKEMON_TYPE_', ''));
+      types.push(pokemonSettings.type.replace(`${PokemonConfig.Type}_`, ''));
     }
     if (pokemonSettings.type2) {
-      types.push(pokemonSettings.type2.replace('POKEMON_TYPE_', ''));
+      types.push(pokemonSettings.type2.replace(`${PokemonConfig.Type}_`, ''));
     }
 
     const defaultName = pokemonSettings.form ? pokemonSettings.form.toString() : pokemonSettings.pokemonId;
@@ -404,7 +405,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
               const opponentPokemonBattle = new OpponentPokemonBattle();
               opponentPokemonBattle.requireDefeat = condition.withOpponentPokemonBattleStatus.requireDefeat;
               opponentPokemonBattle.types = condition.withOpponentPokemonBattleStatus.opponentPokemonType.map((type) =>
-                type.replace('POKEMON_TYPE_', '')
+                type.replace(`${PokemonConfig.Type}_`, '')
               );
               quest.opponentPokemonBattle = opponentPokemonBattle;
             }
@@ -535,9 +536,9 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
         if (tempEvo && isNotEmpty(types)) {
           pokemon.stats = tempEvo.stats;
-          types[0] = tempEvo.typeOverride1.replace('POKEMON_TYPE_', '');
+          types[0] = tempEvo.typeOverride1.replace(`${PokemonConfig.Type}_`, '');
           if (tempEvo.typeOverride2) {
-            types[1] = tempEvo.typeOverride2.replace('POKEMON_TYPE_', '');
+            types[1] = tempEvo.typeOverride2.replace(`${PokemonConfig.Type}_`, '');
           }
         } else {
           if (pokemon.pokemonType === PokemonType.Mega) {
@@ -641,7 +642,7 @@ export const optionPokemonWeather = (data: PokemonDataGM[]) => {
     .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
     .forEach((item) => {
       const rootType = item.data.weatherAffinities.weatherCondition;
-      weather[rootType] = item.data.weatherAffinities.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''));
+      weather[rootType] = item.data.weatherAffinities.pokemonType.map((type) => type.replace(`${PokemonConfig.Type}_`, ''));
     });
   return weather;
 };
@@ -901,7 +902,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       } else if (typeof item.data.combatMove.uniqueId === 'number') {
         result.name = item.templateId.replace(/^COMBAT_V\d{4}_MOVE_/, '');
       }
-      result.type = item.data.combatMove.type.replace('POKEMON_TYPE_', '');
+      result.type = item.data.combatMove.type.replace(`${PokemonConfig.Type}_`, '');
       const fastMoveType = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
       if (item.templateId.endsWith(`_${fastMoveType}`) || isInclude(item.templateId, `_${fastMoveType}_`)) {
         result.typeMove = TypeMove.Fast;
@@ -1010,7 +1011,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
       combat.id = toNumber(result[result.length - 1].id) + 1 + index;
       combat.track = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{3}/g))[0]);
       combat.name = move.vfxName?.replace('max_', '').toUpperCase();
-      combat.type = move.pokemonType?.replace('POKEMON_TYPE_', '');
+      combat.type = move.pokemonType?.replace(`${PokemonConfig.Type}_`, '');
       combat.typeMove = TypeMove.Charge;
       combat.durationMs = move.durationMs;
       combat.damageWindowStartMs = move.damageWindowStartMs;
@@ -1067,7 +1068,7 @@ const setPokemonPermission = (
           );
         });
     } else {
-      const form = currentPokemon.form ? currentPokemon.form.replace(`${currentPokemon.id}_`, '') : FORM_NORMAL;
+      const form = getValueOrDefault(String, currentPokemon.form?.replace(`${currentPokemon.id}_`, ''), FORM_NORMAL);
       pokemonPermission.push(
         new PokemonPermission({
           id: item?.num,
@@ -1124,7 +1125,7 @@ export const optionLeagues = (data: PokemonDataGM[], pokemon: IPokemonData[]) =>
           case LeagueConditionType.PokemonType:
             result.conditions.uniqueType = getValueOrDefault(
               Array,
-              con.withPokemonType?.pokemonType.map((type) => type.replace('POKEMON_TYPE_', ''))
+              con.withPokemonType?.pokemonType.map((type) => type.replace(`${PokemonConfig.Type}_`, ''))
             );
             break;
           case LeagueConditionType.PokemonLevelRange:

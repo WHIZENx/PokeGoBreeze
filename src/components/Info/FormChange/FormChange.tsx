@@ -43,7 +43,7 @@ const FromChange = (props: IFromChangeComponent) => {
   }, [assets, props.currentId, props.pokemonData]);
 
   useEffect(() => {
-    if (isNotEmpty(pokeAssets) && props.pokemonData) {
+    if (isNotEmpty(pokeAssets) && props.pokemonData?.fullName) {
       const defaultForm = getValueOrDefault(String, props.pokemonData.forme?.replaceAll('-', '_'), FORM_NORMAL);
       setDataSrc(
         pokeAssets.find((pokemon) => isInclude(pokemon.form, defaultForm, IncludeMode.IncludeIgnoreCaseSensitive))?.image?.at(0)?.default

@@ -28,7 +28,7 @@ import {
   PokemonFormDetail,
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
-import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
+import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
 import { FORM_NORMAL } from '../../util/constants';
 import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
@@ -47,7 +47,7 @@ interface OptionsPokemon {
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
 
-  const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);
+  const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
   const [typePoke, setTypePoke] = useState(props.isRaid ? TypeRaid.Boss : TypeRaid.Pokemon);
@@ -66,7 +66,7 @@ const FormSelect = (props: IFormSelectComponent) => {
     async (specie: IPokemonSpecie) => {
       setFormList([]);
       setPokeData([]);
-      const dataPokeList: IPokemonDetail[] = [];
+      const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       const cancelToken = axiosSource.current.token;
       await Promise.all(
@@ -78,7 +78,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               return PokemonFormDetail.setDetails(form);
             })
           );
-          const pokeDetail = PokemonDetail.setDetails(pokeInfo);
+          const pokeDetail = PokemonDetailInfo.setDetails(pokeInfo);
           dataPokeList.push(pokeDetail);
           dataFormList.push(pokeForm);
         })

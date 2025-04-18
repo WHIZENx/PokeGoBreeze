@@ -240,7 +240,7 @@ export interface Type {
   type: Path;
 }
 
-export interface IPokemonDetail {
+export interface IPokemonDetailInfo {
   cries?: DynamicObj<string>;
   forms: Path[];
   height: number;
@@ -253,6 +253,41 @@ export interface IPokemonDetail {
   types: string[];
   weight: number;
   isIncludeShadow?: boolean;
+}
+
+export class PokemonDetailInfo implements IPokemonDetailInfo {
+  cries?: DynamicObj<string>;
+  forms: Path[] = [];
+  height = 0;
+  id = 0;
+  isDefault = false;
+  name = '';
+  speciesName?: string;
+  sprites = new PokemonSprit();
+  stats: Stats[] = [];
+  types: string[] = [];
+  weight = 0;
+  isIncludeShadow?: boolean;
+
+  static setDetails(info: PokemonInfo) {
+    const obj = new PokemonDetail();
+    obj.cries = info.cries;
+    obj.forms = info.forms;
+    obj.height = info.height;
+    obj.id = info.id;
+    obj.name = info.name;
+    obj.speciesName = info.species?.name;
+    obj.sprites = PokemonSprit.setDetails(info.sprites);
+    obj.stats = info.stats;
+    obj.types = info.types.map((item) => item.type.name);
+    obj.weight = info.weight;
+    obj.isDefault = info.is_default;
+    obj.isIncludeShadow = info.isIncludeShadow;
+    return obj;
+  }
+}
+
+export interface IPokemonDetail extends IPokemonDetailInfo {
   encounter?: Encounter;
   fullName: string | undefined;
   statsGO: StatsPokemonGO;
@@ -315,10 +350,16 @@ export class PokemonDetail implements IPokemonDetail {
   shadowMoves?: string[];
   purifiedMoves?: string[];
 
+  static setDetails(details: IPokemonDetailInfo) {
+    const obj = new PokemonDetail();
+    Object.assign(obj, details);
+    return obj;
+  }
+
   static setData(data: IPokemonData, info?: PokemonInfo) {
     let obj = new PokemonDetail();
     if (info) {
-      obj = this.setDetails(info);
+      obj = PokemonDetailInfo.setDetails(info);
     } else {
       obj.id = data.num;
       obj.types = data.types;
@@ -350,23 +391,6 @@ export class PokemonDetail implements IPokemonDetail {
     obj.eliteCinematicMoves = data.eliteCinematicMoves;
     obj.purifiedMoves = data.purifiedMoves;
     obj.shadowMoves = data.shadowMoves;
-    return obj;
-  }
-
-  static setDetails(info: PokemonInfo) {
-    const obj = new PokemonDetail();
-    obj.cries = info.cries;
-    obj.forms = info.forms;
-    obj.height = info.height;
-    obj.id = info.id;
-    obj.name = info.name;
-    obj.speciesName = info.species?.name;
-    obj.sprites = PokemonSprit.setDetails(info.sprites);
-    obj.stats = info.stats;
-    obj.types = info.types.map((item) => item.type.name);
-    obj.weight = info.weight;
-    obj.isDefault = info.is_default;
-    obj.isIncludeShadow = info.isIncludeShadow;
     return obj;
   }
 }
