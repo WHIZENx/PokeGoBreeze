@@ -15,18 +15,18 @@ import { toFloatWithPadding, toNumber } from '../../../util/extension';
 
 interface ICurrentStats {
   stats: IStatsPokemonGO;
-  atk: number;
-  def: number;
-  sta: number;
-  prod: number;
+  atkPercent: number;
+  defPercent: number;
+  staPercent: number;
+  prodPercent: number;
 }
 
 class CurrentStats implements ICurrentStats {
   stats = new StatsPokemonGO();
-  atk = 0;
-  def = 0;
-  sta = 0;
-  prod = 0;
+  atkPercent = 0;
+  defPercent = 0;
+  staPercent = 0;
+  prodPercent = 0;
 
   static create(value: ICurrentStats) {
     const obj = new CurrentStats();
@@ -53,32 +53,17 @@ const Stats = (props: IStatsComponent) => {
     );
     const sta = props.stats || props.statSTA ? (props.statSTA ? toNumber(props.statSTA.stamina) : calBaseSTA(props.stats, true)) : 0;
     const prod = setStats(
-      props.stats || props.statProd
-        ? props.statProd
-          ? toNumber(props.statProd.product)
-          : calBaseATK(props.stats, true) * calBaseDEF(props.stats, true) * calBaseSTA(props.stats, true)
-        : 0,
+      props.stats || props.statProd ? (props.statProd ? toNumber(props.statProd.product) : atk * def * sta) : 0,
       TypeAction.Prod
     );
-    setIsAvailable(
-      checkRankAllAvailable(props.pokemonStats, {
-        atk,
-        def,
-        sta,
-        prod,
-      })
-    );
+    const statsPokemonGO = StatsPokemonGO.create(atk, def, sta, prod);
+    setIsAvailable(checkRankAllAvailable(props.pokemonStats, statsPokemonGO));
     setCurrentStats({
-      stats: {
-        atk,
-        def,
-        sta,
-        prod,
-      },
-      atk: (atk * 100) / toNumber(props.pokemonStats?.attack.maxStats, 1),
-      def: (def * 100) / toNumber(props.pokemonStats?.defense.maxStats, 1),
-      sta: (sta * 100) / toNumber(props.pokemonStats?.stamina.maxStats, 1),
-      prod: (prod * 100) / toNumber(props.pokemonStats?.statProd.maxStats, 1),
+      stats: statsPokemonGO,
+      atkPercent: (atk * 100) / toNumber(props.pokemonStats?.attack.maxStats, 1),
+      defPercent: (def * 100) / toNumber(props.pokemonStats?.defense.maxStats, 1),
+      staPercent: (sta * 100) / toNumber(props.pokemonStats?.stamina.maxStats, 1),
+      prodPercent: (prod * 100) / toNumber(props.pokemonStats?.statProd.maxStats, 1),
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType]);
 
@@ -89,7 +74,7 @@ const Stats = (props: IStatsComponent) => {
       <StatsBar
         tag="ATK"
         class="bg-danger"
-        statsPercent={currentStats.atk}
+        statsPercent={currentStats.atkPercent}
         rank={isAvailable.attackRank ? isAvailable.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.attack}
         currentStats={currentStats.stats.atk}
@@ -102,7 +87,7 @@ const Stats = (props: IStatsComponent) => {
       <StatsBar
         tag="DEF"
         class="bg-success"
-        statsPercent={currentStats.def}
+        statsPercent={currentStats.defPercent}
         rank={isAvailable.defenseRank ? isAvailable.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.defense}
         currentStats={currentStats.stats.def}
@@ -115,7 +100,7 @@ const Stats = (props: IStatsComponent) => {
       <StatsBar
         tag="STA"
         class="bg-info"
-        statsPercent={currentStats.sta}
+        statsPercent={currentStats.staPercent}
         rank={isAvailable.staminaRank ? isAvailable.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.stamina}
         currentStats={currentStats.stats.sta}
@@ -128,7 +113,7 @@ const Stats = (props: IStatsComponent) => {
       <StatsBar
         tag="Stat Prod"
         class="bg-warning"
-        statsPercent={currentStats.prod}
+        statsPercent={currentStats.prodPercent}
         rank={isAvailable.statProdRank ? isAvailable.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.statProd}
         currentStats={currentStats.stats.prod}

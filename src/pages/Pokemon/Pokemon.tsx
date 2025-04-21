@@ -130,7 +130,7 @@ const Pokemon = (props: IPokemonPage) => {
     return id;
   };
 
-  const convertPokemonForm = (formName: string | undefined | null, formType: string | null | undefined, pokemonType = PokemonType.None) => {
+  const convertPokemonForm = (formName: string | undefined, formType: string | undefined, pokemonType = PokemonType.None) => {
     let form = formName;
     if (formType) {
       formType = getValueOrDefault(String, formType);
@@ -408,16 +408,16 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [params.id, props.searchOption?.id, spinner.isLoading, pokemonData]);
 
-  const checkReleased = (id: number, form: Partial<IPokemonFormModify> | null | undefined) => {
+  const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined) => {
     if (!form) {
       return false;
     }
     const formName = getValueOrDefault(String, form.form?.name, form.form?.formName, form.defaultName);
     const details = getPokemonDetails(pokemonData, id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType || PokemonType.Normal;
-    const atk = details.baseStats.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
-    const def = details.baseStats.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
-    const sta = details.baseStats.sta;
+    const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
+    const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
+    const sta = details.statsGO.sta;
     details.statsGO = StatsPokemonGO.create(atk, def, sta);
     const pokemonDetails = PokemonDetail.setData(details);
     dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
@@ -472,7 +472,7 @@ const Pokemon = (props: IPokemonPage) => {
     const id = getPokemonIdByParam();
     if (isNotEmpty(pokeData) && isNotEmpty(formList) && id > 0 && id === toNumber(data?.id)) {
       let form = getValueOrDefault(String, searchParams.get(Params.Form));
-      let formType = searchParams.get(Params.FormType);
+      let formType = getValueOrDefault(String, searchParams.get(Params.FormType));
       if (props.searchOption && props.isSearch) {
         form = getValueOrDefault(String, props.searchOption.form);
         const pokemonType = getKeyWithData(PokemonType, props.searchOption.pokemonType);

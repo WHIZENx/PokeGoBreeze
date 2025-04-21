@@ -1,4 +1,5 @@
 import { PokemonType } from '../../enums/type.enum';
+import { MAX_IV, MIN_IV } from '../../util/constants';
 import { toNumber } from '../../util/extension';
 
 export interface OptionsRank {
@@ -82,22 +83,22 @@ export class StatsRank implements IStatsRank {
   }
 }
 
-export interface IStatsBase {
-  atk: number;
-  def: number;
-  sta: number;
+export interface IStatsIV {
+  atkIV: number;
+  defIV: number;
+  staIV: number;
 }
 
-export class StatsBase implements IStatsBase {
-  atk = 0;
-  def = 0;
-  sta = 0;
+export class StatsIV implements IStatsIV {
+  atkIV = 0;
+  defIV = 0;
+  staIV = 0;
 
-  static setValue(atk = 0, def = 0, sta = 0) {
-    const obj = new StatsBase();
-    obj.atk = atk;
-    obj.def = def;
-    obj.sta = sta;
+  static setValue(atkIV = MIN_IV, defIV = MIN_IV, staIV = MIN_IV) {
+    const obj = new StatsIV();
+    obj.atkIV = Math.max(MIN_IV, Math.min(atkIV, MAX_IV));
+    obj.defIV = Math.max(MIN_IV, Math.min(defIV, MAX_IV));
+    obj.staIV = Math.max(MIN_IV, Math.min(staIV, MAX_IV));
     return obj;
   }
 }
@@ -119,12 +120,12 @@ export class StatsPokemonGO implements IStatsPokemonGO {
     this.prod = this.atk * this.def * this.sta;
   }
 
-  static create(atk?: number, def?: number, sta?: number) {
+  static create(atk?: number, def?: number, sta?: number, prod = 0) {
     const obj = new StatsPokemonGO();
     obj.atk = toNumber(atk);
     obj.def = toNumber(def);
     obj.sta = toNumber(sta);
-    obj.prod = obj.atk * obj.def * obj.sta;
+    obj.prod = prod > 0 ? prod : obj.atk * obj.def * obj.sta;
     return obj;
   }
 }
@@ -256,14 +257,14 @@ export interface IPokemonStatsRanking {
   num: number;
   name: string;
   slug: string;
-  forme: string | null;
+  form: string | undefined;
   sprite: string;
-  baseForme: string | undefined | null;
-  baseSpecies: string | null;
+  baseForme: string | undefined;
+  baseSpecies: string | undefined;
   rank?: number;
   gen: number;
-  region: string | null;
-  version: string | null;
+  region: string | undefined;
+  version: string | undefined;
   weightKg: number;
   heightM: number;
   atk: IStatsAtk;
@@ -282,14 +283,14 @@ export class PokemonStatsRanking implements IPokemonStatsRanking {
   num = 0;
   name = '';
   slug = '';
-  forme = '';
+  form: string | undefined;
   sprite = '';
-  baseForme = '';
-  baseSpecies = '';
+  baseForme: string | undefined;
+  baseSpecies: string | undefined;
   rank?: number;
   gen = 0;
-  region = '';
-  version = '';
+  region: string | undefined;
+  version: string | undefined;
   weightKg = 0;
   heightM = 0;
   atk = new StatsAtk();

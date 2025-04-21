@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { OverAllStatsComponent } from '../models/component.model';
-import { IStatsBase } from '../../../core/models/stats.model';
 import { toNumber, combineClasses, isEqual } from '../../../util/extension';
 import Stats from '../../../components/Info/Stats/Stats';
 import Hexagon from '../../../components/Sprites/Hexagon/Hexagon';
@@ -15,11 +14,12 @@ import { getKeyWithData } from '../../../util/utils';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import { EqualMode } from '../../../util/enums/string.enum';
 import { AnimationType } from '../../../components/Sprites/Hexagon/enums/hexagon.enum';
+import { IStatsPokemonGO } from '../../../core/models/stats.model';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
 
-  const setPokemonStats = (stats: IStatsBase | undefined, id: number | undefined) => {
+  const setPokemonStats = (stats: IStatsPokemonGO | undefined, id: number | undefined) => {
     const maxCP = toNumber(props.cp);
     id = toNumber(id);
     let prevCurrentStats = new BattleBaseStats();
@@ -69,17 +69,17 @@ const OverAllStats = (props: OverAllStatsComponent) => {
       <li className="element-top">
         <IVBar
           title="Attack"
-          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.atk)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.atkIV)}
           style={{ maxWidth: 500 }}
         />
         <IVBar
           title="Defense"
-          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.def)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.defIV)}
           style={{ maxWidth: 500 }}
         />
         <IVBar
           title="HP"
-          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.sta)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.staIV)}
           style={{ maxWidth: 500 }}
         />
       </li>
@@ -115,7 +115,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             statProd={props.data?.prod}
             pokemonStats={props.statsRanking}
             id={props.data?.pokemon?.num}
-            form={props.data?.pokemon?.forme}
+            form={props.data?.pokemon?.form}
             isDisabled={!props.data}
             pokemonType={props.data?.pokemonType}
           />

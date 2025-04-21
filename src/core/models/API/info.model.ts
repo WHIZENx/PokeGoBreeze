@@ -291,7 +291,7 @@ export interface IPokemonDetail extends IPokemonDetailInfo {
   encounter?: Encounter;
   fullName: string | undefined;
   statsGO: StatsPokemonGO;
-  forme?: string | null;
+  form?: string;
   pokemonClass?: PokemonClass;
   pokemonType?: PokemonType;
   formChange?: IPokemonFormChange[];
@@ -299,7 +299,7 @@ export interface IPokemonDetail extends IPokemonDetailInfo {
   pokemonId?: string;
   evoList?: IEvoList[];
   tempEvo?: ITempEvo[];
-  prevEvo: string | null;
+  prevEvo: string | undefined;
   sprite?: string;
   releasedGO: boolean;
   quickMoves?: string[];
@@ -329,7 +329,7 @@ export class PokemonDetail implements IPokemonDetail {
   encounter?: Encounter;
   fullName: string | undefined;
   statsGO = new StatsPokemonGO();
-  forme?: string | null;
+  form?: string;
   pokemonClass?: PokemonClass;
   pokemonType?: PokemonType;
   formChange?: IPokemonFormChange[];
@@ -337,7 +337,7 @@ export class PokemonDetail implements IPokemonDetail {
   pokemonId?: string;
   evoList?: IEvoList[];
   tempEvo?: ITempEvo[];
-  prevEvo: string | null = null;
+  prevEvo: string | undefined;
   sprite?: string;
   releasedGO = true;
   quickMoves?: string[];
@@ -371,7 +371,7 @@ export class PokemonDetail implements IPokemonDetail {
     if (data.statsGO) {
       obj.statsGO = data.statsGO;
     }
-    obj.forme = data.forme;
+    obj.form = data.form;
     obj.pokemonClass = data.pokemonClass;
     obj.pokemonType = data.pokemonType;
     obj.formChange = data.formChange;

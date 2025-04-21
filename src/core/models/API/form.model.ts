@@ -61,7 +61,7 @@ export interface PokemonForm {
 }
 
 export interface IPokemonFormDetail {
-  formName: string | null;
+  formName: string;
   id: number;
   isDefault: boolean;
   pokemonType: PokemonType;
@@ -69,7 +69,7 @@ export interface IPokemonFormDetail {
   pokemon: Path;
   sprites?: IPokemonSprit;
   types: string[];
-  version: string | null;
+  version: string | undefined;
 }
 
 export class PokemonFormDetail implements IPokemonFormDetail {
@@ -104,12 +104,12 @@ interface SlotType {
 }
 
 export interface IForm extends Partial<IPokemonFormDetail> {
-  formName: string | null | undefined;
+  formName: string | undefined;
   id: number | undefined;
   isDefault: boolean;
   pokemonType?: PokemonType;
   name: string;
-  version: string | null | undefined;
+  version: string | undefined;
   types: string[] | undefined;
 }
 
@@ -159,10 +159,10 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
   constructor(
     id: number,
     defaultName: string,
-    name: string | null | undefined,
-    formName: string | null | undefined,
-    fullFormName: string | null | undefined,
-    version: string | null | undefined,
+    name: string | undefined,
+    formName: string | undefined,
+    fullFormName: string | undefined,
+    version: string | undefined,
     types: string[],
     sprites: IPokemonSprit | undefined,
     formId: number,
@@ -186,12 +186,12 @@ export class PokemonFormModifyModel implements IPokemonFormModify {
 }
 
 export class Form implements IForm {
-  formName: string | null | undefined = '';
+  formName: string | undefined;
   id: number | undefined;
   isDefault = false;
   pokemonType = PokemonType.Normal;
   name = '';
-  version: string | null | undefined = '';
+  version: string | undefined;
   types: string[] | undefined = [];
 
   static create(value: IForm, isMega = false, isShadow = true) {

@@ -208,7 +208,7 @@ const Tools = (props: IToolsComponent) => {
           pokemonStats={props.stats}
           stats={pokemonData?.statsGO}
           id={props.id}
-          form={pokemonData?.forme}
+          form={pokemonData?.form}
         />
       )}
     </Fragment>

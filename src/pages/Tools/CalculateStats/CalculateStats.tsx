@@ -85,12 +85,12 @@ const Calculate = () => {
     const name = splitAndCapitalize(pokemon?.fullName, '_', ' ');
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
     if (!result.level) {
-      enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} impossible found in ${name}`, {
+      enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`, {
         variant: VariantType.Error,
       });
       return;
     }
-    enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atk}/${result.IV.def}/${result.IV.sta} found in ${typePoke} ${name}`, {
+    enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} found in ${typePoke} ${name}`, {
       variant: VariantType.Success,
     });
     setPokeStats(result);
@@ -494,7 +494,7 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(toNumber(pokemon?.statsGO?.atk), pokeStats?.IV.atk, statLevel, true)
+                              calculateStatsBattle(toNumber(pokemon?.statsGO?.atk), pokeStats?.IV.atkIV, statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData.atkStat}
@@ -518,7 +518,7 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(toNumber(pokemon?.statsGO?.def), pokeStats?.IV.def, statLevel, true)
+                              calculateStatsBattle(toNumber(pokemon?.statsGO?.def), pokeStats?.IV.defIV, statLevel, true)
                             ) : (
                               <Fragment>
                                 {statData.defStat}
@@ -540,7 +540,7 @@ const Calculate = () => {
                           HP
                         </td>
                         <td>
-                          {statData ? calculateStatsBattle(toNumber(pokemon?.statsGO?.sta), pokeStats?.IV.sta, statLevel, true) : '-'}
+                          {statData ? calculateStatsBattle(toNumber(pokemon?.statsGO?.sta), pokeStats?.IV.staIV, statLevel, true) : '-'}
                         </td>
                       </tr>
                     </tbody>

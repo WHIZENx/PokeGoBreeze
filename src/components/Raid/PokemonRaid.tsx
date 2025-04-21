@@ -40,8 +40,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         {dataTargetPokemon && (
           <div className="d-flex text-group-small">
             <span>
-              LV: {dataTargetPokemon.stats?.level} {dataTargetPokemon.stats?.iv.atk}/{dataTargetPokemon.stats?.iv.def}/
-              {`${dataTargetPokemon.stats?.iv.sta} `}
+              LV: {dataTargetPokemon.stats?.level} {dataTargetPokemon.stats?.iv.atkIV}/{dataTargetPokemon.stats?.iv.defIV}/
+              {`${dataTargetPokemon.stats?.iv.staIV} `}
               {dataTargetPokemon.stats?.pokemonType === PokemonType.Shadow && (
                 <img height={24} alt="img-shadow" src={APIService.getPokeShadow()} />
               )}
@@ -113,7 +113,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           isSelected={true}
           inputType={InputType.Small}
           clearData={props.clearData}
-          pokemon={new SelectMovePokemonModel(dataTargetPokemon.num, dataTargetPokemon.forme, dataTargetPokemon.pokemonType)}
+          pokemon={new SelectMovePokemonModel(dataTargetPokemon.num, dataTargetPokemon.form, dataTargetPokemon.pokemonType)}
           move={fMoveTargetPokemon}
           setMovePokemon={setFMoveTargetPokemon}
           moveType={TypeMove.Fast}
@@ -136,7 +136,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           isSelected={true}
           inputType={InputType.Small}
           clearData={props.clearData}
-          pokemon={new SelectMovePokemonModel(dataTargetPokemon.num, dataTargetPokemon.forme, dataTargetPokemon.pokemonType)}
+          pokemon={new SelectMovePokemonModel(dataTargetPokemon.num, dataTargetPokemon.form, dataTargetPokemon.pokemonType)}
           move={cMoveTargetPokemon}
           setMovePokemon={setCMoveTargetPokemon}
           moveType={TypeMove.Charge}

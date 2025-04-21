@@ -5,7 +5,7 @@ import { ConditionType, LeagueConditionType, QuestType } from '../enums/option.e
 import { Cost, IBonusEffect } from './combat.model';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonModel } from './pokemon.model';
-import { IStatsBase, StatsBase } from './stats.model';
+import { IStatsPokemonGO, StatsPokemonGO } from './stats.model';
 
 interface CombatSetting {
   sameTypeAttackBonusMultiplier: number;
@@ -487,23 +487,23 @@ export class PlayerSetting implements IPlayerSetting {
 
 interface ICombatOption {
   stab: number;
-  shadowBonus: IStatsBase;
-  purifiedBonus: IStatsBase;
+  shadowBonus: IStatsPokemonGO;
+  purifiedBonus: IStatsPokemonGO;
   maxEnergy: number;
 }
 
 class CombatOption implements ICombatOption {
   stab = 0;
-  shadowBonus = new StatsBase();
-  purifiedBonus = new StatsBase();
+  shadowBonus = new StatsPokemonGO();
+  purifiedBonus = new StatsPokemonGO();
   maxEnergy = 0;
 }
 
 interface IBattleOption {
   enemyAttackInterval: number;
   stab: number;
-  shadowBonus: IStatsBase;
-  purifiedBonus: IStatsBase;
+  shadowBonus: IStatsPokemonGO;
+  purifiedBonus: IStatsPokemonGO;
   maxEnergy: number;
   dodgeDamageReductionPercent: number;
 }
@@ -511,8 +511,8 @@ interface IBattleOption {
 class BattleOption implements IBattleOption {
   enemyAttackInterval = 0;
   stab = 0;
-  shadowBonus = new StatsBase();
-  purifiedBonus = new StatsBase();
+  shadowBonus = new StatsPokemonGO();
+  purifiedBonus = new StatsPokemonGO();
   maxEnergy = 0;
   dodgeDamageReductionPercent = 0;
 }

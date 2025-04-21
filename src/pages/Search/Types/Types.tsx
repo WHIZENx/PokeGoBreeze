@@ -53,7 +53,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     id: ColumnType.Name,
     name: 'Pokémon Name',
     selector: (row) => (
-      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
         <img
           height={48}
           alt="img-pokemon"

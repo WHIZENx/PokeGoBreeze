@@ -31,7 +31,7 @@ const BodyPVP = (props: BodyComponent) => {
         const name = convertNameRankingToOri(versus.opponent, convertNameRankingToForm(versus.opponent));
         const pokemon = props.pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(props.assets, pokemon?.num, pokemon?.forme);
+        const form = findAssetForm(props.assets, pokemon?.num, pokemon?.form);
         let pokemonType;
         if (isInclude(versus.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;

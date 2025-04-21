@@ -18,7 +18,7 @@ import { GlobalType } from '../../enums/type.enum';
 import { ShopType } from './enums/sticker-type.enum';
 
 interface PokemonStickerModel {
-  id?: number | null;
+  id?: number;
   name: string;
 }
 

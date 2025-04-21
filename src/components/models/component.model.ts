@@ -52,7 +52,7 @@ export interface ICardPokemonInfoComponent {
   image: IImage;
   id: number;
   name: string;
-  forme: string | undefined;
+  form: string | undefined;
   isDefaultImg: boolean;
   types: string[];
   pokemonStat: IStatsPokemonGO;
@@ -144,7 +144,7 @@ export interface IAssetPokemonModelComponent {
 }
 
 export interface IEvolutionComponent {
-  pokemonData: Partial<IPokemonDetail> | undefined | null;
+  pokemonData: Partial<IPokemonDetail> | undefined;
   id: number | undefined;
   setSearchOption?: (searchOption: SearchOption) => void;
   isLoadedForms: boolean;
@@ -161,7 +161,7 @@ export interface IFormInfoComponent {
 }
 
 export interface IFromChangeComponent {
-  pokemonData: Partial<IPokemonDetail> | undefined | null;
+  pokemonData: Partial<IPokemonDetail> | undefined;
   currentId: number | undefined;
 }
 
@@ -181,7 +181,7 @@ export interface IStatsComponent {
   statSTA?: IStatsSta;
   statProd?: IStatsProd;
   id?: number;
-  form?: string | null;
+  form?: string;
   isDisabled?: boolean;
 }
 
@@ -300,7 +300,7 @@ export interface IIVBarComponent {
 
 export interface ICircleBarComponent {
   text: string;
-  type: string | null | undefined;
+  type: string | undefined;
   size: number;
   moveEnergy: number;
   energy: number;
@@ -334,7 +334,7 @@ export interface IStatsBarComponent {
   currentStats: number;
   optionalStats?: string;
   id?: number;
-  form?: string | null;
+  form?: string;
   statType: TypeAction;
   isDisabled?: boolean;
   pokemonType?: PokemonType;
@@ -353,7 +353,7 @@ export interface ITypeComponent {
 }
 
 export interface ITypeBadgeComponent {
-  move: ISelectMoveModel | ICombat | null | undefined;
+  move: ISelectMoveModel | ICombat | undefined;
   isFind?: boolean;
   isGrow?: boolean;
   style?: React.CSSProperties;
@@ -400,11 +400,11 @@ export interface IWeatherComponent {
 }
 
 export interface ICounterComponent {
-  pokemonData: Partial<IPokemonDetail> | undefined | null;
+  pokemonData: Partial<IPokemonDetail> | undefined;
 }
 
 export interface ITableMoveComponent {
-  pokemonData: Partial<IPokemonDetail> | undefined | null;
+  pokemonData: Partial<IPokemonDetail> | undefined;
   maxHeight?: number | string;
 }
 
@@ -412,8 +412,8 @@ export interface IPokemonTableComponent {
   id: number | undefined;
   formName: string | undefined;
   gen: number | string | undefined;
-  region: string | null | undefined;
-  version: string | null | undefined;
+  region: string | undefined;
+  version: string | undefined;
   weight: number | undefined;
   height: number | undefined;
   className?: string;
@@ -423,7 +423,7 @@ export interface IPokemonTableComponent {
 export interface IMoveComponent {
   type?: TypeMove;
   id: number | undefined;
-  form: string | null | undefined;
+  form: string | undefined;
   move: ICombat | undefined;
   setMove: (move: ICombat | undefined) => void | React.Dispatch<React.SetStateAction<ICombat | undefined>>;
   text: string;

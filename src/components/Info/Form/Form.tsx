@@ -97,7 +97,7 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   }, [router]);
 
-  const changeForm = (isSelected: boolean, name: string, form: string | null | undefined, pokemonType = PokemonType.None) => {
+  const changeForm = (isSelected: boolean, name: string, form: string | undefined, pokemonType = PokemonType.None) => {
     if (isSelected) {
       return;
     }
@@ -206,7 +206,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         statProd={statsPokemon?.prod}
         pokemonStats={stats}
         id={props.defaultId}
-        form={pokemonData?.forme}
+        form={pokemonData?.form}
         isDisabled={!stats}
       />
       <hr className="w-100" />
