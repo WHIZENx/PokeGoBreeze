@@ -23,7 +23,7 @@ import './StatsRanking.scss';
 import { FormControlLabel, Checkbox, CircularProgress } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
-import { StatsState, StoreState } from '../../../store/models/state.model';
+import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import { IPokemonStatsRanking, PokemonStatsRanking, StatsAtk, StatsDef, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
@@ -48,6 +48,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
+import { Action } from 'history';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -175,6 +176,7 @@ class Filter implements IFilter {
 const defaultPerPages = 25;
 
 const StatsRanking = () => {
+  const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
   useChangeTitle('Stats Ranking');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -453,6 +455,29 @@ const StatsRanking = () => {
       return () => clearTimeout(timeOutId);
     }
   }, [search, isMatch, releasedGO, pokemonList]);
+
+  useEffect(() => {
+    const paramId = toNumber(searchParams.get(Params.Id));
+    if (paramId > 0 && router.action === Action.Pop && isNotEmpty(pokemonList)) {
+      const form = getValueOrDefault(String, searchParams.get(Params.Form), FORM_NORMAL).replaceAll('-', '_');
+      const formType = searchParams.get(Params.FormType);
+      const pokemonType = getPokemonType(formType);
+      const result = pokemonFilter.find(
+        (row) =>
+          row.num === paramId &&
+          isEqual(row.form, form, EqualMode.IgnoreCaseSensitive) &&
+          ((!formType && !isSpecialFormType(row.pokemonType)) || row.pokemonType === pokemonType)
+      );
+      if (result) {
+        const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
+        const details = getPokemonDetails(pokemon, paramId, result.fullName, result.pokemonType, true);
+        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        const pokemonDetails = PokemonDetail.setData(details);
+        setPokemon(pokemonDetails);
+        setSelect(result);
+      }
+    }
+  }, [router, pokemonList, searchParams])
 
   return (
     <div className="element-bottom position-relative poke-container container">
