@@ -45,10 +45,10 @@ import {
   Encounter,
   IPokemonData,
   PokemonData,
+  PokemonDataModel,
   PokemonDataOptional,
   PokemonEncounter,
   PokemonGenderRatio,
-  PokemonModel,
   StatsGO,
 } from './models/pokemon.model';
 import { ITypeEff } from './models/type-eff.model';
@@ -231,7 +231,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
   pokemonDefaultForm(data).forEach((item) => {
     const pokemonSettings = item.data.pokemonSettings;
     const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
-    const pokemon = new PokemonModel(id, undefined, pokemonSettings);
+    const pokemon = PokemonDataModel.create(id, undefined, pokemonSettings);
 
     if (!pokemonSettings.form) {
       pokemon.form = FORM_NORMAL;
@@ -254,6 +254,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
     if (pokemonSettings.type2) {
       types.push(pokemonSettings.type2.replace(`${PokemonConfig.Type}_`, ''));
     }
+    pokemon.types = types;
 
     const defaultName = pokemonSettings.form ? pokemonSettings.form.toString() : pokemonSettings.pokemonId;
     const pokemonEncounter = encounter?.find((e) => isEqual(defaultName, e.name));
@@ -464,7 +465,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
     }
 
     if (pokemon.pokemonType !== PokemonType.Shadow) {
-      const pokemonData = PokemonData.create(pokemon, types, optional);
+      const pokemonData = PokemonData.create(pokemon, optional);
       result.push(pokemonData);
     }
   });
@@ -485,7 +486,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         pokemon.num > 0 && !result.some((item) => isEqual(item.fullName, convertPokemonDataName(pokemon.baseFormeSlug, pokemon.slug)))
     )
     .forEach((item) => {
-      const pokemon = new PokemonModel(item.num, convertPokemonDataName(item.name));
+      const pokemon = PokemonDataModel.create(item.num, item.name);
 
       pokemon.pokemonId = convertPokemonDataName(item.baseSpecies, item.name);
       pokemon.form = convertPokemonDataName(item.forme, FORM_NORMAL);
@@ -499,7 +500,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         return;
       }
 
-      const types = item.types.map((type) => type.toUpperCase());
+      pokemon.types = item.types.map((type) => type.toUpperCase());
       const optional = new PokemonDataOptional({
         ...item,
         baseForme: isNull(item.baseForme) ? undefined : item.baseForme,
@@ -539,11 +540,11 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         });
 
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
-        if (tempEvo && isNotEmpty(types)) {
+        if (tempEvo && isNotEmpty(pokemon.types)) {
           pokemon.stats = tempEvo.stats;
-          types[0] = tempEvo.typeOverride1.replace(`${PokemonConfig.Type}_`, '');
+          pokemon.types[0] = tempEvo.typeOverride1.replace(`${PokemonConfig.Type}_`, '');
           if (tempEvo.typeOverride2) {
-            types[1] = tempEvo.typeOverride2.replace(`${PokemonConfig.Type}_`, '');
+            pokemon.types[1] = tempEvo.typeOverride2.replace(`${PokemonConfig.Type}_`, '');
           }
         } else {
           if (pokemon.pokemonType === PokemonType.Mega) {
@@ -580,7 +581,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         }
       }
 
-      const pokemonData = PokemonData.create(pokemon, types, optional);
+      const pokemonData = PokemonData.create(pokemon, optional);
       result.push(pokemonData);
     });
 

@@ -477,7 +477,7 @@ const StatsRanking = () => {
         setSelect(result);
       }
     }
-  }, [router, pokemonList, searchParams])
+  }, [router, pokemonList, searchParams]);
 
   return (
     <div className="element-bottom position-relative poke-container container">
