@@ -559,7 +559,7 @@ export class PokemonData implements IPokemonData {
   cannotDynamax = true;
   pokemonType = PokemonType.Normal;
 
-  static create(pokemon: PokemonModel, options?: IPokemonDataOptional) {
+  static create(pokemon: PokemonDataModel, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
     Object.entries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
@@ -638,7 +638,7 @@ export class PokemonModel implements IPokemonName {
   }
 }
 
-export class PokemonDataModel implements PokemonModel {
+export class PokemonDataModel {
   form?: string | number | undefined;
   disableTransferToPokemonHome?: boolean | undefined;
   pokemonClass: string | undefined;

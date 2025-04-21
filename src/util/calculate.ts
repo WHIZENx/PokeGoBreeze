@@ -970,7 +970,7 @@ export const queryTopMove = (
     pokemonList?.forEach((pokemon) => {
       if (pokemon) {
         let name = move.name;
-        if (move.track === 281) {
+        if (move.isMultipleWithType) {
           name = move.name.replace(`_${move.type}`, '');
         }
         const moveType = getMoveType(pokemon, name);

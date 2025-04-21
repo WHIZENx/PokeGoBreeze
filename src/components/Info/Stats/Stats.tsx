@@ -38,7 +38,7 @@ class CurrentStats implements ICurrentStats {
 const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
   const theme = useTheme<ThemeModify>();
-  const [isAvailable, setIsAvailable] = useState(new StatsRankPokemonGO());
+  const [availableRankGO, setAvailableRankGO] = useState(new StatsRankPokemonGO());
 
   const [currentStats, setCurrentStats] = useState(new CurrentStats());
 
@@ -57,7 +57,7 @@ const Stats = (props: IStatsComponent) => {
       TypeAction.Prod
     );
     const statsPokemonGO = StatsPokemonGO.create(atk, def, sta, prod);
-    setIsAvailable(checkRankAllAvailable(props.pokemonStats, statsPokemonGO));
+    setAvailableRankGO(checkRankAllAvailable(props.pokemonStats, statsPokemonGO));
     setCurrentStats({
       stats: statsPokemonGO,
       atkPercent: (atk * 100) / toNumber(props.pokemonStats?.attack.maxStats, 1),
@@ -75,7 +75,7 @@ const Stats = (props: IStatsComponent) => {
         tag="ATK"
         class="bg-danger"
         statsPercent={currentStats.atkPercent}
-        rank={isAvailable.attackRank ? isAvailable.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'}
+        rank={availableRankGO.attackRank ? availableRankGO.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.attack}
         currentStats={currentStats.stats.atk}
         id={props.id}
@@ -88,7 +88,7 @@ const Stats = (props: IStatsComponent) => {
         tag="DEF"
         class="bg-success"
         statsPercent={currentStats.defPercent}
-        rank={isAvailable.defenseRank ? isAvailable.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'}
+        rank={availableRankGO.defenseRank ? availableRankGO.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.defense}
         currentStats={currentStats.stats.def}
         id={props.id}
@@ -101,7 +101,7 @@ const Stats = (props: IStatsComponent) => {
         tag="STA"
         class="bg-info"
         statsPercent={currentStats.staPercent}
-        rank={isAvailable.staminaRank ? isAvailable.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'}
+        rank={availableRankGO.staminaRank ? availableRankGO.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.stamina}
         currentStats={currentStats.stats.sta}
         id={props.id}
@@ -114,7 +114,7 @@ const Stats = (props: IStatsComponent) => {
         tag="Stat Prod"
         class="bg-warning"
         statsPercent={currentStats.prodPercent}
-        rank={isAvailable.statProdRank ? isAvailable.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'}
+        rank={availableRankGO.statProdRank ? availableRankGO.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'}
         pokemonStatsRank={props.pokemonStats?.statProd}
         currentStats={currentStats.stats.prod}
         optionalStats={`${toFloatWithPadding(currentStats.stats.prod / Math.pow(10, 6), 2)} MM`}

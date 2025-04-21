@@ -973,7 +973,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
         result.id = move.id;
         result.track = move.id;
         result.pvePower = move.power;
-        if (result.name !== 'STRUGGLE') {
+        if (!isEqual(result.name, 'STRUGGLE')) {
           result.pveEnergy = move.energyDelta;
         }
         result.durationMs = move.durationMs;
