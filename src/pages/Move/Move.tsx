@@ -83,7 +83,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     id: ColumnType.Name,
     name: 'Name',
     selector: (row) => (
-      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form)}`}>
         <img
           height={48}
           alt="img-pokemon"
@@ -193,14 +193,25 @@ const Move = (props: IMovePage) => {
     [enqueueSnackbar, data.combats]
   );
 
+  const getMoveIdByParam = () => {
+    let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(data.combats)) {
+      const move = data.combats.find((m) => isEqual(m.name.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive));
+      if (move) {
+        id = move.id;
+      }
+    }
+    return id;
+  };
+
   useEffect(() => {
     if (!move) {
-      const id = toNumber(params.id ? params.id.toLowerCase() : props.id);
+      const id = getMoveIdByParam();
       if (id > 0) {
         queryMoveData(id);
       }
     }
-  }, [params.id, props.id, queryMoveData, move]);
+  }, [params.id, props.id, queryMoveData, move, data.combats]);
 
   useEffect(() => {
     if (move && isNotEmpty(data.pokemons)) {
@@ -219,7 +230,7 @@ const Move = (props: IMovePage) => {
         if (!pokemon.releasedGO) {
           const result = checkPokemonGO(
             pokemon.num,
-            convertPokemonDataName(getValueOrDefault(String, pokemon.sprite, pokemon.name.replaceAll(' ', '_'))),
+            convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')),
             data.pokemons
           );
           return result?.releasedGO;

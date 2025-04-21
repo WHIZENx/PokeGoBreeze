@@ -20,9 +20,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
   const [arrEvoList, setArrEvoList] = useState<IForm[]>();
 
   useEffect(() => {
-    if (props.formList?.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Mega))) {
+    if (props.formList.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Mega))) {
       setPokemonType(PokemonType.Mega);
-    } else if (props.formList?.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal))) {
+    } else if (props.formList.some((item) => item.some((pokemon) => pokemon.form.pokemonType === PokemonType.Primal))) {
       setPokemonType(PokemonType.Primal);
     }
   }, [props.formList]);
@@ -30,7 +30,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
   useEffect(() => {
     if (isNotEmpty(props.formList) && pokemonType !== PokemonType.None) {
       const result = props.formList
-        ?.filter((item) => item[0]?.form.pokemonType === pokemonType)
+        .filter((item) => item[0]?.form.pokemonType === pokemonType)
         .map((item) => {
           const form = item.at(0);
           if (!form) {

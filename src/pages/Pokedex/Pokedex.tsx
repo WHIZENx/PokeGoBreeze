@@ -144,7 +144,7 @@ const Pokedex = () => {
       setDataList(
         data.pokemons
           .map((item) => {
-            const assetForm = queryAssetForm(data.assets, item.num, item.forme);
+            const assetForm = queryAssetForm(data.assets, item.num, item.form);
             return new PokemonHomeModel(item, assetForm);
           })
           .sort((a, b) => a.id - b.id)
@@ -516,7 +516,7 @@ const Pokedex = () => {
             <CardPokemonInfo
               key={index}
               name={row.name}
-              forme={row.forme}
+              form={row.form}
               isDefaultImg={isShiny}
               image={row.image}
               id={row.id}

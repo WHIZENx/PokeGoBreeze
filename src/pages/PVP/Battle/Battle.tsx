@@ -93,7 +93,7 @@ import { ScoreType } from '../../../util/enums/constants.enum';
 import { TimelineEvent } from '../../../util/models/overrides/dom.model';
 import { LinkToTop, useNavigateToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { HexagonStats } from '../../../core/models/stats.model';
+import { HexagonStats, StatsPokemonGO } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 
 interface OptionsBattle {
@@ -152,21 +152,17 @@ const Battle = () => {
       hp: Math.max(0, hp),
     });
 
-  const calculateMoveDmgActual = (
-    poke: IPokemonBattleData | null,
-    pokeObj: IPokemonBattleData | null,
-    move: ICombat | undefined | null
-  ) => {
+  const calculateMoveDmgActual = (poke: IPokemonBattleData, pokeObj: IPokemonBattleData, move: ICombat | undefined) => {
     if (poke && pokeObj && move) {
       const atkPoke = calculateStatsBattle(
         poke.stats?.atk,
-        poke.currentStats?.IV?.atk,
+        poke.currentStats?.IV?.atkIV,
         toNumber(poke.currentStats?.level, MIN_LEVEL),
         true
       );
       const defPokeObj = calculateStatsBattle(
         pokeObj.stats?.def,
-        pokeObj.currentStats?.IV?.def,
+        pokeObj.currentStats?.IV?.defIV,
         toNumber(pokeObj.currentStats?.level, MIN_LEVEL),
         true
       );
@@ -185,7 +181,7 @@ const Battle = () => {
   const Pokemon = (poke: IPokemonBattle) =>
     PokemonBattleData.create({
       ...poke,
-      hp: toNumber(poke.pokemonData?.currentStats?.stats?.statsSTA),
+      hp: toNumber(poke.pokemonData?.currentStats?.stats?.statSTA),
       stats: poke.pokemonData?.stats,
       currentStats: poke.pokemonData?.currentStats,
       bestStats: poke.pokemonData?.bestStats,
@@ -551,23 +547,21 @@ const Battle = () => {
                 if (value.target === BuffType.Target) {
                   player2 = PokemonBattleData.create({
                     ...player2,
-                    stats: {
-                      ...player2.stats,
-                      atk: value.type === TypeAction.Atk ? toNumber(player2.stats?.atk) + value.power : toNumber(player2.stats?.atk),
-                      def: value.type === TypeAction.Def ? toNumber(player2.stats?.def) + value.power : toNumber(player2.stats?.def),
-                      sta: toNumber(player2.stats?.sta),
-                    },
+                    stats: StatsPokemonGO.create(
+                      value.type === TypeAction.Atk ? toNumber(player2.stats?.atk) + value.power : toNumber(player2.stats?.atk),
+                      value.type === TypeAction.Def ? toNumber(player2.stats?.def) + value.power : toNumber(player2.stats?.def),
+                      toNumber(player2.stats?.sta)
+                    ),
                   });
                   arrBufTarget.push(value);
                 } else {
                   player1 = PokemonBattleData.create({
                     ...player1,
-                    stats: {
-                      ...player1.stats,
-                      atk: value.type === TypeAction.Atk ? toNumber(player1.stats?.atk) + value.power : toNumber(player1.stats?.atk),
-                      def: value.type === TypeAction.Def ? toNumber(player1.stats?.def) + value.power : toNumber(player1.stats?.def),
-                      sta: toNumber(player2.stats?.sta),
-                    },
+                    stats: StatsPokemonGO.create(
+                      value.type === TypeAction.Atk ? toNumber(player1.stats?.atk) + value.power : toNumber(player1.stats?.atk),
+                      value.type === TypeAction.Def ? toNumber(player1.stats?.def) + value.power : toNumber(player1.stats?.def),
+                      toNumber(player2.stats?.sta)
+                    ),
                   });
                   arrBufAtk.push(value);
                 }
@@ -607,23 +601,21 @@ const Battle = () => {
                 if (value.target === BuffType.Target) {
                   player1 = PokemonBattleData.create({
                     ...player1,
-                    stats: {
-                      ...player1.stats,
-                      atk: value.type === TypeAction.Atk ? toNumber(player1.stats?.atk) + value.power : toNumber(player1.stats?.atk),
-                      def: value.type === TypeAction.Def ? toNumber(player1.stats?.def) + value.power : toNumber(player1.stats?.def),
-                      sta: toNumber(player2.stats?.sta),
-                    },
+                    stats: StatsPokemonGO.create(
+                      value.type === TypeAction.Atk ? toNumber(player1.stats?.atk) + value.power : toNumber(player1.stats?.atk),
+                      value.type === TypeAction.Def ? toNumber(player1.stats?.def) + value.power : toNumber(player1.stats?.def),
+                      toNumber(player2.stats?.sta)
+                    ),
                   });
                   arrBufTarget.push(value);
                 } else {
                   player2 = PokemonBattleData.create({
                     ...player2,
-                    stats: {
-                      ...player2.stats,
-                      atk: value.type === TypeAction.Atk ? toNumber(player2.stats?.atk) + value.power : toNumber(player2.stats?.atk),
-                      def: value.type === TypeAction.Def ? toNumber(player2.stats?.def) + value.power : toNumber(player2.stats?.def),
-                      sta: toNumber(player2.stats?.sta),
-                    },
+                    stats: StatsPokemonGO.create(
+                      value.type === TypeAction.Atk ? toNumber(player2.stats?.atk) + value.power : toNumber(player2.stats?.atk),
+                      value.type === TypeAction.Def ? toNumber(player2.stats?.def) + value.power : toNumber(player2.stats?.def),
+                      toNumber(player2.stats?.sta)
+                    ),
                   });
                   arrBufAtk.push(value);
                 }
@@ -739,7 +731,7 @@ const Battle = () => {
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.forme);
+            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.form);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -975,12 +967,9 @@ const Battle = () => {
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(
         pokemonCurr.energy,
-        Math.floor(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statsSTA))
+        Math.floor(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA))
       ),
-      pokemonObj: PokemonBattleData.setValue(
-        pokemonObj.energy,
-        Math.floor(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statsSTA))
-      ),
+      pokemonObj: PokemonBattleData.setValue(pokemonObj.energy, Math.floor(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statSTA))),
     });
   };
 
@@ -1167,9 +1156,9 @@ const Battle = () => {
         statsCalculate.CP,
         id,
         statsCalculate.level,
-        statsCalculate.IV.atk,
-        statsCalculate.IV.def,
-        statsCalculate.IV.sta
+        statsCalculate.IV.atkIV,
+        statsCalculate.IV.defIV,
+        statsCalculate.IV.staIV
       );
     } else {
       stats = pokemon.pokemonData.bestStats;
@@ -1177,9 +1166,9 @@ const Battle = () => {
 
     const battleType = getKeyWithData(BattleType, type);
     (document.getElementById(`level${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.level?.toString());
-    (document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.atk.toString());
-    (document.getElementById(`defIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.def.toString());
-    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.sta?.toString());
+    (document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.atkIV.toString());
+    (document.getElementById(`defIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.defIV.toString());
+    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.staIV.toString());
 
     setPokemon(
       PokemonBattle.create({
@@ -1238,15 +1227,15 @@ const Battle = () => {
             <br />
             {'IV: '}
             <b>
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.atk)}/{toNumber(pokemon.pokemonData?.currentStats?.IV?.def)}/
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.sta)}
+              {toNumber(pokemon.pokemonData?.currentStats?.IV?.atkIV)}/{toNumber(pokemon.pokemonData?.currentStats?.IV?.defIV)}/
+              {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
             {'Attack: '}
             <b>
               {Math.floor(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsATK) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Atk)
               )}
             </b>
@@ -1255,20 +1244,20 @@ const Battle = () => {
             {'Defense: '}
             <b>
               {Math.floor(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Def)
               )}
             </b>
             <br />
             <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
-            HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statsSTA)))}</b>
+            HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
             <br />
             {'Stats Prod: '}
             <b>
               {Math.round(
-                toNumber(pokemon.pokemonData?.currentStats?.stats?.statsATK) *
-                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statsDEF) *
-                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statsSTA) *
+                toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
+                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
+                  toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
                   getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Prod)
               )}
             </b>
@@ -1294,7 +1283,7 @@ const Battle = () => {
                 <span className="input-group-text">Attack IV</span>
                 <input
                   className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.atk}
+                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.atkIV}
                   id={`atkIV${battleType}`}
                   type="number"
                   step={1}
@@ -1306,7 +1295,7 @@ const Battle = () => {
                 <span className="input-group-text">Defense IV</span>
                 <input
                   className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.def}
+                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.defIV}
                   id={`defIV${battleType}`}
                   type="number"
                   step={1}
@@ -1318,7 +1307,7 @@ const Battle = () => {
                 <span className="input-group-text">HP IV</span>
                 <input
                   className="form-control shadow-none"
-                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.sta}
+                  defaultValue={pokemon.pokemonData?.currentStats?.IV?.staIV}
                   id={`hpIV${battleType}`}
                   type="number"
                   step={1}
@@ -1517,7 +1506,7 @@ const Battle = () => {
                       text="HP"
                       height={15}
                       hp={Math.floor((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType].hp)}
-                      maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statsSTA))}
+                      maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statSTA))}
                     />
                   </Fragment>
                 )}

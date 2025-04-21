@@ -32,6 +32,8 @@ import { IncludeMode } from '../../../util/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { SearchingActions } from '../../../store/actions';
+import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
+import { PokemonDetail } from '../../../core/models/API/info.model';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -44,6 +46,13 @@ const FormComponent = (props: IFormInfoComponent) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [statsPokemon, setStatsPokemon] = useState<StatsRankingPokemonGO>();
+  const [genderRatio, setGenderRatio] = useState(new PokemonGenderRatio());
+
+  useEffect(() => {
+    if (pokemonData?.fullName && pokemonData.genderRatio) {
+      setGenderRatio(pokemonData.genderRatio);
+    }
+  }, [pokemonData]);
 
   const filterFormList = useCallback(
     (stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[]) =>
@@ -64,13 +73,14 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   const findFormData = (name: string) => {
     let currentData = props.pokeData.find((item) => isEqual(name, item.name));
-    const currentForm = props.formList?.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
+    const currentForm = props.formList.flatMap((item) => item).find((item) => isEqual(item.form.name, name));
     if (currentForm) {
       dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
     }
     currentData ??= props.pokeData.find((p) => p.isDefault);
     if (currentData) {
-      dispatch(SearchingActions.SetMainPokemonDetails.create(currentData));
+      const pokemonDetails = PokemonDetail.setDetails(currentData);
+      dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
     }
   };
 
@@ -87,7 +97,7 @@ const FormComponent = (props: IFormInfoComponent) => {
     }
   }, [router]);
 
-  const changeForm = (isSelected: boolean, name: string, form: string | null | undefined, pokemonType = PokemonType.None) => {
+  const changeForm = (isSelected: boolean, name: string, form: string | undefined, pokemonType = PokemonType.None) => {
     if (isSelected) {
       return;
     }
@@ -130,7 +140,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         <div className="scroll-form" style={{ width: props.isLoadedForms ? '100%' : '' }}>
           {props.isLoadedForms ? (
             <Fragment>
-              {props.formList?.map((value, index) => (
+              {props.formList.map((value, index) => (
                 <Fragment key={index}>
                   {value.map((value, index) => (
                     <button
@@ -180,12 +190,10 @@ const FormComponent = (props: IFormInfoComponent) => {
           )}
         </div>
       </div>
-      {pokemonData?.genderRatio?.M !== 0 || pokemonData?.genderRatio?.F !== 0 ? (
+      {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
         <div className="d-flex flex-wrap" style={{ columnGap: 50, rowGap: 15 }}>
-          {pokemonData?.genderRatio?.M !== 0 && <Gender ratio={pokemonData?.genderRatio} sex={TypeSex.Male} sprit={form?.form?.sprites} />}
-          {pokemonData?.genderRatio?.F !== 0 && (
-            <Gender ratio={pokemonData?.genderRatio} sex={TypeSex.Female} sprit={form?.form?.sprites} />
-          )}
+          {genderRatio.M !== 0 && <Gender ratio={genderRatio} sex={TypeSex.Male} sprit={form?.form?.sprites} />}
+          {genderRatio.F !== 0 && <Gender ratio={genderRatio} sex={TypeSex.Female} sprit={form?.form?.sprites} />}
         </div>
       ) : (
         <Gender sex={TypeSex.Genderless} />
@@ -198,7 +206,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         statProd={statsPokemon?.prod}
         pokemonStats={stats}
         id={props.defaultId}
-        form={pokemonData?.forme}
+        form={pokemonData?.form}
         isDisabled={!stats}
       />
       <hr className="w-100" />

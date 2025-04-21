@@ -3,9 +3,9 @@ import { MoveType } from '../../enums/type.enum';
 
 export interface IPokemonTopMove {
   num: number;
-  forme: string | null;
+  form: string | undefined;
   name: string;
-  baseSpecies: string | null;
+  baseSpecies: string | undefined;
   sprite: string;
   releasedGO: boolean;
   moveType: MoveType;
@@ -15,7 +15,7 @@ export interface IPokemonTopMove {
 
 export class PokemonTopMove implements IPokemonTopMove {
   num = 0;
-  forme = '';
+  form: string | undefined;
   name = '';
   baseSpecies = '';
   sprite = '';
@@ -82,7 +82,7 @@ export class PokemonQueryRankMove implements IPokemonQueryRankMove {
 export interface IPokemonQueryCounter {
   pokemonId: number;
   pokemonName: string;
-  pokemonForme: string | null;
+  pokemonForm: string | undefined;
   releasedGO: boolean;
   dps: number;
   fMove: ICombat;
@@ -92,7 +92,7 @@ export interface IPokemonQueryCounter {
 export class PokemonQueryCounter implements IPokemonQueryCounter {
   pokemonId = 0;
   pokemonName = '';
-  pokemonForme = '';
+  pokemonForm: string | undefined;
   releasedGO = false;
   dps = 0;
   fMove = new Combat();

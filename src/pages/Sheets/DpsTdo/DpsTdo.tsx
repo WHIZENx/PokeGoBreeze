@@ -133,7 +133,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Pokémon Name',
     selector: (row) => (
       <LinkToTop
-        to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.forme, row.pokemonType)}`}
+        to={`/pokemon/${row.pokemon.num}${generateParamForm(row.pokemon.form, row.pokemonType)}`}
         title={`#${row.pokemon.num} ${splitAndCapitalize(row.pokemon.name, '-', ' ')}`}
       >
         <PokemonIconType pokemonType={row.pokemonType} size={25}>
@@ -403,7 +403,7 @@ const DpsTdo = () => {
       }
       const fMoveType = getMoveType(pokemon, vf);
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType);
-      if (!pokemon.forme || pokemon.hasShadowForm) {
+      if (!pokemon.form || pokemon.hasShadowForm) {
         if (isNotEmpty(pokemon.shadowMoves)) {
           addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
         }
@@ -411,7 +411,7 @@ const DpsTdo = () => {
         addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, PokemonType.Purified);
       }
       if (
-        (!pokemon.forme || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
+        (!pokemon.form || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
@@ -913,7 +913,7 @@ const DpsTdo = () => {
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
                       inputType={InputType.Small}
-                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.forme, dataTargetPokemon?.pokemonType)}
+                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.form, dataTargetPokemon?.pokemonType)}
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
                       moveType={TypeMove.Fast}
@@ -926,7 +926,7 @@ const DpsTdo = () => {
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
                       inputType={InputType.Small}
-                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.forme, dataTargetPokemon?.pokemonType)}
+                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.form, dataTargetPokemon?.pokemonType)}
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}
                       moveType={TypeMove.Charge}

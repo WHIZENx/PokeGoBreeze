@@ -3,8 +3,10 @@ import { APIUrl } from './constants';
 import {
   DEFAULT_SPRITE_NAME,
   FORM_GALAR,
+  FORM_GALARIAN,
   FORM_GMAX,
   FORM_HISUI,
+  FORM_HISUIAN,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PRIMAL,
@@ -246,11 +248,7 @@ class APIService {
   getPokeFullSprite(id?: number | string, form?: string) {
     if (id) {
       if (form) {
-        form = splitAndCapitalize(
-          form.toUpperCase().replace(`${FORM_GALAR}IAN`, FORM_GALAR).replace(`${FORM_HISUI}AN`, FORM_HISUI),
-          '-',
-          '-'
-        );
+        form = splitAndCapitalize(form.toUpperCase().replace(FORM_GALARIAN, FORM_GALAR).replace(FORM_HISUIAN, FORM_HISUI), '-', '-');
       }
       return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${form ? `-${form}` : ''}.png`;
     }

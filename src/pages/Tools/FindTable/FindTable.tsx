@@ -301,7 +301,7 @@ const FindTable = () => {
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <DataTable
-              title={`Levels/CP for IV: ${preCpArr?.IV.atk}/${preCpArr?.IV.def}/${preCpArr?.IV.sta}`}
+              title={`Levels/CP for IV: ${preCpArr?.IV.atkIV}/${preCpArr?.IV.defIV}/${preCpArr?.IV.staIV}`}
               columns={columnsCP}
               data={getValueOrDefault(Array, preCpArr?.result)}
               pagination={true}

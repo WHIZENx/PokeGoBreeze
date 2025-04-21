@@ -3,11 +3,10 @@ import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
 import { IOptions } from '../../core/models/options.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { IStatsBase, StatsBase, StatsPokemonGO } from '../../core/models/stats.model';
+import { IStatsIV, IStatsPokemonGO, StatsIV } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { PokemonType } from '../../enums/type.enum';
-import { MIN_IV } from '../constants';
 import { getValueOrDefault, toNumber } from '../extension';
 import { IPokemonQueryCounter, IPokemonQueryMove } from './pokemon-top-move.model';
 
@@ -62,7 +61,7 @@ export class StatsLeagueCalculate implements IStatsLeagueCalculate {
 }
 
 export interface IStatsCalculate {
-  IV: IStatsBase;
+  IV: IStatsIV;
   CP: number;
   level: number;
 }
@@ -106,12 +105,12 @@ export class BetweenLevelCalculate implements IBetweenLevelCalculate {
 export interface IBattleLeagueCalculate {
   isElidge: boolean;
   maxCP?: number;
-  IV: IStatsBase;
+  IV: IStatsIV;
   CP: number;
   level: number;
   isLimit: boolean;
   rangeValue?: IBetweenLevelCalculate;
-  stats?: IStatsBase;
+  stats?: IStatsPokemonGO;
 }
 
 export interface IPredictStatsModel {
@@ -164,44 +163,44 @@ export class PredictCPModel implements IPredictCPModel {
 }
 
 export interface IPredictCPCalculate {
-  IV: IStatsBase;
+  IV: IStatsIV;
   result: IPredictCPModel[];
 }
 
 interface IStatsBaseCalculate {
-  statsATK: number;
-  statsDEF: number;
-  statsSTA: number;
+  statATK: number;
+  statDEF: number;
+  statSTA: number;
+  statPROD: number;
 }
 
 export class StatsBaseCalculate implements IStatsBaseCalculate {
-  statsATK = 0;
-  statsDEF = 0;
-  statsSTA = 0;
+  statATK = 0;
+  statDEF = 0;
+  statSTA = 0;
+  statPROD = 0;
 
-  static create(value: IStatsBaseCalculate) {
+  static create(atk: number, def: number, sta: number) {
     const obj = new StatsBaseCalculate();
-    Object.assign(obj, value);
+    obj.statPROD = atk * def * sta;
     return obj;
   }
 }
 
 export interface IStatsProdCalculate {
-  IV: IStatsBase;
+  IV: IStatsIV;
   CP: number;
   level: number;
   stats: IStatsBaseCalculate;
-  statsProds: number;
   ratio?: number;
   rank?: number;
 }
 
 export class StatsProdCalculate implements IStatsProdCalculate {
-  IV = new StatsPokemonGO();
+  IV = new StatsIV();
   CP = 0;
   level = 0;
   stats = new StatsBaseCalculate();
-  statsProds = 0;
   ratio?: number;
   rank?: number;
 }
@@ -209,7 +208,7 @@ export class StatsProdCalculate implements IStatsProdCalculate {
 export interface IQueryStatesEvoChain {
   battleLeague: IBattleLeague;
   maxCP: number | undefined;
-  form: string | null | undefined;
+  form: string | undefined;
   id: number;
   name: string;
   prev?: string;
@@ -223,7 +222,7 @@ export interface IQueryStatesEvoChain {
 export class QueryStatesEvoChain implements IQueryStatesEvoChain {
   battleLeague = new BattleLeague();
   maxCP = 0;
-  form: string | null | undefined = '';
+  form: string | undefined;
   id = 0;
   name = '';
   prev?: string;
@@ -240,8 +239,8 @@ export class QueryStatesEvoChain implements IQueryStatesEvoChain {
 
 export interface IBattleBaseStats {
   CP?: number;
-  IV?: IStatsBase;
-  form?: string | null;
+  IV?: IStatsIV;
+  form?: string;
   id: number;
   league?: string;
   level?: number;
@@ -257,14 +256,13 @@ export interface IBattleBaseStats {
   resultBetweenXLCandy?: number;
   resultBetweenXLCandyDiff?: number;
   stats?: IStatsBaseCalculate;
-  statsProds?: number;
   pokemonType?: PokemonType;
 }
 
 export class BattleBaseStats implements IBattleBaseStats {
   CP?: number;
-  IV?: IStatsBase;
-  form?: string | null;
+  IV?: IStatsIV;
+  form?: string;
   id = 0;
   league?: string;
   level?: number;
@@ -280,7 +278,6 @@ export class BattleBaseStats implements IBattleBaseStats {
   resultBetweenXLCandy?: number;
   resultBetweenXLCandyDiff?: number;
   stats?: IStatsBaseCalculate;
-  statsProds?: number;
   pokemonType?: PokemonType;
 
   static create(value: IBattleBaseStats) {
@@ -373,14 +370,12 @@ export class QueryMovesPokemon {
 }
 
 export class StatsCalculate implements IStatsCalculate {
-  IV = new StatsBase();
+  IV = new StatsIV();
   CP: number;
   level: number;
 
-  constructor(atk: number, def: number, sta: number, CP: number, level: number) {
-    this.IV.atk = atk;
-    this.IV.def = def;
-    this.IV.sta = sta;
+  constructor(atkIV: number, defIV: number, staIV: number, CP: number, level: number) {
+    this.IV = StatsIV.setValue(atkIV, defIV, staIV);
     this.CP = CP;
     this.level = level;
   }
@@ -389,20 +384,26 @@ export class StatsCalculate implements IStatsCalculate {
 export class BattleLeagueCalculate implements IBattleLeagueCalculate {
   isElidge = false;
   maxCP?: number;
-  IV = new StatsBase();
+  IV = new StatsIV();
   CP = 0;
   level = 0;
   isLimit = false;
   rangeValue?: IBetweenLevelCalculate;
-  stats?: IStatsBase;
+  stats?: IStatsPokemonGO;
 
-  constructor(isElidge: boolean, maxCP?: number, atk?: number, def?: number, sta?: number, CP?: number, level?: number, isLimit?: boolean) {
+  constructor(
+    isElidge: boolean,
+    maxCP?: number,
+    atkIV?: number,
+    defIV?: number,
+    staIV?: number,
+    CP?: number,
+    level?: number,
+    isLimit?: boolean
+  ) {
     this.isElidge = isElidge;
     this.maxCP = maxCP;
-    this.IV = new StatsPokemonGO();
-    this.IV.atk = toNumber(atk, MIN_IV);
-    this.IV.def = toNumber(def, MIN_IV);
-    this.IV.sta = toNumber(sta, MIN_IV);
+    this.IV = StatsIV.setValue(atkIV, defIV, staIV);
     this.CP = toNumber(CP);
     this.level = toNumber(level);
     this.isLimit = getValueOrDefault(Boolean, isLimit);
@@ -424,14 +425,11 @@ export class PredictStatsCalculate implements IPredictStatsCalculate {
 }
 
 export class PredictCPCalculate implements IPredictCPCalculate {
-  IV: IStatsBase;
+  IV: IStatsIV;
   result: IPredictCPModel[];
 
-  constructor(atk: number, def: number, sta: number, result: IPredictCPModel[]) {
-    this.IV = new StatsPokemonGO();
-    this.IV.atk = atk;
-    this.IV.def = def;
-    this.IV.sta = sta;
+  constructor(atkIV: number, defIV: number, staIV: number, result: IPredictCPModel[]) {
+    this.IV = StatsIV.setValue(atkIV, defIV, staIV);
     this.result = result;
   }
 }

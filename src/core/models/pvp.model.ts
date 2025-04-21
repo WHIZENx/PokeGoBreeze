@@ -5,7 +5,7 @@ import { BattleLeagueCPType } from '../../util/enums/compute.enum';
 import { getPokemonType } from '../../util/utils';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
-import { IHexagonStats, IStatsAtk, IStatsBase, IStatsDef, IStatsSta, StatsBase } from './stats.model';
+import { IHexagonStats, IStatsAtk, IStatsDef, IStatsPokemonGO, IStatsSta, StatsPokemonGO } from './stats.model';
 
 export interface IPVPDataModel {
   rankings: IPVPInfo[];
@@ -42,8 +42,8 @@ export interface IPerformers {
   name: string | undefined;
   speciesId: string;
   pokemonData: IPokemonData | undefined;
-  form: string | undefined | null;
-  stats: IStatsBase;
+  form: string | undefined;
+  stats: IStatsPokemonGO;
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -64,8 +64,8 @@ export class Performers implements IPerformers {
   name: string | undefined;
   speciesId = '';
   pokemonData: IPokemonData | undefined;
-  form: string | undefined | null;
-  stats = new StatsBase();
+  form: string | undefined;
+  stats = new StatsPokemonGO();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -135,7 +135,7 @@ export interface PokemonVersus {
 
 export interface PokemonRankingMove {
   moveId: string;
-  uses: number | null;
+  uses: number | undefined;
 }
 
 interface IPokemonRankingStats {
@@ -178,7 +178,7 @@ export interface IBattlePokemonData {
   name: string | undefined;
   pokemon: IPokemonData;
   id: number;
-  form: string | undefined | null;
+  form: string | undefined;
   pokemonType: PokemonType;
 }
 
@@ -196,7 +196,7 @@ export class BattlePokemonData implements IBattlePokemonData {
   name: string | undefined;
   pokemon = new PokemonData();
   id = 0;
-  form: string | undefined | null;
+  form: string | undefined;
   pokemonType = PokemonType.Normal;
 
   static create(value: IBattlePokemonData) {

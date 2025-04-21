@@ -2,7 +2,7 @@
 import { Combat, IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { IStatsAtk, IStatsDef, IStatsProd, IStatsSta, IStatsBase, StatsBase } from '../../../core/models/stats.model';
+import { IStatsAtk, IStatsDef, IStatsPokemonGO, IStatsProd, IStatsSta, StatsPokemonGO } from '../../../core/models/stats.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { toNumber } from '../../../util/extension';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';
@@ -26,11 +26,11 @@ interface MoveAudio {
 export interface IPokemonBattleData {
   speciesId?: string;
   name?: string;
-  form?: string | null;
+  form?: string;
   id?: number;
   pokemonType: PokemonType;
   hp: number;
-  stats: IStatsBase | undefined;
+  stats: IStatsPokemonGO | undefined;
   bestStats: IBattleBaseStats | undefined;
   currentStats: IBattleBaseStats | undefined;
   pokemon: IPokemonData | undefined;
@@ -47,11 +47,11 @@ export interface IPokemonBattleData {
 export class PokemonBattleData implements IPokemonBattleData {
   speciesId?: string;
   name?: string;
-  form?: string | null;
+  form?: string;
   id?: number;
   pokemonType = PokemonType.Normal;
   hp = 0;
-  stats: IStatsBase | undefined;
+  stats: IStatsPokemonGO | undefined;
   bestStats: IBattleBaseStats | undefined;
   currentStats: IBattleBaseStats | undefined;
   pokemon: IPokemonData | undefined;
@@ -153,8 +153,8 @@ export interface IPokemonTeamData {
   name: string | undefined;
   speciesId: string;
   pokemonData: IPokemonData | undefined;
-  form: string | undefined | null;
-  stats: IStatsBase;
+  form: string | undefined;
+  stats: IStatsPokemonGO;
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -170,7 +170,7 @@ export class PokemonTeamData implements IPokemonTeamData {
   speciesId = '';
   pokemonData: IPokemonData | undefined;
   form = '';
-  stats = new StatsBase();
+  stats = new StatsPokemonGO();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -192,8 +192,8 @@ export interface IPokemonBattleRanking {
   id: number | undefined;
   name: string | undefined;
   pokemon: IPokemonData | undefined;
-  form: string | undefined | null;
-  stats: IStatsBase;
+  form: string | undefined;
+  stats: IStatsPokemonGO;
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;
@@ -211,7 +211,7 @@ export class PokemonBattleRanking implements IPokemonBattleRanking {
   name: string | undefined;
   pokemon: IPokemonData | undefined;
   form = '';
-  stats = new StatsBase();
+  stats = new StatsPokemonGO();
   atk: IStatsAtk | undefined;
   def: IStatsDef | undefined;
   sta: IStatsSta | undefined;

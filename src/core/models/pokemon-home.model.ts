@@ -10,14 +10,14 @@ import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './
 export interface IPokemonHomeModel {
   id: number;
   name: string;
-  forme: string | undefined;
+  form: string | undefined;
   types: string[];
   color: string;
   sprite: string;
-  baseSpecies: string | null;
+  baseSpecies: string | undefined;
   baseStats: IStatsPokemon;
   gen: number;
-  region: string | null;
+  region: string | undefined;
   version: number;
   goStats: IStatsPokemonGO;
   pokemonClass: PokemonClass;
@@ -29,14 +29,14 @@ export interface IPokemonHomeModel {
 export class PokemonHomeModel implements IPokemonHomeModel {
   id: number;
   name: string;
-  forme: string | undefined;
+  form: string | undefined;
   types: string[];
   color: string;
   sprite: string;
-  baseSpecies: string | null;
+  baseSpecies: string | undefined;
   baseStats = new StatsPokemon();
   gen: number;
-  region: string | null;
+  region: string | undefined;
   version: number;
   goStats = new StatsPokemonGO();
   pokemonClass = PokemonClass.None;
@@ -44,12 +44,12 @@ export class PokemonHomeModel implements IPokemonHomeModel {
   image: IImage;
   pokemonType = PokemonType.Normal;
 
-  constructor(item: IPokemonData, assetForm: IImage | undefined | null) {
+  constructor(item: IPokemonData, assetForm: IImage | undefined) {
     this.id = toNumber(item.num);
     this.name = item.name;
-    this.forme = assetForm?.default
-      ? getValueOrDefault(String, item.forme, FORM_NORMAL)
-      : getValueOrDefault(String, item.forme?.toLowerCase().replaceAll('_', '-'));
+    this.form = assetForm?.default
+      ? getValueOrDefault(String, item.form, FORM_NORMAL)
+      : getValueOrDefault(String, item.form?.toLowerCase().replaceAll('_', '-'));
     this.types = item.types;
     this.color = item.color.toLowerCase();
     this.sprite = item.sprite.toLowerCase();
@@ -58,13 +58,13 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.gen = item.gen;
     this.region = item.region;
     this.version = versionList.indexOf(splitAndCapitalize(item.version, '-', ' ').replace(/GO$/i, 'GO'));
-    this.goStats = StatsPokemonGO.create(item.baseStats.atk, item.baseStats.def, item.baseStats.sta);
+    this.goStats = item.statsGO ?? new StatsPokemonGO();
     this.pokemonClass = item.pokemonClass;
     this.releasedGO = item.releasedGO;
     this.image = new ImageModel({
       default: assetForm?.default
         ? APIService.getPokemonModel(assetForm.default)
-        : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.forme, '_', '-'))),
+        : APIService.getPokeFullSprite(item.num, convertPokemonImageName(splitAndCapitalize(item.form, '_', '-'))),
       shiny: assetForm?.shiny ? APIService.getPokemonModel(assetForm.shiny) : undefined,
       pokemonType: item.pokemonType,
     });

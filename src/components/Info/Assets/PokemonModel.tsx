@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
-import { PokemonGender } from '../../../core/models/pokemon.model';
+import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { isNotEmpty, UniqValueInArray } from '../../../util/extension';
@@ -24,24 +24,26 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
-  const gender = useRef<PokemonGender>();
-  const sound = useRef<IAsset>();
+  const [gender, setGender] = useState<PokemonGender>();
+  const [asset, setAsset] = useState<IAsset>();
 
-  const getImageList = () => {
-    sound.current = assets.find((item) => item.id === pokemonData?.id);
-    const model = sound.current;
-    gender.current = {
-      malePercent: pokemonData?.genderRatio?.M,
-      femalePercent: pokemonData?.genderRatio?.F,
-      genderlessPercent: Number(pokemonData?.genderRatio?.M === 0 && pokemonData?.genderRatio.F === 0),
-    };
-    const result = UniqValueInArray(model?.image.map((item) => item.form)).map((value) => new PokemonModelComponent(value, model?.image));
+  const getImageList = (id: number | undefined, genderRatio: IPokemonGenderRatio) => {
+    const pokemonAsset = assets.find((item) => item.id === id);
+    setAsset(pokemonAsset);
+    setGender({
+      malePercent: genderRatio.M,
+      femalePercent: genderRatio.F,
+      genderlessPercent: Number(genderRatio.M === 0 && genderRatio.F === 0),
+    });
+    const result = UniqValueInArray(pokemonAsset?.image.map((item) => item.form)).map(
+      (value) => new PokemonModelComponent(value, pokemonAsset?.image)
+    );
     return result;
   };
 
   useEffect(() => {
-    if (isNotEmpty(assets) && pokemonData) {
-      setPokeAssets(getImageList());
+    if (isNotEmpty(assets) && pokemonData?.fullName && pokemonData.genderRatio) {
+      setPokeAssets(getImageList(pokemonData.id, pokemonData.genderRatio));
     }
   }, [assets, pokemonData]);
 
@@ -62,12 +64,12 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
               {assets.image.map((value, index) => (
                 <div key={index} className="d-inline-block" style={{ width: value.gender === GenderType.GenderLess ? '100%' : 'auto' }}>
                   <div className="sub-group-model">
-                    {gender.current && !gender.current.genderlessPercent && (
+                    {gender && !gender.genderlessPercent && (
                       <div className="gender">
                         {value.gender === GenderType.GenderLess ? (
                           <Fragment>
-                            {gender.current.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }} />}
-                            {gender.current.femalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
+                            {gender.malePercent !== 0 && <MaleIcon sx={{ color: 'blue' }} />}
+                            {gender.femalePercent !== 0 && <FemaleIcon sx={{ color: 'red' }} />}
                           </Fragment>
                         ) : (
                           <Fragment>
@@ -173,11 +175,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         </div>
       ) : (
         <Fragment>
-          {!isNotEmpty(sound.current?.sound.cry) ? (
+          {!isNotEmpty(asset?.sound.cry) ? (
             <div className="text-danger">&emsp;Sound in Pokémon GO unavailable.</div>
           ) : (
             <ul style={{ margin: 0 }}>
-              {sound.current?.sound.cry.map((value, index) => (
+              {asset?.sound.cry.map((value, index) => (
                 <li key={index} style={{ listStyleType: 'disc' }}>
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
                   <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100" controls={true} style={{ height: 30 }}>

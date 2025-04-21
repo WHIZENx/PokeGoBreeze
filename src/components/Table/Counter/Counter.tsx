@@ -131,9 +131,9 @@ const Counter = (props: ICounterComponent) => {
       id: ColumnType.Pokemon,
       name: 'Pokémon',
       selector: (row) => {
-        const assets = findAssetForm(data.assets, row.pokemonId, row.pokemonForme);
+        const assets = findAssetForm(data.assets, row.pokemonId, row.pokemonForm);
         return (
-          <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForme, row.pokemonType)}`}>
+          <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForm, row.pokemonType)}`}>
             <div className="d-flex justify-content-center">
               <div
                 className={combineClasses(

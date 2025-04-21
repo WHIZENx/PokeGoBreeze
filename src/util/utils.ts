@@ -13,15 +13,18 @@ import {
   OptionsRank,
   IStatsPokemonGO,
 } from '../core/models/stats.model';
-import { IPokemonDetail, Stats } from '../core/models/API/info.model';
+import { IPokemonDetail, IPokemonDetailInfo, Stats } from '../core/models/API/info.model';
 import {
   CLASS_LEGENDARY,
   CLASS_MYTHIC,
   CLASS_ULTRA_BEAST,
   FORM_ALOLA,
+  FORM_ALOLAN,
   FORM_GALAR,
+  FORM_GALARIAN,
   FORM_GMAX,
   FORM_HISUI,
+  FORM_HISUIAN,
   FORM_MEGA,
   FORM_NORMAL,
   FORM_PRIMAL,
@@ -250,7 +253,11 @@ export const convertModelSpritName = (text: string | undefined) =>
     .replace('-armor', '')
     .replace('-mega-x', '-megax')
     .replace('-mega-y', '-megay')
-    .replace(`-${FORM_NORMAL.toLowerCase()}`, '');
+    .replace(`-${FORM_NORMAL.toLowerCase()}`, '')
+    .replace(FORM_GALARIAN.toLowerCase(), FORM_GALAR.toLowerCase())
+    .replace(FORM_HISUIAN.toLowerCase(), FORM_HISUI.toLowerCase())
+    .replace(`-${FORM_GMAX.toLowerCase()}`, '-gigantamax')
+    .replace('-low-key', '');
 
 export const convertNameRankingToForm = (text: string) => {
   let form = '';
@@ -291,7 +298,7 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     .toLowerCase()
     .replaceAll('_', '-')
     .replace(`-${FORM_SHADOW.toLowerCase()}`, '')
-    .replace('alolan', FORM_ALOLA.toLowerCase())
+    .replace(FORM_ALOLAN.toLowerCase(), FORM_ALOLA.toLowerCase())
     .replace('-xs', '')
     .replace('-male', '')
     .replace(/^meowstic$/, 'meowstic-male')
@@ -331,8 +338,8 @@ export const convertNameRankingToOri = (text: string | undefined, form: string) 
     '-speed',
     '-dusk',
     '-dawn',
-    `-${`${FORM_GALAR}IAN`.toLowerCase()}`,
-    `-${`${FORM_HISUI}AN`.toLowerCase()}`,
+    `-${FORM_HISUIAN.toLowerCase()}`,
+    `-${FORM_GALARIAN.toLowerCase()}`,
   ];
   return isInclude(formOri, '(') && isInclude(formOri, ')') && !isIncludeList(invalidForm, form)
     ? text.replaceAll(form.toLowerCase(), '')
@@ -516,7 +523,7 @@ export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, ran
 export const mappingPokemonName = (pokemonData: IPokemonData[]) =>
   pokemonData
     .filter(
-      (pokemon) => pokemon.num > 0 && (pokemon.forme === FORM_NORMAL || (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.forme)))
+      (pokemon) => pokemon.num > 0 && (pokemon.form === FORM_NORMAL || (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form)))
     )
     .map((pokemon) => new PokemonSearching(pokemon))
     .sort((a, b) => a.id - b.id);
@@ -526,8 +533,8 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
     .filter((pokemon) => pokemon.num === id)
     .find(
       (pokemon) =>
-        isEqual(pokemon.forme, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) ||
-        (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.forme, EqualMode.IgnoreCaseSensitive))
+        isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) ||
+        (pokemon.baseForme && isEqual(pokemon.baseForme, pokemon.form, EqualMode.IgnoreCaseSensitive))
     );
   if (!result) {
     return;
@@ -677,9 +684,9 @@ export const convertPokemonDataName = (text: string | undefined | null, defaultN
     .replace(/_M$/, '_MALE')
     .replace(/^F$/, 'FEMALE')
     .replace(/^M$/, 'MALE')
-    .replace(/GALAR/, `${FORM_GALAR}IAN`)
-    .replace(/HISUI/, `${FORM_HISUI}AN`)
-    .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`)
+    .replace(/GALAR/, FORM_GALARIAN)
+    .replace(/HISUI/, FORM_HISUIAN)
+    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
     .replace(/_SUNSHINE$/, '_SUNNY')
     .replace(/_TOTEM$/, '')
     .replace(/_CAP$/, '')
@@ -714,11 +721,12 @@ export const convertPokemonAPIDataName = (text: string | undefined | null, defau
     .replace(/^PURIFIED$/, '')
     .replace(/^SHADOW$/, '')
     .replace(/_MALE$/, '')
-    .replace(/GALAR$/, `${FORM_GALAR}IAN`)
-    .replace(/HISUI$/, `${FORM_HISUI}AN`)
-    .replace(/GALAR_/, `${`${FORM_GALAR}IAN`}_`)
-    .replace(/GALARIAN_STANDARD/, `${FORM_GALAR}IAN`)
+    .replace(/GALAR$/, FORM_GALARIAN)
+    .replace(/HISUI$/, FORM_HISUIAN)
+    .replace(/GALAR_/, `${FORM_GALARIAN}_`)
+    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN)
     .replace(/_TOTEM$/, '')
+    .replace(/_CAP$/, '')
     .replace(/PALDEA_COMBAT_BREED$/, 'PALDEA_COMBAT')
     .replace(/PALDEA_BLAZE_BREED$/, 'PALDEA_BLAZE')
     .replace(/PALDEA_AQUA_BREED$/, 'PALDEA_AQUA')
@@ -789,14 +797,14 @@ export const generatePokemonGoForms = (
   pokemonData
     .filter((pokemon) => pokemon.num === id)
     .forEach((pokemon) => {
-      const isIncludeFormGO = formList.some((form) => isInclude(pokemon.forme, form));
+      const isIncludeFormGO = formList.some((form) => isInclude(pokemon.form, form));
       if (!isIncludeFormGO) {
         index--;
         const pokemonGOModify = new PokemonFormModifyModel(
           id,
           name,
           pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase(),
-          pokemon.forme?.replaceAll('_', '-')?.toLowerCase(),
+          pokemon.form?.replaceAll('_', '-')?.toLowerCase(),
           pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
           'Pokémon-GO',
           pokemon.types,
@@ -813,7 +821,7 @@ export const generatePokemonGoForms = (
 };
 
 export const generatePokemonGoShadowForms = (
-  dataPokeList: IPokemonDetail[],
+  dataPokeList: IPokemonDetailInfo[],
   formListResult: IPokemonFormModify[][],
   id: number,
   name: string,
@@ -861,12 +869,12 @@ export const generatePokemonGoShadowForms = (
 export const getFormFromForms = (
   stats: (IStatsAtk | IStatsDef | IStatsSta | IStatsProd)[] | undefined,
   id: number | undefined,
-  formName: string | null | undefined,
+  form: string | undefined,
   pokemonType = PokemonType.None
 ) => {
   const forms = stats?.filter((i) => i.id === id);
-  formName = getPokemonFormWithNoneSpecialForm(formName, pokemonType);
-  let filterForm = forms?.find((item) => isEqual(item.form, getValueOrDefault(String, formName, FORM_NORMAL)));
+  form = getPokemonFormWithNoneSpecialForm(form, pokemonType);
+  let filterForm = forms?.find((item) => isEqual(item.form, getValueOrDefault(String, form, FORM_NORMAL)));
   if (!filterForm && isNotEmpty(forms)) {
     filterForm = forms?.find((item) => item.form === FORM_NORMAL);
     if (!filterForm) {
@@ -879,12 +887,12 @@ export const getFormFromForms = (
 export const retrieveMoves = (
   pokemon: IPokemonData[],
   id: number | undefined,
-  form: string | null | undefined,
+  form: string | undefined,
   pokemonType = PokemonType.None
 ) => {
   if (isNotEmpty(pokemon)) {
     if (pokemonType === PokemonType.GMax) {
-      return pokemon.find((item) => item.num === id && isEqual(item.forme, FORM_GMAX));
+      return pokemon.find((item) => item.num === id && isEqual(item.form, FORM_GMAX));
     }
     const resultFilter = pokemon.filter((item) => item.num === id);
     const pokemonForm = getValueOrDefault(
@@ -892,7 +900,7 @@ export const retrieveMoves = (
       form?.replaceAll('-', '_').toUpperCase().replace(`_${FORM_STANDARD}`, '').replace(FORM_GMAX, FORM_NORMAL),
       FORM_NORMAL
     );
-    const result = resultFilter.find((item) => isEqual(item.fullName, pokemonForm) || isEqual(item.forme, pokemonForm));
+    const result = resultFilter.find((item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm));
     return result ?? resultFilter[0];
   }
 };
@@ -900,7 +908,7 @@ export const retrieveMoves = (
 export const getPokemonDetails = (
   pokemonData: IPokemonData[],
   id: number | undefined,
-  form: string | null | undefined,
+  form: string | undefined,
   pokemonType = PokemonType.None,
   isDefault = false
 ) => {
@@ -913,7 +921,7 @@ export const getPokemonDetails = (
 
     if (isDefault && !pokemonForm) {
       pokemonForm = pokemonData.find(
-        (item) => item.num === id && (item.forme === FORM_NORMAL || (item.baseForme && isEqual(item.baseForme, item.forme)))
+        (item) => item.num === id && (item.form === FORM_NORMAL || (item.baseForme && isEqual(item.baseForme, item.form)))
       );
     }
     return pokemonForm ?? new PokemonData();
@@ -1070,7 +1078,7 @@ export const getPokemonClass = (className?: string | number | null) => {
 
 export const getArrayBySeq = (length: number, startNumber = 0) => Array.from({ length }, (_, i) => i + startNumber);
 
-export const generateParamForm = (form: string | null | undefined, pokemonType = PokemonType.None, prefix = '?') => {
+export const generateParamForm = (form: string | undefined, pokemonType = PokemonType.None, prefix = '?') => {
   const IsNoneSpecialForm = isPokemonNoneSpecialForm(form, pokemonType);
   const isSpecialForm = isSpecialFormType(pokemonType);
   const formType = getDataWithKey<string>(PokemonType, pokemonType)?.toLowerCase();
@@ -1253,12 +1261,12 @@ export const getBonusType = (bonusType: string | number) => {
   return BonusType.None;
 };
 
-const isPokemonNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) =>
+const isPokemonNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) =>
   !isSpecialFormType(pokemonType) &&
   (isInclude(form, FORM_SHADOW, IncludeMode.IncludeIgnoreCaseSensitive) ||
     isInclude(form, FORM_PURIFIED, IncludeMode.IncludeIgnoreCaseSensitive));
 
-export const getPokemonFormWithNoneSpecialForm = (form: string | null | undefined, pokemonType = PokemonType.None) => {
+export const getPokemonFormWithNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) => {
   const IsNoneSpecialForm = isPokemonNoneSpecialForm(form, pokemonType);
   form = form?.toUpperCase().replaceAll('-', '_');
   if (!IsNoneSpecialForm) {
@@ -1282,12 +1290,12 @@ export const getGenerationPokemon = (text: string) => {
   return toNumber(text.match(/[^v]\d+/)?.[0]?.replaceAll('/', ''));
 };
 
-export const updateSpecificForm = (id: number, form: string | null | undefined) => {
+export const updateSpecificForm = (id: number, form: string | undefined) => {
   let result = getValueOrDefault(String, form)
     .toUpperCase()
     .replaceAll('-', '_')
-    .replace(/_GALAR$/, `_${FORM_GALAR}IAN`)
-    .replace(/_HISUI$/, `_${FORM_HISUI}AN`);
+    .replace(/_GALAR$/, `_${FORM_GALARIAN}`)
+    .replace(/_HISUI$/, `_${FORM_HISUIAN}`);
   if (!isInclude(result, FORM_STANDARD) && (id === 554 || id === 555)) {
     result += `_${FORM_STANDARD}`;
   }

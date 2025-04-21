@@ -23,7 +23,7 @@ import './StatsRanking.scss';
 import { FormControlLabel, Checkbox, CircularProgress } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
-import { StatsState, StoreState } from '../../../store/models/state.model';
+import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import { IPokemonStatsRanking, PokemonStatsRanking, StatsAtk, StatsDef, StatsProd, StatsSta } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
@@ -48,6 +48,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
+import { Action } from 'history';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -55,7 +56,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     name: '',
     selector: (row) => (
       <LinkToTop
-        to={`/pokemon/${row.num}${generateParamForm(row.forme, row.pokemonType)}`}
+        to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
         <VisibilityIcon className="view-pokemon" fontSize="small" sx={{ color: 'black' }} />
@@ -175,6 +176,7 @@ class Filter implements IFilter {
 const defaultPerPages = 25;
 
 const StatsRanking = () => {
+  const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
   useChangeTitle('Stats Ranking');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -193,9 +195,9 @@ const StatsRanking = () => {
   const [search, setSearch] = useState('');
 
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
-    const atkShadow = Math.round(value.baseStats.atk * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Atk));
-    const defShadow = Math.round(value.baseStats.def * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Def));
-    const prodShadow = atkShadow * defShadow * toNumber(details.baseStats.sta);
+    const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Atk));
+    const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Def));
+    const prodShadow = atkShadow * defShadow * toNumber(details.statsGO.sta);
     result.push(
       PokemonStatsRanking.create({
         ...value,
@@ -211,8 +213,8 @@ const StatsRanking = () => {
           rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank),
         }),
         sta: StatsSta.create({
-          stamina: details.baseStats.sta,
-          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.baseStats.sta)?.rank),
+          stamina: details.statsGO.sta,
+          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
         }),
         prod: StatsProd.create({
           product: prodShadow,
@@ -220,9 +222,9 @@ const StatsRanking = () => {
         }),
       })
     );
-    const atkPurification = Math.round(value.baseStats.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk));
-    const defPurification = Math.round(value.baseStats.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def));
-    const prodPurification = atkPurification * defPurification * toNumber(details.baseStats.sta);
+    const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk));
+    const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def));
+    const prodPurification = atkPurification * defPurification * toNumber(details.statsGO.sta);
     result.push(
       PokemonStatsRanking.create({
         ...value,
@@ -237,8 +239,8 @@ const StatsRanking = () => {
           rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank),
         }),
         sta: StatsSta.create({
-          stamina: details.baseStats.sta,
-          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.baseStats.sta)?.rank),
+          stamina: details.statsGO.sta,
+          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
         }),
         prod: StatsProd.create({
           product: prodPurification,
@@ -255,7 +257,7 @@ const StatsRanking = () => {
       if (isSpecialFormType(data.pokemonType)) {
         details.pokemonType = PokemonType.Normal;
       }
-      const product = details.baseStats.atk * details.baseStats.def * toNumber(details.baseStats.sta);
+      const product = details.statsGO.prod;
       result.push(
         PokemonStatsRanking.create({
           ...data,
@@ -263,16 +265,16 @@ const StatsRanking = () => {
           pokemonType: details.pokemonType,
           fullName: details.fullName,
           atk: StatsAtk.create({
-            attack: details.baseStats.atk,
-            rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === details.baseStats.atk)?.rank),
+            attack: details.statsGO.atk,
+            rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank),
           }),
           def: StatsDef.create({
-            defense: details.baseStats.def,
-            rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === details.baseStats.def)?.rank),
+            defense: details.statsGO.def,
+            rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank),
           }),
           sta: StatsSta.create({
-            stamina: details.baseStats.sta,
-            rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.baseStats.sta)?.rank),
+            stamina: details.statsGO.sta,
+            rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
           }),
           prod: StatsProd.create({
             product,
@@ -398,7 +400,7 @@ const StatsRanking = () => {
       const index = pokemonFilter.findIndex(
         (row) =>
           row.num === id &&
-          isEqual(row.forme, form, EqualMode.IgnoreCaseSensitive) &&
+          isEqual(row.form, form, EqualMode.IgnoreCaseSensitive) &&
           ((!formType && !isSpecialFormType(row.pokemonType)) || row.pokemonType === pokemonType)
       );
       if (index > -1) {
@@ -424,7 +426,7 @@ const StatsRanking = () => {
   const setFilterParams = (select: IPokemonStatsRanking) => {
     setSelect(select);
     searchParams.set(Params.Id, select.num.toString());
-    const form = select.forme?.replace(FORM_NORMAL, '').toLowerCase().replaceAll('_', '-');
+    const form = select.form?.replace(FORM_NORMAL, '').toLowerCase().replaceAll('_', '-');
     if (form) {
       searchParams.set(Params.Form, form);
     } else {
@@ -454,6 +456,29 @@ const StatsRanking = () => {
     }
   }, [search, isMatch, releasedGO, pokemonList]);
 
+  useEffect(() => {
+    const paramId = toNumber(searchParams.get(Params.Id));
+    if (paramId > 0 && router.action === Action.Pop && isNotEmpty(pokemonList)) {
+      const form = getValueOrDefault(String, searchParams.get(Params.Form), FORM_NORMAL).replaceAll('-', '_');
+      const formType = searchParams.get(Params.FormType);
+      const pokemonType = getPokemonType(formType);
+      const result = pokemonFilter.find(
+        (row) =>
+          row.num === paramId &&
+          isEqual(row.form, form, EqualMode.IgnoreCaseSensitive) &&
+          ((!formType && !isSpecialFormType(row.pokemonType)) || row.pokemonType === pokemonType)
+      );
+      if (result) {
+        const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
+        const details = getPokemonDetails(pokemon, paramId, result.fullName, result.pokemonType, true);
+        details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
+        const pokemonDetails = PokemonDetail.setData(details);
+        setPokemon(pokemonDetails);
+        setSelect(result);
+      }
+    }
+  }, [router, pokemonList, searchParams]);
+
   return (
     <div className="element-bottom position-relative poke-container container">
       <div className="w-100 d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
@@ -465,7 +490,7 @@ const StatsRanking = () => {
               alt="img-full-pokemon"
               src={APIService.getPokeFullSprite(
                 select?.num,
-                convertPokemonImageName(select && isEqual(select.baseForme, select.forme) ? '' : select?.forme)
+                convertPokemonImageName(select && isEqual(select.baseForme, select.form) ? '' : select?.form)
               )}
               onError={(e) => {
                 e.currentTarget.onerror = null;
@@ -502,7 +527,7 @@ const StatsRanking = () => {
         statProd={select?.prod}
         pokemonStats={stats}
         id={select?.num}
-        form={select?.forme}
+        form={select?.form}
         isDisabled={true}
       />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
@@ -547,7 +572,7 @@ const StatsRanking = () => {
         onRowClicked={(row) => {
           if (select?.id !== row.id) {
             setFilterParams(row);
-            const pokemon = pokemons.find((pokemon) => pokemon.num === row.num && isEqual(row.forme, pokemon.forme));
+            const pokemon = pokemons.find((pokemon) => pokemon.num === row.num && isEqual(row.form, pokemon.form));
             if (pokemon) {
               pokemon.pokemonType = row.pokemonType || PokemonType.Normal;
               const pokemonDetails = PokemonDetail.setData(pokemon);

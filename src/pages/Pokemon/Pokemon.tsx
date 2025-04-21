@@ -15,7 +15,7 @@ import {
   PokemonFormDetail,
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
-import { IPokemonDetail, PokemonDetail, PokemonInfo } from '../../core/models/API/info.model';
+import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
 import { IPokemonSpecie, OptionsPokemon, PokemonModel, PokemonProgress, PokemonSpecie } from '../../core/models/pokemon.model';
 import APIService from '../../services/API.service';
 import { RouterState, StoreState, SpinnerState, SearchingState } from '../../store/models/state.model';
@@ -97,8 +97,8 @@ const Pokemon = (props: IPokemonPage) => {
   const location = useLocation() as unknown as Location<LocationState>;
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [pokeData, setPokeData] = useState<IPokemonDetail[]>([]);
-  const [formList, setFormList] = useState<IPokemonFormModify[][]>();
+  const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
+  const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
 
   const [data, setData] = useState<IPokemonSpecie>();
   const [dataStorePokemon, setDataStorePokemon] = useState<OptionsPokemon>();
@@ -122,15 +122,13 @@ const Pokemon = (props: IPokemonPage) => {
   const getPokemonIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
     if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonData)) {
-      const pokemon = pokemonData.find((p) => isEqual(p.pokemonId, params.id, EqualMode.IgnoreCaseSensitive));
-      if (pokemon) {
-        id = pokemon.num;
-      }
+      const pokemon = pokemonData.find((p) => isEqual(p.pokemonId?.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive));
+      id = toNumber(pokemon?.num);
     }
     return id;
   };
 
-  const convertPokemonForm = (formName: string | undefined | null, formType: string | null | undefined, pokemonType = PokemonType.None) => {
+  const convertPokemonForm = (formName: string | undefined, formType: string | undefined, pokemonType = PokemonType.None) => {
     let form = formName;
     if (formType) {
       formType = getValueOrDefault(String, formType);
@@ -148,7 +146,7 @@ const Pokemon = (props: IPokemonPage) => {
 
   const fetchMap = useCallback(
     async (specie: IPokemonSpecie) => {
-      const dataPokeList: IPokemonDetail[] = [];
+      const dataPokeList: IPokemonDetailInfo[] = [];
       const dataFormList: IPokemonFormDetail[][] = [];
       const soundCries: IFormSoundCry[] = [];
       const cancelToken = axiosSource.current.token;
@@ -162,7 +160,7 @@ const Pokemon = (props: IPokemonPage) => {
             })
           );
           pokeInfo.isIncludeShadow = checkPokemonIncludeShadowForm(pokemonData, pokeInfo.name);
-          const pokeDetail = PokemonDetail.setDetails(pokeInfo);
+          const pokeDetail = PokemonDetailInfo.setDetails(pokeInfo);
           soundCries.push(new FormSoundCry(pokeDetail));
           dataPokeList.push(pokeDetail);
           dataFormList.push(pokeForm);
@@ -286,7 +284,8 @@ const Pokemon = (props: IPokemonPage) => {
       let defaultData = dataPokeList.find((value) => isEqual(value.name, currentForm?.form.name));
       defaultData ??= dataPokeList.find((value) => isEqual(value.name, currentForm?.name));
       if (defaultData) {
-        dispatch(SearchingActions.SetMainPokemonDetails.create(defaultData));
+        const pokemonDetails = PokemonDetail.setDetails(defaultData);
+        dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
       }
       currentForm ??= defaultForm.at(0);
       if (currentForm) {
@@ -407,16 +406,16 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [params.id, props.searchOption?.id, spinner.isLoading, pokemonData]);
 
-  const checkReleased = (id: number, form: Partial<IPokemonFormModify> | null | undefined) => {
+  const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined) => {
     if (!form) {
       return false;
     }
     const formName = getValueOrDefault(String, form.form?.name, form.form?.formName, form.defaultName);
     const details = getPokemonDetails(pokemonData, id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType || PokemonType.Normal;
-    const atk = details.baseStats.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
-    const def = details.baseStats.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
-    const sta = details.baseStats.sta;
+    const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
+    const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
+    const sta = details.statsGO.sta;
     details.statsGO = StatsPokemonGO.create(atk, def, sta);
     const pokemonDetails = PokemonDetail.setData(details);
     dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
@@ -448,7 +447,7 @@ const Pokemon = (props: IPokemonPage) => {
           ? currentSearchingForm.form.name
           : formParams || toNumber(currentSearchingForm.form?.id) < 0
           ? currentSearchingForm.form?.name
-          : data?.name;
+          : data.name;
       setFormName(nameInfo?.replace(/-f$/, '-female').replace(/-m$/, '-male'));
       const originForm = splitAndCapitalize(
         router.action === Action.Pop && props.searching && !params.id
@@ -459,7 +458,7 @@ const Pokemon = (props: IPokemonPage) => {
       );
       setOriginForm(originForm);
       if (params.id) {
-        document.title = `#${data?.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
+        document.title = `#${data.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
       }
       checkReleased(id, currentSearchingForm);
     } else {
@@ -471,7 +470,7 @@ const Pokemon = (props: IPokemonPage) => {
     const id = getPokemonIdByParam();
     if (isNotEmpty(pokeData) && isNotEmpty(formList) && id > 0 && id === toNumber(data?.id)) {
       let form = getValueOrDefault(String, searchParams.get(Params.Form));
-      let formType = searchParams.get(Params.FormType);
+      let formType = getValueOrDefault(String, searchParams.get(Params.FormType));
       if (props.searchOption && props.isSearch) {
         form = getValueOrDefault(String, props.searchOption.form);
         const pokemonType = getKeyWithData(PokemonType, props.searchOption.pokemonType);
@@ -484,7 +483,7 @@ const Pokemon = (props: IPokemonPage) => {
         form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
       }
       let currentForm = formList
-        ?.flatMap((item) => item)
+        .flatMap((item) => item)
         .find((item) => {
           const result = convertPokemonForm(item.form.formName, formType, item.form.pokemonType);
           return isEqual(result, form, EqualMode.IgnoreCaseSensitive);
@@ -494,12 +493,13 @@ const Pokemon = (props: IPokemonPage) => {
         pokemonCurrentData = pokeData.find((item) => item.isDefault);
         if (!currentForm && pokemonCurrentData) {
           currentForm = formList
-            ?.flatMap((item) => item)
+            .flatMap((item) => item)
             .find((item) => isEqual(item.form.name, pokemonCurrentData?.name, EqualMode.IgnoreCaseSensitive));
         }
       }
       if (currentForm && pokemonCurrentData) {
-        dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonCurrentData));
+        const pokemonDetails = PokemonDetail.setDetails(pokemonCurrentData);
+        dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
         dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
         const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
         setOriginForm(originForm);
