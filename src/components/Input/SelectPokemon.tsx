@@ -78,7 +78,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   };
 
   const findMove = (value: IPokemonData, type: TypeMove) => {
-    const result = retrieveMoves(pokemonData, value.num, value.forme, value.pokemonType);
+    const result = retrieveMoves(pokemonData, value.num, value.form, value.pokemonType);
     if (result) {
       const simpleMove = addSelectMovesByType(result, type);
       return simpleMove[0];

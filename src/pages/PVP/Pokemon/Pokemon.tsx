@@ -86,7 +86,7 @@ const PokemonPVP = () => {
       const name = convertNameRankingToOri(data.speciesId, data.speciesName);
       const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
       const id = pokemon?.num;
-      const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
+      const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
       document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(
         params.type
       )})`;

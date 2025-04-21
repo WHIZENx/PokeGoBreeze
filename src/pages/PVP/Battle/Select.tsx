@@ -92,6 +92,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           bestStats,
           disableCMovePri: false,
           disableCMoveSec: false,
+          stats,
         }),
         fMove: fMoveCombat,
         cMovePri: cMovePriCombat,

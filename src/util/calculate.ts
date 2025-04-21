@@ -7,7 +7,6 @@ import { IOptions } from '../core/models/options.model';
 import { IPokemonData, PokemonData } from '../core/models/pokemon.model';
 import {
   IStatsPokemon,
-  StatsBase,
   StatsRank,
   StatsPokemon,
   StatsRankAtk,
@@ -18,7 +17,9 @@ import {
   StatsAtk,
   StatsDef,
   StatsSta,
-  IStatsBase,
+  StatsIV,
+  StatsPokemonGO,
+  IStatsPokemonGO,
 } from '../core/models/stats.model';
 import { ITypeEff } from '../core/models/type-eff.model';
 import { IWeatherBoost } from '../core/models/weatherBoost.model';
@@ -74,6 +75,7 @@ import {
   IBattleCalculate,
   ICalculateDPS,
   CalculateDPS,
+  StatsBaseCalculate,
 } from './models/calculate.model';
 import {
   IPokemonQueryCounter,
@@ -87,7 +89,6 @@ import {
 import {
   DynamicObj,
   getValueOrDefault,
-  isEmpty,
   isEqual,
   isInclude,
   isIncludeList,
@@ -149,7 +150,7 @@ export const convertAllStats = (stats: Stats[] | undefined) => {
 };
 
 /* Algorithm calculate from pokemongohub.net */
-export const calBaseATK = (stats: IStatsPokemon | null | undefined, nerf: boolean) => {
+export const calBaseATK = (stats: IStatsPokemon | undefined, nerf: boolean) => {
   if (!stats) {
     stats = new StatsPokemon();
   }
@@ -174,7 +175,7 @@ export const calBaseATK = (stats: IStatsPokemon | null | undefined, nerf: boolea
   }
 };
 
-export const calBaseDEF = (stats: IStatsPokemon | null | undefined, nerf: boolean) => {
+export const calBaseDEF = (stats: IStatsPokemon | undefined, nerf: boolean) => {
   if (!stats) {
     stats = new StatsPokemon();
   }
@@ -199,7 +200,7 @@ export const calBaseDEF = (stats: IStatsPokemon | null | undefined, nerf: boolea
   }
 };
 
-export const calBaseSTA = (stats: IStatsPokemon | null | undefined, nerf: boolean) => {
+export const calBaseSTA = (stats: IStatsPokemon | undefined, nerf: boolean) => {
   if (!stats) {
     stats = new StatsPokemon();
   }
@@ -217,7 +218,7 @@ export const calBaseSTA = (stats: IStatsPokemon | null | undefined, nerf: boolea
 };
 
 export const sortStatsPokemon = (stats: IArrayStats[]) => {
-  const attackRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.attack))).sort((a, b) => a - b);
+  const attackRanking = UniqValueInArray(stats.map((item) => item.statsGO.atk)).sort((a, b) => a - b);
 
   const minATK = Math.min(...attackRanking);
   const maxATK = Math.max(...attackRanking);
@@ -225,12 +226,12 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     StatsAtk.create({
       id: item.id,
       form: item.form,
-      attack: toNumber(item.baseStatsPokeGo?.attack),
-      rank: attackRanking.length - sparseIndexOf(attackRanking, item.baseStatsPokeGo?.attack),
+      attack: item.statsGO?.atk,
+      rank: attackRanking.length - sparseIndexOf(attackRanking, item.statsGO?.atk),
     })
   );
 
-  const defenseRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.defense))).sort((a, b) => a - b);
+  const defenseRanking = UniqValueInArray(stats.map((item) => item.statsGO?.def)).sort((a, b) => a - b);
 
   const minDEF = Math.min(...defenseRanking);
   const maxDEF = Math.max(...defenseRanking);
@@ -238,12 +239,12 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     StatsDef.create({
       id: item.id,
       form: item.form,
-      defense: toNumber(item.baseStatsPokeGo?.defense),
-      rank: defenseRanking.length - sparseIndexOf(defenseRanking, item.baseStatsPokeGo?.defense, 0),
+      defense: item.statsGO.def,
+      rank: defenseRanking.length - sparseIndexOf(defenseRanking, item.statsGO.def, 0),
     })
   );
 
-  const staminaRanking = UniqValueInArray(stats.map((item) => toNumber(item.baseStatsPokeGo?.stamina))).sort((a, b) => a - b);
+  const staminaRanking = UniqValueInArray(stats.map((item) => item.statsGO.sta)).sort((a, b) => a - b);
 
   const minSTA = Math.min(...staminaRanking);
   const maxSTA = Math.max(...staminaRanking);
@@ -251,12 +252,12 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     StatsSta.create({
       id: item.id,
       form: item.form,
-      stamina: toNumber(item.baseStatsPokeGo?.stamina),
-      rank: staminaRanking.length - sparseIndexOf(staminaRanking, item.baseStatsPokeGo?.stamina, 0),
+      stamina: item.statsGO.sta,
+      rank: staminaRanking.length - sparseIndexOf(staminaRanking, item.statsGO.sta, 0),
     })
   );
 
-  const prodRanking = UniqValueInArray(stats.sort((a, b) => a.baseStatsProd - b.baseStatsProd).map((item) => item.baseStatsProd));
+  const prodRanking = UniqValueInArray(stats.sort((a, b) => a.statsGO.prod - b.statsGO.prod).map((item) => item.statsGO.prod));
 
   const minPROD = Math.min(...prodRanking);
   const maxPROD = Math.max(...prodRanking);
@@ -264,8 +265,8 @@ export const sortStatsPokemon = (stats: IArrayStats[]) => {
     StatsProd.create({
       id: item.id,
       form: item.form,
-      product: item.baseStatsProd,
-      rank: prodRanking.length - sparseIndexOf(prodRanking, item.baseStatsProd, 0),
+      product: item.statsGO.prod,
+      rank: prodRanking.length - sparseIndexOf(prodRanking, item.statsGO.prod, 0),
     })
   );
 
@@ -306,7 +307,7 @@ export const calculateCP = (atk: number, def: number, sta: number, level: number
     Math.max(MIN_CP, (atk * def ** 0.5 * sta ** 0.5 * toNumber(dataCPM.find((item: ICPM) => item.level === level)?.multiplier) ** 2) / 10)
   );
 
-export const calculateRaidStat = (stat: number | undefined | null, tier: number) =>
+export const calculateRaidStat = (stat: number | undefined, tier: number) =>
   Math.floor((toNumber(stat) + MAX_IV) * RAID_BOSS_TIER[tier].CPm);
 
 export const calculateRaidCP = (atk: number, def: number, tier: number) =>
@@ -518,11 +519,7 @@ export const calculateBattleLeague = (
     const defStat = calculateStatsBattle(def, IVdef, dataBattle.level, true, getDmgMultiplyBonus(type, globalOptions, TypeAction.Def));
 
     dataBattle.rangeValue = calculateBetweenLevel(globalOptions, atk, def, sta, IVatk, IVdef, IVsta, fromLV, dataBattle.level, type);
-    dataBattle.stats = {
-      atk: atkStat,
-      def: defStat,
-      sta: calculateStatsBattle(sta, IVsta, dataBattle.level, true),
-    };
+    dataBattle.stats = StatsPokemonGO.create(atkStat, defStat, calculateStatsBattle(sta, IVsta, dataBattle.level, true));
     return dataBattle;
   }
 };
@@ -553,11 +550,11 @@ export const findCPforLeague = (
 };
 
 export const sortStatsProd = (data: IBattleBaseStats[]) => {
-  data = data.sort((a, b) => toNumber(a.statsProds) - toNumber(b.statsProds));
+  data = data.sort((a, b) => toNumber(a.stats?.statPROD) - toNumber(b.stats?.statPROD));
   return data.map((item, index) =>
     BattleBaseStats.create({
       ...item,
-      ratio: (toNumber(item.statsProds) * 100) / toNumber(data[data.length - 1]?.statsProds, 1),
+      ratio: (toNumber(item.stats?.statPROD) * 100) / toNumber(data[data.length - 1]?.stats?.statPROD, 1),
       rank: data.length - index,
     })
   );
@@ -578,11 +575,10 @@ export const getBaseStatsByIVandLevel = (
   const statDEF = calculateStatsBattle(def, defIV, level);
   const statSTA = calculateStatsBattle(sta, staIV, level);
   return BattleBaseStats.create({
-    IV: { atk: atkIV, def: defIV, sta: staIV },
+    IV: StatsIV.setValue(atkIV, defIV, staIV),
     CP,
     level,
-    stats: { statATK, statDEF, statSTA },
-    statsProds: statATK * statDEF * statSTA,
+    stats: StatsBaseCalculate.create(statATK, statDEF, statSTA),
     id,
   });
 };
@@ -614,15 +610,11 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
   }
 };
 
-export const calculateStatsByTag = (
-  pokemon: IPokemonData | undefined | null,
-  baseStats: IStatsPokemon | undefined,
-  tag: string | null | undefined
-) => {
-  const result = new StatsBase();
+export const calculateStatsByTag = (pokemon: IPokemonData | undefined, baseStats: IStatsPokemon | undefined, tag: string | undefined) => {
+  const result = new StatsPokemonGO();
   if (pokemon || (baseStats && tag)) {
     if (pokemon?.baseStatsGO) {
-      return StatsBase.setValue(pokemon.baseStats.atk, pokemon.baseStats.def, pokemon.baseStats.sta);
+      return StatsPokemonGO.create(pokemon.statsGO.atk, pokemon.statsGO.def, pokemon.statsGO.sta);
     }
     const checkNerf = !isInclude(tag, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) || pokemon?.pokemonType !== PokemonType.Mega;
 
@@ -978,7 +970,7 @@ export const queryTopMove = (
     pokemonList?.forEach((pokemon) => {
       if (pokemon) {
         let name = move.name;
-        if (move.track === 281) {
+        if (move.isMultipleWithType) {
           name = move.name.replace(`_${move.type}`, '');
         }
         const moveType = getMoveType(pokemon, name);
@@ -1003,7 +995,7 @@ export const queryTopMove = (
           dataPri.push(
             new PokemonTopMove({
               num: pokemon.num,
-              forme: pokemon.forme,
+              form: pokemon.form,
               name: splitAndCapitalize(pokemon.name, '-', ' '),
               baseSpecies: pokemon.baseSpecies,
               sprite: pokemon.sprite,
@@ -1127,7 +1119,7 @@ export const queryStatesEvoChain = (
   staIV: number
 ) => {
   let pokemon: IPokemonData | undefined = new PokemonData();
-  if (isEmpty(item.form)) {
+  if (!item.form) {
     pokemon = pokemonData.find((value) => value.num === item.id && isEqual(value.slug, item.name, EqualMode.IgnoreCaseSensitive));
   } else {
     pokemon = pokemonData.find(
@@ -1170,7 +1162,7 @@ export const queryStatesEvoChain = (
   );
   const dataMaster = findCPforLeague(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, atkIV, defIV, staIV, level);
 
-  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, MIN_CP, 0, true);
+  const statsProd = calStatsProd(pokemonStats.atk, pokemonStats.def, pokemonStats.sta, MIN_CP, BattleLeagueCPType.Master, true);
   const ultraStatsProd = sortStatsProd(statsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Ultra));
   const greatStatsProd = sortStatsProd(ultraStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Great));
   const littleStatsProd = sortStatsProd(greatStatsProd.filter((item) => toNumber(item.CP) <= BattleLeagueCPType.Little));
@@ -1180,36 +1172,36 @@ export const queryStatesEvoChain = (
       item.level === dataLittle.level &&
       item.CP === dataLittle.CP &&
       item.IV &&
-      item.IV.atk === atkIV &&
-      item.IV.def === defIV &&
-      item.IV.sta === staIV
+      item.IV.atkIV === atkIV &&
+      item.IV.defIV === defIV &&
+      item.IV.staIV === staIV
   );
   const great = greatStatsProd.find(
     (item) =>
       item.level === dataGreat.level &&
       item.CP === dataGreat.CP &&
       item.IV &&
-      item.IV.atk === atkIV &&
-      item.IV.def === defIV &&
-      item.IV.sta === staIV
+      item.IV.atkIV === atkIV &&
+      item.IV.defIV === defIV &&
+      item.IV.staIV === staIV
   );
   const ultra = ultraStatsProd.find(
     (item) =>
       item.level === dataUltra.level &&
       item.CP === dataUltra.CP &&
       item.IV &&
-      item.IV.atk === atkIV &&
-      item.IV.def === defIV &&
-      item.IV.sta === staIV
+      item.IV.atkIV === atkIV &&
+      item.IV.defIV === defIV &&
+      item.IV.staIV === staIV
   );
   const master = sortStatsProd(statsProd).find(
     (item) =>
       item.level === dataMaster.level &&
       item.CP === dataMaster.CP &&
       item.IV &&
-      item.IV.atk === atkIV &&
-      item.IV.def === defIV &&
-      item.IV.sta === staIV
+      item.IV.atkIV === atkIV &&
+      item.IV.defIV === defIV &&
+      item.IV.staIV === staIV
   );
 
   const battleLeague = new BattleLeague();
@@ -1282,7 +1274,7 @@ export const queryStatesEvoChain = (
     ...item,
     battleLeague,
     maxCP: battleLeague.master.CP,
-    form: pokemon?.forme,
+    form: pokemon?.form,
   });
 };
 
@@ -1310,9 +1302,9 @@ const queryMoveCounter = (data: QueryMovesCounterPokemon, mf: ICombat, cMove: st
           data.weatherBoost,
           mf,
           mc,
-          calculateStatsBattle(data.pokemon.baseStats.atk, options.ivAtk, options.pokemonLevel, true),
-          calculateStatsBattle(data.pokemon.baseStats.def, options.ivDef, options.pokemonLevel, true),
-          calculateStatsBattle(data.pokemon.baseStats.sta, options.ivHp, options.pokemonLevel, true),
+          calculateStatsBattle(data.pokemon.statsGO.atk, options.ivAtk, options.pokemonLevel, true),
+          calculateStatsBattle(data.pokemon.statsGO.def, options.ivDef, options.pokemonLevel, true),
+          calculateStatsBattle(data.pokemon.statsGO.sta, options.ivHp, options.pokemonLevel, true),
           data.pokemon.types,
           pokemonType,
           options
@@ -1322,7 +1314,7 @@ const queryMoveCounter = (data: QueryMovesCounterPokemon, mf: ICombat, cMove: st
           new PokemonQueryCounter({
             pokemonId: data.pokemon.num,
             pokemonName: data.pokemon.name,
-            pokemonForme: data.pokemon.forme,
+            pokemonForm: data.pokemon.form,
             releasedGO: data.pokemon.releasedGO,
             dps: dpsOff,
             fMove: Combat.create({ ...mf, moveType: fMoveType }),
@@ -1368,7 +1360,7 @@ const setQueryMoveCounter = (data: QueryMovesCounterPokemon, fastMoveSet: string
   });
 };
 
-export const calculateStatsTopRank = (stats: IStatsBase | undefined, id: number, maxCP: number, level = MAX_LEVEL) => {
+export const calculateStatsTopRank = (stats: IStatsPokemonGO | undefined, id: number, maxCP: number, level = MAX_LEVEL) => {
   const atk = toNumber(stats?.atk);
   const def = toNumber(stats?.def);
   const sta = toNumber(stats?.sta);

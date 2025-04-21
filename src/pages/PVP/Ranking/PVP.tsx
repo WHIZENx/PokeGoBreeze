@@ -129,7 +129,7 @@ const RankingPVP = () => {
         const name = convertNameRankingToOri(data.speciesId, data.speciesName);
         const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.forme);
+        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -163,7 +163,7 @@ const RankingPVP = () => {
           atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
           def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
           sta: statsRanking?.stamina.ranking.find((i) => i.stamina === stats.sta),
-          prod: statsRanking?.statProd.ranking.find((i) => i.product === stats.atk * stats.def * stats.sta),
+          prod: statsRanking?.statProd.ranking.find((i) => i.product === stats.prod),
           fMove,
           cMovePri,
           cMoveSec,

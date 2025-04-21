@@ -44,7 +44,7 @@ const FromChange = (props: IFromChangeComponent) => {
 
   useEffect(() => {
     if (isNotEmpty(pokeAssets) && props.pokemonData?.fullName) {
-      const defaultForm = getValueOrDefault(String, props.pokemonData.forme?.replaceAll('-', '_'), FORM_NORMAL);
+      const defaultForm = getValueOrDefault(String, props.pokemonData.form?.replaceAll('-', '_'), FORM_NORMAL);
       setDataSrc(
         pokeAssets.find((pokemon) => isInclude(pokemon.form, defaultForm, IncludeMode.IncludeIgnoreCaseSensitive))?.image?.at(0)?.default
       );
@@ -125,7 +125,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                 <Candy id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id} />
                                 <LinkToTop
                                   style={{ marginLeft: 2 }}
-                                  to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(pokemon.forme)}`}
+                                  to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(pokemon.form)}`}
                                 >
                                   {splitAndCapitalize(value.componentPokemonSettings?.pokedexId, '_', ' ')}
                                 </LinkToTop>

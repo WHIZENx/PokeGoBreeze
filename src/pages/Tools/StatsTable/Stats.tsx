@@ -19,8 +19,8 @@ import { useSnackbar } from 'notistack';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
-  const a = toFloat(toNumber(rowA.statsProds) / 1000);
-  const b = toFloat(toNumber(rowB.statsProds) / 1000);
+  const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
+  const b = toFloat(toNumber(rowB.stats?.statPROD) / 1000);
   return a - b;
 };
 
@@ -46,19 +46,19 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
     id: ColumnType.Atk,
     name: 'IV ATK',
-    selector: (row) => toNumber(row.IV?.atk),
+    selector: (row) => toNumber(row.IV?.atkIV),
     sortable: true,
   },
   {
     id: ColumnType.Def,
     name: 'IV DEF',
-    selector: (row) => toNumber(row.IV?.def),
+    selector: (row) => toNumber(row.IV?.defIV),
     sortable: true,
   },
   {
     id: ColumnType.Sta,
     name: 'IV STA',
-    selector: (row) => toNumber(row.IV?.sta),
+    selector: (row) => toNumber(row.IV?.staIV),
     sortable: true,
   },
   {
@@ -70,7 +70,7 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
   {
     id: ColumnType.Prod,
     name: 'Stat Prod (*1000)',
-    selector: (row) => toFloatWithPadding(toNumber(row.statsProds) / 1000, 2),
+    selector: (row) => toFloatWithPadding(toNumber(row.stats?.statPROD) / 1000, 2),
     sortable: true,
     sortFunction: numSortStatsProd,
   },
@@ -188,9 +188,9 @@ const StatsTable = () => {
           (stats) =>
             toNumber(stats.CP) === toNumber(searchCP) &&
             stats.IV &&
-            stats.IV.atk === ATKIv &&
-            stats.IV.def === DEFIv &&
-            stats.IV.sta === STAIv
+            stats.IV.atkIV === ATKIv &&
+            stats.IV.defIV === DEFIv &&
+            stats.IV.staIV === STAIv
         );
         setFilterStatsBattle(result);
       }

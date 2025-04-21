@@ -43,8 +43,8 @@ import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
-import { getValueOrDefault, isEmpty, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
-import { EqualMode } from '../../../util/enums/string.enum';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
+import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 import {
   IInfoEvoChain,
@@ -78,7 +78,7 @@ class PokemonEvo implements IPokemonEvo {
   static create(
     name: string | undefined,
     id: number | undefined,
-    form: string | null | undefined,
+    form: string | undefined,
     sprite: string,
     pokemonType = PokemonType.Normal,
     prev = '',
@@ -173,9 +173,7 @@ const Evolution = (props: IEvolutionComponent) => {
       !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) ? pokemon.name.replace(`_${pokemon.form}`, '') : pokemon.name
     );
     const form =
-      pokemon.id === 718 && isEmpty(pokemon.form)
-        ? 'TEN_PERCENT'
-        : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
+      pokemon.id === 718 && !pokemon.form ? 'TEN_PERCENT' : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
     const sprite =
       pokemon.id === 664 || pokemon.id === 665
         ? getValueOrDefault(String, pokemon.pokemonId?.toLowerCase(), pokemon.name)
@@ -184,36 +182,34 @@ const Evolution = (props: IEvolutionComponent) => {
     return PokemonEvo.create(name, pokemon.id, form, sprite, props.pokemonData?.pokemonType, pokemon.prev, pokemon.isBaby);
   };
 
-  const getPrevEvoChainStore = (id: number | undefined, form: string | null | undefined, result: IPokemonEvo[][]) => {
+  const getPrevEvoChainStore = (id: number | undefined, form: string | undefined, result: IPokemonEvo[][]) => {
     const evoList: IPokemonEvo[] = [];
     const pokemon = pokemonData.filter((pokemon) => pokemon.evoList?.find((evo) => evo.evoToId === id && isEqual(evo.evoToForm, form)));
     if (!isNotEmpty(pokemon)) {
       return;
     }
-    pokemon
-      .filter((p) => !(p.num === 718 && p.pokemonType === PokemonType.Normal))
-      .forEach((evo) => {
-        evoList.unshift(
-          modelEvoChain(
-            new EvolutionModel({
-              ...evo,
-              name: evo.name.replaceAll('-', '_').toUpperCase(),
-              id: evo.num,
-              form: getValueOrDefault(String, evo.forme, FORM_NORMAL),
-              evoList: getValueOrDefault(Array, evo.evoList),
-              tempEvo: getValueOrDefault(Array, evo.tempEvo),
-            })
-          )
-        );
-        getPrevEvoChainStore(evo.num, evo.forme, result);
-      });
+    pokemon.forEach((evo) => {
+      evoList.unshift(
+        modelEvoChain(
+          new EvolutionModel({
+            ...evo,
+            name: evo.name.replaceAll('-', '_').toUpperCase(),
+            id: evo.num,
+            form: getValueOrDefault(String, evo.form, FORM_NORMAL),
+            evoList: getValueOrDefault(Array, evo.evoList),
+            tempEvo: getValueOrDefault(Array, evo.tempEvo),
+          })
+        )
+      );
+      getPrevEvoChainStore(evo.num, evo.form, result);
+    });
     return result.push(evoList);
   };
 
   const getCurrEvoChainStore = (poke: Partial<IPokemonDetail>, result: IPokemonEvo[][]) => {
     let evoList: IPokemonEvo[] = [];
     const pokemon = pokemonData.find((pokemon) =>
-      pokemon.evoList?.find((evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.forme?.replace(`_${FORM_STANDARD}`, '')))
+      pokemon.evoList?.find((evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace(`_${FORM_STANDARD}`, '')))
     );
     if (!pokemon) {
       evoList.push(
@@ -222,7 +218,7 @@ const Evolution = (props: IEvolutionComponent) => {
             ...poke,
             name: getValueOrDefault(String, poke.fullName),
             id: toNumber(poke.id),
-            form: getValueOrDefault(String, poke.forme, FORM_NORMAL),
+            form: getValueOrDefault(String, poke.form, FORM_NORMAL),
             evoList: [],
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
           })
@@ -274,7 +270,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
 
     evoList?.forEach((evo) => {
-      const pokemon = pokemonData.find((pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.forme, evo.evoToForm));
+      const pokemon = pokemonData.find((pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.form, evo.evoToForm));
       getNextEvoChainStore(pokemon?.name, pokemon?.evoList, result);
     });
 
@@ -306,14 +302,14 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getEvoChainStore = (pokemon: Partial<IPokemonDetail>) => {
     const result: IPokemonEvo[][] = [];
-    getPrevEvoChainStore(pokemon.id, pokemon.forme, result);
+    getPrevEvoChainStore(pokemon.id, pokemon.form, result);
     getCurrEvoChainStore(pokemon, result);
     getNextEvoChainStore(pokemon.name, pokemon.evoList, result);
-    const form = getValueOrDefault(String, pokemon.forme, FORM_NORMAL);
+    const form = getValueOrDefault(String, pokemon.form, FORM_NORMAL);
     if (pokemon.prevEvo && result.length === 1 && result[0].length === 1) {
       getCombineEvoChainFromPokeGo(result, pokemon.id, form);
     }
-    if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.forme, FORM_NORMAL)) {
+    if (props.urlEvolutionChain && result.length === 1 && result[0].length === 1 && isEqual(pokemon.form, FORM_NORMAL)) {
       const idUrlChain = getGenerationPokemon(props.urlEvolutionChain);
       if (idUrlChain !== idEvoChain) {
         queryPokemonEvolutionChain(props.urlEvolutionChain, idUrlChain, result);
@@ -328,7 +324,7 @@ const Evolution = (props: IEvolutionComponent) => {
   const getSpecialEvoChain = (pokemon: Partial<IPokemonDetail>) =>
     setArrEvoList([
       [PokemonEvo.create(pokemon.pokemonId, pokemon.id, FORM_NORMAL, convertModelSpritName(pokemon.pokemonId), PokemonType.Normal)],
-      [PokemonEvo.create(pokemon.pokemonId, pokemon.id, pokemon.forme, convertModelSpritName(pokemon.sprite), pokemon.pokemonType)],
+      [PokemonEvo.create(pokemon.pokemonId, pokemon.id, pokemon.form, convertModelSpritName(pokemon.sprite), pokemon.pokemonType)],
     ]);
 
   useEffect(() => {
@@ -346,9 +342,13 @@ const Evolution = (props: IEvolutionComponent) => {
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
   const getQuestEvo = (prevId: number, form: string) => {
-    const pokemon = pokemonData.find((item) => item.evoList?.find((value) => isInclude(value.evoToForm, form) && value.evoToId === prevId));
+    const pokemon = pokemonData.find((item) =>
+      item.evoList?.find((value) => isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) && value.evoToId === prevId)
+    );
     if (pokemon) {
-      return pokemon.evoList?.find((item) => isInclude(item.evoToForm, form) && item.evoToId === prevId);
+      return pokemon.evoList?.find(
+        (item) => isInclude(item.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) && item.evoToId === prevId
+      );
     } else {
       const pokemonChain = evolutionChains.find((chain) => chain.id === prevId);
       if (pokemonChain) {
@@ -382,7 +382,7 @@ const Evolution = (props: IEvolutionComponent) => {
   );
 
   const renderImageEvo = (value: IPokemonEvo, chain: IPokemonEvo[], evo: number, index: number, evoCount: number) => {
-    const form = getValueOrDefault(String, value.form, props.pokemonData?.forme);
+    const form = getValueOrDefault(String, value.form, props.pokemonData?.form);
     const sex = getDataWithKey<TypeSex>(TypeSex, form);
     let offsetY = 35;
     offsetY += value.isBaby ? 20 : 0;
@@ -394,15 +394,15 @@ const Evolution = (props: IEvolutionComponent) => {
         index > 0
           ? {
               x: arrEvoList[Math.max(0, evo - 1)].length > 1 ? 40 : 0,
-              y: arrEvoList[Math.max(0, evo - 1)].length > 1 ? offsetY + 82.33 : offsetY,
+              y: arrEvoList[Math.max(0, evo - 1)].length > 1 ? offsetY + 246 / 3 : offsetY,
             }
           : { x: -8 },
     };
-    const data = getQuestEvo(value.id, form.toUpperCase());
+    const data = getQuestEvo(value.id, form);
     const isCurrent =
       value.id === props.id &&
       value.pokemonType === props.pokemonData?.pokemonType &&
-      isEqual(form, generateFormName(props.pokemonData?.forme, value.pokemonType, '-'), EqualMode.IgnoreCaseSensitive);
+      isEqual(form, generateFormName(props.pokemonData?.form, value.pokemonType, '-'), EqualMode.IgnoreCaseSensitive);
     return (
       <Fragment>
         <span id={`evo-${evo}-${index}`}>
@@ -747,7 +747,7 @@ const Evolution = (props: IEvolutionComponent) => {
                       ) : (
                         <Link
                           className="select-evo"
-                          to={`/pokemon/${value.id}${generateParamForm(props.pokemonData?.forme, value.pokemonType)}`}
+                          to={`/pokemon/${value.id}${generateParamForm(props.pokemonData?.form, value.pokemonType)}`}
                           title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}
                         >
                           {renderImageEvo(value, values, evo, index, arrEvoList.length)}

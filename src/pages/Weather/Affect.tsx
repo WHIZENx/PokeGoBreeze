@@ -4,12 +4,12 @@ import WeatherEffective from '../../components/Effective/WeatherEffective';
 import { splitAndCapitalize } from '../../util/utils';
 import { IWeatherAffComponent } from '../models/page.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { DynamicObj, isEqual } from '../../util/extension';
+import { DynamicObj, getPropertyName, isEqual } from '../../util/extension';
 
 const Affect = (prop: IWeatherAffComponent) => {
   const [weathers, setWeathers] = useState<string[]>([]);
 
-  const [currentWeather, setCurrentWeather] = useState('CLEAR');
+  const [currentWeather, setCurrentWeather] = useState(getPropertyName(prop.weathers, (o) => o.CLEAR));
   const [showWeather, setShowWeather] = useState(false);
 
   const [weatherEffective, setWeatherEffective] = useState<string[]>([]);

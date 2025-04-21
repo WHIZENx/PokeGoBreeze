@@ -148,7 +148,7 @@ export const computeBgType = (
   }
 };
 
-export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName: string | null = FORM_NORMAL) => {
+export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName = FORM_NORMAL) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
   if (!pokemonAssets) {
     return;
@@ -166,12 +166,7 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
   return;
 };
 
-export const findAssetForm = (
-  pokemonAssets: IAsset[],
-  id: number | undefined,
-  formName: string | null = FORM_NORMAL,
-  formType = FormType.Default
-) => {
+export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formName = FORM_NORMAL, formType = FormType.Default) => {
   if (isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
     return;
   }

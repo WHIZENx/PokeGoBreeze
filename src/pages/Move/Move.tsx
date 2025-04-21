@@ -83,7 +83,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     id: ColumnType.Name,
     name: 'Name',
     selector: (row) => (
-      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.forme)}`}>
+      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form)}`}>
         <img
           height={48}
           alt="img-pokemon"
@@ -230,7 +230,7 @@ const Move = (props: IMovePage) => {
         if (!pokemon.releasedGO) {
           const result = checkPokemonGO(
             pokemon.num,
-            convertPokemonDataName(getValueOrDefault(String, pokemon.sprite, pokemon.name.replaceAll(' ', '_'))),
+            convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')),
             data.pokemons
           );
           return result?.releasedGO;

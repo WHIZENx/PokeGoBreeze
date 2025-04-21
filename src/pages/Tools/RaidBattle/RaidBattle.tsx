@@ -52,11 +52,12 @@ import {
   IPokemonData,
   IPokemonMoveData,
   IPokemonRaidModel,
+  PokemonDataStats,
   PokemonDPSBattle,
   PokemonMoveData,
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
-import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
+import { ISelectMoveModel, SelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -82,13 +83,13 @@ import {
   RaidSummary,
   TrainerBattle,
 } from './models/raid-battle.model';
-import { IStatsBase, StatsBase } from '../../../core/models/stats.model';
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import PopoverConfig from '../../../components/Popover/PopoverConfig';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import { IStatsIV, StatsIV } from '../../../core/models/stats.model';
 
 interface IOption {
   isWeatherBoss: boolean;
@@ -111,7 +112,7 @@ class Option implements IOption {
 interface IFilterGroup {
   level: number;
   pokemonType: PokemonType;
-  iv: IStatsBase;
+  iv: IStatsIV;
   onlyShadow: boolean;
   onlyMega: boolean;
   onlyReleasedGO: boolean;
@@ -122,7 +123,7 @@ interface IFilterGroup {
 class FilterGroup implements IFilterGroup {
   level = MIN_LEVEL;
   pokemonType = PokemonType.Normal;
-  iv = new StatsBase();
+  iv = new StatsIV();
   onlyShadow = false;
   onlyMega = false;
   onlyReleasedGO = false;
@@ -181,7 +182,7 @@ const RaidBattle = () => {
   const initFilter = FilterGroup.create({
     level: DEFAULT_POKEMON_LEVEL,
     pokemonType: PokemonType.Normal,
-    iv: StatsBase.setValue(MAX_IV, MAX_IV, MAX_IV),
+    iv: StatsIV.setValue(MAX_IV, MAX_IV, MAX_IV),
     onlyShadow: false,
     onlyMega: false,
     onlyReleasedGO: true,
@@ -196,15 +197,11 @@ const RaidBattle = () => {
     })
   );
 
-  const initPokemonStats = {
+  const initPokemonStats = new PokemonDataStats({
     level: filters.selected.level,
     pokemonType: PokemonType.Normal,
-    iv: {
-      atk: filters.selected.iv.atk,
-      def: filters.selected.iv.def,
-      sta: filters.selected.iv.sta,
-    },
-  };
+    iv: StatsIV.setValue(filters.selected.iv.atkIV, filters.selected.iv.defIV, filters.selected.iv.staIV),
+  });
 
   const { used, selected } = filters;
 
@@ -271,14 +268,14 @@ const RaidBattle = () => {
   };
 
   const handleSaveOption = () => {
-    if (isInvalidIV(selected.iv.atk) || isInvalidIV(selected.iv.def) || isInvalidIV(selected.iv.sta)) {
+    if (isInvalidIV(selected.iv.atkIV) || isInvalidIV(selected.iv.defIV) || isInvalidIV(selected.iv.staIV)) {
       return;
     }
     const changeResult =
       selected.level !== used.level ||
-      selected.iv.atk !== used.iv.atk ||
-      selected.iv.def !== used.iv.def ||
-      selected.iv.sta !== used.iv.sta;
+      selected.iv.atkIV !== used.iv.atkIV ||
+      selected.iv.defIV !== used.iv.defIV ||
+      selected.iv.staIV !== used.iv.staIV;
     setFilters({
       ...filters,
       used: selected,
@@ -306,7 +303,7 @@ const RaidBattle = () => {
 
   const handleSaveSettingPokemon = () => {
     const pokemon = showSettingPokemon.pokemon;
-    if (isInvalidIV(pokemon?.stats?.iv.atk) || isInvalidIV(pokemon?.stats?.iv.def) || isInvalidIV(pokemon?.stats?.iv.sta)) {
+    if (isInvalidIV(pokemon?.stats?.iv.atkIV) || isInvalidIV(pokemon?.stats?.iv.defIV) || isInvalidIV(pokemon?.stats?.iv.staIV)) {
       return;
     }
     setPokemonBattle(
@@ -396,9 +393,9 @@ const RaidBattle = () => {
         if (!isEqual(cMoveType, MoveType.Dynamax)) {
           const stats = calculateStatsByTag(value, value?.baseStats, value?.slug);
           const statsAttackerTemp = new BattleCalculate({
-            atk: calculateStatsBattle(stats.atk, used.iv.atk, used.level),
-            def: calculateStatsBattle(stats.def, used.iv.def, used.level),
-            hp: calculateStatsBattle(stats.sta, used.iv.sta, used.level),
+            atk: calculateStatsBattle(stats.atk, used.iv.atkIV, used.level),
+            def: calculateStatsBattle(stats.def, used.iv.defIV, used.level),
+            hp: calculateStatsBattle(stats.sta, used.iv.staIV, used.level),
             fMove,
             cMove: cMoveCurrent,
             types: value?.types,
@@ -462,7 +459,7 @@ const RaidBattle = () => {
       }
       const fMoveType = getMoveType(pokemon, vf);
       addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, pokemonTarget);
-      if (!pokemon.forme || pokemon.hasShadowForm) {
+      if (!pokemon.form || pokemon.hasShadowForm) {
         if (isNotEmpty(pokemon.shadowMoves)) {
           addCPokeData(dataList, pokemon.cinematicMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
         }
@@ -470,7 +467,7 @@ const RaidBattle = () => {
         addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Purified);
       }
       if (
-        (!pokemon.forme || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
+        (!pokemon.form || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
@@ -533,9 +530,9 @@ const RaidBattle = () => {
       );
       const statsGO = pokemonRaid.dataTargetPokemon?.stats ?? used;
       const statsAttacker = new BattleCalculate({
-        atk: calculateStatsBattle(stats.atk, statsGO.iv.atk, statsGO.level),
-        def: calculateStatsBattle(stats.def, statsGO.iv.def, statsGO.level),
-        hp: calculateStatsBattle(stats?.sta, statsGO.iv.sta, statsGO.level),
+        atk: calculateStatsBattle(stats.atk, statsGO.iv.atkIV, statsGO.level),
+        def: calculateStatsBattle(stats.def, statsGO.iv.defIV, statsGO.level),
+        hp: calculateStatsBattle(stats?.sta, statsGO.iv.staIV, statsGO.level),
         fMove: fMoveCurrent,
         cMove: cMoveCurrent,
         types: pokemonRaid.dataTargetPokemon?.types,
@@ -767,7 +764,7 @@ const RaidBattle = () => {
       <div className="input-group mb-3">
         <span className="input-group-text">ATK</span>
         <input
-          value={filters.selected.iv.atk}
+          value={filters.selected.iv.atkIV}
           type="number"
           min={MIN_IV}
           max={MAX_IV}
@@ -775,12 +772,12 @@ const RaidBattle = () => {
           className="form-control"
           placeholder="IV ATK"
           onInput={(e) =>
-            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atk: toNumber(e.currentTarget.value) } } })
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } } })
           }
         />
         <span className="input-group-text">DEF</span>
         <input
-          value={filters.selected.iv.def}
+          value={filters.selected.iv.defIV}
           type="number"
           min={MIN_IV}
           max={MAX_IV}
@@ -788,12 +785,12 @@ const RaidBattle = () => {
           className="form-control"
           placeholder="IV DEF"
           onInput={(e) =>
-            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, def: toNumber(e.currentTarget.value) } } })
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } } })
           }
         />
         <span className="input-group-text">STA</span>
         <input
-          value={filters.selected.iv.sta}
+          value={filters.selected.iv.staIV}
           type="number"
           min={MIN_IV}
           max={MAX_IV}
@@ -801,7 +798,7 @@ const RaidBattle = () => {
           className="form-control"
           placeholder="IV STA"
           onInput={(e) =>
-            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, sta: toNumber(e.currentTarget.value) } } })
+            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } } })
           }
         />
       </div>
@@ -982,7 +979,7 @@ const RaidBattle = () => {
           <div className="input-group mb-3">
             <span className="input-group-text">ATK</span>
             <input
-              value={pokemon.stats?.iv.atk}
+              value={pokemon.stats?.iv.atkIV}
               type="number"
               min={MIN_IV}
               max={MAX_IV}
@@ -998,7 +995,7 @@ const RaidBattle = () => {
                         ...showSettingPokemon.pokemon,
                         stats: {
                           ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, atk: toNumber(e.currentTarget.value) },
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, atkIV: toNumber(e.currentTarget.value) },
                         },
                       },
                     })
@@ -1008,7 +1005,7 @@ const RaidBattle = () => {
             />
             <span className="input-group-text">DEF</span>
             <input
-              value={pokemon.stats?.iv.def}
+              value={pokemon.stats?.iv.defIV}
               type="number"
               min={MIN_IV}
               max={MAX_IV}
@@ -1024,7 +1021,7 @@ const RaidBattle = () => {
                         ...showSettingPokemon.pokemon,
                         stats: {
                           ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, def: toNumber(e.currentTarget.value) },
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, defIV: toNumber(e.currentTarget.value) },
                         },
                       },
                     })
@@ -1034,7 +1031,7 @@ const RaidBattle = () => {
             />
             <span className="input-group-text">STA</span>
             <input
-              value={pokemon.stats?.iv.sta}
+              value={pokemon.stats?.iv.staIV}
               type="number"
               min={MIN_IV}
               max={MAX_IV}
@@ -1050,7 +1047,7 @@ const RaidBattle = () => {
                         ...showSettingPokemon.pokemon,
                         stats: {
                           ...showSettingPokemon.pokemon.stats,
-                          iv: { ...showSettingPokemon.pokemon.stats.iv, sta: toNumber(e.currentTarget.value) },
+                          iv: { ...showSettingPokemon.pokemon.stats.iv, staIV: toNumber(e.currentTarget.value) },
                         },
                       },
                     })
@@ -1096,18 +1093,12 @@ const RaidBattle = () => {
     if (showMovePokemon.pokemon?.pokemon) {
       const stats = pokemonBattle.dataTargetPokemon?.stats ?? initPokemonStats;
       pokemonBattle.dataTargetPokemon = showMovePokemon.pokemon.pokemon;
-      pokemonBattle.dataTargetPokemon.stats = {
+      pokemonBattle.dataTargetPokemon.stats = new PokemonDataStats({
         ...stats,
         pokemonType: showMovePokemon.pokemon.pokemonType ?? PokemonType.None,
-      };
-      pokemonBattle.fMoveTargetPokemon = {
-        name: getValueOrDefault(String, showMovePokemon.pokemon.fMove?.name),
-        moveType: showMovePokemon.pokemon.fMoveType ?? MoveType.None,
-      };
-      pokemonBattle.cMoveTargetPokemon = {
-        name: getValueOrDefault(String, showMovePokemon.pokemon.cMove?.name),
-        moveType: showMovePokemon.pokemon.cMoveType ?? MoveType.None,
-      };
+      });
+      pokemonBattle.fMoveTargetPokemon = new SelectMoveModel(showMovePokemon.pokemon.fMove?.name, showMovePokemon.pokemon.fMoveType);
+      pokemonBattle.cMoveTargetPokemon = new SelectMoveModel(showMovePokemon.pokemon.cMove?.name, showMovePokemon.pokemon.cMoveType);
     }
   };
 
@@ -1214,10 +1205,10 @@ const RaidBattle = () => {
   };
 
   const renderPokemon = (value: IPokemonMoveData) => {
-    const assets = findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.forme);
+    const assets = findAssetForm(data.assets, value.pokemon?.num, value.pokemon?.form);
     return (
       <LinkToTop
-        to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.forme, value.pokemonType)}`}
+        to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.form, value.pokemonType)}`}
         className="sprite-raid position-relative"
       >
         <PokemonIconType pokemonType={value.pokemonType} size={64}>
@@ -1349,7 +1340,7 @@ const RaidBattle = () => {
           <div>
             <h4>
               {`${used.sorted ? 'Worst' : 'Best'} 10 Counters Level: `}
-              {<span>{`${used.level} - ${used.iv.atk}/${used.iv.def}/${used.iv.sta}`}</span>}
+              {<span>{`${used.level} - ${used.iv.atkIV}/${used.iv.defIV}/${used.iv.staIV}`}</span>}
             </h4>
             <p className="text-primary">
               <b>

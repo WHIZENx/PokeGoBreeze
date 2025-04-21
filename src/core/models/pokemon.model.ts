@@ -1,12 +1,19 @@
-import { capitalize, getGenerationPokemon, getPokemonClass, replaceTempMoveName } from '../../util/utils';
+import {
+  capitalize,
+  convertPokemonDataName,
+  getGenerationPokemon,
+  getKeyWithData,
+  getPokemonClass,
+  replaceTempMoveName,
+} from '../../util/utils';
 import { ICombat } from './combat.model';
-import { DEFAULT_SPRITE_NAME, FORM_GALAR, FORM_GALARIAN, FORM_HISUI, FORM_HISUIAN, FORM_NORMAL, genList } from '../../util/constants';
-import { IStatsBase, IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
+import { DEFAULT_SPRITE_NAME, FORM_NORMAL, genList, MIN_LEVEL, regionList, versionList } from '../../util/constants';
+import { IStatsIV, IStatsPokemon, IStatsPokemonGO, StatsIV, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
 import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
-import { MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
+import { GlobalType, MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
 import { Species, Variety } from './API/species.model';
 
 export interface OptionsPokemon {
@@ -24,7 +31,17 @@ export interface PokemonGender {
 export interface IPokemonDataStats {
   level: number;
   pokemonType: PokemonType;
-  iv: IStatsBase;
+  iv: IStatsIV;
+}
+
+export class PokemonDataStats implements IPokemonDataStats {
+  level = MIN_LEVEL;
+  pokemonType = PokemonType.None;
+  iv = new StatsIV();
+
+  constructor({ ...props }: IPokemonDataStats) {
+    Object.assign(this, props);
+  }
 }
 
 interface ComponentPokemonSettings {
@@ -160,7 +177,7 @@ interface Camera {
   shoulderModeScale: number;
 }
 
-interface IThirdMove {
+interface ThirdMove {
   stardustToUnlock: number;
   candyToUnlock: number;
 }
@@ -173,17 +190,17 @@ interface ShadowSetting {
 }
 
 export interface PokemonModel {
-  form?: string | number | null;
+  form?: string | number;
   disableTransferToPokemonHome?: boolean;
-  pokemonClass: string | null | undefined;
+  pokemonClass: string | undefined;
   formChange?: IPokemonFormChange[];
   tempEvoOverrides?: TempEvoOverrides[];
   pokemonId: string;
   modelScale: number;
   type?: string;
   type2?: string;
-  camera: Camera;
-  encounter: IEncounter;
+  camera?: Camera;
+  encounter?: IEncounter;
   stats?: IStatsGO;
   quickMoves?: (string | number)[];
   cinematicMoves?: (string | number)[];
@@ -204,7 +221,7 @@ export interface PokemonModel {
   buddyOffsetMale: number[];
   buddyOffsetFemale: number[];
   buddyScale: number;
-  thirdMove?: IThirdMove;
+  thirdMove?: ThirdMove;
   isTransferable: boolean;
   isDeployable: boolean;
   isTradable: boolean;
@@ -219,6 +236,7 @@ export interface PokemonModel {
   name: string;
   isForceReleaseGO?: boolean;
   pokemonType: PokemonType;
+  types: string[] | undefined;
 }
 
 export interface IPokemonGenderRatio {
@@ -248,40 +266,40 @@ export interface IPokemonData {
   types: string[];
   genderRatio: IPokemonGenderRatio;
   baseStats: IStatsPokemon;
-  statsGO?: IStatsPokemonGO;
+  statsGO: IStatsPokemonGO;
   heightM: number;
   weightKg: number;
   color: string;
-  evos: string[];
-  baseForme: string | undefined | null;
-  baseFormeAlias: string | null;
-  baseFormeSlug: string | null;
-  baseFormeSprite: string | null;
-  cosmeticFormes: string[];
-  cosmeticFormesAliases: string[];
-  cosmeticFormesSprites: string[];
-  otherFormes: string[];
-  otherFormesAliases: string[];
-  otherFormesSprites: string[];
-  formeOrder: string[];
-  prevo: string | null;
-  canGigantamax: string | null;
-  baseSpecies: string | null;
-  forme: string | null;
-  changesFrom: string | null;
+  evos: string[] | undefined;
+  baseForme: string | undefined;
+  baseFormeAlias: string | undefined;
+  baseFormeSlug: string | undefined;
+  baseFormeSprite: string | undefined;
+  cosmeticFormes: string[] | undefined;
+  cosmeticFormesAliases: string[] | undefined;
+  cosmeticFormesSprites: string[] | undefined;
+  otherFormes: string[] | undefined;
+  otherFormesAliases: string[] | undefined;
+  otherFormesSprites: string[] | undefined;
+  formeOrder: string[] | undefined;
+  prevEvo: string | undefined;
+  canGigantamax: string | undefined;
+  baseSpecies: string | undefined;
+  form: string | undefined;
+  changesFrom: string | undefined;
   cannotDynamax: boolean;
   releasedGO: boolean;
-  isTransferable?: boolean | null;
-  isDeployable: boolean | null;
-  isTradable: boolean | null;
+  isTransferable?: boolean | undefined;
+  isDeployable: boolean | undefined;
+  isTradable: boolean | undefined;
   pokemonClass: PokemonClass;
-  disableTransferToPokemonHome: boolean | null;
+  disableTransferToPokemonHome: boolean | undefined;
   isBaby: boolean;
   gen: number;
-  region: string | null;
-  version: string | null;
+  region: string | undefined;
+  version: string | undefined;
   baseStatsGO?: boolean;
-  stats?: IPokemonDataStats | null;
+  stats?: IPokemonDataStats;
   hasShadowForm?: boolean;
   formChange?: IPokemonFormChange[];
   quickMoves?: string[];
@@ -439,17 +457,19 @@ export interface IPokemonDataOptional {
   baseStatsGO?: boolean;
   genderRatio?: IPokemonGenderRatio;
   color?: string;
-  baseForme?: string | null;
+  baseForme?: string;
   releasedGO?: boolean;
   isBaby?: boolean;
-  region?: string | null;
-  version?: string | null;
+  region?: string;
+  version?: string;
   shadowMoves?: string[];
   purifiedMoves?: string[];
   evoList?: IEvoList[];
   tempEvo?: ITempEvo[];
   purified?: IPokemonTypeCost;
   thirdMove?: IPokemonTypeCost;
+  prevEvo?: string;
+  baseStats?: IStatsPokemon;
 }
 
 export class PokemonDataOptional implements IPokemonDataOptional {
@@ -458,17 +478,19 @@ export class PokemonDataOptional implements IPokemonDataOptional {
   baseStatsGO?: boolean;
   genderRatio?: IPokemonGenderRatio;
   color?: string;
-  baseForme?: string | null;
+  baseForme?: string;
   releasedGO?: boolean;
   isBaby?: boolean;
-  region?: string | null;
-  version?: string | null;
+  region?: string;
+  version?: string;
   shadowMoves?: string[];
   purifiedMoves?: string[];
   evoList?: IEvoList[];
   tempEvo?: ITempEvo[];
   purified?: IPokemonTypeCost;
   thirdMove?: IPokemonTypeCost;
+  prevEvo?: string;
+  baseStats?: IStatsPokemon;
 
   constructor({ ...props }: IPokemonDataOptional) {
     Object.assign(this, props);
@@ -489,23 +511,23 @@ export class PokemonData implements IPokemonData {
   heightM = 0;
   weightKg = 0;
   color = '';
-  evos: string[] = [];
-  baseForme: string | undefined | null;
-  prevo: string | null = null;
-  baseSpecies: string | null = null;
-  forme: string | null = null;
+  evos: string[] | undefined;
+  baseForme: string | undefined;
+  prevEvo: string | undefined;
+  baseSpecies: string | undefined;
+  form: string | undefined;
   releasedGO = false;
-  isTransferable?: boolean | null;
+  isTransferable?: boolean | undefined;
   isDeployable = false;
   isTradable = false;
   pokemonClass = PokemonClass.None;
   disableTransferToPokemonHome = false;
   isBaby = false;
   gen = 0;
-  region: string | null = null;
-  version: string | null = null;
+  region: string | undefined;
+  version: string | undefined;
   baseStatsGO?: boolean;
-  stats?: IPokemonDataStats | null;
+  stats?: IPokemonDataStats;
   encounter?: IEncounter;
   hasShadowForm?: boolean;
   formChange?: IPokemonFormChange[];
@@ -522,22 +544,22 @@ export class PokemonData implements IPokemonData {
   tempEvo?: ITempEvo[];
   purified?: IPokemonTypeCost;
   thirdMove?: IPokemonTypeCost;
-  baseFormeAlias = '';
-  baseFormeSlug = '';
-  baseFormeSprite = '';
-  cosmeticFormes: string[] = [];
-  cosmeticFormesAliases: string[] = [];
-  cosmeticFormesSprites: string[] = [];
-  otherFormes: string[] = [];
-  otherFormesAliases: string[] = [];
-  otherFormesSprites: string[] = [];
-  formeOrder: string[] = [];
-  canGigantamax: string | null = null;
-  changesFrom: string | null = null;
+  baseFormeAlias: string | undefined;
+  baseFormeSlug: string | undefined;
+  baseFormeSprite: string | undefined;
+  cosmeticFormes: string[] | undefined;
+  cosmeticFormesAliases: string[] | undefined;
+  cosmeticFormesSprites: string[] | undefined;
+  otherFormes: string[] | undefined;
+  otherFormesAliases: string[] | undefined;
+  otherFormesSprites: string[] | undefined;
+  formeOrder: string[] | undefined;
+  canGigantamax: string | undefined;
+  changesFrom: string | undefined;
   cannotDynamax = true;
   pokemonType = PokemonType.Normal;
 
-  static create(pokemon: PokemonModel, types: string[] | undefined, options?: IPokemonDataOptional) {
+  static create(pokemon: PokemonDataModel, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
     Object.entries(genList).forEach(([key, value]) => {
       const [minId, maxId] = value;
@@ -546,41 +568,32 @@ export class PokemonData implements IPokemonData {
         return;
       }
     });
+    const name = pokemon.name.replaceAll('_', '-');
     obj.pokemonId = pokemon.pokemonId;
     obj.num = pokemon.id;
-    obj.name = capitalize(pokemon.name.replaceAll('_', '-'));
+    obj.name = capitalize(name);
     if (pokemon.id !== 201) {
       obj.fullName =
         pokemon.form && pokemon.pokemonType !== PokemonType.Normal ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
     } else {
       obj.fullName = getValueOrDefault(String, pokemon.form?.toString());
     }
-    obj.slug =
-      options?.slug ??
-      pokemon.name
-        .replace(`_${FORM_GALARIAN}`, `_${FORM_GALAR}`)
-        .replace(`_${FORM_HISUIAN}`, `_${FORM_HISUI}`)
-        .replaceAll('_', '-')
-        .toLowerCase();
+    obj.slug = (options?.slug ?? name).toLowerCase();
     obj.sprite = getValueOrDefault(String, options?.sprite, DEFAULT_SPRITE_NAME);
-    obj.types = getValueOrDefault(Array, types);
+    obj.types = getValueOrDefault(Array, pokemon.types);
     obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
     obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options.baseStatsGO;
-    obj.baseStats = StatsPokemon.create({
-      atk: toNumber(pokemon.stats?.baseAttack),
-      def: toNumber(pokemon.stats?.baseDefense),
-      sta: pokemon.stats?.baseStamina,
-    });
-    obj.statsGO = StatsPokemonGO.create(obj.baseStats.atk, obj.baseStats.def, obj.baseStats.sta);
+    obj.baseStats = options?.baseStats ?? new StatsPokemon();
+    obj.statsGO = StatsPokemonGO.create(pokemon.stats?.baseAttack, pokemon.stats?.baseDefense, pokemon.stats?.baseStamina);
     obj.heightM = pokemon.pokedexHeightM;
     obj.weightKg = pokemon.pokedexWeightKg;
-    obj.color = getValueOrDefault(String, options?.color, 'None');
+    obj.color = getValueOrDefault(String, options?.color, getKeyWithData(GlobalType, GlobalType.None));
     obj.evos = getValueOrDefault(
       Array,
       pokemon.evolutionIds?.map((name) => capitalize(name))
     );
     obj.baseForme = options?.baseForme;
-    obj.prevo = capitalize(pokemon.parentPokemonId);
+    obj.prevEvo = capitalize(pokemon.parentPokemonId || options?.prevEvo) || undefined;
     obj.releasedGO = getValueOrDefault(Boolean, options?.releasedGO);
     obj.isTransferable = pokemon.isTransferable;
     obj.isDeployable = pokemon.isDeployable;
@@ -588,10 +601,10 @@ export class PokemonData implements IPokemonData {
     obj.pokemonClass = getPokemonClass(pokemon.pokemonClass);
     obj.disableTransferToPokemonHome = getValueOrDefault(Boolean, pokemon.disableTransferToPokemonHome);
     obj.isBaby = getValueOrDefault(Boolean, options?.isBaby);
-    obj.region = getValueOrDefault(String, options?.region, 'Unknown');
-    obj.version = getValueOrDefault(String, options?.version, 'scarlet-violet');
+    obj.region = getValueOrDefault(String, options?.region, regionList[0]);
+    obj.version = getValueOrDefault(String, options?.version, versionList[versionList.length - 1].toLowerCase().replaceAll(' ', '-'));
     obj.baseSpecies = capitalize(pokemon.pokemonId);
-    obj.forme = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
+    obj.form = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
     obj.encounter = pokemon.encounter;
     obj.hasShadowForm = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;
@@ -619,12 +632,69 @@ export class PokemonModel implements IPokemonName {
   id: number;
   name: string;
 
-  constructor(id: string | number | undefined, name?: string | null, settings?: PokemonModel) {
+  constructor(id: string | number | undefined, name?: string) {
     this.id = toNumber(id);
     this.name = getValueOrDefault(String, name);
+  }
+}
+
+export class PokemonDataModel {
+  form?: string | number | undefined;
+  disableTransferToPokemonHome?: boolean | undefined;
+  pokemonClass: string | undefined;
+  formChange?: IPokemonFormChange[] | undefined;
+  tempEvoOverrides?: TempEvoOverrides[] | undefined;
+  pokemonId = '';
+  modelScale = 0;
+  type?: string | undefined;
+  type2?: string | undefined;
+  camera?: Camera;
+  encounter?: IEncounter;
+  stats?: IStatsGO | undefined;
+  quickMoves?: (string | number)[] | undefined;
+  cinematicMoves?: (string | number)[] | undefined;
+  animationTime: number[] = [];
+  evolutionIds?: string[] | undefined;
+  evolutionPips = 0;
+  pokedexHeightM = 0;
+  pokedexWeightKg = 0;
+  heightStdDev = 0;
+  weightStdDev = 0;
+  familyId = '';
+  candyToEvolve = 0;
+  kmBuddyDistance = 0;
+  modelHeight = 0;
+  parentPokemonId?: string | undefined;
+  evolutionBranch?: EvolutionBranch[] | undefined;
+  modelScaleV2 = 0;
+  buddyOffsetMale: number[] = [];
+  buddyOffsetFemale: number[] = [];
+  buddyScale = 0;
+  thirdMove?: ThirdMove | undefined;
+  isTransferable = false;
+  isDeployable = false;
+  isTradable = false;
+  shadow?: ShadowSetting | undefined;
+  buddyGroupNumber = 0;
+  buddyWalkedMegaEnergyAward = 0;
+  nonTmCinematicMoves?: (string | number)[] | undefined;
+  obSpecialAttackMoves?: (string | number)[] | undefined;
+  eliteQuickMove?: (string | number)[] | undefined;
+  eliteCinematicMove?: (string | number)[] | undefined;
+  id = 0;
+  name = '';
+  isForceReleaseGO?: boolean | undefined;
+  pokemonType = PokemonType.Normal;
+  types: string[] | undefined;
+
+  static create(id: string | number | undefined, name?: string, settings?: PokemonModel) {
+    const obj = new PokemonDataModel();
+    obj.id = toNumber(id);
+    obj.name = convertPokemonDataName(name);
     if (settings) {
-      Object.assign(this, { ...settings });
+      Object.assign(obj, { ...settings });
     }
+    return obj;
   }
 }
 

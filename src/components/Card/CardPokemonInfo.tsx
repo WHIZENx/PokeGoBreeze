@@ -68,7 +68,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           src={APIService.getShinyIcon()}
         />
       )}
-      <LinkToTop className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.forme)}`}>
+      <LinkToTop className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.form)}`}>
         <div className="d-flex justify-content-center" style={{ padding: 8 }}>
           <span style={{ width: 96 }}>
             <img

@@ -6,7 +6,7 @@ export interface ICounterModel {
   cMove: ICombat;
   dps: number;
   fMove: ICombat;
-  pokemonForme: string | null;
+  pokemonForm: string | undefined;
   pokemonId: number;
   pokemonName: string;
   pokemonType?: PokemonType;
@@ -18,7 +18,7 @@ export class CounterModel implements ICounterModel {
   cMove = new Combat();
   dps = 0;
   fMove = new Combat();
-  pokemonForme = '';
+  pokemonForm: string | undefined;
   pokemonId = 0;
   pokemonName = '';
   pokemonType = PokemonType.Normal;
@@ -31,7 +31,7 @@ export class CounterModel implements ICounterModel {
     } else if (props.cMove.moveType === MoveType.Purified) {
       props.pokemonType = PokemonType.Purified;
     } else {
-      props.pokemonType = getPokemonType(props.pokemonForme, false, false);
+      props.pokemonType = getPokemonType(props.pokemonForm, false, false);
     }
     Object.assign(this, props);
   }

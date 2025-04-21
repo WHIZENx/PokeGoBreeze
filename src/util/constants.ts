@@ -98,6 +98,7 @@ export const FORM_GALAR = 'GALAR';
 
 export const FORM_GALARIAN = `${FORM_GALAR}IAN`;
 export const FORM_HISUIAN = `${FORM_HISUI}AN`;
+export const FORM_ALOLAN = `${FORM_ALOLA}N`;
 
 // Forms special
 export const FORM_HERO = 'HERO';
