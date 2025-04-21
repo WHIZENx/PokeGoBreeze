@@ -729,7 +729,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
     let count = 0;
     while (formSet.length > count) {
       let [, form] = formSet[count].split('.');
-      if (isInclude(form, 'GIGANTAMAX')) {
+      if (isInclude(form, 'GIGANTAMAX', IncludeMode.IncludeIgnoreCaseSensitive)) {
         form = FORM_GMAX;
       } else if (isEqual(form, 'icon') || isEqual(form, 'g2')) {
         form = FORM_NORMAL;

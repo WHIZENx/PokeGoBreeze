@@ -188,23 +188,21 @@ const Evolution = (props: IEvolutionComponent) => {
     if (!isNotEmpty(pokemon)) {
       return;
     }
-    pokemon
-      .filter((p) => !(p.num === 718 && p.pokemonType === PokemonType.Normal))
-      .forEach((evo) => {
-        evoList.unshift(
-          modelEvoChain(
-            new EvolutionModel({
-              ...evo,
-              name: evo.name.replaceAll('-', '_').toUpperCase(),
-              id: evo.num,
-              form: getValueOrDefault(String, evo.form, FORM_NORMAL),
-              evoList: getValueOrDefault(Array, evo.evoList),
-              tempEvo: getValueOrDefault(Array, evo.tempEvo),
-            })
-          )
-        );
-        getPrevEvoChainStore(evo.num, evo.form, result);
-      });
+    pokemon.forEach((evo) => {
+      evoList.unshift(
+        modelEvoChain(
+          new EvolutionModel({
+            ...evo,
+            name: evo.name.replaceAll('-', '_').toUpperCase(),
+            id: evo.num,
+            form: getValueOrDefault(String, evo.form, FORM_NORMAL),
+            evoList: getValueOrDefault(Array, evo.evoList),
+            tempEvo: getValueOrDefault(Array, evo.tempEvo),
+          })
+        )
+      );
+      getPrevEvoChainStore(evo.num, evo.form, result);
+    });
     return result.push(evoList);
   };
 

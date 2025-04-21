@@ -123,9 +123,7 @@ const Pokemon = (props: IPokemonPage) => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
     if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonData)) {
       const pokemon = pokemonData.find((p) => isEqual(p.pokemonId?.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive));
-      if (pokemon) {
-        id = pokemon.num;
-      }
+      id = toNumber(pokemon?.num);
     }
     return id;
   };
@@ -449,7 +447,7 @@ const Pokemon = (props: IPokemonPage) => {
           ? currentSearchingForm.form.name
           : formParams || toNumber(currentSearchingForm.form?.id) < 0
           ? currentSearchingForm.form?.name
-          : data?.name;
+          : data.name;
       setFormName(nameInfo?.replace(/-f$/, '-female').replace(/-m$/, '-male'));
       const originForm = splitAndCapitalize(
         router.action === Action.Pop && props.searching && !params.id
@@ -460,7 +458,7 @@ const Pokemon = (props: IPokemonPage) => {
       );
       setOriginForm(originForm);
       if (params.id) {
-        document.title = `#${data?.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
+        document.title = `#${data.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
       }
       checkReleased(id, currentSearchingForm);
     } else {
