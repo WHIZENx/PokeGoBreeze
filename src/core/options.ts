@@ -535,7 +535,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         pokemon.encounter = new Encounter({
           ...pokemon.encounter,
           baseCaptureRate: pokemonEncounter?.basecapturerate,
-          baseFleeRate: pokemonEncounter?.basecapturerate,
+          baseFleeRate: pokemonEncounter?.basefleerate,
         });
 
         const tempEvo = pokemonSettings.tempEvoOverrides?.find((evo) => pokemon.form && isInclude(evo.tempEvoId, pokemon.form));
