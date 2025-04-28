@@ -233,10 +233,11 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
     const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
     const pokemon = PokemonDataModel.create(id, undefined, pokemonSettings);
 
-    if (!pokemonSettings.form) {
+    const pokemonSettingForm = pokemonSettings.form?.toString();
+    if (!pokemonSettingForm) {
       pokemon.form = FORM_NORMAL;
     } else if (pokemon.id !== 201) {
-      pokemon.form = convertAndReplaceNameGO(pokemonSettings.form.toString(), pokemonSettings.pokemonId);
+      pokemon.form = convertAndReplaceNameGO(pokemonSettingForm, pokemonSettings.pokemonId);
     }
     if (pokemon.id !== 201) {
       pokemon.name = pokemonSettings.form ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
@@ -256,7 +257,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
     }
     pokemon.types = types;
 
-    const defaultName = pokemonSettings.form ? pokemonSettings.form.toString() : pokemonSettings.pokemonId;
+    const defaultName = getValueOrDefault(String, pokemonSettingForm, pokemonSettings.pokemonId);
     const pokemonEncounter = encounter?.find((e) => isEqual(defaultName, e.name));
 
     pokemon.encounter = new Encounter({

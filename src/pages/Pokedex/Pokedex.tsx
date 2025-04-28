@@ -468,7 +468,7 @@ const Pokedex = () => {
                         }
                       />
                     }
-                    label="Legendary"
+                    label={getKeyWithData(PokemonClass, PokemonClass.Legendary)}
                   />
                   <FormControlLabel
                     control={
@@ -484,7 +484,7 @@ const Pokedex = () => {
                         }
                       />
                     }
-                    label="Mythic"
+                    label={getKeyWithData(PokemonClass, PokemonClass.Mythic)}
                   />
                   <FormControlLabel
                     control={

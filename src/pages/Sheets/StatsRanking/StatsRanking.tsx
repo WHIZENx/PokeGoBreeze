@@ -197,7 +197,8 @@ const StatsRanking = () => {
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
     const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Atk));
     const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Def));
-    const prodShadow = atkShadow * defShadow * toNumber(details.statsGO.sta);
+    const sta = Math.round(value.statsGO.sta);
+    const prodShadow = atkShadow * defShadow * sta;
     result.push(
       PokemonStatsRanking.create({
         ...value,
@@ -206,45 +207,45 @@ const StatsRanking = () => {
         fullName: details.fullName,
         atk: StatsAtk.create({
           attack: atkShadow,
-          rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank),
+          rank: stats?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank,
         }),
         def: StatsDef.create({
           defense: defShadow,
-          rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank),
+          rank: stats?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank,
         }),
         sta: StatsSta.create({
-          stamina: details.statsGO.sta,
-          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
+          stamina: sta,
+          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
         }),
         prod: StatsProd.create({
           product: prodShadow,
-          rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank),
+          rank: stats?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank,
         }),
       })
     );
     const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk));
     const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def));
-    const prodPurification = atkPurification * defPurification * toNumber(details.statsGO.sta);
+    const prodPurification = atkPurification * defPurification * sta;
     result.push(
       PokemonStatsRanking.create({
         ...value,
-        releasedGO: true,
+        releasedGO: details.releasedGO,
         pokemonType: PokemonType.Purified,
         atk: StatsAtk.create({
           attack: atkPurification,
-          rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank),
+          rank: stats?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank,
         }),
         def: StatsDef.create({
           defense: defPurification,
-          rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank),
+          rank: stats?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank,
         }),
         sta: StatsSta.create({
-          stamina: details.statsGO.sta,
-          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
+          stamina: sta,
+          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
         }),
         prod: StatsProd.create({
           product: prodPurification,
-          rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank),
+          rank: stats?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank,
         }),
       })
     );
@@ -257,7 +258,6 @@ const StatsRanking = () => {
       if (isSpecialFormType(data.pokemonType)) {
         details.pokemonType = PokemonType.Normal;
       }
-      const product = details.statsGO.prod;
       result.push(
         PokemonStatsRanking.create({
           ...data,
@@ -266,19 +266,19 @@ const StatsRanking = () => {
           fullName: details.fullName,
           atk: StatsAtk.create({
             attack: details.statsGO.atk,
-            rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank),
+            rank: stats?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank,
           }),
           def: StatsDef.create({
             defense: details.statsGO.def,
-            rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank),
+            rank: stats?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank,
           }),
           sta: StatsSta.create({
             stamina: details.statsGO.sta,
-            rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
+            rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank,
           }),
           prod: StatsProd.create({
-            product,
-            rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === product)?.rank),
+            product: details.statsGO.prod,
+            rank: stats?.statProd?.ranking?.find((stat) => stat.product === details.statsGO.prod)?.rank,
           }),
         })
       );

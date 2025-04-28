@@ -190,12 +190,12 @@ interface OptionsStats {
 
 export interface IStatsAtk extends Partial<OptionsStats> {
   attack?: number;
-  rank: number;
+  rank: number | undefined;
 }
 
 export class StatsAtk implements IStatsAtk {
   attack = 0;
-  rank = 0;
+  rank: number | undefined;
 
   static create(value: IStatsAtk) {
     const obj = new StatsAtk();
@@ -206,12 +206,12 @@ export class StatsAtk implements IStatsAtk {
 
 export interface IStatsDef extends Partial<OptionsStats> {
   defense?: number;
-  rank: number;
+  rank: number | undefined;
 }
 
 export class StatsDef implements IStatsDef {
   defense = 0;
-  rank = 0;
+  rank: number | undefined;
 
   static create(value: IStatsDef) {
     const obj = new StatsDef();
@@ -222,12 +222,12 @@ export class StatsDef implements IStatsDef {
 
 export interface IStatsSta extends Partial<OptionsStats> {
   stamina?: number;
-  rank: number;
+  rank: number | undefined;
 }
 
 export class StatsSta implements IStatsSta {
   stamina = 0;
-  rank = 0;
+  rank: number | undefined;
 
   static create(value: IStatsSta) {
     const obj = new StatsSta();
@@ -238,12 +238,12 @@ export class StatsSta implements IStatsSta {
 
 export interface IStatsProd extends Partial<OptionsStats> {
   product?: number;
-  rank: number;
+  rank: number | undefined;
 }
 
 export class StatsProd implements IStatsProd {
   product = 0;
-  rank = 0;
+  rank: number | undefined;
 
   static create(value: IStatsProd) {
     const obj = new StatsProd();
@@ -327,15 +327,15 @@ export class StatsPokemon implements IStatsPokemon {
 }
 
 export interface IStatsRankPokemonGO {
-  attackRank: number;
-  defenseRank: number;
-  staminaRank: number;
-  statProdRank: number;
+  attackRank: number | undefined;
+  defenseRank: number | undefined;
+  staminaRank: number | undefined;
+  statProdRank: number | undefined;
 }
 
 export class StatsRankPokemonGO implements IStatsRankPokemonGO {
-  attackRank = 0;
-  defenseRank = 0;
-  staminaRank = 0;
-  statProdRank = 0;
+  attackRank: number | undefined;
+  defenseRank: number | undefined;
+  staminaRank: number | undefined;
+  statProdRank: number | undefined;
 }
