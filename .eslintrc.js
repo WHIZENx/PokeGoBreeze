@@ -17,7 +17,9 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
   ],
-  rules: {},
+  rules: {
+    "@typescript-eslint/no-explicit-any": 0,
+  },
   overrides: [
     {
       files: ['*.ts', '*.tsx'],
