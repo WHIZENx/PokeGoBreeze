@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
@@ -31,7 +32,6 @@ module.exports = {
       filename: '[contenthash].css',
       chunkFilename: '[hash].css'
     }),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.ProvidePlugin({
       process: 'process/browser',
     }),

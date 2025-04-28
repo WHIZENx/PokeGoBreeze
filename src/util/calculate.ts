@@ -1361,9 +1361,12 @@ const setQueryMoveCounter = (data: QueryMovesCounterPokemon, fastMoveSet: string
 };
 
 export const calculateStatsTopRank = (stats: IStatsPokemonGO | undefined, id: number, maxCP: number, level = MAX_LEVEL) => {
-  const atk = toNumber(stats?.atk);
-  const def = toNumber(stats?.def);
-  const sta = toNumber(stats?.sta);
+  if (!stats) {
+    stats = new StatsPokemonGO();
+  }
+  const atk = stats.atk;
+  const def = stats.def;
+  const sta = stats.sta;
   if (maxCP > BattleLeagueCPType.Ultra) {
     const maxPokeCP = calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level);
     return getBaseStatsByIVandLevel(atk, def, sta, maxPokeCP, id, level);

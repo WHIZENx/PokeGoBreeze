@@ -51,7 +51,7 @@ import { RouterState, StoreState } from './store/models/state.model';
 import { isNotEmpty } from './util/extension';
 import { Action } from 'history';
 
-// tslint:disable-next-line: no-empty
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
@@ -117,7 +117,7 @@ function App() {
 
   const loadData = (signal: AbortSignal, delay = LOAD_DATA_DELAY) => {
     return new Promise<void>((resolve, reject) => {
-      let timeout: NodeJS.Timeout | number;
+      let timeout: NodeJS.Timeout | number | undefined = undefined;
       const abortHandler = () => {
         clearTimeout(timeout);
         reject();

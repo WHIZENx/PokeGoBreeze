@@ -329,7 +329,7 @@ export interface IStatsBarComponent {
   tag: string;
   class: string;
   statsPercent: number;
-  rank: number | string;
+  rank: number | string | undefined;
   pokemonStatsRank: IStatsRankAtk | IStatsRankDef | IStatsRankSta | IStatsRankProd | undefined;
   currentStats: number;
   optionalStats?: string;

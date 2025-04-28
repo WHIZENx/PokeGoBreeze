@@ -252,7 +252,7 @@ const Counter = (props: ICounterComponent) => {
   const calculateCounter = (signal: AbortSignal, delay = COUNTER_DELAY) => {
     return new Promise<ICounterModel[]>((resolve, reject) => {
       let result: ICounterModel[] = [];
-      let timeout: NodeJS.Timeout | number;
+      let timeout: NodeJS.Timeout | number | undefined = undefined;
       const abortHandler = () => {
         clearTimeout(timeout);
         reject();

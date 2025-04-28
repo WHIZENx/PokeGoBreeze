@@ -121,7 +121,7 @@ const StatsTable = () => {
   const calculateStats = (signal: AbortSignal, delay = STATS_DELAY) => {
     return new Promise<IBattleBaseStats[]>((resolve, reject) => {
       let result: IBattleBaseStats[] = [];
-      let timeout: NodeJS.Timeout | number;
+      let timeout: NodeJS.Timeout | number | undefined = undefined;
       const abortHandler = () => {
         clearTimeout(timeout);
         reject();

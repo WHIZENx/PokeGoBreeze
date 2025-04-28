@@ -724,7 +724,7 @@ const DpsTdo = () => {
                     }
                   />
                 }
-                label="Legendary"
+                label={getKeyWithData(PokemonClass, PokemonClass.Legendary)}
               />
               <FormControlLabel
                 control={
@@ -735,7 +735,7 @@ const DpsTdo = () => {
                     }
                   />
                 }
-                label="Mythic"
+                label={getKeyWithData(PokemonClass, PokemonClass.Mythic)}
               />
               <FormControlLabel
                 control={
@@ -814,7 +814,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableLegendary: check })}
                   />
                 }
-                label="Legendary"
+                label={getKeyWithData(PokemonClass, PokemonClass.Legendary)}
               />
               <FormControlLabel
                 control={
@@ -824,7 +824,7 @@ const DpsTdo = () => {
                     onChange={(_, check) => setFilters({ ...filters, enableMythic: check })}
                   />
                 }
-                label="Mythic"
+                label={getKeyWithData(PokemonClass, PokemonClass.Mythic)}
               />
               <FormControlLabel
                 control={

@@ -639,7 +639,7 @@ export class PokemonModel implements IPokemonName {
 }
 
 export class PokemonDataModel {
-  form?: string | number | undefined;
+  form?: string | number;
   disableTransferToPokemonHome?: boolean | undefined;
   pokemonClass: string | undefined;
   formChange?: IPokemonFormChange[] | undefined;
