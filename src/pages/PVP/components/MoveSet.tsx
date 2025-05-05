@@ -21,10 +21,10 @@ import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../
 import { getMoveType, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
 import { ArcheType } from '../enums/arche-type.enum';
 import { MoveType } from '../../../enums/type.enum';
-import APIService from '../../../services/API.service';
 import { PokemonRankingMove } from '../../../core/models/pvp.model';
 import { IMoveSet, MoveSetModel } from '../models/move-set.model';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import IconType from '../../../components/Sprites/Icon/Type/Type';
 
 const MoveSet = (props: MoveSetComponent) => {
   const [fastMoves, setFastMoves] = useState<IMoveSet[]>();
@@ -120,7 +120,7 @@ const MoveSet = (props: MoveSetComponent) => {
       )}
     >
       <div className="d-flex" style={{ columnGap: 10 }}>
-        <img className="filter-shadow" width={24} height={24} alt="img-pokemon" src={APIService.getTypeSprite(move?.type)} />
+        <IconType width={24} height={24} alt="type-logo" type={move?.type} />
         <span className="filter-shadow">
           {splitAndCapitalize(move.name, '_', ' ')} {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}
         </span>

@@ -26,6 +26,7 @@ import { ColumnSearchMoveType, SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { Params } from '../../../util/constants';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { debounce } from 'lodash';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -124,21 +125,27 @@ const Search = () => {
 
   useEffect(() => {
     if (isNotEmpty(combat)) {
-      const timeOutId = setTimeout(() => {
+      const debounced = debounce(() => {
         setResultFMove(searchMove(TypeMove.Fast, fMoveType, fMoveName));
         setFMoveIsLoad(true);
       });
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [combat, fMoveType, fMoveName]);
 
   useEffect(() => {
     if (isNotEmpty(combat)) {
-      const timeOutId = setTimeout(() => {
+      const debounced = debounce(() => {
         setResultCMove(searchMove(TypeMove.Charge, cMoveType, cMoveName));
         setCMoveIsLoad(true);
       });
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [combat, cMoveType, cMoveName]);
 

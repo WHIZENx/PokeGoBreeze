@@ -69,6 +69,8 @@ import Loading from '../../../components/Sprites/Loading/Loading';
 import { TypeEff } from '../../../core/models/type-eff.model';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import IconType from '../../../components/Sprites/Icon/Type/Type';
+import { debounce } from 'lodash';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -160,15 +162,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Type(s)',
     selector: (row) =>
       row.pokemon.types.map((value, index) => (
-        <img
-          key={index}
-          style={{ marginRight: 10 }}
-          width={25}
-          height={25}
-          alt="img-pokemon"
-          title={capitalize(value)}
-          src={APIService.getTypeSprite(value)}
-        />
+        <IconType key={index} width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" title={capitalize(value)} type={value} />
       )),
     width: '140px',
   },
@@ -181,7 +175,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/move/${row.fMove?.id}`}
         title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}
       >
-        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove?.type)} />
+        <IconType width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" type={row.fMove?.type} />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
@@ -205,7 +199,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/move/${row.cMove?.id}`}
         title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}
       >
-        <img style={{ marginRight: 10 }} width={25} height={25} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove?.type)} />
+        <IconType width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" type={row.cMove?.type} />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
@@ -521,10 +515,13 @@ const DpsTdo = () => {
   useEffect(() => {
     if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
       setShowSpinner(true);
-      const timeOutId = setTimeout(() => {
+      const debounced = debounce(() => {
         setDpsTable(calculateDPSTable());
       }, 300);
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [
     dataTargetPokemon,
@@ -540,20 +537,26 @@ const DpsTdo = () => {
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
       setShowSpinner(true);
-      const timeOutId = setTimeout(() => {
+      const debounced = debounce(() => {
         setDataFilter(searchFilter());
       }, 500);
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [dpsTable, searchTerm]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
       setShowSpinner(true);
-      const timeOutId = setTimeout(() => {
+      const debounced = debounce(() => {
         setDataFilter(searchFilter());
       }, 100);
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [
     dpsTable,

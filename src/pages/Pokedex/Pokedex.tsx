@@ -33,6 +33,7 @@ import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { ScrollModifyEvent } from '../../util/models/overrides/dom.model';
 import { IStyleData } from '../../util/models/util.model';
+import { debounce } from 'lodash';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -155,7 +156,7 @@ const Pokedex = () => {
   useEffect(() => {
     setIsLoading(true);
     if (isNotEmpty(dataList)) {
-      const timeOutId = setTimeout(
+      const debounced = debounce(
         () => {
           const result = dataList.filter((item) => {
             const boolFilterType =
@@ -199,7 +200,10 @@ const Pokedex = () => {
         },
         listOfPokemon > result ? listOfPokemon.length : result.length
       );
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [dataList, searchTerm, selectTypes, isMatch, releasedGO, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast, gen, version]);
 

@@ -74,6 +74,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "7.21.0-placeholder-for-preset-env.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
+    "@types/lodash": "^4.17.16",
     "@types/styled-components": "^5.1.26",
     "@types/webpack-env": "^1.18.0",
     "@typescript-eslint/eslint-plugin": "^5.45.1",
