@@ -124,9 +124,6 @@
   "peerDependencies": {
     "postcss": "8.4.31"
   },
-  "engines": {
-    "node": ">=18.17.0"
-  },
   "overrides": {
     "typescript": "5.5.3",
     "cross-spawn": "6.0.6",
