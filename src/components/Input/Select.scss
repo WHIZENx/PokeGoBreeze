@@ -147,13 +147,13 @@
     contrast(102%);
 }
 
-@media screen and (max-width: 420px) {
+@media screen and (max-width <= 420px) {
   .result-pokemon {
     max-width: 250px;
   }
 }
 
-@media screen and (max-width: 375px) {
+@media screen and (max-width <= 375px) {
   .result-pokemon {
     max-width: 230px;
   }

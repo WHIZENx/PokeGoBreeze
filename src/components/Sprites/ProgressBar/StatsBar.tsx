@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { IStatsBarComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isUndefined } from '../../../util/extension';
 import { generateParamForm } from '../../../util/utils';
 import { Params } from '../../../util/constants';
 import { useNavigateToTop } from '../../../util/hooks/LinkToTop';
@@ -50,7 +50,7 @@ const StatsBar = (props: IStatsBarComponent) => {
         </span>
       </BoxText>
       <Bar className={combineClasses('progress-bar', props.class)} aria-valuenow={props.statsPercent} statsPercent={props.statsPercent} />
-      {props.pokemonStatsRank && (
+      {props.pokemonStatsRank && !isUndefined(props.rank) && (
         <BoxText className="box-text rank-text" isRank={true}>
           <span>
             Rank: {props.rank} / {props.pokemonStatsRank.maxRank}

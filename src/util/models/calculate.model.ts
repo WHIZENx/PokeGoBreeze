@@ -182,6 +182,9 @@ export class StatsBaseCalculate implements IStatsBaseCalculate {
 
   static create(atk: number, def: number, sta: number) {
     const obj = new StatsBaseCalculate();
+    obj.statATK = atk;
+    obj.statDEF = def;
+    obj.statSTA = sta;
     obj.statPROD = atk * def * sta;
     return obj;
   }

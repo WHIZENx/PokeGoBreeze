@@ -17,6 +17,7 @@ import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
 import { useSnackbar } from 'notistack';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
+import { debounce } from 'lodash';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -121,9 +122,9 @@ const StatsTable = () => {
   const calculateStats = (signal: AbortSignal, delay = STATS_DELAY) => {
     return new Promise<IBattleBaseStats[]>((resolve, reject) => {
       let result: IBattleBaseStats[] = [];
-      let timeout: NodeJS.Timeout | number;
+
       const abortHandler = () => {
-        clearTimeout(timeout);
+        debouncedResolve.cancel();
         reject();
       };
 
@@ -142,7 +143,9 @@ const StatsTable = () => {
         resolve(result);
       };
 
-      timeout = setTimeout(resolveHandler, delay, result);
+      const debouncedResolve = debounce(resolveHandler, delay);
+
+      debouncedResolve();
 
       if (signal instanceof AbortSignal) {
         signal.addEventListener('abort', abortHandler, { once: true });

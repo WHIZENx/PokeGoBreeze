@@ -8,6 +8,7 @@ import { ITypeComponent } from '../../models/component.model';
 import { TypeTheme } from '../../../enums/type.enum';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { isNotEmpty, combineClasses, toNumber } from '../../../util/extension';
+import IconType from '../Icon/Type/Type';
 
 const TypeInfo = (props: ITypeComponent) => {
   const theme = useTheme<ThemeModify>();
@@ -40,25 +41,21 @@ const TypeInfo = (props: ITypeComponent) => {
                 {props.arr?.map((value, index) => (
                   <div className="text-center d-flex" key={index}>
                     {props.isHideText ? (
-                      <img
+                      <IconType
                         className={props.isShowShadow ? 'filter-shadow' : ''}
                         width={props.height}
                         height={props.height}
-                        alt="img-pokemon"
-                        src={APIService.getTypeSprite(value)}
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = APIService.getPokeSprite();
-                        }}
+                        alt="type-logo"
+                        type={value}
                       />
                     ) : (
                       <div>
-                        <img
+                        <IconType
                           className={props.isShowShadow ? 'filter-shadow' : ''}
                           width={36}
                           height={36}
-                          alt="img-pokemon"
-                          src={APIService.getTypeSprite(value)}
+                          alt="type-logo"
+                          type={value}
                         />
                         <span
                           className={combineClasses(

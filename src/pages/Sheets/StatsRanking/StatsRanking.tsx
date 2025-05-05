@@ -10,6 +10,7 @@ import {
   getDmgMultiplyBonus,
   getPokemonType,
   isSpecialFormType,
+  getKeyWithData,
 } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
@@ -49,6 +50,8 @@ import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 import { Action } from 'history';
+import IconType from '../../../components/Sprites/Icon/Type/Type';
+import { debounce } from 'lodash';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -107,15 +110,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     name: 'Type(s)',
     selector: (row) =>
       getValueOrDefault(Array, row.types).map((value, index) => (
-        <img
-          key={index}
-          style={{ marginRight: 10 }}
-          width={25}
-          height={25}
-          alt="img-pokemon"
-          title={capitalize(value)}
-          src={APIService.getTypeSprite(value)}
-        />
+        <IconType key={index} width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" title={capitalize(value)} type={value} />
       )),
     width: '150px',
   },
@@ -183,7 +178,7 @@ const StatsRanking = () => {
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
-      when: (row) => !isNullOrUndefined(select) && row.id === select.id && row.pokemonType === select.pokemonType,
+      when: (row) => !isNullOrUndefined(select) && row.fullName === select.fullName && row.pokemonType === select.pokemonType,
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -197,7 +192,8 @@ const StatsRanking = () => {
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
     const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Atk));
     const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Def));
-    const prodShadow = atkShadow * defShadow * toNumber(details.statsGO.sta);
+    const sta = Math.round(value.statsGO.sta);
+    const prodShadow = atkShadow * defShadow * sta;
     result.push(
       PokemonStatsRanking.create({
         ...value,
@@ -206,45 +202,45 @@ const StatsRanking = () => {
         fullName: details.fullName,
         atk: StatsAtk.create({
           attack: atkShadow,
-          rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank),
+          rank: stats?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank,
         }),
         def: StatsDef.create({
           defense: defShadow,
-          rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank),
+          rank: stats?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank,
         }),
         sta: StatsSta.create({
-          stamina: details.statsGO.sta,
-          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
+          stamina: sta,
+          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
         }),
         prod: StatsProd.create({
           product: prodShadow,
-          rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank),
+          rank: stats?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank,
         }),
       })
     );
     const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk));
     const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def));
-    const prodPurification = atkPurification * defPurification * toNumber(details.statsGO.sta);
+    const prodPurification = atkPurification * defPurification * sta;
     result.push(
       PokemonStatsRanking.create({
         ...value,
-        releasedGO: true,
+        releasedGO: details.releasedGO,
         pokemonType: PokemonType.Purified,
         atk: StatsAtk.create({
           attack: atkPurification,
-          rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank),
+          rank: stats?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank,
         }),
         def: StatsDef.create({
           defense: defPurification,
-          rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank),
+          rank: stats?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank,
         }),
         sta: StatsSta.create({
-          stamina: details.statsGO.sta,
-          rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
+          stamina: sta,
+          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
         }),
         prod: StatsProd.create({
           product: prodPurification,
-          rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank),
+          rank: stats?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank,
         }),
       })
     );
@@ -257,7 +253,6 @@ const StatsRanking = () => {
       if (isSpecialFormType(data.pokemonType)) {
         details.pokemonType = PokemonType.Normal;
       }
-      const product = details.statsGO.prod;
       result.push(
         PokemonStatsRanking.create({
           ...data,
@@ -266,19 +261,19 @@ const StatsRanking = () => {
           fullName: details.fullName,
           atk: StatsAtk.create({
             attack: details.statsGO.atk,
-            rank: toNumber(stats?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank),
+            rank: stats?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank,
           }),
           def: StatsDef.create({
             defense: details.statsGO.def,
-            rank: toNumber(stats?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank),
+            rank: stats?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank,
           }),
           sta: StatsSta.create({
             stamina: details.statsGO.sta,
-            rank: toNumber(stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank),
+            rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank,
           }),
           prod: StatsProd.create({
-            product,
-            rank: toNumber(stats?.statProd?.ranking?.find((stat) => stat.product === product)?.rank),
+            product: details.statsGO.prod,
+            rank: stats?.statProd?.ranking?.find((stat) => stat.product === details.statsGO.prod)?.rank,
           }),
         })
       );
@@ -437,7 +432,7 @@ const StatsRanking = () => {
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
-      const timeOutId = setTimeout(() => {
+      const debounced = debounce(() => {
         setPokemonFilter(
           pokemonList
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
@@ -452,7 +447,10 @@ const StatsRanking = () => {
             )
         );
       }, 100);
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [search, isMatch, releasedGO, pokemonList]);
 
@@ -504,7 +502,9 @@ const StatsRanking = () => {
             <PokemonTable
               id={select?.num}
               gen={select?.gen}
-              formName={select?.name}
+              formName={`${select?.name}${
+                isSpecialFormType(select?.pokemonType) ? '-' + getKeyWithData(PokemonType, select.pokemonType) : ''
+              }`}
               region={select?.region}
               version={select?.version}
               weight={select?.weightKg}

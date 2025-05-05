@@ -55,6 +55,8 @@ import {
 } from '../../../core/models/API/info.model';
 import { ItemName } from '../../../pages/News/enums/item-type.enum';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
+import IconType from '../../Sprites/Icon/Type/Type';
+import { APIUrl } from '../../../services/constants';
 
 interface IPokemonEvo {
   prev?: string;
@@ -375,7 +377,11 @@ const Evolution = (props: IEvolutionComponent) => {
         src={APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')}
         onError={(e) => {
           e.currentTarget.onerror = null;
-          e.currentTarget.src = APIService.getPokeSprite(value.id);
+          if (e.currentTarget.src.includes(APIUrl.POKE_SPRITES_API_URL)) {
+            e.currentTarget.src = APIService.getPokeSprite();
+          } else {
+            e.currentTarget.src = APIService.getPokeSprite(value.id);
+          }
         }}
       />
     </PokemonIconType>
@@ -517,16 +523,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             {data?.quest.condition.desc === ConditionType.Pokemon && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
                                 {data.quest.condition.pokemonType?.map((value, index) => (
-                                  <img
-                                    key={index}
-                                    alt="img-stardust"
-                                    height={20}
-                                    src={APIService.getTypeSprite(value)}
-                                    onError={(e) => {
-                                      e.currentTarget.onerror = null;
-                                      e.currentTarget.src = APIService.getPokeSprite();
-                                    }}
-                                  />
+                                  <IconType key={index} height={20} alt="type-logo" type={value} />
                                 ))}
                                 <span style={{ marginLeft: 2 }}>{`x${data.quest.goal}`}</span>
                               </div>
@@ -541,7 +538,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               <Fragment>
                                 <div className="inline-flex" style={{ gap: 3 }}>
                                   {data.quest.condition.opponentPokemonBattle?.types.map((value, index) => (
-                                    <img key={index} width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value)} />
+                                    <IconType key={index} width={20} height={20} alt="type-logo" type={value} />
                                   ))}
                                 </div>
                                 <span style={{ fontSize: 11, lineHeight: 1 }}>{`Battle x${data.quest.goal} ${

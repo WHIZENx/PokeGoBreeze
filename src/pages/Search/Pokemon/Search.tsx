@@ -18,6 +18,7 @@ import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
+import { debounce } from 'lodash';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');
@@ -51,15 +52,18 @@ const Search = () => {
   }, [pokemonName]);
 
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      if (isNotEmpty(pokemonList)) {
+    if (isNotEmpty(pokemonList)) {
+      const debounced = debounce(() => {
         const results = pokemonList.filter(
           (item) => isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
         );
         setPokemonListFilter(results);
-      }
-    });
-    return () => clearTimeout(timeOutId);
+      });
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
+    }
   }, [pokemonList, searchTerm]);
 
   useEffect(() => {
@@ -132,6 +136,7 @@ const Search = () => {
           <input
             id="input-search-pokemon"
             type="text"
+            autoComplete="false"
             className={combineClasses('form-control', `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
             style={{ backgroundColor: theme.palette.background.input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"

@@ -4,7 +4,6 @@ import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../util/u
 import { rankMove } from '../../../util/calculate';
 
 import './MoveTable.scss';
-import APIService from '../../../services/API.service';
 import { useSelector } from 'react-redux';
 import { Tab, Tabs } from 'react-bootstrap';
 
@@ -32,6 +31,7 @@ import { MoveType, PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
+import IconType from '../../Sprites/Icon/Type/Type';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -228,7 +228,7 @@ const TableMove = (props: ITableMoveComponent) => {
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
           <LinkToTop to={`../move/${value.fMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.fMove.type)} />
+              <IconType width={20} height={20} alt="type-logo" type={value.fMove.type} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
@@ -245,7 +245,7 @@ const TableMove = (props: ITableMoveComponent) => {
         <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
           <LinkToTop to={`../move/${value.cMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.cMove.type)} />
+              <IconType width={20} height={20} alt="type-logo" type={value.cMove.type} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
@@ -273,7 +273,7 @@ const TableMove = (props: ITableMoveComponent) => {
           <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
             <LinkToTop to={`../move/${value.id}`} className="d-block">
               <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                <img width={20} height={20} alt="img-pokemon" src={APIService.getTypeSprite(value.type)} />
+                <IconType width={20} height={20} alt="type-logo" type={value.type} />
               </div>
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
               <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>

@@ -50,8 +50,9 @@ import { LocalTimeStamp } from './store/models/local-storage.model';
 import { RouterState, StoreState } from './store/models/state.model';
 import { isNotEmpty } from './util/extension';
 import { Action } from 'history';
+import { debounce } from 'lodash';
 
-// tslint:disable-next-line: no-empty
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
@@ -82,15 +83,17 @@ function App() {
 
   useEffect(() => {
     if (router && router.action === Action.Pop) {
-      setTimeout(
-        () =>
-          window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'instant',
-          }),
-        1
-      );
+      const debounced = debounce(() => {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'instant',
+        });
+      }, 1);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [router]);
 
@@ -119,24 +122,28 @@ function App() {
 
   const loadData = (signal: AbortSignal, delay = LOAD_DATA_DELAY) => {
     return new Promise<void>((resolve, reject) => {
-      let timeout: NodeJS.Timeout | number;
-      const abortHandler = () => {
-        clearTimeout(timeout);
-        reject();
-      };
-
       const resolveHandler = async () => {
-        if (signal instanceof AbortSignal) {
-          signal.removeEventListener('abort', abortHandler);
-        }
         resolve(await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound));
       };
 
-      timeout = setTimeout(resolveHandler, delay);
+      const debouncedResolve = debounce(resolveHandler, delay);
 
       if (signal instanceof AbortSignal) {
+        const abortHandler = () => {
+          debouncedResolve.cancel();
+          reject();
+        };
+
         signal.addEventListener('abort', abortHandler, { once: true });
+
+        const originalResolve = debouncedResolve;
+        debouncedResolve.cancel = () => {
+          signal.removeEventListener('abort', abortHandler);
+          originalResolve.cancel();
+        };
       }
+
+      debouncedResolve();
     });
   };
 

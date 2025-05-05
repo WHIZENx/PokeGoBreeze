@@ -33,6 +33,7 @@ import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { debounce } from 'lodash';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -78,7 +79,7 @@ const Leagues = () => {
 
   useEffect(() => {
     if (isNotEmpty(leagues)) {
-      const timeOutId = setTimeout(() => {
+      const debounced = debounce(() => {
         setLeagueFilter(
           leagues.filter((value) => {
             if (isIncludeList(dataStore.leagues.allowLeagues, value.id)) {
@@ -89,7 +90,10 @@ const Leagues = () => {
           })
         );
       }, 500);
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [leagues, search]);
 

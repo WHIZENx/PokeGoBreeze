@@ -17,6 +17,8 @@
     "no-shadowed-variable": false,
     "one-variable-per-declaration": false,
     "curly": true,
-    "max-classes-per-file": false
+    "max-classes-per-file": false,
+    "no-unnecessary-initializer": false,
+    "no-empty": false
   }
 }
