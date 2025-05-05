@@ -10,6 +10,7 @@ import {
   getDmgMultiplyBonus,
   getPokemonType,
   isSpecialFormType,
+  getKeyWithData,
 } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
@@ -177,7 +178,7 @@ const StatsRanking = () => {
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
-      when: (row) => !isNullOrUndefined(select) && row.id === select.id && row.pokemonType === select.pokemonType,
+      when: (row) => !isNullOrUndefined(select) && row.fullName === select.fullName && row.pokemonType === select.pokemonType,
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -501,7 +502,9 @@ const StatsRanking = () => {
             <PokemonTable
               id={select?.num}
               gen={select?.gen}
-              formName={select?.name}
+              formName={`${select?.name}${
+                isSpecialFormType(select?.pokemonType) ? '-' + getKeyWithData(PokemonType, select.pokemonType) : ''
+              }`}
               region={select?.region}
               version={select?.version}
               weight={select?.weightKg}
