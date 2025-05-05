@@ -40,6 +40,8 @@ import { OptionsActions } from '../../../store/actions';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 import { COUNTER_DELAY } from '../../../util/constants';
+import IconType from '../../Sprites/Icon/Type/Type';
+import { debounce } from 'lodash';
 
 const customStyles: TableStyles = {
   head: {
@@ -168,7 +170,7 @@ const Counter = (props: ICounterComponent) => {
       selector: (row) => (
         <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(row.fMove.type)} />
+            <IconType width={28} height={28} alt="type-logo" type={row.fMove.type} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
@@ -190,7 +192,7 @@ const Counter = (props: ICounterComponent) => {
       selector: (row) => (
         <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <img width={28} height={28} alt="img-pokemon" src={APIService.getTypeSprite(row.cMove.type)} />
+            <IconType width={28} height={28} alt="type-logo" type={row.cMove.type} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
@@ -252,16 +254,8 @@ const Counter = (props: ICounterComponent) => {
   const calculateCounter = (signal: AbortSignal, delay = COUNTER_DELAY) => {
     return new Promise<ICounterModel[]>((resolve, reject) => {
       let result: ICounterModel[] = [];
-      let timeout: NodeJS.Timeout | number | undefined = undefined;
-      const abortHandler = () => {
-        clearTimeout(timeout);
-        reject();
-      };
 
       const resolveHandler = () => {
-        if (signal instanceof AbortSignal) {
-          signal.removeEventListener('abort', abortHandler);
-        }
         if (props.pokemonData) {
           result = counterPokemon(
             data.options,
@@ -274,14 +268,22 @@ const Counter = (props: ICounterComponent) => {
           );
         }
 
+        if (signal instanceof AbortSignal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
         resolve(result);
       };
 
-      timeout = setTimeout(resolveHandler, delay, result);
+      const debouncedResolve = debounce(resolveHandler, delay);
 
+      const abortHandler = () => {
+        debouncedResolve.cancel();
+        reject();
+      };
       if (signal instanceof AbortSignal) {
         signal.addEventListener('abort', abortHandler, { once: true });
       }
+      debouncedResolve();
     });
   };
 

@@ -49,6 +49,8 @@ import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 import { Action } from 'history';
+import IconType from '../../../components/Sprites/Icon/Type/Type';
+import { debounce } from 'lodash';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -107,15 +109,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     name: 'Type(s)',
     selector: (row) =>
       getValueOrDefault(Array, row.types).map((value, index) => (
-        <img
-          key={index}
-          style={{ marginRight: 10 }}
-          width={25}
-          height={25}
-          alt="img-pokemon"
-          title={capitalize(value)}
-          src={APIService.getTypeSprite(value)}
-        />
+        <IconType key={index} width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" title={capitalize(value)} type={value} />
       )),
     width: '150px',
   },
@@ -437,7 +431,7 @@ const StatsRanking = () => {
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
-      const timeOutId = setTimeout(() => {
+      const debounced = debounce(() => {
         setPokemonFilter(
           pokemonList
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
@@ -452,7 +446,10 @@ const StatsRanking = () => {
             )
         );
       }, 100);
-      return () => clearTimeout(timeOutId);
+      debounced();
+      return () => {
+        debounced.cancel();
+      };
     }
   }, [search, isMatch, releasedGO, pokemonList]);
 

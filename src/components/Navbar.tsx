@@ -20,14 +20,14 @@ const NavbarComponent = () => {
   const [version, setVersion] = useState<string>();
 
   useEffect(() => {
-    const timeOutId = setTimeout(() =>
-      getEdgeItem<string>(EdgeKey.VERSION)
-        .then((res) => setVersion(res))
-        .catch()
-        .finally(() => clearTimeout(timeOutId))
-    );
-    return () => clearTimeout(timeOutId);
-  }, []);
+    const fetchData = async () => {
+      const result = await getEdgeItem<string>(EdgeKey.VERSION);
+      setVersion(result);
+    };
+    if (!version) {
+      fetchData();
+    }
+  }, [version]);
 
   return (
     <Fragment>

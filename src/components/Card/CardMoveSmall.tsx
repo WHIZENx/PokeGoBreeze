@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
-import APIService from '../../services/API.service';
 import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
@@ -10,6 +9,7 @@ import { ICardSmallComponent } from '../models/component.model';
 import { combineClasses, isEqual, isNotEmpty } from '../../util/extension';
 import { MoveType } from '../../enums/type.enum';
 import { ICombat } from '../../core/models/combat.model';
+import IconType from '../Sprites/Icon/Type/Type';
 
 const CardMoveSmall = (props: ICardSmallComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data.combats);
@@ -34,7 +34,7 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               className={combineClasses('d-flex align-items-center w-100 h-100', props.isDisable ? 'disable-card-move' : '')}
               style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
             >
-              <img width={18} height={18} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getTypeSprite(move.type)} />
+              <IconType width={18} height={18} alt="type-logo" style={{ marginRight: 10 }} type={move.type} />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(move.name, '_', ' ')}</span>
               <span className="d-flex">
                 {props.value.moveType !== MoveType.None && (

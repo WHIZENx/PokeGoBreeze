@@ -1,5 +1,5 @@
 import { Asset, CryPath, IAsset, ImageModel } from './models/asset.model';
-import { Bonus, Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
+import { Buff, Combat, IBuff, ICombat, Move, Sequence } from './models/combat.model';
 import {
   EvoList,
   EvolutionQuest,
@@ -27,7 +27,6 @@ import {
   capitalize,
   checkMoveSetAvailable,
   convertPokemonDataName,
-  getBonusType,
   getDataWithKey,
   getItemEvolutionType,
   getKeyWithData,
@@ -92,6 +91,7 @@ import {
   toNumber,
   UniqValueInArray,
   isNull,
+  isUndefined,
 } from '../util/extension';
 import { GenderType } from './enums/asset.enum';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
@@ -106,85 +106,127 @@ import { StatsPokemonGO } from './models/stats.model';
 
 export const getOption = <T>(options: any, args: string[], defaultValue?: T): T => {
   if (!options) {
-    return defaultValue || options;
+    return defaultValue as T;
   }
 
-  args.forEach((arg) => {
-    try {
-      options = options[arg];
-    } catch {
-      return defaultValue;
-    }
-  });
-  return options || defaultValue;
-};
-
-export const optionSettings = (data: PokemonDataGM[], settings = new Options()) => {
-  data.forEach((item) => {
-    if (isEqual(item.templateId, TemplateId.PlayerSetting)) {
-      settings.playerSetting.maxEncounterPlayerLevel = item.data.playerLevel.maxEncounterPlayerLevel;
-      settings.playerSetting.maxQuestEncounterPlayerLevel = item.data.playerLevel.maxQuestEncounterPlayerLevel;
-      settings.playerSetting.levelUps = item.data.playerLevel.rankNum.map((value, index) => ({
-        level: index + value,
-        amount: value,
-        requiredExp: item.data.playerLevel.requiredExperience[index],
-      }));
-      const cpmList = item.data.playerLevel.cpMultiplier;
-      for (let level = MIN_LEVEL; level <= cpmList.length; level++) {
-        const cpmLow = toNumber(cpmList[level - 1]);
-        const cpmHigh = toNumber(cpmList[level]);
-
-        settings.playerSetting.cpMultipliers[level] = cpmLow;
-        if (cpmHigh > 0) {
-          const multiplier = Math.sqrt(Math.pow(cpmLow, 2) - Math.pow(cpmLow, 2) / 2 + Math.pow(cpmHigh, 2) / 2);
-          settings.playerSetting.cpMultipliers[level + 0.5] = multiplier;
-        }
+  let result = options;
+  try {
+    for (const arg of args) {
+      result = result[arg];
+      if (isNullOrUndefined(result)) {
+        return defaultValue as T;
       }
-    } else if (isEqual(item.templateId, TemplateId.CombatSetting)) {
-      settings.combatOptions.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
-      settings.combatOptions.shadowBonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
-      settings.combatOptions.shadowBonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
-      settings.combatOptions.purifiedBonus = StatsPokemonGO.create(item.data.combatSettings.purifiedPokemonAttackMultiplierVsShadow);
-      settings.combatOptions.maxEnergy = item.data.combatSettings.maxEnergy;
-
-      settings.throwCharge.normal = item.data.combatSettings.chargeScoreBase;
-      settings.throwCharge.nice = item.data.combatSettings.chargeScoreNice;
-      settings.throwCharge.great = item.data.combatSettings.chargeScoreGreat;
-      settings.throwCharge.excellent = item.data.combatSettings.chargeScoreExcellent;
-    } else if (isEqual(item.templateId, TemplateId.BattleSetting)) {
-      settings.battleOptions.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
-      settings.battleOptions.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
-      settings.battleOptions.shadowBonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
-      settings.battleOptions.shadowBonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
-      settings.battleOptions.purifiedBonus = StatsPokemonGO.create(item.data.battleSettings.purifiedPokemonAttackMultiplierVsShadow);
-      settings.battleOptions.maxEnergy = item.data.battleSettings.maximumEnergy;
-      settings.battleOptions.dodgeDamageReductionPercent = item.data.battleSettings.dodgeDamageReductionPercent;
-    } else if (isInclude(item.templateId, `${TemplateId.BuddyLevel}_`)) {
-      const level = item.templateId.replace(`${TemplateId.BuddyLevel}_`, '');
-      settings.buddyFriendship[level] = new BuddyFriendship();
-      settings.buddyFriendship[level].level = toNumber(level);
-      settings.buddyFriendship[level].minNonCumulativePointsRequired = item.data.buddyLevelSettings.minNonCumulativePointsRequired;
-      settings.buddyFriendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
-    } else if (isInclude(item.templateId, `${TemplateId.FriendshipLevel}_`)) {
-      const level = item.templateId.replace(`${TemplateId.FriendshipLevel}_`, '');
-      settings.trainerFriendship[level] = new TrainerFriendship();
-      settings.trainerFriendship[level].level = toNumber(level);
-      settings.trainerFriendship[level].atkBonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
-      settings.trainerFriendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
     }
-  });
-  return settings;
+    return (isUndefined(result) ? defaultValue : result) as T;
+  } catch {
+    return defaultValue as T;
+  }
 };
 
-export const optionPokeImg = (data: APITree) =>
-  data.tree
-    .filter((item) => !isEqual(item.path, PATH_ASSET_POKEGO))
-    .map((item) => item.path.replace('.png', '').replace(PATH_ASSET_POKEGO, ''));
+export const optionSettings = (data: PokemonDataGM[], settings = new Options()): Options => {
+  data.forEach((item) => {
+    const templateHandlers: Record<string, (item: PokemonDataGM) => void> = {
+      [TemplateId.PlayerSetting]: handlePlayerSettings,
+      [TemplateId.CombatSetting]: handleCombatSettings,
+      [TemplateId.BattleSetting]: handleBattleSettings
+    };
+    
+    if (templateHandlers[item.templateId]) {
+      templateHandlers[item.templateId](item);
+      return;
+    }
+    
+    if (isInclude(item.templateId, `${TemplateId.BuddyLevel}_`)) {
+      handleBuddyLevel(item);
+    } else if (isInclude(item.templateId, `${TemplateId.FriendshipLevel}_`)) {
+      handleFriendshipLevel(item);
+    }
+  });
+  
+  return settings;
+  
+  function handlePlayerSettings(item: PokemonDataGM) {
+    settings.playerSetting.maxEncounterPlayerLevel = item.data.playerLevel.maxEncounterPlayerLevel;
+    settings.playerSetting.maxQuestEncounterPlayerLevel = item.data.playerLevel.maxQuestEncounterPlayerLevel;
+    
+    settings.playerSetting.levelUps = item.data.playerLevel.rankNum.map((value, index) => ({
+      level: index + value,
+      amount: value,
+      requiredExp: item.data.playerLevel.requiredExperience[index],
+    }));
+    
+    processCPMultipliers(item.data.playerLevel.cpMultiplier);
+  }
+  
+  function processCPMultipliers(cpmList: number[]) {
+    for (let level = MIN_LEVEL; level <= cpmList.length; level++) {
+      const cpmLow = toNumber(cpmList[level - 1]);
+      const cpmHigh = toNumber(cpmList[level]);
 
-export const optionPokeSound = (data: APITree) =>
+      settings.playerSetting.cpMultipliers[level] = cpmLow;
+      
+      if (cpmHigh > 0) {
+        const multiplier = Math.sqrt(
+          Math.pow(cpmLow, 2) - Math.pow(cpmLow, 2) / 2 + Math.pow(cpmHigh, 2) / 2
+        );
+        settings.playerSetting.cpMultipliers[level + 0.5] = multiplier;
+      }
+    }
+  }
+  
+  function handleCombatSettings(item: PokemonDataGM) {
+    settings.combatOptions.stab = item.data.combatSettings.sameTypeAttackBonusMultiplier;
+    settings.combatOptions.shadowBonus.atk = item.data.combatSettings.shadowPokemonAttackBonusMultiplier;
+    settings.combatOptions.shadowBonus.def = item.data.combatSettings.shadowPokemonDefenseBonusMultiplier;
+    settings.combatOptions.purifiedBonus = StatsPokemonGO.create(
+      item.data.combatSettings.purifiedPokemonAttackMultiplierVsShadow,
+      1
+    );
+    settings.combatOptions.maxEnergy = item.data.combatSettings.maxEnergy;
+
+    settings.throwCharge.normal = item.data.combatSettings.chargeScoreBase;
+    settings.throwCharge.nice = item.data.combatSettings.chargeScoreNice;
+    settings.throwCharge.great = item.data.combatSettings.chargeScoreGreat;
+    settings.throwCharge.excellent = item.data.combatSettings.chargeScoreExcellent;
+  }
+  
+  function handleBattleSettings(item: PokemonDataGM) {
+    settings.battleOptions.enemyAttackInterval = item.data.battleSettings.enemyAttackInterval;
+    settings.battleOptions.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
+    settings.battleOptions.shadowBonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
+    settings.battleOptions.shadowBonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
+    settings.battleOptions.purifiedBonus = StatsPokemonGO.create(
+      item.data.battleSettings.purifiedPokemonAttackMultiplierVsShadow
+    );
+    settings.battleOptions.maxEnergy = item.data.battleSettings.maximumEnergy;
+    settings.battleOptions.dodgeDamageReductionPercent = item.data.battleSettings.dodgeDamageReductionPercent;
+  }
+  
+  function handleBuddyLevel(item: PokemonDataGM) {
+    const level = item.templateId.replace(`${TemplateId.BuddyLevel}_`, '');
+    settings.buddyFriendship[level] = new BuddyFriendship();
+    settings.buddyFriendship[level].level = toNumber(level);
+    settings.buddyFriendship[level].minNonCumulativePointsRequired = 
+      item.data.buddyLevelSettings.minNonCumulativePointsRequired;
+    settings.buddyFriendship[level].unlockedTrading = item.data.buddyLevelSettings.unlockedTraits;
+  }
+  
+  function handleFriendshipLevel(item: PokemonDataGM) {
+    const level = item.templateId.replace(`${TemplateId.FriendshipLevel}_`, '');
+    settings.trainerFriendship[level] = new TrainerFriendship();
+    settings.trainerFriendship[level].level = toNumber(level);
+    settings.trainerFriendship[level].atkBonus = item.data.friendshipMilestoneSettings.attackBonusPercentage;
+    settings.trainerFriendship[level].unlockedTrading = item.data.friendshipMilestoneSettings.unlockedTrading;
+  }
+};
+
+const processAssetData = (data: APITree, extension: string) => 
   data.tree
     .filter((item) => !isEqual(item.path, PATH_ASSET_POKEGO))
-    .map((item) => item.path.replace('.wav', '').replace(PATH_ASSET_POKEGO, ''));
+    .map((item) => item.path.replace(extension, '').replace(PATH_ASSET_POKEGO, ''));
+
+export const optionPokeImg = (data: APITree) => processAssetData(data, '.png');
+export const optionPokeSound = (data: APITree) => processAssetData(data, '.wav');
 
 export const optionPokemonTypes = (data: PokemonDataGM[]) => {
   const types = new TypeSet() as unknown as DynamicObj<DynamicObj<number>>;
@@ -215,17 +257,27 @@ const optionFormNoneSpecial = (data: PokemonDataGM[], result: string[] = []) => 
 };
 
 const findPokemonData = (id: number, name: string, isDefault = false) =>
-  Object.values(pokemonStoreData).find(
-    (pokemon) =>
-      pokemon.num === id && isEqual(name, convertPokemonDataName(isDefault ? pokemon.slug : pokemon.baseFormeSlug ?? pokemon.slug))
-  );
+  Object.values(pokemonStoreData).find(pokemon => {
+    const slugToCompare = isDefault ? pokemon.slug : (pokemon.baseFormeSlug ?? pokemon.slug);
+    const convertedSlug = convertPokemonDataName(slugToCompare);
+    return pokemon.num === id && isEqual(name, convertedSlug);
+  });
 
-const convertAndReplaceNameGO = (name: string, defaultName = '') =>
-  getValueOrDefault(String, name)
-    .replace(`${replacePokemonGoForm(defaultName)}_`, '')
-    .replace(/^S$/gi, FORM_SHADOW)
-    .replace(/^A$/gi, FORM_ARMOR)
-    .replace(/GALARIAN_STANDARD/, FORM_GALARIAN);
+const convertAndReplaceNameGO = (name: string, defaultName = ''): string => {
+  const formName = getValueOrDefault(String, name);
+  let result = formName.replace(`${replacePokemonGoForm(defaultName)}_`, '');
+  const formReplacements: Record<string, string> = {
+    '^S$': FORM_SHADOW,
+    '^A$': FORM_ARMOR,
+    'GALARIAN_STANDARD': FORM_GALARIAN
+  };
+  
+  Object.entries(formReplacements).forEach(([pattern, replacement]) => {
+    result = result.replace(new RegExp(pattern, 'gi'), replacement);
+  });
+  
+  return result;
+};
 
 export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEncounter[], result: IPokemonData[] = []) => {
   pokemonDefaultForm(data).forEach((item) => {
@@ -240,7 +292,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
       pokemon.form = convertAndReplaceNameGO(pokemonSettingForm, pokemonSettings.pokemonId);
     }
     if (pokemon.id !== 201) {
-      pokemon.name = pokemonSettings.form ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
+      pokemon.name = pokemonSettings.form ? `${pokemon.pokemonId}_${pokemon.form}` : pokemonSettings.pokemonId;
     } else {
       const form = getValueOrDefault(String, pokemon.form?.toString());
       pokemon.name = form;
@@ -295,7 +347,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
 
     const pokemonBaseData = findPokemonData(
       pokemon.id,
-      pokemon.form && pokemon.pokemonType !== PokemonType.Normal ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId,
+      pokemon.form && pokemon.pokemonType !== PokemonType.Normal ? `${pokemon.pokemonId}_${pokemon.form}` : pokemonSettings.pokemonId,
       pokemon.pokemonType === PokemonType.Normal
     );
     if (pokemonBaseData) {
@@ -874,183 +926,185 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
   });
 };
 
-export const optionCombat = (data: PokemonDataGM[], types: ITypeEff) => {
-  const moves = data
-    .filter((item) => /^V\d{4}_MOVE_*/g.test(item.templateId))
-    .map((item) => {
-      const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
-      return new Move({
-        ...item.data.moveSettings,
-        id,
-        name:
-          typeof item.data.moveSettings.movementId === 'string'
+export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] => {
+  const moves = extractBasicMoves(data);
+  const sequence = extractMoveSequences(data);
+  const moveSet = processCombatMoves(data, moves, sequence);
+  return processSpecialMoves(moveSet, types);
+  
+  function extractBasicMoves(data: PokemonDataGM[]): Move[] {
+    return data
+      .filter((item) => /^V\d{4}_MOVE_*/g.test(item.templateId))
+      .map((item) => {
+        const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
+        return new Move({
+          ...item.data.moveSettings,
+          id,
+          name: typeof item.data.moveSettings.movementId === 'string'
             ? item.data.moveSettings.movementId
-            : item.templateId.replace(/^V\d{4}_MOVE_/, ''),
+            : item.templateId.replace(/^V\d{4}_MOVE_/, '')
+        });
       });
-    });
-  const sequence = data
-    .filter(
-      (item) =>
-        isInclude(item.templateId, 'sequence_') && item.data.moveSequenceSettings.sequence.find((seq) => isInclude(seq, 'sfx attacker'))
-    )
-    .map((item) => {
-      return new Sequence({
-        id: item.templateId.replace('sequence_', '').toUpperCase(),
-        path: item.data.moveSequenceSettings.sequence.find((seq) => isInclude(seq, 'sfx attacker'))?.replace('sfx attacker ', ''),
+  }
+  
+  function extractMoveSequences(data: PokemonDataGM[]): Sequence[] {
+    return data
+      .filter(
+        (item) => 
+          isInclude(item.templateId, 'sequence_') && 
+          item.data.moveSequenceSettings.sequence.find((seq) => isInclude(seq, 'sfx attacker'))
+      )
+      .map((item) => {
+        return new Sequence({
+          id: item.templateId.replace('sequence_', '').toUpperCase(),
+          path: item.data.moveSequenceSettings.sequence
+            .find((seq) => isInclude(seq, 'sfx attacker'))
+            ?.replace('sfx attacker ', '')
+        });
       });
-    });
-
-  const moveSet = data
-    .filter((item) => /^COMBAT_V\d{4}_MOVE_*/g.test(item.templateId))
-    .map((item) => {
-      const result = new Combat();
-      if (typeof item.data.combatMove.uniqueId === 'string') {
-        result.name = item.data.combatMove.uniqueId;
-      } else if (typeof item.data.combatMove.uniqueId === 'number') {
-        result.name = item.templateId.replace(/^COMBAT_V\d{4}_MOVE_/, '');
-      }
-      result.type = item.data.combatMove.type.replace(`${PokemonConfig.Type}_`, '');
-      const fastMoveType = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
-      if (item.templateId.endsWith(`_${fastMoveType}`) || isInclude(item.templateId, `_${fastMoveType}_`)) {
-        result.typeMove = TypeMove.Fast;
-      } else {
-        result.typeMove = TypeMove.Charge;
-      }
-      result.pvpPower = toNumber(item.data.combatMove.power);
-      result.pvpEnergy = toNumber(item.data.combatMove.energyDelta);
-      const seq = sequence.find((seq) => isEqual(seq.id, result.name));
-      result.sound = seq?.path;
-      const buffs = item.data.combatMove.buffs;
-      if (buffs) {
-        const buffsResult: IBuff[] = [];
-        if (buffs.attackerAttackStatStageChange) {
-          buffsResult.push(
-            Buff.create({
-              type: TypeAction.Atk,
-              target: BuffType.Attacker,
-              power: buffs.attackerAttackStatStageChange,
-              buffChance: buffs.buffActivationChance,
-            })
-          );
+  }
+  
+  function processCombatMoves(data: PokemonDataGM[], moves: Move[], sequence: Sequence[]): Combat[] {
+    return data
+      .filter((item) => /^COMBAT_V\d{4}_MOVE_*/g.test(item.templateId))
+      .map((item) => {
+        const result = new Combat();
+        
+        if (typeof item.data.combatMove.uniqueId === 'string') {
+          result.name = item.data.combatMove.uniqueId;
+        } else if (typeof item.data.combatMove.uniqueId === 'number') {
+          result.name = item.templateId.replace(/^COMBAT_V\d{4}_MOVE_/, '');
         }
-        if (buffs.attackerDefenseStatStageChange) {
-          buffsResult.push(
-            Buff.create({
-              type: TypeAction.Def,
-              target: BuffType.Attacker,
-              power: buffs.attackerDefenseStatStageChange,
-              buffChance: buffs.buffActivationChance,
-            })
-          );
+        
+        result.type = item.data.combatMove.type.replace(`${PokemonConfig.Type}_`, '');
+        const fastMoveType = getValueOrDefault(String, getKeyWithData(TypeMove, TypeMove.Fast)?.toUpperCase());
+        
+        if (item.templateId.endsWith(`_${fastMoveType}`) || isInclude(item.templateId, `_${fastMoveType}_`)) {
+          result.typeMove = TypeMove.Fast;
+        } else {
+          result.typeMove = TypeMove.Charge;
         }
-        if (buffs.targetAttackStatStageChange) {
-          buffsResult.push(
-            Buff.create({
-              type: TypeAction.Atk,
-              target: BuffType.Target,
-              power: buffs.targetAttackStatStageChange,
-              buffChance: buffs.buffActivationChance,
-            })
-          );
+        
+        result.pvpPower = toNumber(item.data.combatMove.power);
+        result.pvpEnergy = toNumber(item.data.combatMove.energyDelta);
+        
+        const seq = sequence.find((seq) => isEqual(seq.id, result.name));
+        result.sound = seq?.path;
+        
+        if (item.data.combatMove.buffs) {
+          result.buffs = processBuffs(item.data.combatMove.buffs);
         }
-        if (buffs.targetDefenseStatStageChange) {
-          buffsResult.push(
-            Buff.create({
-              type: TypeAction.Def,
-              target: BuffType.Target,
-              power: buffs.targetDefenseStatStageChange,
-              buffChance: buffs.buffActivationChance,
-            })
-          );
+        
+        const move = moves.find((move) => isEqual(move.name, result.name));
+        result.name = replaceTempMoveName(result.name);
+        
+        if (isEqual(result.name, 'STRUGGLE')) {
+          result.pveEnergy = -33;
         }
-        result.buffs = buffsResult;
-      }
-      const move = moves.find((move) => isEqual(move.name, result.name));
-      result.name = replaceTempMoveName(result.name);
-      if (isEqual(result.name, 'STRUGGLE')) {
-        result.pveEnergy = -33;
-      }
-      if (move) {
-        result.id = move.id;
-        result.track = move.id;
-        result.pvePower = move.power;
-        if (!isEqual(result.name, 'STRUGGLE')) {
-          result.pveEnergy = move.energyDelta;
+        
+        if (move) {
+          setMoveStats(result, move);
         }
-        result.durationMs = move.durationMs;
-        result.damageWindowStartMs = move.damageWindowStartMs;
-        result.damageWindowEndMs = move.damageWindowEndMs;
-        result.accuracyChance = move.accuracyChance;
-        result.criticalChance = move.criticalChance;
-        result.staminaLossScalar = move.staminaLossScalar;
-      }
-      return result;
-    });
-
-  const result = moveSet;
-  moveSet
-    .filter((move) => move.id === 281)
-    .forEach((move) => {
-      move.isMultipleWithType = true;
-      Object.keys(types)
-        .filter(
-          (type) =>
-            !isEqual(type, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Normal), EqualMode.IgnoreCaseSensitive) &&
-            !isEqual(type, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Fairy), EqualMode.IgnoreCaseSensitive)
-        )
-        .forEach((type, index) =>
-          result.push(
-            Combat.create({
-              ...move,
-              id: toNumber(`${move.id}${index}`),
-              name: `${move.name}_${type}`.replace(`_${getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Normal)?.toUpperCase()}`, ''),
-              type,
-            })
+        
+        return result;
+      });
+  }
+  
+  function processBuffs(buffs: any): IBuff[] {
+    const buffsResult: IBuff[] = [];
+    
+    if (buffs.attackerAttackStatStageChange) {
+      buffsResult.push(
+        Buff.create({
+          type: TypeAction.Atk,
+          target: BuffType.Attacker,
+          power: buffs.attackerAttackStatStageChange,
+          buffChance: buffs.buffActivationChance
+        })
+      );
+    }
+    
+    if (buffs.attackerDefenseStatStageChange) {
+      buffsResult.push(
+        Buff.create({
+          type: TypeAction.Def,
+          target: BuffType.Attacker,
+          power: buffs.attackerDefenseStatStageChange,
+          buffChance: buffs.buffActivationChance
+        })
+      );
+    }
+    
+    if (buffs.targetAttackStatStageChange) {
+      buffsResult.push(
+        Buff.create({
+          type: TypeAction.Atk,
+          target: BuffType.Target,
+          power: buffs.targetAttackStatStageChange,
+          buffChance: buffs.buffActivationChance
+        })
+      );
+    }
+    
+    if (buffs.targetDefenseStatStageChange) {
+      buffsResult.push(
+        Buff.create({
+          type: TypeAction.Def,
+          target: BuffType.Target,
+          power: buffs.targetDefenseStatStageChange,
+          buffChance: buffs.buffActivationChance
+        })
+      );
+    }
+    
+    return buffsResult;
+  }
+  
+  function setMoveStats(result: Combat, move: Move): void {
+    result.id = move.id;
+    result.track = move.id;
+    result.pvePower = move.power;
+    
+    if (!isEqual(result.name, 'STRUGGLE')) {
+      result.pveEnergy = move.energyDelta;
+    }
+    
+    result.durationMs = move.durationMs;
+    result.damageWindowStartMs = move.damageWindowStartMs;
+    result.damageWindowEndMs = move.damageWindowEndMs;
+    result.accuracyChance = move.accuracyChance;
+    result.criticalChance = move.criticalChance;
+    result.staminaLossScalar = move.staminaLossScalar;
+  }
+  
+  function processSpecialMoves(moveSet: Combat[], types: ITypeEff): Combat[] {
+    const result = [...moveSet];
+    
+    moveSet
+      .filter((move) => move.id === 281)
+      .forEach((move) => {
+        move.isMultipleWithType = true;
+        
+        Object.keys(types)
+          .filter(
+            (type) =>
+              !isEqual(type, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Normal), EqualMode.IgnoreCaseSensitive) &&
+              !isEqual(type, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Fairy), EqualMode.IgnoreCaseSensitive)
           )
-        );
-    });
-
-  data
-    .filter((item) => /^VN_BM_\d{3}$/g.test(item.templateId))
-    .forEach((item, index) => {
-      const combat = new Combat();
-      const move = item.data.moveSettings;
-      combat.id = toNumber(result[result.length - 1].id) + 1 + index;
-      combat.track = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{3}/g))[0]);
-      combat.name = move.vfxName?.replace('max_', '').toUpperCase();
-      combat.type = move.pokemonType?.replace(`${PokemonConfig.Type}_`, '');
-      combat.typeMove = TypeMove.Charge;
-      combat.durationMs = move.durationMs;
-      combat.damageWindowStartMs = move.damageWindowStartMs;
-      combat.damageWindowEndMs = move.damageWindowEndMs;
-      combat.accuracyChance = move.accuracyChance;
-      combat.staminaLossScalar = move.staminaLossScalar;
-      combat.moveType = MoveType.Dynamax;
-      result.push(combat);
-    });
-
-  data
-    .filter((item) => /^NON_COMBAT_V\d{4}_MOVE_*/g.test(item.templateId))
-    .forEach((item) => {
-      const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{4}/g))[0]);
-      const combat = result.find((c) => c.id === id);
-      if (combat) {
-        const settings = item.data.nonCombatMoveSettings;
-        if (settings) {
-          const bonus = new Bonus();
-          bonus.cost = settings.cost;
-          bonus.bonusEffect = settings.bonusEffect;
-          bonus.bonusType = getBonusType(settings.bonusType);
-          bonus.durationMs = toNumber(settings.durationMs);
-          bonus.enableMultiUse = settings.enableMultiUse;
-          bonus.enableNonCombatMove = settings.enableNonCombatMove;
-          bonus.extraDurationMs = toNumber(settings.extraDurationMs);
-          combat.bonus = bonus;
-        }
-      }
-    });
-
-  return result;
+          .forEach((type, index) =>
+            result.push(
+              Combat.create({
+                ...move,
+                id: toNumber(`${move.id}${index}`),
+                name: `${move.name}_${type}`,
+                type
+              })
+            )
+          );
+      });
+    
+    return result;
+  }
 };
 
 const setPokemonPermission = (

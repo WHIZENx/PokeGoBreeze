@@ -11,6 +11,7 @@ import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../ut
 import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import IconType from '../../Sprites/Icon/Type/Type';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
   const evoData = useSelector((state: StoreState) => state.store.data.pokemons);
@@ -121,12 +122,12 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                   {getQuestEvo(value.name).requireMove && (
                     <span className="caption">
                       {`Require move: `}
-                      <img
-                        style={{ marginRight: 5 }}
+                      <IconType
                         width={25}
                         height={25}
-                        alt="img-pokemon"
-                        src={APIService.getTypeSprite(getCombatMove(getQuestEvo(value.name).requireMove)?.type)}
+                        alt="type-logo"
+                        style={{ marginRight: 5 }}
+                        type={getCombatMove(getQuestEvo(value.name).requireMove)?.type}
                       />
                       <LinkToTop to={`../move/${getCombatMove(getQuestEvo(value.name).requireMove)?.id}`}>
                         <b>{splitAndCapitalize(getQuestEvo(value.name).requireMove, '_', ' ')}</b>

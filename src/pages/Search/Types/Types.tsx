@@ -34,6 +34,7 @@ import {
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { IStyleData } from '../../../util/models/util.model';
+import IconType from '../../../components/Sprites/Icon/Type/Type';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -76,15 +77,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     name: 'Type(s)',
     selector: (row) =>
       row.types.map((value, index) => (
-        <img
-          key={index}
-          style={{ marginRight: 10 }}
-          width={25}
-          height={25}
-          alt="img-pokemon"
-          title={capitalize(value)}
-          src={APIService.getTypeSprite(value)}
-        />
+        <IconType key={index} width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" title={capitalize(value)} type={value} />
       )),
     width: '150px',
   },

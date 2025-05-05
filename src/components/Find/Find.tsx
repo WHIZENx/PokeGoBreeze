@@ -12,6 +12,7 @@ import { TypeAction } from '../../enums/type.enum';
 import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
+import { debounce } from 'lodash';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -41,13 +42,16 @@ const Find = (props: IFindComponent) => {
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
-      const timeOutId = setTimeout(() => {
+      const debouncedSearch = debounce(() => {
         const results = pokemonList.filter(
           (item) => isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
         );
         setPokemonListFilter(results);
       });
-      return () => clearTimeout(timeOutId);
+      debouncedSearch();
+      return () => {
+        debouncedSearch.cancel();
+      };
     }
   }, [pokemonList, searchTerm]);
 

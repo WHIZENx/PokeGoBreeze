@@ -292,6 +292,16 @@ export interface IHexagonComponent {
   borderSize: number;
 }
 
+export interface IIconTypeComponent {
+  type: string | undefined;
+  className?: string;
+  style?: React.CSSProperties;
+  width?: string | number;
+  height?: string | number;
+  alt?: string;
+  title?: string;
+}
+
 export interface IIVBarComponent {
   iv: number;
   style: React.CSSProperties;
