@@ -443,7 +443,7 @@ const Pokemon = (props: IPokemonPage) => {
       }
       const nameInfo =
         router.action === Action.Pop && props.searching && !params.id
-          ? props.searching.pokemon?.fullName
+          ? props.searching.form?.form?.name
           : currentSearchingForm.form?.isDefault
           ? currentSearchingForm.form.name
           : formParams || toNumber(currentSearchingForm.form?.id) < 0
