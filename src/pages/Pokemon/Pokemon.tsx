@@ -23,6 +23,7 @@ import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
   checkPokemonIncludeShadowForm,
   convertPokemonImageName,
+  convertSexName,
   generatePokemonGoForms,
   generatePokemonGoShadowForms,
   getDmgMultiplyBonus,
@@ -442,13 +443,13 @@ const Pokemon = (props: IPokemonPage) => {
       }
       const nameInfo =
         router.action === Action.Pop && props.searching && !params.id
-          ? props.searching.pokemon?.fullName
+          ? props.searching.form?.form?.name
           : currentSearchingForm.form?.isDefault
           ? currentSearchingForm.form.name
           : formParams || toNumber(currentSearchingForm.form?.id) < 0
           ? currentSearchingForm.form?.name
           : data.name;
-      setFormName(nameInfo?.replace(/-f$/, '-female').replace(/-m$/, '-male'));
+      setFormName(convertSexName(nameInfo));
       const originForm = splitAndCapitalize(
         router.action === Action.Pop && props.searching && !params.id
           ? props.searching.form?.form?.formName
@@ -503,7 +504,7 @@ const Pokemon = (props: IPokemonPage) => {
         dispatch(SearchingActions.SetMainPokemonForm.create(currentForm));
         const originForm = splitAndCapitalize(currentForm.form.formName, '-', '-');
         setOriginForm(originForm);
-        setFormName(currentForm.form.name.replace(/-f$/, '-female').replace(/-m$/, '-male'));
+        setFormName(convertSexName(currentForm.form.name));
         checkReleased(id, currentForm);
       }
     }

@@ -63,6 +63,7 @@ import {
   FORM_SPECIAL,
   MIN_LEVEL,
   PATH_ASSET_POKEGO,
+  versionList,
 } from '../util/constants';
 import { APIUrl } from '../services/constants';
 import {
@@ -190,7 +191,7 @@ export const optionSettings = (data: PokemonDataGM[], settings = new Options()):
     settings.battleOptions.stab = item.data.battleSettings.sameTypeAttackBonusMultiplier;
     settings.battleOptions.shadowBonus.atk = item.data.battleSettings.shadowPokemonAttackBonusMultiplier;
     settings.battleOptions.shadowBonus.def = item.data.battleSettings.shadowPokemonDefenseBonusMultiplier;
-    settings.battleOptions.purifiedBonus = StatsPokemonGO.create(item.data.battleSettings.purifiedPokemonAttackMultiplierVsShadow);
+    settings.battleOptions.purifiedBonus = StatsPokemonGO.create(item.data.battleSettings.purifiedPokemonAttackMultiplierVsShadow, 1);
     settings.battleOptions.maxEnergy = item.data.battleSettings.maximumEnergy;
     settings.battleOptions.dodgeDamageReductionPercent = item.data.battleSettings.dodgeDamageReductionPercent;
   }
@@ -366,7 +367,7 @@ export const optionPokemonData = (data: PokemonDataGM[], encounter?: PokemonEnco
         };
       }
     } else if (pokemonSettings.isForceReleaseGO) {
-      optional.version = 'pokémon-go';
+      optional.version = versionList[0].toLowerCase().replace(' ', '-');
     }
 
     if (!optional.baseForme && pokemon.pokemonType !== PokemonType.Normal) {

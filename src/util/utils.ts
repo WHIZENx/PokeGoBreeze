@@ -38,6 +38,7 @@ import {
   PURIFIED_DEF_BONUS,
   SHADOW_ATK_BONUS,
   SHADOW_DEF_BONUS,
+  versionList,
 } from './constants';
 import { IPokemonFormModify, PokemonFormModifyModel, PokemonSprit, IPokemonFormDetail } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
@@ -206,6 +207,14 @@ export const getTime = (value: string | number | undefined, notFull = false) => 
   const date = Moment(new Date(isNumber(value) ? toNumber(value) : value));
   return date.format(notFull ? 'D MMMM YYYY' : 'HH:mm D MMMM YYYY');
 };
+
+export const convertSexName = (text: string | undefined) =>
+  getValueOrDefault(String, text)
+    .toLowerCase()
+    .replace(/-f$/, '-female')
+    .replace(/-m$/, '-male')
+    .replace(/-f-/, '-female-')
+    .replace(/-m-/, '-male-');
 
 export const convertModelSpritName = (text: string | undefined) =>
   getValueOrDefault(String, text)
@@ -806,7 +815,7 @@ export const generatePokemonGoForms = (
           pokemon.pokemonId?.replaceAll('_', '-')?.toLowerCase(),
           pokemon.form?.replaceAll('_', '-')?.toLowerCase(),
           pokemon.fullName?.replaceAll('_', '-')?.toLowerCase(),
-          'Pokémon-GO',
+          versionList[0].replace(' ', '-'),
           pokemon.types,
           new PokemonSprit(),
           index,
@@ -841,7 +850,7 @@ export const generatePokemonGoShadowForms = (
         p.name,
         generateFormName(form, PokemonType.Shadow),
         generateFormName(p.name, PokemonType.Shadow, '-'),
-        'Pokémon-GO',
+        versionList[0].replace(' ', '-'),
         p.types,
         new PokemonSprit(),
         index,
@@ -854,7 +863,7 @@ export const generatePokemonGoShadowForms = (
         p.name,
         generateFormName(form, PokemonType.Purified),
         generateFormName(p.name, PokemonType.Purified, '-'),
-        'Pokémon-GO',
+        versionList[0].replace(' ', '-'),
         p.types,
         new PokemonSprit(),
         index,

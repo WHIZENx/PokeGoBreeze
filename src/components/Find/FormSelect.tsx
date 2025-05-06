@@ -6,6 +6,7 @@ import Tools from './Tools';
 import {
   capitalize,
   convertPokemonImageName,
+  convertSexName,
   formIconAssets,
   generatePokemonGoForms,
   getItemSpritePath,
@@ -347,9 +348,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       <h4>
         <b>
           {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}
-          {currentForm
-            ? splitAndCapitalize(currentForm.form.name.replace(/^-f$/, '-female').replace(/^-m$/, '-male'), '-', ' ')
-            : props.name}
+          {currentForm ? splitAndCapitalize(convertSexName(currentForm.form.name), '-', ' ') : props.name}
         </b>
       </h4>
       <div className="scroll-card">
