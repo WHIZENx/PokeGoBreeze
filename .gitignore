@@ -20,6 +20,9 @@
 # vercel crash
 .vercel
 
+# eslint crash
+.eslintcache
+
 # misc
 .DS_Store
 .env

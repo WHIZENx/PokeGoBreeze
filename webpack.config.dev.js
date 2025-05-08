@@ -11,8 +11,6 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
-const TerserPlugin = require("terser-webpack-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
@@ -26,11 +24,12 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      favicon: './public/favicon.ico'
+      favicon: './public/favicon.ico',
+      inject: true
     }),
     new MiniCssExtractPlugin({
-      filename: '[contenthash].css',
-      chunkFilename: '[hash].css'
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[id].[contenthash].css'
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
@@ -45,16 +44,22 @@ module.exports = {
         }
       )
     }),
+    // Only run linting when needed, not during every build
     new TSLintPlugin({
-      files: ['./src/**/*.{ts,tsx}']
+      files: ['./src/**/*.{ts,tsx}'],
+      lintDirtyModulesOnly: true
     }),
     new ESLintPlugin({
       files: ['./src/**/*.{ts,tsx}'],
       emitWarning: false,
-      failOnWarning: false
+      failOnWarning: false,
+      lintDirtyModulesOnly: true,
+      cache: true
     }),
     new StylelintPlugin({
-      files: ['./src/**/*.scss']
+      files: ['./src/**/*.scss'],
+      lintDirtyModulesOnly: true,
+      cache: true
     }),
     new WebpackFavicons({
       src: 'src/assets/pokedex.png',
@@ -70,55 +75,60 @@ module.exports = {
       seed: manifest
     }),
     new CleanWebpackPlugin(),
-    new ReactRefreshPlugin()
+    new ReactRefreshPlugin(),
+    // Enable Hot Module Replacement
+    new webpack.HotModuleReplacementPlugin()
   ],
   optimization: {
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
-      maxInitialRequests: Infinity,
-      minSize: 0,
+      maxInitialRequests: 20, // Increase to allow for finer chunks
+      minSize: 20000, // Avoid too small chunks
       cacheGroups: {
         reactVendor: {
           test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
           name: "reactVendor",
+          priority: 30,
           enforce: true
         },
         utilityVendor: {
           test: /[\\/]node_modules[\\/](lodash|moment|moment-timezone)[\\/]/,
           name: "utilityVendor",
+          priority: 20,
           enforce: true
         },
         bootstrapVendor: {
           test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
           name: "bootstrapVendor",
+          priority: 20,
           enforce: true
         },
         vendor: {
-          test: /[\\/]node_modules[\\/](!react-bootstrap)(!lodash)(!moment)(!moment-timezone)[\\/]/,
+          test: /[\\/]node_modules[\\/]/,
           name: "vendor",
-          enforce: true
+          priority: 10,
+          enforce: true,
+          reuseExistingChunk: true
         }
       },
     },
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          output: {
-            comments: false,
-          },
-          sourceMap: true,
-        }
-      }),
-      new CssMinimizerPlugin()
-    ]
+    // Only add minimizers for production
+    minimizer: []
   },
   mode: 'development',
   bail: false,
   target: 'web',
-  devtool: 'inline-source-map',
+  // Use eval-source-map for better debugging but faster builds than inline-source-map
+  devtool: 'eval-source-map',
   performance: {
     hints: false,
+  },
+  cache: {
+    type: 'filesystem', // Use filesystem caching for faster rebuilds
+    buildDependencies: {
+      config: [__filename] // Invalidate cache when webpack config changes
+    }
   },
   devServer: {
     static: [
@@ -130,15 +140,21 @@ module.exports = {
     compress: true,
     port: 9000,
     hot: true,
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false, // Don't show warnings in browser overlay for cleaner dev experience
+      },
+      progress: true,
+    },
   },
   entry: {
-    src: ['./src/index.tsx'],
-    vendors: ['react']
+    main: './src/index.tsx',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[contenthash].js',
-    chunkFilename: "[chunkhash].js",
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[chunkhash].js',
     publicPath,
     clean: true,
   },
@@ -158,19 +174,25 @@ module.exports = {
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
-        use: ["ts-loader"],
+        use: [{
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true, // Speed up compilation in development
+            experimentalWatchApi: true,
+          }
+        }],
       },
       {
         test: /\.s?css$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
-            "style-loader",
+            "style-loader", // Use style-loader in development for HMR
             {
               loader: 'css-loader',
               options: {
                 url: true,
-                importLoaders: 1,
+                importLoaders: 2,
                 sourceMap: true
               }
             },
@@ -190,26 +212,29 @@ module.exports = {
               options: {
                 sassOptions: {
                   indentWidth: 2,
-                  sourceMap: true,
                 },
+                sourceMap: true,
               },
             }
         ]
       },
       {
-        test: /\.(gif|png|jpe?g|svg)$/i,
+        test: /\.(gif|png|jpe?g)$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
-        use: [
-          'file-loader',
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              bypassOnDebug: true, // webpack@1.x
-              disable: true, // webpack@2.x and newer
-            },
-          },
-        ],
+        type: 'asset', // Use asset modules instead of file-loader
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8 * 1024 // 8kb - inline if smaller
+          }
+        }
+      },
+      {
+        test: /\.svg$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[hash][ext][query]'
+        }
       }
     ]
   }

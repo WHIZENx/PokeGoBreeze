@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const manifest = require('./public/manifest.json');
+const { merge } = require('webpack-merge');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TSLintPlugin = require('tslint-webpack-plugin');
@@ -14,6 +15,7 @@ const WebpackFavicons = require('webpack-favicons');
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -22,28 +24,14 @@ const publicPath = process.env.PUBLIC_URL || '/';
 
 dotenv.config();
 
-module.exports = {
+const common = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
       favicon: './public/favicon.ico'
     }),
-    new MiniCssExtractPlugin({
-      filename: '[contenthash].css',
-      chunkFilename: '[hash].css'
-    }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
-    }),
-    new webpack.DefinePlugin({
-      'process.env': JSON.stringify(
-        { REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
-          REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
-          REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
-          NODE_ENV: JSON.stringify('production'),
-          DEBUG: true
-        }
-      )
     }),
     new TSLintPlugin({
       files: ['./src/**/*.{ts,tsx}'],
@@ -74,7 +62,6 @@ module.exports = {
     new ReactRefreshPlugin()
   ],
   optimization: {
-    minimize: false,
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
@@ -103,22 +90,10 @@ module.exports = {
         }
       },
     },
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          output: {
-            comments: false,
-          },
-          sourceMap: true,
-        }
-      }),
-      new CssMinimizerPlugin()
-    ]
   },
   mode: 'production',
   bail: true,
   target: 'web',
-  devtool: false,
   performance: {
     hints: false,
   },
@@ -163,42 +138,6 @@ module.exports = {
         use: ["ts-loader"],
       },
       {
-        test: /\.s?css$/i,
-        include: path.resolve(__dirname, 'src'),
-        exclude: /node_modules/,
-        use: [
-            MiniCssExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              options: {
-                url: true,
-                importLoaders: 1,
-                sourceMap: true
-              }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                postcssOptions: {
-                    plugins: [
-                      "postcss-preset-env",
-                      autoprefixer
-                    ]
-                  }
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                sassOptions: {
-                  indentWidth: 2,
-                },
-                sourceMap: true,
-              },
-            },
-        ]
-      },
-      {
         test: /\.(gif|png|jpe?g|svg)$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
@@ -216,3 +155,115 @@ module.exports = {
     ]
   }
 }
+
+module.exports = merge(common, {
+  mode: 'production',
+  bail: true,
+  devtool: false, // No source maps in production
+  
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].[contenthash].css',
+      chunkFilename: 'css/[id].[contenthash].css',
+    }),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify({
+        REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
+        REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
+        REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
+        NODE_ENV: 'production',
+        DEBUG: false,
+      }),
+    }),
+    new CompressionPlugin({
+      algorithm: 'gzip',
+      test: /\.(js|css|html|svg)$/,
+      threshold: 10240, // Only compress assets > 10kb
+      minRatio: 0.8, // Only compress if compression ratio is better than 0.8
+    }),
+  ],
+  
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          parse: {
+            ecma: 8,
+          },
+          compress: {
+            ecma: 5,
+            warnings: false,
+            comparisons: false,
+            inline: 2,
+            drop_console: true,
+          },
+          mangle: {
+            safari10: true,
+          },
+          output: {
+            ecma: 5,
+            comments: false,
+            ascii_only: true,
+          },
+        },
+      }),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: [
+            'default',
+            {
+              discardComments: { removeAll: true },
+              minifyFontValues: { removeQuotes: false },
+            },
+          ],
+        },
+      }),
+    ],
+  },
+  
+  module: {
+    rules: [
+      {
+        test: /\.s?css$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2,
+              sourceMap: false,
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  require('postcss-preset-env')({
+                    autoprefixer: {
+                      flexbox: 'no-2009',
+                    },
+                    stage: 3,
+                  }),
+                  autoprefixer,
+                ],
+              },
+              sourceMap: false,
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                indentWidth: 2,
+                outputStyle: 'compressed',
+              },
+              sourceMap: false,
+            },
+          },
+        ],
+      },
+    ],
+  },
+});
