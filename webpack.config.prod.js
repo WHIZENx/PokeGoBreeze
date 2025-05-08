@@ -142,26 +142,22 @@ const common = {
         test: /\.(gif|png|jpe?g|svg)$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10 * 1024, // 10kb
+          },
+        },
         use: [
           'file-loader',
           {
             loader: 'image-webpack-loader',
             options: {
               disable: false, // Enable in production
-              mozjpeg: {
-                progressive: true,
-                quality: 65,
-              },
-              optipng: {
-                enabled: true,
-              },
-              pngquant: {
-                quality: [0.65, 0.9],
-                speed: 4,
-              },
-              gifsicle: {
-                interlaced: false,
-              },
+              mozjpeg: false,
+              optipng: false,
+              pngquant: false,
+              gifsicle: false,
             },
           },
         ],
