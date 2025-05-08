@@ -470,12 +470,12 @@ const DpsTdo = () => {
 
       let boolReleaseGO = true;
       if (releasedGO) {
-        const result = checkPokemonGO(
+        const isReleasedGO = checkPokemonGO(
           item.pokemon.num,
           getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
           data.pokemons
         );
-        boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, result?.releasedGO);
+        boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
       }
       const isEnableOptions =
         enableShadow || enableSpecial || enableMega || enableGMax || enablePrimal || enableLegendary || enableMythic || enableUltraBeast;

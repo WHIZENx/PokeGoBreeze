@@ -470,7 +470,7 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
 };
 
 export const checkPokemonGO = (id: number, name: string | undefined, details: IPokemonData[]) =>
-  details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name));
+  details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
 
 export const convertFormGif = (name: string | undefined) => {
   if (isEqual(name, 'nidoran')) {
@@ -910,7 +910,7 @@ export const retrieveMoves = (
       FORM_NORMAL
     );
     const result = resultFilter.find((item) => isEqual(item.fullName, pokemonForm) || isEqual(item.form, pokemonForm));
-    return result ?? resultFilter[0];
+    return PokemonData.copy(result ?? resultFilter[0]);
   }
 };
 
@@ -933,7 +933,7 @@ export const getPokemonDetails = (
         (item) => item.num === id && (item.form === FORM_NORMAL || (item.baseForme && isEqual(item.baseForme, item.form)))
       );
     }
-    return pokemonForm ?? new PokemonData();
+    return PokemonData.copyWithCreate(pokemonForm);
   }
   return new PokemonData();
 };

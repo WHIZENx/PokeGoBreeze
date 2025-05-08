@@ -559,6 +559,22 @@ export class PokemonData implements IPokemonData {
   cannotDynamax = true;
   pokemonType = PokemonType.Normal;
 
+  static copy(pokemon: IPokemonData | undefined) {
+    if (pokemon) {
+      const obj = new PokemonData();
+      Object.assign(obj, pokemon);
+      return obj;
+    }
+  }
+
+  static copyWithCreate(pokemon: IPokemonData | undefined) {
+    const obj = new PokemonData();
+    if (pokemon) {
+      Object.assign(obj, pokemon);
+    }
+    return obj;
+  }
+
   static create(pokemon: PokemonDataModel, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
     Object.entries(genList).forEach(([key, value]) => {

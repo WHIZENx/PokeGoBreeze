@@ -1371,12 +1371,12 @@ const RaidBattle = () => {
                   return true;
                 }
                 if (obj.pokemon) {
-                  const result = checkPokemonGO(
+                  const isReleasedGO = checkPokemonGO(
                     obj.pokemon.num,
                     getValueOrDefault(String, obj.pokemon.fullName, obj.pokemon.pokemonId),
                     data.pokemons
                   );
-                  return getValueOrDefault(Boolean, obj.pokemon.releasedGO, result?.releasedGO);
+                  return getValueOrDefault(Boolean, obj.pokemon.releasedGO, isReleasedGO);
                 }
                 return false;
               })

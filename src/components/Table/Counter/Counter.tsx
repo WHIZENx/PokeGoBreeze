@@ -304,8 +304,7 @@ const Counter = (props: ICounterComponent) => {
               return true;
             }
             if (!pokemon.releasedGO) {
-              const result = checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemons);
-              return result?.releasedGO;
+              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemons);
             }
             return pokemon.releasedGO;
           })
