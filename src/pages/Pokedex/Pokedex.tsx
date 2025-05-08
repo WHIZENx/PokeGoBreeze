@@ -22,7 +22,7 @@ import {
   Switch,
   useTheme,
 } from '@mui/material';
-import { StoreState, StatsState } from '../../store/models/state.model';
+import { StoreState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { PokemonClass, PokemonType, TypeTheme } from '../../enums/type.enum';
@@ -97,7 +97,6 @@ const Pokedex = () => {
   const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const stats = useSelector((state: StatsState) => state.stats);
 
   const [types, setTypes] = useState(getKeysObj(new TypeEff()));
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
@@ -526,9 +525,6 @@ const Pokedex = () => {
               id={row.id}
               types={row.types}
               pokemonStat={row.goStats}
-              atkMaxStats={stats?.attack.maxStats}
-              defMaxStats={stats?.defense.maxStats}
-              staMaxStats={stats?.stamina.maxStats}
               icon={icon}
               releasedGO={row.releasedGO}
               styleList={styleSheet.current}

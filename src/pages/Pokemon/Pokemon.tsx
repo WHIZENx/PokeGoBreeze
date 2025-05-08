@@ -33,6 +33,7 @@ import {
   getPokemonFormWithNoneSpecialForm,
   getPokemonType,
   getValidPokemonImgPath,
+  isSpecialFormType,
   splitAndCapitalize,
 } from '../../util/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
@@ -414,10 +415,12 @@ const Pokemon = (props: IPokemonPage) => {
     const formName = getValueOrDefault(String, form.form?.name, form.form?.formName, form.defaultName);
     const details = getPokemonDetails(pokemonData, id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType || PokemonType.Normal;
-    const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
-    const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
-    const sta = details.statsGO.sta;
-    details.statsGO = StatsPokemonGO.create(atk, def, sta);
+    if (isSpecialFormType(details.pokemonType)) {
+      const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
+      const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
+      const sta = details.statsGO.sta;
+      details.statsGO = StatsPokemonGO.create(atk, def, sta);
+    }
     const pokemonDetails = PokemonDetail.setData(details);
     dispatch(SearchingActions.SetMainPokemonDetails.create(pokemonDetails));
     return details.releasedGO;

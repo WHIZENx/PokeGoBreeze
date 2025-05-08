@@ -228,12 +228,7 @@ const Move = (props: IMovePage) => {
           return true;
         }
         if (!pokemon.releasedGO) {
-          const result = checkPokemonGO(
-            pokemon.num,
-            convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')),
-            data.pokemons
-          );
-          return result?.releasedGO;
+          return checkPokemonGO(pokemon.num, convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')), data.pokemons);
         }
         return pokemon.releasedGO;
       })

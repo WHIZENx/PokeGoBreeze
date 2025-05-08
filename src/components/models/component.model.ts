@@ -56,9 +56,6 @@ export interface ICardPokemonInfoComponent {
   isDefaultImg: boolean;
   types: string[];
   pokemonStat: IStatsPokemonGO;
-  atkMaxStats: number | undefined;
-  defMaxStats: number | undefined;
-  staMaxStats: number | undefined;
   icon: string | undefined;
   releasedGO: boolean;
   styleList: IStyleData[];
