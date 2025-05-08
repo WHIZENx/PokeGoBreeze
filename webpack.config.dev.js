@@ -41,18 +41,14 @@ module.exports = {
         DEBUG: true,
       }),
     }),
-    // Only run linting when needed, not during every build
     new ESLintPlugin({
+      extensions: ['js', 'jsx', 'ts', 'tsx'],
       files: ['./src/**/*.{ts,tsx}'],
-      emitWarning: false,
+      emitWarning: true,
       failOnWarning: false,
-      lintDirtyModulesOnly: true,
-      cache: true,
     }),
     new StylelintPlugin({
       files: ['./src/**/*.scss'],
-      lintDirtyModulesOnly: true,
-      cache: true,
     }),
     new WebpackFavicons({
       src: 'src/assets/pokedex.png',
@@ -69,8 +65,6 @@ module.exports = {
     }),
     new CleanWebpackPlugin(),
     new ReactRefreshPlugin(),
-    // Enable Hot Module Replacement
-    new webpack.HotModuleReplacementPlugin(),
   ],
   optimization: {
     runtimeChunk: 'single',

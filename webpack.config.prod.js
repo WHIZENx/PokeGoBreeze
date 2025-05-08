@@ -32,7 +32,9 @@ const common = {
       process: 'process/browser',
     }),
     new ESLintPlugin({
+      extensions: ['js', 'jsx', 'ts', 'tsx'],
       files: ['./src/**/*.{ts,tsx}'],
+      emitWarning: true,
       failOnWarning: true,
     }),
     new StylelintPlugin({
@@ -137,8 +139,21 @@ const common = {
           {
             loader: 'image-webpack-loader',
             options: {
-              bypassOnDebug: true, // webpack@1.x
-              disable: true, // webpack@2.x and newer
+              disable: false, // Enable in production
+              mozjpeg: {
+                progressive: true,
+                quality: 65,
+              },
+              optipng: {
+                enabled: true,
+              },
+              pngquant: {
+                quality: [0.65, 0.9],
+                speed: 4,
+              },
+              gifsicle: {
+                interlaced: false,
+              },
             },
           },
         ],
@@ -151,7 +166,6 @@ module.exports = merge(common, {
   mode: 'production',
   bail: true,
   devtool: false, // No source maps in production
-
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'css/[name].[contenthash].css',
@@ -167,22 +181,37 @@ module.exports = merge(common, {
       }),
     }),
     new CompressionPlugin({
-      algorithm: 'gzip',
+      algorithm: 'brotliCompress',
       test: /\.(js|css|html|svg)$/,
-      threshold: 10240, // Only compress assets > 10kb
-      minRatio: 0.8, // Only compress if compression ratio is better than 0.8
+      threshold: 8192,
+      minRatio: 0.8,
+      deleteOriginalAssets: false,
+      filename: '[path][base].br',
     }),
   ],
-
   optimization: {
     minimize: true,
+    moduleIds: 'deterministic',
+    chunkIds: 'deterministic',
+    mangleExports: 'deterministic',
+    concatenateModules: true,
+    usedExports: true,
+    sideEffects: true,
+    splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: Infinity,
+      minSize: 20000, // Increase from 0 to avoid too many small chunks
+      maxSize: 244000, // Add a maximum chunk size
+    },
     minimizer: [
       new TerserPlugin({
+        parallel: true,
         terserOptions: {
           parse: {
             ecma: 8,
           },
           compress: {
+            passes: 2,
             ecma: 5,
             warnings: false,
             comparisons: false,
@@ -212,9 +241,28 @@ module.exports = merge(common, {
       }),
     ],
   },
-
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename],
+    },
+    name: 'production-cache',
+  },
   module: {
     rules: [
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true, // Skip type-checking for faster builds
+              experimentalWatchApi: true,
+            },
+          },
+        ],
+      },
       {
         test: /\.s?css$/i,
         use: [
