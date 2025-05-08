@@ -142,12 +142,6 @@ const common = {
         test: /\.(gif|png|jpe?g|svg)$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 10 * 1024, // 10kb
-          },
-        },
         use: [
           'file-loader',
           {
