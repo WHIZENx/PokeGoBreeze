@@ -153,7 +153,7 @@ const common = {
           {
             loader: 'image-webpack-loader',
             options: {
-              disable: false, // Enable in production
+              disable: true, // Disable in production
               mozjpeg: false,
               optipng: false,
               pngquant: false,
