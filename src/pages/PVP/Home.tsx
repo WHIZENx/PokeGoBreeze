@@ -42,7 +42,10 @@ const PVPHome = () => {
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
+    LocalStorageConfig.Timestamp,
+    JSON.stringify(new LocalTimeStamp())
+  );
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
@@ -132,7 +135,10 @@ const PVPHome = () => {
       {rank ? (
         <div className="group-selected">
           {rank.cp.map((value, index) => (
-            <Link key={index} to={`/pvp/rankings/${rank.id}/${value}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toString()}`}>
+            <Link
+              key={index}
+              to={`/pvp/rankings/${rank.id}/${value}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toString()}`}
+            >
               <Button className="btn btn-form" style={{ height: 200 }}>
                 <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
                 <div>

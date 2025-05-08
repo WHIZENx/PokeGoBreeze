@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
@@ -6,7 +5,6 @@ const autoprefixer = require('autoprefixer');
 const manifest = require('./public/manifest.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TSLintPlugin = require('tslint-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -25,41 +23,36 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
       favicon: './public/favicon.ico',
-      inject: true
+      inject: true,
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
-      chunkFilename: '[id].[contenthash].css'
+      chunkFilename: '[id].[contenthash].css',
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
     }),
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(
-        { REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
-          REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
-          REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
-          NODE_ENV: JSON.stringify('development'),
-          DEBUG: true
-        }
-      )
+      'process.env': JSON.stringify({
+        REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
+        REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
+        REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
+        NODE_ENV: JSON.stringify('development'),
+        DEBUG: true,
+      }),
     }),
     // Only run linting when needed, not during every build
-    new TSLintPlugin({
-      files: ['./src/**/*.{ts,tsx}'],
-      lintDirtyModulesOnly: true
-    }),
     new ESLintPlugin({
       files: ['./src/**/*.{ts,tsx}'],
       emitWarning: false,
       failOnWarning: false,
       lintDirtyModulesOnly: true,
-      cache: true
+      cache: true,
     }),
     new StylelintPlugin({
       files: ['./src/**/*.scss'],
       lintDirtyModulesOnly: true,
-      cache: true
+      cache: true,
     }),
     new WebpackFavicons({
       src: 'src/assets/pokedex.png',
@@ -67,17 +60,17 @@ module.exports = {
       background: '#000',
       theme_color: '#000',
       icons: {
-        favicons: true
-      }
+        favicons: true,
+      },
     }),
     new WebpackManifestPlugin({
       fileName: './manifest.json',
-      seed: manifest
+      seed: manifest,
     }),
     new CleanWebpackPlugin(),
     new ReactRefreshPlugin(),
     // Enable Hot Module Replacement
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
   ],
   optimization: {
     runtimeChunk: 'single',
@@ -88,33 +81,33 @@ module.exports = {
       cacheGroups: {
         reactVendor: {
           test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: "reactVendor",
+          name: 'reactVendor',
           priority: 30,
-          enforce: true
+          enforce: true,
         },
         utilityVendor: {
           test: /[\\/]node_modules[\\/](lodash|moment|moment-timezone)[\\/]/,
-          name: "utilityVendor",
+          name: 'utilityVendor',
           priority: 20,
-          enforce: true
+          enforce: true,
         },
         bootstrapVendor: {
           test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
-          name: "bootstrapVendor",
+          name: 'bootstrapVendor',
           priority: 20,
-          enforce: true
+          enforce: true,
         },
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name: "vendor",
+          name: 'vendor',
           priority: 10,
           enforce: true,
-          reuseExistingChunk: true
-        }
+          reuseExistingChunk: true,
+        },
       },
     },
     // Only add minimizers for production
-    minimizer: []
+    minimizer: [],
   },
   mode: 'development',
   bail: false,
@@ -127,14 +120,11 @@ module.exports = {
   cache: {
     type: 'filesystem', // Use filesystem caching for faster rebuilds
     buildDependencies: {
-      config: [__filename] // Invalidate cache when webpack config changes
-    }
+      config: [__filename], // Invalidate cache when webpack config changes
+    },
   },
   devServer: {
-    static: [
-      { directory: path.resolve(__dirname, 'dist') },
-      { directory: path.resolve(__dirname, 'public') },
-    ],
+    static: [{ directory: path.resolve(__dirname, 'dist') }, { directory: path.resolve(__dirname, 'public') }],
     historyApiFallback: true,
     open: true,
     compress: true,
@@ -162,11 +152,11 @@ module.exports = {
     modules: [path.join(__dirname, 'src'), 'node_modules'],
     alias: {
       react: path.join(__dirname, 'node_modules', 'react'),
-      process: "process/browser"
+      process: 'process/browser',
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     fallback: {
-      'process/browser': require.resolve('process/browser')
+      'process/browser': require.resolve('process/browser'),
     },
   },
   module: {
@@ -174,49 +164,48 @@ module.exports = {
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
-        use: [{
-          loader: "ts-loader",
-          options: {
-            transpileOnly: true, // Speed up compilation in development
-            experimentalWatchApi: true,
-          }
-        }],
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true, // Speed up compilation in development
+              experimentalWatchApi: true,
+            },
+          },
+        ],
       },
       {
         test: /\.s?css$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
-            "style-loader", // Use style-loader in development for HMR
-            {
-              loader: 'css-loader',
-              options: {
-                url: true,
-                importLoaders: 2,
-                sourceMap: true
-              }
+          'style-loader', // Use style-loader in development for HMR
+          {
+            loader: 'css-loader',
+            options: {
+              url: true,
+              importLoaders: 2,
+              sourceMap: true,
             },
-            {
-              loader: 'postcss-loader',
-              options: {
-                postcssOptions: {
-                    plugins: [
-                      "postcss-preset-env",
-                      autoprefixer
-                    ]
-                  }
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                sassOptions: {
-                  indentWidth: 2,
-                },
-                sourceMap: true,
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: ['postcss-preset-env', autoprefixer],
               },
-            }
-        ]
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                indentWidth: 2,
+              },
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(gif|png|jpe?g)$/i,
@@ -225,17 +214,17 @@ module.exports = {
         type: 'asset', // Use asset modules instead of file-loader
         parser: {
           dataUrlCondition: {
-            maxSize: 8 * 1024 // 8kb - inline if smaller
-          }
-        }
+            maxSize: 8 * 1024, // 8kb - inline if smaller
+          },
+        },
       },
       {
         test: /\.svg$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'images/[hash][ext][query]'
-        }
-      }
-    ]
-  }
-}
+          filename: 'images/[hash][ext][query]',
+        },
+      },
+    ],
+  },
+};

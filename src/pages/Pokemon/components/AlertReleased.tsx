@@ -16,10 +16,20 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
           <h5 className="text-danger" style={{ margin: 0 }}>
             {'* '}
             <b>
-              {splitAndCapitalize(getPokemonFormWithNoneSpecialForm(props.formName?.replaceAll(' ', '-'), props.pokemonType), '_', ' ')}
+              {splitAndCapitalize(
+                getPokemonFormWithNoneSpecialForm(props.formName?.replaceAll(' ', '-'), props.pokemonType),
+                '_',
+                ' '
+              )}
             </b>
             {' not released in Pokémon GO'}
-            <img width={50} height={50} style={{ marginLeft: 10 }} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(props.icon)} />
+            <img
+              width={50}
+              height={50}
+              style={{ marginLeft: 10 }}
+              alt="pokemon-go-icon"
+              src={APIService.getPokemonGoIcon(props.icon)}
+            />
           </h5>
         </Alert>
       )}

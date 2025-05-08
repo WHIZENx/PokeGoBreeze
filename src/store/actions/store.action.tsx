@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 import { ICPM } from '../../core/models/cpm.model';
 import { IOptions } from '../../core/models/options.model';

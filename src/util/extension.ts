@@ -4,11 +4,20 @@ import { TableColumnModify } from './models/overrides/data-table.model';
 import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
 import { FloatPaddingOption } from './models/extension.model';
 
-// eslint-disable-next-line no-unused-vars
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
-type Constructor = NumberConstructor | StringConstructor | BooleanConstructor | ArrayConstructor | ObjectConstructor | DateConstructor;
+type Constructor =
+  | NumberConstructor
+  | StringConstructor
+  | BooleanConstructor
+  | ArrayConstructor
+  | ObjectConstructor
+  | DateConstructor;
 
-export const getValueOrDefault = <T>(type: Constructor, value: T | undefined | null, ...defaultValues: (T | null | undefined)[]) => {
+export const getValueOrDefault = <T>(
+  type: Constructor,
+  value: T | undefined | null,
+  ...defaultValues: (T | null | undefined)[]
+) => {
   if (isNullOrUndefined(value) || isEmpty(value?.toString())) {
     const defaultValue = defaultValues.find((v) => !isNullOrUndefined(v));
     switch (type.name) {
@@ -182,7 +191,11 @@ export const isIncludeListBetween = (
     getValueOrDefault(
       Array,
       valueList?.map((i) =>
-        !isNullOrUndefined(i) ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''
+        !isNullOrUndefined(i)
+          ? mode === IncludeMode.IncludeIgnoreCaseSensitive
+            ? i.toString().toUpperCase()
+            : i.toString()
+          : ''
       )
     )
   );
@@ -190,7 +203,11 @@ export const isIncludeListBetween = (
     getValueOrDefault(
       Array,
       includesValueList?.map((i) =>
-        !isNullOrUndefined(i) ? (mode === IncludeMode.IncludeIgnoreCaseSensitive ? i.toString().toUpperCase() : i.toString()) : ''
+        !isNullOrUndefined(i)
+          ? mode === IncludeMode.IncludeIgnoreCaseSensitive
+            ? i.toString().toUpperCase()
+            : i.toString()
+          : ''
       )
     )
   );
@@ -198,13 +215,13 @@ export const isIncludeListBetween = (
 };
 
 export const Count = <T>(array: T[], value: T, key?: string, mode = EqualMode.CaseSensitive) =>
-  array.filter((item) => isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode)).length;
+  array.filter((item) =>
+    isEqual(key ? (item as unknown as DynamicObj<string>)[key] : (item as string), value as string, mode)
+  ).length;
 
-// eslint-disable-next-line no-unused-vars
 type DynamicKeyObj<T> = { [Property in keyof T]: string };
 export const getPropertyName = <T extends object, S extends string = ''>(
   obj: T | null | undefined,
-  // eslint-disable-next-line no-unused-vars
   expression: (x: DynamicKeyObj<T>) => string
 ): S => {
   if (isNullOrUndefined(obj)) {

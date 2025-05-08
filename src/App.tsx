@@ -61,7 +61,10 @@ function App() {
   const router = useSelector((state: RouterState) => state.router);
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
+    LocalStorageConfig.Timestamp,
+    JSON.stringify(new LocalTimeStamp())
+  );
   const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.Assets, '');
   const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.Sounds, '');
 
@@ -121,7 +124,17 @@ function App() {
   const loadData = (signal: AbortSignal, delay = LOAD_DATA_DELAY) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
-        resolve(await loadTimestamp(dispatch, stateTimestamp, setStateTimestamp, setStateImage, setStateSound, stateImage, stateSound));
+        resolve(
+          await loadTimestamp(
+            dispatch,
+            stateTimestamp,
+            setStateTimestamp,
+            setStateImage,
+            setStateSound,
+            stateImage,
+            stateSound
+          )
+        );
       };
 
       const debouncedResolve = debounce(resolveHandler, delay);

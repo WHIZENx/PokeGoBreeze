@@ -7,7 +7,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import './SearchBattle.scss';
 import APIService from '../../../services/API.service';
 
-import { capitalize, convertPokemonAPIDataName, generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
+import {
+  capitalize,
+  convertPokemonAPIDataName,
+  generateParamForm,
+  getValidPokemonImgPath,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
@@ -20,7 +26,12 @@ import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { MIN_IV, MAX_IV, FORM_NORMAL, MIN_CP } from '../../../util/constants';
 import { IEvolution } from '../../../core/models/evolution.model';
-import { BattleBaseStats, IBattleBaseStats, IQueryStatesEvoChain, StatsCalculate } from '../../../util/models/calculate.model';
+import {
+  BattleBaseStats,
+  IBattleBaseStats,
+  IQueryStatesEvoChain,
+  StatsCalculate,
+} from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -139,7 +150,9 @@ const FindBattle = () => {
   const getEvoChain = useCallback(
     (id: number) => {
       const currentForm = convertPokemonAPIDataName(pokemon?.form?.form?.formName, FORM_NORMAL);
-      let curr = dataStore.pokemons.filter((item) => item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm)));
+      let curr = dataStore.pokemons.filter((item) =>
+        item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm))
+      );
       if (!isNotEmpty(curr)) {
         if (currentForm === FORM_NORMAL) {
           curr = dataStore.pokemons.filter((item) => id === item.num && isEqual(currentForm, item.form));
@@ -200,7 +213,9 @@ const FindBattle = () => {
             );
           } else {
             currBastStats = BattleBaseStats.create({
-              ...Object.values(value.battleLeague).reduce((a, b) => (!a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b)),
+              ...Object.values(value.battleLeague).reduce((a, b) =>
+                !a ? b : !b ? a : toNumber(a.ratio) > toNumber(b.ratio) ? a : b
+              ),
               id: value.id,
               name: value.name,
               form: value.form,
@@ -323,7 +338,9 @@ const FindBattle = () => {
 
   const getTextColorRatio = (value: number | undefined) => {
     value = toNumber(value);
-    return `rank-${value === 100 ? 'max' : value >= 90 ? 'excellent' : value >= 80 ? 'great' : value >= 70 ? 'nice' : 'normal'}`;
+    return `rank-${
+      value === 100 ? 'max' : value >= 90 ? 'excellent' : value >= 80 ? 'great' : value >= 70 ? 'nice' : 'normal'
+    }`;
   };
 
   const LeaveToggle = (props: Toggle) => {
@@ -508,7 +525,11 @@ const FindBattle = () => {
                     <div className="sub-body">
                       <div className="row justify-content-center league-info-content" style={{ margin: 0 }}>
                         {value.map((item, index) => (
-                          <div className="col d-inline-block evo-item-desc justify-content-center" key={index} style={{ padding: 0 }}>
+                          <div
+                            className="col d-inline-block evo-item-desc justify-content-center"
+                            key={index}
+                            style={{ padding: 0 }}
+                          >
                             <div className="pokemon-best-league">
                               <LinkToTop
                                 to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -534,11 +555,18 @@ const FindBattle = () => {
                             ) : (
                               <Fragment>
                                 <hr />
-                                <div className="element-top d-flex justify-content-center" style={{ textAlign: 'start' }}>
+                                <div
+                                  className="element-top d-flex justify-content-center"
+                                  style={{ textAlign: 'start' }}
+                                >
                                   {item.battleLeague.little.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />
+                                        <img
+                                          alt="pokemon-model"
+                                          height={32}
+                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
+                                        />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
                                       </h6>
                                       <li>
@@ -559,8 +587,11 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center" style={{ marginRight: 5 }}>
-                                            {toNumber(item.battleLeague.little.resultBetweenCandy) + getCandyEvo(value, item.id)}
-                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
+                                            {toNumber(item.battleLeague.little.resultBetweenCandy) +
+                                              getCandyEvo(value, item.id)}
+                                            <span className="d-inline-block caption text-success">
+                                              (+{getCandyEvo(value, item.id)})
+                                            </span>
                                           </span>
                                           <CandyXL id={pokemon?.form?.defaultId} />
                                           {item.battleLeague.little.resultBetweenXLCandy}
@@ -579,7 +610,11 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)} />
+                                        <img
+                                          alt="pokemon-model"
+                                          height={32}
+                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
+                                        />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
@@ -588,11 +623,18 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div className="element-top d-flex justify-content-center" style={{ textAlign: 'start' }}>
+                                <div
+                                  className="element-top d-flex justify-content-center"
+                                  style={{ textAlign: 'start' }}
+                                >
                                   {item.battleLeague.great.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />
+                                        <img
+                                          alt="pokemon-model"
+                                          height={32}
+                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
+                                        />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
                                       </h6>
                                       <li>
@@ -613,8 +655,11 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {toNumber(item.battleLeague.great.resultBetweenCandy) + getCandyEvo(value, item.id)}
-                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
+                                            {toNumber(item.battleLeague.great.resultBetweenCandy) +
+                                              getCandyEvo(value, item.id)}
+                                            <span className="d-inline-block caption text-success">
+                                              (+{getCandyEvo(value, item.id)})
+                                            </span>
                                           </span>
                                           <CandyXL id={pokemon?.form?.defaultId} />
                                           {item.battleLeague.great.resultBetweenXLCandy}
@@ -633,7 +678,11 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)} />
+                                        <img
+                                          alt="pokemon-model"
+                                          height={32}
+                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
+                                        />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
@@ -642,11 +691,18 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div className="element-top d-flex justify-content-center" style={{ textAlign: 'start' }}>
+                                <div
+                                  className="element-top d-flex justify-content-center"
+                                  style={{ textAlign: 'start' }}
+                                >
                                   {item.battleLeague.ultra.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />
+                                        <img
+                                          alt="pokemon-model"
+                                          height={32}
+                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
+                                        />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
                                       </h6>
                                       <li>
@@ -667,8 +723,11 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {toNumber(item.battleLeague.ultra.resultBetweenCandy) + getCandyEvo(value, item.id)}
-                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
+                                            {toNumber(item.battleLeague.ultra.resultBetweenCandy) +
+                                              getCandyEvo(value, item.id)}
+                                            <span className="d-inline-block caption text-success">
+                                              (+{getCandyEvo(value, item.id)})
+                                            </span>
                                           </span>
                                           <CandyXL id={pokemon?.form?.defaultId} />
                                           {item.battleLeague.ultra.resultBetweenXLCandy}
@@ -687,7 +746,11 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)} />
+                                        <img
+                                          alt="pokemon-model"
+                                          height={32}
+                                          src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
+                                        />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">
@@ -696,7 +759,10 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div className="element-top d-flex justify-content-center" style={{ textAlign: 'start' }}>
+                                <div
+                                  className="element-top d-flex justify-content-center"
+                                  style={{ textAlign: 'start' }}
+                                >
                                   {item.battleLeague.master.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
@@ -721,8 +787,11 @@ const FindBattle = () => {
                                         <span className="d-flex align-items-center">
                                           <Candy id={item.id} style={{ marginRight: 5 }} />
                                           <span className="d-flex align-items-center">
-                                            {toNumber(item.battleLeague.master.resultBetweenCandy) + getCandyEvo(value, item.id)}
-                                            <span className="d-inline-block caption text-success">(+{getCandyEvo(value, item.id)})</span>
+                                            {toNumber(item.battleLeague.master.resultBetweenCandy) +
+                                              getCandyEvo(value, item.id)}
+                                            <span className="d-inline-block caption text-success">
+                                              (+{getCandyEvo(value, item.id)})
+                                            </span>
                                           </span>
                                           <CandyXL id={pokemon?.form?.defaultId} />
                                           {item.battleLeague.master.resultBetweenXLCandy}

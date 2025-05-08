@@ -44,14 +44,27 @@ const Stats = (props: IStatsComponent) => {
 
   useEffect(() => {
     const atk = setStats(
-      props.stats || props.statATK ? (props.statATK ? toNumber(props.statATK.attack) : calBaseATK(props.stats, true)) : 0,
+      props.stats || props.statATK
+        ? props.statATK
+          ? toNumber(props.statATK.attack)
+          : calBaseATK(props.stats, true)
+        : 0,
       TypeAction.Atk
     );
     const def = setStats(
-      props.stats || props.statDEF ? (props.statDEF ? toNumber(props.statDEF.defense) : calBaseDEF(props.stats, true)) : 0,
+      props.stats || props.statDEF
+        ? props.statDEF
+          ? toNumber(props.statDEF.defense)
+          : calBaseDEF(props.stats, true)
+        : 0,
       TypeAction.Def
     );
-    const sta = props.stats || props.statSTA ? (props.statSTA ? toNumber(props.statSTA.stamina) : calBaseSTA(props.stats, true)) : 0;
+    const sta =
+      props.stats || props.statSTA
+        ? props.statSTA
+          ? toNumber(props.statSTA.stamina)
+          : calBaseSTA(props.stats, true)
+        : 0;
     const prod = setStats(
       props.stats || props.statProd ? (props.statProd ? toNumber(props.statProd.product) : atk * def * sta) : 0,
       TypeAction.Prod
@@ -67,7 +80,8 @@ const Stats = (props: IStatsComponent) => {
     });
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType]);
 
-  const setStats = (stats: number, type: TypeAction) => Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
+  const setStats = (stats: number, type: TypeAction) =>
+    Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
 
   return (
     <div className="element-top" style={{ color: theme.palette.constant.text }}>
@@ -75,7 +89,9 @@ const Stats = (props: IStatsComponent) => {
         tag="ATK"
         class="bg-danger"
         statsPercent={currentStats.atkPercent}
-        rank={availableRankGO.attackRank ? availableRankGO.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'}
+        rank={
+          availableRankGO.attackRank ? availableRankGO.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'
+        }
         pokemonStatsRank={props.pokemonStats?.attack}
         currentStats={currentStats.stats.atk}
         id={props.id}
@@ -88,7 +104,9 @@ const Stats = (props: IStatsComponent) => {
         tag="DEF"
         class="bg-success"
         statsPercent={currentStats.defPercent}
-        rank={availableRankGO.defenseRank ? availableRankGO.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'}
+        rank={
+          availableRankGO.defenseRank ? availableRankGO.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'
+        }
         pokemonStatsRank={props.pokemonStats?.defense}
         currentStats={currentStats.stats.def}
         id={props.id}
@@ -101,7 +119,9 @@ const Stats = (props: IStatsComponent) => {
         tag="STA"
         class="bg-info"
         statsPercent={currentStats.staPercent}
-        rank={availableRankGO.staminaRank ? availableRankGO.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'}
+        rank={
+          availableRankGO.staminaRank ? availableRankGO.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'
+        }
         pokemonStatsRank={props.pokemonStats?.stamina}
         currentStats={currentStats.stats.sta}
         id={props.id}
@@ -114,7 +134,13 @@ const Stats = (props: IStatsComponent) => {
         tag="Stat Prod"
         class="bg-warning"
         statsPercent={currentStats.prodPercent}
-        rank={availableRankGO.statProdRank ? availableRankGO.statProdRank : props.statProd ? props.statProd.rank : 'Unavailable'}
+        rank={
+          availableRankGO.statProdRank
+            ? availableRankGO.statProdRank
+            : props.statProd
+            ? props.statProd.rank
+            : 'Unavailable'
+        }
         pokemonStatsRank={props.pokemonStats?.statProd}
         currentStats={currentStats.stats.prod}
         optionalStats={`${toFloatWithPadding(currentStats.stats.prod / Math.pow(10, 6), 2)} MM`}

@@ -1,8 +1,14 @@
-/* eslint-disable no-unused-vars */
 import { Combat, IBuff, ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
-import { IStatsAtk, IStatsDef, IStatsPokemonGO, IStatsProd, IStatsSta, StatsPokemonGO } from '../../../core/models/stats.model';
+import {
+  IStatsAtk,
+  IStatsDef,
+  IStatsPokemonGO,
+  IStatsProd,
+  IStatsSta,
+  StatsPokemonGO,
+} from '../../../core/models/stats.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { toNumber } from '../../../util/extension';
 import { IBattleBaseStats } from '../../../util/models/calculate.model';

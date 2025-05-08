@@ -53,7 +53,9 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
       selectOnFocus={true}
       clearOnBlur={true}
       handleHomeEndKeys={true}
-      renderOption={(props, option) => <li {...props} key={props.key}>{`Level: ${option.level} | CP: ${option.CP}`}</li>}
+      renderOption={(props, option) => (
+        <li {...props} key={props.key}>{`Level: ${option.level} | CP: ${option.CP}`}</li>
+      )}
       sx={{
         width: !isNullOrUndefined(props.width) ? props.width : 'auto',
         minWidth: !isNullOrUndefined(props.minWidth) ? props.minWidth : 'auto',

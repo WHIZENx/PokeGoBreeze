@@ -8,7 +8,9 @@ const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
   const renderTypeEffective = (effType: EffectiveType) => (
     <div className="col-lg-4" style={{ marginBottom: 15 }}>
       <div className="h-100">
-        <h6 className={`d-flex justify-content-center ${getKeyWithData(EffectiveType, effType)?.toLowerCase()}-bg-text`}>
+        <h6
+          className={`d-flex justify-content-center ${getKeyWithData(EffectiveType, effType)?.toLowerCase()}-bg-text`}
+        >
           <b>{getKeyWithData(EffectiveType, effType)}</b>
         </h6>
         <hr className="w-100" />

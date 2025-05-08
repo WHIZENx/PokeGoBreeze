@@ -62,14 +62,17 @@ export const loadPokeGOLogo = (dispatch: Dispatch) =>
         if (isNotEmpty(files)) {
           const res = files.find((item) => isInclude(item.filename, 'Images/App Icons/'));
           if (res) {
-            dispatch(StoreActions.SetLogoPokeGO.create(res.filename.replace('Images/App Icons/', '').replace('.png', '')));
+            dispatch(
+              StoreActions.SetLogoPokeGO.create(res.filename.replace('Images/App Icons/', '').replace('.png', ''))
+            );
           }
         }
       }
     })
     .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
 
-export const loadBaseCPM = (dispatch: Dispatch) => dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
+export const loadBaseCPM = (dispatch: Dispatch) =>
+  dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
 
 export const loadCPM = (dispatch: Dispatch, cpmList: DynamicObj<number>) =>
   dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, MIN_LEVEL, Object.keys(cpmList).length)));
@@ -110,7 +113,16 @@ export const loadTimestamp = async (
           sounds: !stateSound || JSON.parse(stateTimestamp).sounds !== soundTimestamp,
         };
         dispatch(SpinnerActions.SetPercent.create(40));
-        loadGameMaster(dispatch, imageRoot.data, soundsRoot.data, timestampLoaded, setStateImage, setStateSound, stateImage, stateSound);
+        loadGameMaster(
+          dispatch,
+          imageRoot.data,
+          soundsRoot.data,
+          timestampLoaded,
+          setStateImage,
+          setStateSound,
+          stateImage,
+          stateSound
+        );
       }
     })
     .catch((e: ErrorEvent) => {
@@ -145,6 +157,7 @@ export const loadGameMaster = (
         return;
       }
       let pokemonEncounter = new Database<PokemonEncounter>();
+      // eslint-disable-next-line no-useless-catch
       try {
         pokemonEncounter = await getDbPokemonEncounter();
       } catch (e) {
@@ -282,7 +295,9 @@ export const loadPVP = (
             const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
             const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 
-            const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(pvpFindFirstPath(pvp.data.tree, 'training/analysis/'));
+            const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(
+              pvpFindFirstPath(pvp.data.tree, 'training/analysis/')
+            );
 
             setStatePVP(JSON.stringify(pvpData));
 

@@ -93,7 +93,11 @@ const Sticker = () => {
           {selectPokemon
             .filter((value) => toNumber(value.id) > 0)
             .map((value, index) => (
-              <option key={index} value={toNumber(value.id)}>{`#${value.id} ${splitAndCapitalize(value.name, '_', ' ')}`}</option>
+              <option key={index} value={toNumber(value.id)}>{`#${value.id} ${splitAndCapitalize(
+                value.name,
+                '_',
+                ' '
+              )}`}</option>
             ))}
         </Form.Select>
       </div>
@@ -120,7 +124,11 @@ const Sticker = () => {
                   placement="auto"
                   overlay={
                     <PopoverConfig id={`popover-sticker-${index}`}>
-                      {value.isShop ? <span>Available in shop sell pack: {value.pack.join(', ')}</span> : <span>Unavailable in shop</span>}
+                      {value.isShop ? (
+                        <span>Available in shop sell pack: {value.pack.join(', ')}</span>
+                      ) : (
+                        <span>Unavailable in shop</span>
+                      )}
                     </PopoverConfig>
                   }
                 >

@@ -36,7 +36,9 @@ const Search = () => {
     form: router.action === Action.Pop && searching ? searching.form?.form?.formName : '',
     pokemonType: PokemonType.Normal,
   });
-  const [selectId, setSelectId] = useState(router.action === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1);
+  const [selectId, setSelectId] = useState(
+    router.action === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1
+  );
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showResult, setShowResult] = useState(false);
@@ -55,7 +57,8 @@ const Search = () => {
     if (isNotEmpty(pokemonList)) {
       const debounced = debounce(() => {
         const results = pokemonList.filter(
-          (item) => isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
+          (item) =>
+            isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
         );
         setPokemonListFilter(results);
       });
@@ -129,7 +132,12 @@ const Search = () => {
         </h1>
         <div className="input-group mb-12 element-top">
           <div className="input-group-prepend">
-            <span className={combineClasses('input-group-text', theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : '')}>
+            <span
+              className={combineClasses(
+                'input-group-text',
+                theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : ''
+              )}
+            >
               Search
             </span>
           </div>
@@ -137,7 +145,10 @@ const Search = () => {
             id="input-search-pokemon"
             type="text"
             autoComplete="false"
-            className={combineClasses('form-control', `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
+            className={combineClasses(
+              'form-control',
+              `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
+            )}
             style={{ backgroundColor: theme.palette.background.input, color: theme.palette.text.primary, zIndex: 1 }}
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}
@@ -151,7 +162,11 @@ const Search = () => {
             onKeyUp={(e) => onChangeSelect(e, e.currentTarget.value)}
           />
         </div>
-        <div className="result" style={{ display: showResult ? 'block' : 'none' }} onScroll={listenScrollEvent.bind(this)}>
+        <div
+          className="result"
+          style={{ display: showResult ? 'block' : 'none' }}
+          onScroll={listenScrollEvent.bind(this)}
+        >
           <Fragment>
             {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
               <div

@@ -20,7 +20,13 @@ const ChargedBar = (props: IChargedBarComponent) => {
   return (
     <Fragment>
       {[...Array(props.barCount).keys()].map((_, index) => (
-        <Bar className={props.color} key={index} barCount={props.barCount} width={props.width ?? 120} gap={props.gap ?? 5} />
+        <Bar
+          className={props.color}
+          key={index}
+          barCount={props.barCount}
+          width={props.width ?? 120}
+          gap={props.gap ?? 5}
+        />
       ))}
     </Fragment>
   );

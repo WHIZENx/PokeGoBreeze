@@ -25,7 +25,11 @@ const Find = (props: IFindComponent) => {
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
 
   const [id, setId] = useState(
-    searching ? (props.isObjective ? toNumber(searching?.object?.pokemon?.id, 1) : toNumber(searching.current?.pokemon?.id, 1)) : 1
+    searching
+      ? props.isObjective
+        ? toNumber(searching?.object?.pokemon?.id, 1)
+        : toNumber(searching.current?.pokemon?.id, 1)
+      : 1
   );
 
   const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
@@ -44,7 +48,8 @@ const Find = (props: IFindComponent) => {
     if (isNotEmpty(pokemonList)) {
       const debouncedSearch = debounce(() => {
         const results = pokemonList.filter(
-          (item) => isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
+          (item) =>
+            isInclude(item.name, searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) || isInclude(item.id, searchTerm)
         );
         setPokemonListFilter(results);
       });
@@ -130,8 +135,10 @@ const Find = (props: IFindComponent) => {
       className="col d-flex justify-content-center"
       style={{
         height:
-          Math.min(eachCounter.current, pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).length + 1) *
-          cardHeight.current,
+          Math.min(
+            eachCounter.current,
+            pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).length + 1
+          ) * cardHeight.current,
         maxHeight: eachCounter.current * cardHeight.current,
       }}
     >

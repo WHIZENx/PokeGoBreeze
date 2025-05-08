@@ -1,4 +1,9 @@
-import { PokemonRaidModel, PokemonMoveData, IPokemonData, IPokemonMoveData } from '../../../../core/models/pokemon.model';
+import {
+  PokemonRaidModel,
+  PokemonMoveData,
+  IPokemonData,
+  IPokemonMoveData,
+} from '../../../../core/models/pokemon.model';
 
 export interface ITrainerBattle {
   pokemons: PokemonRaidModel[];

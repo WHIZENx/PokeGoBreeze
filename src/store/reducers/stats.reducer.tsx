@@ -22,8 +22,12 @@ const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData, 
       statsGO: StatsPokemonGO.create(atkShadow, defShadow, value.statsGO.sta),
     })
   );
-  const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk));
-  const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def));
+  const atkPurification = Math.round(
+    value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk)
+  );
+  const defPurification = Math.round(
+    value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def)
+  );
   result.push(
     new ArrayStats({
       id: value.num,

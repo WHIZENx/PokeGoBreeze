@@ -26,7 +26,14 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
-import { IPokemonStatsRanking, PokemonStatsRanking, StatsAtk, StatsDef, StatsProd, StatsSta } from '../../../core/models/stats.model';
+import {
+  IPokemonStatsRanking,
+  PokemonStatsRanking,
+  StatsAtk,
+  StatsDef,
+  StatsProd,
+  StatsSta,
+} from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { FORM_NORMAL, Params } from '../../../util/constants';
@@ -110,7 +117,15 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
     name: 'Type(s)',
     selector: (row) =>
       getValueOrDefault(Array, row.types).map((value, index) => (
-        <IconType key={index} width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" title={capitalize(value)} type={value} />
+        <IconType
+          key={index}
+          width={25}
+          height={25}
+          style={{ marginRight: 10 }}
+          alt="type-logo"
+          title={capitalize(value)}
+          type={value}
+        />
       )),
     width: '150px',
   },
@@ -178,7 +193,8 @@ const StatsRanking = () => {
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
-      when: (row) => !isNullOrUndefined(select) && row.fullName === select.fullName && row.pokemonType === select.pokemonType,
+      when: (row) =>
+        !isNullOrUndefined(select) && row.fullName === select.fullName && row.pokemonType === select.pokemonType,
       style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
     },
   ];
@@ -218,8 +234,12 @@ const StatsRanking = () => {
         }),
       })
     );
-    const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk));
-    const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def));
+    const atkPurification = Math.round(
+      value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk)
+    );
+    const defPurification = Math.round(
+      value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def)
+    );
     const prodPurification = atkPurification * defPurification * sta;
     result.push(
       PokemonStatsRanking.create({
@@ -300,7 +320,11 @@ const StatsRanking = () => {
     }
   };
 
-  const setSortedPokemonRanking = (primary: IPokemonStatsRanking, secondary: IPokemonStatsRanking, sortBy: string[]) => {
+  const setSortedPokemonRanking = (
+    primary: IPokemonStatsRanking,
+    secondary: IPokemonStatsRanking,
+    sortBy: string[]
+  ) => {
     const a = primary as unknown as DynamicObj<DynamicObj<number>>;
     const b = secondary as unknown as DynamicObj<DynamicObj<number>>;
     return b[sortBy[0]][sortBy[1]] - a[sortBy[0]][sortBy[1]];
@@ -443,7 +467,11 @@ const StatsRanking = () => {
                   ? isEqual(pokemon.num, search) ||
                     isEqual(splitAndCapitalize(pokemon.name, '-', ' '), search, EqualMode.IgnoreCaseSensitive)
                   : isInclude(pokemon.num, search) ||
-                    isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive))
+                    isInclude(
+                      splitAndCapitalize(pokemon.name, '-', ' '),
+                      search,
+                      IncludeMode.IncludeIgnoreCaseSensitive
+                    ))
             )
         );
       }, 100);
@@ -542,11 +570,21 @@ const StatsRanking = () => {
           />
         </div>
         <FormControlLabel
-          control={<Checkbox checked={isMatch} onChange={(_, check) => setFilters(Filter.create({ ...filters, isMatch: check }))} />}
+          control={
+            <Checkbox
+              checked={isMatch}
+              onChange={(_, check) => setFilters(Filter.create({ ...filters, isMatch: check }))}
+            />
+          }
           label="Match Pokémon"
         />
         <FormControlLabel
-          control={<Checkbox checked={releasedGO} onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))} />}
+          control={
+            <Checkbox
+              checked={releasedGO}
+              onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
+            />
+          }
           label={
             <span className="d-flex align-items-center">
               Released in GO
@@ -591,7 +629,10 @@ const StatsRanking = () => {
         customStyles={customStyles}
         paginationDefaultPage={page}
         paginationPerPage={defaultPerPages}
-        paginationRowsPerPageOptions={Array.from({ length: 3 }, (_, i) => defaultPerPages * Math.max(0, i - 1) + defaultPerPages * (i + 1))}
+        paginationRowsPerPageOptions={Array.from(
+          { length: 3 },
+          (_, i) => defaultPerPages * Math.max(0, i - 1) + defaultPerPages * (i + 1)
+        )}
         progressPending={!isNotEmpty(pokemonList)}
         progressComponent={
           <div style={{ margin: 10 }}>

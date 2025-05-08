@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum RewardType {
   Pokemon = 'pokemon',
   ItemLoot = 'itemLoot',

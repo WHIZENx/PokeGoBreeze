@@ -26,7 +26,9 @@ const FromChange = (props: IFromChangeComponent) => {
 
   const getImageList = (id: number | undefined) => {
     const model = assets.find((item) => item.id === id);
-    const result = UniqValueInArray(model?.image.map((item) => item.form)).map((value) => new PokemonModelComponent(value, model?.image));
+    const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
+      (value) => new PokemonModelComponent(value, model?.image)
+    );
     return result;
   };
 
@@ -46,7 +48,9 @@ const FromChange = (props: IFromChangeComponent) => {
     if (isNotEmpty(pokeAssets) && props.pokemonData?.fullName) {
       const defaultForm = getValueOrDefault(String, props.pokemonData.form?.replaceAll('-', '_'), FORM_NORMAL);
       setDataSrc(
-        pokeAssets.find((pokemon) => isInclude(pokemon.form, defaultForm, IncludeMode.IncludeIgnoreCaseSensitive))?.image?.at(0)?.default
+        pokeAssets
+          .find((pokemon) => isInclude(pokemon.form, defaultForm, IncludeMode.IncludeIgnoreCaseSensitive))
+          ?.image?.at(0)?.default
       );
       setPokemon(props.pokemonData);
     }
@@ -55,122 +59,156 @@ const FromChange = (props: IFromChangeComponent) => {
   const findPokeAsset = (name: string) =>
     pokeAssets
       ?.find((pokemon) =>
-        isEqual(pokemon.form, name.replace('_COMPLETE_', '_').replace(`${props.pokemonData?.pokemonId?.toUpperCase()}_`, ''))
+        isEqual(
+          pokemon.form,
+          name.replace('_COMPLETE_', '_').replace(`${props.pokemonData?.pokemonId?.toUpperCase()}_`, '')
+        )
       )
       ?.image.at(0)?.default;
 
   return (
     <Fragment>
-      {props.currentId && props.pokemonData && props.currentId === props.pokemonData.id && pokemon && pokemon.formChange && (
-        <>
-          <h4 className="title-evo">
-            <b>Form Change</b>
-          </h4>
-          {isNotEmpty(pokeAssets) && (
-            <div className="element-top d-flex">
-              <div className="d-flex flex-column align-items-center justify-content-center w-50">
-                <div className="d-flex flex-column align-items-center justify-content-center" id="form-origin">
-                  <div style={{ width: 96 }}>
-                    <img
-                      className="pokemon-sprite-large"
-                      alt="pokemon-model"
-                      src={APIService.getPokemonModel(dataSrc, props.pokemonData.id)}
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, props.pokemonData?.id, dataSrc);
-                      }}
-                    />
+      {props.currentId &&
+        props.pokemonData &&
+        props.currentId === props.pokemonData.id &&
+        pokemon &&
+        pokemon.formChange && (
+          <>
+            <h4 className="title-evo">
+              <b>Form Change</b>
+            </h4>
+            {isNotEmpty(pokeAssets) && (
+              <div className="element-top d-flex">
+                <div className="d-flex flex-column align-items-center justify-content-center w-50">
+                  <div className="d-flex flex-column align-items-center justify-content-center" id="form-origin">
+                    <div style={{ width: 96 }}>
+                      <img
+                        className="pokemon-sprite-large"
+                        alt="pokemon-model"
+                        src={APIService.getPokemonModel(dataSrc, props.pokemonData.id)}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = getValidPokemonImgPath(
+                            e.currentTarget.src,
+                            props.pokemonData?.id,
+                            dataSrc
+                          );
+                        }}
+                      />
+                    </div>
+                    <span className="caption" style={{ color: theme.palette.customText.caption }}>
+                      {splitAndCapitalize(props.pokemonData.name?.replaceAll('-', '_'), '_', ' ')}
+                    </span>
                   </div>
-                  <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                    {splitAndCapitalize(props.pokemonData.name?.replaceAll('-', '_'), '_', ' ')}
-                  </span>
                 </div>
-              </div>
-              <div className="d-flex flex-column align-items-center justify-content-center w-50" style={{ rowGap: 15 }}>
+                <div
+                  className="d-flex flex-column align-items-center justify-content-center w-50"
+                  style={{ rowGap: 15 }}
+                >
+                  {pokemon.formChange.map((value, key) => (
+                    <Fragment key={key}>
+                      {value.availableForm.map((name, index) => (
+                        <div
+                          key={index}
+                          className="d-flex flex-column align-items-center justify-content-center"
+                          id={`form-${key}-${index}`}
+                        >
+                          <div style={{ width: 96 }}>
+                            <img
+                              className="pokemon-sprite-large"
+                              alt="pokemon-model"
+                              src={APIService.getPokemonModel(findPokeAsset(name), pokemon.id)}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getValidPokemonImgPath(
+                                  e.currentTarget.src,
+                                  pokemon.id,
+                                  findPokeAsset(name)
+                                );
+                              }}
+                            />
+                          </div>
+                          <span className="caption" style={{ color: theme.palette.customText.caption }}>
+                            {splitAndCapitalize(name.replace(`_${FORM_NORMAL}`, ''), '_', ' ')}
+                          </span>
+                        </div>
+                      ))}
+                    </Fragment>
+                  ))}
+                </div>
                 {pokemon.formChange.map((value, key) => (
                   <Fragment key={key}>
-                    {value.availableForm.map((name, index) => (
-                      <div key={index} className="d-flex flex-column align-items-center justify-content-center" id={`form-${key}-${index}`}>
-                        <div style={{ width: 96 }}>
-                          <img
-                            className="pokemon-sprite-large"
-                            alt="pokemon-model"
-                            src={APIService.getPokemonModel(findPokeAsset(name), pokemon.id)}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.id, findPokeAsset(name));
-                            }}
-                          />
-                        </div>
-                        <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                          {splitAndCapitalize(name.replace(`_${FORM_NORMAL}`, ''), '_', ' ')}
-                        </span>
-                      </div>
+                    {value.availableForm.map((_, index) => (
+                      <Xarrow
+                        labels={{
+                          end: (
+                            <div className="position-absolute" style={{ left: '-5rem' }}>
+                              {value.candyCost && (
+                                <span
+                                  className="d-flex align-items-center caption"
+                                  style={{ color: theme.palette.customText.caption, width: 'max-content' }}
+                                >
+                                  <Candy
+                                    id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id}
+                                  />
+                                  <LinkToTop
+                                    style={{ marginLeft: 2 }}
+                                    to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(
+                                      pokemon.form
+                                    )}`}
+                                  >
+                                    {splitAndCapitalize(value.componentPokemonSettings?.pokedexId, '_', ' ')}
+                                  </LinkToTop>
+                                  <span style={{ marginLeft: 2 }}>{`x${value.candyCost}`}</span>
+                                </span>
+                              )}
+                              {value.stardustCost && (
+                                <span
+                                  className="d-flex align-items-center caption"
+                                  style={{
+                                    color: theme.palette.customText.caption,
+                                    width: 'max-content',
+                                    marginTop: 5,
+                                  }}
+                                >
+                                  <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
+                                    <img
+                                      alt="img-stardust"
+                                      height={20}
+                                      src={APIService.getItemSprite('stardust_painted')}
+                                    />
+                                  </div>
+                                  <span style={{ marginLeft: 2 }}>{`x${value.stardustCost}`}</span>
+                                </span>
+                              )}
+                              <span
+                                className="d-flex flex-column caption"
+                                style={{ color: theme.palette.customText.caption, width: 'max-content', marginTop: 5 }}
+                              >
+                                {value.item && (
+                                  <>
+                                    <span>Required Item</span>
+                                    <span>{splitAndCapitalize(value.item, '_', ' ')}</span>
+                                    <span>{`Cost count: ${value.itemCostCount}`}</span>
+                                  </>
+                                )}
+                              </span>
+                            </div>
+                          ),
+                        }}
+                        key={index}
+                        strokeWidth={2}
+                        path="grid"
+                        start="form-origin"
+                        end={`form-${key}-${index}`}
+                      />
                     ))}
                   </Fragment>
                 ))}
               </div>
-              {pokemon.formChange.map((value, key) => (
-                <Fragment key={key}>
-                  {value.availableForm.map((_, index) => (
-                    <Xarrow
-                      labels={{
-                        end: (
-                          <div className="position-absolute" style={{ left: '-5rem' }}>
-                            {value.candyCost && (
-                              <span
-                                className="d-flex align-items-center caption"
-                                style={{ color: theme.palette.customText.caption, width: 'max-content' }}
-                              >
-                                <Candy id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id} />
-                                <LinkToTop
-                                  style={{ marginLeft: 2 }}
-                                  to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(pokemon.form)}`}
-                                >
-                                  {splitAndCapitalize(value.componentPokemonSettings?.pokedexId, '_', ' ')}
-                                </LinkToTop>
-                                <span style={{ marginLeft: 2 }}>{`x${value.candyCost}`}</span>
-                              </span>
-                            )}
-                            {value.stardustCost && (
-                              <span
-                                className="d-flex align-items-center caption"
-                                style={{ color: theme.palette.customText.caption, width: 'max-content', marginTop: 5 }}
-                              >
-                                <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
-                                  <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                                </div>
-                                <span style={{ marginLeft: 2 }}>{`x${value.stardustCost}`}</span>
-                              </span>
-                            )}
-                            <span
-                              className="d-flex flex-column caption"
-                              style={{ color: theme.palette.customText.caption, width: 'max-content', marginTop: 5 }}
-                            >
-                              {value.item && (
-                                <>
-                                  <span>Required Item</span>
-                                  <span>{splitAndCapitalize(value.item, '_', ' ')}</span>
-                                  <span>{`Cost count: ${value.itemCostCount}`}</span>
-                                </>
-                              )}
-                            </span>
-                          </div>
-                        ),
-                      }}
-                      key={index}
-                      strokeWidth={2}
-                      path="grid"
-                      start="form-origin"
-                      end={`form-${key}-${index}`}
-                    />
-                  ))}
-                </Fragment>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
     </Fragment>
   );
 };

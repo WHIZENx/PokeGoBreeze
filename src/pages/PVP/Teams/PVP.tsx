@@ -14,7 +14,12 @@ import {
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
 } from '../../../util/utils';
-import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
+import {
+  computeBgType,
+  findAssetForm,
+  getPokemonBattleLeagueIcon,
+  getPokemonBattleLeagueName,
+} from '../../../util/compute';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -62,7 +67,10 @@ const TeamPVP = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
+  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
+    LocalStorageConfig.Timestamp,
+    JSON.stringify(new LocalTimeStamp())
+  );
   const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
   const params = useParams();
 
@@ -112,7 +120,10 @@ const TeamPVP = () => {
     let pokemonType = PokemonType.Normal;
     if (isInclude(speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
       pokemonType = PokemonType.Shadow;
-    } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {
+    } else if (
+      isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
+      isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)
+    ) {
       pokemonType = PokemonType.Purified;
     }
 
@@ -148,7 +159,8 @@ const TeamPVP = () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
         const cp = toNumber(params.cp);
-        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp))).data;
+        const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp)))
+          .data;
         if (!file) {
           return;
         }
@@ -205,7 +217,17 @@ const TeamPVP = () => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [dispatch, params.cp, params.serie, rankingData, pvp, dataStore.combats, dataStore.pokemons, dataStore.assets, statsRanking]);
+  }, [
+    dispatch,
+    params.cp,
+    params.serie,
+    rankingData,
+    pvp,
+    dataStore.combats,
+    dataStore.pokemons,
+    dataStore.assets,
+    statsRanking,
+  ]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
@@ -222,7 +244,9 @@ const TeamPVP = () => {
             />
             <h2>
               <b>
-                {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}
+                {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)
+                  ? getPokemonBattleLeagueName(cp)
+                  : league.name}
               </b>
             </h2>
           </div>
@@ -241,10 +265,14 @@ const TeamPVP = () => {
   };
 
   const setSortedPokemonTeam = (primary: ITeams, secondary: ITeams) => {
-    const sortedColumn = getPropertyName(primary || secondary, (o) => (sortedBy === SortType.Games ? o.games : o.teamScore));
+    const sortedColumn = getPropertyName(primary || secondary, (o) =>
+      sortedBy === SortType.Games ? o.games : o.teamScore
+    );
     const a = primary as unknown as DynamicObj<number>;
     const b = secondary as unknown as DynamicObj<number>;
-    return sortedTeam === SortDirectionType.DESC ? b[sortedColumn] - a[sortedColumn] : a[sortedColumn] - b[sortedColumn];
+    return sortedTeam === SortDirectionType.DESC
+      ? b[sortedColumn] - a[sortedColumn]
+      : a[sortedColumn] - b[sortedColumn];
   };
 
   const findMoveByTag = (nameSet: string[], tag: string) => {
@@ -302,7 +330,12 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedBy === SortType.TeamScore ? 'ranking-selected' : '')}>
+              <span
+                className={combineClasses(
+                  'ranking-sort ranking-score',
+                  sortedBy === SortType.TeamScore ? 'ranking-selected' : ''
+                )}
+              >
                 Team Score
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -318,7 +351,10 @@ const TeamPVP = () => {
               }}
             >
               <span
-                className={combineClasses('ranking-sort ranking-score', sortedBy === SortType.IndividualScore ? 'ranking-selected' : '')}
+                className={combineClasses(
+                  'ranking-sort ranking-score',
+                  sortedBy === SortType.IndividualScore ? 'ranking-selected' : ''
+                )}
               >
                 Individual Score
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
@@ -334,7 +370,12 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedBy === SortType.Games ? 'ranking-selected' : '')}>
+              <span
+                className={combineClasses(
+                  'ranking-sort ranking-score',
+                  sortedBy === SortType.Games ? 'ranking-selected' : ''
+                )}
+              >
                 Usage
                 {sorted ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -382,7 +423,11 @@ const TeamPVP = () => {
               <div className="ranking-group w-100" style={{ columnGap: 15 }}>
                 <div>
                   <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-                    <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
+                    <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(
+                      value.name,
+                      '-',
+                      ' '
+                    )}`}</b>
                     <TypeInfo
                       isHideText={true}
                       isBlock={true}
@@ -455,7 +500,12 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedTeamBy === SortType.TeamScore ? 'ranking-selected' : '')}>
+              <span
+                className={combineClasses(
+                  'ranking-sort ranking-score',
+                  sortedTeamBy === SortType.TeamScore ? 'ranking-selected' : ''
+                )}
+              >
                 Team Score
                 {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -470,7 +520,12 @@ const TeamPVP = () => {
                 }
               }}
             >
-              <span className={combineClasses('ranking-sort ranking-score', sortedTeamBy === SortType.Games ? 'ranking-selected' : '')}>
+              <span
+                className={combineClasses(
+                  'ranking-sort ranking-score',
+                  sortedTeamBy === SortType.Games ? 'ranking-selected' : ''
+                )}
+              >
                 Usage
                 {sortedTeam ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
               </span>
@@ -496,7 +551,11 @@ const TeamPVP = () => {
                                   src={APIService.getPokemonModel(value.form, value.id)}
                                   onError={(e) => {
                                     e.currentTarget.onerror = null;
-                                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                                    e.currentTarget.src = getValidPokemonImgPath(
+                                      e.currentTarget.src,
+                                      value.id,
+                                      value.form
+                                    );
                                   }}
                                 />
                               </PokemonIconType>
@@ -528,13 +587,18 @@ const TeamPVP = () => {
                         style={{
                           padding: 15,
                           gap: '1rem',
-                          backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, styleSheet.current),
+                          backgroundImage: computeBgType(
+                            value.pokemonData?.types,
+                            value.pokemonType,
+                            styleSheet.current
+                          ),
                         }}
                       >
                         <LinkToTop
-                          to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${value.speciesId
-                            .toString()
-                            .replaceAll('_', '-')}`}
+                          to={`/pvp/${params.cp}/${getKeyWithData(
+                            ScoreType,
+                            ScoreType.Overall
+                          )?.toLowerCase()}/${value.speciesId.toString().replaceAll('_', '-')}`}
                         >
                           <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
                         </LinkToTop>
@@ -547,7 +611,11 @@ const TeamPVP = () => {
                                 src={APIService.getPokemonModel(value.form, value.id)}
                                 onError={(e) => {
                                   e.currentTarget.onerror = null;
-                                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.id, value.form);
+                                  e.currentTarget.src = getValidPokemonImgPath(
+                                    e.currentTarget.src,
+                                    value.id,
+                                    value.form
+                                  );
                                 }}
                               />
                             </PokemonIconType>
@@ -556,7 +624,11 @@ const TeamPVP = () => {
                         <div className="ranking-group">
                           <div>
                             <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-                              <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
+                              <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(
+                                value.name,
+                                '-',
+                                ' '
+                              )}`}</b>
                               <TypeInfo
                                 isHideText={true}
                                 isBlock={true}

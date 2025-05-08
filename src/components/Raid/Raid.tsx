@@ -42,7 +42,8 @@ const Raid = (props: IRaidComponent) => {
     } else if (
       tier === 5 &&
       props.currForm &&
-      (props.currForm.form?.pokemonType === PokemonType.Mega || props.currForm.form?.pokemonType === PokemonType.Primal) &&
+      (props.currForm.form?.pokemonType === PokemonType.Mega ||
+        props.currForm.form?.pokemonType === PokemonType.Primal) &&
       pokemonClass !== PokemonClass.None
     ) {
       setTier(6);
@@ -110,7 +111,8 @@ const Raid = (props: IRaidComponent) => {
             )}
           </optgroup>
           {props.currForm &&
-            (props.currForm.form?.pokemonType === PokemonType.Mega || props.currForm.form?.pokemonType === PokemonType.Primal) && (
+            (props.currForm.form?.pokemonType === PokemonType.Mega ||
+              props.currForm.form?.pokemonType === PokemonType.Primal) && (
               <Fragment>
                 {pokemonClass !== PokemonClass.None ? (
                   <optgroup

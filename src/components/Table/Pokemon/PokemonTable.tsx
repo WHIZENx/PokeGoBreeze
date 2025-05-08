@@ -77,7 +77,9 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           </td>
           <td colSpan={2}>
             {reload(
-              <h5 className="d-flex">{splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO').replace(/X y$/i, 'X-Y')}</h5>,
+              <h5 className="d-flex">
+                {splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO').replace(/X y$/i, 'X-Y')}
+              </h5>,
               '#eeeeee'
             )}
           </td>

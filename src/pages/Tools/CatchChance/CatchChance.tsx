@@ -1,4 +1,12 @@
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
@@ -25,11 +33,24 @@ import {
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
 } from '../../../util/constants';
-import { getItemSpritePath, getKeyWithData, getPokemonFormWithNoneSpecialForm, LevelSlider, splitAndCapitalize } from '../../../util/utils';
+import {
+  getItemSpritePath,
+  getKeyWithData,
+  getPokemonFormWithNoneSpecialForm,
+  LevelSlider,
+  splitAndCapitalize,
+} from '../../../util/utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { DynamicObj, getValueOrDefault, isNotEmpty, isUndefined, toFloatWithPadding, toNumber } from '../../../util/extension';
+import {
+  DynamicObj,
+  getValueOrDefault,
+  isNotEmpty,
+  isUndefined,
+  toFloatWithPadding,
+  toNumber,
+} from '../../../util/extension';
 import {
   Medal,
   MedalType,
@@ -48,9 +69,24 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 
 const balls: PokeBallThreshold[] = [
-  { name: 'Poké Ball', itemName: ItemName.PokeBall, threshold: POKE_BALL_INC_CHANCE, pokeBallType: PokeBallType.PokeBall },
-  { name: 'Great Ball', itemName: ItemName.GreatBall, threshold: GREAT_BALL_INC_CHANCE, pokeBallType: PokeBallType.GreatBall },
-  { name: 'Ultra Ball', itemName: ItemName.UltraBall, threshold: ULTRA_BALL_INC_CHANCE, pokeBallType: PokeBallType.UltraBall },
+  {
+    name: 'Poké Ball',
+    itemName: ItemName.PokeBall,
+    threshold: POKE_BALL_INC_CHANCE,
+    pokeBallType: PokeBallType.PokeBall,
+  },
+  {
+    name: 'Great Ball',
+    itemName: ItemName.GreatBall,
+    threshold: GREAT_BALL_INC_CHANCE,
+    pokeBallType: PokeBallType.GreatBall,
+  },
+  {
+    name: 'Ultra Ball',
+    itemName: ItemName.UltraBall,
+    threshold: ULTRA_BALL_INC_CHANCE,
+    pokeBallType: PokeBallType.UltraBall,
+  },
 ];
 const throws: ThrowThreshold[] = [
   { name: 'Normal Throw', threshold: NORMAL_THROW_INC_CHANCE, throwType: ThrowType.Normal },
@@ -118,7 +154,18 @@ const CatchChance = () => {
     if (isAdvance) {
       calculateAdvance();
     }
-  }, [isAdvance, radius, medal, level, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, ballType, isNormalThrow]);
+  }, [
+    isAdvance,
+    radius,
+    medal,
+    level,
+    isCurveBall,
+    isRazzBerry,
+    isGoldenRazzBerry,
+    isSilverPinaps,
+    ballType,
+    isNormalThrow,
+  ]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -142,7 +189,8 @@ const CatchChance = () => {
   const calculateCatch = () => {
     const result = new Object() as DynamicObj<DynamicObj<number>>;
     const medalChance =
-      (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
+      (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) /
+      (medal.typeSec ? 2 : 1);
 
     if (data) {
       balls.forEach((ball) => {
@@ -271,7 +319,8 @@ const CatchChance = () => {
 
   const calculateProb = (disable = false, threshold = 1) => {
     const medalChance =
-      (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) / (medal.typeSec ? 2 : 1);
+      (medalCatchChance(medal.typePri.priority) + (medal.typeSec ? medalCatchChance(medal.typeSec.priority) : 0)) /
+      (medal.typeSec ? 2 : 1);
     const pokeBall = Object.entries(balls).find((_, type) => type === ballType);
     let result = 0;
     if (pokeBall && isNotEmpty(pokeBall)) {
@@ -337,16 +386,32 @@ const CatchChance = () => {
           {!isEncounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
-                <b>{splitAndCapitalize(getPokemonFormWithNoneSpecialForm(form?.form.name, form?.form.pokemonType), '_', ' ')}</b> cannot be
-                encountered in wild.
+                <b>
+                  {splitAndCapitalize(
+                    getPokemonFormWithNoneSpecialForm(form?.form.name, form?.form.pokemonType),
+                    '_',
+                    ' '
+                  )}
+                </b>{' '}
+                cannot be encountered in wild.
               </h5>
             </div>
           )}
           <div className="d-flex justify-content-center " style={{ margin: 0 }}>
             <div>
-              {medal && <SelectBadge type={medal.typePri.type} priority={medal.typePri.priority} setPriority={onSetPriorityPri} />}
+              {medal && (
+                <SelectBadge
+                  type={medal.typePri.type}
+                  priority={medal.typePri.priority}
+                  setPriority={onSetPriorityPri}
+                />
+              )}
               {medal && medal.typeSec.type && (
-                <SelectBadge type={medal.typeSec.type} priority={medal.typeSec.priority} setPriority={onSetPrioritySec} />
+                <SelectBadge
+                  type={medal.typeSec.type}
+                  priority={medal.typeSec.priority}
+                  setPriority={onSetPrioritySec}
+                />
               )}
               <div className="d-flex flex-wrap justify-content-center w-100 element-top" style={{ gap: 10 }}>
                 <FormControlLabel
@@ -425,7 +490,10 @@ const CatchChance = () => {
                   }
                 />
               </div>
-              <div className="d-flex w-100 justify-content-center element-top" style={{ paddingLeft: 15, paddingRight: 15 }}>
+              <div
+                className="d-flex w-100 justify-content-center element-top"
+                style={{ paddingLeft: 15, paddingRight: 15 }}
+              >
                 <LevelSlider
                   aria-label="Level"
                   className="w-75"
@@ -485,7 +553,9 @@ const CatchChance = () => {
                     <h5>
                       {data &&
                         `${
-                          (data.shadowAttackProbability && isShadow ? data.shadowAttackProbability : toNumber(data.attackProbability)) * 100
+                          (data.shadowAttackProbability && isShadow
+                            ? data.shadowAttackProbability
+                            : toNumber(data.attackProbability)) * 100
                         }%`}
                     </h5>
                     <p>{data && `Time: ${toFloatWithPadding(toNumber(data.attackTimerS) / 10, 2)} sec`}</p>
@@ -496,7 +566,11 @@ const CatchChance = () => {
                   <hr className="w-100" />
                   <h5>
                     {data &&
-                      `${data.shadowDodgeProbability && isShadow ? data.shadowDodgeProbability : toNumber(data.dodgeProbability) * 100}%`}
+                      `${
+                        data.shadowDodgeProbability && isShadow
+                          ? data.shadowDodgeProbability
+                          : toNumber(data.dodgeProbability) * 100
+                      }%`}
                   </h5>
                   <p>{data && `Time: ${toFloatWithPadding(toNumber(data.dodgeDurationS) / 10, 2)} sec`}</p>
                 </div>
@@ -516,7 +590,8 @@ const CatchChance = () => {
                 }
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyWithData(PokemonType, PokemonType.Shadow)}
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} />{' '}
+                    {getKeyWithData(PokemonType, PokemonType.Shadow)}
                   </span>
                 }
               />
@@ -590,7 +665,10 @@ const CatchChance = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-6 d-flex flex-column justify-content-center align-items-center" style={{ padding: 0 }}>
+                <div
+                  className="col-md-6 d-flex flex-column justify-content-center align-items-center"
+                  style={{ padding: 0 }}
+                >
                   {advThrow && <h5 className="text-center">{getKeyWithData(ThrowType, advThrow.throwType)}!</h5>}
                   <div className="d-flex justify-content-center position-relative">
                     <Circle line={2} color="lightgray" size={circleDistance.current} />
@@ -631,7 +709,10 @@ const CatchChance = () => {
                       <td>{value.name}</td>
                       {Object.entries(data.result ?? new Object())
                         .reduce(
-                          (p, c) => [...p, c[1][getValueOrDefault(String, getKeyWithData(ThrowType, value.throwType)?.toLowerCase())]],
+                          (p, c) => [
+                            ...p,
+                            c[1][getValueOrDefault(String, getKeyWithData(ThrowType, value.throwType)?.toLowerCase())],
+                          ],
                           [] as number[]
                         )
                         .map((value: number, index) => (
@@ -653,9 +734,10 @@ const CatchChance = () => {
                       <b>The Throw</b>
                     </td>
                     <td className="w-75">
-                      Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging between 1 - 2 times.
-                      We&apos;ve taken the averages of the circles, where the nice throw gives you a 1.15 times multiplier, the great throw
-                      gives you a 1.5 times multiplier and excellent throw gives you a 1.85 times multiplier.
+                      Throwing inside the circle gives you an increased chance to catch, with the multiplier ranging
+                      between 1 - 2 times. We&apos;ve taken the averages of the circles, where the nice throw gives you
+                      a 1.15 times multiplier, the great throw gives you a 1.5 times multiplier and excellent throw
+                      gives you a 1.85 times multiplier.
                     </td>
                   </tr>
                 </tbody>

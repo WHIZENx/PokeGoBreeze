@@ -54,7 +54,10 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     id: ColumnType.Name,
     name: 'Pokémon Name',
     selector: (row) => (
-      <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form)}`} title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}>
+      <LinkToTop
+        to={`/pokemon/${row.num}${generateParamForm(row.form)}`}
+        title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
+      >
         <img
           height={48}
           alt="img-pokemon"
@@ -77,7 +80,15 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
     name: 'Type(s)',
     selector: (row) =>
       row.types.map((value, index) => (
-        <IconType key={index} width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" title={capitalize(value)} type={value} />
+        <IconType
+          key={index}
+          width={25}
+          height={25}
+          style={{ marginRight: 10 }}
+          alt="type-logo"
+          title={capitalize(value)}
+          type={value}
+        />
       )),
     width: '150px',
   },
@@ -114,7 +125,11 @@ const columnMove: TableColumnModify<ICombat>[] = [
   {
     name: 'Move Name',
     selector: (row) => (
-      <LinkToTop className="d-flex align-items-center" to={`/move/${row.id}`} title={`${splitAndCapitalize(row.name, '_', ' ')}`}>
+      <LinkToTop
+        className="d-flex align-items-center"
+        to={`/move/${row.id}`}
+        title={`${splitAndCapitalize(row.name, '_', ' ')}`}
+      >
         {splitAndCapitalize(row.name, '_', ' ')}
       </LinkToTop>
     ),
@@ -235,7 +250,9 @@ const SearchTypes = () => {
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
           fastMove: data.combats.filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
-          chargedMove: data.combats.filter((type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)),
+          chargedMove: data.combats.filter(
+            (type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)
+          ),
         })
       );
     }
@@ -299,7 +316,10 @@ const SearchTypes = () => {
       <div className="row">
         <div className="col-xl-4 element-top">
           <div
-            className={combineClasses('d-flex flex-column align-items-center type-info-container', `${currentType.toLowerCase()}-border`)}
+            className={combineClasses(
+              'd-flex flex-column align-items-center type-info-container',
+              `${currentType.toLowerCase()}-border`
+            )}
             style={{ background: computeBgType(currentType, PokemonType.Normal, styleSheet.current) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
@@ -312,7 +332,10 @@ const SearchTypes = () => {
             </div>
             <span
               style={{ width: 'max-content' }}
-              className={combineClasses(currentType.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow element-top')}
+              className={combineClasses(
+                currentType.toLowerCase(),
+                'type-select-bg d-flex align-items-center filter-shadow element-top'
+              )}
             >
               <div style={{ display: 'contents', width: 16 }}>
                 <img
@@ -336,7 +359,8 @@ const SearchTypes = () => {
                     isNotEmpty(result.pokemonList) &&
                     toNumber(allData?.pokemon) > 0 &&
                     Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) / toNumber(allData?.pokemon, 1)
+                      (result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length * 100) /
+                        toNumber(allData?.pokemon, 1)
                     )
                   }%)`}</b>
                 </li>
@@ -345,7 +369,8 @@ const SearchTypes = () => {
                     isNotEmpty(result.pokemonList) &&
                     toNumber(allData?.pokemon) > 0 &&
                     Math.round(
-                      (result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) / toNumber(allData?.pokemon, 1)
+                      (result.pokemonList.filter((pokemon) => pokemon.types.length > 1).length * 100) /
+                        toNumber(allData?.pokemon, 1)
                     )
                   }%)`}</b>
                 </li>

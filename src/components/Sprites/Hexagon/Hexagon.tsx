@@ -34,7 +34,13 @@ const Hexagon = (props: IHexagonComponent) => {
     return new Pointer(x, y);
   };
 
-  const drawLineHex = (ctx: CanvasRenderingContext2D, center: IPointer, percentage: number, color: string, isFill: boolean) => {
+  const drawLineHex = (
+    ctx: CanvasRenderingContext2D,
+    center: IPointer,
+    percentage: number,
+    color: string,
+    isFill: boolean
+  ) => {
     const start = getHexConnerCord(center, percentage, 0);
     ctx.beginPath();
     ctx.moveTo(start.x, start.y);

@@ -179,7 +179,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
             {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
               <span
                 style={{ marginRight: 5 }}
-                className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`)}
+                className={combineClasses(
+                  'type-icon-small ic',
+                  `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
+                )}
               >
                 {getKeyWithData(MoveType, MoveType.Shadow)}
               </span>
@@ -219,7 +222,12 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           {props.data
             .filter(
               (pokemon) =>
-                pokemon && isInclude(splitAndCapitalize(pokemon.pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive)
+                pokemon &&
+                isInclude(
+                  splitAndCapitalize(pokemon.pokemon.name, '-', ' '),
+                  search,
+                  IncludeMode.IncludeIgnoreCaseSensitive
+                )
             )
             .slice(0, firstInit.current + eachCounter.current * startIndex)
             .map((value, index) => (
@@ -244,7 +252,12 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         )}
         style={{ padding: 0, borderRadius: 0 }}
       >
-        <div className="card-move-input" tabIndex={0} onClick={() => setShowFMove(true)} onBlur={() => setShowFMove(false)}>
+        <div
+          className="card-move-input"
+          tabIndex={0}
+          onClick={() => setShowFMove(true)}
+          onBlur={() => setShowFMove(false)}
+        >
           <CardMoveSmall value={fMove} isShow={Boolean(pokemon)} isSelect={props.data.length > 1} />
           {showFMove && isNotEmpty(props.data) && pokemon && (
             <div className="result-move-select">
@@ -322,7 +335,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                       const move = replaceTempMovePvpName(value.moveId);
                       return combat.find((item) => isEqual(item.name, move));
                     })
-                    .filter((value) => value && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name))
+                    .filter(
+                      (value) => value && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name)
+                    )
                     .map((value, index) => (
                       <div
                         className={combineClasses(
@@ -406,7 +421,12 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                       const move = replaceTempMovePvpName(value.moveId);
                       return combat.find((item) => isEqual(item.name, move));
                     })
-                    .filter((value) => value && (!cMoveSec || !isEqual(value.name, cMoveSec.name)) && !isEqual(value.name, cMovePri?.name))
+                    .filter(
+                      (value) =>
+                        value &&
+                        (!cMoveSec || !isEqual(value.name, cMoveSec.name)) &&
+                        !isEqual(value.name, cMovePri?.name)
+                    )
                     .map((value, index) => (
                       <div
                         className="card-move"

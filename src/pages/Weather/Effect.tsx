@@ -12,7 +12,9 @@ import { EffectiveType } from '../../components/Effective/enums/type-effective.e
 const Effect = (prop: IWeatherEffComponent) => {
   const [types, setTypes] = useState<string[]>([]);
 
-  const [currentTypePri, setCurrentTypePri] = useState(getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase());
+  const [currentTypePri, setCurrentTypePri] = useState(
+    getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase()
+  );
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
   const [showTypePri, setShowTypePri] = useState(false);

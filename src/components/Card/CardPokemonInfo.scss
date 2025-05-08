@@ -25,14 +25,6 @@
 }
 
 .shiny-pokemon.active {
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(88%)
-    sepia(36%)
-    saturate(644%)
-    hue-rotate(6deg)
-    brightness(108%)
-    contrast(105%)
-    drop-shadow(1px 1px 1px #00000099);
+  filter: brightness(0) saturate(100%) invert(88%) sepia(36%) saturate(644%) hue-rotate(6deg) brightness(108%)
+    contrast(105%) drop-shadow(1px 1px 1px #00000099);
 }
