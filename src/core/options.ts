@@ -281,7 +281,7 @@ const convertAndReplaceNameGO = (name: string, defaultName = ''): string => {
 
 export const optionPokemonData = (
   data: PokemonDataGM[],
-  encounter?: PokemonEncounter[],
+  encounter: PokemonEncounter[],
   result: IPokemonData[] = []
 ) => {
   pokemonDefaultForm(data).forEach((item) => {
@@ -314,7 +314,7 @@ export const optionPokemonData = (
     pokemon.types = types;
 
     const defaultName = getValueOrDefault(String, pokemonSettingForm, pokemonSettings.pokemonId);
-    const pokemonEncounter = encounter?.find((e) => isEqual(defaultName, e.name));
+    const pokemonEncounter = encounter.find((e) => isEqual(defaultName, e.name));
 
     pokemon.encounter = new Encounter({
       ...pokemon.encounter,
@@ -546,7 +546,7 @@ export const optionPokemonData = (
   return result.sort((a, b) => a.num - b.num);
 };
 
-const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encounter?: PokemonEncounter[]) =>
+const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encounter: PokemonEncounter[]) =>
   Object.values(pokemonStoreData)
     .filter(
       (pokemon) =>
@@ -601,7 +601,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
         pokemon.nonTmCinematicMoves = pokemonSettings.nonTmCinematicMoves;
 
         const defaultName = pokemonSettings.form ? pokemonSettings.form.toString() : pokemonSettings.pokemonId;
-        const pokemonEncounter = encounter?.find((e) => isEqual(defaultName, e.name));
+        const pokemonEncounter = encounter.find((e) => isEqual(defaultName, e.name));
 
         pokemon.encounter = new Encounter({
           ...pokemon.encounter,

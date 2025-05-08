@@ -157,11 +157,16 @@ export const loadGameMaster = (
         return;
       }
       let pokemonEncounter = new Database<PokemonEncounter>();
-      // eslint-disable-next-line no-useless-catch
       try {
         pokemonEncounter = await getDbPokemonEncounter();
       } catch (e) {
-        throw e;
+        dispatch(
+          SpinnerActions.ShowSpinnerMsg.create({
+            isError: true,
+            message: (e as Error).message,
+          })
+        );
+        return;
       }
 
       const pokemon = optionPokemonData(gm.data, pokemonEncounter.rows);
