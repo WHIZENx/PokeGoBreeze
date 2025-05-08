@@ -128,7 +128,15 @@ const common = {
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
-        use: ['ts-loader'],
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true, // Skip type-checking for faster builds
+              experimentalWatchApi: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(gif|png|jpe?g|svg)$/i,
@@ -250,19 +258,6 @@ module.exports = merge(common, {
   },
   module: {
     rules: [
-      {
-        test: /\.(ts|tsx)$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true, // Skip type-checking for faster builds
-              experimentalWatchApi: true,
-            },
-          },
-        ],
-      },
       {
         test: /\.s?css$/i,
         use: [
