@@ -81,6 +81,7 @@
     "@typescript-eslint/parser": "^5.45.1",
     "autoprefixer": "^10.4.8",
     "clean-webpack-plugin": "^4.0.0",
+    "compression-webpack-plugin": "^11.1.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^6.0.0",
     "dotenv": "^16.0.1",
