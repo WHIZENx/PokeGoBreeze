@@ -59,6 +59,7 @@ import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.mod
 import { Action } from 'history';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
+import ErrorBoundary from '../../../components/ErrorBoundary/ErrorBoundary';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -506,141 +507,143 @@ const StatsRanking = () => {
   }, [router, pokemonList, searchParams]);
 
   return (
-    <div className="element-bottom position-relative poke-container container">
-      <div className="w-100 d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-        <div className="d-flex justify-content-center w-100">
-          <div className="d-inline-block img-desc">
-            <img
-              className="pokemon-main-sprite"
-              style={{ verticalAlign: 'baseline' }}
-              alt="img-full-pokemon"
-              src={APIService.getPokeFullSprite(
-                select?.num,
-                convertPokemonImageName(select && isEqual(select.baseForme, select.form) ? '' : select?.form)
-              )}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, select?.num);
-              }}
-            />
-          </div>
-        </div>
-        <div className="row w-100 element-top" style={{ margin: 0 }}>
-          <div className="col-xl-5" style={{ padding: 0 }}>
-            <PokemonTable
-              id={select?.num}
-              gen={select?.gen}
-              formName={`${select?.name}${
-                isSpecialFormType(select?.pokemonType) ? '-' + getKeyWithData(PokemonType, select.pokemonType) : ''
-              }`}
-              region={select?.region}
-              version={select?.version}
-              weight={select?.weightKg}
-              height={select?.heightM}
-              className="table-stats-ranking"
-              isLoadedForms={progress.isLoadedForms}
-            />
-          </div>
-          {select && (
-            <div className="col-xl-7" style={{ padding: 0 }}>
-              <TableMove pokemonData={pokemon} maxHeight={400} />
+    <ErrorBoundary>
+      <div className="element-bottom position-relative poke-container container">
+        <div className="w-100 d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
+          <div className="d-flex justify-content-center w-100">
+            <div className="d-inline-block img-desc">
+              <img
+                className="pokemon-main-sprite"
+                style={{ verticalAlign: 'baseline' }}
+                alt="img-full-pokemon"
+                src={APIService.getPokeFullSprite(
+                  select?.num,
+                  convertPokemonImageName(select && isEqual(select.baseForme, select.form) ? '' : select?.form)
+                )}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, select?.num);
+                }}
+              />
             </div>
-          )}
+          </div>
+          <div className="row w-100 element-top" style={{ margin: 0 }}>
+            <div className="col-xl-5" style={{ padding: 0 }}>
+              <PokemonTable
+                id={select?.num}
+                gen={select?.gen}
+                formName={`${select?.name}${
+                  isSpecialFormType(select?.pokemonType) ? '-' + getKeyWithData(PokemonType, select.pokemonType) : ''
+                }`}
+                region={select?.region}
+                version={select?.version}
+                weight={select?.weightKg}
+                height={select?.heightM}
+                className="table-stats-ranking"
+                isLoadedForms={progress.isLoadedForms}
+              />
+            </div>
+            {select && (
+              <div className="col-xl-7" style={{ padding: 0 }}>
+                <TableMove pokemonData={pokemon} maxHeight={400} />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      <Stats
-        statATK={select?.atk}
-        statDEF={select?.def}
-        statSTA={select?.sta}
-        statProd={select?.prod}
-        pokemonStats={stats}
-        id={select?.num}
-        form={select?.form}
-        isDisabled={true}
-      />
-      <div className="d-flex flex-wrap" style={{ gap: 15 }}>
-        <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
-          <span className="input-group-text">Find Pokémon</span>
-          <input
-            type="text"
-            className="form-control input-search"
-            placeholder="Enter Name or ID"
-            value={search}
-            onInput={(e) => setSearch(e.currentTarget.value)}
+        <Stats
+          statATK={select?.atk}
+          statDEF={select?.def}
+          statSTA={select?.sta}
+          statProd={select?.prod}
+          pokemonStats={stats}
+          id={select?.num}
+          form={select?.form}
+          isDisabled={true}
+        />
+        <div className="d-flex flex-wrap" style={{ gap: 15 }}>
+          <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
+            <span className="input-group-text">Find Pokémon</span>
+            <input
+              type="text"
+              className="form-control input-search"
+              placeholder="Enter Name or ID"
+              value={search}
+              onInput={(e) => setSearch(e.currentTarget.value)}
+            />
+          </div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isMatch}
+                onChange={(_, check) => setFilters(Filter.create({ ...filters, isMatch: check }))}
+              />
+            }
+            label="Match Pokémon"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={releasedGO}
+                onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
+              />
+            }
+            label={
+              <span className="d-flex align-items-center">
+                Released in GO
+                <img
+                  className={releasedGO ? '' : 'filter-gray'}
+                  width={28}
+                  height={28}
+                  style={{ marginLeft: 5 }}
+                  alt="pokemon-go-icon"
+                  src={APIService.getPokemonGoIcon(icon)}
+                />
+              </span>
+            }
           />
         </div>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={isMatch}
-              onChange={(_, check) => setFilters(Filter.create({ ...filters, isMatch: check }))}
-            />
-          }
-          label="Match Pokémon"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={releasedGO}
-              onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
-            />
-          }
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={releasedGO ? '' : 'filter-gray'}
-                width={28}
-                height={28}
-                style={{ marginLeft: 5 }}
-                alt="pokemon-go-icon"
-                src={APIService.getPokemonGoIcon(icon)}
-              />
-            </span>
+        <DataTable
+          columns={convertColumnDataType(columnPokemon)}
+          data={pokemonFilter}
+          pagination={true}
+          defaultSortFieldId={getSortId()}
+          defaultSortAsc={false}
+          highlightOnHover={true}
+          onRowClicked={(row) => {
+            if (select?.id !== row.id) {
+              setFilterParams(row);
+              const pokemon = pokemons.find((pokemon) => pokemon.num === row.num && isEqual(row.form, pokemon.form));
+              if (pokemon) {
+                pokemon.pokemonType = row.pokemonType || PokemonType.Normal;
+                const pokemonDetails = PokemonDetail.setData(pokemon);
+                setPokemon(pokemonDetails);
+              }
+            }
+          }}
+          onSort={(rows) => {
+            const rowsId = toNumber(rows.id);
+            if (sortId !== rowsId) {
+              setPokemonFilter(sortRanking(pokemonFilter, rowsId));
+              setSortId(rowsId);
+            }
+          }}
+          conditionalRowStyles={conditionalRowStyles}
+          customStyles={customStyles}
+          paginationDefaultPage={page}
+          paginationPerPage={defaultPerPages}
+          paginationRowsPerPageOptions={Array.from(
+            { length: 3 },
+            (_, i) => defaultPerPages * Math.max(0, i - 1) + defaultPerPages * (i + 1)
+          )}
+          progressPending={!isNotEmpty(pokemonList)}
+          progressComponent={
+            <div style={{ margin: 10 }}>
+              <CircularProgress />
+            </div>
           }
         />
       </div>
-      <DataTable
-        columns={convertColumnDataType(columnPokemon)}
-        data={pokemonFilter}
-        pagination={true}
-        defaultSortFieldId={getSortId()}
-        defaultSortAsc={false}
-        highlightOnHover={true}
-        onRowClicked={(row) => {
-          if (select?.id !== row.id) {
-            setFilterParams(row);
-            const pokemon = pokemons.find((pokemon) => pokemon.num === row.num && isEqual(row.form, pokemon.form));
-            if (pokemon) {
-              pokemon.pokemonType = row.pokemonType || PokemonType.Normal;
-              const pokemonDetails = PokemonDetail.setData(pokemon);
-              setPokemon(pokemonDetails);
-            }
-          }
-        }}
-        onSort={(rows) => {
-          const rowsId = toNumber(rows.id);
-          if (sortId !== rowsId) {
-            setPokemonFilter(sortRanking(pokemonFilter, rowsId));
-            setSortId(rowsId);
-          }
-        }}
-        conditionalRowStyles={conditionalRowStyles}
-        customStyles={customStyles}
-        paginationDefaultPage={page}
-        paginationPerPage={defaultPerPages}
-        paginationRowsPerPageOptions={Array.from(
-          { length: 3 },
-          (_, i) => defaultPerPages * Math.max(0, i - 1) + defaultPerPages * (i + 1)
-        )}
-        progressPending={!isNotEmpty(pokemonList)}
-        progressComponent={
-          <div style={{ margin: 10 }}>
-            <CircularProgress />
-          </div>
-        }
-      />
-    </div>
+    </ErrorBoundary>
   );
 };
 
