@@ -50,8 +50,9 @@ import { RouterState, StoreState, TimestampState } from './store/models/state.mo
 import { Action } from 'history';
 import { debounce } from 'lodash';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const ColorModeContext = createContext({ toggleColorMode: () => {} });
+const ColorModeContext = createContext({
+  toggleColorMode: () => true,
+});
 
 function App() {
   const dispatch = useDispatch();
@@ -180,6 +181,7 @@ export default function Main() {
     () => ({
       toggleColorMode: () => {
         setMode((prevMode) => (prevMode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light));
+        return true;
       },
     }),
     []
