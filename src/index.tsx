@@ -11,7 +11,8 @@ import { SnackbarProvider } from 'notistack';
 import reportWebVitals from './reportWebVitals';
 
 import { ReduxRouterSelector, ReduxRouter } from '@lagunovsky/redux-react-router';
-import configureStore, { history } from './store';
+import configureStore from './store';
+import { history } from './store/configure';
 import Main from './App';
 import { RouterState } from './store/models/state.model';
 import { PersistGate } from 'redux-persist/integration/react';

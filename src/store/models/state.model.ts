@@ -1,5 +1,4 @@
 import { AnyIfEmpty } from 'react-redux';
-import configureStore from '..';
 import { StoreModel } from './store.model';
 import { IStatsRank } from '../../core/models/stats.model';
 import { SpinnerModel } from '../reducers/spinner.reducer';
@@ -9,8 +8,7 @@ import { DeviceModel } from '../reducers/device.reducer';
 import { Dispatch, SetStateAction } from 'react';
 import { TimestampModel } from '../reducers/timestamp.reducer';
 import { PathModel } from '../reducers/path.reducer';
-
-const store = configureStore();
+import { storeType } from '../configure';
 
 interface StoreStateModel {
   store: StoreModel;
@@ -40,7 +38,7 @@ interface PathStateModel {
   path: PathModel;
 }
 
-export type RouterState = ReturnType<typeof store.store.getState>;
+export type RouterState = ReturnType<typeof storeType.getState>;
 
 export type StatsState = AnyIfEmpty<StatsStateModel>;
 export type SpinnerState = AnyIfEmpty<SpinnerStateModel>;
