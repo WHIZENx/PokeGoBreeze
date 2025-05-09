@@ -17,17 +17,15 @@ export interface StoreModel {
   icon?: string;
   data: IDataModel;
   searching?: SearchingOptionsModel;
-  timestamp?: number;
 }
 
 export class Store implements StoreModel {
   icon?: string;
   data: IDataModel = new Data();
   searching?: SearchingOptionsModel;
-  timestamp?: number;
 }
 
-interface IDataModel {
+export interface IDataModel {
   cpm: ICPM[];
   typeEff: ITypeEff;
   weatherBoost: IWeatherBoost;

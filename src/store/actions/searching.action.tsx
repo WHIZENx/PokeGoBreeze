@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 import { IToolSearching } from '../../core/models/searching.model';
 import { ISearchingModel } from '../models/searching.model';

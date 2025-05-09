@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum ArcheType {
   SelfDebuff = 'Self-Debuff',
   Debuff = 'Debuff',

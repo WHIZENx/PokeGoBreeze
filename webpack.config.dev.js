@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
@@ -6,13 +5,10 @@ const autoprefixer = require('autoprefixer');
 const manifest = require('./public/manifest.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TSLintPlugin = require('tslint-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
-const TerserPlugin = require("terser-webpack-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
@@ -26,35 +22,33 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      favicon: './public/favicon.ico'
+      favicon: './public/favicon.ico',
+      inject: true,
     }),
     new MiniCssExtractPlugin({
-      filename: '[contenthash].css',
-      chunkFilename: '[hash].css'
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[id].[contenthash].css',
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
     }),
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(
-        { REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
-          REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
-          REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
-          NODE_ENV: JSON.stringify('development'),
-          DEBUG: true
-        }
-      )
-    }),
-    new TSLintPlugin({
-      files: ['./src/**/*.{ts,tsx}']
+      'process.env': JSON.stringify({
+        REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
+        REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
+        REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
+        NODE_ENV: JSON.stringify('development'),
+        DEBUG: true,
+      }),
     }),
     new ESLintPlugin({
+      extensions: ['js', 'jsx', 'ts', 'tsx'],
       files: ['./src/**/*.{ts,tsx}'],
-      emitWarning: false,
-      failOnWarning: false
+      emitWarning: true,
+      failOnWarning: false,
     }),
     new StylelintPlugin({
-      files: ['./src/**/*.scss']
+      files: ['./src/**/*.scss'],
     }),
     new WebpackFavicons({
       src: 'src/assets/pokedex.png',
@@ -62,83 +56,89 @@ module.exports = {
       background: '#000',
       theme_color: '#000',
       icons: {
-        favicons: true
-      }
+        favicons: true,
+      },
     }),
     new WebpackManifestPlugin({
       fileName: './manifest.json',
-      seed: manifest
+      seed: manifest,
     }),
     new CleanWebpackPlugin(),
-    new ReactRefreshPlugin()
+    new ReactRefreshPlugin(),
   ],
   optimization: {
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
-      maxInitialRequests: Infinity,
-      minSize: 0,
+      maxInitialRequests: 20, // Increase to allow for finer chunks
+      minSize: 20000, // Avoid too small chunks
       cacheGroups: {
         reactVendor: {
           test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: "reactVendor",
-          enforce: true
+          name: 'reactVendor',
+          priority: 30,
+          enforce: true,
         },
         utilityVendor: {
           test: /[\\/]node_modules[\\/](lodash|moment|moment-timezone)[\\/]/,
-          name: "utilityVendor",
-          enforce: true
+          name: 'utilityVendor',
+          priority: 20,
+          enforce: true,
         },
         bootstrapVendor: {
           test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
-          name: "bootstrapVendor",
-          enforce: true
+          name: 'bootstrapVendor',
+          priority: 20,
+          enforce: true,
         },
         vendor: {
-          test: /[\\/]node_modules[\\/](!react-bootstrap)(!lodash)(!moment)(!moment-timezone)[\\/]/,
-          name: "vendor",
-          enforce: true
-        }
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          priority: 10,
+          enforce: true,
+          reuseExistingChunk: true,
+        },
       },
     },
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          output: {
-            comments: false,
-          },
-          sourceMap: true,
-        }
-      }),
-      new CssMinimizerPlugin()
-    ]
+    // Only add minimizers for production
+    minimizer: [],
   },
   mode: 'development',
   bail: false,
   target: 'web',
-  devtool: 'inline-source-map',
+  // Use eval-source-map for better debugging but faster builds than inline-source-map
+  devtool: 'eval-source-map',
   performance: {
     hints: false,
   },
+  cache: {
+    type: 'filesystem', // Use filesystem caching for faster rebuilds
+    buildDependencies: {
+      config: [__filename], // Invalidate cache when webpack config changes
+    },
+  },
   devServer: {
-    static: [
-      { directory: path.resolve(__dirname, 'dist') },
-      { directory: path.resolve(__dirname, 'public') },
-    ],
+    static: [{ directory: path.resolve(__dirname, 'dist') }, { directory: path.resolve(__dirname, 'public') }],
     historyApiFallback: true,
     open: true,
     compress: true,
     port: 9000,
     hot: true,
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false, // Don't show warnings in browser overlay for cleaner dev experience
+      },
+      progress: true,
+    },
   },
   entry: {
-    src: ['./src/index.tsx'],
-    vendors: ['react']
+    main: './src/index.tsx',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[contenthash].js',
-    chunkFilename: "[chunkhash].js",
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[chunkhash].js',
     publicPath,
     clean: true,
   },
@@ -146,11 +146,11 @@ module.exports = {
     modules: [path.join(__dirname, 'src'), 'node_modules'],
     alias: {
       react: path.join(__dirname, 'node_modules', 'react'),
-      process: "process/browser"
+      process: 'process/browser',
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     fallback: {
-      'process/browser': require.resolve('process/browser')
+      'process/browser': require.resolve('process/browser'),
     },
   },
   module: {
@@ -158,59 +158,67 @@ module.exports = {
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
-        use: ["ts-loader"],
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true, // Speed up compilation in development
+              experimentalWatchApi: true,
+            },
+          },
+        ],
       },
       {
         test: /\.s?css$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
-            "style-loader",
-            {
-              loader: 'css-loader',
-              options: {
-                url: true,
-                importLoaders: 1,
-                sourceMap: true
-              }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                postcssOptions: {
-                    plugins: [
-                      "postcss-preset-env",
-                      autoprefixer
-                    ]
-                  }
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                sassOptions: {
-                  indentWidth: 2,
-                  sourceMap: true,
-                },
-              },
-            }
-        ]
-      },
-      {
-        test: /\.(gif|png|jpe?g|svg)$/i,
-        include: path.resolve(__dirname, 'src'),
-        exclude: /node_modules/,
-        use: [
-          'file-loader',
+          'style-loader', // Use style-loader in development for HMR
           {
-            loader: 'image-webpack-loader',
+            loader: 'css-loader',
             options: {
-              bypassOnDebug: true, // webpack@1.x
-              disable: true, // webpack@2.x and newer
+              url: true,
+              importLoaders: 2,
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: ['postcss-preset-env', autoprefixer],
+              },
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                indentWidth: 2,
+              },
+              sourceMap: true,
             },
           },
         ],
-      }
-    ]
-  }
-}
+      },
+      {
+        test: /\.(gif|png|jpe?g)$/i,
+        include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/,
+        type: 'asset', // Use asset modules instead of file-loader
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8 * 1024, // 8kb - inline if smaller
+          },
+        },
+      },
+      {
+        test: /\.svg$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[hash][ext][query]',
+        },
+      },
+    ],
+  },
+};

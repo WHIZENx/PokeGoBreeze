@@ -1,8 +1,12 @@
-/* eslint-disable no-unused-vars */
 import { IFormSoundCry, IPokemonFormModify, IPokemonSprit } from '../../core/models/API/form.model';
 import { IImage } from '../../core/models/asset.model';
 import { ICombat } from '../../core/models/combat.model';
-import { IPokemonData, IPokemonDataStats, IPokemonGenderRatio, PokemonRaidModel } from '../../core/models/pokemon.model';
+import {
+  IPokemonData,
+  IPokemonDataStats,
+  IPokemonGenderRatio,
+  PokemonRaidModel,
+} from '../../core/models/pokemon.model';
 import { IToolSearching } from '../../core/models/searching.model';
 import {
   IStatsPokemon,
@@ -56,9 +60,6 @@ export interface ICardPokemonInfoComponent {
   isDefaultImg: boolean;
   types: string[];
   pokemonStat: IStatsPokemonGO;
-  atkMaxStats: number | undefined;
-  defMaxStats: number | undefined;
-  staMaxStats: number | undefined;
   icon: string | undefined;
   releasedGO: boolean;
   styleList: IStyleData[];

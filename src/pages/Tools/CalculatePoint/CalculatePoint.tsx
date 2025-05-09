@@ -22,7 +22,14 @@ import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleState } from '../../../core/models/damage.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isNotEmpty, toNumber, UniqValueInArray } from '../../../util/extension';
+import {
+  combineClasses,
+  DynamicObj,
+  getValueOrDefault,
+  isNotEmpty,
+  toNumber,
+  UniqValueInArray,
+} from '../../../util/extension';
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
 
@@ -243,9 +250,18 @@ const CalculatePoint = () => {
 
   const getIconBattle = (action: TypeAction, form: Partial<IPokemonFormModify> | undefined) => (
     <div className="border-type-stat text-center">
-      <Badge color="primary" overlap="circular" badgeContent={isRaid && action === TypeAction.Def ? `Tier ${tier}` : undefined}>
+      <Badge
+        color="primary"
+        overlap="circular"
+        badgeContent={isRaid && action === TypeAction.Def ? `Tier ${tier}` : undefined}
+      >
         <span className="position-relative" style={{ width: 96 }}>
-          <img className="position-absolute" alt="img-logo" height={36} src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`} />
+          <img
+            className="position-absolute"
+            alt="img-logo"
+            height={36}
+            src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`}
+          />
           <img
             alt="img-pokemon"
             className="pokemon-sprite-large"
@@ -348,7 +364,11 @@ const CalculatePoint = () => {
                     text="Select Moves"
                     id={searching?.current?.pokemon?.id}
                     isSelectDefault={true}
-                    form={searching?.current?.form ? searching?.current?.form.form?.name : searching?.current?.pokemon?.fullName}
+                    form={
+                      searching?.current?.form
+                        ? searching?.current?.form.form?.name
+                        : searching?.current?.pokemon?.fullName
+                    }
                     setMove={setMove}
                     move={move}
                     clearData={clearDataAtk}
@@ -388,7 +408,9 @@ const CalculatePoint = () => {
                       </p>
                       <p>
                         {'- Move Type: '}
-                        <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
+                        <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>
+                          {capitalize(move.type)}
+                        </span>
                       </p>
                       {findStabType(searching?.current?.form?.form?.types, move.type)}
                       <p>
@@ -480,7 +502,11 @@ const CalculatePoint = () => {
                     text="Select Moves"
                     id={searching?.object?.pokemon?.id}
                     isSelectDefault={true}
-                    form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
+                    form={
+                      searching?.object?.form
+                        ? searching?.object?.form.form?.name
+                        : searching?.object?.pokemon?.fullName
+                    }
                     setMove={setMoveDef}
                     move={moveDef}
                     clearData={clearDataDef}
@@ -520,7 +546,9 @@ const CalculatePoint = () => {
                       </p>
                       <p>
                         {'- Move Type: '}
-                        <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>{capitalize(moveDef.type)}</span>
+                        <span className={combineClasses('type-icon-small', moveDef.type?.toLowerCase())}>
+                          {capitalize(moveDef.type)}
+                        </span>
                       </p>
                       {findStabType(searching?.object?.form?.form?.types, moveDef.type)}
                       <p>
@@ -668,7 +696,11 @@ const CalculatePoint = () => {
                       text="Fast Moves"
                       id={searching?.object?.pokemon?.id}
                       isSelectDefault={true}
-                      form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
+                      form={
+                        searching?.object?.form
+                          ? searching?.object?.form.form?.name
+                          : searching?.object?.pokemon?.fullName
+                      }
                       setMove={setFMove}
                       move={fMove}
                       type={TypeMove.Fast}
@@ -683,7 +715,9 @@ const CalculatePoint = () => {
                         </p>
                         <p>
                           {'- Move Type: '}
-                          <span className={combineClasses('type-icon-small', fMove.type?.toLowerCase())}>{capitalize(fMove.type)}</span>
+                          <span className={combineClasses('type-icon-small', fMove.type?.toLowerCase())}>
+                            {capitalize(fMove.type)}
+                          </span>
                         </p>
                         {findStabType(searching?.object?.form?.form?.types, fMove.type)}
                         <p>
@@ -703,7 +737,11 @@ const CalculatePoint = () => {
                       text="Charged Moves"
                       id={searching?.object?.pokemon?.id}
                       isSelectDefault={true}
-                      form={searching?.object?.form ? searching?.object?.form.form?.name : searching?.object?.pokemon?.fullName}
+                      form={
+                        searching?.object?.form
+                          ? searching?.object?.form.form?.name
+                          : searching?.object?.pokemon?.fullName
+                      }
                       setMove={setCMove}
                       move={cMove}
                       type={TypeMove.Charge}
@@ -718,7 +756,9 @@ const CalculatePoint = () => {
                         </p>
                         <p>
                           {'- Move Type: '}
-                          <span className={combineClasses('type-icon-small', cMove.type?.toLowerCase())}>{capitalize(cMove.type)}</span>
+                          <span className={combineClasses('type-icon-small', cMove.type?.toLowerCase())}>
+                            {capitalize(cMove.type)}
+                          </span>
                         </p>
                         {findStabType(searching?.object?.form?.form?.types, cMove.type)}
                         <p>

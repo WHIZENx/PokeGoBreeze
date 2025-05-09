@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum EqualMode {
   CaseSensitive = 1,
   IgnoreCaseSensitive,

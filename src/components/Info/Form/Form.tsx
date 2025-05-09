@@ -86,9 +86,14 @@ const FormComponent = (props: IFormInfoComponent) => {
 
   useEffect(() => {
     if (router.action === Action.Pop) {
-      const form = getValueOrDefault(String, searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'), FORM_NORMAL);
+      const form = getValueOrDefault(
+        String,
+        searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'),
+        FORM_NORMAL
+      );
       const currentData = props.pokeData.find(
-        (i) => isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) || (isEqual(form, FORM_NORMAL) && i.isDefault)
+        (i) =>
+          isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) || (isEqual(form, FORM_NORMAL) && i.isDefault)
       );
 
       if (currentData) {
@@ -145,9 +150,17 @@ const FormComponent = (props: IFormInfoComponent) => {
                   {value.map((value, index) => (
                     <button
                       key={index}
-                      className={combineClasses('btn btn-form', value.form.id === form?.form?.id ? 'form-selected' : '')}
+                      className={combineClasses(
+                        'btn btn-form',
+                        value.form.id === form?.form?.id ? 'form-selected' : ''
+                      )}
                       onClick={() =>
-                        changeForm(value.form.id === form?.form?.id, value.form.name, value.form.formName, value.form.pokemonType)
+                        changeForm(
+                          value.form.id === form?.form?.id,
+                          value.form.name,
+                          value.form.formName,
+                          value.form.pokemonType
+                        )
                       }
                     >
                       <div className="d-flex w-100 justify-content-center">
@@ -165,7 +178,11 @@ const FormComponent = (props: IFormInfoComponent) => {
                           </PokemonIconType>
                         </div>
                       </div>
-                      <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
+                      <p>
+                        {!value.form.formName
+                          ? capitalize(FORM_NORMAL)
+                          : splitAndCapitalize(value.form.formName, '-', ' ')}
+                      </p>
                       {toNumber(value.form.id) > 0 && value.form.id === props.defaultId && (
                         <b>
                           <small>(Default)</small>
@@ -239,7 +256,12 @@ const FormComponent = (props: IFormInfoComponent) => {
           <div className="col-xl h-100 position-relative" style={{ padding: 0 }}>
             {renderEvolution()}
           </div>
-          <SpecialForm className="col-xl h-100 position-relative" style={{ padding: 0 }} formList={props.formList} id={props.defaultId} />
+          <SpecialForm
+            className="col-xl h-100 position-relative"
+            style={{ padding: 0 }}
+            formList={props.formList}
+            id={props.defaultId}
+          />
         </div>
       ) : (
         renderEvolution()

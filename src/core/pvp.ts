@@ -21,7 +21,9 @@ const getLeague = (leagues: ILeague[], league: string) => {
   if (!isEqual(league, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)) {
     item = leagues.find((item) => isInclude(item.iconUrl, league, IncludeMode.IncludeIgnoreCaseSensitive));
     if (!item) {
-      item = leagues.find((item) => isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive));
+      item = leagues.find((item) =>
+        isInclude(item.title.replaceAll('_', ''), league, IncludeMode.IncludeIgnoreCaseSensitive)
+      );
     }
     if (!item) {
       item = leagues.find((item) => isInclude(item.id, league, IncludeMode.IncludeIgnoreCaseSensitive));
@@ -41,9 +43,13 @@ export const convertPVPRankings = (data: string[], leagues: ILeague[]) =>
     }
     result.cp = data
       .filter(
-        (item) => item.startsWith(result.id) && isInclude(item, `${league}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/`)
+        (item) =>
+          item.startsWith(result.id) &&
+          isInclude(item, `${league}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/`)
       )
-      .map((item) => toNumber(item.replace(`${league}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/rankings-`, '')))
+      .map((item) =>
+        toNumber(item.replace(`${league}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/rankings-`, ''))
+      )
       .sort((a, b) => a - b);
     result.logo = item?.iconUrl;
     return result;

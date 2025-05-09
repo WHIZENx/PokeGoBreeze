@@ -559,6 +559,22 @@ export class PokemonData implements IPokemonData {
   cannotDynamax = true;
   pokemonType = PokemonType.Normal;
 
+  static copy(pokemon: IPokemonData | undefined) {
+    if (pokemon) {
+      const obj = new PokemonData();
+      Object.assign(obj, pokemon);
+      return obj;
+    }
+  }
+
+  static copyWithCreate(pokemon: IPokemonData | undefined) {
+    const obj = new PokemonData();
+    if (pokemon) {
+      Object.assign(obj, pokemon);
+    }
+    return obj;
+  }
+
   static create(pokemon: PokemonDataModel, options?: IPokemonDataOptional) {
     const obj = new PokemonData();
     Object.entries(genList).forEach(([key, value]) => {
@@ -574,17 +590,26 @@ export class PokemonData implements IPokemonData {
     obj.name = capitalize(name);
     if (pokemon.id !== 201) {
       obj.fullName =
-        pokemon.form && pokemon.pokemonType !== PokemonType.Normal ? `${pokemon.pokemonId}_${pokemon.form}` : pokemon.pokemonId;
+        pokemon.form && pokemon.pokemonType !== PokemonType.Normal
+          ? `${pokemon.pokemonId}_${pokemon.form}`
+          : pokemon.pokemonId;
     } else {
       obj.fullName = getValueOrDefault(String, pokemon.form?.toString());
     }
     obj.slug = (options?.slug ?? name).toLowerCase();
     obj.sprite = getValueOrDefault(String, options?.sprite, DEFAULT_SPRITE_NAME);
     obj.types = getValueOrDefault(Array, pokemon.types);
-    obj.genderRatio = PokemonGenderRatio.create(toNumber(options?.genderRatio?.M, 0.5), toNumber(options?.genderRatio?.F, 0.5));
+    obj.genderRatio = PokemonGenderRatio.create(
+      toNumber(options?.genderRatio?.M, 0.5),
+      toNumber(options?.genderRatio?.F, 0.5)
+    );
     obj.baseStatsGO = isUndefined(options?.baseStatsGO) ? true : options.baseStatsGO;
     obj.baseStats = options?.baseStats ?? new StatsPokemon();
-    obj.statsGO = StatsPokemonGO.create(pokemon.stats?.baseAttack, pokemon.stats?.baseDefense, pokemon.stats?.baseStamina);
+    obj.statsGO = StatsPokemonGO.create(
+      pokemon.stats?.baseAttack,
+      pokemon.stats?.baseDefense,
+      pokemon.stats?.baseStamina
+    );
     obj.heightM = pokemon.pokedexHeightM;
     obj.weightKg = pokemon.pokedexWeightKg;
     obj.color = getValueOrDefault(String, options?.color, getKeyWithData(GlobalType, GlobalType.None));
@@ -602,7 +627,11 @@ export class PokemonData implements IPokemonData {
     obj.disableTransferToPokemonHome = getValueOrDefault(Boolean, pokemon.disableTransferToPokemonHome);
     obj.isBaby = getValueOrDefault(Boolean, options?.isBaby);
     obj.region = getValueOrDefault(String, options?.region, regionList[0]);
-    obj.version = getValueOrDefault(String, options?.version, versionList[versionList.length - 1].toLowerCase().replaceAll(' ', '-'));
+    obj.version = getValueOrDefault(
+      String,
+      options?.version,
+      versionList[versionList.length - 1].toLowerCase().replaceAll(' ', '-')
+    );
     obj.baseSpecies = capitalize(pokemon.pokemonId);
     obj.form = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
     obj.encounter = pokemon.encounter;

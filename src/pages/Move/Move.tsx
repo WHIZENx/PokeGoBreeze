@@ -107,7 +107,12 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
     selector: (row) => (
       <>
         {row.moveType !== MoveType.None && (
-          <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.moveType)?.toLowerCase()}-ic`)}>
+          <span
+            className={combineClasses(
+              'type-icon-small ic',
+              `${getKeyWithData(MoveType, row.moveType)?.toLowerCase()}-ic`
+            )}
+          >
             {getKeyWithData(MoveType, row.moveType)}
           </span>
         )}
@@ -196,7 +201,9 @@ const Move = (props: IMovePage) => {
   const getMoveIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
     if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(data.combats)) {
-      const move = data.combats.find((m) => isEqual(m.name.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive));
+      const move = data.combats.find((m) =>
+        isEqual(m.name.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
+      );
       if (move) {
         id = move.id;
       }
@@ -228,12 +235,11 @@ const Move = (props: IMovePage) => {
           return true;
         }
         if (!pokemon.releasedGO) {
-          const result = checkPokemonGO(
+          return checkPokemonGO(
             pokemon.num,
             convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')),
             data.pokemons
           );
-          return result?.releasedGO;
         }
         return pokemon.releasedGO;
       })
@@ -245,7 +251,11 @@ const Move = (props: IMovePage) => {
     if (isNotEmpty(data.combats) && move?.isMultipleWithType && type) {
       searchParams.set(Params.MoveType, type.toLowerCase());
       setSearchParams(searchParams);
-      setMove(data.combats.find((item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)));
+      setMove(
+        data.combats.find(
+          (item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)
+        )
+      );
       setMoveType(type.toUpperCase());
     }
   }, [move?.isMultipleWithType, searchParams, data.combats]);
@@ -280,7 +290,14 @@ const Move = (props: IMovePage) => {
               value={moveType}
             >
               {Object.keys(data.typeEff)
-                .filter((type) => !isEqual(type, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Fairy), EqualMode.IgnoreCaseSensitive))
+                .filter(
+                  (type) =>
+                    !isEqual(
+                      type,
+                      getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Fairy),
+                      EqualMode.IgnoreCaseSensitive
+                    )
+                )
                 .map((value, index) => (
                   <option key={index} value={value}>
                     {capitalize(value)}
@@ -322,7 +339,10 @@ const Move = (props: IMovePage) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div style={{ width: 'fit-content' }} className={combineClasses('type-icon-small', move.type?.toLowerCase())}>
+                    <div
+                      style={{ width: 'fit-content' }}
+                      className={combineClasses('type-icon-small', move.type?.toLowerCase())}
+                    >
                       {capitalize(move.type)}
                     </div>
                   )}
@@ -346,7 +366,9 @@ const Move = (props: IMovePage) => {
                         alt="img-type"
                         src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
                       />
-                      <span className="d-inline-block caption">{splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}</span>
+                      <span className="d-inline-block caption">
+                        {splitAndCapitalize(getWeatherEffective(move.type), '_', ' ')}
+                      </span>
                     </>
                   )}
                 </td>
@@ -446,10 +468,16 @@ const Move = (props: IMovePage) => {
                         <CircleIcon sx={{ fontSize: '5px' }} /> {getKeyWithData(BuffType, value.target)}
                       </td>
                       <td>
-                        {value.power > 0 ? <ArrowUpwardIcon sx={{ color: 'green' }} /> : <ArrowDownwardIcon sx={{ color: 'red' }} />}
+                        {value.power > 0 ? (
+                          <ArrowUpwardIcon sx={{ color: 'green' }} />
+                        ) : (
+                          <ArrowDownwardIcon sx={{ color: 'red' }} />
+                        )}
                         <span className="d-inline-block caption">
                           {value.type === TypeAction.Atk ? 'Attack ' : 'Defense '}
-                          <span className={combineClasses('buff-power', value.power > 0 ? 'text-success' : 'text-danger')}>
+                          <span
+                            className={combineClasses('buff-power', value.power > 0 ? 'text-success' : 'text-danger')}
+                          >
                             <b>
                               {value.power > 0 && '+'}
                               {value.power}
@@ -527,7 +555,13 @@ const Move = (props: IMovePage) => {
                   DPS
                   <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${toFloatWithPadding((move.pvePower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000), 2)}`}</td>
+                <td>
+                  {move &&
+                    `${toFloatWithPadding(
+                      (move.pvePower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000),
+                      2
+                    )}`}
+                </td>
               </tr>
               <tr>
                 <td>
@@ -536,7 +570,10 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>
                   {move &&
-                    `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 2)) / (move.durationMs / 1000), 2)}`}
+                    `${toFloatWithPadding(
+                      (move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 2)) / (move.durationMs / 1000),
+                      2
+                    )}`}
                 </td>
               </tr>
               <tr>
@@ -546,7 +583,10 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>
                   {move &&
-                    `${toFloatWithPadding((move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 3)) / (move.durationMs / 1000), 2)}`}
+                    `${toFloatWithPadding(
+                      (move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 3)) / (move.durationMs / 1000),
+                      2
+                    )}`}
                 </td>
               </tr>
               {move?.typeMove === TypeMove.Fast && (
@@ -569,7 +609,13 @@ const Move = (props: IMovePage) => {
                   DPS
                   <span className="caption">(STAB / Shadow Bonus)</span>
                 </td>
-                <td>{move && `${toFloatWithPadding((move.pvpPower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000), 2)}`}</td>
+                <td>
+                  {move &&
+                    `${toFloatWithPadding(
+                      (move.pvpPower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000),
+                      2
+                    )}`}
+                </td>
               </tr>
               {move?.bonus && (
                 <tr>
@@ -584,20 +630,34 @@ const Move = (props: IMovePage) => {
                             <tbody>
                               <tr>
                                 <td>Bonus Type</td>
-                                <td colSpan={2}>{splitAndCapitalize(getKeyWithData(BonusType, move.bonus.bonusType), /(?=[A-Z])/, ' ')}</td>
+                                <td colSpan={2}>
+                                  {splitAndCapitalize(
+                                    getKeyWithData(BonusType, move.bonus.bonusType),
+                                    /(?=[A-Z])/,
+                                    ' '
+                                  )}
+                                </td>
                               </tr>
                               <tr>
                                 <td>Duration</td>
-                                <td colSpan={2}>{`${move.bonus.durationMs} ms (${move.bonus.durationMs / 1000} sec)`}</td>
+                                <td colSpan={2}>{`${move.bonus.durationMs} ms (${
+                                  move.bonus.durationMs / 1000
+                                } sec)`}</td>
                               </tr>
                               <tr>
                                 <td>Extra Duration</td>
-                                <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${move.bonus.extraDurationMs / 1000} sec)`}</td>
+                                <td colSpan={2}>{`${move.bonus.extraDurationMs} ms (${
+                                  move.bonus.extraDurationMs / 1000
+                                } sec)`}</td>
                               </tr>
                               <tr>
                                 <td>Multi Use</td>
                                 <td colSpan={2}>
-                                  {move.bonus.enableMultiUse ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+                                  {move.bonus.enableMultiUse ? (
+                                    <DoneIcon sx={{ color: 'green' }} />
+                                  ) : (
+                                    <CloseIcon sx={{ color: 'red' }} />
+                                  )}
                                 </td>
                               </tr>
                               <tr>
@@ -617,7 +677,11 @@ const Move = (props: IMovePage) => {
                                 </td>
                                 <td className="table-bonus-cost">
                                   <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
-                                    <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                                    <img
+                                      alt="img-stardust"
+                                      height={20}
+                                      src={APIService.getItemSprite('stardust_painted')}
+                                    />
                                   </div>
                                   {move.bonus.cost.stardustCost}
                                 </td>
@@ -638,7 +702,9 @@ const Move = (props: IMovePage) => {
                                           value
                                         ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
                                           <div className="d-flex flex-wrap" style={{ gap: 10 }}>
-                                            {getValueOrDefault<string[]>(Array, value).map((item) => renderReward(item))}
+                                            {getValueOrDefault<string[]>(Array, value).map((item) =>
+                                              renderReward(item)
+                                            )}
                                           </div>
                                         ) : (
                                           renderReward(value)

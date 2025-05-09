@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { TableColumn } from 'react-data-table-component';
 
 type Primitive = string | number | boolean | JSX.Element | JSX.Element[];

@@ -56,7 +56,9 @@ const columns: TableColumnModify<ICombat>[] = [
   {
     id: ColumnSearchMoveType.Type,
     name: 'Type',
-    selector: (row) => <div className={combineClasses('type-icon-small', row.type?.toLowerCase())}>{capitalize(row.type)}</div>,
+    selector: (row) => (
+      <div className={combineClasses('type-icon-small', row.type?.toLowerCase())}>{capitalize(row.type)}</div>
+    ),
     sortable: true,
     sortFunction: moveSort,
   },
@@ -64,7 +66,9 @@ const columns: TableColumnModify<ICombat>[] = [
     id: ColumnSearchMoveType.Name,
     name: 'Name',
     selector: (row) => (
-      <LinkToTop to={`/move/${row.track}${row.isMultipleWithType ? `?${Params.MoveType}=${row.type?.toLowerCase()}` : ''}`}>
+      <LinkToTop
+        to={`/move/${row.track}${row.isMultipleWithType ? `?${Params.MoveType}=${row.type?.toLowerCase()}` : ''}`}
+      >
         {splitAndCapitalize(row.name, '_', ' ')}
       </LinkToTop>
     ),
@@ -181,7 +185,9 @@ const Search = () => {
                           className="text-black"
                           value={fMoveType}
                           label="Type"
-                          onChange={(e) => setFilters(Filter.create({ ...filters, fMoveType: toNumber(e.target.value) }))}
+                          onChange={(e) =>
+                            setFilters(Filter.create({ ...filters, fMoveType: toNumber(e.target.value) }))
+                          }
                         >
                           <MenuItem value={SelectType.All} defaultChecked={true}>
                             {getKeyWithData(SelectType, SelectType.All)}
@@ -245,7 +251,9 @@ const Search = () => {
                           className="text-black"
                           value={cMoveType}
                           label="Type"
-                          onChange={(e) => setFilters(Filter.create({ ...filters, cMoveType: toNumber(e.target.value) }))}
+                          onChange={(e) =>
+                            setFilters(Filter.create({ ...filters, cMoveType: toNumber(e.target.value) }))
+                          }
                         >
                           <MenuItem value={SelectType.All}>{getKeyWithData(SelectType, SelectType.All)}</MenuItem>
                           {Object.keys(types).map((value, index) => (

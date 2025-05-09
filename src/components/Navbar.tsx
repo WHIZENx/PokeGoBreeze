@@ -55,7 +55,14 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
     <Fragment>
       <Navbar collapseOnSelect={true} bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
         <Link className="navbar-brand" to="/">
-          <img src={logo} width="30" height="30" className="d-inline-block align-top" alt="" style={{ marginLeft: 10, marginRight: 10 }} />
+          <img
+            src={logo}
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+            alt=""
+            style={{ marginLeft: 10, marginRight: 10 }}
+          />
           PokéGoBreeze
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />

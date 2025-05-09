@@ -11,7 +11,8 @@ const PokemonIconType = (props: IPokemonIconTypeComponent) => {
   return (
     <>
       {props.pokemonType === PokemonType.Shadow && getIconType(APIService.getPokeShadow(), 'shadow-icon', 'img-shadow')}
-      {props.pokemonType === PokemonType.Purified && getIconType(APIService.getPokePurified(), 'purified-icon', 'img-purified')}
+      {props.pokemonType === PokemonType.Purified &&
+        getIconType(APIService.getPokePurified(), 'purified-icon', 'img-purified')}
       {props.children}
     </>
   );

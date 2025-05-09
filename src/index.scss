@@ -2,7 +2,7 @@
 @use "../node_modules/placeholder-loading/src/scss/variables.scss" as * with (
   $ph-color: #e2eaf1,
   $ph-border: none,
-  $ph-border-radius: 0,
+  $ph-border-radius: 0
 );
 @use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
 
@@ -14,18 +14,8 @@ body {
   height: 100%;
   background: var(--bg-color);
   margin: 0;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    "Fira Sans",
-    "Droid Sans",
-    "Helvetica Neue",
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: 0.1s;

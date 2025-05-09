@@ -162,7 +162,15 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
     name: 'Type(s)',
     selector: (row) =>
       row.pokemon.types.map((value, index) => (
-        <IconType key={index} width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" title={capitalize(value)} type={value} />
+        <IconType
+          key={index}
+          width={25}
+          height={25}
+          style={{ marginRight: 10 }}
+          alt="type-logo"
+          title={capitalize(value)}
+          type={value}
+        />
       )),
     width: '140px',
   },
@@ -179,7 +187,12 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
-            <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.fMoveType)?.toLowerCase()}-ic`)}>
+            <span
+              className={combineClasses(
+                'type-icon-small ic',
+                `${getKeyWithData(MoveType, row.fMoveType)?.toLowerCase()}-ic`
+              )}
+            >
               {getKeyWithData(MoveType, row.fMoveType)}
             </span>
           )}
@@ -203,7 +216,12 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
-            <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.cMoveType)?.toLowerCase()}-ic`)}>
+            <span
+              className={combineClasses(
+                'type-icon-small ic',
+                `${getKeyWithData(MoveType, row.cMoveType)?.toLowerCase()}-ic`
+              )}
+            >
               {getKeyWithData(MoveType, row.cMoveType)}
             </span>
           )}
@@ -261,18 +279,30 @@ const DpsTdo = () => {
   const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(optionStore?.dpsSheet?.dataTargetPokemon);
-  const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.fMoveTargetPokemon);
-  const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(optionStore?.dpsSheet?.cMoveTargetPokemon);
+  const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(
+    optionStore?.dpsSheet?.dataTargetPokemon
+  );
+  const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(
+    optionStore?.dpsSheet?.fMoveTargetPokemon
+  );
+  const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(
+    optionStore?.dpsSheet?.cMoveTargetPokemon
+  );
 
   const [defaultPage, setDefaultPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage ? optionStore.dpsSheet.defaultPage : DEFAULT_SHEET_PAGE
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage
+      ? optionStore.dpsSheet.defaultPage
+      : DEFAULT_SHEET_PAGE
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage ? optionStore.dpsSheet.defaultRowPerPage : DEFAULT_SHEET_ROW
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage
+      ? optionStore.dpsSheet.defaultRowPerPage
+      : DEFAULT_SHEET_ROW
   );
   const [defaultSorted, setDefaultSorted] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted ? optionStore.dpsSheet.defaultSorted : new OptionDPSSort()
+    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
+      ? optionStore.dpsSheet.defaultSorted
+      : new OptionDPSSort()
   );
 
   const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPS());
@@ -342,7 +372,11 @@ const DpsTdo = () => {
           let dps = 0;
           let tdo = 0;
           if (dataTargetPokemon && fMoveTargetPokemon && cMoveTargetPokemon) {
-            const statsDef = calculateStatsByTag(dataTargetPokemon, dataTargetPokemon.baseStats, dataTargetPokemon.slug);
+            const statsDef = calculateStatsByTag(
+              dataTargetPokemon,
+              dataTargetPokemon.baseStats,
+              dataTargetPokemon.slug
+            );
             const statsDefender = new BattleCalculate({
               atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
               def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
@@ -353,8 +387,21 @@ const DpsTdo = () => {
               weatherBoosts: options.weatherBoosts,
             });
 
-            const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-            dps = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+            const dpsDef = calculateBattleDPSDefender(
+              data.options,
+              data.typeEff,
+              data.weatherBoost,
+              statsAttacker,
+              statsDefender
+            );
+            dps = calculateBattleDPS(
+              data.options,
+              data.typeEff,
+              data.weatherBoost,
+              statsAttacker,
+              statsDefender,
+              dpsDef
+            );
             tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
           } else {
             dps = calculateAvgDPS(
@@ -370,7 +417,13 @@ const DpsTdo = () => {
               statsAttacker.pokemonType,
               options
             );
-            tdo = calculateTDO(data.options, statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
+            tdo = calculateTDO(
+              data.options,
+              statsAttacker.def,
+              toNumber(statsAttacker.hp),
+              dps,
+              statsAttacker.pokemonType
+            );
           }
           dataList.push({
             pokemon,
@@ -470,15 +523,22 @@ const DpsTdo = () => {
 
       let boolReleaseGO = true;
       if (releasedGO) {
-        const result = checkPokemonGO(
+        const isReleasedGO = checkPokemonGO(
           item.pokemon.num,
           getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
           data.pokemons
         );
-        boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, result?.releasedGO);
+        boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
       }
       const isEnableOptions =
-        enableShadow || enableSpecial || enableMega || enableGMax || enablePrimal || enableLegendary || enableMythic || enableUltraBeast;
+        enableShadow ||
+        enableSpecial ||
+        enableMega ||
+        enableGMax ||
+        enablePrimal ||
+        enableLegendary ||
+        enableMythic ||
+        enableUltraBeast;
       const isShowOptions =
         boolShowShadow ||
         boolShowElite ||
@@ -497,7 +557,13 @@ const DpsTdo = () => {
         boolOnlyLegend ||
         boolOnlyMythic ||
         boolOnlyUltra;
-      return boolFilterType && boolFilterPoke && boolReleaseGO && !isShowOptions && (!isEnableOptions || (boolReleaseGO && isOnlyOptions));
+      return (
+        boolFilterType &&
+        boolFilterPoke &&
+        boolReleaseGO &&
+        !isShowOptions &&
+        (!isEnableOptions || (boolReleaseGO && isOnlyOptions))
+      );
     });
     if (isNotEmpty(result) && enableBest) {
       result = filterBestOptions(result, bestOf);
@@ -642,7 +708,10 @@ const DpsTdo = () => {
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
-                className={combineClasses('btn-select-type w-100 border-types', isIncludeList(selectTypes, item) ? 'select-type' : '')}
+                className={combineClasses(
+                  'btn-select-type w-100 border-types',
+                  isIncludeList(selectTypes, item) ? 'select-type' : ''
+                )}
                 style={{ padding: 10 }}
               >
                 <TypeInfo isBlock={true} arr={[item]} />
@@ -666,7 +735,9 @@ const DpsTdo = () => {
                 </div>
                 <div className="d-flex col-md-3">
                   <FormControlLabel
-                    control={<Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />}
+                    control={
+                      <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
+                    }
                     label="Match Pokémon"
                   />
                 </div>
@@ -679,7 +750,11 @@ const DpsTdo = () => {
                   <Checkbox
                     checked={showShadow}
                     onChange={(_, check) =>
-                      setFilters({ ...filters, showShadow: check, enableShadow: check === false ? check : filters.enableShadow })
+                      setFilters({
+                        ...filters,
+                        showShadow: check,
+                        enableShadow: check === false ? check : filters.enableShadow,
+                      })
                     }
                   />
                 }
@@ -690,7 +765,11 @@ const DpsTdo = () => {
                   <Checkbox
                     checked={showMega}
                     onChange={(_, check) =>
-                      setFilters({ ...filters, showMega: check, enableMega: check === false ? check : filters.enableMega })
+                      setFilters({
+                        ...filters,
+                        showMega: check,
+                        enableMega: check === false ? check : filters.enableMega,
+                      })
                     }
                   />
                 }
@@ -701,7 +780,11 @@ const DpsTdo = () => {
                   <Checkbox
                     checked={showGMax}
                     onChange={(_, check) =>
-                      setFilters({ ...filters, showGMax: check, enableGMax: check === false ? check : filters.enableGMax })
+                      setFilters({
+                        ...filters,
+                        showGMax: check,
+                        enableGMax: check === false ? check : filters.enableGMax,
+                      })
                     }
                   />
                 }
@@ -712,7 +795,11 @@ const DpsTdo = () => {
                   <Checkbox
                     checked={showPrimal}
                     onChange={(_, check) =>
-                      setFilters({ ...filters, showPrimal: check, enablePrimal: check === false ? check : filters.enablePrimal })
+                      setFilters({
+                        ...filters,
+                        showPrimal: check,
+                        enablePrimal: check === false ? check : filters.enablePrimal,
+                      })
                     }
                   />
                 }
@@ -723,7 +810,11 @@ const DpsTdo = () => {
                   <Checkbox
                     checked={showLegendary}
                     onChange={(_, check) =>
-                      setFilters({ ...filters, showLegendary: check, enableLegendary: check === false ? check : filters.enableLegendary })
+                      setFilters({
+                        ...filters,
+                        showLegendary: check,
+                        enableLegendary: check === false ? check : filters.enableLegendary,
+                      })
                     }
                   />
                 }
@@ -734,7 +825,11 @@ const DpsTdo = () => {
                   <Checkbox
                     checked={showMythic}
                     onChange={(_, check) =>
-                      setFilters({ ...filters, showMythic: check, enableMythic: check === false ? check : filters.enableMythic })
+                      setFilters({
+                        ...filters,
+                        showMythic: check,
+                        enableMythic: check === false ? check : filters.enableMythic,
+                      })
                     }
                   />
                 }
@@ -760,7 +855,11 @@ const DpsTdo = () => {
                   <Checkbox
                     checked={showSpecialMove}
                     onChange={(_, check) =>
-                      setFilters({ ...filters, showSpecialMove: check, enableSpecial: check === false ? check : filters.enableSpecial })
+                      setFilters({
+                        ...filters,
+                        showSpecialMove: check,
+                        enableSpecial: check === false ? check : filters.enableSpecial,
+                      })
                     }
                   />
                 }
@@ -858,7 +957,12 @@ const DpsTdo = () => {
                     <FormControlLabel
                       className="border-input"
                       style={{ marginRight: 0, paddingRight: 16 }}
-                      control={<Switch checked={enableBest} onChange={(_, check) => setFilters({ ...filters, enableBest: check })} />}
+                      control={
+                        <Switch
+                          checked={enableBest}
+                          onChange={(_, check) => setFilters({ ...filters, enableBest: check })}
+                        />
+                      }
                       label="Best move set of"
                     />
                     <Form.Select
@@ -877,7 +981,12 @@ const DpsTdo = () => {
                 <Box className="col-xxl-4">
                   <div className="input-group">
                     <FormControlLabel
-                      control={<Switch checked={releasedGO} onChange={(_, check) => setFilters({ ...filters, releasedGO: check })} />}
+                      control={
+                        <Switch
+                          checked={releasedGO}
+                          onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
+                        />
+                      }
                       label={
                         <span className="d-flex align-items-center">
                           Released in GO
@@ -916,7 +1025,13 @@ const DpsTdo = () => {
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
                       inputType={InputType.Small}
-                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.form, dataTargetPokemon?.pokemonType)}
+                      pokemon={
+                        new SelectMovePokemonModel(
+                          dataTargetPokemon?.num,
+                          dataTargetPokemon?.form,
+                          dataTargetPokemon?.pokemonType
+                        )
+                      }
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
                       moveType={TypeMove.Fast}
@@ -929,7 +1044,13 @@ const DpsTdo = () => {
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
                       inputType={InputType.Small}
-                      pokemon={new SelectMovePokemonModel(dataTargetPokemon?.num, dataTargetPokemon?.form, dataTargetPokemon?.pokemonType)}
+                      pokemon={
+                        new SelectMovePokemonModel(
+                          dataTargetPokemon?.num,
+                          dataTargetPokemon?.form,
+                          dataTargetPokemon?.pokemonType
+                        )
+                      }
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}
                       moveType={TypeMove.Charge}
@@ -1201,7 +1322,9 @@ const DpsTdo = () => {
             setDefaultSorted(
               OptionDPSSort.create({
                 selectedColumn: toNumber(selectedColumn.id, ColumnType.Id),
-                sortDirection: isEqual(sortDirection, SortOrderType.ASC) ? SortDirectionType.ASC : SortDirectionType.DESC,
+                sortDirection: isEqual(sortDirection, SortOrderType.ASC)
+                  ? SortDirectionType.ASC
+                  : SortDirectionType.DESC,
               })
             );
           }}

@@ -109,7 +109,11 @@ const StatsTable = () => {
       setStatsBattle([]);
       setIsLoading(true);
     }
-    if (toNumber(pokemon?.statsGO?.atk) > 0 && toNumber(pokemon?.statsGO?.def) > 0 && toNumber(pokemon?.statsGO?.sta) > 0) {
+    if (
+      toNumber(pokemon?.statsGO?.atk) > 0 &&
+      toNumber(pokemon?.statsGO?.def) > 0 &&
+      toNumber(pokemon?.statsGO?.sta) > 0
+    ) {
       calculateStats(controller.signal)
         .then((data) => {
           setStatsBattle(data);

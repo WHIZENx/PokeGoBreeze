@@ -51,7 +51,13 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
     <div className="element-top position-relative">
       <h4 className="title-evo">
         <b>{`Assets of ${splitAndCapitalize(pokemonData?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
-        <img style={{ marginLeft: 5 }} width={36} height={36} alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(icon)} />
+        <img
+          style={{ marginLeft: 5 }}
+          width={36}
+          height={36}
+          alt="pokemon-go-icon"
+          src={APIService.getPokemonGoIcon(icon)}
+        />
       </h4>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 176 }}>
@@ -62,7 +68,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           {pokeAssets.map((assets, index) => (
             <div key={index} className="d-inline-block group-model text-center">
               {assets.image.map((value, index) => (
-                <div key={index} className="d-inline-block" style={{ width: value.gender === GenderType.GenderLess ? '100%' : 'auto' }}>
+                <div
+                  key={index}
+                  className="d-inline-block"
+                  style={{ width: value.gender === GenderType.GenderLess ? '100%' : 'auto' }}
+                >
                   <div className="sub-group-model">
                     {gender && !gender.genderlessPercent && (
                       <div className="gender">
@@ -73,7 +83,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           </Fragment>
                         ) : (
                           <Fragment>
-                            {value.gender === GenderType.Male ? <MaleIcon sx={{ color: 'blue' }} /> : <FemaleIcon sx={{ color: 'red' }} />}
+                            {value.gender === GenderType.Male ? (
+                              <MaleIcon sx={{ color: 'blue' }} />
+                            ) : (
+                              <FemaleIcon sx={{ color: 'red' }} />
+                            )}
                           </Fragment>
                         )}
                       </div>
@@ -87,7 +101,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                             src={APIService.getPokemonModel(value.default, value.pokemonId)}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
-                              e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemonId, value.default);
+                              e.currentTarget.src = getValidPokemonImgPath(
+                                e.currentTarget.src,
+                                value.pokemonId,
+                                value.default
+                              );
                             }}
                           />
                         </div>
@@ -106,7 +124,11 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                               src={APIService.getPokemonModel(value.shiny, value.pokemonId)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
-                                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemonId, value.shiny);
+                                e.currentTarget.src = getValidPokemonImgPath(
+                                  e.currentTarget.src,
+                                  value.pokemonId,
+                                  value.shiny
+                                );
                               }}
                             />
                           </div>
@@ -182,7 +204,12 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
               {asset?.sound.cry.map((value, index) => (
                 <li key={index} style={{ listStyleType: 'disc' }}>
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100" controls={true} style={{ height: 30 }}>
+                  <audio
+                    src={APIService.getSoundPokemonGO(value.path)}
+                    className="w-100"
+                    controls={true}
+                    style={{ height: 30 }}
+                  >
                     <source type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>

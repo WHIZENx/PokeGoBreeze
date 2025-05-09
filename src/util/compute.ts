@@ -109,7 +109,12 @@ export const computeCandyBgColor = (candyData: ICandy[], id: number | undefined)
         id
       ) || item.familyId === toNumber(id)
   );
-  const color = Color.createRgb(data?.secondaryColor.r, data?.secondaryColor.g, data?.secondaryColor.b, data?.secondaryColor.a);
+  const color = Color.createRgb(
+    data?.secondaryColor.r,
+    data?.secondaryColor.g,
+    data?.secondaryColor.b,
+    data?.secondaryColor.a
+  );
   return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 };
 
@@ -156,7 +161,10 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
   const asset = pokemonAssets.image.find((img) => isEqual(formName, img.form, EqualMode.IgnoreCaseSensitive));
   if (asset) {
     return asset;
-  } else if (isNotEmpty(pokemonAssets.image) && !isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)) {
+  } else if (
+    isNotEmpty(pokemonAssets.image) &&
+    !isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
+  ) {
     const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
     if (!formNormal) {
       return pokemonAssets.image[0];
@@ -166,7 +174,12 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
   return;
 };
 
-export const findAssetForm = (pokemonAssets: IAsset[], id: number | undefined, formName = FORM_NORMAL, formType = FormType.Default) => {
+export const findAssetForm = (
+  pokemonAssets: IAsset[],
+  id: number | undefined,
+  formName = FORM_NORMAL,
+  formType = FormType.Default
+) => {
   if (isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
     return;
   }

@@ -33,7 +33,16 @@ import {
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Radio, RadioGroup, Select } from '@mui/material';
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+} from '@mui/material';
 
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
@@ -548,8 +557,12 @@ const Battle = () => {
                   player2 = PokemonBattleData.create({
                     ...player2,
                     stats: StatsPokemonGO.create(
-                      value.type === TypeAction.Atk ? toNumber(player2.stats?.atk) + value.power : toNumber(player2.stats?.atk),
-                      value.type === TypeAction.Def ? toNumber(player2.stats?.def) + value.power : toNumber(player2.stats?.def),
+                      value.type === TypeAction.Atk
+                        ? toNumber(player2.stats?.atk) + value.power
+                        : toNumber(player2.stats?.atk),
+                      value.type === TypeAction.Def
+                        ? toNumber(player2.stats?.def) + value.power
+                        : toNumber(player2.stats?.def),
                       toNumber(player2.stats?.sta)
                     ),
                   });
@@ -558,8 +571,12 @@ const Battle = () => {
                   player1 = PokemonBattleData.create({
                     ...player1,
                     stats: StatsPokemonGO.create(
-                      value.type === TypeAction.Atk ? toNumber(player1.stats?.atk) + value.power : toNumber(player1.stats?.atk),
-                      value.type === TypeAction.Def ? toNumber(player1.stats?.def) + value.power : toNumber(player1.stats?.def),
+                      value.type === TypeAction.Atk
+                        ? toNumber(player1.stats?.atk) + value.power
+                        : toNumber(player1.stats?.atk),
+                      value.type === TypeAction.Def
+                        ? toNumber(player1.stats?.def) + value.power
+                        : toNumber(player1.stats?.def),
                       toNumber(player2.stats?.sta)
                     ),
                   });
@@ -602,8 +619,12 @@ const Battle = () => {
                   player1 = PokemonBattleData.create({
                     ...player1,
                     stats: StatsPokemonGO.create(
-                      value.type === TypeAction.Atk ? toNumber(player1.stats?.atk) + value.power : toNumber(player1.stats?.atk),
-                      value.type === TypeAction.Def ? toNumber(player1.stats?.def) + value.power : toNumber(player1.stats?.def),
+                      value.type === TypeAction.Atk
+                        ? toNumber(player1.stats?.atk) + value.power
+                        : toNumber(player1.stats?.atk),
+                      value.type === TypeAction.Def
+                        ? toNumber(player1.stats?.def) + value.power
+                        : toNumber(player1.stats?.def),
                       toNumber(player2.stats?.sta)
                     ),
                   });
@@ -612,8 +633,12 @@ const Battle = () => {
                   player2 = PokemonBattleData.create({
                     ...player2,
                     stats: StatsPokemonGO.create(
-                      value.type === TypeAction.Atk ? toNumber(player2.stats?.atk) + value.power : toNumber(player2.stats?.atk),
-                      value.type === TypeAction.Def ? toNumber(player2.stats?.def) + value.power : toNumber(player2.stats?.def),
+                      value.type === TypeAction.Atk
+                        ? toNumber(player2.stats?.atk) + value.power
+                        : toNumber(player2.stats?.atk),
+                      value.type === TypeAction.Def
+                        ? toNumber(player2.stats?.def) + value.power
+                        : toNumber(player2.stats?.def),
                       toNumber(player2.stats?.sta)
                     ),
                   });
@@ -650,12 +675,16 @@ const Battle = () => {
           tapSec = false;
           if (immunePri) {
             player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
-            const lastTapPos = timelinePri.map((timeline) => timeline.isTap && !isUndefined(timeline.type)).lastIndexOf(true);
+            const lastTapPos = timelinePri
+              .map((timeline) => timeline.isTap && !isUndefined(timeline.type))
+              .lastIndexOf(true);
             const lastFastAtkPos = timelinePri.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
             timelinePri[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
           } else if (immuneSec) {
             player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
-            const lastTapPos = timelineSec.map((timeline) => timeline.isTap && !isUndefined(timeline.type)).lastIndexOf(true);
+            const lastTapPos = timelineSec
+              .map((timeline) => timeline.isTap && !isUndefined(timeline.type))
+              .lastIndexOf(true);
             const lastFastAtkPos = timelineSec.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
             timelineSec[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
           }
@@ -674,7 +703,13 @@ const Battle = () => {
             timelineSec.push(State(timer, player2.block, player2.energy, player2.hp, AttackType.Dead));
           } else {
             if (timelinePri.length === timelineSec.length) {
-              timelineSec[timelineSec.length - 1] = State(timer, player2.block, player2.energy, player2.hp, AttackType.Win);
+              timelineSec[timelineSec.length - 1] = State(
+                timer,
+                player2.block,
+                player2.energy,
+                player2.hp,
+                AttackType.Win
+              );
             } else {
               timelineSec.push(State(timer, player2.block, player2.energy, player2.hp, AttackType.Win));
             }
@@ -685,7 +720,13 @@ const Battle = () => {
             timelinePri.push(State(timer, player1.block, player1.energy, player1.hp, AttackType.Dead));
           } else {
             if (timelinePri.length === timelineSec.length) {
-              timelinePri[timelinePri.length - 1] = State(timer, player1.block, player1.energy, player1.hp, AttackType.Win);
+              timelinePri[timelinePri.length - 1] = State(
+                timer,
+                player1.block,
+                player1.energy,
+                player1.hp,
+                AttackType.Win
+              );
             } else {
               timelinePri.push(State(timer, player1.block, player1.energy, player1.hp, AttackType.Win));
             }
@@ -780,10 +821,8 @@ const Battle = () => {
   }, [fetchPokemonBattle, league, dispatch]);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
-      loadPVPMoves(dispatch);
-    }
-  }, [dataStore.combats, dispatch]);
+    loadPVPMoves(dispatch);
+  }, [dispatch]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));
@@ -826,7 +865,11 @@ const Battle = () => {
     if (elem && x <= toNumber(timelineNormal.current?.clientWidth) - 2) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
-    if (!isNotEmpty(arrBound.current) && isNotEmpty(pokemonCurr.timeline) && arrBound.current.length < pokemonCurr.timeline.length) {
+    if (
+      !isNotEmpty(arrBound.current) &&
+      isNotEmpty(pokemonCurr.timeline) &&
+      arrBound.current.length < pokemonCurr.timeline.length
+    ) {
       for (let i = 0; i < pokemonCurr.timeline.length; i++) {
         arrBound.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
       }
@@ -903,7 +946,8 @@ const Battle = () => {
     }
     timelinePlay.current = requestAnimationFrame(function animate(timestamp: number) {
       if (timelineType === TimelineType.Normal) {
-        const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
+        const durationFactor =
+          Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrBound.current.length))) * duration;
         const clientWidth = toNumber(timelineNormal.current?.clientWidth);
         const clientWidthContainer = toNumber(timelineNormalContainer.current?.clientWidth);
         const width = Math.min(clientWidth - 2, xCurrent + durationFactor * (clientWidth - 2));
@@ -927,7 +971,8 @@ const Battle = () => {
         }
       } else {
         const clientWidth = toNumber(timelineFit.current?.clientWidth);
-        const durationFactor = Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
+        const durationFactor =
+          Math.min(1, Math.max(0, (timestamp - start.current) / (500 * arrStore.current.length))) * duration;
         const width = Math.min(clientWidth, xCurrent + durationFactor * clientWidth);
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
@@ -969,7 +1014,10 @@ const Battle = () => {
         pokemonCurr.energy,
         Math.floor(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA))
       ),
-      pokemonObj: PokemonBattleData.setValue(pokemonObj.energy, Math.floor(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statSTA))),
+      pokemonObj: PokemonBattleData.setValue(
+        pokemonObj.energy,
+        Math.floor(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statSTA))
+      ),
     });
   };
 
@@ -1165,10 +1213,22 @@ const Battle = () => {
     }
 
     const battleType = getKeyWithData(BattleType, type);
-    (document.getElementById(`level${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.level?.toString());
-    (document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.atkIV.toString());
-    (document.getElementById(`defIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.defIV.toString());
-    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(String, stats?.IV?.staIV.toString());
+    (document.getElementById(`level${battleType}`) as HTMLInputElement).value = getValueOrDefault(
+      String,
+      stats?.level?.toString()
+    );
+    (document.getElementById(`atkIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(
+      String,
+      stats?.IV?.atkIV.toString()
+    );
+    (document.getElementById(`defIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(
+      String,
+      stats?.IV?.defIV.toString()
+    );
+    (document.getElementById(`hpIV${battleType}`) as HTMLInputElement).value = getValueOrDefault(
+      String,
+      stats?.IV?.staIV.toString()
+    );
 
     setPokemon(
       PokemonBattle.create({
@@ -1202,7 +1262,11 @@ const Battle = () => {
                     src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, pokemon.pokemonData?.id, pokemon.pokemonData?.form);
+                      e.currentTarget.src = getValidPokemonImgPath(
+                        e.currentTarget.src,
+                        pokemon.pokemonData?.id,
+                        pokemon.pokemonData?.form
+                      );
                     }}
                   />
                 </PokemonIconType>
@@ -1227,7 +1291,8 @@ const Battle = () => {
             <br />
             {'IV: '}
             <b>
-              {toNumber(pokemon.pokemonData?.currentStats?.IV?.atkIV)}/{toNumber(pokemon.pokemonData?.currentStats?.IV?.defIV)}/
+              {toNumber(pokemon.pokemonData?.currentStats?.IV?.atkIV)}/
+              {toNumber(pokemon.pokemonData?.currentStats?.IV?.defIV)}/
               {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
             </b>
             <br />
@@ -1368,13 +1433,20 @@ const Battle = () => {
     type: BattleType,
     pokemon: IPokemonBattle,
     setPokemon: React.Dispatch<React.SetStateAction<IPokemonBattle>>,
-    // eslint-disable-next-line no-unused-vars
     clearDataPokemon: (removeMove: boolean) => void
   ) => {
-    const pokemonType = getPropertyName(playTimeline, (o) => (type === BattleType.Object ? o.pokemonObj : o.pokemonCurr));
+    const pokemonType = getPropertyName(playTimeline, (o) =>
+      type === BattleType.Object ? o.pokemonObj : o.pokemonCurr
+    );
     return (
       <Fragment>
-        <SelectPoke data={data} league={league} pokemonBattle={pokemon} setPokemonBattle={setPokemon} clearData={clearDataPokemon} />
+        <SelectPoke
+          data={data}
+          league={league}
+          pokemonBattle={pokemon}
+          setPokemonBattle={setPokemon}
+          clearData={clearDataPokemon}
+        />
         {pokemon.pokemonData && (
           <Fragment>
             <div className="input-group">
@@ -1429,7 +1501,9 @@ const Battle = () => {
                       energy: 0,
                     }),
                   });
-                  setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: toNumber(e.target.value) }));
+                  setPokemon(
+                    PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, block: toNumber(e.target.value) })
+                  );
                 }}
               >
                 {getArrayBySeq(DEFAULT_BLOCK + 1).map((value, index) => (
@@ -1458,7 +1532,14 @@ const Battle = () => {
                         energy: 0,
                       }),
                     });
-                    setPokemon(PokemonBattle.create({ ...pokemon, timeline: [], energy: 0, chargeSlot: toNumber(e.target.value) }));
+                    setPokemon(
+                      PokemonBattle.create({
+                        ...pokemon,
+                        timeline: [],
+                        energy: 0,
+                        chargeSlot: toNumber(e.target.value),
+                      })
+                    );
                   }}
                 >
                   <option value={ChargeType.Primary} disabled={pokemon.disableCMovePri || !pokemon.cMovePri}>
@@ -1469,7 +1550,9 @@ const Battle = () => {
                   </option>
                   <option
                     value={ChargeType.Random}
-                    disabled={pokemon.disableCMovePri || pokemon.disableCMoveSec || !pokemon.cMovePri || !pokemon.cMoveSec}
+                    disabled={
+                      pokemon.disableCMovePri || pokemon.disableCMoveSec || !pokemon.cMovePri || !pokemon.cMoveSec
+                    }
                   >
                     Random
                   </option>
@@ -1485,7 +1568,10 @@ const Battle = () => {
                     size={80}
                     maxEnergy={MAX_ENERGY(dataStore.options)}
                     moveEnergy={Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy))}
-                    energy={toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy, pokemon.energy)}
+                    energy={toNumber(
+                      (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy,
+                      pokemon.energy
+                    )}
                     isDisable={pokemon.disableCMovePri}
                   />
                   {pokemon.cMoveSec && (
@@ -1495,7 +1581,10 @@ const Battle = () => {
                       size={80}
                       maxEnergy={MAX_ENERGY(dataStore.options)}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
-                      energy={toNumber((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy, pokemon.energy)}
+                      energy={toNumber(
+                        (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy,
+                        pokemon.energy
+                      )}
                       isDisable={pokemon.disableCMoveSec}
                     />
                   )}
@@ -1548,154 +1637,186 @@ const Battle = () => {
         <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
       </Form.Select>
       <div className="row element-top" style={{ margin: 0 }}>
-        <div className="col-lg-3">{renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}</div>
-        <div className="col-lg-6">
-          {pokemonCurr.pokemonData && pokemonObj.pokemonData && isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) && (
-            <Fragment>
-              <Accordion defaultActiveKey={[]}>
-                <Card className="position-relative">
-                  <Card.Header style={{ padding: 0 }}>
-                    <div className="d-flex timeline-vertical">
-                      <div className="w-50">
-                        <div
-                          className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start"
-                          style={{ gap: 10 }}
-                        >
-                          <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                            <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
-                              <img
-                                alt="img-league"
-                                className="sprite-type"
-                                src={APIService.getPokemonModel(pokemonCurr.pokemonData.form, pokemonCurr.pokemonData.id)}
-                                onError={(e) => {
-                                  e.currentTarget.onerror = null;
-                                  e.currentTarget.src = getValidPokemonImgPath(
-                                    e.currentTarget.src,
-                                    pokemonCurr.pokemonData?.id,
-                                    pokemonCurr.pokemonData?.form
-                                  );
-                                }}
-                              />
-                            </PokemonIconType>
-                          </div>
-                          <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
-                        </div>
-                      </div>
-                      <div className="w-50">
-                        <div
-                          className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end"
-                          style={{ gap: 10 }}
-                        >
-                          <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                            <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
-                              <img
-                                alt="img-league"
-                                className="sprite-type"
-                                src={APIService.getPokemonModel(pokemonObj.pokemonData.form, pokemonObj.pokemonData.id)}
-                                onError={(e) => {
-                                  e.currentTarget.onerror = null;
-                                  e.currentTarget.src = getValidPokemonImgPath(
-                                    e.currentTarget.src,
-                                    pokemonObj.pokemonData?.id,
-                                    pokemonObj.pokemonData?.form
-                                  );
-                                }}
-                              />
-                            </PokemonIconType>
-                          </div>
-                          <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>
-                        </div>
-                      </div>
-                    </div>
-                    <CustomToggle eventKey="0" />
-                  </Card.Header>
-                  <Accordion.Collapse eventKey="0">
-                    <Card.Body style={{ padding: 0 }}>{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              </Accordion>
-              <div>
-                {timelineType === TimelineType.Normal ? (
-                  <Fragment>
-                    {TimeLine(
-                      pokemonCurr,
-                      pokemonObj,
-                      timelineNormalContainer as React.LegacyRef<HTMLDivElement>,
-                      onScrollTimeline,
-                      timelineNormal as React.LegacyRef<HTMLDivElement>,
-                      playLine as React.LegacyRef<HTMLDivElement>,
-                      onPlayLineMove,
-                      showTap
-                    )}
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    {TimeLineFit(
-                      pokemonCurr,
-                      pokemonObj,
-                      timelineFit as React.LegacyRef<HTMLDivElement>,
-                      playLine as React.LegacyRef<HTMLDivElement>,
-                      onPlayLineFitMove,
-                      showTap
-                    )}
-                  </Fragment>
-                )}
-                <div className="d-flex justify-content-center">
-                  <FormControlLabel
-                    control={<Checkbox checked={showTap} onChange={(_, check) => setOptions({ ...options, showTap: check })} />}
-                    label="Show Tap Move"
-                  />
-                  <RadioGroup
-                    row={true}
-                    aria-labelledby="row-timeline-group-label"
-                    name="row-timeline-group"
-                    value={timelineType}
-                    onChange={(e) =>
-                      onChangeTimeline(
-                        toNumber(e.target.value),
-                        timelineType === TimelineType.Normal ? timelineNormal.current?.clientWidth : timelineFit.current?.clientWidth
-                      )
-                    }
-                  >
-                    <FormControlLabel value={TimelineType.Fit} control={<Radio />} label={<span>Fit Timeline</span>} />
-                    <FormControlLabel value={TimelineType.Normal} control={<Radio />} label={<span>Normal Timeline</span>} />
-                  </RadioGroup>
-                  <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
-                    <InputLabel>Speed</InputLabel>
-                    <Select value={duration} onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })} label="Speed">
-                      <MenuItem value={0.5}>x0.5</MenuItem>
-                      <MenuItem value={1}>Normal</MenuItem>
-                      <MenuItem value={2}>x2</MenuItem>
-                      <MenuItem value={5}>x5</MenuItem>
-                      <MenuItem value={10}>x10</MenuItem>
-                    </Select>
-                  </FormControl>
-                </div>
-                <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
-                  <button
-                    className="btn btn-primary"
-                    onMouseDown={() => (playState ? stopTimeLine() : playingTimeLine())}
-                    onTouchEnd={() => (playState ? stopTimeLine() : playingTimeLine())}
-                  >
-                    {playState ? (
-                      <Fragment>
-                        <PauseIcon /> Stop
-                      </Fragment>
-                    ) : (
-                      <Fragment>
-                        <PlayArrowIcon /> Play
-                      </Fragment>
-                    )}
-                  </button>
-                  <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeLine()}>
-                    <RestartAltIcon /> Reset
-                  </button>
-                </div>
-              </div>
-            </Fragment>
-          )}
+        <div className="col-lg-3">
+          {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
         </div>
-        <div className="col-lg-3">{renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}</div>
+        <div className="col-lg-6">
+          {pokemonCurr.pokemonData &&
+            pokemonObj.pokemonData &&
+            isNotEmpty(pokemonCurr.timeline) &&
+            isNotEmpty(pokemonObj.timeline) && (
+              <Fragment>
+                <Accordion defaultActiveKey={[]}>
+                  <Card className="position-relative">
+                    <Card.Header style={{ padding: 0 }}>
+                      <div className="d-flex timeline-vertical">
+                        <div className="w-50">
+                          <div
+                            className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start"
+                            style={{ gap: 10 }}
+                          >
+                            <div className="position-relative filter-shadow" style={{ width: 35 }}>
+                              <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
+                                <img
+                                  alt="img-league"
+                                  className="sprite-type"
+                                  src={APIService.getPokemonModel(
+                                    pokemonCurr.pokemonData.form,
+                                    pokemonCurr.pokemonData.id
+                                  )}
+                                  onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = getValidPokemonImgPath(
+                                      e.currentTarget.src,
+                                      pokemonCurr.pokemonData?.id,
+                                      pokemonCurr.pokemonData?.form
+                                    );
+                                  }}
+                                />
+                              </PokemonIconType>
+                            </div>
+                            <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
+                          </div>
+                        </div>
+                        <div className="w-50">
+                          <div
+                            className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end"
+                            style={{ gap: 10 }}
+                          >
+                            <div className="position-relative filter-shadow" style={{ width: 35 }}>
+                              <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
+                                <img
+                                  alt="img-league"
+                                  className="sprite-type"
+                                  src={APIService.getPokemonModel(
+                                    pokemonObj.pokemonData.form,
+                                    pokemonObj.pokemonData.id
+                                  )}
+                                  onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = getValidPokemonImgPath(
+                                      e.currentTarget.src,
+                                      pokemonObj.pokemonData?.id,
+                                      pokemonObj.pokemonData?.form
+                                    );
+                                  }}
+                                />
+                              </PokemonIconType>
+                            </div>
+                            <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>
+                          </div>
+                        </div>
+                      </div>
+                      <CustomToggle eventKey="0" />
+                    </Card.Header>
+                    <Accordion.Collapse eventKey="0">
+                      <Card.Body style={{ padding: 0 }}>{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                </Accordion>
+                <div>
+                  {timelineType === TimelineType.Normal ? (
+                    <Fragment>
+                      {TimeLine(
+                        pokemonCurr,
+                        pokemonObj,
+                        timelineNormalContainer as React.LegacyRef<HTMLDivElement>,
+                        onScrollTimeline,
+                        timelineNormal as React.LegacyRef<HTMLDivElement>,
+                        playLine as React.LegacyRef<HTMLDivElement>,
+                        onPlayLineMove,
+                        showTap
+                      )}
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      {TimeLineFit(
+                        pokemonCurr,
+                        pokemonObj,
+                        timelineFit as React.LegacyRef<HTMLDivElement>,
+                        playLine as React.LegacyRef<HTMLDivElement>,
+                        onPlayLineFitMove,
+                        showTap
+                      )}
+                    </Fragment>
+                  )}
+                  <div className="d-flex justify-content-center">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={showTap}
+                          onChange={(_, check) => setOptions({ ...options, showTap: check })}
+                        />
+                      }
+                      label="Show Tap Move"
+                    />
+                    <RadioGroup
+                      row={true}
+                      aria-labelledby="row-timeline-group-label"
+                      name="row-timeline-group"
+                      value={timelineType}
+                      onChange={(e) =>
+                        onChangeTimeline(
+                          toNumber(e.target.value),
+                          timelineType === TimelineType.Normal
+                            ? timelineNormal.current?.clientWidth
+                            : timelineFit.current?.clientWidth
+                        )
+                      }
+                    >
+                      <FormControlLabel
+                        value={TimelineType.Fit}
+                        control={<Radio />}
+                        label={<span>Fit Timeline</span>}
+                      />
+                      <FormControlLabel
+                        value={TimelineType.Normal}
+                        control={<Radio />}
+                        label={<span>Normal Timeline</span>}
+                      />
+                    </RadioGroup>
+                    <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
+                      <InputLabel>Speed</InputLabel>
+                      <Select
+                        value={duration}
+                        onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })}
+                        label="Speed"
+                      >
+                        <MenuItem value={0.5}>x0.5</MenuItem>
+                        <MenuItem value={1}>Normal</MenuItem>
+                        <MenuItem value={2}>x2</MenuItem>
+                        <MenuItem value={5}>x5</MenuItem>
+                        <MenuItem value={10}>x10</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
+                    <button
+                      className="btn btn-primary"
+                      onMouseDown={() => (playState ? stopTimeLine() : playingTimeLine())}
+                      onTouchEnd={() => (playState ? stopTimeLine() : playingTimeLine())}
+                    >
+                      {playState ? (
+                        <Fragment>
+                          <PauseIcon /> Stop
+                        </Fragment>
+                      ) : (
+                        <Fragment>
+                          <PlayArrowIcon /> Play
+                        </Fragment>
+                      )}
+                    </button>
+                    <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeLine()}>
+                      <RestartAltIcon /> Reset
+                    </button>
+                  </div>
+                </div>
+              </Fragment>
+            )}
+        </div>
+        <div className="col-lg-3">
+          {renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}
+        </div>
       </div>
       {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
         <div className="text-center element-top">

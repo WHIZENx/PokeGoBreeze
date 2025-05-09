@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { Fragment, useEffect, useState } from 'react';
 import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 import { rankMove } from '../../../util/calculate';
@@ -12,7 +11,11 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, ICombat } from '../../../core/models/combat.model';
-import { IPokemonQueryMove, IPokemonQueryRankMove, PokemonQueryRankMove } from '../../../util/models/pokemon-top-move.model';
+import {
+  IPokemonQueryMove,
+  IPokemonQueryRankMove,
+  PokemonQueryRankMove,
+} from '../../../util/models/pokemon-top-move.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import {
@@ -107,7 +110,9 @@ const TableMove = (props: ITableMoveComponent) => {
   const filterUnknownMove = (moves: string[] | undefined) => {
     return getValueOrDefault(
       Array,
-      moves?.map((move) => data.combats.find((item) => isEqual(item.name, move)) ?? new Combat()).filter((move) => move.id > 0)
+      moves
+        ?.map((move) => data.combats.find((item) => isEqual(item.name, move)) ?? new Combat())
+        .filter((move) => move.id > 0)
     );
   };
 
@@ -178,26 +183,44 @@ const TableMove = (props: ITableMoveComponent) => {
               </th>
             </tr>
             <tr className="text-center">
-              <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort(table, TypeSorted.Fast)}>
+              <th
+                className="table-column-head main-move cursor-pointer"
+                onClick={() => arrowSort(table, TypeSorted.Fast)}
+              >
                 Fast
                 {!disableSortFM && (
                   <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Fast ? 1 : 0.3 }}>
-                    {stateSorted[tableType].fast ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                    {stateSorted[tableType].fast ? (
+                      <ArrowDropDownIcon fontSize="small" />
+                    ) : (
+                      <ArrowDropUpIcon fontSize="small" />
+                    )}
                   </span>
                 )}
               </th>
-              <th className="table-column-head main-move cursor-pointer" onClick={() => arrowSort(table, TypeSorted.Charge)}>
+              <th
+                className="table-column-head main-move cursor-pointer"
+                onClick={() => arrowSort(table, TypeSorted.Charge)}
+              >
                 Charged
                 {!disableSortCM && (
                   <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Charge ? 1 : 0.3 }}>
-                    {stateSorted[tableType].charged ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                    {stateSorted[tableType].charged ? (
+                      <ArrowDropDownIcon fontSize="small" />
+                    ) : (
+                      <ArrowDropUpIcon fontSize="small" />
+                    )}
                   </span>
                 )}
               </th>
               <th className="table-column-head cursor-pointer" onClick={() => arrowSort(table, TypeSorted.Effective)}>
                 %
                 <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Effective ? 1 : 0.3 }}>
-                  {stateSorted[tableType].effective ? <ArrowDropDownIcon fontSize="small" /> : <ArrowDropUpIcon fontSize="small" />}
+                  {stateSorted[tableType].effective ? (
+                    <ArrowDropDownIcon fontSize="small" />
+                  ) : (
+                    <ArrowDropUpIcon fontSize="small" />
+                  )}
                 </span>
               </th>
             </tr>
@@ -234,7 +257,10 @@ const TableMove = (props: ITableMoveComponent) => {
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.fMove.moveType !== MoveType.None && (
                 <span
-                  className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.fMove.moveType)?.toLowerCase()}-ic`)}
+                  className={combineClasses(
+                    'type-icon-small ic',
+                    `${getKeyWithData(MoveType, value.fMove.moveType)?.toLowerCase()}-ic`
+                  )}
                 >
                   {getKeyWithData(MoveType, value.fMove.moveType)}
                 </span>
@@ -251,7 +277,10 @@ const TableMove = (props: ITableMoveComponent) => {
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.cMove.moveType !== MoveType.None && (
                 <span
-                  className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.cMove.moveType)?.toLowerCase()}-ic`)}
+                  className={combineClasses(
+                    'type-icon-small ic',
+                    `${getKeyWithData(MoveType, value.cMove.moveType)?.toLowerCase()}-ic`
+                  )}
                 >
                   {getKeyWithData(MoveType, value.cMove.moveType)}
                 </span>
@@ -278,7 +307,12 @@ const TableMove = (props: ITableMoveComponent) => {
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
               <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
                 {value.moveType !== MoveType.None && (
-                  <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
+                  <span
+                    className={combineClasses(
+                      'type-icon-small ic',
+                      `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`
+                    )}
+                  >
                     {getKeyWithData(MoveType, value.moveType)}
                   </span>
                 )}
@@ -327,7 +361,9 @@ const TableMove = (props: ITableMoveComponent) => {
       sortedBy === TypeSorted.Charge ? o.charged : sortedBy === TypeSorted.Effective ? o.effective : o.fast
     );
     if (sortedBy === TypeSorted.Effective) {
-      return result[sortedColumn] ? rowB.eDPS[tableType] - rowA.eDPS[tableType] : rowA.eDPS[tableType] - rowB.eDPS[tableType];
+      return result[sortedColumn]
+        ? rowB.eDPS[tableType] - rowA.eDPS[tableType]
+        : rowA.eDPS[tableType] - rowB.eDPS[tableType];
     }
     if (result[sortedColumn]) {
       const tempRowA = rowA;
