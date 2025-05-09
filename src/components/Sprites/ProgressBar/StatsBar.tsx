@@ -38,18 +38,23 @@ const StatsBar = (props: IStatsBarComponent) => {
       onClick={() =>
         !props.isDisabled &&
         navigateToTop(
-          `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, props.pokemonType, '&')}&${Params.StatsType}=${
-            props.statType
-          }`
+          `/stats-ranking?${Params.Id}=${props.id}${generateParamForm(props.form, props.pokemonType, '&')}&${
+            Params.StatsType
+          }=${props.statType}`
         )
       }
     >
       <BoxText className="box-text stats-text">
         <span>
-          {props.tag} {props.pokemonStatsRank && getValueOrDefault(String, props.optionalStats, props.currentStats.toString())}
+          {props.tag}{' '}
+          {props.pokemonStatsRank && getValueOrDefault(String, props.optionalStats, props.currentStats.toString())}
         </span>
       </BoxText>
-      <Bar className={combineClasses('progress-bar', props.class)} aria-valuenow={props.statsPercent} statsPercent={props.statsPercent} />
+      <Bar
+        className={combineClasses('progress-bar', props.class)}
+        aria-valuenow={props.statsPercent}
+        statsPercent={props.statsPercent}
+      />
       {props.pokemonStatsRank && !isUndefined(props.rank) && (
         <BoxText className="box-text rank-text" isRank={true}>
           <span>

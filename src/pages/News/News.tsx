@@ -12,7 +12,15 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../util/utils';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty, isNumber, toNumber, UniqValueInArray } from '../../util/extension';
+import {
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  isNumber,
+  toNumber,
+  UniqValueInArray,
+} from '../../util/extension';
 import APIService from '../../services/API.service';
 import { DateEvent, TitleName } from './enums/item-type.enum';
 import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
@@ -93,7 +101,9 @@ const News = () => {
 
   const getImageList = (pokemon: RewardPokemon | undefined) => {
     const model = assets.find((item) => item.id === pokemon?.id);
-    const result = UniqValueInArray(model?.image.map((item) => item.form)).map((value) => new PokemonModelComponent(value, model?.image));
+    const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
+      (value) => new PokemonModelComponent(value, model?.image)
+    );
     if (pokemon?.costume && toNumber(pokemon.costume) === 0) {
       const form = pokemon?.costume;
       const imageList = result.find((poke) => isEqual(poke.form, form));
@@ -102,7 +112,9 @@ const News = () => {
         return image;
       }
     }
-    const imageList = result.find((poke) => (pokemon?.form ? isEqual(poke.form, pokemon.form) : isEqual(poke.form, FORM_NORMAL)));
+    const imageList = result.find((poke) =>
+      pokemon?.form ? isEqual(poke.form, pokemon.form) : isEqual(poke.form, FORM_NORMAL)
+    );
     const image = imageList?.image.find((img) =>
       pokemon?.form ? isEqual(img.form, pokemon.form) : isEqual(img.form, FORM_NORMAL)
     )?.default;
@@ -175,7 +187,11 @@ const News = () => {
           <img
             style={{ width: 64 }}
             className="pokemon-sprite-medium"
-            src={value.type === TicketRewardType.Pokemon ? APIService.getPokemonModel(value.imageSrc, value.pokemon?.id) : value.imageSrc}
+            src={
+              value.type === TicketRewardType.Pokemon
+                ? APIService.getPokemonModel(value.imageSrc, value.pokemon?.id)
+                : value.imageSrc
+            }
             onError={(e) => {
               e.currentTarget.onerror = null;
               e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, value.pokemon?.id, value.imageSrc);
@@ -213,7 +229,10 @@ const News = () => {
 
   return (
     <div className="info-main-bg">
-      <div className="container info-main-container element-top" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
+      <div
+        className="container info-main-container element-top"
+        style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}
+      >
         <h1 className="text-center" style={{ textDecoration: 'underline' }}>
           News
         </h1>
@@ -230,7 +249,10 @@ const News = () => {
                   <Accordion>
                     <Accordion.Item key={index} eventKey={index.toString()}>
                       <Accordion.Header>
-                        <div className="w-100 d-flex justify-content-between" style={{ marginRight: 15, columnGap: 15 }}>
+                        <div
+                          className="w-100 d-flex justify-content-between"
+                          style={{ marginRight: 15, columnGap: 15 }}
+                        >
                           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
                             {value.titleImgUrl && <img alt="img-league" height={50} src={value.titleImgUrl} />}
                             <b>{value.title}</b>
@@ -280,7 +302,9 @@ const News = () => {
                               </div>
                             </>
                           )}
-                          {value.detailsLink && <p className="element-top" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />}
+                          {value.detailsLink && (
+                            <p className="element-top" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
+                          )}
                         </div>
                       </Accordion.Body>
                     </Accordion.Item>

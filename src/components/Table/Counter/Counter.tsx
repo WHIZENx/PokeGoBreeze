@@ -177,7 +177,12 @@ const Counter = (props: ICounterComponent) => {
           </span>
           <span className="w-100">
             {row.fMove.moveType !== MoveType.None && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`)}>
+              <span
+                className={combineClasses(
+                  'type-icon-small ic',
+                  `${getKeyWithData(MoveType, row.fMove.moveType)?.toLowerCase()}-ic`
+                )}
+              >
                 {getKeyWithData(MoveType, row.fMove.moveType)}
               </span>
             )}
@@ -199,7 +204,12 @@ const Counter = (props: ICounterComponent) => {
           </span>
           <span className="w-100">
             {row.cMove.moveType !== MoveType.None && (
-              <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`)}>
+              <span
+                className={combineClasses(
+                  'type-icon-small ic',
+                  `${getKeyWithData(MoveType, row.cMove.moveType)?.toLowerCase()}-ic`
+                )}
+              >
                 {getKeyWithData(MoveType, row.cMove.moveType)}
               </span>
             )}
@@ -211,7 +221,8 @@ const Counter = (props: ICounterComponent) => {
     {
       id: ColumnType.Percent,
       name: '%',
-      selector: (row) => toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
+      selector: (row) =>
+        toFloatWithPadding(row.ratio, 2, FloatPaddingOption.setOptions({ maxValue: 100, maxLength: 6 })),
       sortable: true,
       sortFunction: numSortRatio,
       width: '20%',
@@ -222,7 +233,10 @@ const Counter = (props: ICounterComponent) => {
     <div className="w-100 counter-none" style={{ verticalAlign: 'top' }}>
       <div className="text-origin text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
         <div className="ph-item">
-          <div className="ph-col-12" style={{ padding: 10, margin: 0, gap: 10, backgroundColor: theme.palette.background.tablePrimary }}>
+          <div
+            className="ph-col-12"
+            style={{ padding: 10, margin: 0, gap: 10, backgroundColor: theme.palette.background.tablePrimary }}
+          >
             {[...Array(5).keys()].map((_, index) => (
               <div key={index} className="ph-row d-flex" style={{ gap: '5%' }}>
                 <div className="ph-picture" style={{ width: '25%', height: 100 }} />

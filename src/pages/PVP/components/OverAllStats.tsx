@@ -57,7 +57,12 @@ const OverAllStats = (props: OverAllStatsComponent) => {
         </b>
       </li>
       <li className={toNumber(data?.level) <= 40 ? 'element-top' : ''}>
-        Level: <b>{toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? `${MAX_LEVEL - 1}-${MAX_LEVEL}` : `${toNumber(data?.level)}`} </b>
+        Level:{' '}
+        <b>
+          {toNumber(data?.maxCP) > BattleLeagueCPType.Ultra
+            ? `${MAX_LEVEL - 1}-${MAX_LEVEL}`
+            : `${toNumber(data?.level)}`}{' '}
+        </b>
         {(toNumber(data?.level) > 40 || toNumber(data?.maxCP) > BattleLeagueCPType.Ultra) && (
           <b>
             (
@@ -94,13 +99,21 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             <h5>
               <b>Overall Performance</b>
             </h5>
-            <Hexagon name={props.data?.name} animation={AnimationType.On} borderSize={320} size={180} stats={props.data?.data?.scorePVP} />
+            <Hexagon
+              name={props.data?.name}
+              animation={AnimationType.On}
+              borderSize={320}
+              size={180}
+              stats={props.data?.data?.scorePVP}
+            />
           </div>
         </div>
       )}
       <div
         className={combineClasses(
-          isEqual(props.type, getKeyWithData(ScoreType, ScoreType.Overall), EqualMode.IgnoreCaseSensitive) ? 'col-lg-8' : '',
+          isEqual(props.type, getKeyWithData(ScoreType, ScoreType.Overall), EqualMode.IgnoreCaseSensitive)
+            ? 'col-lg-8'
+            : '',
           'container status-ranking'
         )}
       >

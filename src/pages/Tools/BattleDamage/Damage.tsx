@@ -255,7 +255,9 @@ const Damage = () => {
                 isSelectDefault={true}
                 form={getValueOrDefault(
                   String,
-                  searching?.current?.form ? searching?.current?.form.form?.name : searching?.current?.form?.form?.formName
+                  searching?.current?.form
+                    ? searching?.current?.form.form?.name
+                    : searching?.current?.form?.form?.formName
                 )}
                 setMove={setMove}
                 move={move}
@@ -270,7 +272,9 @@ const Damage = () => {
                     </p>
                     <p>
                       {'- Move Type: '}
-                      <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>{capitalize(move.type)}</span>
+                      <span className={combineClasses('type-icon-small', move.type?.toLowerCase())}>
+                        {capitalize(move.type)}
+                      </span>
                     </p>
                     {findStabType(searching?.current?.form?.form?.types, move.type)}
                     <p>
@@ -290,7 +294,10 @@ const Damage = () => {
                       control={<Checkbox checked={isWeather} onChange={handleCheckbox} name="isWeather" />}
                       label="Weather Boosts"
                     />
-                    <FormControlLabel control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="isDodge" />} label="Dodge" />
+                    <FormControlLabel
+                      control={<Checkbox checked={isDodge} onChange={handleCheckbox} name="isDodge" />}
+                      label="Dodge"
+                    />
                     <FormControlLabel
                       control={<Checkbox checked={isTrainer} onChange={handleCheckbox} name="isTrainer" />}
                       label="Trainer"
@@ -353,7 +360,9 @@ const Damage = () => {
                         {Object.entries(globalOptions.throwCharge).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
-                            <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>x{value}</span>
+                            <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>
+                              x{value}
+                            </span>
                           </MenuItem>
                         ))}
                       </Select>

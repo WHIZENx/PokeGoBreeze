@@ -226,7 +226,9 @@ export class FormSoundCry implements IFormSoundCry {
   constructor(pokemon: IPokemonDetail) {
     const fullName = isNotEmpty(pokemon.forms) ? pokemon.forms[0].name : '';
     const speciesName = pokemon.speciesName;
-    this.form = isEqual(fullName, speciesName) ? FORM_NORMAL : fullName.replace(`${speciesName}-`, '').replaceAll('-', '_').toUpperCase();
+    this.form = isEqual(fullName, speciesName)
+      ? FORM_NORMAL
+      : fullName.replace(`${speciesName}-`, '').replaceAll('-', '_').toUpperCase();
     this.cries = pokemon.cries;
   }
 }

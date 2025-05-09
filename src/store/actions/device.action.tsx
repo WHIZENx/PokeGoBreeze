@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { isMobile, browserName, osName } from 'react-device-detect';
 import { Action } from 'redux';
 import { DeviceModel } from '../reducers/device.reducer';

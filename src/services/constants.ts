@@ -11,12 +11,15 @@ export class APIUrl {
   public static POKE_SPRITES_API_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
   public static POKE_ICON_SPRITES_TYPE_API_URL = 'https://static.wikia.nocookie.net/pokemongo/images/';
-  public static POKE_SPRITES_FULL_API_URL = 'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/';
+  public static POKE_SPRITES_FULL_API_URL =
+    'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/';
 
   public static POKE_GIF_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Pokemon/';
-  public static POKE_TRAINER_SPRITES_API_URL = 'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Trainers/';
+  public static POKE_TRAINER_SPRITES_API_URL =
+    'https://raw.githubusercontent.com/argorar/Pokemon-Assets/master/Trainers/';
   public static POKE_SOUND_CRY_API_URL = 'https://raw.githubusercontent.com/Touched/pokedex-data/master/data/';
-  public static POKE_TYPES_API_URL = 'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/';
+  public static POKE_TYPES_API_URL =
+    'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/Others/type-icons/png-original/';
 
   public static POKE_PV_API_URL = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/';
   public static POKE_ASSETS_URL = `https://raw.githubusercontent.com/WHIZENx/pokemon-assets/master/`;
@@ -36,5 +39,6 @@ export class APIUrl {
   public static CANDY_DATA =
     'https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Candy%20Color%20Data/PokemonCandyColorData.json';
 
-  public static FETCH_PVP_MOVES = 'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/gamemaster/moves.json';
+  public static FETCH_PVP_MOVES =
+    'https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/gamemaster/moves.json';
 }

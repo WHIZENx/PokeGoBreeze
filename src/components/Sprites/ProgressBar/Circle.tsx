@@ -94,7 +94,12 @@ const CircleBar = (props: ICircleBarComponent) => {
           />
         ))}
         <Icon size={props.size - 5} url={APIService.getTypeIcon(props.type)} />
-        <IconFill size={props.size - 5} energy={energy} moveEnergy={props.moveEnergy} url={APIService.getTypeIcon(props.type)} />
+        <IconFill
+          size={props.size - 5}
+          energy={energy}
+          moveEnergy={props.moveEnergy}
+          url={APIService.getTypeIcon(props.type)}
+        />
       </Circle>
     </div>
   );

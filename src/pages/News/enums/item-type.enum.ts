@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum ItemName {
   RaidTicket = 'ITEM_FREE_RAID_TICKET',
   XlRareCandy = 'ITEM_XL_RARE_CANDY',

@@ -23,10 +23,23 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
 import { StoreState } from '../../../store/models/state.model';
-import { ILeague, IPokemonRewardSetLeague, PokemonRewardSetLeague, SettingLeague } from '../../../core/models/league.model';
+import {
+  ILeague,
+  IPokemonRewardSetLeague,
+  PokemonRewardSetLeague,
+  SettingLeague,
+} from '../../../core/models/league.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { Toggle } from '../../../core/models/pvp.model';
-import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
+import {
+  combineClasses,
+  isEmpty,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../../util/extension';
 import { LeagueRewardType, LeagueBattleType, RewardType, LeagueType } from '../../../core/enums/league.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
@@ -54,7 +67,8 @@ const Leagues = () => {
   const [setting, setSetting] = useState<SettingLeague>();
   const [showData, setShowData] = useState<LeagueData>();
 
-  const getAssetPokeGo = (id: number | undefined, formName: string | undefined) => findAssetForm(dataStore.assets, id, formName);
+  const getAssetPokeGo = (id: number | undefined, formName: string | undefined) =>
+    findAssetForm(dataStore.assets, id, formName);
 
   const LeaveToggle = (props: Toggle) => {
     const decoratedOnClick = useAccordionButton(props.eventKey);
@@ -149,7 +163,9 @@ const Leagues = () => {
         <div className="d-flex justify-content-between w-100" style={{ marginRight: 15, columnGap: 10 }}>
           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
             <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl)} />
-            <b className={league.enabled ? '' : 'text-danger'}>{splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}</b>
+            <b className={league.enabled ? '' : 'text-danger'}>
+              {splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
+            </b>
           </div>
           {isEqual(league.leagueType, LeagueType.Premier) && (
             <div className="d-flex align-items-center flex-end">
@@ -173,7 +189,9 @@ const Leagues = () => {
                   alt="img-league"
                   height={140}
                   src={APIService.getAssetPokeGo(
-                    dataStore.leagues.data.find((item) => isEqual(item.id, league.leagueBattleType, EqualMode.IgnoreCaseSensitive))?.iconUrl
+                    dataStore.leagues.data.find((item) =>
+                      isEqual(item.id, league.leagueBattleType, EqualMode.IgnoreCaseSensitive)
+                    )?.iconUrl
                   )}
                 />
                 <span className={combineClasses('badge-league', league.league?.toLowerCase()?.replaceAll('_', '-'))}>
@@ -227,7 +245,11 @@ const Leagues = () => {
             </li>
             <li style={{ fontWeight: 500 }}>
               <h6 className="title-leagues">Unique Selected</h6>
-              {league.conditions.uniqueSelected ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
+              {league.conditions.uniqueSelected ? (
+                <DoneIcon sx={{ color: 'green' }} />
+              ) : (
+                <CloseIcon sx={{ color: 'red' }} />
+              )}
             </li>
             {isNotEmpty(league.conditions.uniqueType) && (
               <li style={{ fontWeight: 500 }} className="unique-type">
@@ -253,14 +275,20 @@ const Leagues = () => {
                           src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
+                            e.currentTarget.src = getValidPokemonImgPath(
+                              e.currentTarget.src,
+                              item.id,
+                              getAssetPokeGo(item.id, item.form)
+                            );
                           }}
                         />
                       </span>
                     </div>
                     <span className="caption">
                       {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                        item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
+                        item.pokemonType === PokemonType.Normal
+                          ? ''
+                          : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
                       }`}
                     </span>
                   </LinkToTop>
@@ -285,14 +313,20 @@ const Leagues = () => {
                           src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
+                            e.currentTarget.src = getValidPokemonImgPath(
+                              e.currentTarget.src,
+                              item.id,
+                              getAssetPokeGo(item.id, item.form)
+                            );
                           }}
                         />
                       </span>
                     </div>
                     <span className="caption">
                       {`${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')} ${
-                        item.pokemonType === PokemonType.Normal ? '' : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
+                        item.pokemonType === PokemonType.Normal
+                          ? ''
+                          : `${splitAndCapitalize(item.form?.toLowerCase(), '_', ' ')}`
                       }`}
                     </span>
                   </LinkToTop>
@@ -327,7 +361,9 @@ const Leagues = () => {
             onChange={(e) => {
               setRank(toNumber(e.target.value));
               if (toNumber(e.target.value) < 24) {
-                setSetting(dataStore.leagues.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1));
+                setSetting(
+                  dataStore.leagues.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1)
+                );
               }
             }}
             defaultValue={rank}
@@ -373,7 +409,11 @@ const Leagues = () => {
                   badgeContent={null}
                   sx={{ paddingBottom: '1.5rem !important', maxWidth: 64 }}
                 >
-                  <img className="pokemon-sprite-medium" alt="img-pokemon" src={getItemSpritePath(ItemName.PaidRaidTicket)} />
+                  <img
+                    className="pokemon-sprite-medium"
+                    alt="img-pokemon"
+                    src={getItemSpritePath(ItemName.PaidRaidTicket)}
+                  />
                   <span className="caption text-black">Premium</span>
                 </Badge>
               </div>
@@ -711,7 +751,11 @@ const Leagues = () => {
                         src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
-                          e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, item.id, getAssetPokeGo(item.id, item.form));
+                          e.currentTarget.src = getValidPokemonImgPath(
+                            e.currentTarget.src,
+                            item.id,
+                            getAssetPokeGo(item.id, item.form)
+                          );
                         }}
                       />
                     </span>

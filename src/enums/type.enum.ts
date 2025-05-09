@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum TypeMove {
   Fast = 1,
   Charge,

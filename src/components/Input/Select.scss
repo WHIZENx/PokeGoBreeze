@@ -136,15 +136,7 @@
 }
 
 .filter-platinum {
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(86%)
-    sepia(4%)
-    saturate(80%)
-    hue-rotate(2deg)
-    brightness(102%)
-    contrast(102%);
+  filter: brightness(0) saturate(100%) invert(86%) sepia(4%) saturate(80%) hue-rotate(2deg) brightness(102%) contrast(102%);
 }
 
 @media screen and (max-width <= 420px) {

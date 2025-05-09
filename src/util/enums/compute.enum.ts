@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum BattleLeagueCPType {
   Master,
   Little = 500,

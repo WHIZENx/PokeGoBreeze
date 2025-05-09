@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export interface ScrollModifyEvent extends Event {
   target: TargetModify | null;
 }

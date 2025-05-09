@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 import { ErrorModel } from '../reducers/spinner.reducer';
 

@@ -53,7 +53,12 @@ const Trainer = () => {
                 <>
                   {data.levelUps.map((value, index) => (
                     <div className="d-flex justify-content-center flex-column align-items-center" key={index}>
-                      <img className="pokemon-sprite-medium" style={{ width: 64 }} alt="img-pokemon" src={getItemSpritePath(value.name)} />
+                      <img
+                        className="pokemon-sprite-medium"
+                        style={{ width: 64 }}
+                        alt="img-pokemon"
+                        src={getItemSpritePath(value.name)}
+                      />
                       <span className="caption text-black">
                         {splitAndCapitalize(value.name.replace('ITEM_', ''), '_', ' ')} <b>x{value.amount}</b>
                       </span>
@@ -72,8 +77,15 @@ const Trainer = () => {
                     <>
                       {data.itemUnlocks?.map((value, index) => (
                         <div className="d-flex justify-content-center flex-column align-items-center" key={index}>
-                          <img className="pokemon-sprite-medium" style={{ width: 64 }} alt="img-pokemon" src={getItemSpritePath(value)} />
-                          <span className="caption text-black">{splitAndCapitalize(value.replace('ITEM_', ''), '_', ' ')}</span>
+                          <img
+                            className="pokemon-sprite-medium"
+                            style={{ width: 64 }}
+                            alt="img-pokemon"
+                            src={getItemSpritePath(value)}
+                          />
+                          <span className="caption text-black">
+                            {splitAndCapitalize(value.replace('ITEM_', ''), '_', ' ')}
+                          </span>
                         </div>
                       ))}
                     </>

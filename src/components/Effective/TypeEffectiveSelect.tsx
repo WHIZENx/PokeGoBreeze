@@ -22,7 +22,13 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
           </h6>
           <div className="d-flex flex-wrap" style={{ gap: 5 }}>
             {data?.map((value, index) => (
-              <span key={index} className={combineClasses(value.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}>
+              <span
+                key={index}
+                className={combineClasses(
+                  value.toLowerCase(),
+                  'type-select-bg d-flex align-items-center filter-shadow'
+                )}
+              >
                 <div style={{ display: 'contents', width: 16 }}>
                   <img
                     className="pokemon-sprite-small sprite-type-select filter-shadow"

@@ -171,7 +171,12 @@ const FindTable = () => {
     if (toNumber(searchCP) < MIN_CP) {
       return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
     }
-    const result = predictStat(toNumber(pokemon.statsGO?.atk), toNumber(pokemon.statsGO?.def), toNumber(pokemon.statsGO?.sta), searchCP);
+    const result = predictStat(
+      toNumber(pokemon.statsGO?.atk),
+      toNumber(pokemon.statsGO?.def),
+      toNumber(pokemon.statsGO?.sta),
+      searchCP
+    );
     if (!isNotEmpty(result.result)) {
       setPreIvArr(undefined);
       const name = splitAndCapitalize(pokemon.fullName, '_', ' ');
@@ -243,9 +248,11 @@ const FindTable = () => {
 
   const showResultTableIV = () => {
     const avgPercent =
-      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.percent, 0) / toNumber(preIvArr?.result.length, 1);
+      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.percent, 0) /
+      toNumber(preIvArr?.result.length, 1);
     const avgHP =
-      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) / toNumber(preIvArr?.result.length, 1);
+      Object.values(preIvArr?.result ?? new PredictStatsModel()).reduce((a, b) => a + b.hp, 0) /
+      toNumber(preIvArr?.result.length, 1);
     const fourStar = preIvArr?.result.filter((item) => item.percent === 100).length;
     const threeStar = preIvArr?.result.filter((item) => item.percent > 80 && item.percent < 100).length;
     const twoStar = preIvArr?.result.filter((item) => item.percent > 64 && item.percent <= 80).length;
@@ -287,9 +294,11 @@ const FindTable = () => {
 
   const showResultTableCP = () => {
     const avgCp =
-      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.CP, 0) / toNumber(preCpArr?.result.length, 1);
+      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.CP, 0) /
+      toNumber(preCpArr?.result.length, 1);
     const avgHP =
-      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) / toNumber(preCpArr?.result.length, 1);
+      Object.values(preCpArr?.result ?? new PredictCPModel()).reduce((a, b) => a + b.hp, 0) /
+      toNumber(preCpArr?.result.length, 1);
     return (
       <Fragment>
         {isNotEmpty(preCpArr?.result) && (

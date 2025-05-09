@@ -178,7 +178,13 @@ export const MULTIPLY_THROW_CHARGE = (
   settings = [
     getPropertyName(options, (o) => o.throwCharge),
     getPropertyName(options?.throwCharge, (o) =>
-      type === ThrowType.Normal ? o.normal : type === ThrowType.Nice ? o.nice : type === ThrowType.Great ? o.great : o.excellent
+      type === ThrowType.Normal
+        ? o.normal
+        : type === ThrowType.Nice
+        ? o.nice
+        : type === ThrowType.Great
+        ? o.great
+        : o.excellent
     ),
   ]
 ) => getOption<number>(options, settings, 1);
@@ -193,7 +199,10 @@ export const DODGE_REDUCE = (
 
 export const MAX_ENERGY = (
   options: IOptions | undefined,
-  settings = [getPropertyName(options, (o) => o.battleOptions), getPropertyName(options?.battleOptions, (o) => o.maxEnergy)]
+  settings = [
+    getPropertyName(options, (o) => o.battleOptions),
+    getPropertyName(options?.battleOptions, (o) => o.maxEnergy),
+  ]
 ) => getOption<number>(options, settings, 0);
 
 /* Shadow exclusive bonus for Pokémon in battle */

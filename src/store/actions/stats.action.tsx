@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { IOptions } from '../../core/models/options.model';
