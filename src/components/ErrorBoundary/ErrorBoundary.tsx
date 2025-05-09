@@ -1,7 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { useNavigateToTop } from '../../util/hooks/LinkToTop';
 
 interface Props {
   children: ReactNode;
@@ -36,9 +35,15 @@ class ErrorBoundary extends Component<Props, State> {
     });
   }
 
-  render(): ReactNode {
-    const navigateToTop = useNavigateToTop();
+  handleGoHome = (): void => {
+    window.location.href = '/';
+  };
 
+  handleRefresh = (): void => {
+    window.location.reload();
+  };
+
+  render(): ReactNode {
     if (this.state.hasError) {
       if (this.props.fallbackUI) {
         return this.props.fallbackUI;
@@ -62,15 +67,14 @@ class ErrorBoundary extends Component<Props, State> {
           <Typography variant="body1" gutterBottom>
             The application encountered an error.
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => navigateToTop('/')}
-            startIcon={<RefreshIcon />}
-            style={{ marginTop: '16px' }}
-          >
-            Back to Home
-          </Button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+            <Button variant="contained" color="primary" onClick={this.handleGoHome} startIcon={<RefreshIcon />}>
+              Back to Home
+            </Button>
+            <Button variant="outlined" color="primary" onClick={this.handleRefresh}>
+              Refresh Page
+            </Button>
+          </div>
           {this.state.error && (
             <div style={{ marginTop: '20px', textAlign: 'left', maxWidth: '100%', overflow: 'auto' }}>
               <Typography variant="subtitle2" component="h3" gutterBottom>
