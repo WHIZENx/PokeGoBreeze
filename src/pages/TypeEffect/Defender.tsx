@@ -94,7 +94,10 @@ const Defender = (prop: ITypeEffComponent) => {
                   <ul>
                     {types.map((value, index) => (
                       <li
-                        className={combineClasses('container', `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
+                        className={combineClasses(
+                          'container',
+                          `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
+                        )}
                         style={{ backgroundColor: theme.palette.background.default }}
                         key={index}
                         onMouseDown={() => changeTypePri(value)}
@@ -142,7 +145,10 @@ const Defender = (prop: ITypeEffComponent) => {
                   <ul>
                     {types.map((value, index) => (
                       <li
-                        className={combineClasses('container', `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
+                        className={combineClasses(
+                          'container',
+                          `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
+                        )}
                         style={{ backgroundColor: theme.palette.background.default }}
                         key={index}
                         onMouseDown={() => changeTypeSec(value)}

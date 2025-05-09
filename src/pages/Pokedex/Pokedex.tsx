@@ -116,7 +116,8 @@ const Pokedex = () => {
     )
   );
 
-  const { isMatch, releasedGO, isShiny, gen, version, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast } = filters;
+  const { isMatch, releasedGO, isShiny, gen, version, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast } =
+    filters;
 
   const [btnSelected, setBtnSelected] = useState(
     new BtnSelect({
@@ -166,8 +167,11 @@ const Pokedex = () => {
               isEmpty(searchTerm) ||
               (isMatch
                 ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
-                : isInclude(splitAndCapitalize(item.name, '-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive) ||
-                  isInclude(item.id, searchTerm));
+                : isInclude(
+                    splitAndCapitalize(item.name, '-', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(item.id, searchTerm));
             const boolReleasedGO = releasedGO ? item.releasedGO : true;
             const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
             const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
@@ -204,7 +208,21 @@ const Pokedex = () => {
         debounced.cancel();
       };
     }
-  }, [dataList, searchTerm, selectTypes, isMatch, releasedGO, isMega, isGMax, isPrimal, isLegendary, isMythic, isUltraBeast, gen, version]);
+  }, [
+    dataList,
+    searchTerm,
+    selectTypes,
+    isMatch,
+    releasedGO,
+    isMega,
+    isGMax,
+    isPrimal,
+    isLegendary,
+    isMythic,
+    isUltraBeast,
+    gen,
+    version,
+  ]);
 
   useEffect(() => {
     if (isNotEmpty(listOfPokemon)) {
@@ -281,7 +299,9 @@ const Pokedex = () => {
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
                   `btn-select-type w-100 border-types btn-${theme.palette.mode}`,
-                  isIncludeList(selectTypes, item) ? `select-type${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}` : ''
+                  isIncludeList(selectTypes, item)
+                    ? `select-type${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
+                    : ''
                 )}
                 style={{ padding: 10, transition: TRANSITION_TIME }}
               >
@@ -296,13 +316,21 @@ const Pokedex = () => {
             <div className="row" style={{ margin: 0 }}>
               <div className="col-xl-4" style={{ padding: 0 }}>
                 <div className="d-flex">
-                  <span className={combineClasses('input-group-text', theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : '')}>
+                  <span
+                    className={combineClasses(
+                      'input-group-text',
+                      theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : ''
+                    )}
+                  >
                     Search name or ID
                   </span>
                   <input
                     type="text"
                     style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
-                    className={combineClasses('form-control', `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
+                    className={combineClasses(
+                      'form-control',
+                      `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
+                    )}
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
                     onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
@@ -310,11 +338,18 @@ const Pokedex = () => {
                 </div>
                 <div className="d-flex flex-wrap" style={{ paddingLeft: 8, paddingRight: 8 }}>
                   <FormControlLabel
-                    control={<Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />}
+                    control={
+                      <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
+                    }
                     label="Match Pokémon"
                   />
                   <FormControlLabel
-                    control={<Switch checked={releasedGO} onChange={(_, check) => setFilters({ ...filters, releasedGO: check })} />}
+                    control={
+                      <Switch
+                        checked={releasedGO}
+                        onChange={(_, check) => setFilters({ ...filters, releasedGO: check })}
+                      />
+                    }
                     label={
                       <span className="d-flex align-items-center">
                         Released in GO
@@ -332,7 +367,9 @@ const Pokedex = () => {
                 </div>
                 <div className="d-flex" style={{ paddingLeft: 8, paddingRight: 8 }}>
                   <FormControlLabel
-                    control={<Switch checked={isShiny} onChange={(_, check) => setFilters({ ...filters, isShiny: check })} />}
+                    control={
+                      <Switch checked={isShiny} onChange={(_, check) => setFilters({ ...filters, isShiny: check })} />
+                    }
                     label={
                       <span className="d-flex align-items-center">
                         Show All Shiny Pokémon (Only Possible)
@@ -363,9 +400,9 @@ const Pokedex = () => {
                       <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
                         <ListItemText
                           primary={
-                            <button className={combineClasses('btn', btnSelected.isSelectGen ? 'btn-danger' : 'btn-success')}>{`${
-                              btnSelected.isSelectGen ? 'Deselect All' : 'Select All'
-                            }`}</button>
+                            <button
+                              className={combineClasses('btn', btnSelected.isSelectGen ? 'btn-danger' : 'btn-success')}
+                            >{`${btnSelected.isSelectGen ? 'Deselect All' : 'Select All'}`}</button>
                           }
                         />
                       </MenuItem>
@@ -390,9 +427,12 @@ const Pokedex = () => {
                       <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
                         <ListItemText
                           primary={
-                            <button className={combineClasses('btn', btnSelected.isSelectVersion ? 'btn-danger' : 'btn-success')}>{`${
-                              btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'
-                            }`}</button>
+                            <button
+                              className={combineClasses(
+                                'btn',
+                                btnSelected.isSelectVersion ? 'btn-danger' : 'btn-success'
+                              )}
+                            >{`${btnSelected.isSelectVersion ? 'Deselect All' : 'Select All'}`}</button>
                           }
                         />
                       </MenuItem>
@@ -406,7 +446,12 @@ const Pokedex = () => {
                   </FormControl>
                 </div>
                 <div className="input-group border-input">
-                  <span className={combineClasses('input-group-text', theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : '')}>
+                  <span
+                    className={combineClasses(
+                      'input-group-text',
+                      theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : ''
+                    )}
+                  >
                     Filter only by
                   </span>
                   <FormControlLabel

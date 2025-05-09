@@ -9,7 +9,12 @@ import {
   splitAndCapitalize,
   TypeRadioGroup,
 } from '../../../util/utils';
-import { calculateBattleLeague, calculateBetweenLevel, calculateStats, calculateStatsBattle } from '../../../util/calculate';
+import {
+  calculateBattleLeague,
+  calculateBetweenLevel,
+  calculateStats,
+  calculateStatsBattle,
+} from '../../../util/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -85,17 +90,36 @@ const Calculate = () => {
     const name = splitAndCapitalize(pokemon?.fullName, '_', ' ');
     const result = calculateStats(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, searchCP);
     if (!result.level) {
-      enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`, {
-        variant: VariantType.Error,
-      });
+      enqueueSnackbar(
+        `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`,
+        {
+          variant: VariantType.Error,
+        }
+      );
       return;
     }
-    enqueueSnackbar(`At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} found in ${typePoke} ${name}`, {
-      variant: VariantType.Success,
-    });
+    enqueueSnackbar(
+      `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} found in ${typePoke} ${name}`,
+      {
+        variant: VariantType.Success,
+      }
+    );
     setPokeStats(result);
     setStatLevel(result.level);
-    setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke));
+    setStatData(
+      calculateBetweenLevel(
+        globalOptions,
+        statATK,
+        statDEF,
+        statSTA,
+        ATKIv,
+        DEFIv,
+        STAIv,
+        result.level,
+        result.level,
+        typePoke
+      )
+    );
     setDataLittleLeague(
       calculateBattleLeague(
         globalOptions,
@@ -142,7 +166,18 @@ const Calculate = () => {
       )
     );
     setDataMasterLeague(
-      calculateBattleLeague(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke)
+      calculateBattleLeague(
+        globalOptions,
+        statATK,
+        statDEF,
+        statSTA,
+        ATKIv,
+        DEFIv,
+        STAIv,
+        result.level,
+        result.CP,
+        typePoke
+      )
     );
   }, [
     enqueueSnackbar,
@@ -172,7 +207,20 @@ const Calculate = () => {
       const statATK = toNumber(pokemon?.statsGO?.atk);
       const statDEF = toNumber(pokemon?.statsGO?.def);
       const statSTA = toNumber(pokemon?.statsGO?.sta);
-      setStatData(calculateBetweenLevel(globalOptions, statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, level, typePoke));
+      setStatData(
+        calculateBetweenLevel(
+          globalOptions,
+          statATK,
+          statDEF,
+          statSTA,
+          ATKIv,
+          DEFIv,
+          STAIv,
+          pokeStats.level,
+          level,
+          typePoke
+        )
+      );
     }
   };
 
@@ -288,7 +336,8 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {getKeyWithData(PokemonType, PokemonType.Buddy)}
+                    <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} />{' '}
+                    {getKeyWithData(PokemonType, PokemonType.Buddy)}
                   </span>
                 }
               />
@@ -297,7 +346,8 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={28} alt="img-lucky" src={APIService.getPokeLucky()} /> {getKeyWithData(PokemonType, PokemonType.Lucky)}
+                    <img height={28} alt="img-lucky" src={APIService.getPokeLucky()} />{' '}
+                    {getKeyWithData(PokemonType, PokemonType.Lucky)}
                   </span>
                 }
               />
@@ -306,7 +356,8 @@ const Calculate = () => {
                 control={<Radio />}
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyWithData(PokemonType, PokemonType.Shadow)}
+                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} />{' '}
+                    {getKeyWithData(PokemonType, PokemonType.Shadow)}
                   </span>
                 }
               />
@@ -366,7 +417,13 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Power Up Count</td>
-                        <td>{statData ? (!isUndefined(statData.powerUpCount) ? statData.powerUpCount : 'Unavailable') : '-'}</td>
+                        <td>
+                          {statData
+                            ? !isUndefined(statData.powerUpCount)
+                              ? statData.powerUpCount
+                              : 'Unavailable'
+                            : '-'}
+                        </td>
                       </tr>
                       <tr>
                         <td>CP</td>
@@ -414,7 +471,12 @@ const Calculate = () => {
                           {statData ? (
                             <Candy id={pokemon?.id} style={{ marginRight: 8 }} />
                           ) : (
-                            <img style={{ marginRight: 8 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
+                            <img
+                              style={{ marginRight: 8 }}
+                              alt="img-stardust"
+                              height={20}
+                              src={getItemSpritePath(ItemName.RareCandy)}
+                            />
                           )}
                           Candy Required
                         </td>
@@ -450,7 +512,12 @@ const Calculate = () => {
                           {statData ? (
                             <CandyXL id={pokemon?.id} />
                           ) : (
-                            <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.XlRareCandy)} />
+                            <img
+                              style={{ marginRight: 10 }}
+                              alt="img-stardust"
+                              height={20}
+                              src={getItemSpritePath(ItemName.XlRareCandy)}
+                            />
                           )}
                           XL Candy Required
                         </td>
@@ -494,7 +561,12 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(toNumber(pokemon?.statsGO?.atk), pokeStats?.IV.atkIV, statLevel, true)
+                              calculateStatsBattle(
+                                toNumber(pokemon?.statsGO?.atk),
+                                pokeStats?.IV.atkIV,
+                                statLevel,
+                                true
+                              )
                             ) : (
                               <Fragment>
                                 {statData.atkStat}
@@ -518,7 +590,12 @@ const Calculate = () => {
                         <td>
                           {statData ? (
                             statData.pokemonType !== PokemonType.Shadow ? (
-                              calculateStatsBattle(toNumber(pokemon?.statsGO?.def), pokeStats?.IV.defIV, statLevel, true)
+                              calculateStatsBattle(
+                                toNumber(pokemon?.statsGO?.def),
+                                pokeStats?.IV.defIV,
+                                statLevel,
+                                true
+                              )
                             ) : (
                               <Fragment>
                                 {statData.defStat}
@@ -540,7 +617,14 @@ const Calculate = () => {
                           HP
                         </td>
                         <td>
-                          {statData ? calculateStatsBattle(toNumber(pokemon?.statsGO?.sta), pokeStats?.IV.staIV, statLevel, true) : '-'}
+                          {statData
+                            ? calculateStatsBattle(
+                                toNumber(pokemon?.statsGO?.sta),
+                                pokeStats?.IV.staIV,
+                                statLevel,
+                                true
+                              )
+                            : '-'}
                         </td>
                       </tr>
                     </tbody>
@@ -571,7 +655,9 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Level</td>
-                        <td colSpan={3}>{dataLittleLeague && dataLittleLeague.isElidge ? dataLittleLeague.level : '-'}</td>
+                        <td colSpan={3}>
+                          {dataLittleLeague && dataLittleLeague.isElidge ? dataLittleLeague.level : '-'}
+                        </td>
                       </tr>
                       <tr>
                         <td>CP</td>
@@ -589,7 +675,9 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataLittleLeague && dataLittleLeague.isElidge ? (
-                            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+                            <span
+                              className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}
+                            >
                               {dataLittleLeague.rangeValue?.resultBetweenStardust}
                             </span>
                           ) : (
@@ -611,7 +699,12 @@ const Calculate = () => {
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
                               <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
                             ) : (
-                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
+                              <img
+                                style={{ marginRight: 10 }}
+                                alt="img-stardust"
+                                height={20}
+                                src={getItemSpritePath(ItemName.RareCandy)}
+                              />
                             )}
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
                               <span
@@ -716,7 +809,9 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataGreatLeague && dataGreatLeague.isElidge ? (
-                            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+                            <span
+                              className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}
+                            >
                               {dataGreatLeague.rangeValue?.resultBetweenStardust}
                             </span>
                           ) : (
@@ -738,7 +833,12 @@ const Calculate = () => {
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
                               <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
                             ) : (
-                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
+                              <img
+                                style={{ marginRight: 10 }}
+                                alt="img-stardust"
+                                height={20}
+                                src={getItemSpritePath(ItemName.RareCandy)}
+                              />
                             )}
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
                               <span
@@ -843,7 +943,9 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataUltraLeague && dataUltraLeague.isElidge ? (
-                            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+                            <span
+                              className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}
+                            >
                               {dataUltraLeague.rangeValue?.resultBetweenStardust}
                             </span>
                           ) : (
@@ -865,7 +967,12 @@ const Calculate = () => {
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
                               <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
                             ) : (
-                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
+                              <img
+                                style={{ marginRight: 10 }}
+                                alt="img-stardust"
+                                height={20}
+                                src={getItemSpritePath(ItemName.RareCandy)}
+                              />
                             )}
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
                               <span
@@ -937,7 +1044,13 @@ const Calculate = () => {
                       </tr>
                       <tr className="text-center">
                         <td className="table-sub-header" colSpan={4}>
-                          <img style={{ marginRight: 10 }} alt="img-league" width={30} height={30} src={getPokemonBattleLeagueIcon()} />
+                          <img
+                            style={{ marginRight: 10 }}
+                            alt="img-league"
+                            width={30}
+                            height={30}
+                            src={getPokemonBattleLeagueIcon()}
+                          />
                           {getPokemonBattleLeagueName()}
                         </td>
                       </tr>
@@ -961,7 +1074,9 @@ const Calculate = () => {
                         </td>
                         <td colSpan={3}>
                           {dataMasterLeague ? (
-                            <span className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}>
+                            <span
+                              className={`${getKeyWithData(PokemonType, statData?.pokemonType)?.toLowerCase()}-text`}
+                            >
                               {dataMasterLeague.rangeValue?.resultBetweenStardust}
                             </span>
                           ) : (
@@ -983,7 +1098,12 @@ const Calculate = () => {
                             {dataMasterLeague ? (
                               <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
                             ) : (
-                              <img style={{ marginRight: 10 }} alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} />
+                              <img
+                                style={{ marginRight: 10 }}
+                                alt="img-stardust"
+                                height={20}
+                                src={getItemSpritePath(ItemName.RareCandy)}
+                              />
                             )}
                             {dataMasterLeague ? (
                               <span

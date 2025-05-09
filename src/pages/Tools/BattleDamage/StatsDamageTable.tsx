@@ -114,7 +114,8 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} /> {getKeyWithData(PokemonType, PokemonType.Buddy)}
+                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} />{' '}
+                  {getKeyWithData(PokemonType, PokemonType.Buddy)}
                 </span>
               }
             />
@@ -124,7 +125,8 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} /> {getKeyWithData(PokemonType, PokemonType.Shadow)}
+                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} />{' '}
+                  {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               }
             />

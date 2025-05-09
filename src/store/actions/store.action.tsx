@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 import { ICPM } from '../../core/models/cpm.model';
 import { IOptions } from '../../core/models/options.model';
@@ -16,7 +15,6 @@ import { ITrainerLevelUp } from '../../core/models/trainer.model';
 
 export enum StoreActionTypes {
   getStore = '[Store] GetStore',
-  setTimestamp = '[Store] SetTimestamp',
   setOptions = '[Store] SetOptions',
   setTypeEff = '[Store] SetTypeEff',
   setWeatherBoost = '[Store] SetWeatherBoost',
@@ -42,20 +40,6 @@ export class LoadStore implements Action {
     const { type } = new LoadStore();
     return {
       type,
-    };
-  }
-}
-
-export class SetTimestamp implements Action {
-  readonly type = StoreActionTypes.setTimestamp;
-
-  constructor(public payload: number) {}
-
-  static create(value: number) {
-    const { type, payload } = new SetTimestamp(value);
-    return {
-      type,
-      payload,
     };
   }
 }
@@ -283,7 +267,6 @@ export class ResetStore implements Action {
 
 export type StoreActionsUnion =
   | LoadStore
-  | SetTimestamp
   | SetOptions
   | SetTypeEff
   | SetWeatherBoost

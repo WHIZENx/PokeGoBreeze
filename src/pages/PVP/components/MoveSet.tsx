@@ -48,7 +48,11 @@ const MoveSet = (props: MoveSetComponent) => {
             {value === ArcheType.SelfDebuff && (
               <div className="position-relative">
                 <PersonIcon sx={{ color: 'black' }} />
-                <KeyboardDoubleArrowDownIcon fontSize="small" className="position-absolute" sx={{ color: 'red', left: '50%', bottom: 0 }} />
+                <KeyboardDoubleArrowDownIcon
+                  fontSize="small"
+                  className="position-absolute"
+                  sx={{ color: 'red', left: '50%', bottom: 0 }}
+                />
               </div>
             )}
           </div>
@@ -97,7 +101,11 @@ const MoveSet = (props: MoveSetComponent) => {
               {'- '}
               <span className="position-relative filter-shadow" style={{ marginRight: 5 }}>
                 <PersonIcon sx={{ color: 'black' }} />
-                <KeyboardDoubleArrowDownIcon fontSize="small" className="position-absolute" sx={{ color: 'red', left: '50%', bottom: 0 }} />
+                <KeyboardDoubleArrowDownIcon
+                  fontSize="small"
+                  className="position-absolute"
+                  sx={{ color: 'red', left: '50%', bottom: 0 }}
+                />
               </span>
               {` ${ArcheType.SelfDebuff}`}
             </span>
@@ -122,7 +130,8 @@ const MoveSet = (props: MoveSetComponent) => {
       <div className="d-flex" style={{ columnGap: 10 }}>
         <IconType width={24} height={24} alt="type-logo" type={move?.type} />
         <span className="filter-shadow">
-          {splitAndCapitalize(move.name, '_', ' ')} {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}
+          {splitAndCapitalize(move.name, '_', ' ')}{' '}
+          {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}
         </span>
       </div>
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>

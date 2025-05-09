@@ -54,7 +54,13 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
     >
       {!props.releasedGO && (
         <div className="no-released-pokemon">
-          <img width={24} height={24} title="Coming Soon" alt="pokemon-go-icon" src={APIService.getPokemonGoIcon(props.icon)} />
+          <img
+            width={24}
+            height={24}
+            title="Coming Soon"
+            alt="pokemon-go-icon"
+            src={APIService.getPokemonGoIcon(props.icon)}
+          />
         </div>
       )}
       {props.image.shiny && (
@@ -77,7 +83,8 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
               alt="pokemon-img"
               src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
               onError={(e) => {
-                const form = props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default;
+                const form =
+                  props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default;
                 const formList = form.split('/');
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = getValidPokemonImgPath(
@@ -91,26 +98,33 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
         </div>
         <TypeInfo arr={props.types} isHideText={true} height={24} />
         <b>
-          <span style={{ fontSize: 14 }} className="text-info text-center caption text-black">{`#${props.id} ${splitAndCapitalize(
-            props.name.replaceAll('_', '-'),
-            '-',
-            ' '
-          )}`}</span>
+          <span style={{ fontSize: 14 }} className="text-info text-center caption text-black">{`#${
+            props.id
+          } ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}</span>
         </b>
         <div className="element-top">
           <div className="d-flex align-items-center justify-content-center w-100">
             <b>
-              <span className="caption text-light-shadow" style={{ color: 'var(--bs-danger)' }}>{`ATK ${props.pokemonStat.atk}`}</span>
+              <span
+                className="caption text-light-shadow"
+                style={{ color: 'var(--bs-danger)' }}
+              >{`ATK ${props.pokemonStat.atk}`}</span>
             </b>
           </div>
           <div className="d-flex align-items-center justify-content-center w-100">
             <b>
-              <span className="caption text-light-shadow" style={{ color: 'var(--bs-success)' }}>{`DEF ${props.pokemonStat.def}`}</span>
+              <span
+                className="caption text-light-shadow"
+                style={{ color: 'var(--bs-success)' }}
+              >{`DEF ${props.pokemonStat.def}`}</span>
             </b>
           </div>
           <div className="d-flex align-items-center justify-content-center w-100">
             <b>
-              <span className="caption text-light-shadow" style={{ color: 'var(--bs-info)' }}>{`STA ${props.pokemonStat.sta}`}</span>
+              <span
+                className="caption text-light-shadow"
+                style={{ color: 'var(--bs-info)' }}
+              >{`STA ${props.pokemonStat.sta}`}</span>
             </b>
           </div>
         </div>

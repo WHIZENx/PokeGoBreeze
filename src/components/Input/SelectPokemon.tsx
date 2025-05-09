@@ -22,7 +22,9 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   const firstInit = useRef(20);
   const eachCounter = useRef(10);
 
-  const [pokemonIcon, setPokemonIcon] = useState(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
+  const [pokemonIcon, setPokemonIcon] = useState(
+    props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined
+  );
   const [showPokemon, setShowPokemon] = useState(false);
   const [search, setSearch] = useState(props.pokemon ? splitAndCapitalize(props.pokemon.name, '-', ' ') : '');
 
@@ -141,7 +143,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   return (
     <div
-      className={combineClasses('position-relative d-flex align-items-center form-control', props.isDisable ? 'card-select-disabled' : '')}
+      className={combineClasses(
+        'position-relative d-flex align-items-center form-control',
+        props.isDisable ? 'card-select-disabled' : ''
+      )}
       style={{ padding: 0, borderRadius: 0 }}
     >
       <div className="card-pokemon-input">

@@ -27,14 +27,18 @@ import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { APIPath, APITreeRoot, APITree } from '../../services/models/api.model';
 import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
-import { SetValue } from '../models/state.model';
-import { SpinnerActions, StatsActions, StoreActions } from '../actions';
-import { LocalTimeStamp } from '../models/local-storage.model';
+import { PathActions, SpinnerActions, StatsActions, StoreActions, TimestampActions } from '../actions';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { TimestampModel } from '../reducers/timestamp.reducer';
+import { IDataModel } from '../models/store.model';
 
 interface Timestamp {
-  images: boolean;
-  sounds: boolean;
+  isCurrentGameMaster: boolean;
+  isCurrentImage: boolean;
+  isCurrentSound: boolean;
+  gamemasterTimestamp: number;
+  assetsTimestamp: number;
+  soundsTimestamp: number;
 }
 
 interface Files {
@@ -62,55 +66,51 @@ export const loadPokeGOLogo = (dispatch: Dispatch) =>
         if (isNotEmpty(files)) {
           const res = files.find((item) => isInclude(item.filename, 'Images/App Icons/'));
           if (res) {
-            dispatch(StoreActions.SetLogoPokeGO.create(res.filename.replace('Images/App Icons/', '').replace('.png', '')));
+            dispatch(
+              StoreActions.SetLogoPokeGO.create(res.filename.replace('Images/App Icons/', '').replace('.png', ''))
+            );
           }
         }
       }
     })
     .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
 
-export const loadBaseCPM = (dispatch: Dispatch) => dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
+export const loadBaseCPM = (dispatch: Dispatch) =>
+  dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
 
 export const loadCPM = (dispatch: Dispatch, cpmList: DynamicObj<number>) =>
   dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, MIN_LEVEL, Object.keys(cpmList).length)));
 
-export const loadTimestamp = async (
-  dispatch: Dispatch,
-  stateTimestamp: string,
-  setStateTimestamp: SetValue<string>,
-  setStateImage: SetValue<string>,
-  setStateSound: SetValue<string>,
-  stateImage: string,
-  stateSound: string
-) => {
+export const loadTimestamp = async (dispatch: Dispatch, data: IDataModel, timestamp: TimestampModel) => {
   await Promise.all([
     APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
     APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
     APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
   ])
     .then(async ([GMtimestamp, imageRoot, soundsRoot]) => {
-      dispatch(StoreActions.SetTimestamp.create(toNumber(GMtimestamp.data)));
-
+      const timestampGameMaster = toNumber(GMtimestamp.data);
       if (isNotEmpty(imageRoot.data) && isNotEmpty(soundsRoot.data)) {
         const imageTimestamp = new Date(imageRoot.data[0].commit.committer.date).getTime();
         const soundTimestamp = new Date(soundsRoot.data[0].commit.committer.date).getTime();
-        setStateTimestamp(
-          JSON.stringify(
-            LocalTimeStamp.create({
-              ...JSON.parse(stateTimestamp),
-              gamemaster: toNumber(GMtimestamp.data),
-              images: imageTimestamp,
-              sounds: soundTimestamp,
-            })
-          )
-        );
 
         const timestampLoaded: Timestamp = {
-          images: !stateImage || JSON.parse(stateTimestamp).images !== imageTimestamp,
-          sounds: !stateSound || JSON.parse(stateTimestamp).sounds !== soundTimestamp,
+          isCurrentGameMaster: timestampGameMaster > 0 && timestamp.gamemaster === timestampGameMaster,
+          isCurrentImage: timestamp.assets > 0 && timestamp.assets === imageTimestamp,
+          isCurrentSound: timestamp.sounds > 0 && timestamp.sounds === soundTimestamp,
+          gamemasterTimestamp: timestampGameMaster,
+          assetsTimestamp: imageTimestamp,
+          soundsTimestamp: soundTimestamp,
         };
         dispatch(SpinnerActions.SetPercent.create(40));
-        loadGameMaster(dispatch, imageRoot.data, soundsRoot.data, timestampLoaded, setStateImage, setStateSound, stateImage, stateSound);
+
+        if (!timestampLoaded.isCurrentGameMaster) {
+          await loadGameMaster(dispatch, imageRoot.data, soundsRoot.data, timestampLoaded);
+        } else if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
+          await loadAssets(dispatch, imageRoot.data, soundsRoot.data, data.pokemons, timestampLoaded);
+        } else {
+          dispatch(SpinnerActions.SetPercent.create(100));
+          setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);
+        }
       }
     })
     .catch((e: ErrorEvent) => {
@@ -128,11 +128,7 @@ export const loadGameMaster = (
   dispatch: Dispatch,
   imageRoot: APITreeRoot[],
   soundsRoot: APITreeRoot[],
-  timestampLoaded: Timestamp,
-  setStateImage: SetValue<string>,
-  setStateSound: SetValue<string>,
-  stateImage: string,
-  stateSound: string
+  timestampLoaded: Timestamp
 ) => {
   APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER)
     .then(async (gm) => {
@@ -148,7 +144,13 @@ export const loadGameMaster = (
       try {
         pokemonEncounter = await getDbPokemonEncounter();
       } catch (e) {
-        throw e;
+        dispatch(
+          SpinnerActions.ShowSpinnerMsg.create({
+            isError: true,
+            message: (e as Error).message,
+          })
+        );
+        return;
       }
 
       const pokemon = optionPokemonData(gm.data, pokemonEncounter.rows);
@@ -162,6 +164,7 @@ export const loadGameMaster = (
 
       const options = optionSettings(gm.data);
       dispatch(StoreActions.SetOptions.create(options));
+      loadCPM(dispatch, options.playerSetting.cpMultipliers);
       dispatch(StoreActions.SetTrainer.create(optionTrainer(gm.data)));
       dispatch(StoreActions.SetTypeEff.create(typeEff));
       dispatch(StoreActions.SetWeatherBoost.create(weatherBoost));
@@ -174,18 +177,14 @@ export const loadGameMaster = (
 
       mappingMoveSetPokemonGO(pokemon, combat);
 
-      if (timestampLoaded.images || timestampLoaded.sounds) {
-        await loadAssets(dispatch, imageRoot, soundsRoot, pokemon, setStateImage, setStateSound);
-      } else {
-        const assetsPokemon = optionAssets(pokemon, JSON.parse(stateImage), JSON.parse(stateSound));
-        mappingReleasedPokemonGO(pokemon, assetsPokemon);
-        dispatch(StoreActions.SetAssets.create(assetsPokemon));
-        dispatch(StoreActions.SetPokemon.create(pokemon));
+      if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
+        await loadAssets(dispatch, imageRoot, soundsRoot, pokemon, timestampLoaded);
       }
 
       dispatch(SpinnerActions.SetPercent.create(90));
       dispatch(StatsActions.SetStats.create({ pokemon, options }));
 
+      dispatch(TimestampActions.SetTimestampGameMaster.create(timestampLoaded.gamemasterTimestamp));
       dispatch(SpinnerActions.SetPercent.create(100));
       setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);
     })
@@ -205,8 +204,7 @@ export const loadAssets = async (
   imageRoot: APITreeRoot[],
   soundsRoot: APITreeRoot[],
   pokemon: IPokemonData[],
-  setStateImage: SetValue<string>,
-  setStateSound: SetValue<string>
+  timestamp: Timestamp
 ) => {
   if (!isNotEmpty(imageRoot) || !isNotEmpty(soundsRoot)) {
     return;
@@ -232,16 +230,21 @@ export const loadAssets = async (
             APIService.getFetchUrl<APITree>(`${soundPath.url}?recursive=1`, options),
           ]).then(([imageData, soundData]) => {
             const assetImgFiles = optionPokeImg(imageData.data);
-            setStateImage(JSON.stringify(assetImgFiles));
+            dispatch(PathActions.SetPathAssets.create(assetImgFiles));
 
             const assetSoundFiles = optionPokeSound(soundData.data);
-            setStateSound(JSON.stringify(assetSoundFiles));
+            dispatch(PathActions.SetPathSounds.create(assetSoundFiles));
 
             const assetsPokemon = optionAssets(pokemon, assetImgFiles, assetSoundFiles);
             mappingReleasedPokemonGO(pokemon, assetsPokemon);
 
             dispatch(StoreActions.SetAssets.create(assetsPokemon));
             dispatch(StoreActions.SetPokemon.create(pokemon));
+
+            dispatch(TimestampActions.SetTimestampAssets.create(timestamp.assetsTimestamp));
+            dispatch(TimestampActions.SetTimestampSounds.create(timestamp.soundsTimestamp));
+            dispatch(SpinnerActions.SetPercent.create(100));
+            setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);
           });
         }
       });
@@ -249,24 +252,10 @@ export const loadAssets = async (
   });
 };
 
-export const loadPVP = (
-  dispatch: Dispatch,
-  setStateTimestamp: SetValue<string>,
-  stateTimestamp: string,
-  setStatePVP: SetValue<string>,
-  statePVP: string
-) => {
+export const loadPVP = (dispatch: Dispatch, timestamp: TimestampModel, pvpData: string[]) => {
   APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, options).then((res) => {
-    const pvpDate = new Date(getValueOrDefault(String, res.data.at(0)?.commit.committer.date)).getTime();
-    setStateTimestamp(
-      JSON.stringify(
-        LocalTimeStamp.create({
-          ...JSON.parse(stateTimestamp),
-          pvp: pvpDate,
-        })
-      )
-    );
-    if (pvpDate !== JSON.parse(stateTimestamp).pvp && isNotEmpty(res.data)) {
+    const pvpTimestamp = new Date(getValueOrDefault(String, res.data.at(0)?.commit.committer.date)).getTime();
+    if (pvpTimestamp !== timestamp.pvp && isNotEmpty(res.data)) {
       const pvpUrl = res.data[0].commit.tree.url;
       if (pvpUrl) {
         APIService.getFetchUrl<APITree>(pvpUrl, options)
@@ -282,9 +271,12 @@ export const loadPVP = (
             const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
             const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 
-            const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(pvpFindFirstPath(pvp.data.tree, 'training/analysis/'));
+            const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(
+              pvpFindFirstPath(pvp.data.tree, 'training/analysis/')
+            );
 
-            setStatePVP(JSON.stringify(pvpData));
+            dispatch(TimestampActions.SetTimestampPVP.create(pvpTimestamp));
+            dispatch(PathActions.SetPathPvp.create(pvpData));
 
             dispatch(
               StoreActions.SetPVP.create({
@@ -295,8 +287,8 @@ export const loadPVP = (
           });
       }
     } else {
-      const pvpRank = pvpFindPath(JSON.parse(statePVP), 'rankings/');
-      const pvpTrain = pvpFindPath(JSON.parse(statePVP), 'training/analysis/');
+      const pvpRank = pvpFindPath(pvpData, 'rankings/');
+      const pvpTrain = pvpFindPath(pvpData, 'training/analysis/');
       dispatch(
         StoreActions.SetPVP.create({
           rankings: pvpRank,

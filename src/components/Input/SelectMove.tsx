@@ -52,7 +52,12 @@ const SelectMove = (props: ISelectMoveComponent) => {
   }, [props.pokemon, props.isSelected, resultMove.length, pokemon, findMove]);
 
   const smallCardInput = () => (
-    <CardMoveSmall value={props.move} isShow={Boolean(props.pokemon)} isDisable={props.isDisable} isSelect={resultMove.length > 1} />
+    <CardMoveSmall
+      value={props.move}
+      isShow={Boolean(props.pokemon)}
+      isDisable={props.isDisable}
+      isSelect={resultMove.length > 1}
+    />
   );
 
   const smallCardList = (position = SelectPosition.Down) => (
@@ -90,7 +95,12 @@ const SelectMove = (props: ISelectMoveComponent) => {
         </div>
       )}
       {isNotEmpty(resultMove) && (
-        <div className="card-move-input" tabIndex={0} onClick={() => setShowMove(true)} onBlur={() => setShowMove(false)}>
+        <div
+          className="card-move-input"
+          tabIndex={0}
+          onClick={() => setShowMove(true)}
+          onBlur={() => setShowMove(false)}
+        >
           {isUndefined(props.position) || props.position === SelectPosition.Down ? (
             <>
               {smallCardInput()}
@@ -112,7 +122,12 @@ const SelectMove = (props: ISelectMoveComponent) => {
   const defaultCardList = (position = SelectPosition.Down) => (
     <>
       {showMove && (
-        <div className={combineClasses('result-move-select-default', position === SelectPosition.Up ? 'pos-up-default' : '')}>
+        <div
+          className={combineClasses(
+            'result-move-select-default',
+            position === SelectPosition.Up ? 'pos-up-default' : ''
+          )}
+        >
           <div>
             {resultMove
               .filter((value) => !isEqual(value.name, props.move?.name))

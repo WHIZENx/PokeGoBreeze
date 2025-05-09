@@ -1,24 +1,28 @@
-import { composeWithDevTools } from '@redux-devtools/extension';
-import { createBrowserHistory } from 'history';
-import { applyMiddleware, legacy_createStore as createStore } from 'redux';
-import thunk from 'redux-thunk';
-import { combineReducers } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 
-import { createRouterMiddleware, createRouterReducer } from '@lagunovsky/redux-react-router';
-import rootReducer from './reducers';
+import { createTransform, persistReducer, persistStore } from 'redux-persist';
 
-export const history = createBrowserHistory();
-const routerMiddleware = createRouterMiddleware(history);
+import { combinedReducer, devTools } from './configure';
+import storage from 'redux-persist/lib/storage';
 
-const middleware = applyMiddleware(thunk, routerMiddleware);
-const devTools = process.env.NODE_ENV === 'production' ? middleware : composeWithDevTools(middleware);
+const persistConfig = {
+  key: 'root',
+  storage,
+  transforms: [
+    createTransform(
+      // transform state to be stored
+      (inboundState: any) => ({ ...inboundState, sensitiveData: undefined }),
+      // transform state being rehydrated
+      (outboundState: any) => ({ ...outboundState })
+    ),
+  ],
+  blacklist: ['router', 'spinner', 'device', 'searching', 'options'],
+};
+
+const persistedReducer = persistReducer(persistConfig, combinedReducer);
 
 export default function configureStore() {
-  return createStore(
-    combineReducers({
-      router: createRouterReducer(history),
-      ...rootReducer,
-    }),
-    devTools
-  );
+  const store = createStore(persistedReducer, devTools);
+  const persistor = persistStore(store);
+  return { store, persistor };
 }

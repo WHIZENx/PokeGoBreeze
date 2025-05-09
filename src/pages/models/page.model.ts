@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { OptionsPokemon } from '../../core/models/pokemon.model';
 import { ISearchingModel } from '../../store/models/searching.model';
 import { IBattlePokemonData } from '../../core/models/pvp.model';

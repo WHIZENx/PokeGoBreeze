@@ -5,5 +5,17 @@ import * as SearchingActions from './searching.action';
 import * as SpinnerActions from './spinner.action';
 import * as StatsActions from './stats.action';
 import * as ThemeActions from './theme.action';
+import * as TimestampActions from './timestamp.action';
+import * as PathActions from './path.action';
 
-export { StoreActions, DeviceActions, OptionsActions, SearchingActions, SpinnerActions, StatsActions, ThemeActions };
+export {
+  StoreActions,
+  DeviceActions,
+  OptionsActions,
+  SearchingActions,
+  SpinnerActions,
+  StatsActions,
+  ThemeActions,
+  PathActions,
+  TimestampActions,
+};

@@ -13,21 +13,23 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 import { calculateStatsByTag } from '../../../util/calculate';
-import { computeBgType, findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
+import {
+  computeBgType,
+  findAssetForm,
+  getPokemonBattleLeagueIcon,
+  getPokemonBattleLeagueName,
+} from '../../../util/compute';
 
 import Error from '../../Error/Error';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
 import { FORM_MEGA, FORM_SHADOW } from '../../../util/constants';
-import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
+import { PathState, RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
-import { LocalStorageConfig } from '../../../store/constants/localStorage';
-import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
@@ -49,8 +51,8 @@ const PokemonPVP = () => {
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const params = useParams();
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, JSON.stringify(new LocalTimeStamp()));
-  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
+  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const pvpData = useSelector((state: PathState) => state.path.pvp);
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const statsRanking = useSelector((state: StatsState) => state.stats);
@@ -58,10 +60,8 @@ const PokemonPVP = () => {
   const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
-    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
-      loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
-    }
-  }, [pvp.rankings, pvp.trains]);
+    loadPVP(dispatch, timestamp, pvpData);
+  }, [dispatch]);
 
   const fetchPokemonInfo = useCallback(async () => {
     dispatch(SpinnerActions.ShowSpinner.create());
@@ -71,7 +71,9 @@ const PokemonPVP = () => {
       const data = (
         await APIService.getFetchUrl<RankingsPVP[]>(
           APIService.getRankingFile(
-            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive) ? LeagueBattleType.Mega : LeagueBattleType.All,
+            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive)
+              ? LeagueBattleType.Mega
+              : LeagueBattleType.All,
             cp,
             params.type
           )
@@ -87,9 +89,9 @@ const PokemonPVP = () => {
       const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
       const id = pokemon?.num;
       const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
-      document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(cp)} (${capitalize(
-        params.type
-      )})`;
+      document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
+        cp
+      )} (${capitalize(params.type)})`;
 
       const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -108,7 +110,10 @@ const PokemonPVP = () => {
       let pokemonType = PokemonType.Normal;
       if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
         pokemonType = PokemonType.Shadow;
-      } else if (isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) || isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)) {
+      } else if (
+        isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
+        isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)
+      ) {
         pokemonType = PokemonType.Purified;
       }
 
@@ -142,14 +147,28 @@ const PokemonPVP = () => {
         })
       );
     }
-  }, [params.type, params.pokemon, params.cp, statsRanking, dataStore.combats, dataStore.pokemons, dataStore.assets, dispatch]);
+  }, [
+    params.type,
+    params.pokemon,
+    params.cp,
+    statsRanking,
+    dataStore.combats,
+    dataStore.pokemons,
+    dataStore.assets,
+    dispatch,
+  ]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
       router.action = null as AnyAction[''];
     };
-    if (statsRanking && isNotEmpty(dataStore.combats) && isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.assets)) {
+    if (
+      statsRanking &&
+      isNotEmpty(dataStore.combats) &&
+      isNotEmpty(dataStore.pokemons) &&
+      isNotEmpty(dataStore.assets)
+    ) {
       if (dataStore.combats.every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
       } else if (router.action) {
@@ -167,7 +186,10 @@ const PokemonPVP = () => {
     return (
       <Fragment>
         {league && (
-          <div className="d-flex flex-wrap align-items-center filter-shadow text-shadow text-white" style={{ columnGap: 10 }}>
+          <div
+            className="d-flex flex-wrap align-items-center filter-shadow text-shadow text-white"
+            style={{ columnGap: 10 }}
+          >
             <img
               alt="img-league"
               width={64}
@@ -176,7 +198,9 @@ const PokemonPVP = () => {
             />
             <h2>
               <b>
-                {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive) ? getPokemonBattleLeagueName(cp) : league.name}
+                {isEqual(league.name, LeagueBattleType.All, EqualMode.IgnoreCaseSensitive)
+                  ? getPokemonBattleLeagueName(cp)
+                  : league.name}
               </b>
             </h2>
           </div>
@@ -227,7 +251,11 @@ const PokemonPVP = () => {
                       src={APIService.getPokemonModel(rankingPoke?.form, rankingPoke?.id)}
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, rankingPoke?.id, rankingPoke?.form);
+                        e.currentTarget.src = getValidPokemonImgPath(
+                          e.currentTarget.src,
+                          rankingPoke?.id,
+                          rankingPoke?.form
+                        );
                       }}
                     />
                   </PokemonIconType>

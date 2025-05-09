@@ -46,7 +46,11 @@ const Tools = (props: IToolsComponent) => {
       if (props.setTier) {
         props.setTier(5);
       }
-    } else if (props.tier === 5 && currentForm?.form?.pokemonType === PokemonType.Mega && pokemonData?.pokemonClass !== PokemonClass.None) {
+    } else if (
+      props.tier === 5 &&
+      currentForm?.form?.pokemonType === PokemonType.Mega &&
+      pokemonData?.pokemonClass !== PokemonClass.None
+    ) {
       setCurrTier(6);
       if (props.setTier) {
         props.setTier(6);
@@ -100,7 +104,9 @@ const Tools = (props: IToolsComponent) => {
         );
         props.onSetStats(
           TypeAction.Sta,
-          props.isRaid && props.tier && !props.isHide ? RAID_BOSS_TIER[props.tier].sta : toNumber(formResult.sta.stamina)
+          props.isRaid && props.tier && !props.isHide
+            ? RAID_BOSS_TIER[props.tier].sta
+            : toNumber(formResult.sta.stamina)
         );
       }
     }
@@ -186,7 +192,9 @@ const Tools = (props: IToolsComponent) => {
                   STA
                 </td>
                 <td className="text-center">
-                  {statsPokemon?.sta ? Math.floor(toNumber(statsPokemon.sta.stamina) / RAID_BOSS_TIER[props.tier].CPm) : 0}
+                  {statsPokemon?.sta
+                    ? Math.floor(toNumber(statsPokemon.sta.stamina) / RAID_BOSS_TIER[props.tier].CPm)
+                    : 0}
                 </td>
               </tr>
               <tr>

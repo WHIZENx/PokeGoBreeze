@@ -5,7 +5,10 @@ const convertHexByRgba = (color: string) =>
     .replace(/^rgba?\(|\s+|\)$/gi, '')
     .split(',')
     .map((c, i) =>
-      (i < 3 ? toNumber(c).toString(16) : Math.round(Math.max(0, Math.min(toNumber(c, 1), 1)) * 255).toString(16)).padStart(2, '0')
+      (i < 3
+        ? toNumber(c).toString(16)
+        : Math.round(Math.max(0, Math.min(toNumber(c, 1), 1)) * 255).toString(16)
+      ).padStart(2, '0')
     )
     .join('')}`;
 

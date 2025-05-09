@@ -30,9 +30,9 @@ const Attacker = (prop: ITypeEffComponent) => {
       resist: [],
       neutral: [],
     });
-    Object.entries(((prop.types ?? new TypeEff()) as unknown as DynamicObj<TypeMultiply>)[currentType] ?? new TypeModel()).forEach(
-      ([key, value]: [string, number]) => getMultiplyTypeEffect(data, value, key)
-    );
+    Object.entries(
+      ((prop.types ?? new TypeEff()) as unknown as DynamicObj<TypeMultiply>)[currentType] ?? new TypeModel()
+    ).forEach(([key, value]: [string, number]) => getMultiplyTypeEffect(data, value, key));
     setTypeEffective(data);
   }, [currentType, prop.types]);
 
@@ -66,7 +66,10 @@ const Attacker = (prop: ITypeEffComponent) => {
               <ul>
                 {types.map((value, index) => (
                   <li
-                    className={combineClasses('container', `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`)}
+                    className={combineClasses(
+                      'container',
+                      `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
+                    )}
                     style={{ backgroundColor: theme.palette.background.default }}
                     key={index}
                     onMouseDown={() => changeType(value)}

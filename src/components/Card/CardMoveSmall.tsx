@@ -31,7 +31,10 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
         <Fragment>
           {props.value && move && (
             <div
-              className={combineClasses('d-flex align-items-center w-100 h-100', props.isDisable ? 'disable-card-move' : '')}
+              className={combineClasses(
+                'd-flex align-items-center w-100 h-100',
+                props.isDisable ? 'disable-card-move' : ''
+              )}
               style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
             >
               <IconType width={18} height={18} alt="type-logo" style={{ marginRight: 10 }} type={move.type} />
@@ -39,7 +42,10 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               <span className="d-flex">
                 {props.value.moveType !== MoveType.None && (
                   <span
-                    className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, props.value.moveType)?.toLowerCase()}-ic`)}
+                    className={combineClasses(
+                      'type-icon-small ic',
+                      `${getKeyWithData(MoveType, props.value.moveType)?.toLowerCase()}-ic`
+                    )}
                   >
                     {getKeyWithData(MoveType, props.value.moveType)}
                   </span>
@@ -49,7 +55,11 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
                 <div className="select-down d-flex align-items-center">
                   {props.isSelect && <KeyboardArrowDownIcon fontSize="small" />}
                   {props.clearData && (
-                    <CloseIcon className="remove-pokemon-select" sx={{ color: 'red' }} onClick={() => props.clearData?.()} />
+                    <CloseIcon
+                      className="remove-pokemon-select"
+                      sx={{ color: 'red' }}
+                      onClick={() => props.clearData?.()}
+                    />
                   )}
                 </div>
               )}

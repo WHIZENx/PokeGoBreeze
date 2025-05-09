@@ -248,7 +248,11 @@ class APIService {
   getPokeFullSprite(id?: number | string, form?: string) {
     if (id) {
       if (form) {
-        form = splitAndCapitalize(form.toUpperCase().replace(FORM_GALARIAN, FORM_GALAR).replace(FORM_HISUIAN, FORM_HISUI), '-', '-');
+        form = splitAndCapitalize(
+          form.toUpperCase().replace(FORM_GALARIAN, FORM_GALAR).replace(FORM_HISUIAN, FORM_HISUI),
+          '-',
+          '-'
+        );
       }
       return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${form ? `-${form}` : ''}.png`;
     }

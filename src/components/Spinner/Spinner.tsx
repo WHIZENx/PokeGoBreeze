@@ -15,7 +15,13 @@ const Spinner = () => {
           <div className="loading-group-spin" />
           <div className="loading-spin-container">
             <div className="loading-spin text-center">
-              <img className={spinner.error?.isError ? '' : 'loading'} width={64} height={64} alt="img-pokemon" src={loading} />
+              <img
+                className={spinner.error?.isError ? '' : 'loading'}
+                width={64}
+                height={64}
+                alt="img-pokemon"
+                src={loading}
+              />
               <span className="caption text-white text-shadow" style={{ fontSize: 18 }}>
                 <b>
                   {spinner.error?.isError ? (
@@ -32,7 +38,9 @@ const Spinner = () => {
                       >
                         Retry Again
                       </p>
-                      {device.isMobile && spinner.error.message && <p className="text-danger">{spinner.error.message}</p>}
+                      {device.isMobile && spinner.error.message && (
+                        <p className="text-danger">{spinner.error.message}</p>
+                      )}
                     </Fragment>
                   ) : (
                     <Fragment>

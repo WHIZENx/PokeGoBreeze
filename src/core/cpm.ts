@@ -12,7 +12,8 @@ export const calculateBaseCPM = (baseCPM: DynamicObj<number>, min: number, max: 
       const lvLow = toNumber(Object.keys(baseCPM).find((key) => toNumber(key) <= i));
       const lvHigh = toNumber(Object.keys(baseCPM).find((key) => toNumber(key) >= i));
       result.multiplier = Math.sqrt(
-        ((Math.pow(baseCPM[lvHigh], 2) - Math.pow(baseCPM[lvLow], 2)) / (lvHigh - lvLow)) * (i - lvLow) + Math.pow(baseCPM[lvLow], 2)
+        ((Math.pow(baseCPM[lvHigh], 2) - Math.pow(baseCPM[lvLow], 2)) / (lvHigh - lvLow)) * (i - lvLow) +
+          Math.pow(baseCPM[lvLow], 2)
       );
     }
     cpmList.push(result);

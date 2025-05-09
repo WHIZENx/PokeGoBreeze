@@ -70,7 +70,11 @@ const SpecialForm = (props: IFormSpecialComponent) => {
           <div className="form-special-container scroll-evolution">
             <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
               {arrEvoList?.map((value, evo) => (
-                <li key={evo} className="img-form-gender-group li-evo" style={{ width: 'fit-content', height: 'fit-content' }}>
+                <li
+                  key={evo}
+                  className="img-form-gender-group li-evo"
+                  style={{ width: 'fit-content', height: 'fit-content' }}
+                >
                   <img
                     id="img-pokemon"
                     height="96"
@@ -97,7 +101,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                         pokemonType === PokemonType.Mega
                           ? APIService.getIconSprite('ic_mega')
                           : APIService.getIconMegaPrimalSprite(
-                              props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
+                              props.id === 382
+                                ? 'pokemon_details_primal_alpha_energy'
+                                : 'pokemon_details_primal_omega_energy'
                             )
                       }
                     />
@@ -113,7 +119,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                         pokemonType === PokemonType.Mega
                           ? APIService.getIconSprite('ic_mega')
                           : APIService.getIconMegaPrimalSprite(
-                              props.id === 382 ? 'pokemon_details_primal_alpha_energy' : 'pokemon_details_primal_omega_energy'
+                              props.id === 382
+                                ? 'pokemon_details_primal_alpha_energy'
+                                : 'pokemon_details_primal_omega_energy'
                             )
                       }
                     />

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 import { OptionDPSModel } from '../models/options.model';
 import { OptionFiltersCounter } from '../../components/Table/Counter/models/counter.model';

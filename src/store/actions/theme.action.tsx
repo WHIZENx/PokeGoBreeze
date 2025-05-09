@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Action } from 'redux';
 
 export enum ThemeActionTypes {

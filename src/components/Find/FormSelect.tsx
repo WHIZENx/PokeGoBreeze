@@ -175,7 +175,9 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     if (props.setName) {
-      props.setName(currentForm ? splitAndCapitalize(currentForm.form.name, '-', ' ') : getValueOrDefault(String, props.name));
+      props.setName(
+        currentForm ? splitAndCapitalize(currentForm.form.name, '-', ' ') : getValueOrDefault(String, props.name)
+      );
     }
   }, [props.setName, props.name, currentForm]);
 
@@ -195,8 +197,19 @@ const FormSelect = (props: IFormSelectComponent) => {
   useEffect(() => {
     const id = toNumber(props.id);
     if (currentForm && toNumber(data?.id) > 0 && id > 0) {
-      const formName = getValueOrDefault(String, currentForm.form.name, currentForm.form.formName, currentForm.defaultName);
-      const details = getPokemonDetails(props.pokemonData, id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
+      const formName = getValueOrDefault(
+        String,
+        currentForm.form.name,
+        currentForm.form.formName,
+        currentForm.defaultName
+      );
+      const details = getPokemonDetails(
+        props.pokemonData,
+        id,
+        formName,
+        currentForm.form.pokemonType,
+        currentForm.form.isDefault
+      );
       details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
       if (
         props.searching?.object?.pokemon?.id !== props.id ||
@@ -312,7 +325,10 @@ const FormSelect = (props: IFormSelectComponent) => {
         alt="img-full-pokemon"
         src={
           currentForm?.form
-            ? APIService.getPokeFullSprite(dataStorePokemon?.current?.id, convertPokemonImageName(currentForm?.form.formName))
+            ? APIService.getPokeFullSprite(
+                dataStorePokemon?.current?.id,
+                convertPokemonImageName(currentForm?.form.formName)
+              )
             : APIService.getPokeFullSprite(dataStorePokemon?.current?.id)
         }
         onError={(e) => {
@@ -359,7 +375,10 @@ const FormSelect = (props: IFormSelectComponent) => {
                 {value.map((value, index) => (
                   <button
                     key={index}
-                    className={combineClasses('btn btn-form', value.form.id === currentForm.form.id ? 'form-selected' : '')}
+                    className={combineClasses(
+                      'btn btn-form',
+                      value.form.id === currentForm.form.id ? 'form-selected' : ''
+                    )}
                     onClick={() => changeForm(value.form.id === currentForm.form.id, value.form.name)}
                   >
                     <img
@@ -372,7 +391,11 @@ const FormSelect = (props: IFormSelectComponent) => {
                       alt="img-icon-form"
                       src={formIconAssets(value)}
                     />
-                    <p>{!value.form.formName ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.form.formName, '-', ' ')}</p>
+                    <p>
+                      {!value.form.formName
+                        ? capitalize(FORM_NORMAL)
+                        : splitAndCapitalize(value.form.formName, '-', ' ')}
+                    </p>
                     {toNumber(value.form.id) > 0 && value.form.id === currentForm.defaultId && (
                       <b>
                         <small>(Default)</small>
@@ -411,7 +434,13 @@ const FormSelect = (props: IFormSelectComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img className="img-type-icon" height={32} alt="img-boss" src={APIService.getRaidSprite('ic_raid_small')} /> Boss Stats
+                  <img
+                    className="img-type-icon"
+                    height={32}
+                    alt="img-boss"
+                    src={APIService.getRaidSprite('ic_raid_small')}
+                  />{' '}
+                  Boss Stats
                 </span>
               }
             />

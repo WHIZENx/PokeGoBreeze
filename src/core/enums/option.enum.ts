@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum ItemLureType {
   Magnetic = 'ITEM_TROY_DISK_MAGNETIC',
   Mossy = 'ITEM_TROY_DISK_MOSSY',

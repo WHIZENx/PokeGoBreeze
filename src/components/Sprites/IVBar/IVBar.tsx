@@ -39,7 +39,10 @@ const IVBar = (props: IIVBarComponent) => {
         <div className="iv position-relative">
           <div
             style={{ width: `${ivWidthSec}%` }}
-            className={combineClasses('position-absolute iv-bar', props.iv > 5 && props.iv <= 10 ? 'border-right-iv' : '')}
+            className={combineClasses(
+              'position-absolute iv-bar',
+              props.iv > 5 && props.iv <= 10 ? 'border-right-iv' : ''
+            )}
           />
           <div className="iv-bg-bar w-100" />
         </div>

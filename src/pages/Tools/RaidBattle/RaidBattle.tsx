@@ -57,7 +57,11 @@ import {
   PokemonMoveData,
   PokemonRaidModel,
 } from '../../../core/models/pokemon.model';
-import { ISelectMoveModel, SelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
+import {
+  ISelectMoveModel,
+  SelectMoveModel,
+  SelectMovePokemonModel,
+} from '../../../components/Input/models/select-move.model';
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
@@ -303,7 +307,11 @@ const RaidBattle = () => {
 
   const handleSaveSettingPokemon = () => {
     const pokemon = showSettingPokemon.pokemon;
-    if (isInvalidIV(pokemon?.stats?.iv.atkIV) || isInvalidIV(pokemon?.stats?.iv.defIV) || isInvalidIV(pokemon?.stats?.iv.staIV)) {
+    if (
+      isInvalidIV(pokemon?.stats?.iv.atkIV) ||
+      isInvalidIV(pokemon?.stats?.iv.defIV) ||
+      isInvalidIV(pokemon?.stats?.iv.staIV)
+    ) {
       return;
     }
     setPokemonBattle(
@@ -420,8 +428,21 @@ const RaidBattle = () => {
             return;
           }
 
-          const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-          const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+          const dpsDef = calculateBattleDPSDefender(
+            data.options,
+            data.typeEff,
+            data.weatherBoost,
+            statsAttacker,
+            statsDefender
+          );
+          const dpsAtk = calculateBattleDPS(
+            data.options,
+            data.typeEff,
+            data.weatherBoost,
+            statsAttacker,
+            statsDefender,
+            dpsDef
+          );
 
           const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
           const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
@@ -451,7 +472,12 @@ const RaidBattle = () => {
       }
     });
 
-  const addFPokeData = (dataList: IPokemonMoveData[], pokemon: IPokemonData, movePoke: string[], pokemonTarget: boolean) =>
+  const addFPokeData = (
+    dataList: IPokemonMoveData[],
+    pokemon: IPokemonData,
+    movePoke: string[],
+    pokemonTarget: boolean
+  ) =>
     movePoke.forEach((vf) => {
       const fMove = data.combats.find((item) => isEqual(item.name, vf));
       if (!fMove) {
@@ -470,7 +496,15 @@ const RaidBattle = () => {
         (!pokemon.form || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
         isNotEmpty(pokemon.shadowMoves)
       ) {
-        addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
+        addCPokeData(
+          dataList,
+          pokemon.eliteCinematicMoves,
+          pokemon,
+          fMove,
+          fMoveType,
+          pokemonTarget,
+          PokemonType.Shadow
+        );
       }
       addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, pokemonTarget);
       addCPokeData(dataList, pokemon.specialMoves, pokemon, fMove, fMoveType, pokemonTarget);
@@ -548,8 +582,21 @@ const RaidBattle = () => {
         isStab: isWeatherBoss,
       });
 
-      const dpsDef = calculateBattleDPSDefender(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-      const dpsAtk = calculateBattleDPS(data.options, data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+      const dpsDef = calculateBattleDPSDefender(
+        data.options,
+        data.typeEff,
+        data.weatherBoost,
+        statsAttacker,
+        statsDefender
+      );
+      const dpsAtk = calculateBattleDPS(
+        data.options,
+        data.typeEff,
+        data.weatherBoost,
+        statsAttacker,
+        statsDefender,
+        dpsDef
+      );
 
       const ttkAtk = enableTimeAllow
         ? Math.min(timeAllow - timer, TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk))
@@ -675,7 +722,11 @@ const RaidBattle = () => {
 
   useEffect(() => {
     if (pokemon?.form && isNotEmpty(data.pokemons)) {
-      findMove(toNumber(pokemon?.form.defaultId, 1), getValueOrDefault(String, pokemon?.form.form?.name), pokemon?.form.form?.pokemonType);
+      findMove(
+        toNumber(pokemon?.form.defaultId, 1),
+        getValueOrDefault(String, pokemon?.form.form?.name),
+        pokemon?.form.form?.pokemonType
+      );
     }
   }, [data.pokemons, pokemon?.form]);
 
@@ -731,13 +782,17 @@ const RaidBattle = () => {
   };
 
   const resultBattle = (bossHp: number, timer: number) => {
-    const status = enableTimeAllow && timer >= timeAllow ? RaidState.TimeOut : bossHp > 0 ? RaidState.Loss : RaidState.Win;
+    const status =
+      enableTimeAllow && timer >= timeAllow ? RaidState.TimeOut : bossHp > 0 ? RaidState.Loss : RaidState.Win;
     const result = getKeyWithData(RaidState, status)
       ?.split(/(?=[A-Z])/)
       .join(' ')
       .toUpperCase();
     return (
-      <td colSpan={3} className={combineClasses('text-center', `bg-${status === RaidState.Win ? 'success' : 'danger'}`)}>
+      <td
+        colSpan={3}
+        className={combineClasses('text-center', `bg-${status === RaidState.Win ? 'success' : 'danger'}`)}
+      >
         <span className="text-white">{result}</span>
       </td>
     );
@@ -772,7 +827,10 @@ const RaidBattle = () => {
           className="form-control"
           placeholder="IV ATK"
           onInput={(e) =>
-            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } } })
+            setFilters({
+              ...filters,
+              selected: { ...selected, iv: { ...selected.iv, atkIV: toNumber(e.currentTarget.value) } },
+            })
           }
         />
         <span className="input-group-text">DEF</span>
@@ -785,7 +843,10 @@ const RaidBattle = () => {
           className="form-control"
           placeholder="IV DEF"
           onInput={(e) =>
-            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } } })
+            setFilters({
+              ...filters,
+              selected: { ...selected, iv: { ...selected.iv, defIV: toNumber(e.currentTarget.value) } },
+            })
           }
         />
         <span className="input-group-text">STA</span>
@@ -798,7 +859,10 @@ const RaidBattle = () => {
           className="form-control"
           placeholder="IV STA"
           onInput={(e) =>
-            setFilters({ ...filters, selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } } })
+            setFilters({
+              ...filters,
+              selected: { ...selected, iv: { ...selected.iv, staIV: toNumber(e.currentTarget.value) } },
+            })
           }
         />
       </div>
@@ -809,7 +873,10 @@ const RaidBattle = () => {
             <Checkbox
               checked={filters.selected.onlyShadow}
               onChange={(_, check) =>
-                setFilters({ ...filters, selected: { ...selected, onlyShadow: check, onlyMega: check ? false : selected.onlyMega } })
+                setFilters({
+                  ...filters,
+                  selected: { ...selected, onlyShadow: check, onlyMega: check ? false : selected.onlyMega },
+                })
               }
             />
           }
@@ -820,7 +887,10 @@ const RaidBattle = () => {
             <Checkbox
               checked={filters.selected.onlyMega}
               onChange={(_, check) =>
-                setFilters({ ...filters, selected: { ...selected, onlyMega: check, onlyShadow: check ? false : selected.onlyShadow } })
+                setFilters({
+                  ...filters,
+                  selected: { ...selected, onlyMega: check, onlyShadow: check ? false : selected.onlyShadow },
+                })
               }
             />
           }
@@ -940,7 +1010,12 @@ const RaidBattle = () => {
                   alt="pokemon-go-icon"
                   src={APIService.getPokeShadow()}
                 />
-                <span style={{ color: showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? 'black' : 'lightgray' }}>
+                <span
+                  style={{
+                    color:
+                      showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? 'black' : 'lightgray',
+                  }}
+                >
                   {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               </span>
@@ -1062,10 +1137,17 @@ const RaidBattle = () => {
   };
 
   const renderMove = (value: Partial<ICombat> | undefined) => (
-    <span className={combineClasses(value?.type?.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}>
+    <span
+      className={combineClasses(value?.type?.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}
+    >
       {value && value.moveType !== MoveType.None && (
         <span className="move-badge">
-          <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`)}>
+          <span
+            className={combineClasses(
+              'type-icon-small ic',
+              `${getKeyWithData(MoveType, value.moveType)?.toLowerCase()}-ic`
+            )}
+          >
             {getKeyWithData(MoveType, value.moveType)}
           </span>
         </span>
@@ -1097,8 +1179,14 @@ const RaidBattle = () => {
         ...stats,
         pokemonType: showMovePokemon.pokemon.pokemonType ?? PokemonType.None,
       });
-      pokemonBattle.fMoveTargetPokemon = new SelectMoveModel(showMovePokemon.pokemon.fMove?.name, showMovePokemon.pokemon.fMoveType);
-      pokemonBattle.cMoveTargetPokemon = new SelectMoveModel(showMovePokemon.pokemon.cMove?.name, showMovePokemon.pokemon.cMoveType);
+      pokemonBattle.fMoveTargetPokemon = new SelectMoveModel(
+        showMovePokemon.pokemon.fMove?.name,
+        showMovePokemon.pokemon.fMoveType
+      );
+      pokemonBattle.cMoveTargetPokemon = new SelectMoveModel(
+        showMovePokemon.pokemon.cMove?.name,
+        showMovePokemon.pokemon.cMoveType
+      );
     }
   };
 
@@ -1143,7 +1231,12 @@ const RaidBattle = () => {
                   horizontal: 'left',
                 }}
               >
-                <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel(trainer.trainerId % 294)} />
+                <img
+                  width={80}
+                  height={80}
+                  alt="img-trainer"
+                  src={APIService.getTrainerModel(trainer.trainerId % 294)}
+                />
               </Badge>
               <div className="pokemon-battle-group">
                 {trainer.pokemons.map((poke, index) => (
@@ -1152,14 +1245,19 @@ const RaidBattle = () => {
                     onMouseLeave={onLeaveSlot}
                     onTouchEnd={onLeaveSlot}
                     key={index}
-                    className={combineClasses('pokemon-battle', hoverSlot === `${trainer.trainerId}-${index}` ? 'slot-active' : '')}
+                    className={combineClasses(
+                      'pokemon-battle',
+                      hoverSlot === `${trainer.trainerId}-${index}` ? 'slot-active' : ''
+                    )}
                     onClick={() => onMovePokemon(poke)}
                   >
                     {poke.dataTargetPokemon ? (
                       <span className="position-relative">
                         <PokemonIconType
                           pokemonType={
-                            hoverSlot === `${trainer.trainerId}-${index}` ? pokemon.pokemonType : poke.dataTargetPokemon.stats?.pokemonType
+                            hoverSlot === `${trainer.trainerId}-${index}`
+                              ? pokemon.pokemonType
+                              : poke.dataTargetPokemon.stats?.pokemonType
                           }
                           size={18}
                         >
@@ -1167,7 +1265,9 @@ const RaidBattle = () => {
                             className="pokemon-sprite-battle"
                             alt="img-pokemon"
                             src={APIService.getPokeIconSprite(
-                              hoverSlot === `${trainer.trainerId}-${index}` ? pokemon.pokemon?.sprite : poke.dataTargetPokemon.sprite,
+                              hoverSlot === `${trainer.trainerId}-${index}`
+                                ? pokemon.pokemon?.sprite
+                                : poke.dataTargetPokemon.sprite,
                               true
                             )}
                             onError={(e) => {
@@ -1249,7 +1349,11 @@ const RaidBattle = () => {
                   </h6>
                   <SelectMove
                     pokemon={
-                      new SelectMovePokemonModel(pokemon?.form?.defaultId, pokemon?.form?.form?.formName, pokemon?.form?.form?.pokemonType)
+                      new SelectMovePokemonModel(
+                        pokemon?.form?.defaultId,
+                        pokemon?.form?.form?.formName,
+                        pokemon?.form?.form?.pokemonType
+                      )
                     }
                     clearData={clearData}
                     move={fMove}
@@ -1265,7 +1369,11 @@ const RaidBattle = () => {
                   </h6>
                   <SelectMove
                     pokemon={
-                      new SelectMovePokemonModel(pokemon?.form?.defaultId, pokemon?.form?.form?.formName, pokemon?.form?.form?.pokemonType)
+                      new SelectMovePokemonModel(
+                        pokemon?.form?.defaultId,
+                        pokemon?.form?.form?.formName,
+                        pokemon?.form?.form?.pokemonType
+                      )
                     }
                     clearData={clearData}
                     move={cMove}
@@ -1293,13 +1401,23 @@ const RaidBattle = () => {
             <div className="row align-items-center element-top" style={{ margin: 0 }}>
               <div className="col-6 d-flex justify-content-end">
                 <FormControlLabel
-                  control={<Checkbox checked={isWeatherBoss} onChange={(_, check) => setOptions({ ...options, isWeatherBoss: check })} />}
+                  control={
+                    <Checkbox
+                      checked={isWeatherBoss}
+                      onChange={(_, check) => setOptions({ ...options, isWeatherBoss: check })}
+                    />
+                  }
                   label="Boss Weather Boost"
                 />
               </div>
               <div className="col-6">
                 <FormControlLabel
-                  control={<Checkbox checked={isReleased} onChange={(_, check) => setOptions({ ...options, isReleased: check })} />}
+                  control={
+                    <Checkbox
+                      checked={isReleased}
+                      onChange={(_, check) => setOptions({ ...options, isReleased: check })}
+                    />
+                  }
                   label="Only Release in Pokémon GO"
                 />
               </div>
@@ -1307,7 +1425,12 @@ const RaidBattle = () => {
             <div className="row align-items-center element-top" style={{ margin: 0 }}>
               <div className="col-6 d-flex justify-content-end" style={{ paddingRight: 0 }}>
                 <FormControlLabel
-                  control={<Switch checked={enableTimeAllow} onChange={(_, check) => setOptions({ ...options, enableTimeAllow: check })} />}
+                  control={
+                    <Switch
+                      checked={enableTimeAllow}
+                      onChange={(_, check) => setOptions({ ...options, enableTimeAllow: check })}
+                    />
+                  }
                   label="Time Allow"
                 />
               </div>
@@ -1353,7 +1476,9 @@ const RaidBattle = () => {
                     ? 'Time To Kill'
                     : 'Tankiness'
                 } `}
-                <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${used.onlyMega ? '*Only Mega' : ''}`}</span>
+                <span className="text-danger">{`${used.onlyShadow ? '*Only Shadow' : ''}${
+                  used.onlyMega ? '*Only Mega' : ''
+                }`}</span>
               </b>
             </p>
           </div>
@@ -1418,7 +1543,8 @@ const RaidBattle = () => {
                     Death: <b className={value.death === 0 ? 'text-success' : 'text-danger'}>{value.death}</b>
                   </span>
                   <span className="d-block">
-                    Time to Kill <span className="d-inline-block caption">(Boss)</span>: <b>{toFloatWithPadding(value.ttkAtk, 2)} sec</b>
+                    Time to Kill <span className="d-inline-block caption">(Boss)</span>:{' '}
+                    <b>{toFloatWithPadding(value.ttkAtk, 2)} sec</b>
                   </span>
                   <span className="d-block">
                     Time is Killed: <b>{toFloatWithPadding(value.ttkDef, 2)} sec</b>
@@ -1445,9 +1571,18 @@ const RaidBattle = () => {
                     horizontal: 'left',
                   }}
                 >
-                  <img width={80} height={80} alt="img-trainer" src={APIService.getTrainerModel(trainer.trainerId % 294)} />
+                  <img
+                    width={80}
+                    height={80}
+                    alt="img-trainer"
+                    src={APIService.getTrainerModel(trainer.trainerId % 294)}
+                  />
                 </Badge>
-                <button className="btn btn-primary" style={{ marginRight: 10 }} onClick={() => handleShow(trainer.pokemons, index)}>
+                <button
+                  className="btn btn-primary"
+                  style={{ marginRight: 10 }}
+                  onClick={() => handleShow(trainer.pokemons, index)}
+                >
                   <EditIcon fontSize="small" />
                 </button>
                 <div className="pokemon-battle-group">
@@ -1497,7 +1632,10 @@ const RaidBattle = () => {
                     <ContentCopyIcon sx={{ fontSize: 14 }} />
                   </span>
                   <span
-                    className={combineClasses('ic-remove text-white', index > 0 ? 'bg-danger' : 'click-none bg-secondary')}
+                    className={combineClasses(
+                      'ic-remove text-white',
+                      index > 0 ? 'bg-danger' : 'click-none bg-secondary'
+                    )}
                     title="Remove"
                     onClick={() => {
                       if (index > 0) {
@@ -1511,7 +1649,11 @@ const RaidBattle = () => {
               </div>
             ))}
             <div className="text-center element-top">
-              <button className="btn btn-primary" onClick={() => calculateTrainerBattle(trainerBattle)} disabled={!resultBoss}>
+              <button
+                className="btn btn-primary"
+                onClick={() => calculateTrainerBattle(trainerBattle)}
+                disabled={!resultBoss}
+              >
                 Raid Battle
               </button>
             </div>
@@ -1578,7 +1720,8 @@ const RaidBattle = () => {
                       </b>
                     </span>
                     <span className="d-block">
-                      Average Total Damage Output: <b>{toFloatWithPadding((resultBoss.minTDO + resultBoss.maxTDO) / 2, 2)}</b>
+                      Average Total Damage Output:{' '}
+                      <b>{toFloatWithPadding((resultBoss.minTDO + resultBoss.maxTDO) / 2, 2)}</b>
                     </span>
                     <span className="d-block">
                       {'Boss HP Remaining: '}
@@ -1590,7 +1733,10 @@ const RaidBattle = () => {
                       Boss Average HP Remaining: <b>{Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)}</b>
                     </span>
                   </div>
-                  <div className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center" style={{ marginBottom: 20 }}>
+                  <div
+                    className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center"
+                    style={{ marginBottom: 20 }}
+                  >
                     <h2 className="text-center" style={{ margin: 0 }}>
                       Suggested players
                     </h2>
@@ -1642,7 +1788,10 @@ const RaidBattle = () => {
                               <tr key={index}>
                                 <td>#{toNumber(data.trainerId) + 1}</td>
                                 <td>
-                                  <OverlayTrigger placement="auto" overlay={<PopoverConfig>{modalDetailsPokemon(data)}</PopoverConfig>}>
+                                  <OverlayTrigger
+                                    placement="auto"
+                                    overlay={<PopoverConfig>{modalDetailsPokemon(data)}</PopoverConfig>}
+                                  >
                                     <span className="tooltips-info">
                                       <div className="d-flex align-items-center table-pokemon">
                                         <PokemonIconType pokemonType={data.pokemon?.stats?.pokemonType} size={18}>
@@ -1666,10 +1815,18 @@ const RaidBattle = () => {
                                 </td>
                                 <td>{toFloatWithPadding(data.dpsAtk, 2)}</td>
                                 <td>{Math.floor(data.tdoAtk) === 0 ? '-' : toFloatWithPadding(data.tdoAtk, 2)}</td>
-                                <td>{Math.floor(toNumber(data.atkHpRemain)) === 0 ? toFloatWithPadding(data.ttkDef, 2) : '-'}</td>
+                                <td>
+                                  {Math.floor(toNumber(data.atkHpRemain)) === 0
+                                    ? toFloatWithPadding(data.ttkDef, 2)
+                                    : '-'}
+                                </td>
                                 <td>
                                   <b>
-                                    <span className={Math.floor(toNumber(data.atkHpRemain)) === 0 ? 'text-danger' : 'text-success'}>
+                                    <span
+                                      className={
+                                        Math.floor(toNumber(data.atkHpRemain)) === 0 ? 'text-danger' : 'text-success'
+                                      }
+                                    >
                                       {Math.max(0, Math.floor(toNumber(data.atkHpRemain)))}
                                     </span>
                                     {' / '}
@@ -1682,7 +1839,9 @@ const RaidBattle = () => {
                               turn === 0 ||
                               (!enableTimeAllow && result.summary.timer <= timeAllow)) && (
                               <tr>
-                                <td colSpan={6}>{calculateHpBar(result.summary.bossHp, result.summary.tdoAtk, result.summary.dpsAtk)}</td>
+                                <td colSpan={6}>
+                                  {calculateHpBar(result.summary.bossHp, result.summary.tdoAtk, result.summary.dpsAtk)}
+                                </td>
                               </tr>
                             )}
                             <tr className="text-summary">
@@ -1690,7 +1849,9 @@ const RaidBattle = () => {
                               <td className="text-center" colSpan={2}>
                                 Total TDO: {toFloatWithPadding(result.summary.tdoAtk, 2)}
                               </td>
-                              <td colSpan={2}>Boss HP Remain: {Math.floor(result.summary.bossHp - result.summary.tdoAtk)}</td>
+                              <td colSpan={2}>
+                                Boss HP Remain: {Math.floor(result.summary.bossHp - result.summary.tdoAtk)}
+                              </td>
                             </tr>
                             {((turn > 0 && Math.floor(result.summary.tdoAtk) > 0) ||
                               turn === 0 ||
@@ -1700,7 +1861,10 @@ const RaidBattle = () => {
                                   <TimerIcon /> Time To Battle Remain: {toFloatWithPadding(result.summary.timer, 2)}
                                   {enableTimeAllow && ` / ${timeAllow}`}
                                 </td>
-                                {resultBattle(Math.floor(result.summary.bossHp - result.summary.tdoAtk), result.summary.timer)}
+                                {resultBattle(
+                                  Math.floor(result.summary.bossHp - result.summary.tdoAtk),
+                                  result.summary.timer
+                                )}
                               </tr>
                             )}
                           </tbody>

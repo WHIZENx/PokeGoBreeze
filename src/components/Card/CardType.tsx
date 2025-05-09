@@ -13,7 +13,12 @@ const CardType = (props: ICardTypeComponent) => {
           <IconType width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} type={props.value} />
           <b>{`${getValueOrDefault(String, props.name, props.value)} `}</b>
           {props.moveType !== MoveType.None && (
-            <span className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, props.moveType)?.toLowerCase()}-ic`)}>
+            <span
+              className={combineClasses(
+                'type-icon-small ic',
+                `${getKeyWithData(MoveType, props.moveType)?.toLowerCase()}-ic`
+              )}
+            >
               {getKeyWithData(MoveType, props.moveType)}
             </span>
           )}

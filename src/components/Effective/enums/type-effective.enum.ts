@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum EffectiveType {
   VeryWeakness = 2.56,
   Weakness = 1.6,

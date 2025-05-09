@@ -51,7 +51,11 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                   className={combineClasses('d-flex align-items-center turn-battle', end ? 'justify-content-end' : '')}
                 >
                   <div className="block-attack-container">
-                    <img className="block-spirit-timeline" alt="img-shield" src={APIService.getPokeOtherLeague('ShieldButton')} />
+                    <img
+                      className="block-spirit-timeline"
+                      alt="img-shield"
+                      src={APIService.getPokeOtherLeague('ShieldButton')}
+                    />
                   </div>
                   <span className="text-success">
                     x{value.block}
@@ -59,7 +63,9 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                   </span>
                 </div>
               ) : (
-                <div className={combineClasses('wait-attack-container turn-battle', end ? 'justify-content-end' : '')} />
+                <div
+                  className={combineClasses('wait-attack-container turn-battle', end ? 'justify-content-end' : '')}
+                />
               )}
             </Fragment>
           )}
@@ -68,7 +74,10 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               color="primary"
               overlap="circular"
               badgeContent={value.isTap ? 'Tap' : undefined}
-              className={combineClasses('fast-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}
+              className={combineClasses(
+                'fast-attack-container text-shadow turn-battle',
+                end ? 'justify-content-end' : ''
+              )}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: end ? 'right' : 'left',
@@ -126,7 +135,12 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             </div>
           )}
           {value.type === AttackType.Charge && (
-            <div className={combineClasses('charged-attack-container text-shadow turn-battle', end ? 'justify-content-end' : '')}>
+            <div
+              className={combineClasses(
+                'charged-attack-container text-shadow turn-battle',
+                end ? 'justify-content-end' : ''
+              )}
+            >
               <div className={combineClasses('charged-attack-content text-center', value.color)}>
                 <span className="text-warning" style={{ fontSize: 16 }}>
                   <b>Charged Attack!</b>
@@ -134,17 +148,36 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               </div>
             </div>
           )}
-          {value.type === AttackType.Dead && pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Dead ? (
-            <div className={combineClasses('winner-container bg-dark text-white turn-battle', end ? 'justify-content-end' : '')}>TIE!</div>
+          {value.type === AttackType.Dead &&
+          pokeObj.timeline.at(index) &&
+          pokeObj.timeline.at(index)?.type === AttackType.Dead ? (
+            <div
+              className={combineClasses(
+                'winner-container bg-dark text-white turn-battle',
+                end ? 'justify-content-end' : ''
+              )}
+            >
+              TIE!
+            </div>
           ) : (
             <Fragment>
               {value.type === AttackType.Win && (
-                <div className={combineClasses('winner-container bg-success text-white turn-battle', end ? 'justify-content-end' : '')}>
+                <div
+                  className={combineClasses(
+                    'winner-container bg-success text-white turn-battle',
+                    end ? 'justify-content-end' : ''
+                  )}
+                >
                   WIN!
                 </div>
               )}
               {value.type === AttackType.Dead && (
-                <div className={combineClasses('loser-container bg-danger text-white turn-battle', end ? 'justify-content-end' : '')}>
+                <div
+                  className={combineClasses(
+                    'loser-container bg-danger text-white turn-battle',
+                    end ? 'justify-content-end' : ''
+                  )}
+                >
                   LOSE!
                 </div>
               )}
@@ -179,7 +212,6 @@ export const TimeLine = (
   pokemonCurr: IPokemonBattle,
   pokemonObj: IPokemonBattle,
   elem: React.LegacyRef<HTMLDivElement> | undefined,
-  // eslint-disable-next-line no-unused-vars
   scroll: (e: React.SyntheticEvent<HTMLDivElement>) => void,
   timeline: React.LegacyRef<HTMLDivElement> | undefined,
   eRef: React.LegacyRef<HTMLDivElement> | undefined,
@@ -215,7 +247,9 @@ export const TimeLine = (
                     </div>
                   ) : (
                     <Fragment>
-                      {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && isNotEmpty(value.buff) ? (
+                      {pokeObj.timeline.at(index) &&
+                      pokeObj.timeline.at(index)?.type === AttackType.Charge &&
+                      isNotEmpty(value.buff) ? (
                         <div className="position-absolute icon-buff-timeline">
                           {value.buff?.map((b, i) => (
                             <span key={i} className={b.power < 0 ? 'text-danger' : 'text-success'}>
@@ -244,9 +278,14 @@ export const TimeLine = (
       >
         {poke.timeline.map((value, index) => (
           <Fragment key={index}>
-            {value.type === AttackType.Block && <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />}
+            {value.type === AttackType.Block && (
+              <HexagonIcon id={index.toString()} sx={{ color: 'purple', fontSize: value.size }} />
+            )}
             {value.type === AttackType.Fast && (
-              <div id={index.toString()} className={combineClasses('fast-attack', value.color, `${value.color}-border`)} />
+              <div
+                id={index.toString()}
+                className={combineClasses('fast-attack', value.color, `${value.color}-border`)}
+              />
             )}
             {(value.type === AttackType.Spin || value.type === AttackType.Prepare) && (
               <div
@@ -262,8 +301,16 @@ export const TimeLine = (
                 style={{ width: value.size, height: value.size }}
               />
             )}
-            {(value.type === AttackType.Wait || value.type === AttackType.New) && <div id={index.toString()} className="wait-attack" />}
-            {!value.type && <div id={index.toString()} className="wait-charge-attack" style={{ width: value.size, height: value.size }} />}
+            {(value.type === AttackType.Wait || value.type === AttackType.New) && (
+              <div id={index.toString()} className="wait-attack" />
+            )}
+            {!value.type && (
+              <div
+                id={index.toString()}
+                className="wait-charge-attack"
+                style={{ width: value.size, height: value.size }}
+              />
+            )}
             {value.type === AttackType.Dead && (
               <div id={index.toString()}>
                 <CloseIcon color="error" />
@@ -342,7 +389,9 @@ export const TimeLineFit = (
                     </div>
                   ) : (
                     <Fragment>
-                      {pokeObj.timeline.at(index) && pokeObj.timeline.at(index)?.type === AttackType.Charge && isNotEmpty(value.buff) ? (
+                      {pokeObj.timeline.at(index) &&
+                      pokeObj.timeline.at(index)?.type === AttackType.Charge &&
+                      isNotEmpty(value.buff) ? (
                         <div
                           className="position-absolute icon-buff-timeline"
                           style={{
@@ -412,7 +461,11 @@ export const TimeLineFit = (
               />
             )}
             {(value.type === AttackType.Wait || value.type === AttackType.New) && (
-              <div id={index.toString()} className="wait-attack" style={{ left: calculateFitPoint(poke.timeline.length, index) }} />
+              <div
+                id={index.toString()}
+                className="wait-attack"
+                style={{ left: calculateFitPoint(poke.timeline.length, index) }}
+              />
             )}
             {!value.type && (
               <div

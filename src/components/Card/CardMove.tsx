@@ -23,7 +23,10 @@ const CardMove = (props: ICardMoveComponent) => {
   return (
     <Fragment>
       {move && (
-        <div className="d-flex align-items-center w-100 h-100" style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}>
+        <div
+          className="d-flex align-items-center w-100 h-100"
+          style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+        >
           <IconType width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} type={move.type} />
           <span style={{ marginRight: 5 }}>
             <b>{splitAndCapitalize(move.name, '_', ' ')}</b>
@@ -31,7 +34,10 @@ const CardMove = (props: ICardMoveComponent) => {
           <span className="d-flex">
             {props.value && props.value.moveType !== MoveType.None && (
               <span
-                className={combineClasses('type-icon-small ic', `${getKeyWithData(MoveType, props.value?.moveType)?.toLowerCase()}-ic`)}
+                className={combineClasses(
+                  'type-icon-small ic',
+                  `${getKeyWithData(MoveType, props.value?.moveType)?.toLowerCase()}-ic`
+                )}
               >
                 {getKeyWithData(MoveType, props.value.moveType)}
               </span>

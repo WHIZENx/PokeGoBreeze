@@ -16,7 +16,9 @@ const Affect = (prop: IWeatherAffComponent) => {
 
   const getWeatherEffective = useCallback(() => {
     setWeatherEffective(
-      Object.values(((prop.weathers ?? new WeatherBoost()) as unknown as DynamicObj<string>)[currentWeather] ?? new WeatherBoost())
+      Object.values(
+        ((prop.weathers ?? new WeatherBoost()) as unknown as DynamicObj<string>)[currentWeather] ?? new WeatherBoost()
+      )
     );
   }, [currentWeather, prop.weathers]);
 
@@ -41,7 +43,12 @@ const Affect = (prop: IWeatherAffComponent) => {
         <b>Select Weather</b>
       </h6>
       <div className=" d-flex justify-content-center">
-        <div className="card-input" tabIndex={0} onClick={() => setShowWeather(true)} onBlur={() => setShowWeather(false)}>
+        <div
+          className="card-input"
+          tabIndex={0}
+          onClick={() => setShowWeather(true)}
+          onBlur={() => setShowWeather(false)}
+        >
           <div className="card-select">
             <CardWeather value={splitAndCapitalize(currentWeather, '_', ' ')} />
           </div>

@@ -56,7 +56,9 @@ const HpBar = (props: IHpBarComponent) => {
           maxHp={props.maxHp}
           color={props.hp / props.maxHp > 0.5 ? 'lightgreen' : props.hp / props.maxHp > 0.25 ? 'yellow' : 'red'}
         />
-        {props.dmg && <FillDmg height={props.height} hp={props.hp} maxHp={props.maxHp} color="orange" dmg={props.dmg} />}
+        {props.dmg && (
+          <FillDmg height={props.height} hp={props.hp} maxHp={props.maxHp} color="orange" dmg={props.dmg} />
+        )}
       </Bar>
       <span className="text-center" style={{ whiteSpace: 'nowrap', minWidth: 72, maxWidth: 72 }}>
         <b>
