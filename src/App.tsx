@@ -49,6 +49,7 @@ import { LocalStorageConfig } from './store/constants/localStorage';
 import { RouterState, StoreState, TimestampState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -192,7 +193,9 @@ export default function Main() {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <App />
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
