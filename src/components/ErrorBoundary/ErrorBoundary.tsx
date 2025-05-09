@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { useNavigateToTop } from '../../util/hooks/LinkToTop';
 
 interface Props {
   children: ReactNode;
@@ -24,12 +25,10 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI
     return { hasError: true, error, errorInfo: null };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // You can also log the error to an error reporting service
     console.error('ErrorBoundary caught an error', error, errorInfo);
     this.setState({
       error,
@@ -37,14 +36,10 @@ class ErrorBoundary extends Component<Props, State> {
     });
   }
 
-  handleRefresh = (): void => {
-    // Reload the current page
-    window.location.reload();
-  };
-
   render(): ReactNode {
+    const navigateToTop = useNavigateToTop();
+
     if (this.state.hasError) {
-      // You can render any custom fallback UI
       if (this.props.fallbackUI) {
         return this.props.fallbackUI;
       }
@@ -65,16 +60,16 @@ class ErrorBoundary extends Component<Props, State> {
             Something went wrong
           </Typography>
           <Typography variant="body1" gutterBottom>
-            The application encountered an error. Please try refreshing the page.
+            The application encountered an error.
           </Typography>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleRefresh}
+            onClick={() => navigateToTop('/')}
             startIcon={<RefreshIcon />}
             style={{ marginTop: '16px' }}
           >
-            Refresh Page
+            Back to Home
           </Button>
           {this.state.error && (
             <div style={{ marginTop: '20px', textAlign: 'left', maxWidth: '100%', overflow: 'auto' }}>

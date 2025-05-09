@@ -528,10 +528,10 @@ export const convertFormGif = (name: string | undefined) => {
 
 export const checkRankAllAvailable = (pokemonStats: IStatsRank | null, stats: IStatsPokemonGO) => {
   const data = new StatsRankPokemonGO();
-  const checkRankAtk = pokemonStats?.attack.ranking.find((item) => item.attack === stats.atk);
-  const checkRankDef = pokemonStats?.defense.ranking.find((item) => item.defense === stats.def);
-  const checkRankSta = pokemonStats?.stamina.ranking.find((item) => item.stamina === stats.sta);
-  const checkRankProd = pokemonStats?.statProd.ranking.find((item) => item.product === stats.prod);
+  const checkRankAtk = pokemonStats?.attack?.ranking?.find((item) => item.attack === stats.atk);
+  const checkRankDef = pokemonStats?.defense?.ranking?.find((item) => item.defense === stats.def);
+  const checkRankSta = pokemonStats?.stamina?.ranking?.find((item) => item.stamina === stats.sta);
+  const checkRankProd = pokemonStats?.statProd?.ranking?.find((item) => item.product === stats.prod);
   if (checkRankAtk) {
     data.attackRank = checkRankAtk.rank;
   }

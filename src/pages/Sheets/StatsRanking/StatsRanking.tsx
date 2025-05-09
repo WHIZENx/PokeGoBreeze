@@ -14,6 +14,7 @@ import {
 } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
+import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
 
 import DoneIcon from '@mui/icons-material/Done';
@@ -547,7 +548,7 @@ const StatsRanking = () => {
           )}
         </div>
       </div>
-      {/* <Stats
+      <Stats
         statATK={select?.atk}
         statDEF={select?.def}
         statSTA={select?.sta}
@@ -556,7 +557,7 @@ const StatsRanking = () => {
         id={select?.num}
         form={select?.form}
         isDisabled={true}
-      /> */}
+      />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
           <span className="input-group-text">Find Pokémon</span>
