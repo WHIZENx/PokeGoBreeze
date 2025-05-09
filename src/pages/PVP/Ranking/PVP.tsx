@@ -111,80 +111,87 @@ const RankingPVP = () => {
   }, [dispatch]);
 
   const fetchPokemonRanking = useCallback(async () => {
-    dispatch(SpinnerActions.ShowSpinner.create());
-    try {
-      const cp = toNumber(params.cp);
-      const file = (
-        await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))
-      ).data;
-      if (!isNotEmpty(file)) {
-        return;
-      }
-      if (params.serie === LeagueBattleType.All) {
-        document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
-      } else {
-        document.title = `PVP Ranking - ${
-          params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
-        } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
-      }
-      const filePVP = file.map((data) => {
-        const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-        const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
-        const id = pokemon?.num;
-        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
-
-        const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-
-        const [fMoveData] = data.moveset;
-        let [, cMoveDataPri, cMoveDataSec] = data.moveset;
-        cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
-        cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
-
-        const fMove = dataStore.combats.find((item) => isEqual(item.name, fMoveData));
-        const cMovePri = dataStore.combats.find((item) => isEqual(item.name, cMoveDataPri));
-        let cMoveSec;
-        if (cMoveDataSec) {
-          cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
+    if (
+      statsRanking?.attack?.ranking &&
+      statsRanking?.defense?.ranking &&
+      statsRanking?.stamina?.ranking &&
+      statsRanking?.statProd?.ranking
+    ) {
+      dispatch(SpinnerActions.ShowSpinner.create());
+      try {
+        const cp = toNumber(params.cp);
+        const file = (
+          await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))
+        ).data;
+        if (!isNotEmpty(file)) {
+          return;
         }
-
-        data.scorePVP = HexagonStats.create(data.scores);
-        let pokemonType = PokemonType.Normal;
-        if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
-          pokemonType = PokemonType.Shadow;
-        } else if (
-          isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
-          isIncludeList(pokemon?.purifiedMoves, cMoveDataSec)
-        ) {
-          pokemonType = PokemonType.Purified;
+        if (params.serie === LeagueBattleType.All) {
+          document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
+        } else {
+          document.title = `PVP Ranking - ${
+            params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
+          } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
         }
+        const filePVP = file.map((data) => {
+          const name = convertNameRankingToOri(data.speciesId, data.speciesName);
+          const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+          const id = pokemon?.num;
+          const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
 
-        return new PokemonBattleRanking({
-          data,
-          id,
-          name,
-          form,
-          pokemon,
-          stats,
-          atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
-          def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === stats.sta),
-          prod: statsRanking?.statProd.ranking.find((i) => i.product === stats.prod),
-          fMove,
-          cMovePri,
-          cMoveSec,
-          pokemonType,
+          const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+
+          const [fMoveData] = data.moveset;
+          let [, cMoveDataPri, cMoveDataSec] = data.moveset;
+          cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
+          cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
+
+          const fMove = dataStore.combats.find((item) => isEqual(item.name, fMoveData));
+          const cMovePri = dataStore.combats.find((item) => isEqual(item.name, cMoveDataPri));
+          let cMoveSec;
+          if (cMoveDataSec) {
+            cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
+          }
+
+          data.scorePVP = HexagonStats.create(data.scores);
+          let pokemonType = PokemonType.Normal;
+          if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+            pokemonType = PokemonType.Shadow;
+          } else if (
+            isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
+            isIncludeList(pokemon?.purifiedMoves, cMoveDataSec)
+          ) {
+            pokemonType = PokemonType.Purified;
+          }
+
+          return new PokemonBattleRanking({
+            data,
+            id,
+            name,
+            form,
+            pokemon,
+            stats,
+            atk: statsRanking.attack?.ranking?.find((i) => i.attack === stats.atk),
+            def: statsRanking.defense?.ranking?.find((i) => i.defense === stats.def),
+            sta: statsRanking.stamina?.ranking?.find((i) => i.stamina === stats.sta),
+            prod: statsRanking.statProd?.ranking?.find((i) => i.product === stats.prod),
+            fMove,
+            cMovePri,
+            cMoveSec,
+            pokemonType,
+          });
         });
-      });
-      setRankingData(filePVP);
-      setStoreStats([...Array(filePVP.length).keys()].map(() => false));
-      dispatch(SpinnerActions.HideSpinner.create());
-    } catch (e) {
-      dispatch(
-        SpinnerActions.ShowSpinnerMsg.create({
-          isError: true,
-          message: (e as Error).message,
-        })
-      );
+        setRankingData(filePVP);
+        setStoreStats([...Array(filePVP.length).keys()].map(() => false));
+        dispatch(SpinnerActions.HideSpinner.create());
+      } catch (e) {
+        dispatch(
+          SpinnerActions.ShowSpinnerMsg.create({
+            isError: true,
+            message: (e as Error).message,
+          })
+        );
+      }
     }
   }, [
     params.serie,

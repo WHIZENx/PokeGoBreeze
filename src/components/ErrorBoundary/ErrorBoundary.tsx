@@ -68,10 +68,10 @@ class ErrorBoundary extends Component<Props, State> {
             The application encountered an error.
           </Typography>
           <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-            <Button variant="contained" color="primary" onClick={this.handleGoHome} startIcon={<RefreshIcon />}>
+            <Button variant="contained" color="primary" onClick={this.handleGoHome}>
               Back to Home
             </Button>
-            <Button variant="outlined" color="primary" onClick={this.handleRefresh}>
+            <Button variant="outlined" color="primary" onClick={this.handleRefresh} startIcon={<RefreshIcon />}>
               Refresh Page
             </Button>
           </div>

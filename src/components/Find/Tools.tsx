@@ -59,7 +59,12 @@ const Tools = (props: IToolsComponent) => {
   }, [currentForm?.form?.formName, props.id, props.setTier, props.tier, pokemonData?.pokemonClass]);
 
   useEffect(() => {
-    if (props.stats) {
+    if (
+      props.stats?.attack?.ranking &&
+      props.stats?.defense?.ranking &&
+      props.stats?.stamina?.ranking &&
+      props.stats?.statProd?.ranking
+    ) {
       const formResult: StatsRankingPokemonGO = {
         atk: filterFormList(props.stats.attack.ranking),
         def: filterFormList(props.stats.defense.ranking),
@@ -110,18 +115,7 @@ const Tools = (props: IToolsComponent) => {
         );
       }
     }
-  }, [
-    filterFormList,
-    currentForm,
-    props.dataPoke,
-    props.id,
-    props.stats?.attack.ranking,
-    props.stats?.defense.ranking,
-    props.stats?.stamina.ranking,
-    props.isRaid,
-    props.tier,
-    props.isHide,
-  ]);
+  }, [filterFormList, currentForm, props.dataPoke, props.id, props.stats, props.isRaid, props.tier, props.isHide]);
 
   return (
     <Fragment>
