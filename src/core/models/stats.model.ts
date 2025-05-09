@@ -10,7 +10,7 @@ export interface OptionsRank {
 }
 
 export interface IStatsRankAtk extends Partial<OptionsRank> {
-  ranking: IStatsAtk[];
+  ranking: IStatsAtk[] | undefined;
 }
 
 export class StatsRankAtk implements IStatsRankAtk {
@@ -24,7 +24,7 @@ export class StatsRankAtk implements IStatsRankAtk {
 }
 
 export interface IStatsRankDef extends Partial<OptionsRank> {
-  ranking: IStatsDef[];
+  ranking: IStatsDef[] | undefined;
 }
 
 export class StatsRankDef implements IStatsRankDef {
@@ -38,7 +38,7 @@ export class StatsRankDef implements IStatsRankDef {
 }
 
 export interface IStatsRankSta extends Partial<OptionsRank> {
-  ranking: IStatsSta[];
+  ranking: IStatsSta[] | undefined;
 }
 
 export class StatsRankSta implements IStatsRankSta {
@@ -52,7 +52,7 @@ export class StatsRankSta implements IStatsRankSta {
 }
 
 export interface IStatsRankProd extends Partial<OptionsRank> {
-  ranking: IStatsProd[];
+  ranking: IStatsProd[] | undefined;
 }
 
 export class StatsRankProd implements IStatsRankProd {
@@ -66,10 +66,10 @@ export class StatsRankProd implements IStatsRankProd {
 }
 
 export interface IStatsRank {
-  attack: IStatsRankAtk;
-  defense: IStatsRankDef;
-  stamina: IStatsRankSta;
-  statProd: IStatsRankProd;
+  attack: IStatsRankAtk | undefined;
+  defense: IStatsRankDef | undefined;
+  stamina: IStatsRankSta | undefined;
+  statProd: IStatsRankProd | undefined;
 }
 
 export class StatsRank implements IStatsRank {

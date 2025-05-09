@@ -128,9 +128,9 @@ const TeamPVP = () => {
       pokemonData: pokemon,
       form,
       stats,
-      atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
-      def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-      sta: statsRanking?.stamina.ranking.find((i) => i.stamina === stats.sta),
+      atk: statsRanking?.attack?.ranking?.find((i) => i.attack === stats.atk),
+      def: statsRanking?.defense?.ranking?.find((i) => i.defense === stats.def),
+      sta: statsRanking?.stamina?.ranking?.find((i) => i.stamina === stats.sta),
       fMove,
       cMovePri,
       cMoveSec,
@@ -202,7 +202,10 @@ const TeamPVP = () => {
       isNotEmpty(dataStore.combats) &&
       isNotEmpty(dataStore.pokemons) &&
       isNotEmpty(dataStore.assets) &&
-      statsRanking
+      statsRanking?.attack?.ranking &&
+      statsRanking?.defense?.ranking &&
+      statsRanking?.stamina?.ranking &&
+      statsRanking?.statProd?.ranking
     ) {
       fetchPokemon();
     }

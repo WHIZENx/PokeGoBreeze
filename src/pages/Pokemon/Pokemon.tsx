@@ -93,7 +93,7 @@ const Pokemon = (props: IPokemonPage) => {
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons || []);
   const options = useSelector((state: StoreState) => state.store.data.options);
 
   const currentSearchingForm = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
