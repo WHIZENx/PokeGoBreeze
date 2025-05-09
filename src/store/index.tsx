@@ -16,7 +16,7 @@ const persistConfig = {
       (outboundState: any) => ({ ...outboundState })
     ),
   ],
-  blacklist: ['router', 'spinner', 'device', 'searching', 'options'],
+  whitelist: ['store', 'stats', 'path', 'timestamp', 'theme'],
 };
 
 const persistedReducer = persistReducer(persistConfig, combinedReducer);
