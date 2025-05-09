@@ -7,6 +7,8 @@ import { OptionsSheetModel } from '../../core/models/options-sheet.model';
 import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { DeviceModel } from '../reducers/device.reducer';
 import { Dispatch, SetStateAction } from 'react';
+import { TimestampModel } from '../reducers/timestamp.reducer';
+import { PathModel } from '../reducers/path.reducer';
 
 const store = configureStore();
 
@@ -31,8 +33,14 @@ interface ThemeStateModel {
 interface DeviceStateModel {
   device: DeviceModel;
 }
+interface TimestampStateModel {
+  timestamp: TimestampModel;
+}
+interface PathStateModel {
+  path: PathModel;
+}
 
-export type RouterState = ReturnType<typeof store.getState>;
+export type RouterState = ReturnType<typeof store.store.getState>;
 
 export type StatsState = AnyIfEmpty<StatsStateModel>;
 export type SpinnerState = AnyIfEmpty<SpinnerStateModel>;
@@ -42,6 +50,10 @@ export type OptionsSheetState = AnyIfEmpty<OptionsSheetStateModel>;
 export type StoreState = AnyIfEmpty<StoreStateModel>;
 
 export type ThemeState = AnyIfEmpty<ThemeStateModel>;
+
+export type TimestampState = AnyIfEmpty<TimestampStateModel>;
+
+export type PathState = AnyIfEmpty<PathStateModel>;
 
 export type DeviceState = AnyIfEmpty<DeviceStateModel>;
 

@@ -23,16 +23,13 @@ import {
 import Error from '../../Error/Error';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { useLocalStorage } from 'usehooks-ts';
 import { Button } from 'react-bootstrap';
 import { FORM_MEGA, FORM_SHADOW } from '../../../util/constants';
-import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
+import { PathState, RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
 import { AnyAction } from 'redux';
-import { LocalStorageConfig } from '../../../store/constants/localStorage';
-import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
@@ -54,11 +51,8 @@ const PokemonPVP = () => {
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const params = useParams();
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    LocalStorageConfig.Timestamp,
-    JSON.stringify(new LocalTimeStamp())
-  );
-  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
+  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const pvpData = useSelector((state: PathState) => state.path.pvp);
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const statsRanking = useSelector((state: StatsState) => state.stats);
@@ -66,10 +60,8 @@ const PokemonPVP = () => {
   const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
-    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
-      loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
-    }
-  }, [pvp.rankings, pvp.trains]);
+    loadPVP(dispatch, timestamp, pvpData);
+  }, [dispatch]);
 
   const fetchPokemonInfo = useCallback(async () => {
     dispatch(SpinnerActions.ShowSpinner.create());

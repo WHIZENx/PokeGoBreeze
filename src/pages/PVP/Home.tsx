@@ -4,15 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
 import { leaguesTeamBattle } from '../../util/constants';
 import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
-import { useLocalStorage } from 'usehooks-ts';
 import { Link } from 'react-router-dom';
-import { SpinnerState, StoreState } from '../../store/models/state.model';
+import { PathState, SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/compute';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
-import { LocalStorageConfig } from '../../store/constants/localStorage';
-import { LocalTimeStamp } from '../../store/models/local-storage.model';
 import { getKeyWithData, getTime } from '../../util/utils';
 import { isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
@@ -42,27 +39,22 @@ const PVPHome = () => {
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    LocalStorageConfig.Timestamp,
-    JSON.stringify(new LocalTimeStamp())
-  );
-  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
+  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const pvpData = useSelector((state: PathState) => state.path.pvp);
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
   const { rank, team } = options;
 
   useEffect(() => {
-    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
-      loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
-    }
+    loadPVP(dispatch, timestamp, pvpData);
     if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
     if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [pvp.rankings, pvp.trains, spinner, combat, dispatch]);
+  }, [spinner, combat, dispatch]);
 
   useEffect(() => {
     if (!rank && !team && isNotEmpty(pvp.rankings) && isNotEmpty(pvp.trains)) {
@@ -97,9 +89,9 @@ const PVPHome = () => {
 
   return (
     <div className="container element-top element-bottom">
-      {stateTimestamp && JSON.parse(stateTimestamp).pvp && (
+      {timestamp.pvp > 0 && (
         <h4>
-          <b>Updated: {getTime(JSON.parse(stateTimestamp).pvp, true)}</b>
+          <b>Updated: {getTime(timestamp.pvp, true)}</b>
         </h4>
       )}
       <p className="text-danger">

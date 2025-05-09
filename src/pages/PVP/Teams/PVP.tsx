@@ -31,15 +31,12 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { useLocalStorage } from 'usehooks-ts';
-import { StatsState, StoreState } from '../../../store/models/state.model';
+import { PathState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 import { FORM_SHADOW } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
-import { LocalStorageConfig } from '../../../store/constants/localStorage';
-import { LocalTimeStamp } from '../../../store/models/local-storage.model';
 import {
   combineClasses,
   DynamicObj,
@@ -67,11 +64,8 @@ const TeamPVP = () => {
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    LocalStorageConfig.Timestamp,
-    JSON.stringify(new LocalTimeStamp())
-  );
-  const [statePVP, setStatePVP] = useLocalStorage(LocalStorageConfig.PVP, '');
+  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const pvpData = useSelector((state: PathState) => state.path.pvp);
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<TeamsPVP>();
@@ -146,13 +140,11 @@ const TeamPVP = () => {
   };
 
   useEffect(() => {
-    if (!isNotEmpty(pvp.rankings) && !isNotEmpty(pvp.trains)) {
-      loadPVP(dispatch, setStateTimestamp, stateTimestamp, setStatePVP, statePVP);
-    }
+    loadPVP(dispatch, timestamp, pvpData);
     if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [pvp, dataStore.combats]);
+  }, [dispatch, dataStore.combats]);
 
   useEffect(() => {
     const fetchPokemon = async () => {

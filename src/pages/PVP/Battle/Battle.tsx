@@ -821,10 +821,8 @@ const Battle = () => {
   }, [fetchPokemonBattle, league, dispatch]);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
-      loadPVPMoves(dispatch);
-    }
-  }, [dataStore.combats, dispatch]);
+    loadPVPMoves(dispatch);
+  }, [dispatch]);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));

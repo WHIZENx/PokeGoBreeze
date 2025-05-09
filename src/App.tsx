@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { loadCPM, loadPokeGOLogo, loadTimestamp } from './store/effects/store.effects';
+import { loadPokeGOLogo, loadTimestamp } from './store/effects/store.effects';
 
 import './App.scss';
 
@@ -46,9 +46,7 @@ import { LOAD_DATA_DELAY, TRANSITION_TIME } from './util/constants';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/localStorage';
-import { LocalTimeStamp } from './store/models/local-storage.model';
-import { RouterState, StoreState } from './store/models/state.model';
-import { isNotEmpty } from './util/extension';
+import { RouterState, StoreState, TimestampState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
 
@@ -58,16 +56,10 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 function App() {
   const dispatch = useDispatch();
   const data = useSelector((state: StoreState) => state.store.data);
+  const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const router = useSelector((state: RouterState) => state.router);
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
-  const [stateTimestamp, setStateTimestamp] = useLocalStorage(
-    LocalStorageConfig.Timestamp,
-    JSON.stringify(new LocalTimeStamp())
-  );
-  const [stateImage, setStateImage] = useLocalStorage(LocalStorageConfig.Assets, '');
-  const [stateSound, setStateSound] = useLocalStorage(LocalStorageConfig.Sounds, '');
-
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -115,26 +107,10 @@ function App() {
     }
   }, [isLoaded]);
 
-  useEffect(() => {
-    if (!isNotEmpty(data.cpm) && isNotEmpty(data.options.playerSetting.levelUps)) {
-      loadCPM(dispatch, data.options.playerSetting.cpMultipliers);
-    }
-  }, [data]);
-
   const loadData = (signal: AbortSignal, delay = LOAD_DATA_DELAY) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
-        resolve(
-          await loadTimestamp(
-            dispatch,
-            stateTimestamp,
-            setStateTimestamp,
-            setStateImage,
-            setStateSound,
-            stateImage,
-            stateSound
-          )
-        );
+        resolve(await loadTimestamp(dispatch, data, timestamp));
       };
 
       const debouncedResolve = debounce(resolveHandler, delay);

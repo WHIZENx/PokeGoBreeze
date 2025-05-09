@@ -20,11 +20,6 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
           cpm: action.payload,
         },
       };
-    case StoreActions.StoreActionTypes.setTimestamp:
-      return {
-        ...state,
-        timestamp: action.payload,
-      };
     case StoreActions.StoreActionTypes.setLogoPokeGO:
       return {
         ...state,
