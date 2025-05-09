@@ -92,19 +92,6 @@ class ErrorBoundary extends Component<Props, State> {
               >
                 {this.state.error?.toString()}
               </pre>
-              {this.state.errorInfo && (
-                <pre
-                  style={{
-                    backgroundColor: '#f5f5f5',
-                    padding: '10px',
-                    borderRadius: '4px',
-                    overflowX: 'auto',
-                    maxWidth: '100%',
-                  }}
-                >
-                  {this.state.errorInfo.componentStack}
-                </pre>
-              )}
             </div>
           )}
         </div>
