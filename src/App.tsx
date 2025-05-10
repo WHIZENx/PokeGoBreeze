@@ -62,6 +62,7 @@ function App() {
   const router = useSelector((state: RouterState) => state.router);
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
+  const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -91,6 +92,12 @@ function App() {
       };
     }
   }, [router]);
+
+  useEffect(() => {
+    if (timestamp?.gamemaster) {
+      setStateTimestamp(timestamp.gamemaster);
+    }
+  }, [timestamp?.gamemaster]);
 
   useEffect(() => {
     dispatch(DeviceActions.SetDevice.create());
