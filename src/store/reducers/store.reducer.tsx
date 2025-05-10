@@ -149,7 +149,7 @@ const StoreReducer = (state = initialize, action: StoreActionsUnion) => {
     }
     case StoreActions.StoreActionTypes.resetStore:
       return {
-        initialize,
+        ...initialize,
         timestamp: new Date().getTime(),
       };
     default:

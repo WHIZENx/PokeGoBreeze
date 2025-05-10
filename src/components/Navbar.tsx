@@ -8,13 +8,13 @@ import { getTime } from '../util/utils';
 
 import './Navbar.scss';
 import { Box, LinearProgress } from '@mui/material';
-import { SpinnerState, StoreState } from '../store/models/state.model';
+import { SpinnerState, TimestampState } from '../store/models/state.model';
 import { getEdgeItem } from '../services/edge.service';
 import { EdgeKey } from '../services/constants/edgeKey';
 import { VariantType } from '../enums/type.enum';
 
 const NavbarComponent = () => {
-  const timestamp = useSelector((state: StoreState) => state.store.timestamp);
+  const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [version, setVersion] = useState<string>();
@@ -122,10 +122,10 @@ const NavbarComponent = () => {
               Stickers
             </Link>
           </Nav>
-          {timestamp && (
+          {timestamp?.gamemaster && (
             <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
               <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
-                Updated: {getTime(timestamp, true)}
+                Updated: {getTime(timestamp?.gamemaster, true)}
               </span>
               <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
                 <b>{version}</b>

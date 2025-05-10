@@ -10,13 +10,12 @@ const persistConfig = {
   storage,
   transforms: [
     createTransform(
-      // transform state to be stored
       (inboundState: any) => ({ ...inboundState, sensitiveData: undefined }),
-      // transform state being rehydrated
       (outboundState: any) => ({ ...outboundState })
     ),
   ],
-  whitelist: ['store', 'stats', 'path', 'timestamp', 'theme'],
+  whitelist: ['store', 'stats', 'path', 'timestamp'],
+  debounce: 1000,
 };
 
 const persistedReducer = persistReducer(persistConfig, combinedReducer);
