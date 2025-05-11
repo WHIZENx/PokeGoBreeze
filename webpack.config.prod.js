@@ -175,6 +175,8 @@ module.exports = merge(common, {
         REACT_APP_POKEGO_BREEZE_DB_URL: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,
         REACT_APP_EDGE_CONFIG: process.env.REACT_APP_EDGE_CONFIG,
         REACT_APP_DEPLOYMENT_MODE: process.env.REACT_APP_DEPLOYMENT_MODE,
+        REACT_APP_ENCRYPTION_KEY: process.env.REACT_APP_ENCRYPTION_KEY,
+        REACT_APP_ENCRYPTION_SALT: process.env.REACT_APP_ENCRYPTION_SALT,
         NODE_ENV: 'production',
         DEBUG: false,
       }),
