@@ -129,7 +129,9 @@ const NavbarComponent = () => {
               </span>
               <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
                 <b>
-                  {capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: {version}
+                  {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
+                    `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
+                  {version}
                 </b>
               </span>
             </Navbar.Text>
