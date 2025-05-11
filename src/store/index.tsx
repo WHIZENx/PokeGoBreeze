@@ -3,11 +3,17 @@ import { legacy_createStore as createStore } from 'redux';
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
 
 import { combinedReducer, devTools } from './configure';
-import storage from 'redux-persist/lib/storage';
+import localForage from 'localforage';
+import { PersistKey } from '../util/constants';
+
+localForage.config({
+  name: 'PokeGoBreeze',
+  storeName: 'PokeGoBreezeStore',
+});
 
 const persistConfig = {
-  key: 'root',
-  storage,
+  key: PersistKey,
+  storage: localForage,
   transforms: [
     createTransform(
       (inboundState: any) => ({ ...inboundState, sensitiveData: undefined }),
