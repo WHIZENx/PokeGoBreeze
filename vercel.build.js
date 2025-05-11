@@ -4,7 +4,7 @@ const branch = process.env.VERCEL_GIT_COMMIT_REF;
 console.log(`🪵 Branch Detected: ${branch}`);
 
 try {
-  if (branch === 'develop' || branch === 'stage') {
+  if (branch !== 'main') {
     execSync('npm run develop', { stdio: 'inherit' });
   } else if (branch === 'main') {
     execSync('npm run deploy', { stdio: 'inherit' });
