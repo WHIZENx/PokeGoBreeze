@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import logo from '../assets/pokedex.png';
-import { getTime } from '../util/utils';
+import { capitalize, getTime } from '../util/utils';
 
 import './Navbar.scss';
 import { Box, LinearProgress } from '@mui/material';
@@ -128,7 +128,9 @@ const NavbarComponent = () => {
                 Updated: {getTime(timestamp?.gamemaster, true)}
               </span>
               <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
-                <b>{version}</b>
+                <b>
+                  {capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: {version}
+                </b>
               </span>
             </Navbar.Text>
           )}

@@ -75,10 +75,10 @@ class ErrorBoundary extends Component<Props, State> {
               Refresh Page
             </Button>
           </div>
-          {this.state.error && (
+          {this.state.error && process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
             <div style={{ marginTop: '20px', textAlign: 'left', maxWidth: '100%', overflow: 'auto' }}>
               <Typography variant="subtitle2" component="h3" gutterBottom>
-                Error Details:
+                Error Details (Deployment Only):
               </Typography>
               <pre
                 style={{
