@@ -49,6 +49,7 @@ import { LocalStorageConfig } from './store/constants/localStorage';
 import { RouterState, StoreState, TimestampState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -63,6 +64,7 @@ function App() {
   const theme = useTheme<ThemeModify>();
   const colorMode = useContext(ColorModeContext);
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
+  const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -92,6 +94,12 @@ function App() {
       };
     }
   }, [router]);
+
+  useEffect(() => {
+    if (timestamp?.gamemaster) {
+      setStateTimestamp(timestamp.gamemaster);
+    }
+  }, [timestamp?.gamemaster]);
 
   useEffect(() => {
     dispatch(DeviceActions.SetDevice.create());
@@ -194,7 +202,9 @@ export default function Main() {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <App />
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

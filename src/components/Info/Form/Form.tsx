@@ -61,7 +61,7 @@ const FormComponent = (props: IFormInfoComponent) => {
   );
 
   useEffect(() => {
-    if (stats) {
+    if (stats?.attack?.ranking && stats?.defense?.ranking && stats?.stamina?.ranking && stats?.statProd?.ranking) {
       setStatsPokemon({
         atk: filterFormList(stats.attack.ranking),
         def: filterFormList(stats.defense.ranking),

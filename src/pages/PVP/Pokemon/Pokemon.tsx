@@ -64,88 +64,95 @@ const PokemonPVP = () => {
   }, [dispatch]);
 
   const fetchPokemonInfo = useCallback(async () => {
-    dispatch(SpinnerActions.ShowSpinner.create());
-    try {
-      const cp = toNumber(params.cp);
-      const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase().replace('clodsiresb', 'clodsire');
-      const data = (
-        await APIService.getFetchUrl<RankingsPVP[]>(
-          APIService.getRankingFile(
-            isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive)
-              ? LeagueBattleType.Mega
-              : LeagueBattleType.All,
-            cp,
-            params.type
+    if (
+      statsRanking?.attack?.ranking &&
+      statsRanking?.defense?.ranking &&
+      statsRanking?.stamina?.ranking &&
+      statsRanking?.statProd?.ranking
+    ) {
+      dispatch(SpinnerActions.ShowSpinner.create());
+      try {
+        const cp = toNumber(params.cp);
+        const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase().replace('clodsiresb', 'clodsire');
+        const data = (
+          await APIService.getFetchUrl<RankingsPVP[]>(
+            APIService.getRankingFile(
+              isInclude(paramName, `_${FORM_MEGA}`, IncludeMode.IncludeIgnoreCaseSensitive)
+                ? LeagueBattleType.Mega
+                : LeagueBattleType.All,
+              cp,
+              params.type
+            )
           )
-        )
-      ).data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
+        ).data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
 
-      if (!data) {
+        if (!data) {
+          setFound(false);
+          return;
+        }
+
+        const name = convertNameRankingToOri(data.speciesId, data.speciesName);
+        const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+        const id = pokemon?.num;
+        const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
+        document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
+          cp
+        )} (${capitalize(params.type)})`;
+
+        const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
+
+        const [fMoveData] = data.moveset;
+        let [, cMoveDataPri, cMoveDataSec] = data.moveset;
+        cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
+        cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
+
+        const fMove = dataStore.combats.find((item) => isEqual(item.name, fMoveData));
+        const cMovePri = dataStore.combats.find((item) => isEqual(item.name, cMoveDataPri));
+        let cMoveSec;
+        if (cMoveDataSec) {
+          cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
+        }
+
+        let pokemonType = PokemonType.Normal;
+        if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+          pokemonType = PokemonType.Shadow;
+        } else if (
+          isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
+          isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)
+        ) {
+          pokemonType = PokemonType.Purified;
+        }
+
+        data.scorePVP = HexagonStats.create(data.scores);
+
+        setRankingPoke(
+          new PokemonBattleRanking({
+            data,
+            id,
+            name,
+            pokemon,
+            form,
+            stats,
+            atk: statsRanking.attack.ranking.find((i) => i.attack === stats.atk),
+            def: statsRanking.defense.ranking.find((i) => i.defense === stats.def),
+            sta: statsRanking.stamina.ranking.find((i) => i.stamina === stats.sta),
+            prod: statsRanking.statProd.ranking.find((i) => i.product === stats.atk * stats.def * stats.sta),
+            fMove,
+            cMovePri,
+            cMoveSec,
+            pokemonType,
+          })
+        );
+        dispatch(SpinnerActions.HideSpinner.create());
+      } catch (e) {
         setFound(false);
-        return;
+        dispatch(
+          SpinnerActions.ShowSpinnerMsg.create({
+            isError: true,
+            message: (e as Error).message,
+          })
+        );
       }
-
-      const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-      const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
-      const id = pokemon?.num;
-      const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
-      document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
-        cp
-      )} (${capitalize(params.type)})`;
-
-      const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
-
-      const [fMoveData] = data.moveset;
-      let [, cMoveDataPri, cMoveDataSec] = data.moveset;
-      cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
-      cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
-
-      const fMove = dataStore.combats.find((item) => isEqual(item.name, fMoveData));
-      const cMovePri = dataStore.combats.find((item) => isEqual(item.name, cMoveDataPri));
-      let cMoveSec;
-      if (cMoveDataSec) {
-        cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
-      }
-
-      let pokemonType = PokemonType.Normal;
-      if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
-        pokemonType = PokemonType.Shadow;
-      } else if (
-        isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
-        isIncludeList(pokemon?.purifiedMoves, cMoveSec?.name)
-      ) {
-        pokemonType = PokemonType.Purified;
-      }
-
-      data.scorePVP = HexagonStats.create(data.scores);
-
-      setRankingPoke(
-        new PokemonBattleRanking({
-          data,
-          id,
-          name,
-          pokemon,
-          form,
-          stats,
-          atk: statsRanking?.attack.ranking.find((i) => i.attack === stats.atk),
-          def: statsRanking?.defense.ranking.find((i) => i.defense === stats.def),
-          sta: statsRanking?.stamina.ranking.find((i) => i.stamina === stats.sta),
-          prod: statsRanking?.statProd.ranking.find((i) => i.product === stats.atk * stats.def * stats.sta),
-          fMove,
-          cMovePri,
-          cMoveSec,
-          pokemonType,
-        })
-      );
-      dispatch(SpinnerActions.HideSpinner.create());
-    } catch (e) {
-      setFound(false);
-      dispatch(
-        SpinnerActions.ShowSpinnerMsg.create({
-          isError: true,
-          message: (e as Error).message,
-        })
-      );
     }
   }, [
     params.type,

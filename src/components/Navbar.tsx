@@ -7,11 +7,11 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 import logo from '../assets/pokedex.png';
-import { getTime } from '../util/utils';
+import { capitalize, getTime } from '../util/utils';
 
 import './Navbar.scss';
 import { Box, IconButton, LinearProgress, PaletteMode } from '@mui/material';
-import { SpinnerState, StoreState } from '../store/models/state.model';
+import { SpinnerState, TimestampState } from '../store/models/state.model';
 import { loadTheme } from '../store/effects/theme.effects';
 import { useLocalStorage } from 'usehooks-ts';
 import { getEdgeItem } from '../services/edge.service';
@@ -22,7 +22,7 @@ import { LocalStorageConfig } from '../store/constants/localStorage';
 const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void }) => {
   const dispatch = useDispatch();
 
-  const timestamp = useSelector((state: StoreState) => state.store.timestamp);
+  const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
 
@@ -144,13 +144,17 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
               Stickers
             </Link>
           </Nav>
-          {timestamp && (
+          {timestamp?.gamemaster && (
             <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
               <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
-                Updated: {getTime(timestamp, true)}
+                Updated: {getTime(timestamp?.gamemaster, true)}
               </span>
               <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
-                <b>{version}</b>
+                <b>
+                  {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
+                    `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
+                  {version}
+                </b>
               </span>
             </Navbar.Text>
           )}

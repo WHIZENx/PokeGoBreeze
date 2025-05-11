@@ -386,7 +386,14 @@ const StatsRanking = () => {
   const [progress, setProgress] = useState(new PokemonProgress());
 
   useEffect(() => {
-    if (isNotEmpty(pokemons) && !isNotEmpty(pokemonList)) {
+    if (
+      isNotEmpty(pokemons) &&
+      !isNotEmpty(pokemonList) &&
+      stats?.attack?.ranking &&
+      stats?.defense?.ranking &&
+      stats?.stamina?.ranking &&
+      stats?.statProd?.ranking
+    ) {
       const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
       const mapping = mappingData(pokemon);
       const pokemonList = sortRanking(mapping, sortId);
@@ -394,7 +401,7 @@ const StatsRanking = () => {
       setPokemonFilter(pokemonList);
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     }
-  }, [pokemonList, pokemons]);
+  }, [pokemonList, pokemons, stats]);
 
   useEffect(() => {
     if (!select && isNotEmpty(pokemonList)) {
