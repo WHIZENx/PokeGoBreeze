@@ -50,6 +50,7 @@ import { RouterState, StoreState, TimestampState } from './store/models/state.mo
 import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import { clearLocalStorageExcept } from './store/localStorage';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -66,15 +67,14 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setTimeout(
-      () =>
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'instant',
-        }),
-      400
-    );
+    setTimeout(() => {
+      clearLocalStorageExcept();
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'instant',
+      });
+    }, 400);
   }, []);
 
   useEffect(() => {

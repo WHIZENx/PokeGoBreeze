@@ -8,6 +8,9 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './comput
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType, ThrowType } from '../enums/type.enum';
 
+// Persist Key
+export const PersistKey = 'pokego-breeze';
+
 // Delay
 export const BATTLE_DELAY = 1;
 export const LOAD_DATA_DELAY = 100;
