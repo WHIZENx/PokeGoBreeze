@@ -51,7 +51,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format:code": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
@@ -60,6 +59,7 @@
     "lint:style": "stylelint \"src/**/*.{css,scss}\"",
     "lint": "npm run lint:code && npm run lint:style",
     "format": "npm run format:code && npm run format:style",
+    "build": "node ./vercel.build.js",
     "develop": "webpack-dev-server --mode development --config webpack.config.dev.js",
     "prebuild": "rimraf dist",
     "deploy": "webpack --mode production --config webpack.config.prod.js"
