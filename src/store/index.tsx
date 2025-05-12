@@ -20,8 +20,10 @@ localForage.config({
 
 const createEncryptionTransform = () => {
   return createTransform(
-    (inboundState: any, key) => {
-      if (!inboundState) return inboundState;
+    (inboundState, key) => {
+      if (!inboundState) {
+        return inboundState;
+      }
 
       try {
         const keyWithSalt = `${ENCRYPTION_KEY}${ENCRYPTION_SALT}${String(key)}`;
@@ -37,8 +39,10 @@ const createEncryptionTransform = () => {
         return JSON.stringify(inboundState);
       }
     },
-    (outboundState: any, key) => {
-      if (!outboundState) return outboundState;
+    (outboundState, key) => {
+      if (!outboundState) {
+        return outboundState;
+      }
 
       if (typeof outboundState !== 'string' || !outboundState.startsWith('U2F')) {
         return outboundState;
@@ -64,8 +68,8 @@ const createEncryptionTransform = () => {
 };
 
 const sensitiveDataTransform = createTransform(
-  (inboundState: any) => ({ ...inboundState, sensitiveData: undefined }),
-  (outboundState: any) => ({ ...outboundState })
+  (inboundState: object) => ({ ...inboundState, sensitiveData: undefined }),
+  (outboundState: object) => ({ ...outboundState })
 );
 
 const persistConfig = {

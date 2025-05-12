@@ -77,6 +77,7 @@ import {
   EvolutionChainData,
   GlobalEventTicket,
   ItemSettings,
+  MoveBuff,
 } from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
@@ -1049,7 +1050,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
       });
   }
 
-  function processBuffs(buffs: any): IBuff[] {
+  function processBuffs(buffs: MoveBuff): IBuff[] {
     const buffsResult: IBuff[] = [];
 
     if (buffs.attackerAttackStatStageChange) {

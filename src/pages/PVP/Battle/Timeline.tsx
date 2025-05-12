@@ -9,7 +9,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
 import { combineClasses, isNotEmpty } from '../../../util/extension';
 import { TypeAction } from '../../../enums/type.enum';
-import { TimelineElement } from '../../../util/models/overrides/dom.model';
+import { TimelineElement, TimelineEvent } from '../../../util/models/overrides/dom.model';
 
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, isHide = false) => {
   const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShowShadow = false) => {
@@ -332,7 +332,7 @@ export const TimeLine = (
               ref={timeline}
               onMouseMove={move.bind(this)}
               onMouseOver={move.bind(this)}
-              onTouchMove={move.bind(this)}
+              onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
             >
               {renderTimeline(pokemonCurr, pokemonObj, true)}
               {renderTimeline(pokemonObj, pokemonCurr)}
@@ -498,7 +498,7 @@ export const TimeLineFit = (
             ref={timeline}
             onMouseMove={move.bind(this)}
             onMouseOver={move.bind(this)}
-            onTouchMove={move.bind(this)}
+            onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
           >
             {renderTimelineFit(pokemonCurr, pokemonObj)}
             <hr className="w-100" style={{ margin: 0 }} />

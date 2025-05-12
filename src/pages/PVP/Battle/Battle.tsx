@@ -860,7 +860,7 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
     const xPos = toNumber(xNormal.current);
     if (elem && x <= toNumber(timelineNormal.current?.clientWidth) - 2) {
       elem.style.transform = `translate(${x}px, -50%)`;
@@ -887,7 +887,7 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
     if (elem && x <= toNumber(timelineFit.current?.clientWidth)) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }

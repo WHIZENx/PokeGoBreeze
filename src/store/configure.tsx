@@ -7,7 +7,7 @@ import rootReducer from './reducers';
 import { SearchingActions, StoreActions } from './actions';
 
 interface IAction extends Action {
-  payload: any;
+  payload: object[];
 }
 
 export const history = createBrowserHistory();
@@ -37,7 +37,7 @@ export const devTools =
         actionSanitizer: <A extends Action>(action: A) => {
           if (!action) return action;
 
-          const isIAction = (act: any): act is IAction => typeof act === 'object' && 'payload' in act;
+          const isIAction = (act: object): act is IAction => typeof act === 'object' && 'payload' in act;
           if (!isIAction(action)) {
             return action;
           }

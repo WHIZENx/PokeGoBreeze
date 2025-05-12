@@ -11,11 +11,29 @@ interface TouchList {
   identifiedTouch(identifier: number): Touch;
 }
 
-export interface TimelineEvent<T> extends React.MouseEvent<T>, React.TouchEvent<T> {
-  changedTouches: TouchList;
-  currentTarget: EventTarget & T;
-  nativeEvent: any;
+interface Touch {
+  identifier: number;
+  target: EventTarget;
+  clientX: number;
+  clientY: number;
+  screenX: number;
+  screenY: number;
+  pageX: number;
+  pageY: number;
+  force: number;
+  radiusX: number;
+  radiusY: number;
+  rotationAngle: number;
 }
+
+export interface TimelineEventBase<T> {
+  changedTouches?: TouchList;
+  currentTarget: EventTarget & T;
+  nativeEvent: MouseEvent | TouchEvent;
+  clientX?: number;
+}
+
+export type TimelineEvent<T> = (React.MouseEvent<T> | React.TouchEvent<T>) & TimelineEventBase<T>;
 
 export interface TimelineElement<T> {
   (e: TimelineEvent<T>): void;

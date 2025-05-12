@@ -10,12 +10,11 @@ import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/compute';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
-import { getKeyWithData, getTime } from '../../util/utils';
+import { getTime } from '../../util/utils';
 import { isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 import { LeagueBattleType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../util/enums/compute.enum';
-import { ScoreType } from '../../util/enums/constants.enum';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -48,6 +47,9 @@ const PVPHome = () => {
 
   useEffect(() => {
     loadPVP(dispatch, timestamp, pvpData);
+  }, []);
+
+  useEffect(() => {
     if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
@@ -127,10 +129,7 @@ const PVPHome = () => {
       {rank ? (
         <div className="group-selected">
           {rank.cp.map((value, index) => (
-            <Link
-              key={index}
-              to={`/pvp/rankings/${rank.id}/${value}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toString()}`}
-            >
+            <Link key={index} to={`/pvp/rankings/${rank.id}/${value}`}>
               <Button className="btn btn-form" style={{ height: 200 }}>
                 <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
                 <div>
