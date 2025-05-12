@@ -167,11 +167,11 @@ function App() {
         <Route path="/dps-tdo-sheets" element={<DpsTdo />} />
         <Route path="/stats-ranking" element={<StatsRanking />} />
         <Route path="/pvp" element={<PVPHome />} />
-        <Route path="/pvp/rankings/:serie/:cp/:type" element={<RankingPVP />} />
+        <Route path="/pvp/rankings/:serie/:cp" element={<RankingPVP />} />
         <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP />} />
         <Route path="/pvp/battle" element={<Battle />} />
         <Route path="/pvp/battle/:cp" element={<Battle />} />
-        <Route path="/pvp/:cp/:type/:pokemon" element={<PokemonPVP />} />
+        <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP />} />
         <Route path="/battle-leagues" element={<Leagues />} />
         <Route path="/stickers" element={<Sticker />} />
         <Route path="*" element={<Error />} />

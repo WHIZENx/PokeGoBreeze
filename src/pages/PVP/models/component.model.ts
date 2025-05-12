@@ -15,7 +15,8 @@ export interface BodyComponent {
   pokemonData: IPokemonData[];
   data: RankingsPVP | undefined;
   cp: string | undefined;
-  type: string | undefined;
+  serie: string | null | undefined;
+  type: string | null | undefined;
   styleList: IStyleData[];
 }
 
@@ -27,7 +28,7 @@ export interface OverAllStatsComponent {
   data: IPokemonBattleRanking | undefined;
   statsRanking: IStatsRank | null;
   cp: string | undefined;
-  type: string | undefined;
+  type: string | null | undefined;
 }
 
 export interface MoveSetComponent {

@@ -35,7 +35,7 @@ import { PathState, StatsState, StoreState, TimestampState } from '../../../stor
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
-import { FORM_SHADOW } from '../../../util/constants';
+import { FORM_SHADOW, Params } from '../../../util/constants';
 import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
@@ -141,6 +141,9 @@ const TeamPVP = () => {
 
   useEffect(() => {
     loadPVP(dispatch, timestamp, pvpData);
+  }, []);
+
+  useEffect(() => {
     if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
@@ -217,11 +220,15 @@ const TeamPVP = () => {
     params.cp,
     params.serie,
     rankingData,
-    pvp,
+    pvp.rankings,
+    pvp.trains,
     dataStore.combats,
     dataStore.pokemons,
     dataStore.assets,
-    statsRanking,
+    statsRanking?.attack?.ranking,
+    statsRanking?.defense?.ranking,
+    statsRanking?.stamina?.ranking,
+    statsRanking?.statProd?.ranking,
   ]);
 
   const renderLeague = () => {
@@ -394,9 +401,9 @@ const TeamPVP = () => {
               }}
             >
               <LinkToTop
-                to={`/pvp/${params.cp}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}/${value.speciesId
-                  .toString()
-                  .replaceAll('_', '-')}`}
+                to={`/pvp/${params.cp}/${LeagueBattleType.All}/${value.speciesId.replaceAll('_', '-')}?${
+                  Params.LeagueType
+                }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
               >
                 <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
               </LinkToTop>
@@ -590,10 +597,9 @@ const TeamPVP = () => {
                         }}
                       >
                         <LinkToTop
-                          to={`/pvp/${params.cp}/${getKeyWithData(
-                            ScoreType,
-                            ScoreType.Overall
-                          )?.toLowerCase()}/${value.speciesId.toString().replaceAll('_', '-')}`}
+                          to={`/pvp/${params.cp}/${LeagueBattleType.All}/${value.speciesId.replaceAll('_', '-')}?${
+                            Params.LeagueType
+                          }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
                         >
                           <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
                         </LinkToTop>

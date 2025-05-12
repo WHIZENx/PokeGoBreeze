@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { OverAllStatsComponent } from '../models/component.model';
-import { toNumber, combineClasses, isEqual } from '../../../util/extension';
+import { toNumber, combineClasses, isEqual, getValueOrDefault } from '../../../util/extension';
 import Stats from '../../../components/Info/Stats/Stats';
 import Hexagon from '../../../components/Sprites/Hexagon/Hexagon';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
@@ -93,7 +93,11 @@ const OverAllStats = (props: OverAllStatsComponent) => {
 
   return (
     <div className="row w-100" style={{ margin: 0 }}>
-      {isEqual(props.type, getKeyWithData(ScoreType, ScoreType.Overall), EqualMode.IgnoreCaseSensitive) && (
+      {isEqual(
+        getValueOrDefault(String, props.type, getKeyWithData(ScoreType, ScoreType.Overall)),
+        getKeyWithData(ScoreType, ScoreType.Overall),
+        EqualMode.IgnoreCaseSensitive
+      ) && (
         <div className="col-lg-4 d-flex justify-content-center" style={{ padding: 10 }}>
           <div>
             <h5>
@@ -111,7 +115,11 @@ const OverAllStats = (props: OverAllStatsComponent) => {
       )}
       <div
         className={combineClasses(
-          isEqual(props.type, getKeyWithData(ScoreType, ScoreType.Overall), EqualMode.IgnoreCaseSensitive)
+          isEqual(
+            getValueOrDefault(String, props.type, getKeyWithData(ScoreType, ScoreType.Overall)),
+            getKeyWithData(ScoreType, ScoreType.Overall),
+            EqualMode.IgnoreCaseSensitive
+          )
             ? 'col-lg-8'
             : '',
           'container status-ranking'

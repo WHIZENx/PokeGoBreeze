@@ -97,7 +97,7 @@ const FromChange = (props: IFromChangeComponent) => {
                       />
                     </div>
                     <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                      {splitAndCapitalize(props.pokemonData.name?.replaceAll('-', '_'), '_', ' ')}
+                      {splitAndCapitalize(props.pokemonData.fullName?.replaceAll('-', '_'), '_', ' ')}
                     </span>
                   </div>
                 </div>

@@ -271,12 +271,12 @@ export const loadPVP = (dispatch: Dispatch, timestamp: TimestampModel, pvpData: 
             const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
             const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 
-            const pvpData = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(
+            const pvpDataPath = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(
               pvpFindFirstPath(pvp.data.tree, 'training/analysis/')
             );
 
             dispatch(TimestampActions.SetTimestampPVP.create(pvpTimestamp));
-            dispatch(PathActions.SetPathPvp.create(pvpData));
+            dispatch(PathActions.SetPathPvp.create(pvpDataPath));
 
             dispatch(
               StoreActions.SetPVP.create({
