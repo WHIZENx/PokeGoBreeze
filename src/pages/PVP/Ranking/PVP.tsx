@@ -64,6 +64,8 @@ import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IStyleData } from '../../../util/models/util.model';
 import { HexagonStats } from '../../../core/models/stats.model';
+import Error from '../../Error/Error';
+import { AxiosError } from 'axios';
 
 const RankingPVP = () => {
   const dispatch = useDispatch();
@@ -84,6 +86,7 @@ const RankingPVP = () => {
   const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   const [search, setSearch] = useState('');
+  const [isFound, setIsFound] = useState(true);
 
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
@@ -131,6 +134,7 @@ const RankingPVP = () => {
         const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, pvpType)))
           .data;
         if (!isNotEmpty(file)) {
+          setIsFound(false);
           return;
         }
         if (params.serie === LeagueBattleType.All) {
@@ -192,12 +196,16 @@ const RankingPVP = () => {
         setStoreStats([...Array(filePVP.length).keys()].map(() => false));
         dispatch(SpinnerActions.HideSpinner.create());
       } catch (e) {
-        dispatch(
-          SpinnerActions.ShowSpinnerMsg.create({
-            isError: true,
-            message: (e as Error).message,
-          })
-        );
+        if ((e as AxiosError)?.status === 404) {
+          setIsFound(false);
+        } else {
+          dispatch(
+            SpinnerActions.ShowSpinnerMsg.create({
+              isError: true,
+              message: (e as AxiosError).message,
+            })
+          );
+        }
       }
     }
   }, [
@@ -375,7 +383,7 @@ const RankingPVP = () => {
   };
 
   return (
-    <Fragment>
+    <Error isError={!isFound}>
       <div className="container pvp-container element-bottom">
         {renderLeague()}
         <hr />
@@ -456,7 +464,7 @@ const RankingPVP = () => {
           </Accordion>
         </div>
       </div>
-    </Fragment>
+    </Error>
   );
 };
 

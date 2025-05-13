@@ -45,6 +45,7 @@ import PokemonIconType from '../../../components/Sprites/PokemonIconType/Pokemon
 import { IStyleData } from '../../../util/models/util.model';
 import { HexagonStats } from '../../../core/models/stats.model';
 import { getValueOrDefault } from '../../../util/extension';
+import { AxiosError } from 'axios';
 
 const PokemonPVP = () => {
   const dispatch = useDispatch();
@@ -60,7 +61,7 @@ const PokemonPVP = () => {
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const statsRanking = useSelector((state: StatsState) => state.stats);
-  const [found, setFound] = useState(true);
+  const [isFound, setIsFound] = useState(true);
   const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
@@ -84,13 +85,13 @@ const PokemonPVP = () => {
           .data;
 
         if (!data) {
-          setFound(false);
+          setIsFound(false);
           return;
         }
 
         const pokemonData = data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
         if (!pokemonData) {
-          setFound(false);
+          setIsFound(false);
           return;
         }
 
@@ -148,13 +149,16 @@ const PokemonPVP = () => {
         );
         dispatch(SpinnerActions.HideSpinner.create());
       } catch (e) {
-        setFound(false);
-        dispatch(
-          SpinnerActions.ShowSpinnerMsg.create({
-            isError: true,
-            message: (e as Error).message,
-          })
-        );
+        if ((e as AxiosError)?.status === 404) {
+          setIsFound(false);
+        } else {
+          dispatch(
+            SpinnerActions.ShowSpinnerMsg.create({
+              isError: true,
+              message: (e as AxiosError).message,
+            })
+          );
+        }
       }
     }
   }, [
@@ -223,104 +227,100 @@ const PokemonPVP = () => {
   };
 
   return (
-    <Fragment>
-      {!found ? (
-        <Error />
-      ) : (
-        <div
-          style={{
-            backgroundImage: computeBgType(
-              rankingPoke?.pokemon?.types,
-              rankingPoke?.pokemonType,
-              styleSheet.current,
-              0.8,
-              rankingPoke ? undefined : '#646464'
-            ),
-            paddingTop: 15,
-            paddingBottom: 15,
-          }}
-        >
-          <div className="pokemon-ranking-body container pvp-container">
-            {renderLeague()}
-            <hr />
-            <div className="ranking-link-group" style={{ paddingTop: 10 }}>
-              {getKeysObj(ScoreType).map((type, index) => (
-                <Button
-                  key={index}
-                  className={
-                    isEqual(
-                      getValueOrDefault(
-                        String,
-                        searchParams.get(Params.LeagueType),
-                        getKeyWithData(ScoreType, ScoreType.Overall)
-                      ).toLowerCase(),
-                      type,
-                      EqualMode.IgnoreCaseSensitive
-                    )
-                      ? 'active'
-                      : ''
-                  }
-                  onClick={() =>
-                    navigate(
-                      `/pvp/${params.cp}/${params.serie}/${params.pokemon}?${Params.LeagueType}=${type.toLowerCase()}`
-                    )
-                  }
-                >
-                  {type}
-                </Button>
-              ))}
-            </div>
-            <div className="w-100 ranking-info element-top">
-              <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
-                <div className="position-relative filter-shadow" style={{ width: 128 }}>
-                  <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
-                    <img
-                      alt="img-league"
-                      className="pokemon-sprite-raid"
-                      src={APIService.getPokemonModel(rankingPoke?.form, rankingPoke?.id)}
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = getValidPokemonImgPath(
-                          e.currentTarget.src,
-                          rankingPoke?.id,
-                          rankingPoke?.form
-                        );
-                      }}
-                    />
-                  </PokemonIconType>
-                </div>
-                <div>
-                  <HeaderPVP data={rankingPoke} />
-                </div>
+    <Error isError={!isFound}>
+      <div
+        style={{
+          backgroundImage: computeBgType(
+            rankingPoke?.pokemon?.types,
+            rankingPoke?.pokemonType,
+            styleSheet.current,
+            0.8,
+            rankingPoke ? undefined : '#646464'
+          ),
+          paddingTop: 15,
+          paddingBottom: 15,
+        }}
+      >
+        <div className="pokemon-ranking-body container pvp-container">
+          {renderLeague()}
+          <hr />
+          <div className="ranking-link-group" style={{ paddingTop: 10 }}>
+            {getKeysObj(ScoreType).map((type, index) => (
+              <Button
+                key={index}
+                className={
+                  isEqual(
+                    getValueOrDefault(
+                      String,
+                      searchParams.get(Params.LeagueType),
+                      getKeyWithData(ScoreType, ScoreType.Overall)
+                    ).toLowerCase(),
+                    type,
+                    EqualMode.IgnoreCaseSensitive
+                  )
+                    ? 'active'
+                    : ''
+                }
+                onClick={() =>
+                  navigate(
+                    `/pvp/${params.cp}/${params.serie}/${params.pokemon}?${Params.LeagueType}=${type.toLowerCase()}`
+                  )
+                }
+              >
+                {type}
+              </Button>
+            ))}
+          </div>
+          <div className="w-100 ranking-info element-top">
+            <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
+              <div className="position-relative filter-shadow" style={{ width: 128 }}>
+                <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
+                  <img
+                    alt="img-league"
+                    className="pokemon-sprite-raid"
+                    src={APIService.getPokemonModel(rankingPoke?.form, rankingPoke?.id)}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getValidPokemonImgPath(
+                        e.currentTarget.src,
+                        rankingPoke?.id,
+                        rankingPoke?.form
+                      );
+                    }}
+                  />
+                </PokemonIconType>
               </div>
-              <hr />
-              <BodyPVP
-                assets={dataStore.assets}
-                pokemonData={dataStore.pokemons}
-                data={rankingPoke?.data}
-                cp={params.cp}
-                serie={params.serie}
-                type={searchParams.get(Params.LeagueType)}
-                styleList={styleSheet.current}
-              />
+              <div>
+                <HeaderPVP data={rankingPoke} />
+              </div>
             </div>
-            <div className="container">
-              <hr />
-            </div>
-            <div className="stats-container">
-              <OverAllStats data={rankingPoke} statsRanking={statsRanking} cp={params.cp} type={params.serie} />
-            </div>
-            <div className="container">
-              <hr />
-              <TypeEffectivePVP types={rankingPoke?.pokemon?.types} />
-            </div>
-            <div className="container">
-              <MoveSet moves={rankingPoke?.data?.moves} pokemon={rankingPoke?.pokemon} combatData={dataStore.combats} />
-            </div>
+            <hr />
+            <BodyPVP
+              assets={dataStore.assets}
+              pokemonData={dataStore.pokemons}
+              data={rankingPoke?.data}
+              cp={params.cp}
+              serie={params.serie}
+              type={searchParams.get(Params.LeagueType)}
+              styleList={styleSheet.current}
+            />
+          </div>
+          <div className="container">
+            <hr />
+          </div>
+          <div className="stats-container">
+            <OverAllStats data={rankingPoke} statsRanking={statsRanking} cp={params.cp} type={params.serie} />
+          </div>
+          <div className="container">
+            <hr />
+            <TypeEffectivePVP types={rankingPoke?.pokemon?.types} />
+          </div>
+          <div className="container">
+            <MoveSet moves={rankingPoke?.data?.moves} pokemon={rankingPoke?.pokemon} combatData={dataStore.combats} />
           </div>
         </div>
-      )}
-    </Fragment>
+      </div>
+    </Error>
   );
 };
 
