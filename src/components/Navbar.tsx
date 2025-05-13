@@ -38,7 +38,7 @@ const NavbarComponent = () => {
             width="30"
             height="30"
             className="d-inline-block align-top"
-            alt=""
+            alt="home"
             style={{ marginLeft: 10, marginRight: 10 }}
           />
           PokéGoBreeze

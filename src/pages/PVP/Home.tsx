@@ -5,7 +5,7 @@ import APIService from '../../services/API.service';
 import { leaguesTeamBattle } from '../../util/constants';
 import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { Link } from 'react-router-dom';
-import { PathState, SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
+import { SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/compute';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
@@ -39,14 +39,13 @@ const PVPHome = () => {
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const pvpData = useSelector((state: PathState) => state.path.pvp);
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData);
+    loadPVP(dispatch, timestamp);
   }, []);
 
   useEffect(() => {

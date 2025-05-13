@@ -35,7 +35,9 @@ export const devTools =
           SearchingActions.SearchingActionTypes.setToolObjectPokemonForm,
         ],
         actionSanitizer: <A extends Action>(action: A) => {
-          if (!action) return action;
+          if (!action) {
+            return action;
+          }
 
           const isIAction = (act: object): act is IAction => typeof act === 'object' && 'payload' in act;
           if (!isIAction(action)) {
@@ -88,7 +90,9 @@ export const devTools =
           }
         },
         stateSanitizer: (state: any) => {
-          if (!state) return state;
+          if (!state) {
+            return state;
+          }
           const sanitized = { ...state };
 
           if (sanitized.store?.data) {

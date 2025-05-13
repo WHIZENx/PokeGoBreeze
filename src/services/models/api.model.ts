@@ -18,4 +18,5 @@ interface Commit {
 
 export interface APITreeRoot {
   commit: Commit;
+  url: string;
 }

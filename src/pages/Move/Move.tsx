@@ -263,7 +263,7 @@ const Move = (props: IMovePage) => {
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
       <div style={{ width: 35 }}>
-        <img className="sprite-type" src={getItemSpritePath(itemName)} />
+        <img alt="icon-item" className="sprite-type" src={getItemSpritePath(itemName)} />
       </div>
       <span className="caption">{splitAndCapitalize(itemName.replace('ITEM_', ''), '_', ' ')}</span>
     </div>

@@ -31,7 +31,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { PathState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
+import { StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
@@ -65,7 +65,6 @@ const TeamPVP = () => {
   const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const pvpData = useSelector((state: PathState) => state.path.pvp);
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<TeamsPVP>();
@@ -140,7 +139,7 @@ const TeamPVP = () => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData);
+    loadPVP(dispatch, timestamp);
   }, []);
 
   useEffect(() => {

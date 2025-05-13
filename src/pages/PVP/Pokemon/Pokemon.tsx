@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { Button } from 'react-bootstrap';
 import { FORM_SHADOW, Params } from '../../../util/constants';
-import { PathState, RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
+import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
@@ -57,7 +57,6 @@ const PokemonPVP = () => {
 
   const params = useParams();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const pvpData = useSelector((state: PathState) => state.path.pvp);
 
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const statsRanking = useSelector((state: StatsState) => state.stats);
@@ -65,7 +64,7 @@ const PokemonPVP = () => {
   const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData);
+    loadPVP(dispatch, timestamp);
   }, []);
 
   const fetchPokemonInfo = useCallback(async () => {

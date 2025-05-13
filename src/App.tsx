@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { loadPokeGOLogo, loadTimestamp } from './store/effects/store.effects';
+import { loadTimestamp } from './store/effects/store.effects';
 
 import './App.scss';
 
@@ -101,16 +101,14 @@ function App() {
 
   useEffect(() => {
     dispatch(DeviceActions.SetDevice.create());
-    dispatch(SpinnerActions.SetBar.create(true));
-    dispatch(SpinnerActions.SetPercent.create(0));
     loadTheme(dispatch, stateTheme, setStateTheme);
-    loadPokeGOLogo(dispatch);
-    dispatch(SpinnerActions.SetPercent.create(15));
   }, [dispatch]);
 
   useEffect(() => {
     const controller = new AbortController();
     if (!isLoaded) {
+      dispatch(SpinnerActions.SetBar.create(true));
+      dispatch(SpinnerActions.SetPercent.create(0));
       setIsLoaded(true);
       loadData(controller.signal);
     }
