@@ -7,43 +7,54 @@ interface Props {
   fallbackUI?: ReactNode;
 }
 
-interface State {
+interface IState {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
 }
 
-class ErrorBoundary extends Component<Props, State> {
+class State implements IState {
+  hasError = false;
+  error: Error | null = null;
+  errorInfo: ErrorInfo | null = null;
+
+  static create(result: IState) {
+    const obj = new State();
+    Object.assign(obj, result);
+    return obj;
+  }
+}
+
+class ErrorBoundary extends Component<Props, IState> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-      errorInfo: null,
-    };
+    this.state = new State();
   }
 
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error, errorInfo: null };
+  static getDerivedStateFromError(error: Error) {
+    return State.create({ hasError: true, error, errorInfo: null });
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error', error, errorInfo);
-    this.setState({
-      error,
-      errorInfo,
-    });
+    this.setState(
+      State.create({
+        hasError: true,
+        error,
+        errorInfo,
+      })
+    );
   }
 
-  handleGoHome = (): void => {
+  handleGoHome = () => {
     window.location.href = '/';
   };
 
-  handleRefresh = (): void => {
+  handleRefresh = () => {
     window.location.reload();
   };
 
-  render(): ReactNode {
+  render() {
     if (this.state.hasError) {
       if (this.props.fallbackUI) {
         return this.props.fallbackUI;
@@ -89,7 +100,7 @@ class ErrorBoundary extends Component<Props, State> {
                   maxWidth: '100%',
                 }}
               >
-                {this.state.error?.toString()}
+                {this.state.error.toString()}
               </pre>
             </div>
           )}

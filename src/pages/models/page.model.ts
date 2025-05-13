@@ -8,6 +8,11 @@ import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { PokemonType } from '../../enums/type.enum';
 import { SearchOption } from '../Search/Pokemon/models/pokemon-search.model';
 
+export interface IErrorPage {
+  isError?: boolean;
+  children?: React.ReactNode;
+}
+
 export interface IMovePage {
   id?: number;
 }
