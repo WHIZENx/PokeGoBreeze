@@ -3,6 +3,7 @@ import { TimestampActionsUnion } from '../actions/timestamp.action';
 
 export interface TimestampModel {
   gamemaster: number;
+  icon: number;
   assets: number;
   sounds: number;
   pvp: number;
@@ -10,6 +11,7 @@ export interface TimestampModel {
 
 const initialize: TimestampModel = {
   gamemaster: 0,
+  icon: 0,
   assets: 0,
   sounds: 0,
   pvp: 0,
@@ -21,6 +23,11 @@ const TimestampReducer = (state: TimestampModel = initialize, action: TimestampA
       return {
         ...state,
         gamemaster: action.payload,
+      };
+    case TimestampActions.TimestampActionTypes.setTimestampIcon:
+      return {
+        ...state,
+        icon: action.payload,
       };
     case TimestampActions.TimestampActionTypes.setTimestampAssets:
       return {

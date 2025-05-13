@@ -33,7 +33,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { FORM_SHADOW, Params } from '../../../util/constants';
-import { PathState, RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
+import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
@@ -72,7 +72,6 @@ const RankingPVP = () => {
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const pvpData = useSelector((state: PathState) => state.path.pvp);
 
   const [searchParams] = useSearchParams();
   const params = useParams();
@@ -111,7 +110,7 @@ const RankingPVP = () => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData);
+    loadPVP(dispatch, timestamp);
   }, []);
 
   const fetchPokemonRanking = useCallback(async () => {

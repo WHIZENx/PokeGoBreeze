@@ -187,6 +187,7 @@ const News = () => {
           <img
             style={{ width: 64 }}
             className="pokemon-sprite-medium"
+            alt="pokemon-sprite"
             src={
               value.type === TicketRewardType.Pokemon
                 ? APIService.getPokemonModel(value.imageSrc, value.pokemon?.id)
@@ -243,8 +244,8 @@ const News = () => {
               .map((value, index) => (
                 <div key={index}>
                   <div className="position-relative info-container">
-                    <img className="info-background" src={value.backgroundImgUrl} />
-                    <img className="info-banner-img" src={value.bannerUrl} />
+                    <img alt="info-background" className="info-background" src={value.backgroundImgUrl} />
+                    <img alt="info-banner" className="info-banner-img" src={value.bannerUrl} />
                   </div>
                   <Accordion>
                     <Accordion.Item key={index} eventKey={index.toString()}>

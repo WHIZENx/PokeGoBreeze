@@ -21,13 +21,13 @@ import {
   optionInformation,
   optionTrainer,
 } from '../../core/options';
-import { pvpConvertPath, pvpFindFirstPath, pvpFindPath } from '../../core/pvp';
+import { pvpConvertPath } from '../../core/pvp';
 import APIService from '../../services/API.service';
 import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
-import { APIPath, APITreeRoot, APITree } from '../../services/models/api.model';
+import { APITreeRoot, APITree } from '../../services/models/api.model';
 import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
-import { PathActions, SpinnerActions, StatsActions, StoreActions, TimestampActions } from '../actions';
+import { SpinnerActions, StatsActions, StoreActions, TimestampActions } from '../actions';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
 import { TimestampModel } from '../reducers/timestamp.reducer';
 import { IDataModel } from '../models/store.model';
@@ -53,13 +53,8 @@ const options = {
   headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
 };
 
-export const loadPokeGOLogo = (dispatch: Dispatch) =>
-  APIService.getFetchUrl<APIPath[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options)
-    .then((res) => {
-      if (isNotEmpty(res.data)) {
-        return APIService.getFetchUrl<Files>(res.data[0].url, options);
-      }
-    })
+export const loadPokeGOLogo = (dispatch: Dispatch, url: string, iconTimestamp: number) =>
+  APIService.getFetchUrl<Files>(url, options)
     .then((file) => {
       if (file?.data) {
         const files = file.data.files;
@@ -69,6 +64,7 @@ export const loadPokeGOLogo = (dispatch: Dispatch) =>
             dispatch(
               StoreActions.SetLogoPokeGO.create(res.filename.replace('Images/App Icons/', '').replace('.png', ''))
             );
+            dispatch(TimestampActions.SetTimestampIcon.create(iconTimestamp));
           }
         }
       }
@@ -84,14 +80,22 @@ export const loadCPM = (dispatch: Dispatch, cpmList: DynamicObj<number>) =>
 export const loadTimestamp = async (dispatch: Dispatch, data: IDataModel, timestamp: TimestampModel) => {
   await Promise.all([
     APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
+    APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options),
     APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_POKEMON_SHA, options),
     APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_SOUND_SHA, options),
   ])
-    .then(async ([GMtimestamp, imageRoot, soundsRoot]) => {
+    .then(async ([GMtimestamp, iconRoot, imageRoot, soundsRoot]) => {
       const timestampGameMaster = toNumber(GMtimestamp.data);
-      if (isNotEmpty(imageRoot.data) && isNotEmpty(soundsRoot.data)) {
+      if (isNotEmpty(iconRoot.data) && isNotEmpty(imageRoot.data) && isNotEmpty(soundsRoot.data)) {
+        const iconTimestamp = new Date(iconRoot.data[0].commit.committer.date).getTime();
         const imageTimestamp = new Date(imageRoot.data[0].commit.committer.date).getTime();
         const soundTimestamp = new Date(soundsRoot.data[0].commit.committer.date).getTime();
+
+        if (timestamp.icon === 0 || timestamp.icon !== iconTimestamp) {
+          const url = iconRoot.data[0].url;
+          loadPokeGOLogo(dispatch, url, iconTimestamp);
+        }
+        dispatch(SpinnerActions.SetPercent.create(15));
 
         const timestampLoaded: Timestamp = {
           isCurrentGameMaster: timestampGameMaster > 0 && timestamp.gamemaster === timestampGameMaster,
@@ -124,7 +128,7 @@ export const loadTimestamp = async (dispatch: Dispatch, data: IDataModel, timest
     });
 };
 
-export const loadGameMaster = (
+export const loadGameMaster = async (
   dispatch: Dispatch,
   imageRoot: APITreeRoot[],
   soundsRoot: APITreeRoot[],
@@ -230,10 +234,7 @@ export const loadAssets = async (
             APIService.getFetchUrl<APITree>(`${soundPath.url}?recursive=1`, options),
           ]).then(([imageData, soundData]) => {
             const assetImgFiles = optionPokeImg(imageData.data);
-            dispatch(PathActions.SetPathAssets.create(assetImgFiles));
-
             const assetSoundFiles = optionPokeSound(soundData.data);
-            dispatch(PathActions.SetPathSounds.create(assetSoundFiles));
 
             const assetsPokemon = optionAssets(pokemon, assetImgFiles, assetSoundFiles);
             mappingReleasedPokemonGO(pokemon, assetsPokemon);
@@ -252,49 +253,36 @@ export const loadAssets = async (
   });
 };
 
-export const loadPVP = (dispatch: Dispatch, timestamp: TimestampModel, pvpData: string[]) => {
+export const loadPVP = (dispatch: Dispatch, timestamp: TimestampModel) => {
   APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, options).then((res) => {
-    const pvpTimestamp = new Date(getValueOrDefault(String, res.data.at(0)?.commit.committer.date)).getTime();
-    if (pvpTimestamp !== timestamp.pvp && isNotEmpty(res.data)) {
-      const pvpUrl = res.data[0].commit.tree.url;
-      if (pvpUrl) {
-        APIService.getFetchUrl<APITree>(pvpUrl, options)
-          .then((pvpRoot) => {
-            const pvpRootPath = pvpRoot.data.tree.find((item) => isEqual(item.path, 'src'));
-            return APIService.getFetchUrl<APITree>(`${pvpRootPath?.url}`, options);
-          })
-          .then((pvpFolder) => {
-            const pvpFolderPath = pvpFolder.data.tree.find((item) => isEqual(item.path, 'data'));
-            return APIService.getFetchUrl<APITree>(`${pvpFolderPath?.url}?recursive=1`, options);
-          })
-          .then((pvp) => {
-            const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
-            const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
+    if (isNotEmpty(res.data)) {
+      const pvpTimestamp = new Date(getValueOrDefault(String, res.data[0].commit.committer.date)).getTime();
+      if (pvpTimestamp !== timestamp.pvp) {
+        const pvpUrl = res.data[0].commit.tree.url;
+        if (pvpUrl) {
+          APIService.getFetchUrl<APITree>(pvpUrl, options)
+            .then((pvpRoot) => {
+              const pvpRootPath = pvpRoot.data.tree.find((item) => isEqual(item.path, 'src'));
+              return APIService.getFetchUrl<APITree>(`${pvpRootPath?.url}`, options);
+            })
+            .then((pvpFolder) => {
+              const pvpFolderPath = pvpFolder.data.tree.find((item) => isEqual(item.path, 'data'));
+              return APIService.getFetchUrl<APITree>(`${pvpFolderPath?.url}?recursive=1`, options);
+            })
+            .then((pvp) => {
+              const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
+              const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 
-            const pvpDataPath = pvpFindFirstPath(pvp.data.tree, 'rankings/').concat(
-              pvpFindFirstPath(pvp.data.tree, 'training/analysis/')
-            );
-
-            dispatch(TimestampActions.SetTimestampPVP.create(pvpTimestamp));
-            dispatch(PathActions.SetPathPvp.create(pvpDataPath));
-
-            dispatch(
-              StoreActions.SetPVP.create({
-                rankings: pvpRank,
-                trains: pvpTrain,
-              })
-            );
-          });
+              dispatch(TimestampActions.SetTimestampPVP.create(pvpTimestamp));
+              dispatch(
+                StoreActions.SetPVP.create({
+                  rankings: pvpRank,
+                  trains: pvpTrain,
+                })
+              );
+            });
+        }
       }
-    } else {
-      const pvpRank = pvpFindPath(pvpData, 'rankings/');
-      const pvpTrain = pvpFindPath(pvpData, 'training/analysis/');
-      dispatch(
-        StoreActions.SetPVP.create({
-          rankings: pvpRank,
-          trains: pvpTrain,
-        })
-      );
     }
   });
 };

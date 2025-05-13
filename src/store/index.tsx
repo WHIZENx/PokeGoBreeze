@@ -76,7 +76,7 @@ const persistConfig = {
   key: PersistKey,
   storage: localForage,
   transforms: [sensitiveDataTransform, createEncryptionTransform()],
-  whitelist: ['store', 'stats', 'path', 'timestamp'],
+  whitelist: ['store', 'stats', 'timestamp'],
   debounce: 1000,
 };
 
