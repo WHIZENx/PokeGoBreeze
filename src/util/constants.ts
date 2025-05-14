@@ -24,6 +24,7 @@ export class Params {
   public static FormType = 'formType';
   public static StatsType = 'statsType';
   public static MoveType = 'moveType';
+  public static LeagueType = 'leagueType';
 }
 
 // KeyCode

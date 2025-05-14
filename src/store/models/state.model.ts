@@ -7,7 +7,6 @@ import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { DeviceModel } from '../reducers/device.reducer';
 import { Dispatch, SetStateAction } from 'react';
 import { TimestampModel } from '../reducers/timestamp.reducer';
-import { PathModel } from '../reducers/path.reducer';
 import { storeType } from '../configure';
 
 interface StoreStateModel {
@@ -34,9 +33,6 @@ interface DeviceStateModel {
 interface TimestampStateModel {
   timestamp: TimestampModel;
 }
-interface PathStateModel {
-  path: PathModel;
-}
 
 export type RouterState = ReturnType<typeof storeType.getState>;
 
@@ -50,8 +46,6 @@ export type StoreState = AnyIfEmpty<StoreStateModel>;
 export type ThemeState = AnyIfEmpty<ThemeStateModel>;
 
 export type TimestampState = AnyIfEmpty<TimestampStateModel>;
-
-export type PathState = AnyIfEmpty<PathStateModel>;
 
 export type DeviceState = AnyIfEmpty<DeviceStateModel>;
 

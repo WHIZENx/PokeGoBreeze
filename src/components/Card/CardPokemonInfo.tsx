@@ -72,6 +72,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           className={combineClasses('shiny-pokemon', props.isDefaultImg ? 'active' : '')}
           height={32}
           src={APIService.getShinyIcon()}
+          alt="icon-shiny"
         />
       )}
       <LinkToTop className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.form)}`}>

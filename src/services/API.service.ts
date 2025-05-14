@@ -17,8 +17,9 @@ import { Species } from '../core/models/API/species.model';
 import { getValueOrDefault, isEqual, isInclude } from '../util/extension';
 import { EqualMode, IncludeMode } from '../util/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
-import { capitalize, getDataWithKey, splitAndCapitalize } from '../util/utils';
+import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../util/utils';
 import { PokemonTypeBadge } from '../core/models/type.model';
+import { ScoreType } from '../util/enums/constants.enum';
 
 class APIService {
   date: Date;
@@ -400,7 +401,8 @@ class APIService {
   getRankingFile(serie: string | undefined, cp: number, type: string | undefined) {
     return `${APIUrl.POKE_PV_API_URL}rankings/${getValueOrDefault(String, serie)}/${getValueOrDefault(
       String,
-      type
+      type,
+      getKeyWithData(ScoreType, ScoreType.Overall)
     ).toLowerCase()}/rankings-${cp}.json`;
   }
 

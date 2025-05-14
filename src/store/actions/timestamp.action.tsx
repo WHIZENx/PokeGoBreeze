@@ -2,6 +2,7 @@ import { Action } from 'redux';
 
 export enum TimestampActionTypes {
   setTimestampGameMaster = '[Timestamp] SetTimestampGameMaster',
+  setTimestampIcon = '[Timestamp] SetTimestampIcon',
   setTimestampAssets = '[Timestamp] SetTimestampAssets',
   setTimestampSounds = '[Timestamp] SetTimestampSounds',
   setTimestampPVP = '[Timestamp] SetTimestampPVP',
@@ -14,6 +15,20 @@ export class SetTimestampGameMaster implements Action {
 
   static create(value: number) {
     const { type, payload } = new SetTimestampGameMaster(value);
+    return {
+      type,
+      payload,
+    };
+  }
+}
+
+export class SetTimestampIcon implements Action {
+  readonly type = TimestampActionTypes.setTimestampIcon;
+
+  constructor(public payload: number) {}
+
+  static create(value: number) {
+    const { type, payload } = new SetTimestampIcon(value);
     return {
       type,
       payload,
@@ -63,4 +78,9 @@ export class SetTimestampPVP implements Action {
   }
 }
 
-export type TimestampActionsUnion = SetTimestampGameMaster | SetTimestampAssets | SetTimestampSounds | SetTimestampPVP;
+export type TimestampActionsUnion =
+  | SetTimestampGameMaster
+  | SetTimestampIcon
+  | SetTimestampAssets
+  | SetTimestampSounds
+  | SetTimestampPVP;

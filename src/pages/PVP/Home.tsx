@@ -5,17 +5,16 @@ import APIService from '../../services/API.service';
 import { leaguesTeamBattle } from '../../util/constants';
 import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { Link } from 'react-router-dom';
-import { PathState, SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
+import { SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/compute';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
 import { SpinnerActions } from '../../store/actions';
-import { getKeyWithData, getTime } from '../../util/utils';
+import { getTime } from '../../util/utils';
 import { isEqual, isInclude, isNotEmpty } from '../../util/extension';
 import { EqualMode } from '../../util/enums/string.enum';
 import { LeagueBattleType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../util/enums/compute.enum';
-import { ScoreType } from '../../util/enums/constants.enum';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -40,14 +39,16 @@ const PVPHome = () => {
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const pvpData = useSelector((state: PathState) => state.path.pvp);
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData);
+    loadPVP(dispatch, timestamp);
+  }, []);
+
+  useEffect(() => {
     if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
@@ -127,10 +128,7 @@ const PVPHome = () => {
       {rank ? (
         <div className="group-selected">
           {rank.cp.map((value, index) => (
-            <Link
-              key={index}
-              to={`/pvp/rankings/${rank.id}/${value}/${getKeyWithData(ScoreType, ScoreType.Overall)?.toString()}`}
-            >
+            <Link key={index} to={`/pvp/rankings/${rank.id}/${value}`}>
               <Button className="btn btn-form" style={{ height: 200 }}>
                 <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
                 <div>

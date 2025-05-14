@@ -624,7 +624,12 @@ const Evolution = (props: IEvolutionComponent) => {
                         {data?.quest?.type === QuestType.UseIncense && (
                           <span className="caption">
                             <Fragment>
-                              <img width={20} height={20} src={getItemSpritePath(ItemName.Incense)} />
+                              <img
+                                alt="icon-incense"
+                                width={20}
+                                height={20}
+                                src={getItemSpritePath(ItemName.Incense)}
+                              />
                               <div style={{ fontSize: 11, lineHeight: 1 }}>Use Incense</div>
                             </Fragment>
                           </span>
@@ -765,7 +770,8 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <RestaurantIcon fontSize="small" /> : Buddy feed.
                 </span>
                 <span className="d-block caption">
-                  - <img width={20} height={20} src={getItemSpritePath(ItemName.Incense)} /> : Use Incense.
+                  - <img alt="icon-incense" width={20} height={20} src={getItemSpritePath(ItemName.Incense)} /> : Use
+                  Incense.
                 </span>
                 <span className="d-block caption">- Pokémon Battle.</span>
               </span>

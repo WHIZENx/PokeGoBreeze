@@ -1,9 +1,10 @@
 # build environment
-FROM node:18.17-alpine as builder
+FROM node:18.17.0-alpine as builder
 WORKDIR /app
+
 COPY . .
-RUN npm install --location=global npm@latest
-RUN npm install && npm run build
+RUN npm install --location=global npm@10.8.2
+RUN npm install && npm run deploy
 
 # production environment
 FROM nginx:alpine

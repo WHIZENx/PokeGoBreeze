@@ -2,11 +2,11 @@ import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import loading from '../../assets/loading.png';
 import './Spinner.scss';
-import { DeviceState, SpinnerState } from '../../store/models/state.model';
+import { SpinnerState } from '../../store/models/state.model';
+import { clearLocalStorageExcept } from '../../store/localStorage';
 
 const Spinner = () => {
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const device = useSelector((state: DeviceState) => state.device);
 
   return (
     <Fragment>
@@ -32,13 +32,13 @@ const Spinner = () => {
                       <p
                         className="reload-text"
                         onClick={() => {
-                          localStorage.clear();
+                          clearLocalStorageExcept();
                           window.location.reload();
                         }}
                       >
                         Retry Again
                       </p>
-                      {device.isMobile && spinner.error.message && (
+                      {spinner.error.message && process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
                         <p className="text-danger">{spinner.error.message}</p>
                       )}
                     </Fragment>
