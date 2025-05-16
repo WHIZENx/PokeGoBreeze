@@ -545,7 +545,7 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [pokemonData, params.id, props.searchOption?.id]);
 
-  const reload = (element: JSX.Element, color = '#f5f5f5') => {
+  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (progress.isLoadedForms) {
       return element;
     }

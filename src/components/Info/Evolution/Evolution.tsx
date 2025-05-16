@@ -689,7 +689,7 @@ const Evolution = (props: IEvolutionComponent) => {
     );
   };
 
-  const reload = (element: JSX.Element, color = '#fafafa') => {
+  const reload = (element: JSX.Element, color = 'var(--background-default)') => {
     if (
       props.isLoadedForms ||
       (isNotEmpty(arrEvoList) && arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id)))

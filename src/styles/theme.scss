@@ -37,6 +37,7 @@
   --background-table-strip: #fafafa;
   --background-table-hover: #eeeeee;
   --background-input: #eeeeee;
+  --background-stats-container: #c8c8c8e6;
 
   // Text colors
   --text-primary: black;
@@ -58,6 +59,10 @@
   --loading-placeholder-bg: 255, 255, 255;
   --loading-spinner: #ffffff60;
   --loading-spinner-bg: #f8f8f8;
+  --loading-custom-bg: whitesmoke;
+
+  // Data table
+  --table-highlight-row: #e3f2fd;
 
   // Custom selected
   --custom-selected: #aaaaaa;
@@ -113,6 +118,7 @@
   --background-table-strip: #050505;
   --background-table-hover: #333333;
   --background-input: #666666;
+  --background-stats-container: #373737e6;
 
   // Text colors
   --text-primary: white;
@@ -134,6 +140,10 @@
   --loading-placeholder-bg: 0, 0, 0;
   --loading-spinner: #00000060;
   --loading-spinner-bg: #232323;
+  --loading-custom-bg: #1e1e1e;
+
+  // Data table
+  --table-highlight-row: #1a3f5f;
 
   // Custom selected
   --custom-selected: #2b2b2b;

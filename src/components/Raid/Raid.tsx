@@ -70,7 +70,7 @@ const Raid = (props: IRaidComponent) => {
     props.setTimeAllow,
   ]);
 
-  const reload = (element: JSX.Element, color = '#f5f5f5') => {
+  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (props.isLoadedForms) {
       return element;
     }

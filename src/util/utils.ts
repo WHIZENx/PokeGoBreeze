@@ -622,10 +622,7 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
         backgroundColor: 'var(--background-table-strip)',
       },
       highlightOnHoverStyle: {
-        color: 'var(--text-primary)',
         backgroundColor: 'var(--background-table-hover)',
-        borderBottomColor: 'var(--background-table-divided)',
-        outlineColor: 'var(--background-table-primary)',
       },
     },
     headCells: {
@@ -636,7 +633,6 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
     },
     cells: {
       style: {
-        backgroundColor: 'inherit',
         color: 'var(--text-primary)',
       },
     },
@@ -668,7 +664,11 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
       },
     },
   };
-  return customStyles ? mergeTableStyles(customStyles, defaultData) : defaultData;
+  if (customStyles) {
+    const result = mergeTableStyles(customStyles, defaultData);
+    return result;
+  }
+  return defaultData;
 };
 
 export const getDataWithKey = <T>(

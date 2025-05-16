@@ -5,7 +5,7 @@ import { IPokemonTableComponent } from '../../models/component.model';
 import { combineClasses, isNumber, isUndefined, toFloatWithPadding, toNumber } from '../../../util/extension';
 
 const PokemonTable = (props: IPokemonTableComponent) => {
-  const reload = (element: JSX.Element, color = '#f5f5f5') => {
+  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (props.isLoadedForms) {
       return element;
     }
@@ -61,7 +61,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                   </>
                 )}
               </h5>,
-              '#eeeeee'
+              'var(--background-btn-type)'
             )}
           </td>
         </tr>
@@ -80,7 +80,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
               <h5 className="d-flex">
                 {splitAndCapitalize(props.version, '-', ' ').replace(/GO$/i, 'GO').replace(/X y$/i, 'X-Y')}
               </h5>,
-              '#eeeeee'
+              'var(--background-btn-type)'
             )}
           </td>
         </tr>

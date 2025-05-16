@@ -58,7 +58,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 176 }}>
-          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#fafafa' }} />
+          <div
+            className="ph-picture ph-col-3 w-100 h-100"
+            style={{ padding: 0, margin: 0, background: 'var(--background-default)' }}
+          />
         </div>
       ) : (
         <div>
@@ -150,7 +153,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 65 }}>
-          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#fafafa' }} />
+          <div
+            className="ph-picture ph-col-3 w-100 h-100"
+            style={{ padding: 0, margin: 0, background: 'var(--background-default)' }}
+          />
         </div>
       ) : (
         <Fragment>
@@ -186,7 +192,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 65 }}>
-          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#fafafa' }} />
+          <div
+            className="ph-picture ph-col-3 w-100 h-100"
+            style={{ padding: 0, margin: 0, background: 'var(--background-default)' }}
+          />
         </div>
       ) : (
         <Fragment>

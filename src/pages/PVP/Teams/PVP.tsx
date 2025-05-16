@@ -576,7 +576,11 @@ const TeamPVP = () => {
                                 </PokemonIconType>
                               </div>
                             </div>
-                            <b className="text-black">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
+                            <b className="theme-text-primary">{`#${value.id} ${splitAndCapitalize(
+                              value.name,
+                              '-',
+                              ' '
+                            )}`}</b>
                           </div>
                         ))}
                       </div>
