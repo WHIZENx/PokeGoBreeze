@@ -27,7 +27,7 @@
 }
 
 .theme-text-primary {
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
 }
 
 .theme-text-secondary {
@@ -42,21 +42,26 @@
   background-color: var(--background-table-primary);
 }
 
+.theme-spinner {
+  background: var(--loading-spinner) !important;
+}
+
 // Override some of the existing styles to use theme variables
 .caption {
   color: var(--text-caption);
 }
 
-.highlight-select-pokemon {
-  background-color: var(--background-btn-type-select) !important;
+.highlight-select-pokemon,
+.current-select-pokemon,
+.selected {
+  background-color: var(--custom-selected) !important;
 }
 
-.current-select-pokemon {
-  background-color: var(--background-table-hover) !important;
-}
-
-.result {
-  background-color: var(--background-btn-type);
+.result,
+.result-pokemon,
+.result-move-select,
+.result-move-select-default {
+  background-color: var(--custom-selected-bg);
   box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
   color: var(--text-primary);
 }
@@ -67,12 +72,16 @@
   background-color: var(--background-paper);
 }
 
-.card-pokemon {
+.card-pokemon,
+.card-move,
+.card-pokemon-select {
   border-top: 1px solid var(--background-table-divided);
 }
 
-.card-pokemon:hover {
-  background-color: var(--background-table-hover) !important;
+.card-pokemon:hover,
+.card-move:hover,
+.card-pokemon-select:hover {
+  background-color: var(--custom-selected-hover) !important;
 }
 
 .moveset-error-msg {
@@ -175,7 +184,7 @@
 }
 
 .btn-form {
-  background-color: var(--custom-btn-form);
+  background-color: var(--custom-btn-form) !important;
   color: var(--text-primary) !important;
 
   &:hover:not(.form-selected) {
@@ -189,4 +198,17 @@
   &.form-selected {
     background-color: var(--custom-btn-form-selected) !important;
   }
+}
+
+.card-select-enabled {
+  background-color: var(--background-paper);
+}
+
+.card-select-disabled {
+  background-color: var(--bs-secondary-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+.select-down {
+  background-color: var(--bs-body-bg);
 }

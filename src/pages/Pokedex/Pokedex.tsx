@@ -283,7 +283,7 @@ const Pokedex = () => {
     <div className="position-relative">
       {!isNotEmpty(dataList) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
-          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
+          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner" style={{ padding: 0, margin: 0 }} />
         </div>
       )}
       <div className="border-types text-center w-100">
@@ -314,7 +314,7 @@ const Pokedex = () => {
                   <span className="input-group-text">Search name or ID</span>
                   <input
                     type="text"
-                    className="form-control theme-text-primary theme-bg-default"
+                    className="form-control input-search"
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
                     onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}

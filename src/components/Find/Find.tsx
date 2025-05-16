@@ -145,9 +145,7 @@ const Find = (props: IFindComponent) => {
       <div className="btn-group-search">
         <input
           type="text"
-          className="form-control"
-          aria-label="search"
-          aria-describedby="input-search"
+          className="form-control input-search"
           placeholder="Enter Name or ID"
           defaultValue={searchTerm}
           onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}

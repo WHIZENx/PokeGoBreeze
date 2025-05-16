@@ -634,7 +634,7 @@ const StatsRanking = () => {
           }
         }}
         conditionalRowStyles={conditionalRowStyles}
-        customStyles={{ ...customStyles, ...getCustomThemeDataTable() }}
+        customStyles={getCustomThemeDataTable(customStyles)}
         paginationDefaultPage={page}
         paginationPerPage={defaultPerPages}
         paginationRowsPerPageOptions={Array.from(
