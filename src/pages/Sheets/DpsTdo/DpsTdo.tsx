@@ -10,6 +10,7 @@ import {
   generateParamForm,
   getKeysObj,
   getAllMoves,
+  getCustomThemeDataTable,
 } from '../../../util/utils';
 import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import {
@@ -700,7 +701,7 @@ const DpsTdo = () => {
           <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
         </div>
       )}
-      <div className="head-filter text-center w-100">
+      <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100" style={{ margin: 0 }}>
           {types.map((item, index) => (
@@ -1311,6 +1312,7 @@ const DpsTdo = () => {
           striped={true}
           paginationDefaultPage={defaultPage}
           paginationPerPage={defaultRowPerPage}
+          customStyles={getCustomThemeDataTable()}
           onChangePage={(page) => {
             setDefaultPage(page);
           }}

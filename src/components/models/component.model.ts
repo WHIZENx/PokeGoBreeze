@@ -32,6 +32,12 @@ import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../util/models/util.model';
+import { PaletteMode } from '@mui/material';
+
+export interface INavbarComponent {
+  mode: PaletteMode;
+  toggleColorMode: () => void;
+}
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;

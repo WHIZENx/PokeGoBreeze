@@ -2,16 +2,12 @@ import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../util/utils';
-import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
 import { PokemonTypeBadge, TypeModel, TypeMultiply } from '../../core/models/type.model';
-import { TypeTheme } from '../../enums/type.enum';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isEqual } from '../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual } from '../../util/extension';
 
 const Attacker = (prop: ITypeEffComponent) => {
-  const theme = useTheme<ThemeModify>();
   const [types, setTypes] = useState<string[]>([]);
 
   const [currentType, setCurrentType] = useState(
@@ -66,11 +62,7 @@ const Attacker = (prop: ITypeEffComponent) => {
               <ul>
                 {types.map((value, index) => (
                   <li
-                    className={combineClasses(
-                      'container',
-                      `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
-                    )}
-                    style={{ backgroundColor: theme.palette.background.default }}
+                    className="container card-pokemon theme-bg-default"
                     key={index}
                     onMouseDown={() => changeType(value)}
                   >

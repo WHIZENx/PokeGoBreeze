@@ -15,12 +15,11 @@ import { computeBgType } from '../../../util/compute';
 import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { calculateStatsByTag } from '../../../util/calculate';
-import { CircularProgress, FormControlLabel, Switch, useTheme } from '@mui/material';
+import { CircularProgress, FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -200,7 +199,6 @@ class PokemonTypeData implements IPokemonTypeData {
 }
 
 const SearchTypes = () => {
-  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [typeList, setTypeList] = useState<string[]>([]);
@@ -264,7 +262,7 @@ const SearchTypes = () => {
   };
 
   return (
-    <div className="container element-top" style={{ color: theme.palette.text.primary }}>
+    <div className="container element-top">
       <div className="d-flex justify-content-end">
         <div>
           <h6 className="text-center">
@@ -400,7 +398,7 @@ const SearchTypes = () => {
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
-                customStyles={getCustomThemeDataTable(theme)}
+                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={
                   <div style={{ margin: 10 }}>
@@ -417,7 +415,7 @@ const SearchTypes = () => {
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
-                customStyles={getCustomThemeDataTable(theme)}
+                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={
                   <div style={{ margin: 10 }}>
@@ -434,7 +432,7 @@ const SearchTypes = () => {
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
-                customStyles={getCustomThemeDataTable(theme)}
+                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={
                   <div style={{ margin: 10 }}>
@@ -451,7 +449,7 @@ const SearchTypes = () => {
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
-                customStyles={getCustomThemeDataTable(theme)}
+                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={
                   <div style={{ margin: 10 }}>

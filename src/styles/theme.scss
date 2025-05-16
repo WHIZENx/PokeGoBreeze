@@ -1,0 +1,155 @@
+// Theme variables for both light and dark modes
+// These will automatically update when the theme changes
+
+// Usage:
+// Import this file in your SCSS: @import 'styles/theme.scss';
+// Then use variables like: color: var(--text-primary);
+
+:root {
+  --text-constant: black;
+  --border-radius: 4px;
+  --spacing-unit: 8px;
+}
+
+:root[data-theme="light"] {
+  // Theme mode
+  --mode: light;
+
+  // Primary colors
+  --primary-main: #3f51b5;
+  --primary-light: #757de8;
+  --primary-dark: #002984;
+  --primary-contrast-text: white;
+
+  // Secondary colors
+  --secondary-main: #f50057;
+  --secondary-light: #ff4081;
+  --secondary-dark: #c51162;
+  --secondary-contrast-text: white;
+
+  // Background colors
+  --background-default: #fafafa;
+  --background-paper: white;
+  --background-btn-type: white;
+  --background-btn-type-select: #757575;
+  --background-table-primary: white;
+  --background-table-divided: #0000001f;
+  --background-table-strip: #fafafa;
+  --background-table-hover: #eeeeee;
+  --background-input: #eeeeee;
+
+  // Text colors
+  --text-primary: black;
+  --text-secondary: #757575;
+  --text-disabled: rgb(0 0 0 / 38%);
+  --text-custom: black;
+  --text-caption: grey;
+
+  // Divider color
+  --divider: rgb(0 0 0 / 12%); 
+
+  // Shadow colors
+  --shadow-default: black;
+  --shadow-custom: #00000000;
+  --shadow-hover: white;
+
+  // Custom text
+  --custom-text: black;
+  --custom-caption: grey;
+
+  // Custom table
+  --custom-table-background-head: #409ff1;
+  --custom-table-background-odd: #eeeeee;
+  --custom-table-background-even: white;
+  --custom-table-info-costs-bg: #f1ffff;
+  --custom-table-strip: #fafafa;
+  --custom-table-hover: #eeeeee;
+  --custom-table-background-sub-head: #f1f1ff;
+  --custom-table-background-sub-head-text: #0571c2;
+  --custom-table-background-sub-head-border: #b8d4da;
+  --custom-table-background-sub-head-hover: #3386d2;
+
+  // Custom button
+  --custom-btn-form: #e1e1e1;
+  --custom-btn-form-selected: #969696;
+  --custom-btn-form-hover: #c8c8c8;
+  --custom-btn-form-focus: grey;
+}
+
+:root[data-theme="dark"] {
+  // Theme mode
+  --mode: dark;
+
+  // Primary colors
+  --primary-main: #7986cb;
+  --primary-light: #9fa8da;
+  --primary-dark: #5c6bc0;
+  --primary-contrast-text: white;
+
+  // Secondary colors
+  --secondary-main: #ff4081;
+  --secondary-light: #ff79b0;
+  --secondary-dark: #c60055;
+  --secondary-contrast-text: white;
+
+  // Background colors
+  --background-default: #222222;
+  --background-paper: #333333;
+  --background-btn-type: #555555;
+  --background-btn-type-select: #111111;
+  --background-table-primary: #222222;
+  --background-table-divided: #ffffff1f;
+  --background-table-strip: #050505;
+  --background-table-hover: #333333;
+  --background-input: #666666;
+
+  // Text colors
+  --text-primary: white;
+  --text-secondary: #afafaf;
+  --text-disabled: rgb(255 255 255 / 50%);
+  --text-custom: white;
+  --text-caption: #ebebeb;
+
+  // Divider color
+  --divider: rgb(255 255 255 / 12%); 
+
+  // Shadow colors
+  --shadow-default: white;
+  --shadow-custom: white;
+  --shadow-hover: #000000cc;
+
+  // Custom text
+  --custom-text: white;
+  --custom-caption: #ebebeb;
+
+  // Custom table
+  --custom-table-background-head: #1e78c2;
+  --custom-table-background-odd: #222222;
+  --custom-table-background-even: black;
+  --custom-table-info-costs-bg: #364d50;
+  --custom-table-strip: #050505;
+  --custom-table-hover: #111111;
+  --custom-table-background-sub-head: #1e78c2;
+  --custom-table-background-sub-head-text: #90caf9;
+  --custom-table-background-sub-head-border: #b8d4da;
+  --custom-table-background-sub-head-hover: #0d5ca0;
+
+  // Custom button
+  --custom-btn-form: #3a3a45;
+  --custom-btn-form-selected: #4f4f5c;
+  --custom-btn-form-hover: #454550;
+  --custom-btn-form-focus: #5a5a6a;
+}
+
+// Theme mixins to make theme usage easier
+@mixin light-mode {
+  html[data-theme="light"] & {
+    @content;
+  }
+}
+
+@mixin dark-mode {
+  html[data-theme="dark"] & {
+    @content;
+  }
+}

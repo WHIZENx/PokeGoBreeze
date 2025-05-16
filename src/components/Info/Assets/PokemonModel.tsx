@@ -7,18 +7,15 @@ import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
 import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
-import { useTheme } from '@mui/material';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { isNotEmpty, UniqValueInArray } from '../../../util/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
-  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
   const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
@@ -110,9 +107,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           />
                         </div>
                       </div>
-                      <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                        Default
-                      </span>
+                      <span className="theme-caption">Default</span>
                     </div>
                     {value.shiny && (
                       <div className="model text-center">
@@ -133,9 +128,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                             />
                           </div>
                         </div>
-                        <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                          Shiny
-                        </span>
+                        <span className="theme-caption">Shiny</span>
                       </div>
                     )}
                   </div>

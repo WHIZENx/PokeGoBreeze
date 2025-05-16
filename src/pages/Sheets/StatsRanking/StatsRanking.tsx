@@ -11,6 +11,7 @@ import {
   getPokemonType,
   isSpecialFormType,
   getKeyWithData,
+  getCustomThemeDataTable,
 } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
@@ -633,7 +634,7 @@ const StatsRanking = () => {
           }
         }}
         conditionalRowStyles={conditionalRowStyles}
-        customStyles={customStyles}
+        customStyles={{ ...customStyles, ...getCustomThemeDataTable() }}
         paginationDefaultPage={page}
         paginationPerPage={defaultPerPages}
         paginationRowsPerPageOptions={Array.from(

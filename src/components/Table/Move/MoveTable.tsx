@@ -8,7 +8,6 @@ import { Tab, Tabs } from 'react-bootstrap';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { useTheme } from '@mui/material';
 import { StoreState } from '../../../store/models/state.model';
 import { Combat, ICombat } from '../../../core/models/combat.model';
 import {
@@ -17,7 +16,6 @@ import {
   PokemonQueryRankMove,
 } from '../../../util/models/pokemon-top-move.model';
 import { ITableMoveComponent } from '../../models/component.model';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import {
   combineClasses,
   DynamicObj,
@@ -81,7 +79,6 @@ class TableSort implements ITableSort {
 }
 
 const TableMove = (props: ITableMoveComponent) => {
-  const theme = useTheme<ThemeModify>();
   const data = useSelector((state: StoreState) => state.store.data);
   const [move, setMove] = useState<IPokemonQueryRankMove>(new PokemonQueryRankMove());
   const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
@@ -248,7 +245,7 @@ const TableMove = (props: ITableMoveComponent) => {
     );
     return (
       <tr>
-        <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
+        <td className="text-origin theme-table-primary">
           <LinkToTop to={`../move/${value.fMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <IconType width={20} height={20} alt="type-logo" type={value.fMove.type} />
@@ -268,7 +265,7 @@ const TableMove = (props: ITableMoveComponent) => {
             </span>
           </LinkToTop>
         </td>
-        <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
+        <td className="text-origin theme-table-primary">
           <LinkToTop to={`../move/${value.cMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
               <IconType width={20} height={20} alt="type-logo" type={value.cMove.type} />
@@ -288,9 +285,7 @@ const TableMove = (props: ITableMoveComponent) => {
             </span>
           </LinkToTop>
         </td>
-        <td className="text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
-          {ratio}
-        </td>
+        <td className="text-center theme-table-primary">{ratio}</td>
       </tr>
     );
   };
@@ -299,7 +294,7 @@ const TableMove = (props: ITableMoveComponent) => {
     <Fragment>
       {data.map((value, index) => (
         <tr key={index}>
-          <td className="text-origin" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
+          <td className="text-origin theme-table-primary">
             <LinkToTop to={`../move/${value.id}`} className="d-block">
               <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
                 <IconType width={20} height={20} alt="type-logo" type={value.type} />

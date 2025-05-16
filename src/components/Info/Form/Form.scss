@@ -30,24 +30,17 @@
   height: 142px;
   margin: 2px 0;
   border: 1px solid gray;
-  background-color: #e1e1e1;
   color: black;
-}
-
-.form-selected {
-  background-color: #969696 !important;
 }
 
 .btn-form:focus {
   border: 1px solid black;
-  background-color: gray;
   outline: none;
   box-shadow: 0 0 0 3px #64646466 !important;
 }
 
 .btn-form:hover:not(.form-selected) {
   border: 1px solid black !important;
-  background-color: #c8c8c8 !important;
   color: black;
 }
 

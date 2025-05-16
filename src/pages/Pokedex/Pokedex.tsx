@@ -20,13 +20,11 @@ import {
   Select,
   SelectChangeEvent,
   Switch,
-  useTheme,
 } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { PokemonClass, PokemonType, TypeTheme } from '../../enums/type.enum';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
+import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
@@ -94,7 +92,6 @@ class BtnSelect implements IBtnSelect {
 
 const Pokedex = () => {
   useChangeTitle('Pokédex');
-  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
 
@@ -289,7 +286,7 @@ const Pokedex = () => {
           <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
         </div>
       )}
-      <div className="head-filter border-types text-center w-100">
+      <div className="border-types text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
         <div className="row w-100" style={{ margin: 0 }}>
           {types.map((item, index) => (
@@ -298,10 +295,8 @@ const Pokedex = () => {
                 value={item}
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
-                  `btn-select-type w-100 border-types btn-${theme.palette.mode}`,
-                  isIncludeList(selectTypes, item)
-                    ? `select-type${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
-                    : ''
+                  `btn-select-type w-100 border-types`,
+                  isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
                 style={{ padding: 10, transition: TRANSITION_TIME }}
               >
@@ -310,27 +305,16 @@ const Pokedex = () => {
             </div>
           ))}
         </div>
-        <div className="w-100" style={{ color: theme.palette.text.primary }}>
+        <div className="w-100">
           <div className="border-input">
             <div className="head-types">Options</div>
             <div className="row" style={{ margin: 0 }}>
               <div className="col-xl-4" style={{ padding: 0 }}>
                 <div className="d-flex">
-                  <span
-                    className={combineClasses(
-                      'input-group-text',
-                      theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : ''
-                    )}
-                  >
-                    Search name or ID
-                  </span>
+                  <span className="input-group-text">Search name or ID</span>
                   <input
                     type="text"
-                    style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
-                    className={combineClasses(
-                      'form-control',
-                      `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
-                    )}
+                    className="form-control theme-text-primary theme-bg-default"
                     placeholder="Enter Name or ID"
                     defaultValue={searchTerm}
                     onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
@@ -446,14 +430,7 @@ const Pokedex = () => {
                   </FormControl>
                 </div>
                 <div className="input-group border-input">
-                  <span
-                    className={combineClasses(
-                      'input-group-text',
-                      theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : ''
-                    )}
-                  >
-                    Filter only by
-                  </span>
+                  <span className="input-group-text">Filter only by</span>
                   <FormControlLabel
                     control={
                       <Checkbox

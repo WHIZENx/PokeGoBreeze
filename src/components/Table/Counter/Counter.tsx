@@ -1,10 +1,11 @@
-import { Checkbox, FormControlLabel, Switch, useTheme } from '@mui/material';
+import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
 import {
   checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
+  getCustomThemeDataTable,
   getKeyWithData,
   getValidPokemonImgPath,
   splitAndCapitalize,
@@ -20,8 +21,7 @@ import { OptionsSheetState, StoreState } from '../../../store/models/state.model
 import DataTable, { TableStyles } from 'react-data-table-component';
 import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { ColumnType, MoveType, PokemonType, TypeTheme, VariantType } from '../../../enums/type.enum';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { ColumnType, MoveType, PokemonType, VariantType } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -114,7 +114,6 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 
 const Counter = (props: ICounterComponent) => {
   const dispatch = useDispatch();
-  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
@@ -137,12 +136,7 @@ const Counter = (props: ICounterComponent) => {
         return (
           <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForm, row.pokemonType)}`}>
             <div className="d-flex justify-content-center">
-              <div
-                className={combineClasses(
-                  theme.palette.mode === TypeTheme.Light ? 'filter-shadow-hover' : 'filter-light-shadow-hover',
-                  'position-relative group-pokemon-sprite'
-                )}
-              >
+              <div className="filter-shadow-hover position-relative group-pokemon-sprite">
                 <PokemonIconType pokemonType={row.pokemonType} size={30}>
                   <img
                     className="pokemon-sprite-counter"
@@ -156,7 +150,7 @@ const Counter = (props: ICounterComponent) => {
                 </PokemonIconType>
               </div>
             </div>
-            <span className="caption text-overflow" style={{ color: theme.palette.text.primary }}>
+            <span className="caption text-overflow theme-text-primary">
               #{row.pokemonId} {splitAndCapitalize(row.pokemonName, '-', ' ')}
             </span>
           </LinkToTop>
@@ -231,12 +225,9 @@ const Counter = (props: ICounterComponent) => {
 
   const CounterLoader = () => (
     <div className="w-100 counter-none" style={{ verticalAlign: 'top' }}>
-      <div className="text-origin text-center" style={{ backgroundColor: theme.palette.background.tablePrimary }}>
+      <div className="text-origin text-center theme-table-primary">
         <div className="ph-item">
-          <div
-            className="ph-col-12"
-            style={{ padding: 10, margin: 0, gap: 10, backgroundColor: theme.palette.background.tablePrimary }}
-          >
+          <div className="ph-col-12 theme-table-primary" style={{ padding: 10, margin: 0, gap: 10 }}>
             {[...Array(5).keys()].map((_, index) => (
               <div key={index} className="ph-row d-flex" style={{ gap: '5%' }}>
                 <div className="ph-picture" style={{ width: '25%', height: 100 }} />
@@ -405,7 +396,7 @@ const Counter = (props: ICounterComponent) => {
         defaultSortFieldId={ColumnType.Percent}
         defaultSortAsc={false}
         pagination={true}
-        customStyles={customStyles}
+        customStyles={{ ...customStyles, ...getCustomThemeDataTable() }}
         fixedHeader={true}
         paginationComponentOptions={{
           noRowsPerPage: true,

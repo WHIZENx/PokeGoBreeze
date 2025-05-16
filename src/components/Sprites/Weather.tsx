@@ -1,23 +1,17 @@
-import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
 import { splitAndCapitalize } from '../../util/utils';
 import { IWeatherComponent } from '../models/component.model';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { isNotEmpty } from '../../util/extension';
 
 const Weather = (props: IWeatherComponent) => {
-  const theme = useTheme<ThemeModify>();
-
   return (
     <Fragment>
       {!isNotEmpty(props.arr) ? (
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
           <div className="text-center" key={0}>
             <img height={50} alt="img-pokemon" src={APIService.getPokeSprite()} />
-            <span className="caption" style={{ color: theme.palette.text.primary }}>
-              None
-            </span>
+            <span className="theme-caption theme-text-primary">None</span>
           </div>
         </div>
       ) : (
@@ -28,9 +22,7 @@ const Weather = (props: IWeatherComponent) => {
               <div className="text-center d-flex" key={index}>
                 <div>
                   <img height={50} alt="img-pokemon" src={APIService.getWeatherSprite(value)} />
-                  <span className="caption" style={{ color: theme.palette.text.primary }}>
-                    {splitAndCapitalize(value, '_', ' ')}
-                  </span>
+                  <span className="theme-caption theme-text-primary">{splitAndCapitalize(value, '_', ' ')}</span>
                 </div>
               </div>
             ))}

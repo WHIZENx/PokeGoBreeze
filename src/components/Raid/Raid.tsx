@@ -10,16 +10,13 @@ import DEF_LOGO from '../../assets/defense.png';
 import STA_LOGO from '../../assets/stamina.png';
 
 import { useSelector } from 'react-redux';
-import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
 import { getKeyWithData } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { toNumber } from '../../util/extension';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 
 const Raid = (props: IRaidComponent) => {
-  const theme = useTheme<ThemeModify>();
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const [tier, setTier] = useState(1);
   const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
@@ -178,7 +175,7 @@ const Raid = (props: IRaidComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
-                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                <td className="text-center theme-text-primary">
                   {reload(<>{props.currForm ? calculateRaidStat(props.statATK, tier) : ''}</>)}
                 </td>
               </tr>
@@ -187,7 +184,7 @@ const Raid = (props: IRaidComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
-                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                <td className="text-center theme-text-primary">
                   {reload(<>{props.currForm ? calculateRaidStat(props.statDEF, tier) : ''}</>)}
                 </td>
               </tr>
@@ -196,7 +193,7 @@ const Raid = (props: IRaidComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={STA_LOGO} />
                   STA
                 </td>
-                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                <td className="text-center theme-text-primary">
                   {reload(<>{props.currForm ? Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm) : ''}</>)}
                 </td>
               </tr>

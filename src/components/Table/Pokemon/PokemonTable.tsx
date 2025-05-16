@@ -57,7 +57,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                   <b>Unknown</b>
                 ) : (
                   <>
-                    <b>{genRoman(props.gen)}</b> <span className="text-gen">{`Gen ${toNumber(props.gen)}`}</span>
+                    <b>{genRoman(props.gen)}</b> <span className="text-gen">{`(Gen ${toNumber(props.gen)})`}</span>
                   </>
                 )}
               </h5>,

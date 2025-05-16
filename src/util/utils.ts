@@ -48,7 +48,6 @@ import {
 } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
-import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
 import {
   DynamicObj,
@@ -575,35 +574,63 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   return new PokemonModel(result.num, result.name);
 };
 
-export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => ({
+export const getCustomThemeDataTable = (): TableStyles => ({
   rows: {
     style: {
-      color: theme.palette.text.primary,
-      backgroundColor: theme.palette.background.tablePrimary,
+      color: 'var(--text-primary)',
+      backgroundColor: 'var(--background-table-primary)',
       '&:not(:last-of-type)': {
-        borderBottomColor: theme.palette.background.tableDivided,
+        borderBottomColor: 'var(--background-table-divided)',
       },
     },
     stripedStyle: {
-      color: theme.palette.text.primary,
-      backgroundColor: theme.palette.background.tableStrip,
+      color: 'var(--text-primary)',
+      backgroundColor: 'var(--background-table-strip)',
     },
     highlightOnHoverStyle: {
-      color: theme.palette.text.primary,
-      backgroundColor: theme.palette.background.tableHover,
-      borderBottomColor: theme.palette.background.tableDivided,
-      outlineColor: theme.palette.background.tablePrimary,
+      color: 'var(--text-primary)',
+      backgroundColor: 'var(--background-table-hover)',
+      borderBottomColor: 'var(--background-table-divided)',
+      outlineColor: 'var(--background-table-primary)',
     },
   },
   headCells: {
     style: {
-      backgroundColor: theme.palette.background.tablePrimary,
-      color: theme.palette.text.primary,
+      backgroundColor: 'var(--background-table-primary)',
+      color: 'var(--text-primary)',
     },
   },
   cells: {
     style: {
-      color: theme.palette.text.primary,
+      backgroundColor: 'inherit',
+      color: 'var(--text-primary)',
+    },
+  },
+  pagination: {
+    style: {
+      color: 'var(--text-primary)',
+      backgroundColor: 'var(--background-table-primary)',
+      borderTopColor: 'var(--background-table-divided)',
+    },
+    pageButtonsStyle: {
+      color: 'var(--text-primary)',
+      fill: 'var(--text-primary)',
+      '&:disabled': {
+        color: 'var(--text-disabled)',
+        fill: 'var(--text-disabled)',
+      },
+      '&:hover:not(:disabled)': {
+        backgroundColor: 'var(--background-table-hover)',
+      },
+      '&:focus': {
+        outline: '1px solid var(--primary-main)',
+      },
+    },
+  },
+  noData: {
+    style: {
+      color: 'var(--text-primary)',
+      backgroundColor: 'var(--background-table-primary)',
     },
   },
 });
