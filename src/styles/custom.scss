@@ -46,6 +46,10 @@
   background: var(--loading-spinner) !important;
 }
 
+.theme-spinner-bg {
+  background: var(--loading-spinner-bg) !important;
+}
+
 // Override some of the existing styles to use theme variables
 .caption {
   color: var(--text-caption);
