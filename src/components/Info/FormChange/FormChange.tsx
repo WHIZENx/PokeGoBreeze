@@ -141,10 +141,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           end: (
                             <div className="position-absolute" style={{ left: '-5rem' }}>
                               {value.candyCost && (
-                                <span
-                                  className="d-flex align-items-center caption"
-                                  style={{ width: 'max-content' }}
-                                >
+                                <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
                                   <Candy
                                     id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id}
                                   />

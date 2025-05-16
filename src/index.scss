@@ -1,6 +1,5 @@
 @use "./styles/theme.scss";
 @use "./styles/custom.scss";
-
 @use "../node_modules/bootstrap/dist/css/bootstrap.min.css" as *;
 @use "../node_modules/placeholder-loading/src/scss/variables.scss" as * with (
   $ph-bg: var(--loading-placeholder-bg),

@@ -574,66 +574,102 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   return new PokemonModel(result.num, result.name);
 };
 
-export const getCustomThemeDataTable = (): TableStyles => ({
-  rows: {
-    style: {
-      color: 'var(--text-primary)',
-      backgroundColor: 'var(--background-table-primary)',
-      '&:not(:last-of-type)': {
-        borderBottomColor: 'var(--background-table-divided)',
+const mergeTableStyles = (custom: Partial<TableStyles>, defaults: TableStyles): TableStyles => {
+  if (!custom) {
+    return { ...defaults };
+  }
+
+  const result = JSON.parse(JSON.stringify(defaults)) as TableStyles;
+
+  for (const key in custom) {
+    const customKey = key as keyof TableStyles;
+    const customValue = custom[customKey];
+
+    if (isNullOrUndefined(customValue)) {
+      continue;
+    }
+
+    if (
+      customValue &&
+      result[customKey] &&
+      typeof customValue === 'object' &&
+      typeof result[customKey] === 'object' &&
+      !Array.isArray(customValue) &&
+      !Array.isArray(result[customKey])
+    ) {
+      const merged = Object.assign({}, result[customKey], customValue);
+      result[customKey] = merged as any;
+    } else {
+      result[customKey] = customValue as any;
+    }
+  }
+
+  return result;
+};
+
+export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
+  const defaultData: TableStyles = {
+    rows: {
+      style: {
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--background-table-primary)',
+        '&:not(:last-of-type)': {
+          borderBottomColor: 'var(--background-table-divided)',
+        },
       },
-    },
-    stripedStyle: {
-      color: 'var(--text-primary)',
-      backgroundColor: 'var(--background-table-strip)',
-    },
-    highlightOnHoverStyle: {
-      color: 'var(--text-primary)',
-      backgroundColor: 'var(--background-table-hover)',
-      borderBottomColor: 'var(--background-table-divided)',
-      outlineColor: 'var(--background-table-primary)',
-    },
-  },
-  headCells: {
-    style: {
-      backgroundColor: 'var(--background-table-primary)',
-      color: 'var(--text-primary)',
-    },
-  },
-  cells: {
-    style: {
-      backgroundColor: 'inherit',
-      color: 'var(--text-primary)',
-    },
-  },
-  pagination: {
-    style: {
-      color: 'var(--text-primary)',
-      backgroundColor: 'var(--background-table-primary)',
-      borderTopColor: 'var(--background-table-divided)',
-    },
-    pageButtonsStyle: {
-      color: 'var(--text-primary)',
-      fill: 'var(--text-primary)',
-      '&:disabled': {
-        color: 'var(--text-disabled)',
-        fill: 'var(--text-disabled)',
+      stripedStyle: {
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--background-table-strip)',
       },
-      '&:hover:not(:disabled)': {
+      highlightOnHoverStyle: {
+        color: 'var(--text-primary)',
         backgroundColor: 'var(--background-table-hover)',
-      },
-      '&:focus': {
-        outline: '1px solid var(--primary-main)',
+        borderBottomColor: 'var(--background-table-divided)',
+        outlineColor: 'var(--background-table-primary)',
       },
     },
-  },
-  noData: {
-    style: {
-      color: 'var(--text-primary)',
-      backgroundColor: 'var(--background-table-primary)',
+    headCells: {
+      style: {
+        backgroundColor: 'var(--background-table-primary)',
+        color: 'var(--text-primary)',
+      },
     },
-  },
-});
+    cells: {
+      style: {
+        backgroundColor: 'inherit',
+        color: 'var(--text-primary)',
+      },
+    },
+    pagination: {
+      style: {
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--background-table-primary)',
+        borderTopColor: 'var(--background-table-divided)',
+      },
+      pageButtonsStyle: {
+        color: 'var(--text-primary)',
+        fill: 'var(--text-primary)',
+        '&:disabled': {
+          color: 'var(--text-disabled)',
+          fill: 'var(--text-disabled)',
+        },
+        '&:hover:not(:disabled)': {
+          backgroundColor: 'var(--background-table-hover)',
+        },
+        '&:focus': {
+          outline: '1px solid var(--primary-main)',
+        },
+      },
+    },
+    noData: {
+      style: {
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--background-table-primary)',
+      },
+    },
+  };
+  return customStyles ? mergeTableStyles(customStyles, defaultData) : defaultData;
+};
 
 export const getDataWithKey = <T>(
   data: object,

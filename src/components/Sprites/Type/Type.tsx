@@ -51,10 +51,7 @@ const TypeInfo = (props: ITypeComponent) => {
                           type={value}
                         />
                         <span
-                          className={combineClasses(
-                            'caption',
-                            props.isShowShadow ? `text-white text-shadow` : ''
-                          )}
+                          className={combineClasses('caption', props.isShowShadow ? `text-white text-shadow` : '')}
                           style={{ color: `${props.color} !important` }}
                         >
                           {capitalize(value)}

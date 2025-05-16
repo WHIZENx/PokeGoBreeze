@@ -396,7 +396,7 @@ const Counter = (props: ICounterComponent) => {
         defaultSortFieldId={ColumnType.Percent}
         defaultSortAsc={false}
         pagination={true}
-        customStyles={{ ...customStyles, ...getCustomThemeDataTable() }}
+        customStyles={getCustomThemeDataTable(customStyles)}
         fixedHeader={true}
         paginationComponentOptions={{
           noRowsPerPage: true,
