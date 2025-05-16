@@ -136,11 +136,7 @@ const Defender = (prop: ITypeEffComponent) => {
                 <div className="result-type">
                   <ul>
                     {types.map((value, index) => (
-                      <li
-                        className="container card-pokemon theme-bg-default"
-                        key={index}
-                        onMouseDown={() => changeTypeSec(value)}
-                      >
+                      <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
                         <CardType value={capitalize(value)} />
                       </li>
                     ))}

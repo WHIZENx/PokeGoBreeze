@@ -61,11 +61,7 @@ const Attacker = (prop: ITypeEffComponent) => {
             <div className="result-type">
               <ul>
                 {types.map((value, index) => (
-                  <li
-                    className="container card-pokemon theme-bg-default"
-                    key={index}
-                    onMouseDown={() => changeType(value)}
-                  >
+                  <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                     <CardType value={capitalize(value)} />
                   </li>
                 ))}
