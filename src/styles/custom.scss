@@ -1,5 +1,3 @@
-@use "./theme.scss";
-
 // Dynamic theme classes
 .theme-card {
   background-color: var(--background-paper);
@@ -174,10 +172,6 @@
     color: var(--custom-table-background-sub-head-text) !important;
     border: 1px solid var(--custom-table-background-sub-head-border);
   }
-}
-
-.scroll-form {
-  background-color: var(--background-default) !important;
 }
 
 .btn-form {

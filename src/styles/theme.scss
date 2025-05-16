@@ -53,6 +53,10 @@
   --shadow-custom: #00000000;
   --shadow-hover: white;
 
+  // Placeholder
+  --loading-placeholder: #e2eaf1;
+  --loading-placeholder-bg: 255, 255, 255;
+
   // Custom text
   --custom-text: black;
   --custom-caption: grey;
@@ -117,6 +121,10 @@
   --shadow-default: white;
   --shadow-custom: white;
   --shadow-hover: #000000cc;
+
+  // Placeholder
+  --loading-placeholder: #2a3038;
+  --loading-placeholder-bg: 0, 0, 0;
 
   // Custom text
   --custom-text: white;

@@ -1,11 +1,14 @@
+@use "./styles/theme.scss";
+@use "./styles/custom.scss";
+
 @use "../node_modules/bootstrap/dist/css/bootstrap.min.css" as *;
 @use "../node_modules/placeholder-loading/src/scss/variables.scss" as * with (
-  $ph-color: #e2eaf1,
+  $ph-bg: var(--loading-placeholder-bg),
+  $ph-color: var(--loading-placeholder),
   $ph-border: none,
   $ph-border-radius: 0
 );
 @use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
-@use "./styles/custom.scss";
 @use "./styles/constant.scss";
 
 html {
