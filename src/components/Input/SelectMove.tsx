@@ -91,7 +91,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
     >
       {props.pokemon && !isNotEmpty(resultMove) && (
         <div style={{ overflowX: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-          <span style={{ paddingLeft: 10, paddingRight: 10, color: 'gray' }}>Moves unavailable</span>
+          <span style={{ paddingLeft: 10, paddingRight: 10 }}>Moves unavailable</span>
         </div>
       )}
       {isNotEmpty(resultMove) && (

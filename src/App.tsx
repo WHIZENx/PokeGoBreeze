@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { loadTimestamp } from './store/effects/store.effects';
@@ -39,7 +39,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 import { loadTheme } from './store/effects/theme.effects';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './util/models/overrides/themes.model';
 import { LOAD_DATA_DELAY, TRANSITION_TIME } from './util/constants';
@@ -61,6 +61,9 @@ function App() {
   const data = useSelector((state: StoreState) => state.store.data);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const router = useSelector((state: RouterState) => state.router);
+
+  const theme = useTheme();
+  const colorMode = useContext(ColorModeContext);
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
@@ -143,7 +146,7 @@ function App() {
 
   return (
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
-      <NavbarComponent />
+      <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
       <Routes>
         <Route path="/" element={<Pokedex />} />
         <Route path="/news" element={<News />} />
@@ -193,7 +196,12 @@ export default function Main() {
     []
   );
 
-  const theme = useMemo(() => createTheme(getDesignThemes(mode)), [mode]);
+  const theme = useMemo(() => {
+    const newTheme = createTheme(getDesignThemes(mode));
+    document.documentElement.setAttribute('data-theme', newTheme.palette.mode);
+    document.documentElement.setAttribute('data-bs-theme', newTheme.palette.mode);
+    return newTheme;
+  }, [mode]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>

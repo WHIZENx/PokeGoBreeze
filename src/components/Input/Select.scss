@@ -1,10 +1,8 @@
 .card-select-disabled {
-  background-color: #e9ecef;
   cursor: default !important;
 }
 
 .card-select-enabled {
-  background-color: white;
   cursor: pointer !important;
 }
 
@@ -56,45 +54,33 @@
 
 .card-move {
   width: 100%;
-  border-top: 1px solid #dddddd;
   padding: 5px;
   cursor: pointer;
-}
-
-.card-pokemon-select:hover,
-.card-move:hover {
-  background-color: lightgray;
 }
 
 .result-pokemon {
   text-align: start !important;
   position: absolute;
   z-index: 2;
-  box-shadow: 0 4px 8px 0 #00000033;
   width: max-content;
   overflow-y: auto;
-  background-color: white;
 }
 
 .result-move-select {
   text-align: start !important;
   position: absolute;
   z-index: 2;
-  box-shadow: 0 4px 8px 0 #00000033;
   width: auto; /* 275px; */
   max-height: 180px;
   overflow-y: auto;
-  background-color: white;
 }
 
 .result-move-select-default {
   position: absolute;
   z-index: 2;
-  box-shadow: 0 4px 8px 0 #00000033;
   width: 298px;
   max-height: 300px;
   overflow-y: auto;
-  background-color: white;
 }
 
 .select-down {
@@ -104,7 +90,6 @@
   height: calc(100% - 2px);
   margin-top: 1px;
   padding-right: 10px;
-  background-color: white;
 }
 
 .input-move.form-control:focus {

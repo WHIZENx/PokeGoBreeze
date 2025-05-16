@@ -145,9 +145,7 @@ const Find = (props: IFindComponent) => {
       <div className="btn-group-search">
         <input
           type="text"
-          className="form-control"
-          aria-label="search"
-          aria-describedby="input-search"
+          className="form-control input-search"
           placeholder="Enter Name or ID"
           defaultValue={searchTerm}
           onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
@@ -231,8 +229,8 @@ const Find = (props: IFindComponent) => {
       ) : (
         <div className="ph-item d-flex justify-content-center w-100">
           <div
-            className="ph-picture d-flex align-item-center justify-content-center position-relative w-50"
-            style={{ height: 600, backgroundColor: '#f8f8f8' }}
+            className="ph-picture d-flex align-item-center justify-content-center position-relative w-50 theme-spinner-bg"
+            style={{ height: 600 }}
           >
             <LoadGroup isShow={true} isVertical={true} isHideAttr={true} size={40} />
           </div>

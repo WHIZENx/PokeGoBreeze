@@ -10,6 +10,7 @@ import {
   generateParamForm,
   getKeysObj,
   getAllMoves,
+  getCustomThemeDataTable,
 } from '../../../util/utils';
 import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import {
@@ -338,7 +339,7 @@ const DpsTdo = () => {
   const [options, setOptions] = useState(new OptionOtherDPS());
   const { weatherBoosts, isTrainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
 
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [isShowSpinner, setIsShowSpinner] = useState(false);
   const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionStore?.dpsSheet?.selectTypes));
 
   const addCPokeData = (
@@ -474,7 +475,7 @@ const DpsTdo = () => {
     data.pokemons.forEach((pokemon) => {
       addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
-    setShowSpinner(false);
+    setIsShowSpinner(false);
     return dataList;
   };
 
@@ -568,7 +569,7 @@ const DpsTdo = () => {
     if (isNotEmpty(result) && enableBest) {
       result = filterBestOptions(result, bestOf);
     }
-    setShowSpinner(false);
+    setIsShowSpinner(false);
     return result;
   };
 
@@ -580,7 +581,7 @@ const DpsTdo = () => {
 
   useEffect(() => {
     if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
-      setShowSpinner(true);
+      setIsShowSpinner(true);
       const debounced = debounce(() => {
         setDpsTable(calculateDPSTable());
       }, 300);
@@ -602,7 +603,7 @@ const DpsTdo = () => {
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
-      setShowSpinner(true);
+      setIsShowSpinner(true);
       const debounced = debounce(() => {
         setDataFilter(searchFilter());
       }, 500);
@@ -615,7 +616,7 @@ const DpsTdo = () => {
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
-      setShowSpinner(true);
+      setIsShowSpinner(true);
       const debounced = debounce(() => {
         setDataFilter(searchFilter());
       }, 100);
@@ -687,7 +688,7 @@ const DpsTdo = () => {
 
   const onCalculateTable = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setShowSpinner(true);
+    setIsShowSpinner(true);
     setTimeout(() => {
       setDpsTable(calculateDPSTable());
     }, 300);
@@ -697,10 +698,10 @@ const DpsTdo = () => {
     <div className="position-relative">
       {!isNotEmpty(dpsTable) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
-          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#ffffff60' }} />
+          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner" style={{ padding: 0, margin: 0 }} />
         </div>
       )}
-      <div className="head-filter text-center w-100">
+      <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100" style={{ margin: 0 }}>
           {types.map((item, index) => (
@@ -1016,7 +1017,7 @@ const DpsTdo = () => {
                       setCurrentPokemon={setDataTargetPokemon}
                       setFMovePokemon={setFMoveTargetPokemon}
                       setCMovePokemon={setCMoveTargetPokemon}
-                      isDisable={showSpinner}
+                      isDisable={isShowSpinner}
                     />
                   </div>
                 </Box>
@@ -1035,7 +1036,7 @@ const DpsTdo = () => {
                       move={fMoveTargetPokemon}
                       setMovePokemon={setFMoveTargetPokemon}
                       moveType={TypeMove.Fast}
-                      isDisable={showSpinner}
+                      isDisable={isShowSpinner}
                     />
                   </div>
                 </Box>
@@ -1054,7 +1055,7 @@ const DpsTdo = () => {
                       move={cMoveTargetPokemon}
                       setMovePokemon={setCMoveTargetPokemon}
                       moveType={TypeMove.Charge}
-                      isDisable={showSpinner}
+                      isDisable={isShowSpinner}
                     />
                   </div>
                 </Box>
@@ -1299,7 +1300,7 @@ const DpsTdo = () => {
         </div>
       </div>
       <div className="position-relative">
-        <Loading isShow={showSpinner} bgColor={'white'} />
+        <Loading isShow={isShowSpinner} />
         <DataTable
           columns={convertColumnDataType(columns)}
           data={dataFilter}
@@ -1311,6 +1312,7 @@ const DpsTdo = () => {
           striped={true}
           paginationDefaultPage={defaultPage}
           paginationPerPage={defaultRowPerPage}
+          customStyles={getCustomThemeDataTable()}
           onChangePage={(page) => {
             setDefaultPage(page);
           }}

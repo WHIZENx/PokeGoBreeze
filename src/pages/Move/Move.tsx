@@ -8,6 +8,7 @@ import {
   checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
+  getCustomThemeDataTable,
   getItemSpritePath,
   getKeyWithData,
   splitAndCapitalize,
@@ -758,6 +759,7 @@ const Move = (props: IMovePage) => {
                     fixedHeader={true}
                     fixedHeaderScrollHeight="35vh"
                     progressPending={!progress}
+                    customStyles={getCustomThemeDataTable()}
                     progressComponent={
                       <div style={{ margin: 10 }}>
                         <CircularProgress />

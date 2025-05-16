@@ -4,12 +4,11 @@ import { capitalize, getCustomThemeDataTable, getKeyWithData, splitAndCapitalize
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
-import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -114,7 +113,6 @@ class Filter implements IFilter {
 
 const Search = () => {
   useChangeTitle('Moves - Search');
-  const theme = useTheme<ThemeModify>();
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const types = useSelector((state: StoreState) => state.store.data.typeEff);
 
@@ -221,7 +219,7 @@ const Search = () => {
                     defaultSortFieldId={ColumnSearchMoveType.Name}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="70vh"
-                    customStyles={getCustomThemeDataTable(theme)}
+                    customStyles={getCustomThemeDataTable()}
                     progressPending={!fMoveIsLoad}
                     progressComponent={
                       <div style={{ margin: 10 }}>
@@ -285,7 +283,7 @@ const Search = () => {
                     defaultSortFieldId={ColumnSearchMoveType.Name}
                     fixedHeader={true}
                     fixedHeaderScrollHeight="70vh"
-                    customStyles={getCustomThemeDataTable(theme)}
+                    customStyles={getCustomThemeDataTable()}
                     progressPending={!cMoveIsLoad}
                     progressComponent={
                       <div style={{ margin: 10 }}>

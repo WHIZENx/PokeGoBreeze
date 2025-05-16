@@ -1,14 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { useTheme } from '@mui/material';
 import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber, UniqValueInArray } from '../../../util/extension';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { IncludeMode } from '../../../util/enums/string.enum';
@@ -16,7 +14,6 @@ import { FORM_NORMAL } from '../../../util/constants';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 
 const FromChange = (props: IFromChangeComponent) => {
-  const theme = useTheme<ThemeModify>();
   const assets = useSelector((state: StoreState) => state.store.data.assets);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
@@ -96,7 +93,7 @@ const FromChange = (props: IFromChangeComponent) => {
                         }}
                       />
                     </div>
-                    <span className="caption" style={{ color: theme.palette.customText.caption }}>
+                    <span className="caption">
                       {splitAndCapitalize(props.pokemonData.fullName?.replaceAll('-', '_'), '_', ' ')}
                     </span>
                   </div>
@@ -128,7 +125,7 @@ const FromChange = (props: IFromChangeComponent) => {
                               }}
                             />
                           </div>
-                          <span className="caption" style={{ color: theme.palette.customText.caption }}>
+                          <span className="caption">
                             {splitAndCapitalize(name.replace(`_${FORM_NORMAL}`, ''), '_', ' ')}
                           </span>
                         </div>
@@ -144,10 +141,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           end: (
                             <div className="position-absolute" style={{ left: '-5rem' }}>
                               {value.candyCost && (
-                                <span
-                                  className="d-flex align-items-center caption"
-                                  style={{ color: theme.palette.customText.caption, width: 'max-content' }}
-                                >
+                                <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
                                   <Candy
                                     id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id}
                                   />
@@ -166,7 +160,6 @@ const FromChange = (props: IFromChangeComponent) => {
                                 <span
                                   className="d-flex align-items-center caption"
                                   style={{
-                                    color: theme.palette.customText.caption,
                                     width: 'max-content',
                                     marginTop: 5,
                                   }}
@@ -183,7 +176,7 @@ const FromChange = (props: IFromChangeComponent) => {
                               )}
                               <span
                                 className="d-flex flex-column caption"
-                                style={{ color: theme.palette.customText.caption, width: 'max-content', marginTop: 5 }}
+                                style={{ width: 'max-content', marginTop: 5 }}
                               >
                                 {value.item && (
                                   <>

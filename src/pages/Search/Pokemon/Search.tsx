@@ -7,14 +7,12 @@ import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../../util/utils';
-import { useTheme } from '@mui/material';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
 import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { PokemonType, TypeTheme } from '../../../enums/type.enum';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
+import { PokemonType } from '../../../enums/type.enum';
 import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
@@ -22,7 +20,6 @@ import { debounce } from 'lodash';
 
 const Search = () => {
   useChangeTitle('Pokémon - Search');
-  const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const pokemonName = useSelector((state: StoreState) => state.store.data.pokemons);
@@ -127,29 +124,18 @@ const Search = () => {
   return (
     <Fragment>
       <div className="container element-top">
-        <h1 id="main" className="text-center" style={{ color: theme.palette.text.primary }}>
+        <h1 id="main" className="text-center">
           Pokémon Info Search
         </h1>
         <div className="input-group mb-12 element-top">
           <div className="input-group-prepend">
-            <span
-              className={combineClasses(
-                'input-group-text',
-                theme.palette.mode === TypeTheme.Dark ? 'input-group-dark' : ''
-              )}
-            >
-              Search
-            </span>
+            <span className="input-group-text">Search</span>
           </div>
           <input
             id="input-search-pokemon"
             type="text"
             autoComplete="false"
-            className={combineClasses(
-              'form-control',
-              `input-search${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
-            )}
-            style={{ backgroundColor: theme.palette.background.input, color: theme.palette.text.primary, zIndex: 1 }}
+            className="form-control input-search"
             placeholder="Enter Name or ID"
             defaultValue={searchTerm}
             onFocus={(e) => {

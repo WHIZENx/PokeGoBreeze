@@ -2,7 +2,7 @@ import { Box, CircularProgress } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 
-import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { getCustomThemeDataTable, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd, sortStatsProd } from '../../../util/calculate';
 
 import Find from '../../../components/Find/Find';
@@ -324,6 +324,7 @@ const StatsTable = () => {
         striped={true}
         highlightOnHover={true}
         progressPending={isLoading}
+        customStyles={getCustomThemeDataTable()}
         progressComponent={
           <div style={{ margin: 10 }}>
             <CircularProgress />

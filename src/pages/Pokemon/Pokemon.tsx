@@ -49,13 +49,11 @@ import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
 import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_STANDARD } from '../../util/constants';
-import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
 import { IPokemonPage } from '../models/page.model';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
 import {
   combineClasses,
   getValueOrDefault,
@@ -89,7 +87,6 @@ class TypeCost implements ITypeCost {
 
 const Pokemon = (props: IPokemonPage) => {
   const dispatch = useDispatch();
-  const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
@@ -548,7 +545,7 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [pokemonData, params.id, props.searchOption?.id]);
 
-  const reload = (element: JSX.Element, color = '#f5f5f5') => {
+  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (progress.isLoadedForms) {
       return element;
     }
@@ -569,8 +566,10 @@ const Pokemon = (props: IPokemonPage) => {
         )}
       </div>
       <div
-        style={{ color: theme.palette.text.primary }}
-        className={combineClasses('element-bottom position-relative poke-container', props.isSearch ? '' : 'container')}
+        className={combineClasses(
+          'element-bottom position-relative poke-container theme-text-primary',
+          props.isSearch ? '' : 'container'
+        )}
       >
         <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
           <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={icon} />

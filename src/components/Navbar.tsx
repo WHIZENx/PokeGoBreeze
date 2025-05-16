@@ -1,23 +1,45 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 import logo from '../assets/pokedex.png';
 import { capitalize, getTime } from '../util/utils';
 
 import './Navbar.scss';
-import { Box, LinearProgress } from '@mui/material';
+import { Box, IconButton, LinearProgress } from '@mui/material';
 import { SpinnerState, TimestampState } from '../store/models/state.model';
 import { getEdgeItem } from '../services/edge.service';
 import { EdgeKey } from '../services/constants/edgeKey';
-import { VariantType } from '../enums/type.enum';
+import { TypeTheme, VariantType } from '../enums/type.enum';
+import { INavbarComponent } from './models/component.model';
+import { useLocalStorage } from 'usehooks-ts';
+import { LocalStorageConfig } from '../store/constants/localStorage';
+import { loadTheme } from '../store/effects/theme.effects';
 
-const NavbarComponent = () => {
+const NavbarComponent = (props: INavbarComponent) => {
+  const dispatch = useDispatch();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [version, setVersion] = useState<string>();
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
+
+  const [isDelay, setIsDelay] = useState(false);
+
+  const onChangeTheme = () => {
+    if (!isDelay) {
+      setIsDelay(true);
+      loadTheme(dispatch, props.mode === TypeTheme.Light ? TypeTheme.Dark : TypeTheme.Light, setStateTheme);
+      setTimeout(() => {
+        setIsDelay(false);
+        props.toggleColorMode();
+      }, 500);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,6 +158,18 @@ const NavbarComponent = () => {
               </span>
             </Navbar.Text>
           )}
+          <IconButton
+            className={`${stateTheme}-mode`}
+            onClick={onChangeTheme}
+            style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
+            color="inherit"
+          >
+            {props.mode === TypeTheme.Light ? (
+              <LightModeIcon fontSize="large" style={{ color: 'white' }} />
+            ) : (
+              <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
+            )}
+          </IconButton>
         </Navbar.Collapse>
       </Navbar>
       {spinner.bar.isShow && (

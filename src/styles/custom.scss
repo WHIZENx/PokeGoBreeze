@@ -1,0 +1,222 @@
+// Dynamic theme classes
+.theme-card {
+  background-color: var(--background-paper);
+  color: var(--text-primary);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.theme-input {
+  background-color: var(--background-input);
+  color: var(--text-primary);
+  border: 1px solid var(--background-table-divided);
+
+  &::placeholder {
+    color: var(--text-secondary);
+  }
+}
+
+.theme-btn {
+  background-color: var(--primary-main);
+  color: var(--primary-contrast-text);
+  border-radius: var(--border-radius);
+
+  &:hover {
+    background-color: var(--primary-dark);
+  }
+}
+
+.theme-text-primary {
+  color: var(--text-primary) !important;
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-bg-default {
+  background-color: var(--background-default);
+}
+
+.theme-table-primary {
+  background-color: var(--background-table-primary);
+}
+
+.theme-spinner {
+  background: var(--loading-spinner) !important;
+}
+
+.theme-spinner-bg {
+  background: var(--loading-spinner-bg) !important;
+}
+
+// Override some of the existing styles to use theme variables
+.caption {
+  color: var(--text-caption);
+}
+
+.highlight-select-pokemon,
+.current-select-pokemon,
+.selected {
+  background-color: var(--custom-selected) !important;
+}
+
+.result,
+.result-pokemon,
+.result-move-select,
+.result-move-select-default {
+  background-color: var(--custom-selected-bg);
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+  color: var(--text-primary);
+}
+
+.result-type ul,
+.result-weather ul,
+.result-move ul {
+  background-color: var(--background-default);
+}
+
+.card-pokemon,
+.card-move,
+.card-pokemon-select {
+  border-top: 1px solid var(--background-table-divided);
+}
+
+.card-pokemon:hover,
+.card-move:hover,
+.card-pokemon-select:hover {
+  background-color: var(--custom-selected-hover) !important;
+}
+
+.moveset-error-msg {
+  background-color: var(--background-paper);
+  color: var(--error-main, #f44336);
+}
+
+// Button styling using CSS variables
+.btn-select-type {
+  background-color: var(--background-btn-type);
+  color: var(--text-primary);
+  border: 1px solid var(--divider);
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  
+  &:hover:not(.select-type) {
+    background-color: var(--background-table-hover);
+  }
+  
+  &.select-type {
+    background-color: var(--background-btn-type-select);
+    border-color: white;
+
+    span {
+      color: white !important;
+    }
+  }
+}
+
+// Border input styling
+.border-input {
+  border: 1px solid var(--divider);
+  background-color: var(--background-paper);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.head-types {
+  background-color: var(--custom-table-background-head);
+  color: white;
+  transition: background-color 0.3s, color 0.3s;
+  padding: 10px;
+  font-weight: bolder;
+}
+
+.pokemon-content {
+  background-color: var(--background-default);
+}
+
+.theme-shadow {
+  text-shadow: 1px 1px var(--shadow-custom);
+}
+
+.filter-shadow-hover:hover {
+  filter: drop-shadow(2px 2px 2px #000000cc);
+}
+
+.prev-next-block {
+  background-color: var(--background-btn-type);
+  color: var(--text-primary) !important;
+
+  a {
+    color: var(--text-primary) !important;
+  }
+}
+
+.table-desc tbody tr td:nth-child(1) {
+  color: var(--text-primary) !important;
+}
+
+.table-desc tbody tr td:nth-child(2) {
+  color: var(--text-primary);
+}
+
+.table-desc tbody tr:nth-child(odd) td {
+  background-color: var(--custom-table-background-odd) !important;
+}
+
+.table-desc tbody tr:nth-child(even) td {
+  background-color: var(--custom-table-background-even) !important;
+}
+
+.text-gen {
+  color: var(--text-caption);
+}
+
+.table-info tbody tr.info-costs td:nth-child(1) {
+  background-color: var(--background-default) !important;
+}
+
+.table-info tbody tr.info-costs td:nth-child(2) {
+  color: var(--text-primary);
+  background-color: var(--custom-table-info-costs-bg) !important;
+}
+
+.table-main, .table-moves {
+  tbody tr td.table-sub-header {
+    background-color: var(--custom-table-background-sub-head) !important;
+    color: var(--custom-table-background-sub-head-text) !important;
+    border: 1px solid var(--custom-table-background-sub-head-border);
+  }
+}
+
+.btn-form {
+  background-color: var(--custom-btn-form) !important;
+  color: var(--text-primary) !important;
+
+  &:hover:not(.form-selected) {
+    background-color: var(--custom-btn-form-hover);
+  }
+
+  &:focus {
+    background-color: var(--custom-btn-form-focus);
+  }
+
+  &.form-selected {
+    background-color: var(--custom-btn-form-selected) !important;
+  }
+}
+
+.card-select-enabled {
+  background-color: var(--background-paper);
+}
+
+.card-select-disabled {
+  background-color: var(--bs-secondary-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+.select-down {
+  background-color: var(--bs-body-bg);
+}
+
+.stats-container {
+  background-color: var(--background-stats-container);
+}

@@ -24,7 +24,7 @@ const Load = styled.div<Element>`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
-  background-color: ${(props) => getValueOrDefault(String, props.bgColor, 'white')};
+  background-color: ${(props) => getValueOrDefault(String, props.bgColor, 'var(--background-default)')};
   padding: 15px;
   border-radius: 5px;
   box-shadow: 0 8px 8px 0 #00000033;
@@ -35,7 +35,7 @@ const LoadGroup = (props: ILoadGroupComponent) => {
   const ref = (
     <>
       <img className="loading" width={props.size ?? 64} height={props.size ?? 64} alt="img-pokemon" src={loadingImg} />
-      <span className="caption text-black" style={{ fontSize: props.fontSize ?? 18 }}>
+      <span className="caption theme-text-primary" style={{ fontSize: props.fontSize ?? 18 }}>
         <b>
           Loading<span id="p1">.</span>
           <span id="p2">.</span>
