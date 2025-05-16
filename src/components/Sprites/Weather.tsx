@@ -11,7 +11,7 @@ const Weather = (props: IWeatherComponent) => {
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
           <div className="text-center" key={0}>
             <img height={50} alt="img-pokemon" src={APIService.getPokeSprite()} />
-            <span className="theme-caption theme-text-primary">None</span>
+            <span className="caption theme-text-primary">None</span>
           </div>
         </div>
       ) : (
@@ -22,7 +22,7 @@ const Weather = (props: IWeatherComponent) => {
               <div className="text-center d-flex" key={index}>
                 <div>
                   <img height={50} alt="img-pokemon" src={APIService.getWeatherSprite(value)} />
-                  <span className="theme-caption theme-text-primary">{splitAndCapitalize(value, '_', ' ')}</span>
+                  <span className="caption theme-text-primary">{splitAndCapitalize(value, '_', ' ')}</span>
                 </div>
               </div>
             ))}

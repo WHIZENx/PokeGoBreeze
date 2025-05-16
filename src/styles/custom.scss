@@ -12,6 +12,7 @@
   background-color: var(--background-input);
   color: var(--text-primary);
   border: 1px solid var(--background-table-divided);
+
   &::placeholder {
     color: var(--text-secondary);
   }
@@ -21,6 +22,7 @@
   background-color: var(--primary-main);
   color: var(--primary-contrast-text);
   border-radius: var(--border-radius);
+
   &:hover {
     background-color: var(--primary-dark);
   }
@@ -32,12 +34,6 @@
 
 .theme-text-secondary {
   color: var(--text-secondary);
-}
-
-.theme-caption {
-  color: var(--text-caption);
-  font-size: 12px;
-  display: block;
 }
 
 .theme-bg-default {
@@ -84,31 +80,6 @@
 .moveset-error-msg {
   background-color: var(--background-paper);
   color: var(--error-main, #f44336);
-}
-
-// Input group styling using CSS variables
-.input-group-text {
-  background-color: var(--background-input);
-  color: var(--text-primary);
-  transition: background-color 0.3s, color 0.3s;
-}
-
-// Form control styling using CSS variables
-.form-control {
-  background-color: var(--background-default) !important;
-  color: var(--text-primary) !important;
-  border-radius: 0;
-  transition: background-color 0.3s, color 0.3s;
-  
-  &::placeholder {
-    color: var(--text-secondary);
-  }
-  
-  &:focus {
-    background-color: var(--background-paper) !important;
-    border-color: var(--primary-main);
-    box-shadow: 0 0 0 0.2rem rgb(var(--primary-main-rgb) 0.25);
-  }
 }
 
 // Button styling using CSS variables

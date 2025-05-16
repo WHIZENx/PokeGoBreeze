@@ -19,7 +19,7 @@ const TypeInfo = (props: ITypeComponent) => {
               alt="img-pokemon"
               src={APIService.getPokeSprite()}
             />
-            <span className="theme-caption theme-text-primary">None</span>
+            <span className="caption theme-text-primary">None</span>
           </div>
         </div>
       ) : (
@@ -52,7 +52,7 @@ const TypeInfo = (props: ITypeComponent) => {
                         />
                         <span
                           className={combineClasses(
-                            'theme-caption',
+                            'caption',
                             props.isShowShadow ? `text-white text-shadow` : ''
                           )}
                           style={{ color: `${props.color} !important` }}

@@ -109,26 +109,17 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           <div>
             <div className="d-flex align-items-center justify-content-center w-100">
               <b>
-                <span
-                  className="theme-caption"
-                  style={{ color: 'var(--bs-danger)' }}
-                >{`ATK ${props.pokemonStat.atk}`}</span>
+                <span className="caption" style={{ color: 'var(--bs-danger)' }}>{`ATK ${props.pokemonStat.atk}`}</span>
               </b>
             </div>
             <div className="d-flex align-items-center justify-content-center w-100">
               <b>
-                <span
-                  className="theme-caption"
-                  style={{ color: 'var(--bs-success)' }}
-                >{`DEF ${props.pokemonStat.def}`}</span>
+                <span className="caption" style={{ color: 'var(--bs-success)' }}>{`DEF ${props.pokemonStat.def}`}</span>
               </b>
             </div>
             <div className="d-flex align-items-center justify-content-center w-100">
               <b>
-                <span
-                  className="theme-caption"
-                  style={{ color: 'var(--bs-info)' }}
-                >{`STA ${props.pokemonStat.sta}`}</span>
+                <span className="caption" style={{ color: 'var(--bs-info)' }}>{`STA ${props.pokemonStat.sta}`}</span>
               </b>
             </div>
           </div>

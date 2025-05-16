@@ -462,7 +462,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {toNumber(data?.evoToId) > 0 &&
                           !data?.itemCost &&
                           (data?.candyCost || data?.purificationEvoCandyCost) && (
-                            <span className="d-flex align-items-center theme-caption" style={{ width: 'max-content' }}>
+                            <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
                               <Candy id={value.id} />
                               <span style={{ marginLeft: 2 }}>{`x${
                                 props.pokemonData?.pokemonType === PokemonType.Purified
@@ -545,7 +545,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             />
                             {data.itemCost && (
                               <span
-                                className="d-flex align-items-center theme-caption"
+                                className="d-flex align-items-center caption"
                                 style={{ width: 'max-content', marginLeft: 2 }}
                               >{`x${data.itemCost}`}</span>
                             )}
@@ -684,7 +684,7 @@ const Evolution = (props: IEvolutionComponent) => {
           </div>
         </span>
         {value.isBaby && <span className="caption text-danger">(Baby)</span>}
-        <p>{isCurrent && <span className="theme-caption">Current</span>}</p>
+        <p>{isCurrent && <span className="caption">Current</span>}</p>
       </Fragment>
     );
   };

@@ -50,7 +50,7 @@ const Gender = (props: IGenderComponent) => {
               }
             />
           </div>
-          <span className="theme-caption">Default</span>
+          <span className="caption">Default</span>
         </div>
         <div className="img-form-gender-group">
           <div className="img-gender-group">
@@ -79,7 +79,7 @@ const Gender = (props: IGenderComponent) => {
               }
             />
           </div>
-          <span className="theme-caption">Shiny</span>
+          <span className="caption">Shiny</span>
         </div>
       </div>
     </div>

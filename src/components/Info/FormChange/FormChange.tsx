@@ -93,7 +93,7 @@ const FromChange = (props: IFromChangeComponent) => {
                         }}
                       />
                     </div>
-                    <span className="theme-caption">
+                    <span className="caption">
                       {splitAndCapitalize(props.pokemonData.fullName?.replaceAll('-', '_'), '_', ' ')}
                     </span>
                   </div>
@@ -125,7 +125,7 @@ const FromChange = (props: IFromChangeComponent) => {
                               }}
                             />
                           </div>
-                          <span className="theme-caption">
+                          <span className="caption">
                             {splitAndCapitalize(name.replace(`_${FORM_NORMAL}`, ''), '_', ' ')}
                           </span>
                         </div>
@@ -142,7 +142,7 @@ const FromChange = (props: IFromChangeComponent) => {
                             <div className="position-absolute" style={{ left: '-5rem' }}>
                               {value.candyCost && (
                                 <span
-                                  className="d-flex align-items-center theme-caption"
+                                  className="d-flex align-items-center caption"
                                   style={{ width: 'max-content' }}
                                 >
                                   <Candy
@@ -161,7 +161,7 @@ const FromChange = (props: IFromChangeComponent) => {
                               )}
                               {value.stardustCost && (
                                 <span
-                                  className="d-flex align-items-center theme-caption"
+                                  className="d-flex align-items-center caption"
                                   style={{
                                     width: 'max-content',
                                     marginTop: 5,
@@ -178,7 +178,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                 </span>
                               )}
                               <span
-                                className="d-flex flex-column theme-caption"
+                                className="d-flex flex-column caption"
                                 style={{ width: 'max-content', marginTop: 5 }}
                               >
                                 {value.item && (

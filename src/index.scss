@@ -6,6 +6,7 @@
 );
 @use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
 @use "./styles/custom.scss";
+@use "./styles/constant.scss";
 
 html {
   height: 100%;
@@ -26,9 +27,4 @@ body {
 #root {
   position: relative;
   height: 100%;
-}
-
-.ph-item {
-  padding: 0;
-  margin: 0;
 }

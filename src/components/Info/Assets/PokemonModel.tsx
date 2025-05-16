@@ -107,7 +107,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           />
                         </div>
                       </div>
-                      <span className="theme-caption">Default</span>
+                      <span className="caption">Default</span>
                     </div>
                     {value.shiny && (
                       <div className="model text-center">
@@ -128,7 +128,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                             />
                           </div>
                         </div>
-                        <span className="theme-caption">Shiny</span>
+                        <span className="caption">Shiny</span>
                       </div>
                     )}
                   </div>
