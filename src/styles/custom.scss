@@ -59,6 +59,14 @@
   border: 2px solid var(--custom-table-background-sub-head-border);
 }
 
+.theme-table-info-bg-border {
+  border: 2px solid var(--custom-table-background-sub-head-border);
+}
+
+.theme-text-shadow {
+  text-shadow: var(--shadow-default-revert) 1px 1px;
+}
+
 // Override some of the existing styles to use theme variables
 .caption {
   color: var(--text-caption);
@@ -173,6 +181,7 @@
   color: var(--text-primary) !important;
 }
 
+.table-raid-cal tbody tr td,
 .table-info tbody tr td:nth-child(2),
 .table-desc tbody tr td:nth-child(2) {
   color: var(--text-primary);
@@ -190,6 +199,7 @@
   color: var(--text-caption);
 }
 
+.table-raid-cal thead tr th:nth-child(1),
 .table-info tbody tr.info-costs td:nth-child(1) {
   background-color: var(--background-default) !important;
 }
@@ -199,6 +209,7 @@
   background-color: var(--custom-table-background-info) !important;
 }
 
+.table-catch-chance thead th,
 .table-info tbody tr.info-costs td:nth-child(2) {
   color: var(--text-primary);
   background-color: var(--custom-table-background-info) !important;
@@ -268,6 +279,13 @@ td,
   border: 1px solid var(--custom-table-background-sub-head-border);
 }
 
+.table-raid-cal tbody tr td:nth-child(1) {
+  background-color: var(--custom-table-background-sub-head) !important;
+  color: var(--text-primary) !important;
+
+}
+
+.table-raid-cal thead tr.table-header th:not(:first-child),
 .group-model .desc,
 .sub-header,
 .table-column-head {
@@ -284,4 +302,22 @@ td,
 
 .img-type-icon {
   filter: drop-shadow(1px 1px 1px var(--shadow-default));
+}
+
+.frame-badge-select,
+.frame-badge:hover,
+.form-header {
+  background-color: var(--custom-according-header);
+}
+
+.accordion-footer {
+  background-color: var(--custom-according-footer);
+}
+
+.card-header {
+  background-color: var(--custom-dropdown-header) !important;
+}
+
+.bg-card-highlight {
+  background-color: var(--custom-dropdown-highlight) !important;
 }

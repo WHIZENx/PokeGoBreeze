@@ -1135,7 +1135,10 @@ const RaidBattle = () => {
 
   const renderMove = (value: Partial<ICombat> | undefined) => (
     <span
-      className={combineClasses(value?.type?.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}
+      className={combineClasses(
+        value?.type?.toLowerCase(),
+        'position-relative type-select-bg d-flex align-items-center filter-shadow'
+      )}
     >
       {value && value.moveType !== MoveType.None && (
         <span className="move-badge">
@@ -1331,7 +1334,7 @@ const RaidBattle = () => {
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
           <div className="element-top position-relative">
-            {(isNotEmpty(resultFMove) || isNotEmpty(resultCMove)) && (
+            {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
               <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>

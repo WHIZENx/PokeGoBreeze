@@ -51,6 +51,7 @@
 
   // Shadow colors
   --shadow-default: black;
+  --shadow-default-revert: white;
   --shadow-custom: #00000000;
   --shadow-hover: white;
 
@@ -84,6 +85,14 @@
   --custom-table-background-sub-head-text: #0571c2;
   --custom-table-background-sub-head-border: #b8d4da;
   --custom-table-background-sub-head-hover: #3386d2;
+
+  // According
+  --custom-according-header: lightgray;
+  --custom-according-footer: #f6f6f6;
+
+  // Dropdown
+  --custom-dropdown-header: #e6e6e6;
+  --custom-dropdown-highlight: lightyellow;
 
   // Custom button
   --custom-btn-form: #e1e1e1;
@@ -132,6 +141,7 @@
 
   // Shadow colors
   --shadow-default: white;
+  --shadow-default-revert: white;
   --shadow-custom: white;
   --shadow-hover: #000000cc;
 
@@ -165,6 +175,14 @@
   --custom-table-background-sub-head-text: #90caf9;
   --custom-table-background-sub-head-border: #b8d4da;
   --custom-table-background-sub-head-hover: #0d5ca0;
+
+  // According
+  --custom-according-header: #3d3d3d;
+  --custom-according-footer: #262626;
+
+  // Dropdown
+  --custom-dropdown-header: #333333;
+  --custom-dropdown-highlight: #4d4d30;
 
   // Custom button
   --custom-btn-form: #3a3a45;

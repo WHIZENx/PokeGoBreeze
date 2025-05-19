@@ -609,6 +609,12 @@ const mergeTableStyles = (custom: Partial<TableStyles>, defaults: TableStyles): 
 
 export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
   const defaultData: TableStyles = {
+    header: {
+      style: {
+        backgroundColor: 'var(--background-default)',
+        color: 'var(--text-primary)',
+      },
+    },
     rows: {
       style: {
         color: 'var(--text-primary)',

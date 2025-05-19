@@ -85,7 +85,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                       e.currentTarget.src = getValueOrDefault(String, value.sprites?.frontDefault);
                     }}
                   />
-                  <div id="id-pokemon" style={{ color: 'black' }}>
+                  <div id="id-pokemon">
                     <b>#{props.id}</b>
                   </div>
                   <div>

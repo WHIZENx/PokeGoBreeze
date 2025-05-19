@@ -476,7 +476,7 @@ const FindBattle = () => {
                   <div className="d-flex align-items-center h-100">
                     <div className="border-best-poke h-100">
                       {renderPokemon(value, 'poke-best-league', 102)}
-                      <span className="caption text-black border-best-poke best-name">
+                      <span className="caption border-best-poke best-name">
                         <b>
                           #{value.id} {splitAndCapitalize(value.name, '_', ' ')}{' '}
                           {splitAndCapitalize(pokemon?.form?.form?.formName, '-', ' ')}
@@ -501,7 +501,7 @@ const FindBattle = () => {
                         <div>
                           <b>{toFloatWithPadding(value.ratio, 2)}</b>
                         </div>
-                        <span className="caption">CP: {value.CP}</span>
+                        <span className="caption caption-constant theme-text-shadow">CP: {value.CP}</span>
                       </div>
                       <span className="caption text-black border-best-poke">
                         <b>#{value.rank}</b>

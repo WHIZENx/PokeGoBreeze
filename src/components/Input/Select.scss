@@ -40,7 +40,6 @@
   transform: translateY(-50%);
   right: 0;
   padding: 0 10px 0 5px;
-  background-color: white;
 }
 
 .remove-pokemon-select {
@@ -99,7 +98,6 @@
 
 .frame-badge {
   border: 1px solid lightgray;
-  background-color: white;
   border-radius: 8px;
   cursor: pointer;
   padding: 10px;
@@ -110,7 +108,6 @@
 .frame-badge-select,
 .frame-badge:hover {
   border: 1px solid gray !important;
-  background-color: lightgray !important;
 }
 
 .position-badge {
