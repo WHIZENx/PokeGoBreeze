@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { getKeysObj, getKeyWithData, getStyleList, splitAndCapitalize } from '../../util/utils';
+import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../util/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../util/compute';
 import { genList, regionList, TRANSITION_TIME, versionList } from '../../util/constants';
@@ -30,8 +30,8 @@ import { IncludeMode } from '../../util/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { ScrollModifyEvent } from '../../util/models/overrides/dom.model';
-import { IStyleData } from '../../util/models/util.model';
 import { debounce } from 'lodash';
+import { IStyleSheetData } from '../models/page.model';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -90,7 +90,7 @@ class BtnSelect implements IBtnSelect {
   }
 }
 
-const Pokedex = () => {
+const Pokedex = (props: IStyleSheetData) => {
   useChangeTitle('Pokédex');
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -104,7 +104,6 @@ const Pokedex = () => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollID = useRef(0);
   const subItem = useRef(100);
-  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   const [filters, setFilters] = useState(
     Filter.setFilterGenAndVersion(
@@ -549,7 +548,7 @@ const Pokedex = () => {
               pokemonStat={row.goStats}
               icon={icon}
               releasedGO={row.releasedGO}
-              styleList={styleSheet.current}
+              styleList={props.styleSheet}
             />
           ))}
         </ul>

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
@@ -9,7 +9,6 @@ import {
   getAllMoves,
   getKeyWithData,
   getMoveType,
-  getStyleList,
   getValidPokemonImgPath,
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
@@ -57,11 +56,11 @@ import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { IStyleData } from '../../../util/models/util.model';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
+import { IStyleSheetData } from '../../models/page.model';
 
-const TeamPVP = () => {
+const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
@@ -79,8 +78,6 @@ const TeamPVP = () => {
 
   const [sortedTeamBy, setSortedTeamBy] = useState(SortType.TeamScore);
   const [sortedTeam, setSortedTeam] = useState(SortDirectionType.DESC);
-
-  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
@@ -406,7 +403,7 @@ const TeamPVP = () => {
                 key={index}
                 style={{
                   columnGap: '1rem',
-                  backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, styleSheet.current),
+                  backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, props.styleSheet),
                 }}
               >
                 <LinkToTop
@@ -609,7 +606,7 @@ const TeamPVP = () => {
                             backgroundImage: computeBgType(
                               value.pokemonData?.types,
                               value.pokemonType,
-                              styleSheet.current
+                              props.styleSheet
                             ),
                           }}
                         >

@@ -11,7 +11,7 @@ import STA_LOGO from '../../assets/stamina.png';
 
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { getKeyWithData } from '../../util/utils';
+import { getKeyWithData, isSpecialMegaFormType } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
 import { toNumber } from '../../util/extension';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
@@ -29,18 +29,12 @@ const Raid = (props: IRaidComponent) => {
   }, [props.id]);
 
   useEffect(() => {
-    if (
-      tier > 5 &&
-      props.currForm &&
-      props.currForm.form?.pokemonType !== PokemonType.Mega &&
-      props.currForm.form?.pokemonType !== PokemonType.Primal
-    ) {
+    if (tier > 5 && props.currForm && !isSpecialMegaFormType(props.currForm.form?.pokemonType)) {
       setTier(5);
     } else if (
       tier === 5 &&
       props.currForm &&
-      (props.currForm.form?.pokemonType === PokemonType.Mega ||
-        props.currForm.form?.pokemonType === PokemonType.Primal) &&
+      isSpecialMegaFormType(props.currForm.form?.pokemonType) &&
       pokemonClass !== PokemonClass.None
     ) {
       setTier(6);
@@ -107,33 +101,31 @@ const Raid = (props: IRaidComponent) => {
               <option value={4}>Tier 4</option>
             )}
           </optgroup>
-          {props.currForm &&
-            (props.currForm.form?.pokemonType === PokemonType.Mega ||
-              props.currForm.form?.pokemonType === PokemonType.Primal) && (
-              <Fragment>
-                {pokemonClass !== PokemonClass.None ? (
-                  <optgroup
-                    label={`Legendary ${
+          {props.currForm && isSpecialMegaFormType(props.currForm.form?.pokemonType) && (
+            <Fragment>
+              {pokemonClass !== PokemonClass.None ? (
+                <optgroup
+                  label={`Legendary ${
+                    props.currForm.form.pokemonType === PokemonType.Primal
+                      ? getKeyWithData(PokemonType, PokemonType.Primal)
+                      : getKeyWithData(PokemonType, PokemonType.Mega)
+                  } Tier 6`}
+                >
+                  <option value={6}>
+                    {`Tier ${
                       props.currForm.form.pokemonType === PokemonType.Primal
                         ? getKeyWithData(PokemonType, PokemonType.Primal)
                         : getKeyWithData(PokemonType, PokemonType.Mega)
-                    } Tier 6`}
-                  >
-                    <option value={6}>
-                      {`Tier ${
-                        props.currForm.form.pokemonType === PokemonType.Primal
-                          ? getKeyWithData(PokemonType, PokemonType.Primal)
-                          : getKeyWithData(PokemonType, PokemonType.Mega)
-                      }`}
-                    </option>
-                  </optgroup>
-                ) : (
-                  <optgroup label="Mega Tier 4">
-                    <option value={4}>Tier Mega</option>
-                  </optgroup>
-                )}
-              </Fragment>
-            )}
+                    }`}
+                  </option>
+                </optgroup>
+              ) : (
+                <optgroup label="Mega Tier 4">
+                  <option value={4}>Tier Mega</option>
+                </optgroup>
+              )}
+            </Fragment>
+          )}
         </Form.Select>
       </div>
       <div className="row w-100 element-top" style={{ margin: 0 }}>

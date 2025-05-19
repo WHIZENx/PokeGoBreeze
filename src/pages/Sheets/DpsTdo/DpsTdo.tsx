@@ -11,6 +11,7 @@ import {
   getKeysObj,
   getAllMoves,
   getCustomThemeDataTable,
+  isSpecialMegaFormType,
 } from '../../../util/utils';
 import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
 import {
@@ -458,10 +459,7 @@ const DpsTdo = () => {
         addCPokeData(dataList, pokemon.shadowMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
         addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, PokemonType.Purified);
       }
-      if (
-        (!pokemon.form || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
-        isNotEmpty(pokemon.shadowMoves)
-      ) {
+      if ((!pokemon.form || !isSpecialMegaFormType(pokemon.pokemonType)) && isNotEmpty(pokemon.shadowMoves)) {
         addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType, PokemonType.Shadow);
       }
       addCPokeData(dataList, pokemon.eliteCinematicMoves, pokemon, fMove, fMoveType);

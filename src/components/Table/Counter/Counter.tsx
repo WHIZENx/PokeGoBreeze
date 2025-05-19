@@ -8,6 +8,7 @@ import {
   getCustomThemeDataTable,
   getKeyWithData,
   getValidPokemonImgPath,
+  isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../util/utils';
 import { findAssetForm } from '../../../util/compute';
@@ -302,7 +303,7 @@ const Counter = (props: ICounterComponent) => {
             if (showMegaPrimal) {
               return true;
             }
-            return pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal;
+            return !isSpecialMegaFormType(pokemon.pokemonType);
           })
           .filter((pokemon) => {
             if (!releasedGO) {

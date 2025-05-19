@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import {
@@ -6,7 +6,6 @@ import {
   generateParamForm,
   getCustomThemeDataTable,
   getItemSpritePath,
-  getStyleList,
   splitAndCapitalize,
 } from '../../../util/utils';
 import './Types.scss';
@@ -32,8 +31,8 @@ import {
 } from '../../../util/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
-import { IStyleData } from '../../../util/models/util.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
+import { IStyleSheetData } from '../../models/page.model';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -198,7 +197,7 @@ class PokemonTypeData implements IPokemonTypeData {
   }
 }
 
-const SearchTypes = () => {
+const SearchTypes = (props: IStyleSheetData) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [typeList, setTypeList] = useState<string[]>([]);
@@ -210,7 +209,6 @@ const SearchTypes = () => {
   const [allData, setAllData] = useState<IPokemonTypeData>();
 
   const [showType, setShowType] = useState(false);
-  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
     if (currentType) {
@@ -318,7 +316,7 @@ const SearchTypes = () => {
               'd-flex flex-column align-items-center type-info-container',
               `${currentType.toLowerCase()}-border`
             )}
-            style={{ background: computeBgType(currentType, PokemonType.Normal, styleSheet.current) }}
+            style={{ background: computeBgType(currentType, PokemonType.Normal, props.styleSheet) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img

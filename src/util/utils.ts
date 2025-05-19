@@ -1431,3 +1431,6 @@ export const updateSpecificForm = (id: number, form: string | undefined) => {
 
 export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
   pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
+
+export const isSpecialMegaFormType = (pokemonType: PokemonType | undefined) =>
+  pokemonType === PokemonType.Mega || pokemonType === PokemonType.Primal;

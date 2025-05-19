@@ -12,6 +12,7 @@ import {
   getMoveType,
   getValidPokemonImgPath,
   isInvalidIV,
+  isSpecialMegaFormType,
   retrieveMoves,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -492,10 +493,7 @@ const RaidBattle = () => {
         addCPokeData(dataList, pokemon.shadowMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
         addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Purified);
       }
-      if (
-        (!pokemon.form || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
-        isNotEmpty(pokemon.shadowMoves)
-      ) {
+      if (!pokemon.form || (!isSpecialMegaFormType(pokemon.pokemonType) && isNotEmpty(pokemon.shadowMoves))) {
         addCPokeData(
           dataList,
           pokemon.eliteCinematicMoves,
@@ -979,8 +977,7 @@ const RaidBattle = () => {
               <Checkbox
                 checked={showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow}
                 disabled={
-                  showSettingPokemon.pokemon?.pokemonType === PokemonType.Mega ||
-                  showSettingPokemon.pokemon?.pokemonType === PokemonType.Primal ||
+                  isSpecialMegaFormType(showSettingPokemon.pokemon?.pokemonType) ||
                   showSettingPokemon.pokemon?.pokemonType === PokemonType.GMax
                 }
                 onChange={(_, check) => {

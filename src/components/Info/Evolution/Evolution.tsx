@@ -28,6 +28,7 @@ import {
   getDataWithKey,
   getGenerationPokemon,
   getItemSpritePath,
+  isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../util/utils';
 
@@ -369,11 +370,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   useEffect(() => {
     if (props.pokemonData?.fullName) {
-      if (
-        props.pokemonData.pokemonType === PokemonType.GMax ||
-        props.pokemonData.pokemonType === PokemonType.Mega ||
-        props.pokemonData.pokemonType === PokemonType.Primal
-      ) {
+      if (props.pokemonData.pokemonType === PokemonType.GMax || isSpecialMegaFormType(props.pokemonData.pokemonType)) {
         getSpecialEvoChain(props.pokemonData);
       } else {
         getEvoChainStore(props.pokemonData);

@@ -7,6 +7,11 @@ import { ITypeEff } from '../../core/models/type-eff.model';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
 import { PokemonType } from '../../enums/type.enum';
 import { SearchOption } from '../Search/Pokemon/models/pokemon-search.model';
+import { IStyleData } from '../../util/models/util.model';
+
+export interface IStyleSheetData {
+  styleSheet: IStyleData[];
+}
 
 export interface IErrorPage {
   isError?: boolean;
