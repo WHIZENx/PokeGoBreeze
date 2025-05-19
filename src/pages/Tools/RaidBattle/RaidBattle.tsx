@@ -342,9 +342,11 @@ const RaidBattle = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const clearData = () => {
+  const clearData = (isForceClear = true) => {
     setResult([]);
-    setIsLoadedForms(false);
+    if (isForceClear) {
+      setIsLoadedForms(false);
+    }
   };
 
   const clearDataTarget = () => {
@@ -771,7 +773,7 @@ const RaidBattle = () => {
               <div className="caption text-dps">DPS</div>
             </div>
           </div>
-          <div className="box-text rank-text justify-content-end d-flex position-absolute">
+          <div className="box-text rank-text text-black justify-content-end d-flex w-100 position-absolute">
             <span>HP: {`${Math.floor(bossHp - tdo)} / ${Math.floor(bossHp)}`}</span>
           </div>
         </div>

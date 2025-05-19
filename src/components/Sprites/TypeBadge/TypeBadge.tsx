@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { ITypeBadgeComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
+import { combineClasses, isEqual, isNotEmpty } from '../../../util/extension';
 import { MoveType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
@@ -23,7 +23,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
 
   return (
     <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>
-      <span className="caption text-type-border" style={{ color: getValueOrDefault(String, props.color, 'gray') }}>
+      <span className="caption text-type-border" style={{ color: props.color }}>
         {props.title}
       </span>
       <LinkToTop

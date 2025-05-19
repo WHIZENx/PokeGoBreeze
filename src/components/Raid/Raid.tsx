@@ -83,7 +83,7 @@ const Raid = (props: IRaidComponent) => {
           onChange={(e) => {
             setTier(toNumber(e.target.value));
             if (props.clearData) {
-              props.clearData();
+              props.clearData(false);
             }
           }}
           value={tier}

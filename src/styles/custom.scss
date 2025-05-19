@@ -285,6 +285,7 @@ td,
 
 }
 
+.table-round-battle thead tr.table-header th,
 .table-raid-cal thead tr.table-header th:not(:first-child),
 .group-model .desc,
 .sub-header,
@@ -320,4 +321,10 @@ td,
 
 .bg-card-highlight {
   background-color: var(--custom-dropdown-highlight) !important;
+}
+
+.table-round-battle tbody tr td:first-child,
+.table-round-battle tbody tr td:not(:first-child) {
+  background-color: var(--background-default);
+  color: var(--text-primary);
 }

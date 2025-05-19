@@ -254,11 +254,11 @@ export interface IPokemonRaidComponent {
   onCopyPokemon: (index: number) => void;
   onRemovePokemon: (index: number) => void;
   onOptionsPokemon: (index: number, pokemon: IPokemonData) => void;
-  clearData?: () => void;
+  clearData?: (isForceClear?: boolean) => void;
 }
 
 export interface IRaidComponent {
-  clearData?: () => void;
+  clearData?: (isForceClear?: boolean) => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
   currForm: Partial<IPokemonFormModify> | undefined;
   id: number | undefined;
