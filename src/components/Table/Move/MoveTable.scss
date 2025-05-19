@@ -2,7 +2,6 @@
   height: 10%;
   max-height: 700px;
   overflow-y: auto;
-  border: 1px solid #b8d4da;
 }
 
 .table-moves {
@@ -23,7 +22,6 @@
 }
 
 .table-moves tbody tr td {
-  color: #0571c2;
   font-weight: bolder;
 }
 
@@ -42,14 +40,7 @@
 }
 
 .table-movesets tbody tr td {
-  color: #0571c2;
   font-weight: bolder;
-}
-
-.table-column-head {
-  background-color: #f1ffff !important;
-  color: black !important;
-  border: 1px solid #b8d4da;
 }
 
 .main-move {

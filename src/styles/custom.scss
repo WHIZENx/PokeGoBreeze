@@ -54,6 +54,11 @@
   background-color: var(--custom-selected-bg);
 }
 
+.theme-table-info-bg {
+  background-color: var(--custom-table-background-info);
+  border: 2px solid var(--custom-table-background-sub-head-border);
+}
+
 // Override some of the existing styles to use theme variables
 .caption {
   color: var(--text-caption);
@@ -92,8 +97,12 @@
   background-color: var(--custom-selected-hover) !important;
 }
 
-.moveset-error-msg {
+.moveset-error {
   background-color: var(--background-paper);
+}
+
+.moveset-error-msg {
+  background-color: var(--background-default);
   color: var(--error-main, #f44336);
 }
 
@@ -178,12 +187,19 @@
   background-color: var(--background-default) !important;
 }
 
-.table-info tbody tr.info-costs td:nth-child(2) {
-  color: var(--text-primary);
-  background-color: var(--custom-table-info-costs-bg) !important;
+.table-raid tbody tr td:nth-child(1) {
+  color: var(--custom-table-background-sub-head-text);
+  background-color: var(--custom-table-background-info) !important;
 }
 
-.table-main, .table-moves {
+.table-info tbody tr.info-costs td:nth-child(2) {
+  color: var(--text-primary);
+  background-color: var(--custom-table-background-info) !important;
+}
+
+.table-info,
+.table-main,
+.table-moves {
   tbody tr td.table-sub-header {
     background-color: var(--custom-table-background-sub-head) !important;
     color: var(--custom-table-background-sub-head-text) !important;
@@ -223,4 +239,30 @@
 
 .stats-container {
   background-color: var(--background-stats-container);
+}
+
+.table-movesets tbody tr td,
+.table-moves tbody tr td {
+  color: var(--custom-table-background-sub-head-text);
+}
+
+th,
+td,
+.table-info,
+.table-moves-col,
+.table-counter-container {
+  border: 1px solid var(--custom-table-background-sub-head-border) !important;
+}
+
+.sub-header,
+.table-column-head {
+  background-color: var(--custom-table-background-sub-head) !important;
+  color: var(--custom-table-background-sub-head-text) !important;
+  border: 1px solid var(--custom-table-background-sub-head-border);
+}
+
+.table-info thead tr {
+  background-color: var(--custom-table-background-head) !important;
+  color: white !important;
+  font-weight: bold;
 }

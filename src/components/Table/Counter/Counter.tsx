@@ -59,7 +59,8 @@ const customStyles: TableStyles = {
   },
   headRow: {
     style: {
-      backgroundColor: '#f1ffff !important',
+      backgroundColor: 'var(--custom-table-background-info) !important',
+      color: 'var(--text-primary) !important',
       fontSize: 16,
       fontWeight: 'bolder',
       justifyContent: 'center',
@@ -73,11 +74,11 @@ const customStyles: TableStyles = {
       padding: '5px 10px',
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
-      borderBottomColor: '#b8d4da',
+      borderBottomColor: 'var(--custom-table-background-sub-head-border)',
       '&:not(:last-of-type)': {
         borderRightWidth: 1,
         borderRightStyle: 'solid',
-        borderRightColor: '#b8d4da',
+        borderRightColor: 'var(--custom-table-background-sub-head-border)',
       },
     },
   },
@@ -86,11 +87,11 @@ const customStyles: TableStyles = {
       '&:not(:last-of-type)': {
         borderRightWidth: 1,
         borderRightStyle: 'solid',
-        borderRightColor: '#b8d4da',
+        borderRightColor: 'var(--custom-table-background-sub-head-border)',
       },
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
-      borderBottomColor: '#b8d4da',
+      borderBottomColor: 'var(--custom-table-background-sub-head-border)',
       justifyContent: 'center',
       textAlign: 'center',
       padding: '5px 10px',
@@ -100,7 +101,7 @@ const customStyles: TableStyles = {
       },
       '&:last-of-type': {
         fontWeight: 'bold',
-        color: '#0571c2',
+        color: 'var(--custom-table-background-sub-head-text)',
         fontSize: '1rem',
       },
     },

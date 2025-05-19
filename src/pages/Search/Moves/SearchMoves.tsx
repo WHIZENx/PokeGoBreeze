@@ -178,9 +178,8 @@ const Search = () => {
                     </div>
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
-                        <InputLabel className="text-black">Type</InputLabel>
+                        <InputLabel>Type</InputLabel>
                         <Select
-                          className="text-black"
                           value={fMoveType}
                           label="Type"
                           onChange={(e) =>
@@ -244,9 +243,8 @@ const Search = () => {
                     </div>
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
-                        <InputLabel className="text-black">Type</InputLabel>
+                        <InputLabel>Type</InputLabel>
                         <Select
-                          className="text-black"
                           value={cMoveType}
                           label="Type"
                           onChange={(e) =>

@@ -115,12 +115,14 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
 
 const columnMove: TableColumnModify<ICombat>[] = [
   {
+    id: ColumnType.Type,
     name: 'ID',
     selector: (row) => row.id,
     sortable: true,
     width: '100px',
   },
   {
+    id: ColumnType.Name,
     name: 'Move Name',
     selector: (row) => (
       <LinkToTop
@@ -136,24 +138,28 @@ const columnMove: TableColumnModify<ICombat>[] = [
     sortFunction: nameSort,
   },
   {
+    id: ColumnType.PowerPVE,
     name: 'Power PVE',
     selector: (row) => row.pvePower,
     sortable: true,
     width: '120px',
   },
   {
+    id: ColumnType.PowerPVP,
     name: 'Power PVP',
     selector: (row) => row.pvpPower,
     sortable: true,
     width: '120px',
   },
   {
+    id: ColumnType.EnergyPVE,
     name: 'Energy PVE',
     selector: (row) => `${row.pveEnergy > 0 ? '+' : ''}${row.pveEnergy}`,
     sortable: true,
     width: '120px',
   },
   {
+    id: ColumnType.EnergyPVP,
     name: 'Energy PVP',
     selector: (row) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
     sortable: true,

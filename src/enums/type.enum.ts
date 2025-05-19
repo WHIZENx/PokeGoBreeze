@@ -114,4 +114,8 @@ export enum ColumnType {
   Level,
   Hp,
   Pokemon,
+  PowerPVE,
+  PowerPVP,
+  EnergyPVE,
+  EnergyPVP,
 }

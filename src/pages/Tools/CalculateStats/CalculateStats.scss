@@ -13,12 +13,6 @@ td {
   padding: 5px 10px;
 }
 
-.table-info,
-th,
-td {
-  border: 1px solid #b8d4da;
-}
-
 .table-info td:nth-child(1) {
   width: 50%;
 }
@@ -28,14 +22,10 @@ td {
 }
 
 .table-info thead tr {
-  background-color: #409ff1;
-  color: #f1ffff;
   font-weight: bold;
 }
 
 .table-info tbody tr td:nth-child(1) {
-  background-color: #f1ffff;
-  color: #0571c2;
   font-weight: bold;
 }
 
@@ -47,24 +37,14 @@ td {
 .shadow-text {
   color: #c184ec;
   font-weight: 500;
-
-  /* text-shadow: 0.01px 0.01px black; */
 }
 
 .purified-text {
   color: #74e1e6;
   font-weight: 500;
-
-  /* text-shadow: 0.01px 0.01px black; */
 }
 
 .buddy-text {
   color: #f4e474;
   font-weight: 500;
-
-  /* text-shadow: 0.01px 0.01px black; */
-}
-
-.img-table-evo {
-  background-color: white !important;
 }

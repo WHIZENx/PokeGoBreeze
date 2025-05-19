@@ -154,7 +154,7 @@ const Raid = (props: IRaidComponent) => {
           />
         </div>
         <div className="col d-flex justify-content-center" style={{ marginBottom: 15 }}>
-          <table className="table-info">
+          <table className="table-info table-raid">
             <thead />
             <tbody>
               <tr className="text-center">

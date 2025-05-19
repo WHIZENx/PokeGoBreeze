@@ -1,10 +1,10 @@
 .scroll-form {
   position: relative;
-  height: 180px !important;
   white-space: nowrap;
   overflow-x: auto;
   display: inline-flex;
   column-gap: 10px;
+  margin: 10px 0;
 }
 
 .img-gender {
@@ -27,7 +27,7 @@
 }
 
 .btn-form {
-  height: 142px;
+  min-height: 142px;
   margin: 2px 0;
   border: 1px solid gray;
   color: black;
