@@ -39,7 +39,7 @@
 }
 
 .theme-table-primary {
-  background-color: var(--background-table-primary);
+  background-color: var(--background-table-primary) !important;
 }
 
 .theme-spinner {
@@ -142,6 +142,12 @@
   font-weight: bolder;
 }
 
+.table-head {
+  background-color: var(--custom-table-background-head);
+  color: white;
+  border: 1px solid var(--custom-table-background-sub-head-border);
+}
+
 .pokemon-content {
   background-color: var(--background-default);
 }
@@ -167,6 +173,7 @@
   color: var(--text-primary) !important;
 }
 
+.table-info tbody tr td:nth-child(2),
 .table-desc tbody tr td:nth-child(2) {
   color: var(--text-primary);
 }
@@ -254,6 +261,14 @@ td,
   border: 1px solid var(--custom-table-background-sub-head-border) !important;
 }
 
+.table-info tbody tr td:first-child,
+.sub-group-model .gender {
+  background-color: var(--custom-table-background-info);
+  color: var(--custom-table-background-sub-head-text);
+  border: 1px solid var(--custom-table-background-sub-head-border);
+}
+
+.group-model .desc,
 .sub-header,
 .table-column-head {
   background-color: var(--custom-table-background-sub-head) !important;
@@ -265,4 +280,8 @@ td,
   background-color: var(--custom-table-background-head) !important;
   color: white !important;
   font-weight: bold;
+}
+
+.img-type-icon {
+  filter: drop-shadow(1px 1px 1px var(--shadow-default));
 }

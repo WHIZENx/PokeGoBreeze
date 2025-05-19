@@ -14,7 +14,7 @@ import { computeBgType } from '../../../util/compute';
 import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { calculateStatsByTag } from '../../../util/calculate';
-import { CircularProgress, FormControlLabel, Switch } from '@mui/material';
+import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
@@ -33,6 +33,7 @@ import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
+import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -404,11 +405,7 @@ const SearchTypes = (props: IStyleSheetData) => {
                 striped={true}
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={
-                  <div style={{ margin: 10 }}>
-                    <CircularProgress />
-                  </div>
-                }
+                progressComponent={<CircularProgressTable />}
               />
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
@@ -421,11 +418,7 @@ const SearchTypes = (props: IStyleSheetData) => {
                 striped={true}
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={
-                  <div style={{ margin: 10 }}>
-                    <CircularProgress />
-                  </div>
-                }
+                progressComponent={<CircularProgressTable />}
               />
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
@@ -438,11 +431,7 @@ const SearchTypes = (props: IStyleSheetData) => {
                 striped={true}
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={
-                  <div style={{ margin: 10 }}>
-                    <CircularProgress />
-                  </div>
-                }
+                progressComponent={<CircularProgressTable />}
               />
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
@@ -455,11 +444,7 @@ const SearchTypes = (props: IStyleSheetData) => {
                 striped={true}
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={
-                  <div style={{ margin: 10 }}>
-                    <CircularProgress />
-                  </div>
-                }
+                progressComponent={<CircularProgressTable />}
               />
             </Tab>
           </Tabs>

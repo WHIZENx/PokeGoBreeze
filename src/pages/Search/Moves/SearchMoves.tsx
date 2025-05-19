@@ -4,7 +4,7 @@ import { capitalize, getCustomThemeDataTable, getKeyWithData, splitAndCapitalize
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
-import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
@@ -26,6 +26,7 @@ import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { Params } from '../../../util/constants';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { debounce } from 'lodash';
+import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -220,11 +221,7 @@ const Search = () => {
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable()}
                     progressPending={!fMoveIsLoad}
-                    progressComponent={
-                      <div style={{ margin: 10 }}>
-                        <CircularProgress />
-                      </div>
-                    }
+                    progressComponent={<CircularProgressTable />}
                   />
                 </td>
               </tr>
@@ -283,11 +280,7 @@ const Search = () => {
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable()}
                     progressPending={!cMoveIsLoad}
-                    progressComponent={
-                      <div style={{ margin: 10 }}>
-                        <CircularProgress />
-                      </div>
-                    }
+                    progressComponent={<CircularProgressTable />}
                   />
                 </td>
               </tr>
