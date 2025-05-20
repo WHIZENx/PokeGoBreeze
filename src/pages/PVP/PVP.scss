@@ -113,13 +113,8 @@
 
 .ranking-link-group button {
   border-radius: 0 !important;
-  border-left: 1px solid black;
-  border-top: 2px solid black;
-  border-right: 1px solid black;
-  background-color: #f1ffff;
-  color: black;
   box-shadow: none !important;
-  border-bottom: none;
+  border: 1px solid black;
 }
 
 .ranking-link-group button.active {
@@ -154,9 +149,6 @@
 
 .moves-title {
   padding: 8px 0;
-  background-color: #f1f1ff !important;
-  color: #0571c2;
-  border: 1px solid #b8d4da;
   font-weight: bolder;
   text-align: center;
 }

@@ -113,7 +113,7 @@ const BodyPVP = (props: BodyComponent) => {
       </div>
       <div style={{ marginRight: 15 }}>
         <span
-          className="ranking-score score-ic text-white text-shadow filter-shadow"
+          className="ranking-score text-white text-shadow filter-shadow"
           style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
         >
           {data.rating}

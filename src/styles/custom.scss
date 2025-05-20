@@ -210,6 +210,11 @@
   background-color: var(--custom-table-background-info) !important;
 }
 
+.ranking-link-group button {
+  color: var(--text-primary);
+  background-color: var(--custom-table-background-info);
+}
+
 .table-info,
 .table-main,
 .table-moves {
@@ -277,9 +282,9 @@ td,
 .table-raid-cal tbody tr td:nth-child(1) {
   background-color: var(--custom-table-background-sub-head) !important;
   color: var(--text-primary) !important;
-
 }
 
+.moves-title,
 .table-round-battle thead tr.table-header th,
 .table-raid-cal thead tr.table-header th:not(:first-child),
 .group-model .desc,
@@ -300,6 +305,7 @@ td,
   filter: drop-shadow(1px 1px 1px var(--shadow-default));
 }
 
+.moves-title-container,
 .frame-badge-select,
 .frame-badge:hover,
 .form-header {
@@ -331,4 +337,8 @@ td,
 
 .ranking-header .ranking-sort:not(.ranking-selected) {
   color: var(--table-sort) !important;
+}
+
+.stats-border {
+  background-color: var(--background-stats-performance);
 }
