@@ -190,6 +190,7 @@
   color: var(--text-caption);
 }
 
+.bg-ref-pokemon,
 .result-type ul,
 .result-weather ul,
 .result-move ul,
@@ -305,6 +306,7 @@ td,
   filter: drop-shadow(1px 1px 1px var(--shadow-default));
 }
 
+.pokemon-battle-header,
 .moves-title-container,
 .frame-badge-select,
 .frame-badge:hover,
@@ -341,4 +343,8 @@ td,
 
 .stats-border {
   background-color: var(--background-stats-performance);
+}
+
+.play-line {
+  background-color: var(--background-revert);
 }
