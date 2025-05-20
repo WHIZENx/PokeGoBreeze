@@ -441,7 +441,6 @@ const TeamPVP = (props: IStyleSheetData) => {
                         isBlock={true}
                         isShowShadow={true}
                         height={20}
-                        color="white"
                         arr={value.pokemonData?.types}
                       />
                     </div>
@@ -450,7 +449,6 @@ const TeamPVP = (props: IStyleSheetData) => {
                         isGrow={true}
                         isFind={true}
                         title="Fast Move"
-                        color="white"
                         move={value.fMove}
                         moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                       />
@@ -458,7 +456,6 @@ const TeamPVP = (props: IStyleSheetData) => {
                         isGrow={true}
                         isFind={true}
                         title="Primary Charged Move"
-                        color="white"
                         move={value.cMovePri}
                         moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                       />
@@ -467,7 +464,6 @@ const TeamPVP = (props: IStyleSheetData) => {
                           isGrow={true}
                           isFind={true}
                           title="Secondary Charged Move"
-                          color="white"
                           move={value.cMoveSec}
                           moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
                         />
@@ -476,12 +472,12 @@ const TeamPVP = (props: IStyleSheetData) => {
                   </div>
                   <div className="d-flex filter-shadow align-items-center" style={{ marginRight: 35, columnGap: 30 }}>
                     <div className="text-center" style={{ width: 120 }}>
-                      <span className="ranking-score score-ic">{value.teamScore}</span>
+                      <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                     </div>
                     <div className="text-center" style={{ width: 160 }}>
-                      <span className="ranking-score score-ic">{value.individualScore}</span>
+                      <span className="ranking-score score-ic text-black">{value.individualScore}</span>
                     </div>
-                    <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic">
+                    <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic text-black">
                       {toFloatWithPadding((value.games * 100) / value.performersTotalGames, 2)}
                       <span className="caption text-black">
                         {value.games}/{value.performersTotalGames}
@@ -583,9 +579,9 @@ const TeamPVP = (props: IStyleSheetData) => {
                       </div>
                       <div className="d-flex align-items-center" style={{ marginRight: 15, columnGap: 30 }}>
                         <div className="text-center" style={{ width: 200 }}>
-                          <span className="ranking-score score-ic">{value.teamScore}</span>
+                          <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                         </div>
-                        <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic">
+                        <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic text-black">
                           {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
                           <span className="caption text-black">
                             {value.games}/{value.teamsTotalGames}
@@ -659,7 +655,6 @@ const TeamPVP = (props: IStyleSheetData) => {
                                   isGrow={true}
                                   isFind={true}
                                   title="Fast Move"
-                                  color="white"
                                   move={value.fMove}
                                   moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                                 />
@@ -667,7 +662,6 @@ const TeamPVP = (props: IStyleSheetData) => {
                                   isGrow={true}
                                   isFind={true}
                                   title="Primary Charged Move"
-                                  color="white"
                                   move={value.cMovePri}
                                   moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                                 />
@@ -676,7 +670,6 @@ const TeamPVP = (props: IStyleSheetData) => {
                                     isGrow={true}
                                     isFind={true}
                                     title="Secondary Charged Move"
-                                    color="white"
                                     move={value.cMoveSec}
                                     moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
                                   />

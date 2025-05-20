@@ -151,6 +151,12 @@
   border: 1px solid var(--custom-table-background-sub-head-border);
 }
 
+.sticker-container h5 {
+  background-color: var(--custom-table-background-head);
+  color: var(--custom-table-background-info);
+  border: 1px solid var(--custom-table-background-sub-head-border);
+}
+
 .theme-shadow {
   text-shadow: 1px 1px var(--shadow-custom);
 }
@@ -285,6 +291,7 @@ td,
   color: var(--text-primary) !important;
 }
 
+.rank-header,
 .moves-title,
 .table-round-battle thead tr.table-header th,
 .table-raid-cal thead tr.table-header th:not(:first-child),
@@ -347,4 +354,8 @@ td,
 
 .play-line {
   background-color: var(--background-revert);
+}
+
+.league-opened .accordion-button.collapsed {
+  background-color: var(--custom-according-highlight);
 }

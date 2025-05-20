@@ -136,7 +136,7 @@ const MoveSet = (props: MoveSetComponent) => {
       </div>
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
         {move?.archetype && findArchetype(move.archetype)}
-        <span className="ranking-score score-ic filter-shadow">{move.uses}</span>
+        <span className="ranking-score score-ic text-black filter-shadow">{move.uses}</span>
       </div>
     </LinkToTop>
   );

@@ -282,7 +282,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           <div className="ranking-group w-100">
             <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
             <div style={{ marginRight: 15 }}>
-              <span className="ranking-score score-ic">{data.data?.score}</span>
+              <span className="ranking-score score-ic text-black">{data.data?.score}</span>
             </div>
           </div>
         </div>

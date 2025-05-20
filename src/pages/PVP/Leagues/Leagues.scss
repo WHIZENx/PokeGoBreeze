@@ -10,10 +10,6 @@
   margin: auto;
 }
 
-.league-opened .accordion-button.collapsed {
-  background-color: #e6ffe6;
-}
-
 .season-league {
   position: relative;
   white-space: nowrap;
@@ -33,9 +29,6 @@
 }
 
 .rank-header {
-  background-color: #f1f1ff !important;
-  color: #0571c2;
-  border-bottom: 1px solid #b8d4da;
   padding: 8px;
   font-weight: bold;
 }
@@ -43,7 +36,6 @@
 .reward-league {
   position: sticky;
   left: 0;
-  background-color: white;
   z-index: 2;
 }
 

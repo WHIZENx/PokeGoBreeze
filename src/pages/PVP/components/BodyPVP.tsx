@@ -128,7 +128,7 @@ const BodyPVP = (props: BodyComponent) => {
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Matchups</h4>
           <div style={{ marginRight: 15 }}>
-            <span className="ranking-score score-ic">Rating</span>
+            <span className="ranking-score score-ic text-black">Rating</span>
           </div>
         </div>
         {matchups?.map((matchup, index) => (
@@ -139,7 +139,7 @@ const BodyPVP = (props: BodyComponent) => {
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Counters</h4>
           <div style={{ marginRight: 15 }}>
-            <span className="ranking-score score-ic">Rating</span>
+            <span className="ranking-score score-ic text-black">Rating</span>
           </div>
         </div>
         {counters?.map((counter, index) => (

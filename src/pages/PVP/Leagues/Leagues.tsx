@@ -399,7 +399,7 @@ const Leagues = () => {
                     alt="img-pokemon"
                     src={APIService.getPokeOtherLeague('BattleIconColor')}
                   />
-                  <span className="caption text-black">Free</span>
+                  <span className="caption theme-text-primary">Free</span>
                 </Badge>
                 <hr />
                 <Badge
@@ -414,7 +414,7 @@ const Leagues = () => {
                     alt="img-pokemon"
                     src={getItemSpritePath(ItemName.PaidRaidTicket)}
                   />
-                  <span className="caption text-black">Premium</span>
+                  <span className="caption theme-text-primary">Premium</span>
                 </Badge>
               </div>
               {dataStore.leagues.season.rewards.rank[rank].free.map((value, index) => (
@@ -448,10 +448,10 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={APIService.getIconSprite('ic_grass')}
                           />
-                          <span className="caption text-black">Random Pokémon</span>
+                          <span className="caption theme-text-primary">Random Pokémon</span>
                           <VisibilityIcon
-                            className="view-pokemon"
-                            sx={{ fontSize: '1rem', color: 'black' }}
+                            className="view-pokemon theme-text-primary"
+                            sx={{ fontSize: '1rem' }}
                             onClick={() => handleShow(value.type, LeagueRewardType.Free, value.step)}
                           />
                         </Fragment>
@@ -464,8 +464,8 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
-                          <span className="caption text-black">Random Item</span>
-                          <VisibilityIcon className="view-pokemon" sx={{ fontSize: '1rem', color: 'black' }} />
+                          <span className="caption theme-text-primary">Random Item</span>
+                          <VisibilityIcon className="view-pokemon theme-text-primary" sx={{ fontSize: '1rem' }} />
                         </Fragment>
                       )}
                       {value.type === RewardType.RareCandy && (
@@ -476,7 +476,7 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={getItemSpritePath(ItemName.RareCandy)}
                           />
-                          <span className="caption text-black">Rare Candy</span>
+                          <span className="caption theme-text-primary">Rare Candy</span>
                         </Fragment>
                       )}
                       {value.type === RewardType.Stardust && (
@@ -487,7 +487,7 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          <span className="caption text-black">Stardust</span>
+                          <span className="caption theme-text-primary">Stardust</span>
                         </Fragment>
                       )}
                       {value.type === RewardType.MoveReRoll && (
@@ -498,7 +498,7 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={APIService.getItemSprite('Item_1202')}
                           />
-                          <span className="caption text-black">TM Charged Move</span>
+                          <span className="caption theme-text-primary">TM Charged Move</span>
                         </Fragment>
                       )}
                     </Badge>
@@ -532,10 +532,10 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={APIService.getIconSprite('ic_grass')}
                           />
-                          <span className="caption text-black">Random Pokémon</span>
+                          <span className="caption theme-text-primary">Random Pokémon</span>
                           <VisibilityIcon
-                            className="view-pokemon"
-                            sx={{ fontSize: '1rem', color: 'black' }}
+                            className="view-pokemon theme-text-primary"
+                            sx={{ fontSize: '1rem' }}
                             onClick={() =>
                               handleShow(
                                 dataStore.leagues.season.rewards.rank[rank].premium[index].type,
@@ -554,10 +554,10 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
-                          <span className="caption text-black">Random Item</span>
+                          <span className="caption theme-text-primary">Random Item</span>
                           <VisibilityIcon
-                            className="view-pokemon"
-                            sx={{ fontSize: '1rem', color: 'black' }}
+                            className="view-pokemon theme-text-primary"
+                            sx={{ fontSize: '1rem' }}
                             onClick={() =>
                               handleShow(
                                 dataStore.leagues.season.rewards.rank[rank].premium[index].type,
@@ -576,7 +576,7 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={getItemSpritePath(ItemName.RareCandy)}
                           />
-                          <span className="caption text-black">Rare Candy</span>
+                          <span className="caption theme-text-primary">Rare Candy</span>
                         </Fragment>
                       )}
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Stardust && (
@@ -587,7 +587,7 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={APIService.getItemSprite('stardust_painted')}
                           />
-                          <span className="caption text-black">Stardust</span>
+                          <span className="caption theme-text-primary">Stardust</span>
                         </Fragment>
                       )}
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.MoveReRoll && (
@@ -598,7 +598,7 @@ const Leagues = () => {
                             alt="img-pokemon"
                             src={APIService.getItemSprite('Item_1202')}
                           />
-                          <span className="caption text-black">TM Charged Move</span>
+                          <span className="caption theme-text-primary">TM Charged Move</span>
                         </Fragment>
                       )}
                     </Badge>
