@@ -262,7 +262,7 @@ const RankingPVP = (props: IStyleSheetData) => {
               getKeyWithData(ScoreType, ScoreType.Overall)
             ).toLowerCase()}`}
           >
-            <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+            <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
           </LinkToTop>
           <div className="d-flex justify-content-center">
             <span className="position-relative" style={{ width: 50 }}>
@@ -290,7 +290,7 @@ const RankingPVP = (props: IStyleSheetData) => {
       <Accordion.Body
         style={{
           padding: 0,
-          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, props.styleSheet, 0.8),
+          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, props.styleSheet, 0.3),
         }}
       >
         {storeStats && storeStats[key] && (

@@ -326,7 +326,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         </div>
         <div className="ranking-container card-container">
           <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
-            <div className="ranking-score text-black">Pokémon</div>
+            <div className="ranking-score">Pokémon</div>
             <div className="d-flex" style={{ marginRight: 15, columnGap: 30 }}>
               <div
                 className="text-center"
@@ -403,7 +403,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 key={index}
                 style={{
                   columnGap: '1rem',
-                  backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, props.styleSheet),
+                  backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, props.styleSheet, 0.3),
                 }}
               >
                 <LinkToTop
@@ -411,7 +411,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                     Params.LeagueType
                   }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
                 >
-                  <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+                  <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
                 </LinkToTop>
                 <div className="d-flex justify-content-center">
                   <span className="position-relative filter-shadow" style={{ width: 96 }}>
@@ -606,7 +606,8 @@ const TeamPVP = (props: IStyleSheetData) => {
                             backgroundImage: computeBgType(
                               value.pokemonData?.types,
                               value.pokemonType,
-                              props.styleSheet
+                              props.styleSheet,
+                              0.3
                             ),
                           }}
                         >
@@ -615,7 +616,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                               Params.LeagueType
                             }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
                           >
-                            <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+                            <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
                           </LinkToTop>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>

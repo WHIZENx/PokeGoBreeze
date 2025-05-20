@@ -83,7 +83,8 @@ const BodyPVP = (props: BodyComponent) => {
           isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
             ? PokemonType.Shadow
             : PokemonType.Normal,
-          props.styleList
+          props.styleList,
+          0.3
         ),
       }}
     >

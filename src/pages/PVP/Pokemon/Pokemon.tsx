@@ -232,7 +232,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
             rankingPoke?.pokemon?.types,
             rankingPoke?.pokemonType,
             props.styleSheet,
-            0.8,
+            0.3,
             rankingPoke ? undefined : '#646464'
           ),
           paddingTop: 15,
@@ -307,7 +307,12 @@ const PokemonPVP = (props: IStyleSheetData) => {
             <hr />
           </div>
           <div className="stats-container">
-            <OverAllStats data={rankingPoke} statsRanking={statsRanking} cp={params.cp} type={params.serie} />
+            <OverAllStats
+              data={rankingPoke}
+              statsRanking={statsRanking}
+              cp={params.cp}
+              type={searchParams.get(Params.LeagueType)}
+            />
           </div>
           <div className="container">
             <hr />

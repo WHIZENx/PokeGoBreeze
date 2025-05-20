@@ -1288,7 +1288,7 @@ const Battle = () => {
                   ScoreType.Overall
                 )?.toLowerCase()}/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}
               >
-                <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+                <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
               </LinkToTop>
               <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
             </div>

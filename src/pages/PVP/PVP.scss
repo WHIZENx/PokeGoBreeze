@@ -24,17 +24,11 @@
   top: 0;
   padding: 15px;
   border: 2px solid #dee2e6;
-  background-color: white;
   z-index: 4;
-}
-
-.ranking-header .ranking-sort {
-  color: gray;
   cursor: pointer;
 }
 
 .ranking-header .ranking-selected {
-  color: black;
   text-decoration: underline;
 }
 
@@ -60,7 +54,6 @@
   padding: 5px 10px;
   border-radius: 8px;
   font-weight: bolder;
-  color: black;
 }
 
 .ranking-container .accordion-item:first-of-type {
@@ -82,10 +75,6 @@
 
 .ranking-info {
   padding: 0 2rem;
-}
-
-.ranking-container .accordion-button.collapsed:hover {
-  background-color: lightgray;
 }
 
 .title-item-ranking {

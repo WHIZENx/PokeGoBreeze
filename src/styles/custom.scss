@@ -87,12 +87,6 @@
   color: var(--text-primary);
 }
 
-.result-type ul,
-.result-weather ul,
-.result-move ul {
-  background-color: var(--background-default);
-}
-
 .card-pokemon,
 .card-move,
 .card-pokemon-select {
@@ -101,7 +95,8 @@
 
 .card-pokemon:hover,
 .card-move:hover,
-.card-pokemon-select:hover {
+.card-pokemon-select:hover,
+.ranking-container .accordion-button.collapsed:hover {
   background-color: var(--custom-selected-hover) !important;
 }
 
@@ -156,10 +151,6 @@
   border: 1px solid var(--custom-table-background-sub-head-border);
 }
 
-.pokemon-content {
-  background-color: var(--background-default);
-}
-
 .theme-shadow {
   text-shadow: 1px 1px var(--shadow-custom);
 }
@@ -199,6 +190,10 @@
   color: var(--text-caption);
 }
 
+.result-type ul,
+.result-weather ul,
+.result-move ul,
+.pokemon-content,
 .table-raid-cal thead tr th:nth-child(1),
 .table-info tbody tr.info-costs td:nth-child(1) {
   background-color: var(--background-default) !important;
@@ -323,6 +318,7 @@ td,
   background-color: var(--custom-dropdown-highlight) !important;
 }
 
+.ranking-header,
 .table-round-battle tbody tr td:first-child,
 .table-round-battle tbody tr td:not(:first-child) {
   background-color: var(--background-default);
@@ -331,4 +327,8 @@ td,
 
 .loading-spin-container {
   background: radial-gradient(closest-side, var(--loading-spinner-bg-start), var(--loading-spinner-bg-end));
+}
+
+.ranking-header .ranking-sort:not(.ranking-selected) {
+  color: var(--table-sort) !important;
 }
