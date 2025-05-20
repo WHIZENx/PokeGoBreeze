@@ -732,7 +732,7 @@ const RaidBattle = () => {
 
   const handleCalculate = () => {
     dispatch(SpinnerActions.ShowSpinner.create());
-    clearData();
+    clearData(false);
     clearDataTarget();
     setTimeout(() => {
       calculateBossBattle();
@@ -1433,20 +1433,23 @@ const RaidBattle = () => {
                       onChange={(_, check) => setOptions({ ...options, enableTimeAllow: check })}
                     />
                   }
-                  label="Time Allow"
+                  label={`Time Allow (Default: ${RAID_BOSS_TIER[tier].timer}sec)`}
                 />
               </div>
               <div className="col-6" style={{ paddingLeft: 0 }}>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={RAID_BOSS_TIER[tier].timer}
-                  placeholder="Battle Time"
-                  aria-label="Battle Time"
-                  min={0}
-                  disabled={!enableTimeAllow}
-                  onInput={(e) => setTimeAllow(toNumber(e.currentTarget.value))}
-                />
+                <div className="input-group">
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={timeAllow}
+                    placeholder="Battle Time"
+                    aria-label="Battle Time"
+                    min={0}
+                    disabled={!enableTimeAllow}
+                    onInput={(e) => setTimeAllow(toNumber(e.currentTarget.value))}
+                  />
+                  <span className="input-group-text">sec</span>
+                </div>
               </div>
             </div>
             {resultFMove && resultCMove && (

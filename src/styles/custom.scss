@@ -328,3 +328,7 @@ td,
   background-color: var(--background-default);
   color: var(--text-primary);
 }
+
+.loading-spin-container {
+  background: radial-gradient(closest-side, var(--loading-spinner-bg-start), var(--loading-spinner-bg-end));
+}

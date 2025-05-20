@@ -65,7 +65,7 @@ const MoveSet = (props: MoveSetComponent) => {
     <OverlayTrigger
       placement="auto"
       overlay={
-        <PopoverConfig id="popover-info-evo">
+        <PopoverConfig id="popover-info">
           <span className="info-evo">
             <span className="d-block caption">
               - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> {ArcheType.General}

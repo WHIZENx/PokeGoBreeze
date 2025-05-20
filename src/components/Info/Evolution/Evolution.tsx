@@ -18,7 +18,6 @@ import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
 import './Evolution.scss';
-import { createTheme, Theme, ThemeProvider } from '@mui/material/styles';
 import {
   capitalize,
   convertFormGif,
@@ -96,16 +95,6 @@ class PokemonEvo implements IPokemonEvo {
     return obj;
   }
 }
-
-const customTheme = createTheme({
-  palette: {
-    secondary: {
-      main: '#a6efff80',
-      contrastText: 'gray',
-      fontSize: '0.75rem',
-    },
-  },
-} as unknown as Theme);
 
 const Evolution = (props: IEvolutionComponent) => {
   const router = useSelector((state: RouterState) => state.router);
@@ -643,21 +632,19 @@ const Evolution = (props: IEvolutionComponent) => {
               {chain.length > 1 || (chain.length === 1 && !isEqual(form, FORM_NORMAL) && isNotEmpty(form)) ? (
                 <Fragment>
                   {!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) && isNotEmpty(form) ? (
-                    <ThemeProvider theme={customTheme}>
-                      <Badge
-                        color="secondary"
-                        overlap="circular"
-                        badgeContent={splitAndCapitalize(form.replaceAll('_', '-'), '-', ' ')}
-                        anchorOrigin={{
-                          vertical: 'top',
-                          horizontal: 'left',
-                        }}
-                      >
-                        <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
-                          {renderImgGif(value)}
-                        </Badge>
+                    <Badge
+                      color="secondary"
+                      overlap="circular"
+                      badgeContent={splitAndCapitalize(form.replaceAll('_', '-'), '-', ' ')}
+                      anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                      }}
+                    >
+                      <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
+                        {renderImgGif(value)}
                       </Badge>
-                    </ThemeProvider>
+                    </Badge>
                   ) : (
                     <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
                       {renderImgGif(value)}
@@ -674,7 +661,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <span className="img-evo-container">{renderImgGif(value)}</span>
           )}
           <div id="id-pokemon">
-            <b>#{value.id}</b>
+            <b className="theme-text-primary">#{value.id}</b>
           </div>
           <div>
             <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
@@ -707,7 +694,7 @@ const Evolution = (props: IEvolutionComponent) => {
         <OverlayTrigger
           placement="auto"
           overlay={
-            <PopoverConfig id="popover-info-evo">
+            <PopoverConfig id="popover-info">
               <span className="info-evo">
                 <span className="d-block caption">
                   - <img alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of
