@@ -1114,7 +1114,7 @@ const Battle = () => {
       <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
         {move?.buffs.map((value, index) => (
           <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
-            <img width={15} height={15} alt="img-atk" src={value.type === TypeAction.Atk ? ATK_LOGO : DEF_LOGO} />
+            <img width={15} height={15} alt="Image ATK" src={value.type === TypeAction.Atk ? ATK_LOGO : DEF_LOGO} />
             <div className="position-absolute icon-buff">
               {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
               {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
@@ -1266,7 +1266,7 @@ const Battle = () => {
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
                 <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
                   <img
-                    alt="img-league"
+                    alt="Image League"
                     className="pokemon-sprite-raid"
                     src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
                     onError={(e) => {
@@ -1305,7 +1305,7 @@ const Battle = () => {
               {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
+            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
             {'Attack: '}
             <b>
               {Math.floor(
@@ -1314,7 +1314,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
+            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
             {'Defense: '}
             <b>
               {Math.floor(
@@ -1323,7 +1323,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
+            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={HP_LOGO} />
             HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
             <br />
             {'Stats Prod: '}
@@ -1668,7 +1668,7 @@ const Battle = () => {
                               <div className="position-relative filter-shadow" style={{ width: 35 }}>
                                 <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
                                   <img
-                                    alt="img-league"
+                                    alt="Image League"
                                     className="sprite-type"
                                     src={APIService.getPokemonModel(
                                       pokemonCurr.pokemonData.form,
@@ -1696,7 +1696,7 @@ const Battle = () => {
                               <div className="position-relative filter-shadow" style={{ width: 35 }}>
                                 <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
                                   <img
-                                    alt="img-league"
+                                    alt="Image League"
                                     className="sprite-type"
                                     src={APIService.getPokemonModel(
                                       pokemonObj.pokemonData.form,
@@ -1838,8 +1838,8 @@ const Battle = () => {
               ) : (
                 <Fragment>
                   <span className="position-relative">
-                    <img height={36} alt="atk-left" src={ATK_LOGO} />
-                    <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
+                    <img height={36} alt="ATK Left" src={ATK_LOGO} />
+                    <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
                   </span>
                   {' Battle Simulator'}
                 </Fragment>

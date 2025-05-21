@@ -65,10 +65,10 @@ const DamageTable = (props: IDamageTableComponent) => {
                 {props.result.objPoke ? (
                   <Fragment>
                     {props.result.type === PokemonType.Buddy && (
-                      <img height={20} style={{ marginRight: 8 }} alt="img-buddy" src={APIService.getPokeBuddy()} />
+                      <img height={20} style={{ marginRight: 8 }} alt="Image Buddy" src={APIService.getPokeBuddy()} />
                     )}
                     {props.result.type === PokemonType.Shadow && (
-                      <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
+                      <img height={20} style={{ marginRight: 8 }} alt="Image Shadow" src={APIService.getPokeShadow()} />
                     )}
                     {`${splitAndCapitalize(props.result.currPoke?.form?.name, '-', ' ')} `}
                     <span className="d-inline-block caption">(LV. {props.result.currLevel})</span>
@@ -84,10 +84,10 @@ const DamageTable = (props: IDamageTableComponent) => {
                 {props.result.objPoke ? (
                   <Fragment>
                     {props.result.typeObj === PokemonType.Buddy && (
-                      <img height={20} style={{ marginRight: 8 }} alt="img-buddy" src={APIService.getPokeBuddy()} />
+                      <img height={20} style={{ marginRight: 8 }} alt="Image Buddy" src={APIService.getPokeBuddy()} />
                     )}
                     {props.result.typeObj === PokemonType.Shadow && (
-                      <img height={20} style={{ marginRight: 8 }} alt="img-shadow" src={APIService.getPokeShadow()} />
+                      <img height={20} style={{ marginRight: 8 }} alt="Image Shadow" src={APIService.getPokeShadow()} />
                     )}
                     {`${splitAndCapitalize(props.result.objPoke.form?.name, '-', ' ')} `}
                     <span className="d-inline-block caption">(LV. {props.result.objLevel})</span>
@@ -187,14 +187,14 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>
-                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
+                <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={ATK_LOGO} />
                 Damage Taken
               </td>
               <td>{props.result.damage ? <b>{props.result.damage}</b> : '-'}</td>
             </tr>
             <tr>
               <td>
-                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
+                <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={DEF_LOGO} />
                 Damage Reduced
               </td>
               <td>
@@ -220,7 +220,7 @@ const DamageTable = (props: IDamageTableComponent) => {
             </tr>
             <tr>
               <td>
-                <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
+                <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={HP_LOGO} />
                 HP Object remaining
               </td>
               <td>

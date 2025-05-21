@@ -52,7 +52,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           style={{ marginLeft: 5 }}
           width={36}
           height={36}
-          alt="pokemon-go-icon"
+          alt="Pokémon GO Icon"
           src={APIService.getPokemonGoIcon(icon)}
         />
       </h4>
@@ -97,7 +97,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                         <div style={{ width: 80 }}>
                           <img
                             className="pokemon-sprite-model"
-                            alt="pokemon-model"
+                            alt="Pokémon Model"
                             src={APIService.getPokemonModel(value.default, value.pokemonId)}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
@@ -118,7 +118,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           <div style={{ width: 80 }}>
                             <img
                               className="pokemon-sprite-model"
-                              alt="pokemon-model"
+                              alt="Pokémon Model"
                               src={APIService.getPokemonModel(value.shiny, value.pokemonId)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;

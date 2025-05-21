@@ -143,7 +143,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         <PokemonIconType pokemonType={row.pokemonType} size={25}>
           <img
             height={48}
-            alt="img-pokemon"
+            alt="Pokémon Image"
             style={{ marginRight: 10 }}
             src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
             onError={(e) => {
@@ -169,7 +169,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           width={25}
           height={25}
           style={{ marginRight: 10 }}
-          alt="type-logo"
+          alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
         />
@@ -185,7 +185,13 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/move/${row.fMove?.id}`}
         title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}
       >
-        <IconType width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" type={row.fMove?.type} />
+        <IconType
+          width={25}
+          height={25}
+          style={{ marginRight: 10 }}
+          alt="Pokémon GO Type Logo"
+          type={row.fMove?.type}
+        />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
@@ -214,7 +220,13 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/move/${row.cMove?.id}`}
         title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}
       >
-        <IconType width={25} height={25} style={{ marginRight: 10 }} alt="type-logo" type={row.cMove?.type} />
+        <IconType
+          width={25}
+          height={25}
+          style={{ marginRight: 10 }}
+          alt="Pokémon GO Type Logo"
+          type={row.cMove?.type}
+        />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
@@ -994,7 +1006,7 @@ const DpsTdo = () => {
                             width={28}
                             height={28}
                             style={{ marginLeft: 5 }}
-                            alt="pokemon-go-icon"
+                            alt="Pokémon GO Icon"
                             src={APIService.getPokemonGoIcon(icon)}
                           />
                         </span>

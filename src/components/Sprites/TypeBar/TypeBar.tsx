@@ -12,7 +12,7 @@ const TypeBar = (props: ITypeBarComponent) => {
         <img
           style={{ padding: 5, backgroundColor: 'black' }}
           className="sprite-type"
-          alt="img-type-pokemon"
+          alt="Pokémon GO Type Logo"
           src={APIService.getTypeHqSprite(props.type)}
         />
       </span>

@@ -27,7 +27,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
           <div style={{ display: 'contents', width: 16 }}>
             <img
               className={combineClasses('pokemon-sprite-small sprite-type-select', isShowShadow ? 'filter-shadow' : '')}
-              alt="img-type-pokemon"
+              alt="Pokémon GO Type Logo"
               src={APIService.getTypeHqSprite(move.type)}
             />
           </div>
@@ -56,7 +56,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
                   <div className="block-attack-container">
                     <img
                       className="block-spirit-timeline"
-                      alt="img-shield"
+                      alt="Image Shield"
                       src={APIService.getPokeOtherLeague('ShieldButton')}
                     />
                   </div>

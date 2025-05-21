@@ -142,7 +142,7 @@ const Counter = (props: ICounterComponent) => {
                 <PokemonIconType pokemonType={row.pokemonType} size={30}>
                   <img
                     className="pokemon-sprite-counter"
-                    alt="img-pokemon"
+                    alt="Pokémon Image"
                     src={APIService.getPokemonModel(assets, row.pokemonId)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
@@ -166,7 +166,7 @@ const Counter = (props: ICounterComponent) => {
       selector: (row) => (
         <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <IconType width={28} height={28} alt="type-logo" type={row.fMove.type} />
+            <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
@@ -193,7 +193,7 @@ const Counter = (props: ICounterComponent) => {
       selector: (row) => (
         <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
           <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-            <IconType width={28} height={28} alt="type-logo" type={row.cMove.type} />
+            <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
           <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
@@ -354,7 +354,7 @@ const Counter = (props: ICounterComponent) => {
               width={28}
               height={28}
               style={{ marginLeft: 5 }}
-              alt="pokemon-go-icon"
+              alt="Pokémon GO Icon"
               src={APIService.getPokemonGoIcon(icon)}
             />
           </span>

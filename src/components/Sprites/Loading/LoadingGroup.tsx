@@ -34,7 +34,13 @@ const Load = styled.div<Element>`
 const LoadGroup = (props: ILoadGroupComponent) => {
   const ref = (
     <>
-      <img className="loading" width={props.size ?? 64} height={props.size ?? 64} alt="img-pokemon" src={loadingImg} />
+      <img
+        className="loading"
+        width={props.size ?? 64}
+        height={props.size ?? 64}
+        alt="Pokémon Loading"
+        src={loadingImg}
+      />
       <span className="caption theme-text-primary" style={{ fontSize: props.fontSize ?? 18 }}>
         <b>
           Loading<span id="p1">.</span>

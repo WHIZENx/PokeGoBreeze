@@ -58,7 +58,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
             width={24}
             height={24}
             title="Coming Soon"
-            alt="pokemon-go-icon"
+            alt="Pokémon GO Icon"
             src={APIService.getPokemonGoIcon(props.icon)}
           />
         </div>
@@ -72,7 +72,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           className={combineClasses('shiny-pokemon', props.isDefaultImg ? 'active' : '')}
           height={32}
           src={APIService.getShinyIcon()}
-          alt="icon-shiny"
+          alt="Icon Shiny"
         />
       )}
       <LinkToTop className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.form)}`}>
@@ -83,7 +83,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
                 <img
                   ref={imageRef}
                   className="pokemon-sprite-large"
-                  alt="pokemon-img"
+                  alt={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
                   src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
                   onError={(e) => {
                     const form =

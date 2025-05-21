@@ -116,7 +116,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} />{' '}
+                  <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />{' '}
                   {getKeyWithData(PokemonType, PokemonType.Buddy)}
                 </span>
               }
@@ -127,7 +127,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} />{' '}
+                  <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
                   {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               }
@@ -163,7 +163,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
+                  <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center">
@@ -178,7 +178,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
+                  <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center">
@@ -193,7 +193,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
+                  <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={HP_LOGO} />
                   HP
                 </td>
                 <td className="text-center">{calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel, true)}</td>

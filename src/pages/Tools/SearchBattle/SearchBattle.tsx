@@ -360,7 +360,7 @@ const FindBattle = () => {
     return (
       <img
         className={className}
-        alt="pokemon-model"
+        alt="Pokémon Model"
         height={height}
         src={APIService.getPokemonModel(assets, value.id)}
         onError={(e) => {
@@ -486,7 +486,7 @@ const FindBattle = () => {
                     <div className={combineClasses('border-best-poke', getTextColorRatio(value.ratio))}>
                       <div className="best-poke-desc border-best-poke">
                         <img
-                          alt="pokemon-model"
+                          alt="Pokémon Model"
                           height={32}
                           src={
                             value.league === LeagueBattleType.Little
@@ -563,7 +563,7 @@ const FindBattle = () => {
                                     <ul className="list-best-league">
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
                                         />
@@ -600,7 +600,7 @@ const FindBattle = () => {
                                       <li>
                                         <img
                                           style={{ marginRight: 5 }}
-                                          alt="img-stardust"
+                                          alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />
@@ -611,7 +611,7 @@ const FindBattle = () => {
                                     <div>
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
                                         />
@@ -631,7 +631,7 @@ const FindBattle = () => {
                                     <ul className="list-best-league">
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
                                         />
@@ -668,7 +668,7 @@ const FindBattle = () => {
                                       <li>
                                         <img
                                           style={{ marginRight: 5 }}
-                                          alt="img-stardust"
+                                          alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />
@@ -679,7 +679,7 @@ const FindBattle = () => {
                                     <div>
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
                                         />
@@ -699,7 +699,7 @@ const FindBattle = () => {
                                     <ul className="list-best-league">
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
                                         />
@@ -736,7 +736,7 @@ const FindBattle = () => {
                                       <li>
                                         <img
                                           style={{ marginRight: 5 }}
-                                          alt="img-stardust"
+                                          alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />
@@ -747,7 +747,7 @@ const FindBattle = () => {
                                     <div>
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
                                         />
@@ -766,7 +766,7 @@ const FindBattle = () => {
                                   {item.battleLeague.master.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />
+                                        <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
                                         <b>{` ${getPokemonBattleLeagueName()}`}</b>
                                       </h6>
                                       <li>
@@ -800,7 +800,7 @@ const FindBattle = () => {
                                       <li>
                                         <img
                                           style={{ marginRight: 5 }}
-                                          alt="img-stardust"
+                                          alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />
@@ -810,7 +810,7 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />
+                                        <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
                                         <b>{` ${getPokemonBattleLeagueName()}`}</b>
                                       </h6>
                                       <b style={{ padding: '1rem' }} className="text-danger">

@@ -12,7 +12,7 @@ const CardPokemon = (props: ICardPokemonComponent) => {
         <PokemonIconType pokemonType={props.pokemonType} size={24} style={{ left: -5 }}>
           <img
             height={38}
-            alt="pokemon-logo"
+            alt="Pokémon Logo"
             style={{ marginRight: 10 }}
             src={APIService.getPokeIconSprite(props.value.sprite, true)}
             onError={(e) => {

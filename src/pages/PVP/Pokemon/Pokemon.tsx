@@ -206,7 +206,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
             style={{ columnGap: 10 }}
           >
             <img
-              alt="img-league"
+              alt="Image League"
               width={64}
               height={64}
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
@@ -274,7 +274,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
                 <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
                   <img
-                    alt="img-league"
+                    alt="Image League"
                     className="pokemon-sprite-raid"
                     src={APIService.getPokemonModel(rankingPoke?.form, rankingPoke?.id)}
                     onError={(e) => {

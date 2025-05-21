@@ -56,7 +56,7 @@ const Trainer = () => {
                       <img
                         className="pokemon-sprite-medium"
                         style={{ width: 64 }}
-                        alt="img-pokemon"
+                        alt="Pokémon Image"
                         src={getItemSpritePath(value.name)}
                       />
                       <span className="caption text-black">
@@ -80,7 +80,7 @@ const Trainer = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
                             src={getItemSpritePath(value)}
                           />
                           <span className="caption text-black">

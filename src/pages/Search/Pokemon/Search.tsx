@@ -170,7 +170,7 @@ const Search = () => {
                   width={36}
                   height={36}
                   className="img-search"
-                  alt="img-pokemon"
+                  alt="Pokémon Image"
                   src={value.sprites}
                   onError={(e) => {
                     e.currentTarget.onerror = null;

@@ -32,7 +32,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
                 <div style={{ display: 'contents', width: 16 }}>
                   <img
                     className="pokemon-sprite-small sprite-type-select filter-shadow"
-                    alt="img-type-pokemon"
+                    alt="Pokémon GO Type Logo"
                     src={APIService.getTypeHqSprite(value)}
                   />
                 </div>

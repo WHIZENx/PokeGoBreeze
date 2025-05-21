@@ -10,7 +10,7 @@ const Weather = (props: IWeatherComponent) => {
       {!isNotEmpty(props.arr) ? (
         <div className="element-top d-flex" style={{ marginLeft: 15 }}>
           <div className="text-center" key={0}>
-            <img height={50} alt="img-pokemon" src={APIService.getPokeSprite()} />
+            <img height={50} alt="Pokémon Image" src={APIService.getPokeSprite()} />
             <span className="caption theme-text-primary">None</span>
           </div>
         </div>
@@ -21,7 +21,7 @@ const Weather = (props: IWeatherComponent) => {
             {props.arr?.map((value, index) => (
               <div className="text-center d-flex" key={index}>
                 <div>
-                  <img height={50} alt="img-pokemon" src={APIService.getWeatherSprite(value)} />
+                  <img height={50} alt="Pokémon Image" src={APIService.getWeatherSprite(value)} />
                   <span className="caption theme-text-primary">{splitAndCapitalize(value, '_', ' ')}</span>
                 </div>
               </div>

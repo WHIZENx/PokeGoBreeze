@@ -13,7 +13,7 @@ const Gender = (props: IGenderComponent) => {
           className="img-gender"
           width={40}
           height={40}
-          alt="img-pokemon-sex"
+          alt="Image Pokémon Sex"
           src={APIService.getGenderSprite(getKeyWithData(TypeSex, props.sex))}
         />
         <h6 className="ratio-gender" style={{ margin: 0 }}>
@@ -28,7 +28,7 @@ const Gender = (props: IGenderComponent) => {
             <img
               width={96}
               height={96}
-              alt="img-pokemon"
+              alt="Pokémon Image"
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = APIService.getPokeSprite();
@@ -57,7 +57,7 @@ const Gender = (props: IGenderComponent) => {
             <img
               width={96}
               height={96}
-              alt="img-pokemon"
+              alt="Pokémon Image"
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = APIService.getPokeSprite();

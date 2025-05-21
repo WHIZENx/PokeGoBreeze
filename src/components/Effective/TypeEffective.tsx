@@ -10,7 +10,7 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => (
     <div className="element-top d-flex" style={{ marginLeft: 15 }}>
       <div className="text-center" key={0}>
-        <img height={50} alt="img-pokemon" src={APIService.getPokeSprite()} />
+        <img height={50} alt="Pokémon Image" src={APIService.getPokeSprite()} />
         <span className="caption text-black">{getKeyWithData(EffectiveType, EffectiveType.None)}</span>
       </div>
     </div>

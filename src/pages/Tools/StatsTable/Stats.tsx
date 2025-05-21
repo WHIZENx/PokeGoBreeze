@@ -222,7 +222,7 @@ const StatsTable = () => {
                 style={{ height: 200 }}
                 onClick={() => setBattleLeague(value.cp[0])}
               >
-                <img alt="img-league" width={128} height={128} src={value.logo} />
+                <img alt="Image League" width={128} height={128} src={value.logo} />
                 <div>
                   <b>{value.name}</b>
                 </div>

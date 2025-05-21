@@ -303,7 +303,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             <div>
               <img
                 height={60}
-                alt="img-full-pokemon"
+                alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
@@ -322,7 +322,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       <img
         style={{ padding: 10 }}
         height={200}
-        alt="img-full-pokemon"
+        alt="Image Pokemon"
         src={
           currentForm?.form
             ? APIService.getPokeFullSprite(
@@ -342,7 +342,7 @@ const FormSelect = (props: IFormSelectComponent) => {
             <div>
               <img
                 height={60}
-                alt="img-full-pokemon"
+                alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
@@ -388,7 +388,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = APIService.getPokeIconSprite();
                       }}
-                      alt="img-icon-form"
+                      alt="Image Icon Form"
                       src={formIconAssets(value)}
                     />
                     <p>
@@ -425,7 +425,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-pokemon" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
+                  <img height={32} alt="Pokémon Image" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
                 </span>
               }
             />

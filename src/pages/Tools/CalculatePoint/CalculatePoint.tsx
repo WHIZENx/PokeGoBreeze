@@ -258,12 +258,12 @@ const CalculatePoint = () => {
         <span className="position-relative" style={{ width: 96 }}>
           <img
             className="position-absolute"
-            alt="img-logo"
+            alt="Image Logo"
             height={36}
             src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`}
           />
           <img
-            alt="img-pokemon"
+            alt="Pokémon Image"
             className="pokemon-sprite-large"
             src={APIService.getPokeIconSprite(form?.form?.name, false)}
             onError={(e) => {
