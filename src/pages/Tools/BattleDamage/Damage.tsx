@@ -29,7 +29,7 @@ import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../..
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
-    color: 'black',
+    color: 'var(--text-primary)',
     style: 'text-danger',
   }),
   1: LabelDamage.create({

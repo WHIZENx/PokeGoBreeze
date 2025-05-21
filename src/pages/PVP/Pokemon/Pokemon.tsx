@@ -63,7 +63,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   const [isFound, setIsFound] = useState(true);
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp);
+    loadPVP(dispatch, timestamp, pvp);
   }, []);
 
   const fetchPokemonInfo = useCallback(async () => {
