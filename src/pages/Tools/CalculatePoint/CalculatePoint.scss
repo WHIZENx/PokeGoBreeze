@@ -11,14 +11,7 @@
   padding: 5px 10px;
 }
 
-.table-raid-cal thead tr.table-header th {
-  background-color: #f1f1ff !important;
-  border: 1px solid #b8d4da;
-  color: #0571c2;
-}
-
 .table-raid-cal thead tr th:nth-child(1) {
-  background-color: white !important;
   width: 75px !important;
   min-width: 75px !important;
 }
@@ -31,9 +24,7 @@
 .table-raid-cal tbody tr td:nth-child(1) {
   width: auto;
   min-width: auto;
-  background-color: #f1f1ff;
   text-align: center;
-  color: black;
   font-weight: bold;
 }
 
@@ -49,7 +40,7 @@
 
 .text-iv {
   font-weight: initial;
-  color: white;
+  color: white !important;
   text-shadow: 1px 1px black;
 }
 
@@ -64,6 +55,7 @@
 }
 
 .bg-zero {
+  color: black !important;
   background-color: lightgray;
 }
 

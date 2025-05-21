@@ -6,10 +6,9 @@ import {
   splitAndCapitalize,
   capitalize,
   replaceTempMovePvpName,
-  getKeyWithData,
   getKeysObj,
   getValidPokemonImgPath,
-  getStyleList,
+  getKeyWithData,
 } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
@@ -23,7 +22,7 @@ import {
 } from '../../../util/compute';
 
 import update from 'immutability-helper';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -32,8 +31,8 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { FORM_SHADOW } from '../../../util/constants';
-import { PathState, RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
+import { FORM_SHADOW, Params } from '../../../util/constants';
+import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
@@ -42,6 +41,7 @@ import {
   combineClasses,
   DynamicObj,
   getPropertyName,
+  getValueOrDefault,
   isEqual,
   isInclude,
   isIncludeList,
@@ -61,17 +61,20 @@ import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { IStyleData } from '../../../util/models/util.model';
 import { HexagonStats } from '../../../core/models/stats.model';
+import Error from '../../Error/Error';
+import { AxiosError } from 'axios';
+import { IStyleSheetData } from '../../models/page.model';
 
-const RankingPVP = () => {
+const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
-  const pvpData = useSelector((state: PathState) => state.path.pvp);
+
+  const [searchParams] = useSearchParams();
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<IPokemonBattleRanking[]>([]);
@@ -79,9 +82,9 @@ const RankingPVP = () => {
   const sortedBy = useRef(SortType.Score);
   const [sorted, setSorted] = useState(SortDirectionType.DESC);
 
-  const styleSheet = useRef<IStyleData[]>(getStyleList());
-
   const [search, setSearch] = useState('');
+  const [isFound, setIsFound] = useState(true);
+
   const statsRanking = useSelector((state: StatsState) => state.stats);
 
   const [startIndex, setStartIndex] = useState(0);
@@ -107,8 +110,8 @@ const RankingPVP = () => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData);
-  }, [dispatch]);
+    loadPVP(dispatch, timestamp);
+  }, []);
 
   const fetchPokemonRanking = useCallback(async () => {
     if (
@@ -120,10 +123,15 @@ const RankingPVP = () => {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
         const cp = toNumber(params.cp);
-        const file = (
-          await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, params.type))
-        ).data;
+        const pvpType = getValueOrDefault(
+          String,
+          searchParams.get(Params.LeagueType),
+          getKeyWithData(ScoreType, ScoreType.Overall)
+        ).toLowerCase();
+        const file = (await APIService.getFetchUrl<RankingsPVP[]>(APIService.getRankingFile(params.serie, cp, pvpType)))
+          .data;
         if (!isNotEmpty(file)) {
+          setIsFound(false);
           return;
         }
         if (params.serie === LeagueBattleType.All) {
@@ -131,7 +139,7 @@ const RankingPVP = () => {
         } else {
           document.title = `PVP Ranking - ${
             params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
-          } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(params.type)})`;
+          } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(pvpType)})`;
         }
         const filePVP = file.map((data) => {
           const name = convertNameRankingToOri(data.speciesId, data.speciesName);
@@ -185,19 +193,26 @@ const RankingPVP = () => {
         setStoreStats([...Array(filePVP.length).keys()].map(() => false));
         dispatch(SpinnerActions.HideSpinner.create());
       } catch (e) {
-        dispatch(
-          SpinnerActions.ShowSpinnerMsg.create({
-            isError: true,
-            message: (e as Error).message,
-          })
-        );
+        if ((e as AxiosError)?.status === 404) {
+          setIsFound(false);
+        } else {
+          dispatch(
+            SpinnerActions.ShowSpinnerMsg.create({
+              isError: true,
+              message: (e as AxiosError).message,
+            })
+          );
+        }
       }
     }
   }, [
+    searchParams,
     params.serie,
-    params.type,
     params.cp,
-    statsRanking,
+    statsRanking?.attack?.ranking,
+    statsRanking?.defense?.ranking,
+    statsRanking?.stamina?.ranking,
+    statsRanking?.statProd?.ranking,
     dataStore.combats,
     dataStore.pokemons,
     dataStore.assets,
@@ -211,6 +226,8 @@ const RankingPVP = () => {
     };
     if (
       statsRanking &&
+      isNotEmpty(pvp.rankings) &&
+      isNotEmpty(pvp.trains) &&
       isNotEmpty(dataStore.combats) &&
       isNotEmpty(dataStore.pokemons) &&
       isNotEmpty(dataStore.assets)
@@ -224,7 +241,7 @@ const RankingPVP = () => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonRanking, rankingData, pvp, router.action, dispatch]);
+  }, [fetchPokemonRanking, rankingData, pvp.rankings, pvp.trains, router.action, dispatch]);
 
   const renderItem = (data: IPokemonBattleRanking, key: number) => (
     <Accordion.Item eventKey={key.toString()}>
@@ -237,12 +254,15 @@ const RankingPVP = () => {
       >
         <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
           <LinkToTop
-            to={`/pvp/${params.cp}/${getKeyWithData(
-              ScoreType,
-              ScoreType.Overall
-            )?.toLowerCase()}/${data.data?.speciesId?.replaceAll('_', '-')}`}
+            to={`/pvp/${params.cp}/${params.serie?.toLowerCase()}/${data.data?.speciesId?.replaceAll('_', '-')}?${
+              Params.LeagueType
+            }=${getValueOrDefault(
+              String,
+              searchParams.get(Params.LeagueType),
+              getKeyWithData(ScoreType, ScoreType.Overall)
+            ).toLowerCase()}`}
           >
-            <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+            <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
           </LinkToTop>
           <div className="d-flex justify-content-center">
             <span className="position-relative" style={{ width: 50 }}>
@@ -262,7 +282,7 @@ const RankingPVP = () => {
           <div className="ranking-group w-100">
             <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
             <div style={{ marginRight: 15 }}>
-              <span className="ranking-score score-ic">{data.data?.score}</span>
+              <span className="ranking-score score-ic text-black">{data.data?.score}</span>
             </div>
           </div>
         </div>
@@ -270,7 +290,7 @@ const RankingPVP = () => {
       <Accordion.Body
         style={{
           padding: 0,
-          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, styleSheet.current, 0.8),
+          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, props.styleSheet, 0.3),
         }}
       >
         {storeStats && storeStats[key] && (
@@ -284,15 +304,21 @@ const RankingPVP = () => {
                   pokemonData={dataStore.pokemons}
                   data={data.data}
                   cp={params.cp}
-                  type={params.type}
-                  styleList={styleSheet.current}
+                  serie={params.serie}
+                  type={searchParams.get(Params.LeagueType)}
+                  styleList={props.styleSheet}
                 />
               </div>
               <div className="container">
                 <hr />
               </div>
               <div className="stats-container">
-                <OverAllStats data={data} statsRanking={statsRanking} cp={params.cp} type={params.type} />
+                <OverAllStats
+                  data={data}
+                  statsRanking={statsRanking}
+                  cp={params.cp}
+                  type={searchParams.get(Params.LeagueType)}
+                />
               </div>
               <div className="container">
                 <hr />
@@ -354,7 +380,7 @@ const RankingPVP = () => {
   };
 
   return (
-    <Fragment>
+    <Error isError={!isFound}>
       <div className="container pvp-container element-bottom">
         {renderLeague()}
         <hr />
@@ -362,8 +388,22 @@ const RankingPVP = () => {
           {getKeysObj(ScoreType).map((type, index) => (
             <Button
               key={index}
-              className={isEqual(params.type, type, EqualMode.IgnoreCaseSensitive) ? 'active' : ''}
-              onClick={() => navigate(`/pvp/rankings/${params.serie}/${params.cp}/${type.toLowerCase()}`)}
+              className={
+                isEqual(
+                  getValueOrDefault(
+                    String,
+                    searchParams.get(Params.LeagueType),
+                    getKeyWithData(ScoreType, ScoreType.Overall)
+                  ),
+                  type,
+                  EqualMode.IgnoreCaseSensitive
+                )
+                  ? 'active'
+                  : ''
+              }
+              onClick={() =>
+                navigate(`/pvp/rankings/${params.serie}/${params.cp}?${Params.LeagueType}=${type.toLowerCase()}`)
+              }
             >
               {type}
             </Button>
@@ -421,7 +461,7 @@ const RankingPVP = () => {
           </Accordion>
         </div>
       </div>
-    </Fragment>
+    </Error>
   );
 };
 

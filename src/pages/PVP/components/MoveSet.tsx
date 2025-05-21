@@ -65,7 +65,7 @@ const MoveSet = (props: MoveSetComponent) => {
     <OverlayTrigger
       placement="auto"
       overlay={
-        <PopoverConfig id="popover-info-evo">
+        <PopoverConfig id="popover-info">
           <span className="info-evo">
             <span className="d-block caption">
               - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> {ArcheType.General}
@@ -136,7 +136,7 @@ const MoveSet = (props: MoveSetComponent) => {
       </div>
       <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
         {move?.archetype && findArchetype(move.archetype)}
-        <span className="ranking-score score-ic filter-shadow">{move.uses}</span>
+        <span className="ranking-score score-ic text-black filter-shadow">{move.uses}</span>
       </div>
     </LinkToTop>
   );
@@ -176,7 +176,7 @@ const MoveSet = (props: MoveSetComponent) => {
 
   return (
     <div className="row" style={{ margin: 0 }}>
-      <div className="col-xl-6" style={{ padding: 0, backgroundColor: 'lightgray' }}>
+      <div className="col-xl-6 moves-title-container" style={{ padding: 0 }}>
         <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {fastMoves?.map((value, index) => (
@@ -184,7 +184,7 @@ const MoveSet = (props: MoveSetComponent) => {
           ))}
         </div>
       </div>
-      <div className="col-xl-6" style={{ padding: 0, backgroundColor: 'lightgray' }}>
+      <div className="col-xl-6 moves-title-container" style={{ padding: 0 }}>
         <div className="moves-title">Charged Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {chargedMoves?.map((value, index) => (

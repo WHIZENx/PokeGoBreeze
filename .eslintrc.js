@@ -18,6 +18,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react', 'prettier', 'css', 'stylelint'],
   rules: {
     '@typescript-eslint/no-explicit-any': 0,
+    curly: 1,
     'prettier/prettier': [
       'warn',
       {

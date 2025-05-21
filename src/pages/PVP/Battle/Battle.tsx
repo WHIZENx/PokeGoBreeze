@@ -104,6 +104,8 @@ import { LinkToTop, useNavigateToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats, StatsPokemonGO } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import Error from '../../Error/Error';
+import { AxiosError } from 'axios';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -150,6 +152,8 @@ const Battle = () => {
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
   const [playTimeline, setPlayTimeline] = useState(new BattleState());
+
+  const [isFound, setIsFound] = useState(true);
 
   const State = (timer: number, block: number, energy: number, hp: number, type?: AttackType) =>
     new TimelineModel({
@@ -758,6 +762,7 @@ const Battle = () => {
           )
         ).data;
         if (!isNotEmpty(file)) {
+          setIsFound(false);
           return;
         }
         document.title = `PVP Battle Simulator - ${getPokemonBattleLeagueName(league)}`;
@@ -797,12 +802,16 @@ const Battle = () => {
         setData(result);
         dispatch(SpinnerActions.HideSpinner.create());
       } catch (e) {
-        dispatch(
-          SpinnerActions.ShowSpinnerMsg.create({
-            isError: true,
-            message: (e as Error).message,
-          })
-        );
+        if ((e as AxiosError)?.status === 404) {
+          setIsFound(false);
+        } else {
+          dispatch(
+            SpinnerActions.ShowSpinnerMsg.create({
+              isError: true,
+              message: (e as AxiosError).message,
+            })
+          );
+        }
       }
     },
     [dataStore.options, dataStore.pokemons, dataStore.assets, dispatch]
@@ -860,7 +869,7 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
     const xPos = toNumber(xNormal.current);
     if (elem && x <= toNumber(timelineNormal.current?.clientWidth) - 2) {
       elem.style.transform = `translate(${x}px, -50%)`;
@@ -887,7 +896,7 @@ const Battle = () => {
     stopTimeLine();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(0, (e.clientX ?? e.changedTouches[0].clientX) - rect.left);
+    const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
     if (elem && x <= toNumber(timelineFit.current?.clientWidth)) {
       elem.style.transform = `translate(${x}px, -50%)`;
     }
@@ -1279,7 +1288,7 @@ const Battle = () => {
                   ScoreType.Overall
                 )?.toLowerCase()}/${pokemon.pokemonData?.speciesId?.replaceAll('_', '-')}`}
               >
-                <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+                <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
               </LinkToTop>
               <b>{`#${pokemon.pokemonData?.id} ${splitAndCapitalize(pokemon.pokemonData?.name, '-', ' ')}`}</b>
             </div>
@@ -1623,221 +1632,223 @@ const Battle = () => {
   };
 
   return (
-    <div className="container element-top battle-body-container">
-      <Form.Select
-        onChange={(e) => {
-          navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
-          setOptions({ ...options, league: toNumber(e.target.value) });
-        }}
-        defaultValue={league}
-      >
-        <option value={BattleLeagueCPType.Little}>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</option>
-        <option value={BattleLeagueCPType.Great}>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</option>
-        <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
-        <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
-      </Form.Select>
-      <div className="row element-top" style={{ margin: 0 }}>
-        <div className="col-lg-3">
-          {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
-        </div>
-        <div className="col-lg-6">
-          {pokemonCurr.pokemonData &&
-            pokemonObj.pokemonData &&
-            isNotEmpty(pokemonCurr.timeline) &&
-            isNotEmpty(pokemonObj.timeline) && (
-              <Fragment>
-                <Accordion defaultActiveKey={[]}>
-                  <Card className="position-relative">
-                    <Card.Header style={{ padding: 0 }}>
-                      <div className="d-flex timeline-vertical">
-                        <div className="w-50">
-                          <div
-                            className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start"
-                            style={{ gap: 10 }}
-                          >
-                            <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                              <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
-                                <img
-                                  alt="img-league"
-                                  className="sprite-type"
-                                  src={APIService.getPokemonModel(
-                                    pokemonCurr.pokemonData.form,
-                                    pokemonCurr.pokemonData.id
-                                  )}
-                                  onError={(e) => {
-                                    e.currentTarget.onerror = null;
-                                    e.currentTarget.src = getValidPokemonImgPath(
-                                      e.currentTarget.src,
-                                      pokemonCurr.pokemonData?.id,
-                                      pokemonCurr.pokemonData?.form
-                                    );
-                                  }}
-                                />
-                              </PokemonIconType>
+    <Error isError={!isFound}>
+      <div className="container element-top battle-body-container">
+        <Form.Select
+          onChange={(e) => {
+            navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
+            setOptions({ ...options, league: toNumber(e.target.value) });
+          }}
+          defaultValue={league}
+        >
+          <option value={BattleLeagueCPType.Little}>{getPokemonBattleLeagueName(BattleLeagueCPType.Little)}</option>
+          <option value={BattleLeagueCPType.Great}>{getPokemonBattleLeagueName(BattleLeagueCPType.Great)}</option>
+          <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
+          <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
+        </Form.Select>
+        <div className="row element-top" style={{ margin: 0 }}>
+          <div className="col-lg-3">
+            {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
+          </div>
+          <div className="col-lg-6">
+            {pokemonCurr.pokemonData &&
+              pokemonObj.pokemonData &&
+              isNotEmpty(pokemonCurr.timeline) &&
+              isNotEmpty(pokemonObj.timeline) && (
+                <Fragment>
+                  <Accordion defaultActiveKey={[]}>
+                    <Card className="position-relative">
+                      <Card.Header style={{ padding: 0 }}>
+                        <div className="d-flex timeline-vertical">
+                          <div className="w-50">
+                            <div
+                              className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start"
+                              style={{ gap: 10 }}
+                            >
+                              <div className="position-relative filter-shadow" style={{ width: 35 }}>
+                                <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
+                                  <img
+                                    alt="img-league"
+                                    className="sprite-type"
+                                    src={APIService.getPokemonModel(
+                                      pokemonCurr.pokemonData.form,
+                                      pokemonCurr.pokemonData.id
+                                    )}
+                                    onError={(e) => {
+                                      e.currentTarget.onerror = null;
+                                      e.currentTarget.src = getValidPokemonImgPath(
+                                        e.currentTarget.src,
+                                        pokemonCurr.pokemonData?.id,
+                                        pokemonCurr.pokemonData?.form
+                                      );
+                                    }}
+                                  />
+                                </PokemonIconType>
+                              </div>
+                              <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
                             </div>
-                            <b>{splitAndCapitalize(pokemonCurr.pokemonData.name, '-', ' ')}</b>
+                          </div>
+                          <div className="w-50">
+                            <div
+                              className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end"
+                              style={{ gap: 10 }}
+                            >
+                              <div className="position-relative filter-shadow" style={{ width: 35 }}>
+                                <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
+                                  <img
+                                    alt="img-league"
+                                    className="sprite-type"
+                                    src={APIService.getPokemonModel(
+                                      pokemonObj.pokemonData.form,
+                                      pokemonObj.pokemonData.id
+                                    )}
+                                    onError={(e) => {
+                                      e.currentTarget.onerror = null;
+                                      e.currentTarget.src = getValidPokemonImgPath(
+                                        e.currentTarget.src,
+                                        pokemonObj.pokemonData?.id,
+                                        pokemonObj.pokemonData?.form
+                                      );
+                                    }}
+                                  />
+                                </PokemonIconType>
+                              </div>
+                              <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>
+                            </div>
                           </div>
                         </div>
-                        <div className="w-50">
-                          <div
-                            className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end"
-                            style={{ gap: 10 }}
-                          >
-                            <div className="position-relative filter-shadow" style={{ width: 35 }}>
-                              <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
-                                <img
-                                  alt="img-league"
-                                  className="sprite-type"
-                                  src={APIService.getPokemonModel(
-                                    pokemonObj.pokemonData.form,
-                                    pokemonObj.pokemonData.id
-                                  )}
-                                  onError={(e) => {
-                                    e.currentTarget.onerror = null;
-                                    e.currentTarget.src = getValidPokemonImgPath(
-                                      e.currentTarget.src,
-                                      pokemonObj.pokemonData?.id,
-                                      pokemonObj.pokemonData?.form
-                                    );
-                                  }}
-                                />
-                              </PokemonIconType>
-                            </div>
-                            <b>{splitAndCapitalize(pokemonObj.pokemonData.name, '-', ' ')}</b>
-                          </div>
-                        </div>
-                      </div>
-                      <CustomToggle eventKey="0" />
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="0">
-                      <Card.Body style={{ padding: 0 }}>{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                </Accordion>
-                <div>
-                  {timelineType === TimelineType.Normal ? (
-                    <Fragment>
-                      {TimeLine(
-                        pokemonCurr,
-                        pokemonObj,
-                        timelineNormalContainer as React.LegacyRef<HTMLDivElement>,
-                        onScrollTimeline,
-                        timelineNormal as React.LegacyRef<HTMLDivElement>,
-                        playLine as React.LegacyRef<HTMLDivElement>,
-                        onPlayLineMove,
-                        showTap
-                      )}
-                    </Fragment>
-                  ) : (
-                    <Fragment>
-                      {TimeLineFit(
-                        pokemonCurr,
-                        pokemonObj,
-                        timelineFit as React.LegacyRef<HTMLDivElement>,
-                        playLine as React.LegacyRef<HTMLDivElement>,
-                        onPlayLineFitMove,
-                        showTap
-                      )}
-                    </Fragment>
-                  )}
-                  <div className="d-flex justify-content-center">
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={showTap}
-                          onChange={(_, check) => setOptions({ ...options, showTap: check })}
-                        />
-                      }
-                      label="Show Tap Move"
-                    />
-                    <RadioGroup
-                      row={true}
-                      aria-labelledby="row-timeline-group-label"
-                      name="row-timeline-group"
-                      value={timelineType}
-                      onChange={(e) =>
-                        onChangeTimeline(
-                          toNumber(e.target.value),
-                          timelineType === TimelineType.Normal
-                            ? timelineNormal.current?.clientWidth
-                            : timelineFit.current?.clientWidth
-                        )
-                      }
-                    >
+                        <CustomToggle eventKey="0" />
+                      </Card.Header>
+                      <Accordion.Collapse eventKey="0">
+                        <Card.Body style={{ padding: 0 }}>{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  </Accordion>
+                  <div>
+                    {timelineType === TimelineType.Normal ? (
+                      <Fragment>
+                        {TimeLine(
+                          pokemonCurr,
+                          pokemonObj,
+                          timelineNormalContainer as React.LegacyRef<HTMLDivElement>,
+                          onScrollTimeline,
+                          timelineNormal as React.LegacyRef<HTMLDivElement>,
+                          playLine as React.LegacyRef<HTMLDivElement>,
+                          onPlayLineMove,
+                          showTap
+                        )}
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        {TimeLineFit(
+                          pokemonCurr,
+                          pokemonObj,
+                          timelineFit as React.LegacyRef<HTMLDivElement>,
+                          playLine as React.LegacyRef<HTMLDivElement>,
+                          onPlayLineFitMove,
+                          showTap
+                        )}
+                      </Fragment>
+                    )}
+                    <div className="d-flex justify-content-center">
                       <FormControlLabel
-                        value={TimelineType.Fit}
-                        control={<Radio />}
-                        label={<span>Fit Timeline</span>}
+                        control={
+                          <Checkbox
+                            checked={showTap}
+                            onChange={(_, check) => setOptions({ ...options, showTap: check })}
+                          />
+                        }
+                        label="Show Tap Move"
                       />
-                      <FormControlLabel
-                        value={TimelineType.Normal}
-                        control={<Radio />}
-                        label={<span>Normal Timeline</span>}
-                      />
-                    </RadioGroup>
-                    <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
-                      <InputLabel>Speed</InputLabel>
-                      <Select
-                        value={duration}
-                        onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })}
-                        label="Speed"
+                      <RadioGroup
+                        row={true}
+                        aria-labelledby="row-timeline-group-label"
+                        name="row-timeline-group"
+                        value={timelineType}
+                        onChange={(e) =>
+                          onChangeTimeline(
+                            toNumber(e.target.value),
+                            timelineType === TimelineType.Normal
+                              ? timelineNormal.current?.clientWidth
+                              : timelineFit.current?.clientWidth
+                          )
+                        }
                       >
-                        <MenuItem value={0.5}>x0.5</MenuItem>
-                        <MenuItem value={1}>Normal</MenuItem>
-                        <MenuItem value={2}>x2</MenuItem>
-                        <MenuItem value={5}>x5</MenuItem>
-                        <MenuItem value={10}>x10</MenuItem>
-                      </Select>
-                    </FormControl>
+                        <FormControlLabel
+                          value={TimelineType.Fit}
+                          control={<Radio />}
+                          label={<span>Fit Timeline</span>}
+                        />
+                        <FormControlLabel
+                          value={TimelineType.Normal}
+                          control={<Radio />}
+                          label={<span>Normal Timeline</span>}
+                        />
+                      </RadioGroup>
+                      <FormControl variant={VariantType.Standard} sx={{ m: 1, minWidth: 120 }} disabled={playState}>
+                        <InputLabel>Speed</InputLabel>
+                        <Select
+                          value={duration}
+                          onChange={(e) => setOptions({ ...options, duration: toFloat(e.target.value) })}
+                          label="Speed"
+                        >
+                          <MenuItem value={0.5}>x0.5</MenuItem>
+                          <MenuItem value={1}>Normal</MenuItem>
+                          <MenuItem value={2}>x2</MenuItem>
+                          <MenuItem value={5}>x5</MenuItem>
+                          <MenuItem value={10}>x10</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
+                      <button
+                        className="btn btn-primary"
+                        onMouseDown={() => (playState ? stopTimeLine() : playingTimeLine())}
+                        onTouchEnd={() => (playState ? stopTimeLine() : playingTimeLine())}
+                      >
+                        {playState ? (
+                          <Fragment>
+                            <PauseIcon /> Stop
+                          </Fragment>
+                        ) : (
+                          <Fragment>
+                            <PlayArrowIcon /> Play
+                          </Fragment>
+                        )}
+                      </button>
+                      <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeLine()}>
+                        <RestartAltIcon /> Reset
+                      </button>
+                    </div>
                   </div>
-                  <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
-                    <button
-                      className="btn btn-primary"
-                      onMouseDown={() => (playState ? stopTimeLine() : playingTimeLine())}
-                      onTouchEnd={() => (playState ? stopTimeLine() : playingTimeLine())}
-                    >
-                      {playState ? (
-                        <Fragment>
-                          <PauseIcon /> Stop
-                        </Fragment>
-                      ) : (
-                        <Fragment>
-                          <PlayArrowIcon /> Play
-                        </Fragment>
-                      )}
-                    </button>
-                    <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeLine()}>
-                      <RestartAltIcon /> Reset
-                    </button>
-                  </div>
-                </div>
-              </Fragment>
-            )}
+                </Fragment>
+              )}
+          </div>
+          <div className="col-lg-3">
+            {renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}
+          </div>
         </div>
-        <div className="col-lg-3">
-          {renderPokemonInfo(BattleType.Object, pokemonObj, setPokemonObj, clearDataPokemonObj)}
-        </div>
+        {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
+          <div className="text-center element-top">
+            <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
+              {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
+                <Fragment>
+                  <RestartAltIcon /> Reset Battle
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <span className="position-relative">
+                    <img height={36} alt="atk-left" src={ATK_LOGO} />
+                    <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
+                  </span>
+                  {' Battle Simulator'}
+                </Fragment>
+              )}
+            </button>
+          </div>
+        )}
       </div>
-      {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-        <div className="text-center element-top">
-          <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
-            {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
-              <Fragment>
-                <RestartAltIcon /> Reset Battle
-              </Fragment>
-            ) : (
-              <Fragment>
-                <span className="position-relative">
-                  <img height={36} alt="atk-left" src={ATK_LOGO} />
-                  <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
-                </span>
-                {' Battle Simulator'}
-              </Fragment>
-            )}
-          </button>
-        </div>
-      )}
-    </div>
+    </Error>
   );
 };
 

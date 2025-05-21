@@ -10,33 +10,23 @@ import logo from '../assets/pokedex.png';
 import { capitalize, getTime } from '../util/utils';
 
 import './Navbar.scss';
-import { Box, IconButton, LinearProgress, PaletteMode } from '@mui/material';
+import { Box, IconButton, LinearProgress } from '@mui/material';
 import { SpinnerState, TimestampState } from '../store/models/state.model';
-import { loadTheme } from '../store/effects/theme.effects';
-import { useLocalStorage } from 'usehooks-ts';
 import { getEdgeItem } from '../services/edge.service';
 import { EdgeKey } from '../services/constants/edgeKey';
 import { TypeTheme, VariantType } from '../enums/type.enum';
+import { INavbarComponent } from './models/component.model';
+import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/localStorage';
+import { loadTheme } from '../store/effects/theme.effects';
 
-const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void }) => {
+const NavbarComponent = (props: INavbarComponent) => {
   const dispatch = useDispatch();
-
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
 
   const [version, setVersion] = useState<string>();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await getEdgeItem<string>(EdgeKey.VERSION);
-      setVersion(result);
-    };
-    if (!version) {
-      fetchData();
-    }
-  }, [version]);
+  const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
 
   const [isDelay, setIsDelay] = useState(false);
 
@@ -51,6 +41,16 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await getEdgeItem<string>(EdgeKey.VERSION);
+      setVersion(result);
+    };
+    if (!version) {
+      fetchData();
+    }
+  }, [version]);
+
   return (
     <Fragment>
       <Navbar collapseOnSelect={true} bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
@@ -60,7 +60,7 @@ const NavbarComponent = (props: { mode: PaletteMode; toggleColorMode: () => void
             width="30"
             height="30"
             className="d-inline-block align-top"
-            alt=""
+            alt="home"
             style={{ marginLeft: 10, marginRight: 10 }}
           />
           PokéGoBreeze

@@ -6,7 +6,6 @@ import stats from './stats.reducer';
 import theme from './theme.reducer';
 import device from './device.reducer';
 import timestamp from './timestamp.reducer';
-import path from './path.reducer';
 
 const rootReducer = {
   spinner,
@@ -16,7 +15,6 @@ const rootReducer = {
   stats,
   device,
   theme,
-  path,
   timestamp,
 };
 

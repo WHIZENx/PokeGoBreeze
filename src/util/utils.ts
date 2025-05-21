@@ -48,7 +48,6 @@ import {
 } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
 import APIService from '../services/API.service';
-import { ThemeModify } from './models/overrides/themes.model';
 import { TableStyles } from 'react-data-table-component';
 import {
   DynamicObj,
@@ -575,38 +574,108 @@ export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
   return new PokemonModel(result.num, result.name);
 };
 
-export const getCustomThemeDataTable = (theme: ThemeModify): TableStyles => ({
-  rows: {
-    style: {
-      color: theme.palette.text.primary,
-      backgroundColor: theme.palette.background.tablePrimary,
-      '&:not(:last-of-type)': {
-        borderBottomColor: theme.palette.background.tableDivided,
+const mergeTableStyles = (custom: Partial<TableStyles>, defaults: TableStyles): TableStyles => {
+  if (!custom) {
+    return { ...defaults };
+  }
+
+  const result = JSON.parse(JSON.stringify(defaults)) as TableStyles;
+
+  for (const key in custom) {
+    const customKey = key as keyof TableStyles;
+    const customValue = custom[customKey];
+
+    if (isNullOrUndefined(customValue)) {
+      continue;
+    }
+
+    if (
+      customValue &&
+      result[customKey] &&
+      typeof customValue === 'object' &&
+      typeof result[customKey] === 'object' &&
+      !Array.isArray(customValue) &&
+      !Array.isArray(result[customKey])
+    ) {
+      const merged = Object.assign({}, result[customKey], customValue);
+      result[customKey] = merged as any;
+    } else {
+      result[customKey] = customValue as any;
+    }
+  }
+
+  return result;
+};
+
+export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
+  const defaultData: TableStyles = {
+    header: {
+      style: {
+        backgroundColor: 'var(--background-default)',
+        color: 'var(--text-primary)',
       },
     },
-    stripedStyle: {
-      color: theme.palette.text.primary,
-      backgroundColor: theme.palette.background.tableStrip,
+    rows: {
+      style: {
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--background-table-primary)',
+        '&:not(:last-of-type)': {
+          borderBottomColor: 'var(--background-table-divided)',
+        },
+      },
+      stripedStyle: {
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--background-table-strip)',
+      },
+      highlightOnHoverStyle: {
+        backgroundColor: 'var(--background-table-hover)',
+      },
     },
-    highlightOnHoverStyle: {
-      color: theme.palette.text.primary,
-      backgroundColor: theme.palette.background.tableHover,
-      borderBottomColor: theme.palette.background.tableDivided,
-      outlineColor: theme.palette.background.tablePrimary,
+    headCells: {
+      style: {
+        backgroundColor: 'var(--background-table-primary)',
+        color: 'var(--text-primary)',
+      },
     },
-  },
-  headCells: {
-    style: {
-      backgroundColor: theme.palette.background.tablePrimary,
-      color: theme.palette.text.primary,
+    cells: {
+      style: {
+        color: 'var(--text-primary)',
+      },
     },
-  },
-  cells: {
-    style: {
-      color: theme.palette.text.primary,
+    pagination: {
+      style: {
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--background-table-primary)',
+        borderTopColor: 'var(--background-table-divided)',
+      },
+      pageButtonsStyle: {
+        color: 'var(--text-primary)',
+        fill: 'var(--text-primary)',
+        '&:disabled': {
+          color: 'var(--text-disabled)',
+          fill: 'var(--text-disabled)',
+        },
+        '&:hover:not(:disabled)': {
+          backgroundColor: 'var(--background-table-hover)',
+        },
+        '&:focus': {
+          outline: '1px solid var(--primary-main)',
+        },
+      },
     },
-  },
-});
+    noData: {
+      style: {
+        color: 'var(--text-primary)',
+        backgroundColor: 'var(--background-table-primary)',
+      },
+    },
+  };
+  if (customStyles) {
+    const result = mergeTableStyles(customStyles, defaultData);
+    return result;
+  }
+  return defaultData;
+};
 
 export const getDataWithKey = <T>(
   data: object,
@@ -1368,3 +1437,6 @@ export const updateSpecificForm = (id: number, form: string | undefined) => {
 
 export const isSpecialFormType = (pokemonType: PokemonType | undefined) =>
   pokemonType === PokemonType.Shadow || pokemonType === PokemonType.Purified;
+
+export const isSpecialMegaFormType = (pokemonType: PokemonType | undefined) =>
+  pokemonType === PokemonType.Mega || pokemonType === PokemonType.Primal;

@@ -34,6 +34,7 @@ import {
   getLureItemType,
   getPokemonType,
   getTicketRewardType,
+  isSpecialMegaFormType,
   replacePokemonGoForm,
   replaceTempMoveName,
   splitAndCapitalize,
@@ -77,6 +78,7 @@ import {
   EvolutionChainData,
   GlobalEventTicket,
   ItemSettings,
+  MoveBuff,
 } from './models/options.model';
 import { calculateStatsByTag } from '../util/calculate';
 import { APITree } from '../services/models/api.model';
@@ -577,9 +579,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
       });
 
       const goTemplate = `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
-        pokemon.pokemonType === PokemonType.Mega ||
-          pokemon.pokemonType === PokemonType.Primal ||
-          pokemon.pokemonType === PokemonType.GMax
+        isSpecialMegaFormType(pokemon.pokemonType) || pokemon.pokemonType === PokemonType.GMax
           ? pokemon.pokemonId
           : convertPokemonDataName(item.baseFormeSlug, item.slug)
       )}`;
@@ -1049,7 +1049,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
       });
   }
 
-  function processBuffs(buffs: any): IBuff[] {
+  function processBuffs(buffs: MoveBuff): IBuff[] {
     const buffsResult: IBuff[] = [];
 
     if (buffs.attackerAttackStatStageChange) {

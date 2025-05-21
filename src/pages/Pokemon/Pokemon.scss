@@ -21,7 +21,6 @@
 
 .text-gen {
   font-size: 16px;
-  color: gray;
 }
 
 .img-form-group hr {
@@ -45,12 +44,6 @@ a b.link-title,
 .table-main,
 .table-desc {
   max-width: 500px !important;
-}
-
-.table-main tbody tr td.table-sub-header {
-  background-color: #f1f1ff !important;
-  color: #0571c2;
-  border: 1px solid #b8d4da;
 }
 
 .table-main thead tr th {
@@ -77,11 +70,9 @@ td h6 {
   text-align: start;
   width: 25% !important;
   min-width: 180px;
-  color: black !important;
 }
 
 .table-desc tbody tr:nth-child(odd) td {
-  background-color: #eeeeee !important;
   text-align: start;
 }
 
@@ -94,7 +85,6 @@ td h6 {
 }
 
 .table-desc tbody tr:nth-child(even) td {
-  background-color: white !important;
   text-align: start;
 }
 
@@ -104,14 +94,6 @@ td h6 {
 
 .table-info tbody tr.text-center td.table-sub-header:nth-child(2) {
   font-weight: bolder;
-}
-
-.table-info tbody tr.info-costs td:nth-child(1) {
-  background-color: white !important;
-}
-
-.table-info tbody tr.info-costs td:nth-child(2) {
-  background-color: #f1ffff !important;
 }
 
 .table-info tbody tr:nth-child(even) td:nth-child(2) {
@@ -136,15 +118,10 @@ td h6 {
 
 .prev-next-block {
   border: 1px solid lightgray;
-  background-color: #eeeeee;
   z-index: 3 !important;
   box-shadow: 0 5px 3px #0000004d;
   margin: 0;
   height: 62px;
-}
-
-.prev-next-block a {
-  color: black !important;
 }
 
 .prev-block {

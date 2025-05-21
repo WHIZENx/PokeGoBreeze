@@ -105,7 +105,7 @@ interface StickerMetadata {
   regionId: number;
 }
 
-interface MoveBuff {
+export interface MoveBuff {
   attackerAttackStatStageChange?: number;
   attackerDefenseStatStageChange?: number;
   targetAttackStatStageChange?: number;

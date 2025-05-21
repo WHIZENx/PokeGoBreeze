@@ -1,7 +1,13 @@
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { LevelSlider, TypeRadioGroup, getDmgMultiplyBonus, getKeyWithData } from '../../../util/utils';
+import {
+  LevelSlider,
+  TypeRadioGroup,
+  getDmgMultiplyBonus,
+  getKeyWithData,
+  isSpecialMegaFormType,
+} from '../../../util/utils';
 import { calculateStatsBattle } from '../../../util/calculate';
 
 import APIService from '../../../services/API.service';
@@ -23,11 +29,7 @@ const StatsTable = (props: IStatsTableComponent) => {
   const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
 
   useEffect(() => {
-    if (
-      props.setStatType &&
-      currStatType === PokemonType.Shadow &&
-      (props.pokemonType === PokemonType.Mega || props.pokemonType === PokemonType.Primal)
-    ) {
+    if (props.setStatType && currStatType === PokemonType.Shadow && isSpecialMegaFormType(props.pokemonType)) {
       setCurrStatType(PokemonType.Normal);
       props.setStatType(PokemonType.Normal);
     }
@@ -121,7 +123,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             />
             <FormControlLabel
               value={PokemonType.Shadow}
-              disabled={props.pokemonType === PokemonType.Mega || props.pokemonType === PokemonType.Primal}
+              disabled={isSpecialMegaFormType(props.pokemonType)}
               control={<Radio />}
               label={
                 <span>

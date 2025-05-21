@@ -6,19 +6,21 @@ import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/API.service';
 import { findAssetForm, computeBgType } from '../../../util/compute';
-import { isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
 import {
   convertNameRankingToOri,
   convertNameRankingToForm,
   splitAndCapitalize,
   getValidPokemonImgPath,
   getPokemonType,
+  getKeyWithData,
 } from '../../../util/utils';
 import { BodyModel, IBody } from '../models/body.model';
-import { FORM_SHADOW } from '../../../util/constants';
+import { FORM_SHADOW, Params } from '../../../util/constants';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
+import { ScoreType } from '../../../util/enums/constants.enum';
 
 const BodyPVP = (props: BodyComponent) => {
   const [matchups, setMatchups] = useState<IBody[]>();
@@ -58,7 +60,7 @@ const BodyPVP = (props: BodyComponent) => {
     if (isNotEmpty(counters) && isNotEmpty(props.data?.counters)) {
       setCounters([]);
     }
-  }, [props.type, props.data?.matchups, props.data?.counters]);
+  }, [props.serie, props.type, props.data?.matchups, props.data?.counters]);
 
   useEffect(() => {
     if (!isNotEmpty(matchups) && isNotEmpty(props.data?.matchups)) {
@@ -71,7 +73,9 @@ const BodyPVP = (props: BodyComponent) => {
 
   const renderItemList = (data: IBody, bgType: BackgroundType) => (
     <LinkToTop
-      to={`/pvp/${props.cp}/${props.type}/${data.opponent.replaceAll('_', '-')}`}
+      to={`/pvp/${props.cp}/${props.serie}/${data.opponent.replaceAll('_', '-')}?${
+        Params.LeagueType
+      }=${getValueOrDefault(String, props.type, getKeyWithData(ScoreType, ScoreType.Overall)).toLowerCase()}`}
       className="list-item-ranking"
       style={{
         backgroundImage: computeBgType(
@@ -79,7 +83,8 @@ const BodyPVP = (props: BodyComponent) => {
           isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
             ? PokemonType.Shadow
             : PokemonType.Normal,
-          props.styleList
+          props.styleList,
+          0.3
         ),
       }}
     >
@@ -108,7 +113,7 @@ const BodyPVP = (props: BodyComponent) => {
       </div>
       <div style={{ marginRight: 15 }}>
         <span
-          className="ranking-score score-ic text-white text-shadow filter-shadow"
+          className="ranking-score text-white text-shadow filter-shadow"
           style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
         >
           {data.rating}
@@ -123,7 +128,7 @@ const BodyPVP = (props: BodyComponent) => {
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Matchups</h4>
           <div style={{ marginRight: 15 }}>
-            <span className="ranking-score score-ic">Rating</span>
+            <span className="ranking-score score-ic text-black">Rating</span>
           </div>
         </div>
         {matchups?.map((matchup, index) => (
@@ -134,7 +139,7 @@ const BodyPVP = (props: BodyComponent) => {
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Counters</h4>
           <div style={{ marginRight: 15 }}>
-            <span className="ranking-score score-ic">Rating</span>
+            <span className="ranking-score score-ic text-black">Rating</span>
           </div>
         </div>
         {counters?.map((counter, index) => (

@@ -11,6 +11,7 @@ import {
   getPokemonType,
   isSpecialFormType,
   getKeyWithData,
+  getCustomThemeDataTable,
 } from '../../../util/utils';
 import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
@@ -21,7 +22,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import './StatsRanking.scss';
-import { FormControlLabel, Checkbox, CircularProgress } from '@mui/material';
+import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
 import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
@@ -59,6 +60,7 @@ import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.mod
 import { Action } from 'history';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
+import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -69,7 +71,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
         to={`/pokemon/${row.num}${generateParamForm(row.form, row.pokemonType)}`}
         title={`#${row.num} ${splitAndCapitalize(row.name, '-', ' ')}`}
       >
-        <VisibilityIcon className="view-pokemon" fontSize="small" sx={{ color: 'black' }} />
+        <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="small" />
       </LinkToTop>
     ),
     width: '55px',
@@ -193,9 +195,13 @@ const StatsRanking = () => {
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
     {
+      when: () => true,
+      style: { backgroundColor: 'var(--background-table-primary)' },
+    },
+    {
       when: (row) =>
         !isNullOrUndefined(select) && row.fullName === select.fullName && row.pokemonType === select.pokemonType,
-      style: { backgroundColor: '#e3f2fd', fontWeight: 'bold' },
+      style: { backgroundColor: 'var(--table-highlight-row)', fontWeight: 'bold' },
     },
   ];
 
@@ -633,7 +639,7 @@ const StatsRanking = () => {
           }
         }}
         conditionalRowStyles={conditionalRowStyles}
-        customStyles={customStyles}
+        customStyles={getCustomThemeDataTable(customStyles)}
         paginationDefaultPage={page}
         paginationPerPage={defaultPerPages}
         paginationRowsPerPageOptions={Array.from(
@@ -641,11 +647,7 @@ const StatsRanking = () => {
           (_, i) => defaultPerPages * Math.max(0, i - 1) + defaultPerPages * (i + 1)
         )}
         progressPending={!isNotEmpty(pokemonList)}
-        progressComponent={
-          <div style={{ margin: 10 }}>
-            <CircularProgress />
-          </div>
-        }
+        progressComponent={<CircularProgressTable />}
       />
     </div>
   );

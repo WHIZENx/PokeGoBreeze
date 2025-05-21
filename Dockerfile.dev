@@ -1,0 +1,11 @@
+FROM node:18.17.0-alpine
+
+WORKDIR /app
+
+COPY . .
+RUN npm install --location=global npm@10.8.2
+RUN npm install
+
+EXPOSE 3030
+
+CMD ["npm", "run", "develop"]

@@ -9,7 +9,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
 import { combineClasses, isNotEmpty } from '../../../util/extension';
 import { TypeAction } from '../../../enums/type.enum';
-import { TimelineElement } from '../../../util/models/overrides/dom.model';
+import { TimelineElement, TimelineEvent } from '../../../util/models/overrides/dom.model';
 
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, isHide = false) => {
   const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShowShadow = false) => {
@@ -31,7 +31,10 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               src={APIService.getTypeHqSprite(move.type)}
             />
           </div>
-          <span className={combineClasses(!isShowShadow ? 'text-black' : 'filter-shadow')} style={{ fontSize: 14 }}>
+          <span
+            className={combineClasses(!isShowShadow ? 'theme-text-primary' : 'filter-shadow')}
+            style={{ fontSize: 14 }}
+          >
             {splitAndCapitalize(move.name, '_', ' ')}
           </span>
         </span>
@@ -230,7 +233,7 @@ export const TimeLine = (
                   style={{
                     display: !showTap ? 'none' : 'block',
                     opacity: 0.5,
-                    borderColor: value.isDmgImmune ? 'red' : 'black',
+                    borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
                   className="charge-attack"
                 />
@@ -332,7 +335,7 @@ export const TimeLine = (
               ref={timeline}
               onMouseMove={move.bind(this)}
               onMouseOver={move.bind(this)}
-              onTouchMove={move.bind(this)}
+              onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
             >
               {renderTimeline(pokemonCurr, pokemonObj, true)}
               {renderTimeline(pokemonObj, pokemonCurr)}
@@ -370,7 +373,7 @@ export const TimeLineFit = (
                     opacity: 0.5,
                     width: value.size,
                     left: calculateFitPoint(poke.timeline.length, index),
-                    borderColor: value.isDmgImmune ? 'red' : 'black',
+                    borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
                 />
               )}
@@ -498,7 +501,7 @@ export const TimeLineFit = (
             ref={timeline}
             onMouseMove={move.bind(this)}
             onMouseOver={move.bind(this)}
-            onTouchMove={move.bind(this)}
+            onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
           >
             {renderTimelineFit(pokemonCurr, pokemonObj)}
             <hr className="w-100" style={{ margin: 0 }} />

@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from 'react-redux';
 import { Location, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -49,13 +49,11 @@ import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
 import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_STANDARD } from '../../util/constants';
-import { useTheme } from '@mui/material';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
 import { AxiosError } from 'axios';
 import { IPokemonPage } from '../models/page.model';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
 import {
   combineClasses,
   getValueOrDefault,
@@ -89,7 +87,6 @@ class TypeCost implements ITypeCost {
 
 const Pokemon = (props: IPokemonPage) => {
   const dispatch = useDispatch();
-  const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
@@ -371,9 +368,9 @@ const Pokemon = (props: IPokemonPage) => {
   useEffect(() => {
     if (isNotEmpty(pokemonData)) {
       let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
-      if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonData)) {
+      if (id <= 0 && params.id && isNotEmpty(params.id) && isNotEmpty(pokemonData)) {
         id = getPokemonIdByParam();
-        if (id === 0) {
+        if (id <= 0) {
           enqueueSnackbar(`Pokémon ID or name: ${params.id} Not found!`, { variant: VariantType.Error });
           document.title = `#${id} - Not Found`;
           setIsFound(false);
@@ -548,7 +545,7 @@ const Pokemon = (props: IPokemonPage) => {
     }
   }, [pokemonData, params.id, props.searchOption?.id]);
 
-  const reload = (element: JSX.Element, color = '#f5f5f5') => {
+  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (progress.isLoadedForms) {
       return element;
     }
@@ -560,147 +557,138 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   return (
-    <Fragment>
-      {!isFound ? (
-        <Error />
-      ) : (
-        <Fragment>
-          <div className="w-100 row prev-next-block sticky-top">
-            {params.id ? (
-              <SearchBarMain data={dataStorePokemon} />
-            ) : (
-              <SearchBar data={dataStorePokemon} onDecId={props.onDecId} onIncId={props.onIncId} />
-            )}
+    <Error isError={!isFound}>
+      <div className="w-100 row prev-next-block sticky-top">
+        {params.id ? (
+          <SearchBarMain data={dataStorePokemon} />
+        ) : (
+          <SearchBar data={dataStorePokemon} onDecId={props.onDecId} onIncId={props.onIncId} />
+        )}
+      </div>
+      <div
+        className={combineClasses(
+          'element-bottom position-relative poke-container theme-text-primary',
+          props.isSearch ? '' : 'container'
+        )}
+      >
+        <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
+          <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={icon} />
+          <div className="d-inline-block img-desc">
+            <img
+              className="pokemon-main-sprite"
+              style={{ verticalAlign: 'baseline' }}
+              alt="img-full-pokemon"
+              src={APIService.getPokeFullSprite(
+                dataStorePokemon?.current?.id,
+                convertPokemonImageName(
+                  currentSearchingForm && originForm && currentSearchingForm.defaultId === currentSearchingForm.form?.id
+                    ? ''
+                    : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
+                )
+              )}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
+              }}
+            />
           </div>
-          <div
-            style={{ color: theme.palette.text.primary }}
-            className={combineClasses(
-              'element-bottom position-relative poke-container',
-              props.isSearch ? '' : 'container'
-            )}
-          >
-            <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
-              <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={icon} />
-              <div className="d-inline-block img-desc">
-                <img
-                  className="pokemon-main-sprite"
-                  style={{ verticalAlign: 'baseline' }}
-                  alt="img-full-pokemon"
-                  src={APIService.getPokeFullSprite(
-                    dataStorePokemon?.current?.id,
-                    convertPokemonImageName(
-                      currentSearchingForm &&
-                        originForm &&
-                        currentSearchingForm.defaultId === currentSearchingForm.form?.id
-                        ? ''
-                        : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
-                    )
-                  )}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
-                  }}
-                />
-              </div>
-              <div className="d-inline-block">
-                <PokemonTable
-                  id={dataStorePokemon?.current?.id}
-                  gen={generation}
-                  formName={formName}
-                  region={region}
-                  version={version}
-                  weight={pokemonDetails?.weight}
-                  height={pokemonDetails?.height}
-                  isLoadedForms={progress.isLoadedForms}
-                />
-              </div>
-              <div className="d-inline-block" style={{ padding: 0 }}>
-                <table className="table-info table-main">
-                  <thead />
-                  <tbody>
-                    <tr className="text-center">
-                      <td className="table-sub-header">Unlock third move</td>
-                      <td className="table-sub-header">Costs</td>
-                    </tr>
-                    <tr className="info-costs">
-                      <td>
-                        <img alt="img-cost-info" width={100} src={APIService.getItemSprite('Item_1202')} />
-                      </td>
-                      <td style={{ padding: 0 }}>
-                        <div className="d-flex align-items-center row-extra td-costs">
-                          <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
-                          {reload(
-                            <span>
-                              {!isUndefined(costModifier?.thirdMove.candy)
-                                ? `x${costModifier?.thirdMove.candy}`
-                                : 'Unavailable'}
-                            </span>
-                          )}
-                        </div>
-                        <div className="row-extra d-flex">
-                          <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
-                            <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                          </div>
-                          {reload(
-                            <span>
-                              {!isUndefined(costModifier?.thirdMove.stardust)
-                                ? `x${costModifier?.thirdMove.stardust}`
-                                : 'Unavailable'}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                    <tr className="text-center">
-                      <td className="table-sub-header">Purified</td>
-                      <td className="table-sub-header">Costs</td>
-                    </tr>
-                    <tr className="info-costs">
-                      <td>
-                        <img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()} />
-                      </td>
-                      <td style={{ padding: 0 }}>
-                        <div className="d-flex align-items-center row-extra td-costs">
-                          <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
-                          {reload(
-                            <span>
-                              {!isUndefined(costModifier?.purified.candy)
-                                ? `x${costModifier?.purified.candy}`
-                                : 'Unavailable'}
-                            </span>
-                          )}
-                        </div>
-                        <div className="row-extra d-flex">
-                          <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
-                            <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
-                          </div>
-                          {reload(
-                            <span>
-                              {!isUndefined(costModifier?.purified.stardust)
-                                ? `x${costModifier?.purified.stardust}`
-                                : 'Unavailable'}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <FormComponent
-              formList={formList}
-              pokeData={pokeData}
-              setSearchOption={props.setSearchOption}
-              defaultId={dataStorePokemon?.current?.id}
-              urlEvolutionChain={urlEvolutionChain}
+          <div className="d-inline-block">
+            <PokemonTable
+              id={dataStorePokemon?.current?.id}
+              gen={generation}
+              formName={formName}
+              region={region}
+              version={version}
+              weight={pokemonDetails?.weight}
+              height={pokemonDetails?.height}
               isLoadedForms={progress.isLoadedForms}
             />
-            <PokemonAssetComponent originSoundCry={originSoundCry} isLoadedForms={progress.isLoadedForms} />
           </div>
-        </Fragment>
-      )}
-    </Fragment>
+          <div className="d-inline-block" style={{ padding: 0 }}>
+            <table className="table-info table-main">
+              <thead />
+              <tbody>
+                <tr className="text-center">
+                  <td className="table-sub-header">Unlock third move</td>
+                  <td className="table-sub-header">Costs</td>
+                </tr>
+                <tr className="info-costs">
+                  <td>
+                    <img alt="img-cost-info" width={100} src={APIService.getItemSprite('Item_1202')} />
+                  </td>
+                  <td style={{ padding: 0 }}>
+                    <div className="d-flex align-items-center row-extra td-costs">
+                      <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
+                      {reload(
+                        <span>
+                          {!isUndefined(costModifier?.thirdMove.candy)
+                            ? `x${costModifier?.thirdMove.candy}`
+                            : 'Unavailable'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="row-extra d-flex">
+                      <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
+                        <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                      </div>
+                      {reload(
+                        <span>
+                          {!isUndefined(costModifier?.thirdMove.stardust)
+                            ? `x${costModifier?.thirdMove.stardust}`
+                            : 'Unavailable'}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+                <tr className="text-center">
+                  <td className="table-sub-header">Purified</td>
+                  <td className="table-sub-header">Costs</td>
+                </tr>
+                <tr className="info-costs">
+                  <td>
+                    <img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()} />
+                  </td>
+                  <td style={{ padding: 0 }}>
+                    <div className="d-flex align-items-center row-extra td-costs">
+                      <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
+                      {reload(
+                        <span>
+                          {!isUndefined(costModifier?.purified.candy)
+                            ? `x${costModifier?.purified.candy}`
+                            : 'Unavailable'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="row-extra d-flex">
+                      <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
+                        <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                      </div>
+                      {reload(
+                        <span>
+                          {!isUndefined(costModifier?.purified.stardust)
+                            ? `x${costModifier?.purified.stardust}`
+                            : 'Unavailable'}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <FormComponent
+          formList={formList}
+          pokeData={pokeData}
+          setSearchOption={props.setSearchOption}
+          defaultId={dataStorePokemon?.current?.id}
+          urlEvolutionChain={urlEvolutionChain}
+          isLoadedForms={progress.isLoadedForms}
+        />
+        <PokemonAssetComponent originSoundCry={originSoundCry} isLoadedForms={progress.isLoadedForms} />
+      </div>
+    </Error>
   );
 };
 

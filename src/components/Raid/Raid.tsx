@@ -10,16 +10,13 @@ import DEF_LOGO from '../../assets/defense.png';
 import STA_LOGO from '../../assets/stamina.png';
 
 import { useSelector } from 'react-redux';
-import { useTheme } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
-import { getKeyWithData } from '../../util/utils';
+import { getKeyWithData, isSpecialMegaFormType } from '../../util/utils';
 import { IRaidComponent } from '../models/component.model';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { toNumber } from '../../util/extension';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 
 const Raid = (props: IRaidComponent) => {
-  const theme = useTheme<ThemeModify>();
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const [tier, setTier] = useState(1);
   const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
@@ -32,18 +29,12 @@ const Raid = (props: IRaidComponent) => {
   }, [props.id]);
 
   useEffect(() => {
-    if (
-      tier > 5 &&
-      props.currForm &&
-      props.currForm.form?.pokemonType !== PokemonType.Mega &&
-      props.currForm.form?.pokemonType !== PokemonType.Primal
-    ) {
+    if (tier > 5 && props.currForm && !isSpecialMegaFormType(props.currForm.form?.pokemonType)) {
       setTier(5);
     } else if (
       tier === 5 &&
       props.currForm &&
-      (props.currForm.form?.pokemonType === PokemonType.Mega ||
-        props.currForm.form?.pokemonType === PokemonType.Primal) &&
+      isSpecialMegaFormType(props.currForm.form?.pokemonType) &&
       pokemonClass !== PokemonClass.None
     ) {
       setTier(6);
@@ -73,7 +64,7 @@ const Raid = (props: IRaidComponent) => {
     props.setTimeAllow,
   ]);
 
-  const reload = (element: JSX.Element, color = '#f5f5f5') => {
+  const reload = (element: JSX.Element, color = 'var(--loading-custom-bg)') => {
     if (props.isLoadedForms) {
       return element;
     }
@@ -92,7 +83,7 @@ const Raid = (props: IRaidComponent) => {
           onChange={(e) => {
             setTier(toNumber(e.target.value));
             if (props.clearData) {
-              props.clearData();
+              props.clearData(false);
             }
           }}
           value={tier}
@@ -110,33 +101,31 @@ const Raid = (props: IRaidComponent) => {
               <option value={4}>Tier 4</option>
             )}
           </optgroup>
-          {props.currForm &&
-            (props.currForm.form?.pokemonType === PokemonType.Mega ||
-              props.currForm.form?.pokemonType === PokemonType.Primal) && (
-              <Fragment>
-                {pokemonClass !== PokemonClass.None ? (
-                  <optgroup
-                    label={`Legendary ${
+          {props.currForm && isSpecialMegaFormType(props.currForm.form?.pokemonType) && (
+            <Fragment>
+              {pokemonClass !== PokemonClass.None ? (
+                <optgroup
+                  label={`Legendary ${
+                    props.currForm.form.pokemonType === PokemonType.Primal
+                      ? getKeyWithData(PokemonType, PokemonType.Primal)
+                      : getKeyWithData(PokemonType, PokemonType.Mega)
+                  } Tier 6`}
+                >
+                  <option value={6}>
+                    {`Tier ${
                       props.currForm.form.pokemonType === PokemonType.Primal
                         ? getKeyWithData(PokemonType, PokemonType.Primal)
                         : getKeyWithData(PokemonType, PokemonType.Mega)
-                    } Tier 6`}
-                  >
-                    <option value={6}>
-                      {`Tier ${
-                        props.currForm.form.pokemonType === PokemonType.Primal
-                          ? getKeyWithData(PokemonType, PokemonType.Primal)
-                          : getKeyWithData(PokemonType, PokemonType.Mega)
-                      }`}
-                    </option>
-                  </optgroup>
-                ) : (
-                  <optgroup label="Mega Tier 4">
-                    <option value={4}>Tier Mega</option>
-                  </optgroup>
-                )}
-              </Fragment>
-            )}
+                    }`}
+                  </option>
+                </optgroup>
+              ) : (
+                <optgroup label="Mega Tier 4">
+                  <option value={4}>Tier Mega</option>
+                </optgroup>
+              )}
+            </Fragment>
+          )}
         </Form.Select>
       </div>
       <div className="row w-100 element-top" style={{ margin: 0 }}>
@@ -165,7 +154,7 @@ const Raid = (props: IRaidComponent) => {
           />
         </div>
         <div className="col d-flex justify-content-center" style={{ marginBottom: 15 }}>
-          <table className="table-info">
+          <table className="table-info table-raid">
             <thead />
             <tbody>
               <tr className="text-center">
@@ -178,7 +167,7 @@ const Raid = (props: IRaidComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
-                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                <td className="text-center theme-text-primary">
                   {reload(<>{props.currForm ? calculateRaidStat(props.statATK, tier) : ''}</>)}
                 </td>
               </tr>
@@ -187,7 +176,7 @@ const Raid = (props: IRaidComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
-                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                <td className="text-center theme-text-primary">
                   {reload(<>{props.currForm ? calculateRaidStat(props.statDEF, tier) : ''}</>)}
                 </td>
               </tr>
@@ -196,7 +185,7 @@ const Raid = (props: IRaidComponent) => {
                   <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={STA_LOGO} />
                   STA
                 </td>
-                <td className="text-center" style={{ color: theme.palette.text.primary }}>
+                <td className="text-center theme-text-primary">
                   {reload(<>{props.currForm ? Math.floor(RAID_BOSS_TIER[tier].sta / RAID_BOSS_TIER[tier].CPm) : ''}</>)}
                 </td>
               </tr>
