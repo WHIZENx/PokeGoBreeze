@@ -1,18 +1,13 @@
-import { useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import { capitalize } from '../../../util/utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
-import { TypeTheme } from '../../../enums/type.enum';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { isNotEmpty, combineClasses, toNumber } from '../../../util/extension';
 import IconType from '../Icon/Type/Type';
 
 const TypeInfo = (props: ITypeComponent) => {
-  const theme = useTheme<ThemeModify>();
-
   return (
     <Fragment>
       {!isNotEmpty(props.arr) && props.isShow ? (
@@ -24,9 +19,7 @@ const TypeInfo = (props: ITypeComponent) => {
               alt="img-pokemon"
               src={APIService.getPokeSprite()}
             />
-            <span className="caption" style={{ color: theme.palette.text.primary }}>
-              None
-            </span>
+            <span className="caption theme-text-primary">None</span>
           </div>
         </div>
       ) : (
@@ -58,13 +51,8 @@ const TypeInfo = (props: ITypeComponent) => {
                           type={value}
                         />
                         <span
-                          className={combineClasses(
-                            'caption',
-                            props.isShowShadow
-                              ? `text-shadow${theme.palette.mode === TypeTheme.Dark ? '-white' : ''}`
-                              : ''
-                          )}
-                          style={{ color: props.color ?? theme.palette.text.primary }}
+                          className={combineClasses('caption', props.isShowShadow ? `text-white text-shadow` : '')}
+                          style={{ color: `${props.color} !important` }}
                         >
                           {capitalize(value)}
                         </span>

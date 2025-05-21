@@ -32,6 +32,12 @@ import { AnimationType } from '../Sprites/Hexagon/enums/hexagon.enum';
 import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../util/models/util.model';
+import { PaletteMode } from '@mui/material';
+
+export interface INavbarComponent {
+  mode: PaletteMode;
+  toggleColorMode: () => void;
+}
 
 export interface ICardMoveComponent {
   value: ISelectMoveModel | ICombat | undefined;
@@ -248,11 +254,11 @@ export interface IPokemonRaidComponent {
   onCopyPokemon: (index: number) => void;
   onRemovePokemon: (index: number) => void;
   onOptionsPokemon: (index: number, pokemon: IPokemonData) => void;
-  clearData?: () => void;
+  clearData?: (isForceClear?: boolean) => void;
 }
 
 export interface IRaidComponent {
-  clearData?: () => void;
+  clearData?: (isForceClear?: boolean) => void;
   setTierBoss?: React.Dispatch<React.SetStateAction<number>>;
   currForm: Partial<IPokemonFormModify> | undefined;
   id: number | undefined;

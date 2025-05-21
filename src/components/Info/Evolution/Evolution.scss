@@ -48,26 +48,6 @@
   margin-bottom: 0;
 }
 
-#popover-info-evo {
-  background-color: cornsilk;
-}
-
-#popover-info-evo.bs-popover-start > .popover-arrow::after {
-  border-left-color: cornsilk;
-}
-
-#popover-info-evo.bs-popover-end > .popover-arrow::after {
-  border-right-color: cornsilk;
-}
-
-#popover-info-evo.bs-popover-top > .popover-arrow::after {
-  border-top-color: cornsilk;
-}
-
-#popover-info-evo.bs-popover-bottom > .popover-arrow::after {
-  border-bottom-color: cornsilk;
-}
-
 .scroll-evolution {
   position: relative;
   white-space: nowrap;

@@ -83,7 +83,8 @@ const BodyPVP = (props: BodyComponent) => {
           isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
             ? PokemonType.Shadow
             : PokemonType.Normal,
-          props.styleList
+          props.styleList,
+          0.3
         ),
       }}
     >
@@ -112,7 +113,7 @@ const BodyPVP = (props: BodyComponent) => {
       </div>
       <div style={{ marginRight: 15 }}>
         <span
-          className="ranking-score score-ic text-white text-shadow filter-shadow"
+          className="ranking-score text-white text-shadow filter-shadow"
           style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
         >
           {data.rating}
@@ -127,7 +128,7 @@ const BodyPVP = (props: BodyComponent) => {
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Matchups</h4>
           <div style={{ marginRight: 15 }}>
-            <span className="ranking-score score-ic">Rating</span>
+            <span className="ranking-score score-ic text-black">Rating</span>
           </div>
         </div>
         {matchups?.map((matchup, index) => (
@@ -138,7 +139,7 @@ const BodyPVP = (props: BodyComponent) => {
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Counters</h4>
           <div style={{ marginRight: 15 }}>
-            <span className="ranking-score score-ic">Rating</span>
+            <span className="ranking-score score-ic text-black">Rating</span>
           </div>
         </div>
         {counters?.map((counter, index) => (

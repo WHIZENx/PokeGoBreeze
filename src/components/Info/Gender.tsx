@@ -1,15 +1,11 @@
-import { useTheme } from '@mui/material';
 import React from 'react';
 import APIService from '../../services/API.service';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
 import { getKeyWithData } from '../../util/utils';
 import { getValueOrDefault } from '../../util/extension';
 
 const Gender = (props: IGenderComponent) => {
-  const theme = useTheme<ThemeModify>();
-
   return (
     <div className="element-top" style={{ marginRight: 15 }}>
       <div className="d-flex align-items-center" style={{ columnGap: 15 }}>
@@ -54,9 +50,7 @@ const Gender = (props: IGenderComponent) => {
               }
             />
           </div>
-          <span className="caption" style={{ color: theme.palette.customText.caption }}>
-            Default
-          </span>
+          <span className="caption">Default</span>
         </div>
         <div className="img-form-gender-group">
           <div className="img-gender-group">
@@ -85,9 +79,7 @@ const Gender = (props: IGenderComponent) => {
               }
             />
           </div>
-          <span className="caption" style={{ color: theme.palette.customText.caption }}>
-            Shiny
-          </span>
+          <span className="caption">Shiny</span>
         </div>
       </div>
     </div>

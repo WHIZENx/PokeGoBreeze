@@ -1,12 +1,11 @@
 import '../PVP.scss';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import {
   capitalize,
   convertNameRankingToOri,
   getKeysObj,
   getKeyWithData,
-  getStyleList,
   getValidPokemonImgPath,
   replaceTempMovePvpName,
   splitAndCapitalize,
@@ -42,12 +41,12 @@ import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
 import { ScoreType } from '../../../util/enums/constants.enum';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { IStyleData } from '../../../util/models/util.model';
 import { HexagonStats } from '../../../core/models/stats.model';
 import { getValueOrDefault } from '../../../util/extension';
 import { AxiosError } from 'axios';
+import { IStyleSheetData } from '../../models/page.model';
 
-const PokemonPVP = () => {
+const PokemonPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const dataStore = useSelector((state: StoreState) => state.store.data);
@@ -62,7 +61,6 @@ const PokemonPVP = () => {
   const [rankingPoke, setRankingPoke] = useState<IPokemonBattleRanking>();
   const statsRanking = useSelector((state: StatsState) => state.stats);
   const [isFound, setIsFound] = useState(true);
-  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
     loadPVP(dispatch, timestamp);
@@ -233,8 +231,8 @@ const PokemonPVP = () => {
           backgroundImage: computeBgType(
             rankingPoke?.pokemon?.types,
             rankingPoke?.pokemonType,
-            styleSheet.current,
-            0.8,
+            props.styleSheet,
+            0.3,
             rankingPoke ? undefined : '#646464'
           ),
           paddingTop: 15,
@@ -302,14 +300,19 @@ const PokemonPVP = () => {
               cp={params.cp}
               serie={params.serie}
               type={searchParams.get(Params.LeagueType)}
-              styleList={styleSheet.current}
+              styleList={props.styleSheet}
             />
           </div>
           <div className="container">
             <hr />
           </div>
           <div className="stats-container">
-            <OverAllStats data={rankingPoke} statsRanking={statsRanking} cp={params.cp} type={params.serie} />
+            <OverAllStats
+              data={rankingPoke}
+              statsRanking={statsRanking}
+              cp={params.cp}
+              type={searchParams.get(Params.LeagueType)}
+            />
           </div>
           <div className="container">
             <hr />

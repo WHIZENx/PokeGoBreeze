@@ -1,0 +1,19 @@
+#popover-info {
+  background-color: var(--custom-pop-over);
+}
+
+#popover-info.bs-popover-start > .popover-arrow::after {
+  border-left-color: var(--custom-pop-over);
+}
+
+#popover-info.bs-popover-end > .popover-arrow::after {
+  border-right-color: var(--custom-pop-over);
+}
+
+#popover-info.bs-popover-top > .popover-arrow::after {
+  border-top-color: var(--custom-pop-over);
+}
+
+#popover-info.bs-popover-bottom > .popover-arrow::after {
+  border-bottom-color: var(--custom-pop-over);
+}

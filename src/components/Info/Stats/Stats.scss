@@ -28,5 +28,8 @@
 .rank-text {
   align-items: center;
   height: 30px;
-  width: 99% !important;
+
+  span {
+    margin-right: 1%;
+  }
 }

@@ -12,6 +12,7 @@ import {
   getMoveType,
   getValidPokemonImgPath,
   isInvalidIV,
+  isSpecialMegaFormType,
   retrieveMoves,
   splitAndCapitalize,
 } from '../../../util/utils';
@@ -341,9 +342,11 @@ const RaidBattle = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const clearData = () => {
+  const clearData = (isForceClear = true) => {
     setResult([]);
-    setIsLoadedForms(false);
+    if (isForceClear) {
+      setIsLoadedForms(false);
+    }
   };
 
   const clearDataTarget = () => {
@@ -492,10 +495,7 @@ const RaidBattle = () => {
         addCPokeData(dataList, pokemon.shadowMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Shadow);
         addCPokeData(dataList, pokemon.purifiedMoves, pokemon, fMove, fMoveType, pokemonTarget, PokemonType.Purified);
       }
-      if (
-        (!pokemon.form || (pokemon.pokemonType !== PokemonType.Mega && pokemon.pokemonType !== PokemonType.Primal)) &&
-        isNotEmpty(pokemon.shadowMoves)
-      ) {
+      if (!pokemon.form || (!isSpecialMegaFormType(pokemon.pokemonType) && isNotEmpty(pokemon.shadowMoves))) {
         addCPokeData(
           dataList,
           pokemon.eliteCinematicMoves,
@@ -732,7 +732,7 @@ const RaidBattle = () => {
 
   const handleCalculate = () => {
     dispatch(SpinnerActions.ShowSpinner.create());
-    clearData();
+    clearData(false);
     clearDataTarget();
     setTimeout(() => {
       calculateBossBattle();
@@ -773,7 +773,7 @@ const RaidBattle = () => {
               <div className="caption text-dps">DPS</div>
             </div>
           </div>
-          <div className="box-text rank-text justify-content-end d-flex position-absolute">
+          <div className="box-text rank-text text-black justify-content-end d-flex w-100 position-absolute">
             <span>HP: {`${Math.floor(bossHp - tdo)} / ${Math.floor(bossHp)}`}</span>
           </div>
         </div>
@@ -979,8 +979,7 @@ const RaidBattle = () => {
               <Checkbox
                 checked={showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow}
                 disabled={
-                  showSettingPokemon.pokemon?.pokemonType === PokemonType.Mega ||
-                  showSettingPokemon.pokemon?.pokemonType === PokemonType.Primal ||
+                  isSpecialMegaFormType(showSettingPokemon.pokemon?.pokemonType) ||
                   showSettingPokemon.pokemon?.pokemonType === PokemonType.GMax
                 }
                 onChange={(_, check) => {
@@ -1138,7 +1137,10 @@ const RaidBattle = () => {
 
   const renderMove = (value: Partial<ICombat> | undefined) => (
     <span
-      className={combineClasses(value?.type?.toLowerCase(), 'type-select-bg d-flex align-items-center filter-shadow')}
+      className={combineClasses(
+        value?.type?.toLowerCase(),
+        'position-relative type-select-bg d-flex align-items-center filter-shadow'
+      )}
     >
       {value && value.moveType !== MoveType.None && (
         <span className="move-badge">
@@ -1334,7 +1336,7 @@ const RaidBattle = () => {
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
           <div className="element-top position-relative">
-            {(!isNotEmpty(resultFMove) || !isNotEmpty(resultCMove)) && (
+            {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
               <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>
@@ -1431,20 +1433,23 @@ const RaidBattle = () => {
                       onChange={(_, check) => setOptions({ ...options, enableTimeAllow: check })}
                     />
                   }
-                  label="Time Allow"
+                  label={`Time Allow (Default: ${RAID_BOSS_TIER[tier].timer}sec)`}
                 />
               </div>
               <div className="col-6" style={{ paddingLeft: 0 }}>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={RAID_BOSS_TIER[tier].timer}
-                  placeholder="Battle Time"
-                  aria-label="Battle Time"
-                  min={0}
-                  disabled={!enableTimeAllow}
-                  onInput={(e) => setTimeAllow(toNumber(e.currentTarget.value))}
-                />
+                <div className="input-group">
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={timeAllow}
+                    placeholder="Battle Time"
+                    aria-label="Battle Time"
+                    min={0}
+                    disabled={!enableTimeAllow}
+                    onInput={(e) => setTimeAllow(toNumber(e.currentTarget.value))}
+                  />
+                  <span className="input-group-text">sec</span>
+                </div>
               </div>
             </div>
             {resultFMove && resultCMove && (
