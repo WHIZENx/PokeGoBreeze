@@ -265,7 +265,7 @@
 .table-info tbody tr.info-costs td:nth-child(1),
 .ranking-header,
 .table-round-battle tbody tr td:first-child,
-.table-round-battle tbody tr td:not(:first-child):not(.bg-summary) {
+.table-round-battle tbody tr td:not(:first-child, .bg-summary) {
   background-color: var(--background-default) !important;
 }
 
