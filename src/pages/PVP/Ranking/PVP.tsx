@@ -110,7 +110,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp);
+    loadPVP(dispatch, timestamp, pvp);
   }, []);
 
   const fetchPokemonRanking = useCallback(async () => {

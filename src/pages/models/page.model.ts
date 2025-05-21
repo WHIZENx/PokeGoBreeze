@@ -14,6 +14,7 @@ export interface IStyleSheetData {
 }
 
 export interface IErrorPage {
+  isShowTitle?: boolean;
   isError?: boolean;
   children?: React.ReactNode;
 }

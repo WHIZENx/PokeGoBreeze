@@ -342,15 +342,10 @@ const RaidBattle = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const clearData = (isForceClear = true) => {
+  const clearDataBoss = () => {
     setResult([]);
-    if (isForceClear) {
-      setIsLoadedForms(false);
-    }
-  };
-
-  const clearDataTarget = () => {
     setResultRaid(undefined);
+    setResultBoss(undefined);
   };
 
   const onCopyPokemon = (index: number) => {
@@ -732,8 +727,6 @@ const RaidBattle = () => {
 
   const handleCalculate = () => {
     dispatch(SpinnerActions.ShowSpinner.create());
-    clearData(false);
-    clearDataTarget();
     setTimeout(() => {
       calculateBossBattle();
     }, 500);
@@ -791,7 +784,7 @@ const RaidBattle = () => {
     return (
       <td
         colSpan={3}
-        className={combineClasses('text-center', `bg-${status === RaidState.Win ? 'success' : 'danger'}`)}
+        className={combineClasses('text-center bg-summary', `bg-${status === RaidState.Win ? 'success' : 'danger'}`)}
       >
         <span className="text-white">{result}</span>
       </td>
@@ -1332,7 +1325,7 @@ const RaidBattle = () => {
     <Fragment>
       <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
         <div className="col-lg" style={{ padding: 0 }}>
-          <Find isHide={true} title="Raid Boss" clearStats={clearData} />
+          <Find isHide={true} title="Raid Boss" clearStats={clearDataBoss} />
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
           <div className="element-top position-relative">
@@ -1357,7 +1350,7 @@ const RaidBattle = () => {
                         pokemon?.form?.form?.pokemonType
                       )
                     }
-                    clearData={clearData}
+                    clearData={clearDataBoss}
                     move={fMove}
                     setMovePokemon={setFMove}
                     moveType={TypeMove.Fast}
@@ -1377,7 +1370,7 @@ const RaidBattle = () => {
                         pokemon?.form?.form?.pokemonType
                       )
                     }
-                    clearData={clearData}
+                    clearData={clearDataBoss}
                     move={cMove}
                     setMovePokemon={setCMove}
                     moveType={TypeMove.Charge}
@@ -1387,7 +1380,7 @@ const RaidBattle = () => {
             </div>
             <hr />
             <Raid
-              clearData={clearData}
+              clearData={clearDataBoss}
               setTierBoss={setTier}
               setTimeAllow={setTimeAllow}
               currForm={pokemon?.form}
@@ -1454,7 +1447,11 @@ const RaidBattle = () => {
             </div>
             {resultFMove && resultCMove && (
               <div className="text-center element-top">
-                <button className="btn btn-primary w-50" onClick={() => handleCalculate()}>
+                <button
+                  className="btn btn-primary w-50"
+                  disabled={Boolean(resultBoss)}
+                  onClick={() => handleCalculate()}
+                >
                   Search
                 </button>
               </div>

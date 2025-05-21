@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 
-export const useChangeTitle = (title: string) => {
+export const useChangeTitle = (title: string, isShowTitle = true) => {
   useEffect(() => {
-    document.title = title;
+    if (isShowTitle) {
+      document.title = title;
+    }
   }, []);
 };
