@@ -15,7 +15,10 @@ const Error = (props: IErrorPage) => {
   const dispatch = useDispatch();
   const location = useLocation() as unknown as Location<LocationState>;
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  useChangeTitle(location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found');
+  useChangeTitle(
+    location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found',
+    props.isShowTitle
+  );
 
   useEffect(() => {
     if (spinner.isLoading) {
