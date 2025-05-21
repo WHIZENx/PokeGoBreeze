@@ -140,7 +140,7 @@ const TeamPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp);
+    loadPVP(dispatch, timestamp, pvp);
   }, []);
 
   useEffect(() => {

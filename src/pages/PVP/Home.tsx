@@ -45,7 +45,7 @@ const PVPHome = () => {
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp);
+    loadPVP(dispatch, timestamp, pvp);
   }, []);
 
   useEffect(() => {
@@ -86,6 +86,22 @@ const PVPHome = () => {
       return getPokemonBattleLeagueName(cp);
     }
     return name;
+  };
+
+  const renderLoading = () => {
+    return (
+      <div style={{ overflowX: 'hidden' }}>
+        <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
+          {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
+            <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
+              <div className="ph-row">
+                <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -140,17 +156,7 @@ const PVPHome = () => {
           ))}
         </div>
       ) : (
-        <div style={{ overflowX: 'hidden' }}>
-          <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
-            {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
-              <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
-                <div className="ph-row">
-                  <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        renderLoading()
       )}
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Teams Pokémon Leagues</h1>
@@ -189,17 +195,7 @@ const PVPHome = () => {
           ))}
         </div>
       ) : (
-        <div style={{ overflowX: 'hidden' }}>
-          <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
-            {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
-              <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
-                <div className="ph-row">
-                  <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        renderLoading()
       )}
       <h1>
         Battle League Simulator <span className="d-inline-block caption text-danger">(Beta Test)</span>
