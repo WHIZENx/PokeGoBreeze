@@ -162,7 +162,7 @@ const CalculatePoint = () => {
       b = 100;
     const diff = Math.max(1, 20 - data.length / 2);
     data.forEach((value, index) => {
-      colorTone[value.toString()] = new ColorTone(value, Color.create(r, g, b));
+      colorTone[value.toString()] = new ColorTone(value, Color.create(r, g, b, 0.85));
       g -= diff;
       if (index % 2 === 0) {
         b -= diff;

@@ -1,85 +1,71 @@
-import { Palette, PaletteColor, Theme, TypeBackground } from '@mui/material';
 import { TypeTheme } from '../../../enums/type.enum';
-
-interface Constants {
-  text: string;
-}
-
-interface CustomText {
-  text: string;
-  caption: string;
-}
-
-interface PaletteModify extends Palette {
-  constant: Constants;
-  background: TypeBackgroundModify;
-  primary: PaletteColorModify;
-  secondary: PaletteColorModify;
-  customText: CustomText;
-}
-
-interface TypeBackgroundModify extends TypeBackground {
-  btnType: string;
-  tablePrimary: string;
-  tableDivided: string;
-  tableStrip: string;
-  tableHover: string;
-  input: string;
-}
-
-interface PaletteColorModify extends PaletteColor {
-  fontSize: string;
-}
-
-const constant: Constants = {
-  text: '#000000',
-};
-
-export interface ThemeModify extends Theme {
-  palette: PaletteModify;
-}
+import { PaletteData } from './palette.model';
+import { ThemeOptions } from '@mui/material';
 
 export const getDesignThemes = (mode: TypeTheme) =>
   ({
-    palette: {
-      constant,
-      mode,
-      ...(mode === TypeTheme.Light
-        ? {
-            // palette values for light mode
-            text: {
-              primary: '#000000',
+    components: {
+      MuiInputBase: {
+        styleOverrides: {
+          root: {
+            color: mode === TypeTheme.Light ? '#333333' : '#ffffff',
+          },
+          input: {
+            '&::placeholder': {
+              color: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.5)',
             },
-            background: {
-              btnType: '#ffffff',
-              tablePrimary: '#ffffff',
-              tableDivided: '#0000001f',
-              tableStrip: '#fafafa',
-              tableHover: '#eeeeee',
+          },
+        },
+      },
+      MuiFormLabel: {
+        styleOverrides: {
+          root: {
+            color: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
+            '&.Mui-focused': {
+              color: mode === TypeTheme.Light ? '#3f51b5' : '#7986cb',
             },
-            customText: {
-              text: '#000000',
-              caption: '#808080',
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
+          },
+        },
+      },
+      MuiSelect: {
+        styleOverrides: {
+          select: {
+            color: mode === TypeTheme.Light ? '#333333' : '#ffffff',
+          },
+        },
+      },
+      MuiFormControlLabel: {
+        styleOverrides: {
+          root: {
+            color: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.87)' : '#ffffff',
+          },
+          label: {
+            color: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.87)' : '#ffffff',
+            '&.Mui-disabled': {
+              color: mode === TypeTheme.Light ? 'rgba(0, 0, 0, 0.38)' : 'rgba(255, 255, 255, 0.5)',
             },
-          }
-        : {
-            // palette values for dark mode
-            text: {
-              primary: '#ffffff',
-            },
-            background: {
-              default: '#222222',
-              btnType: '#555555',
-              input: '#666666',
-              tablePrimary: '#222222',
-              tableDivided: '#ffffff1f',
-              tableStrip: '#050505',
-              tableHover: '#111111',
-            },
-            customText: {
-              text: '#ffffff',
-              caption: '#ebebeb',
-            },
-          }),
+          },
+        },
+      },
     },
-  } as ThemeModify);
+    palette: PaletteData(mode),
+    shape: {
+      borderRadius: 4,
+    },
+    typography: {
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontSize: 14,
+      fontWeightLight: 300,
+      fontWeightRegular: 400,
+      fontWeightMedium: 500,
+      fontWeightBold: 700,
+    },
+    spacing: 8,
+  } as unknown as ThemeOptions);

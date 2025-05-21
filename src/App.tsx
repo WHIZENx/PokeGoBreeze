@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { loadTimestamp } from './store/effects/store.effects';
@@ -39,7 +39,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 import { loadTheme } from './store/effects/theme.effects';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './util/models/overrides/themes.model';
 import { LOAD_DATA_DELAY, TRANSITION_TIME } from './util/constants';
@@ -51,6 +51,7 @@ import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './store/localStorage';
+import { getStyleList } from './util/utils';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -62,9 +63,14 @@ function App() {
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const router = useSelector((state: RouterState) => state.router);
 
+  const theme = useTheme();
+  const colorMode = useContext(ColorModeContext);
+
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const styleSheet = useRef(getStyleList());
 
   useEffect(() => {
     setTimeout(() => {
@@ -143,9 +149,9 @@ function App() {
 
   return (
     <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
-      <NavbarComponent />
+      <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
       <Routes>
-        <Route path="/" element={<Pokedex />} />
+        <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
         <Route path="/news" element={<News />} />
         <Route path="/type-effective" element={<TypeEffect />} />
         <Route path="/weather-boosts" element={<Weather />} />
@@ -153,7 +159,7 @@ function App() {
         <Route path="/pokemon/:id" element={<Pokemon />} />
         <Route path="/search-moves" element={<SearchMove />} />
         <Route path="/move/:id" element={<Move />} />
-        <Route path="/search-types" element={<SearchTypes />} />
+        <Route path="/search-types" element={<SearchTypes styleSheet={styleSheet.current} />} />
         <Route path="/find-cp-iv" element={<FindTable />} />
         <Route path="/calculate-stats" element={<CalculateStats />} />
         <Route path="/search-battle-stats" element={<SearchBattle />} />
@@ -165,11 +171,11 @@ function App() {
         <Route path="/dps-tdo-sheets" element={<DpsTdo />} />
         <Route path="/stats-ranking" element={<StatsRanking />} />
         <Route path="/pvp" element={<PVPHome />} />
-        <Route path="/pvp/rankings/:serie/:cp" element={<RankingPVP />} />
-        <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP />} />
+        <Route path="/pvp/rankings/:serie/:cp" element={<RankingPVP styleSheet={styleSheet.current} />} />
+        <Route path="/pvp/teams/:serie/:cp" element={<TeamPVP styleSheet={styleSheet.current} />} />
         <Route path="/pvp/battle" element={<Battle />} />
         <Route path="/pvp/battle/:cp" element={<Battle />} />
-        <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP />} />
+        <Route path="/pvp/:cp/:serie/:pokemon" element={<PokemonPVP styleSheet={styleSheet.current} />} />
         <Route path="/battle-leagues" element={<Leagues />} />
         <Route path="/stickers" element={<Sticker />} />
         <Route path="*" element={<Error />} />
@@ -193,7 +199,12 @@ export default function Main() {
     []
   );
 
-  const theme = useMemo(() => createTheme(getDesignThemes(mode)), [mode]);
+  const theme = useMemo(() => {
+    const newTheme = createTheme(getDesignThemes(mode));
+    document.documentElement.setAttribute('data-theme', newTheme.palette.mode);
+    document.documentElement.setAttribute('data-bs-theme', newTheme.palette.mode);
+    return newTheme;
+  }, [mode]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>

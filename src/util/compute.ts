@@ -124,7 +124,7 @@ export const computeBgType = (
   styleList: IStyleData[],
   opacity = 1,
   defaultColor?: string,
-  defaultBg = `#646464`
+  defaultBg = `#6464644d`
 ) => {
   if (defaultColor) {
     return `linear-gradient(to bottom right, ${defaultColor}, ${defaultColor})`;

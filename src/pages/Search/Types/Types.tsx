@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
 import {
@@ -6,7 +6,6 @@ import {
   generateParamForm,
   getCustomThemeDataTable,
   getItemSpritePath,
-  getStyleList,
   splitAndCapitalize,
 } from '../../../util/utils';
 import './Types.scss';
@@ -15,12 +14,11 @@ import { computeBgType } from '../../../util/compute';
 import { Tabs, Tab } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { calculateStatsByTag } from '../../../util/calculate';
-import { CircularProgress, FormControlLabel, Switch, useTheme } from '@mui/material';
+import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -33,8 +31,9 @@ import {
 } from '../../../util/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
-import { IStyleData } from '../../../util/models/util.model';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
+import { IStyleSheetData } from '../../models/page.model';
+import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -117,12 +116,14 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
 
 const columnMove: TableColumnModify<ICombat>[] = [
   {
+    id: ColumnType.Type,
     name: 'ID',
     selector: (row) => row.id,
     sortable: true,
     width: '100px',
   },
   {
+    id: ColumnType.Name,
     name: 'Move Name',
     selector: (row) => (
       <LinkToTop
@@ -138,24 +139,28 @@ const columnMove: TableColumnModify<ICombat>[] = [
     sortFunction: nameSort,
   },
   {
+    id: ColumnType.PowerPVE,
     name: 'Power PVE',
     selector: (row) => row.pvePower,
     sortable: true,
     width: '120px',
   },
   {
+    id: ColumnType.PowerPVP,
     name: 'Power PVP',
     selector: (row) => row.pvpPower,
     sortable: true,
     width: '120px',
   },
   {
+    id: ColumnType.EnergyPVE,
     name: 'Energy PVE',
     selector: (row) => `${row.pveEnergy > 0 ? '+' : ''}${row.pveEnergy}`,
     sortable: true,
     width: '120px',
   },
   {
+    id: ColumnType.EnergyPVP,
     name: 'Energy PVP',
     selector: (row) => `${row.pvpEnergy > 0 ? '+' : ''}${row.pvpEnergy}`,
     sortable: true,
@@ -199,8 +204,7 @@ class PokemonTypeData implements IPokemonTypeData {
   }
 }
 
-const SearchTypes = () => {
-  const theme = useTheme<ThemeModify>();
+const SearchTypes = (props: IStyleSheetData) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
   const [typeList, setTypeList] = useState<string[]>([]);
@@ -212,7 +216,6 @@ const SearchTypes = () => {
   const [allData, setAllData] = useState<IPokemonTypeData>();
 
   const [showType, setShowType] = useState(false);
-  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   useEffect(() => {
     if (currentType) {
@@ -264,7 +267,7 @@ const SearchTypes = () => {
   };
 
   return (
-    <div className="container element-top" style={{ color: theme.palette.text.primary }}>
+    <div className="container element-top">
       <div className="d-flex justify-content-end">
         <div>
           <h6 className="text-center">
@@ -320,7 +323,7 @@ const SearchTypes = () => {
               'd-flex flex-column align-items-center type-info-container',
               `${currentType.toLowerCase()}-border`
             )}
-            style={{ background: computeBgType(currentType, PokemonType.Normal, styleSheet.current) }}
+            style={{ background: computeBgType(currentType, PokemonType.Normal, props.styleSheet) }}
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img
@@ -400,13 +403,9 @@ const SearchTypes = () => {
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
-                customStyles={getCustomThemeDataTable(theme)}
+                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={
-                  <div style={{ margin: 10 }}>
-                    <CircularProgress />
-                  </div>
-                }
+                progressComponent={<CircularProgressTable />}
               />
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
@@ -417,13 +416,9 @@ const SearchTypes = () => {
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
-                customStyles={getCustomThemeDataTable(theme)}
+                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={
-                  <div style={{ margin: 10 }}>
-                    <CircularProgress />
-                  </div>
-                }
+                progressComponent={<CircularProgressTable />}
               />
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
@@ -434,13 +429,9 @@ const SearchTypes = () => {
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
-                customStyles={getCustomThemeDataTable(theme)}
+                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={
-                  <div style={{ margin: 10 }}>
-                    <CircularProgress />
-                  </div>
-                }
+                progressComponent={<CircularProgressTable />}
               />
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
@@ -451,13 +442,9 @@ const SearchTypes = () => {
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover={true}
                 striped={true}
-                customStyles={getCustomThemeDataTable(theme)}
+                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
-                progressComponent={
-                  <div style={{ margin: 10 }}>
-                    <CircularProgress />
-                  </div>
-                }
+                progressComponent={<CircularProgressTable />}
               />
             </Tab>
           </Tabs>

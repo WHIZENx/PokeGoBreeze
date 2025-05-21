@@ -7,18 +7,15 @@ import './PokemonModel.scss';
 import APIService from '../../../services/API.service';
 import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
 import { useSelector } from 'react-redux';
-import { useTheme } from '@mui/material';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { isNotEmpty, UniqValueInArray } from '../../../util/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
-  const theme = useTheme<ThemeModify>();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
   const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
@@ -61,7 +58,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 176 }}>
-          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#fafafa' }} />
+          <div
+            className="ph-picture ph-col-3 w-100 h-100"
+            style={{ padding: 0, margin: 0, background: 'var(--background-default)' }}
+          />
         </div>
       ) : (
         <div>
@@ -110,9 +110,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           />
                         </div>
                       </div>
-                      <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                        Default
-                      </span>
+                      <span className="caption">Default</span>
                     </div>
                     {value.shiny && (
                       <div className="model text-center">
@@ -133,9 +131,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                             />
                           </div>
                         </div>
-                        <span className="caption" style={{ color: theme.palette.customText.caption }}>
-                          Shiny
-                        </span>
+                        <span className="caption">Shiny</span>
                       </div>
                     )}
                   </div>
@@ -157,7 +153,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 65 }}>
-          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#fafafa' }} />
+          <div
+            className="ph-picture ph-col-3 w-100 h-100"
+            style={{ padding: 0, margin: 0, background: 'var(--background-default)' }}
+          />
         </div>
       ) : (
         <Fragment>
@@ -193,7 +192,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 65 }}>
-          <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: '#fafafa' }} />
+          <div
+            className="ph-picture ph-col-3 w-100 h-100"
+            style={{ padding: 0, margin: 0, background: 'var(--background-default)' }}
+          />
         </div>
       ) : (
         <Fragment>

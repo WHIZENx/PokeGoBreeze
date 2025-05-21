@@ -1,6 +1,13 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import {
+  getCustomThemeDataTable,
+  HundoRate,
+  isInvalidIV,
+  marks,
+  PokeGoSlider,
+  splitAndCapitalize,
+} from '../../../util/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
 import DataTable, { ConditionalStyles, TableColumn } from 'react-data-table-component';
@@ -287,6 +294,7 @@ const FindTable = () => {
           defaultSortAsc={false}
           conditionalRowStyles={conditionalRowStyles}
           highlightOnHover={true}
+          customStyles={getCustomThemeDataTable()}
         />
       </Fragment>
     );
@@ -317,6 +325,7 @@ const FindTable = () => {
               defaultSortFieldId={ColumnType.Level}
               highlightOnHover={true}
               striped={true}
+              customStyles={getCustomThemeDataTable()}
             />
           </Fragment>
         )}
@@ -350,6 +359,7 @@ const FindTable = () => {
         defaultSortFieldId={ColumnType.Level}
         striped={true}
         highlightOnHover={true}
+        customStyles={getCustomThemeDataTable()}
       />
     );
   };

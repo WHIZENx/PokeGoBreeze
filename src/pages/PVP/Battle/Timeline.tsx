@@ -31,7 +31,10 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               src={APIService.getTypeHqSprite(move.type)}
             />
           </div>
-          <span className={combineClasses(!isShowShadow ? 'text-black' : 'filter-shadow')} style={{ fontSize: 14 }}>
+          <span
+            className={combineClasses(!isShowShadow ? 'theme-text-primary' : 'filter-shadow')}
+            style={{ fontSize: 14 }}
+          >
             {splitAndCapitalize(move.name, '_', ' ')}
           </span>
         </span>
@@ -230,7 +233,7 @@ export const TimeLine = (
                   style={{
                     display: !showTap ? 'none' : 'block',
                     opacity: 0.5,
-                    borderColor: value.isDmgImmune ? 'red' : 'black',
+                    borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
                   className="charge-attack"
                 />
@@ -370,7 +373,7 @@ export const TimeLineFit = (
                     opacity: 0.5,
                     width: value.size,
                     left: calculateFitPoint(poke.timeline.length, index),
-                    borderColor: value.isDmgImmune ? 'red' : 'black',
+                    borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
                 />
               )}

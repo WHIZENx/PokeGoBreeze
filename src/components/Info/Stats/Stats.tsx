@@ -1,4 +1,3 @@
-import { useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/calculate';
 import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../util/utils';
@@ -10,7 +9,6 @@ import { StoreState } from '../../../store/models/state.model';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { toFloatWithPadding, toNumber } from '../../../util/extension';
 
 interface ICurrentStats {
@@ -37,7 +35,6 @@ class CurrentStats implements ICurrentStats {
 
 const Stats = (props: IStatsComponent) => {
   const data = useSelector((state: StoreState) => state.store.data);
-  const theme = useTheme<ThemeModify>();
   const [availableRankGO, setAvailableRankGO] = useState(new StatsRankPokemonGO());
 
   const [currentStats, setCurrentStats] = useState(new CurrentStats());
@@ -92,7 +89,7 @@ const Stats = (props: IStatsComponent) => {
     Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
 
   return (
-    <div className="element-top" style={{ color: theme.palette.constant.text }}>
+    <div className="element-top text-black">
       <StatsBar
         tag="ATK"
         class="bg-danger"

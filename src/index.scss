@@ -1,10 +1,15 @@
+@use "./styles/theme.scss";
+@use "./styles/custom.scss";
 @use "../node_modules/bootstrap/dist/css/bootstrap.min.css" as *;
 @use "../node_modules/placeholder-loading/src/scss/variables.scss" as * with (
-  $ph-color: #e2eaf1,
+  $ph-bg: var(--loading-placeholder-bg),
+  $ph-color: var(--loading-placeholder),
   $ph-border: none,
   $ph-border-radius: 0
 );
 @use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
+@use "./styles/constant.scss";
+@use "./styles/popover.scss";
 
 html {
   height: 100%;
@@ -12,7 +17,7 @@ html {
 
 body {
   height: 100%;
-  background: var(--bg-color);
+  background: var(--background-default);
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif;
@@ -25,9 +30,4 @@ body {
 #root {
   position: relative;
   height: 100%;
-}
-
-.ph-item {
-  padding: 0;
-  margin: 0;
 }

@@ -1,8 +1,8 @@
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 
-import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { getCustomThemeDataTable, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd, sortStatsProd } from '../../../util/calculate';
 
 import Find from '../../../components/Find/Find';
@@ -18,6 +18,7 @@ import { ColumnType, VariantType } from '../../../enums/type.enum';
 import { useSnackbar } from 'notistack';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 import { debounce } from 'lodash';
+import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -324,11 +325,8 @@ const StatsTable = () => {
         striped={true}
         highlightOnHover={true}
         progressPending={isLoading}
-        progressComponent={
-          <div style={{ margin: 10 }}>
-            <CircularProgress />
-          </div>
-        }
+        customStyles={getCustomThemeDataTable()}
+        progressComponent={<CircularProgressTable />}
       />
     </div>
   );

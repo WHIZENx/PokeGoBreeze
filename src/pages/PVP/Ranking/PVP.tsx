@@ -8,7 +8,6 @@ import {
   replaceTempMovePvpName,
   getKeysObj,
   getValidPokemonImgPath,
-  getStyleList,
   getKeyWithData,
 } from '../../../util/utils';
 import { calculateStatsByTag } from '../../../util/calculate';
@@ -62,12 +61,12 @@ import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { IStyleData } from '../../../util/models/util.model';
 import { HexagonStats } from '../../../core/models/stats.model';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
+import { IStyleSheetData } from '../../models/page.model';
 
-const RankingPVP = () => {
+const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const dataStore = useSelector((state: StoreState) => state.store.data);
@@ -82,8 +81,6 @@ const RankingPVP = () => {
   const [storeStats, setStoreStats] = useState<boolean[]>();
   const sortedBy = useRef(SortType.Score);
   const [sorted, setSorted] = useState(SortDirectionType.DESC);
-
-  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   const [search, setSearch] = useState('');
   const [isFound, setIsFound] = useState(true);
@@ -265,7 +262,7 @@ const RankingPVP = () => {
               getKeyWithData(ScoreType, ScoreType.Overall)
             ).toLowerCase()}`}
           >
-            <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+            <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
           </LinkToTop>
           <div className="d-flex justify-content-center">
             <span className="position-relative" style={{ width: 50 }}>
@@ -285,7 +282,7 @@ const RankingPVP = () => {
           <div className="ranking-group w-100">
             <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
             <div style={{ marginRight: 15 }}>
-              <span className="ranking-score score-ic">{data.data?.score}</span>
+              <span className="ranking-score score-ic text-black">{data.data?.score}</span>
             </div>
           </div>
         </div>
@@ -293,7 +290,7 @@ const RankingPVP = () => {
       <Accordion.Body
         style={{
           padding: 0,
-          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, styleSheet.current, 0.8),
+          backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, props.styleSheet, 0.3),
         }}
       >
         {storeStats && storeStats[key] && (
@@ -309,7 +306,7 @@ const RankingPVP = () => {
                   cp={params.cp}
                   serie={params.serie}
                   type={searchParams.get(Params.LeagueType)}
-                  styleList={styleSheet.current}
+                  styleList={props.styleSheet}
                 />
               </div>
               <div className="container">

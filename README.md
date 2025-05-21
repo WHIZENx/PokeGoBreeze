@@ -1,75 +1,160 @@
-# Pokemon GO Tools&Information
+# PokeGoBreeze - Pokémon GO Tools & Information
 
-This Web Appliation was hosted in [Firebase](https://pokego-breeze.web.app/) with travis CI/CD and [Vercel](https://poke-go-breeze.vercel.app/) with github CI/CD.
+## Overview
+PokeGoBreeze is a comprehensive web application that provides a suite of tools and information for Pokémon GO players. The application helps trainers optimize their gameplay by offering detailed Pokémon statistics, battle calculators, move analysis, and more - all within a user-friendly interface that syncs with the latest Pokémon GO game data.
 
-## Pages information
-### [Home](https://poke-go-breeze.vercel.app/)
+## Architecture & Tech Stack
 
-Show all current with released pokemon by filter to show all stats and type.
-- Pokedex includes 905 pokemon.
+### Frontend
+- **Framework**: React 18 with TypeScript
+- **State Management**: Redux with Redux Thunk and Redux Persist
+- **Routing**: React Router v6
+- **UI Components**: 
+  - Material UI (MUI) v5
+  - React Bootstrap
+  - Styled Components
+- **Data Visualization**: 
+  - React Data Table Component
+  - React XArrows
+- **Styling**: SCSS/Sass with custom theming system
+- **Storage**: LocalForage (IndexedDB with fallback to localStorage)
+- **Security**: Crypto-js for data encryption
+- **Performance Optimization**:
+  - Code splitting with React Imported Component
+  - Redux DevTools optimization for large state
+  - Debounced loading patterns
 
-### `Search`
+### Build & Development Tools
+- **Build System**: Webpack with custom configuration
+- **Development Server**: Webpack Dev Server
+- **Code Quality**:
+  - ESLint
+  - Prettier
+  - Stylelint
+- **Testing**: Jest and React Testing Library
+- **CI/CD**:
+  - GitHub Actions
+  - Travis CI for Firebase deployment
+  - Vercel integration
 
-#### - [Pokemon](https://poke-go-breeze.vercel.app/search-pokemon)
-You can search pokemon by filter to show all stats and type.
-- Includes 905 pokemon.
-- Show information pokemon etc. stats, shiny image, type effective and evolution chains.
-- Show information pokemon GO etc. Weather Boosts and recommend movesets.
+### Deployment
+- **Primary Hosting**: Firebase
+- **Secondary Hosting**: Vercel
+- **Containerization**: Docker support for development and production
 
-#### - [Moves](https://poke-go-breeze.vercel.app/search-move)
-You can search moves by filter to show all stats and type.
-- Includes current all movesets in Pokemon GO.
-- Show information pokemon etc. stats and DPS (Damage Per Seconds).
+## Project Structure
 
-### `Effective`
+```
+/src
+├── assets           # Static assets, images, and icons
+├── components       # Reusable UI components
+├── core             # Core functionality and utilities
+├── data             # Static data files and game data
+├── enums            # TypeScript enumerations
+├── pages            # Application pages and routes
+│   ├── Move         # Move details and information
+│   ├── News         # Game news and updates
+│   ├── PVP          # PVP battle simulator and rankings
+│   ├── Pokedex      # Pokémon listing and information
+│   ├── Pokemon      # Individual Pokémon details
+│   ├── Search       # Search functionality for Pokémon/moves/types
+│   ├── Sheets       # Data sheets (DPS/TDO, rankings)
+│   ├── Sticker      # Sticker collection
+│   ├── Tools        # Various calculators and tools
+│   ├── TypeEffect   # Type effectiveness charts
+│   └── Weather      # Weather boost information
+├── services         # API services and data fetching
+├── store            # Redux store configuration
+│   ├── actions      # Redux actions
+│   ├── effects      # Side effects and async logic
+│   ├── reducers     # State reducers
+│   └── selectors    # State selectors
+├── styles           # Global styles and theme definitions
+└── util             # Utility functions and helpers
+```
 
-#### - [Type Effective](https://poke-go-breeze.vercel.app/type-effective)
-You can search pokemon by filter to show effective.
-- Includes all types in Pokemon.
-- Show effective weakness, resistance and neutral.
+## Features
 
-#### - [Weaher Boosts](https://poke-go-breeze.vercel.app/weather-boosts)
-You can search pokemon by filter to show effective.
-- Includes 905 pokemon.
-- Show effective weakness, resistance and neutral.
+### Pokémon Database
+- **Pokédex**: Complete database of all 905+ Pokémon with detailed stats
+- **Search**: Advanced filtering by name, type, stats, and more
+- **Pokémon Details**: Comprehensive information including:
+  - Base stats and CP ranges
+  - Type effectiveness
+  - Evolution chains
+  - Shiny forms
+  - Recommended movesets
+  - Weather boosts
 
-### `Tools`
+### Move Analysis
+- **Move Database**: All available moves in Pokémon GO
+- **Stats**: Damage, energy cost, cooldown time
+- **DPS Calculation**: Damage Per Second analysis
+- **Move Comparisons**: Compare effectiveness across different Pokémon
 
-#### - [Find CP&IV](https://poke-go-breeze.vercel.app/find-cp-iv)
-Calculate IV with your pokemon selected by CP.
-- Includes 905 pokemon.
-- Show all available possible CP.
+### Battle Tools
+- **Damage Calculator**: Simulate battle damage between Pokémon
+- **DPS & TDO Sheets**: Damage Per Second and Total Damage Output rankings
+- **Raid Battle Simulator**: Optimize raid battle teams
+- **PVP Analysis**:
+  - League rankings (Great, Ultra, Master)
+  - Team builder
+  - Battle simulator
+  - Stats ranking per league
 
-#### - [Calculate Overall Stats](https://poke-go-breeze.vercel.app/calculate-stats)
-Calculate overall stats with your pokemon selected.
-- Includes 905 pokemon.
-- Show all available stats in Pokemon GO.
+### Utility Tools
+- **CP & IV Calculator**: Find possible IV combinations from CP
+- **Stats Calculator**: Calculate overall stats for any Pokémon
+- **Catch Chance Calculator**: Probability of catching Pokémon
+- **Weather Boost Finder**: Find Pokémon boosted by current weather
 
-### [Stats Table](https://poke-go-breeze.vercel.app/stats-table)
+### Special Features
+- **Dark/Light Theme**: Customizable UI theme
+- **Responsive Design**: Works on mobile, tablet, and desktop
+- **Offline Support**: Core functionality available offline
+- **Data Synchronization**: Regular updates to match game data
+- **Performance Optimization**: Fast loading and interaction
 
-Show all stats pokemon by filter battle leagues.
-- Find bast Pokemon GO stats in battle leagues (Little cup, Great league, Ultra league, Master league)
+## Goals & Success Metrics
 
-### `Battle Simulator`
+### Primary Goals
+1. Provide the most accurate and up-to-date Pokémon GO information
+2. Offer comprehensive tools that enhance player experience and strategy
+3. Maintain an intuitive, responsive UI accessible to all player levels
+4. Ensure compatibility with the latest Pokémon GO game mechanics and updates
 
-#### - [Damage Simulator](https://poke-go-breeze.vercel.app/damage-calculate)
-Calculate damage by options with Pokemon vs another Pokemon.
-- Includes options and type pokemon to feelfree calculate damage.
+### Success Metrics
+- **Data Accuracy**: Sync with official game data within 24 hours of updates
+- **Tool Completeness**: Cover all major gameplay aspects (catching, battling, raids, PVP)
+- **Performance**: <2s initial load time, <500ms for subsequent interactions
+- **Accessibility**: Support all modern browsers and devices
 
-#### - [DPS&TDO Sheets](https://poke-go-breeze.vercel.app/dps-tdo-sheets)
-You can search pokemon by filter to show DPS, TDO.
-- Includes 905 pokemon.
-- Includes all types in Pokemon.
-- Includes current all movesets in Pokemon GO.
-- Show DPS, TDO, DPS^3*TDO and CP in each pokemon.
+## Getting Started
 
-## Other Pages
+### Development
+```bash
+# Install dependencies
+npm install
 
-### `Pokemon`
+# Start development server
+npm run develop
+```
 
-- Show information pokemon etc. stats, shiny image, type effective and evolution chains.
-- Show information pokemon GO etc. Weather Boosts and recommend movesets.
+### Production Build
+```bash
+# Build for production
+npm run deploy
 
-### `Moves`
+# Run with Docker
+docker-compose up
+```
 
-- Show information pokemon etc. stats and DPS (Damage Per Seconds).
+## Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Links
+- [Live Site (Firebase)](https://pokego-breeze.web.app/)
+- [Alternative Site (Vercel)](https://poke-go-breeze.vercel.app/)

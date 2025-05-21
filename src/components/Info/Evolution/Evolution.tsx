@@ -18,8 +18,6 @@ import { Link } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
 import './Evolution.scss';
-import { useTheme } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
   capitalize,
   convertFormGif,
@@ -29,6 +27,7 @@ import {
   getDataWithKey,
   getGenerationPokemon,
   getItemSpritePath,
+  isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../util/utils';
 
@@ -42,7 +41,6 @@ import { FORM_NORMAL, FORM_STANDARD } from '../../../util/constants';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
-import { ThemeModify } from '../../../util/models/overrides/themes.model';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
@@ -98,18 +96,7 @@ class PokemonEvo implements IPokemonEvo {
   }
 }
 
-const customTheme = createTheme({
-  palette: {
-    secondary: {
-      main: '#a6efff80',
-      contrastText: 'gray',
-      fontSize: '0.75rem',
-    },
-  },
-} as ThemeModify);
-
 const Evolution = (props: IEvolutionComponent) => {
-  const theme = useTheme<ThemeModify>();
   const router = useSelector((state: RouterState) => state.router);
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
   const evolutionChains = useSelector((state: StoreState) => state.store.data.evolutionChains);
@@ -372,11 +359,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   useEffect(() => {
     if (props.pokemonData?.fullName) {
-      if (
-        props.pokemonData.pokemonType === PokemonType.GMax ||
-        props.pokemonData.pokemonType === PokemonType.Mega ||
-        props.pokemonData.pokemonType === PokemonType.Primal
-      ) {
+      if (props.pokemonData.pokemonType === PokemonType.GMax || isSpecialMegaFormType(props.pokemonData.pokemonType)) {
         getSpecialEvoChain(props.pokemonData);
       } else {
         getEvoChainStore(props.pokemonData);
@@ -465,10 +448,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {toNumber(data?.evoToId) > 0 &&
                           !data?.itemCost &&
                           (data?.candyCost || data?.purificationEvoCandyCost) && (
-                            <span
-                              className="d-flex align-items-center caption"
-                              style={{ color: theme.palette.customText.caption, width: 'max-content' }}
-                            >
+                            <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
                               <Candy id={value.id} />
                               <span style={{ marginLeft: 2 }}>{`x${
                                 props.pokemonData?.pokemonType === PokemonType.Purified
@@ -552,7 +532,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             {data.itemCost && (
                               <span
                                 className="d-flex align-items-center caption"
-                                style={{ color: theme.palette.customText.caption, width: 'max-content', marginLeft: 2 }}
+                                style={{ width: 'max-content', marginLeft: 2 }}
                               >{`x${data.itemCost}`}</span>
                             )}
                           </Fragment>
@@ -652,21 +632,19 @@ const Evolution = (props: IEvolutionComponent) => {
               {chain.length > 1 || (chain.length === 1 && !isEqual(form, FORM_NORMAL) && isNotEmpty(form)) ? (
                 <Fragment>
                   {!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) && isNotEmpty(form) ? (
-                    <ThemeProvider theme={customTheme}>
-                      <Badge
-                        color="secondary"
-                        overlap="circular"
-                        badgeContent={splitAndCapitalize(form.replaceAll('_', '-'), '-', ' ')}
-                        anchorOrigin={{
-                          vertical: 'top',
-                          horizontal: 'left',
-                        }}
-                      >
-                        <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
-                          {renderImgGif(value)}
-                        </Badge>
+                    <Badge
+                      color="secondary"
+                      overlap="circular"
+                      badgeContent={splitAndCapitalize(form.replaceAll('_', '-'), '-', ' ')}
+                      anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                      }}
+                    >
+                      <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
+                        {renderImgGif(value)}
                       </Badge>
-                    </ThemeProvider>
+                    </Badge>
                   ) : (
                     <Badge color="primary" overlap="circular" badgeContent={evo + 1} sx={{ width: 96 }}>
                       {renderImgGif(value)}
@@ -682,26 +660,20 @@ const Evolution = (props: IEvolutionComponent) => {
           ) : (
             <span className="img-evo-container">{renderImgGif(value)}</span>
           )}
-          <div id="id-pokemon" style={{ color: theme.palette.text.primary }}>
-            <b>#{value.id}</b>
+          <div id="id-pokemon">
+            <b className="theme-text-primary">#{value.id}</b>
           </div>
           <div>
             <b className="link-title">{splitAndCapitalize(value.name, '-', ' ')}</b>
           </div>
         </span>
         {value.isBaby && <span className="caption text-danger">(Baby)</span>}
-        <p>
-          {isCurrent && (
-            <span className="caption" style={{ color: theme.palette.customText.caption }}>
-              Current
-            </span>
-          )}
-        </p>
+        <p>{isCurrent && <span className="caption">Current</span>}</p>
       </Fragment>
     );
   };
 
-  const reload = (element: JSX.Element, color = '#fafafa') => {
+  const reload = (element: JSX.Element, color = 'var(--background-default)') => {
     if (
       props.isLoadedForms ||
       (isNotEmpty(arrEvoList) && arrEvoList.some((evo) => evo.some((pokemon) => pokemon.id === props.id)))
@@ -722,7 +694,7 @@ const Evolution = (props: IEvolutionComponent) => {
         <OverlayTrigger
           placement="auto"
           overlay={
-            <PopoverConfig id="popover-info-evo">
+            <PopoverConfig id="popover-info">
               <span className="info-evo">
                 <span className="d-block caption">
                   - <img alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of

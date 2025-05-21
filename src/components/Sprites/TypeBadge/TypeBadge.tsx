@@ -23,7 +23,10 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
 
   return (
     <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>
-      <span className="caption text-type-border" style={{ color: getValueOrDefault(String, props.color, 'gray') }}>
+      <span
+        className="caption text-type-border"
+        style={{ color: getValueOrDefault(String, props.color, 'var(--text-primary)') }}
+      >
         {props.title}
       </span>
       <LinkToTop

@@ -75,7 +75,7 @@ const CircleBar = (props: ICircleBarComponent) => {
   return (
     <div
       className="d-flex flex-column align-items-center justify-content-between"
-      style={{ rowGap: 10, color: props.isDisable ? 'red' : 'black' }}
+      style={{ rowGap: 10, color: props.isDisable ? 'red' : 'var(--text-primary)' }}
     >
       {props.text && (
         <span className="text-center">

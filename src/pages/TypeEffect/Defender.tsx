@@ -2,17 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../util/utils';
-import { useTheme } from '@mui/material';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
-import { TypeTheme } from '../../enums/type.enum';
-import { ThemeModify } from '../../util/models/overrides/themes.model';
-import { combineClasses, DynamicObj, getValueOrDefault, isEmpty, isEqual } from '../../util/extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isEqual } from '../../util/extension';
 import { PokemonTypeBadge } from '../../core/models/type.model';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 
 const Defender = (prop: ITypeEffComponent) => {
-  const theme = useTheme<ThemeModify>();
   const [types, setTypes] = useState<string[]>([]);
 
   const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
@@ -94,11 +90,7 @@ const Defender = (prop: ITypeEffComponent) => {
                   <ul>
                     {types.map((value, index) => (
                       <li
-                        className={combineClasses(
-                          'container',
-                          `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
-                        )}
-                        style={{ backgroundColor: theme.palette.background.default }}
+                        className="container card-pokemon theme-bg-default"
                         key={index}
                         onMouseDown={() => changeTypePri(value)}
                       >
@@ -144,15 +136,7 @@ const Defender = (prop: ITypeEffComponent) => {
                 <div className="result-type">
                   <ul>
                     {types.map((value, index) => (
-                      <li
-                        className={combineClasses(
-                          'container',
-                          `card-pokemon${theme.palette.mode === TypeTheme.Dark ? '-dark' : ''}`
-                        )}
-                        style={{ backgroundColor: theme.palette.background.default }}
-                        key={index}
-                        onMouseDown={() => changeTypeSec(value)}
-                      >
+                      <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
                         <CardType value={capitalize(value)} />
                       </li>
                     ))}

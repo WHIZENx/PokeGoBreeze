@@ -34,6 +34,7 @@ import {
   getLureItemType,
   getPokemonType,
   getTicketRewardType,
+  isSpecialMegaFormType,
   replacePokemonGoForm,
   replaceTempMoveName,
   splitAndCapitalize,
@@ -578,9 +579,7 @@ const addPokemonFromData = (data: PokemonDataGM[], result: IPokemonData[], encou
       });
 
       const goTemplate = `V${pokemon.id.toString().padStart(4, '0')}_POKEMON_${replacePokemonGoForm(
-        pokemon.pokemonType === PokemonType.Mega ||
-          pokemon.pokemonType === PokemonType.Primal ||
-          pokemon.pokemonType === PokemonType.GMax
+        isSpecialMegaFormType(pokemon.pokemonType) || pokemon.pokemonType === PokemonType.GMax
           ? pokemon.pokemonId
           : convertPokemonDataName(item.baseFormeSlug, item.slug)
       )}`;

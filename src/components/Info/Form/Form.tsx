@@ -183,12 +183,14 @@ const FormComponent = (props: IFormInfoComponent) => {
                           ? capitalize(FORM_NORMAL)
                           : splitAndCapitalize(value.form.formName, '-', ' ')}
                       </p>
-                      {toNumber(value.form.id) > 0 && value.form.id === props.defaultId && (
-                        <b>
-                          <small>(Default)</small>
-                        </b>
-                      )}
-                      {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
+                      <div className="d-flex flex-column">
+                        {toNumber(value.form.id) > 0 && value.form.id === props.defaultId && (
+                          <b>
+                            <small>(Default)</small>
+                          </b>
+                        )}
+                        {toNumber(value.form.id) <= 0 && <small className="text-danger">* Only in GO</small>}
+                      </div>
                     </button>
                   ))}
                 </Fragment>

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
 
@@ -9,7 +9,6 @@ import {
   getAllMoves,
   getKeyWithData,
   getMoveType,
-  getStyleList,
   getValidPokemonImgPath,
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
@@ -57,11 +56,11 @@ import { ScoreType } from '../../../util/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { IStyleData } from '../../../util/models/util.model';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
+import { IStyleSheetData } from '../../models/page.model';
 
-const TeamPVP = () => {
+const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
@@ -79,8 +78,6 @@ const TeamPVP = () => {
 
   const [sortedTeamBy, setSortedTeamBy] = useState(SortType.TeamScore);
   const [sortedTeam, setSortedTeam] = useState(SortDirectionType.DESC);
-
-  const styleSheet = useRef<IStyleData[]>(getStyleList());
 
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
@@ -329,7 +326,7 @@ const TeamPVP = () => {
         </div>
         <div className="ranking-container card-container">
           <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
-            <div className="ranking-score text-black">Pokémon</div>
+            <div className="ranking-score">Pokémon</div>
             <div className="d-flex" style={{ marginRight: 15, columnGap: 30 }}>
               <div
                 className="text-center"
@@ -406,7 +403,7 @@ const TeamPVP = () => {
                 key={index}
                 style={{
                   columnGap: '1rem',
-                  backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, styleSheet.current),
+                  backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, props.styleSheet, 0.3),
                 }}
               >
                 <LinkToTop
@@ -414,7 +411,7 @@ const TeamPVP = () => {
                     Params.LeagueType
                   }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
                 >
-                  <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+                  <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
                 </LinkToTop>
                 <div className="d-flex justify-content-center">
                   <span className="position-relative filter-shadow" style={{ width: 96 }}>
@@ -444,7 +441,6 @@ const TeamPVP = () => {
                         isBlock={true}
                         isShowShadow={true}
                         height={20}
-                        color="white"
                         arr={value.pokemonData?.types}
                       />
                     </div>
@@ -453,7 +449,6 @@ const TeamPVP = () => {
                         isGrow={true}
                         isFind={true}
                         title="Fast Move"
-                        color="white"
                         move={value.fMove}
                         moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                       />
@@ -461,7 +456,6 @@ const TeamPVP = () => {
                         isGrow={true}
                         isFind={true}
                         title="Primary Charged Move"
-                        color="white"
                         move={value.cMovePri}
                         moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                       />
@@ -470,7 +464,6 @@ const TeamPVP = () => {
                           isGrow={true}
                           isFind={true}
                           title="Secondary Charged Move"
-                          color="white"
                           move={value.cMoveSec}
                           moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
                         />
@@ -479,12 +472,12 @@ const TeamPVP = () => {
                   </div>
                   <div className="d-flex filter-shadow align-items-center" style={{ marginRight: 35, columnGap: 30 }}>
                     <div className="text-center" style={{ width: 120 }}>
-                      <span className="ranking-score score-ic">{value.teamScore}</span>
+                      <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                     </div>
                     <div className="text-center" style={{ width: 160 }}>
-                      <span className="ranking-score score-ic">{value.individualScore}</span>
+                      <span className="ranking-score score-ic text-black">{value.individualScore}</span>
                     </div>
-                    <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic">
+                    <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic text-black">
                       {toFloatWithPadding((value.games * 100) / value.performersTotalGames, 2)}
                       <span className="caption text-black">
                         {value.games}/{value.performersTotalGames}
@@ -576,15 +569,19 @@ const TeamPVP = () => {
                                 </PokemonIconType>
                               </div>
                             </div>
-                            <b className="text-black">{`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}</b>
+                            <b className="theme-text-primary">{`#${value.id} ${splitAndCapitalize(
+                              value.name,
+                              '-',
+                              ' '
+                            )}`}</b>
                           </div>
                         ))}
                       </div>
                       <div className="d-flex align-items-center" style={{ marginRight: 15, columnGap: 30 }}>
                         <div className="text-center" style={{ width: 200 }}>
-                          <span className="ranking-score score-ic">{value.teamScore}</span>
+                          <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                         </div>
-                        <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic">
+                        <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic text-black">
                           {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
                           <span className="caption text-black">
                             {value.games}/{value.teamsTotalGames}
@@ -605,7 +602,8 @@ const TeamPVP = () => {
                             backgroundImage: computeBgType(
                               value.pokemonData?.types,
                               value.pokemonType,
-                              styleSheet.current
+                              props.styleSheet,
+                              0.3
                             ),
                           }}
                         >
@@ -614,7 +612,7 @@ const TeamPVP = () => {
                               Params.LeagueType
                             }=${getKeyWithData(ScoreType, ScoreType.Overall)?.toLowerCase()}`}
                           >
-                            <VisibilityIcon className="view-pokemon" fontSize="large" sx={{ color: 'black' }} />
+                            <VisibilityIcon className="view-pokemon theme-text-primary" fontSize="large" />
                           </LinkToTop>
                           <div className="d-flex justify-content-center">
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
@@ -657,7 +655,6 @@ const TeamPVP = () => {
                                   isGrow={true}
                                   isFind={true}
                                   title="Fast Move"
-                                  color="white"
                                   move={value.fMove}
                                   moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                                 />
@@ -665,7 +662,6 @@ const TeamPVP = () => {
                                   isGrow={true}
                                   isFind={true}
                                   title="Primary Charged Move"
-                                  color="white"
                                   move={value.cMovePri}
                                   moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                                 />
@@ -674,7 +670,6 @@ const TeamPVP = () => {
                                     isGrow={true}
                                     isFind={true}
                                     title="Secondary Charged Move"
-                                    color="white"
                                     move={value.cMoveSec}
                                     moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
                                   />

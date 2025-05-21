@@ -731,7 +731,7 @@ const CatchChance = () => {
                 <thead />
                 <tbody>
                   <tr>
-                    <td className="text-center w-25" style={{ backgroundColor: '#f1ffff' }}>
+                    <td className="text-center w-25 theme-table-info-bg">
                       <b>The Throw</b>
                     </td>
                     <td className="w-75">

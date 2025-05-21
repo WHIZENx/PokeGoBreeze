@@ -25,7 +25,6 @@ const HeaderPVP = (props: HeaderComponent) => {
           isGrow={true}
           isFind={true}
           title="Fast Move"
-          color="white"
           move={props.data?.fMove}
           moveType={getMoveType(props.data?.pokemon, props.data?.fMove?.name)}
         />
@@ -33,7 +32,6 @@ const HeaderPVP = (props: HeaderComponent) => {
           isGrow={true}
           isFind={true}
           title="Primary Charged Move"
-          color="white"
           move={props.data?.cMovePri}
           moveType={getMoveType(props.data?.pokemon, props.data?.cMovePri?.name)}
         />
@@ -42,7 +40,6 @@ const HeaderPVP = (props: HeaderComponent) => {
             isGrow={true}
             isFind={true}
             title="Secondary Charged Move"
-            color="white"
             move={props.data.cMoveSec}
             moveType={getMoveType(props.data.pokemon, props.data.cMoveSec.name)}
           />

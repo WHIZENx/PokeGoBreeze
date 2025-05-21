@@ -8,6 +8,7 @@ import {
   checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
+  getCustomThemeDataTable,
   getItemSpritePath,
   getKeyWithData,
   splitAndCapitalize,
@@ -26,7 +27,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { CircularProgress, FormControlLabel, Switch } from '@mui/material';
+import { FormControlLabel, Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Accordion, Form } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
@@ -52,6 +53,7 @@ import { PokemonTypeBadge } from '../../core/models/type.model';
 import { LinkToTop } from '../../util/hooks/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
+import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -758,11 +760,8 @@ const Move = (props: IMovePage) => {
                     fixedHeader={true}
                     fixedHeaderScrollHeight="35vh"
                     progressPending={!progress}
-                    progressComponent={
-                      <div style={{ margin: 10 }}>
-                        <CircularProgress />
-                      </div>
-                    }
+                    customStyles={getCustomThemeDataTable()}
+                    progressComponent={<CircularProgressTable />}
                   />
                 </td>
               </tr>

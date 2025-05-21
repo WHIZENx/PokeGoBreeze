@@ -1,0 +1,362 @@
+// Dynamic theme classes
+.theme-card {
+  background-color: var(--background-paper);
+  color: var(--text-primary);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.theme-input {
+  background-color: var(--background-input);
+  color: var(--text-primary);
+  border: 1px solid var(--background-table-divided);
+
+  &::placeholder {
+    color: var(--text-secondary);
+  }
+}
+
+.theme-btn {
+  background-color: var(--primary-main);
+  color: var(--primary-contrast-text);
+  border-radius: var(--border-radius);
+
+  &:hover {
+    background-color: var(--primary-dark);
+  }
+}
+
+.theme-text-primary {
+  color: var(--text-primary) !important;
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-bg-default {
+  background-color: var(--background-default);
+}
+
+.theme-table-primary {
+  background-color: var(--background-table-primary) !important;
+}
+
+.theme-spinner {
+  background: var(--loading-spinner) !important;
+}
+
+.theme-spinner-bg {
+  background: var(--loading-spinner-bg) !important;
+}
+
+.theme-custom-selected-bg {
+  background-color: var(--custom-selected-bg);
+}
+
+.theme-table-info-bg {
+  background-color: var(--custom-table-background-info);
+  border: 2px solid var(--custom-table-background-sub-head-border);
+}
+
+.theme-table-info-bg-border {
+  border: 2px solid var(--custom-table-background-sub-head-border);
+}
+
+.theme-text-shadow {
+  text-shadow: var(--shadow-default-revert) 1px 1px;
+}
+
+// Override some of the existing styles to use theme variables
+.caption {
+  color: var(--text-caption);
+}
+
+.highlight-select-pokemon,
+.current-select-pokemon,
+.selected {
+  background-color: var(--custom-selected) !important;
+}
+
+.result,
+.result-pokemon,
+.result-move-select,
+.result-move-select-default {
+  background-color: var(--custom-selected-bg);
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+  color: var(--text-primary);
+}
+
+.card-pokemon,
+.card-move,
+.card-pokemon-select {
+  border-top: 1px solid var(--background-table-divided);
+}
+
+.card-pokemon:hover,
+.card-move:hover,
+.card-pokemon-select:hover,
+.ranking-container .accordion-button.collapsed:hover {
+  background-color: var(--custom-selected-hover) !important;
+}
+
+.moveset-error {
+  background-color: var(--background-paper);
+}
+
+.moveset-error-msg {
+  background-color: var(--background-default);
+  color: var(--error-main, #f44336);
+}
+
+// Button styling using CSS variables
+.btn-select-type {
+  background-color: var(--background-btn-type);
+  color: var(--text-primary);
+  border: 1px solid var(--divider);
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  
+  &:hover:not(.select-type) {
+    background-color: var(--background-table-hover);
+  }
+  
+  &.select-type {
+    background-color: var(--background-btn-type-select);
+    border-color: white;
+
+    span {
+      color: white !important;
+    }
+  }
+}
+
+// Border input styling
+.border-input {
+  border: 1px solid var(--divider);
+  background-color: var(--background-paper);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.head-types {
+  background-color: var(--custom-table-background-head);
+  color: white;
+  transition: background-color 0.3s, color 0.3s;
+  padding: 10px;
+  font-weight: bolder;
+}
+
+.table-head {
+  background-color: var(--custom-table-background-head);
+  color: white;
+  border: 1px solid var(--custom-table-background-sub-head-border);
+}
+
+.sticker-container h5 {
+  background-color: var(--custom-table-background-head);
+  color: var(--custom-table-background-info);
+  border: 1px solid var(--custom-table-background-sub-head-border);
+}
+
+.theme-shadow {
+  text-shadow: 1px 1px var(--shadow-custom);
+}
+
+.filter-shadow-hover:hover {
+  filter: drop-shadow(2px 2px 2px #000000cc);
+}
+
+.prev-next-block {
+  background-color: var(--background-btn-type);
+  color: var(--text-primary) !important;
+
+  a {
+    color: var(--text-primary) !important;
+  }
+}
+
+.table-desc tbody tr td:nth-child(1) {
+  color: var(--text-primary) !important;
+}
+
+.table-raid-cal tbody tr td,
+.table-info tbody tr td:nth-child(2),
+.table-desc tbody tr td:nth-child(2) {
+  color: var(--text-primary);
+}
+
+.table-desc tbody tr:nth-child(odd) td {
+  background-color: var(--custom-table-background-odd) !important;
+}
+
+.table-desc tbody tr:nth-child(even) td {
+  background-color: var(--custom-table-background-even) !important;
+}
+
+.text-gen {
+  color: var(--text-caption);
+}
+
+.reward-league.group-rank-league,
+.bg-ref-pokemon,
+.result-type ul,
+.result-weather ul,
+.result-move ul,
+.pokemon-content,
+.table-raid-cal thead tr th:nth-child(1),
+.table-info tbody tr.info-costs td:nth-child(1) {
+  background-color: var(--background-default) !important;
+}
+
+.table-raid tbody tr td:nth-child(1) {
+  color: var(--custom-table-background-sub-head-text);
+  background-color: var(--custom-table-background-info) !important;
+}
+
+.table-catch-chance thead th,
+.table-info tbody tr.info-costs td:nth-child(2) {
+  color: var(--text-primary);
+  background-color: var(--custom-table-background-info) !important;
+}
+
+.ranking-link-group button {
+  color: var(--text-primary);
+  background-color: var(--custom-table-background-info);
+}
+
+.table-info,
+.table-main,
+.table-moves {
+  tbody tr td.table-sub-header {
+    background-color: var(--custom-table-background-sub-head) !important;
+    color: var(--custom-table-background-sub-head-text) !important;
+    border: 1px solid var(--custom-table-background-sub-head-border);
+  }
+}
+
+.btn-form {
+  background-color: var(--custom-btn-form) !important;
+  color: var(--text-primary) !important;
+
+  &:hover:not(.form-selected) {
+    background-color: var(--custom-btn-form-hover);
+  }
+
+  &:focus {
+    background-color: var(--custom-btn-form-focus);
+  }
+
+  &.form-selected {
+    background-color: var(--custom-btn-form-selected) !important;
+  }
+}
+
+.card-select-enabled {
+  background-color: var(--background-paper);
+}
+
+.card-select-disabled {
+  background-color: var(--bs-secondary-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+.select-down {
+  background-color: var(--bs-body-bg);
+}
+
+.stats-container {
+  background-color: var(--background-stats-container);
+}
+
+.table-movesets tbody tr td,
+.table-moves tbody tr td {
+  color: var(--custom-table-background-sub-head-text);
+}
+
+th,
+td,
+.table-info,
+.table-moves-col,
+.table-counter-container {
+  border: 1px solid var(--custom-table-background-sub-head-border) !important;
+}
+
+.table-info tbody tr td:first-child,
+.sub-group-model .gender {
+  background-color: var(--custom-table-background-info);
+  color: var(--custom-table-background-sub-head-text);
+  border: 1px solid var(--custom-table-background-sub-head-border);
+}
+
+.table-raid-cal tbody tr td:nth-child(1) {
+  background-color: var(--custom-table-background-sub-head) !important;
+  color: var(--text-primary) !important;
+}
+
+.rank-header,
+.moves-title,
+.table-round-battle thead tr.table-header th,
+.table-raid-cal thead tr.table-header th:not(:first-child),
+.group-model .desc,
+.sub-header,
+.table-column-head {
+  background-color: var(--custom-table-background-sub-head) !important;
+  color: var(--custom-table-background-sub-head-text) !important;
+  border: 1px solid var(--custom-table-background-sub-head-border);
+}
+
+.table-info thead tr {
+  background-color: var(--custom-table-background-head) !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.img-type-icon {
+  filter: drop-shadow(1px 1px 1px var(--shadow-default));
+}
+
+.pokemon-battle-header,
+.moves-title-container,
+.frame-badge-select,
+.frame-badge:hover,
+.form-header {
+  background-color: var(--custom-according-header);
+}
+
+.accordion-footer {
+  background-color: var(--custom-according-footer);
+}
+
+.card-header {
+  background-color: var(--custom-dropdown-header) !important;
+}
+
+.bg-card-highlight {
+  background-color: var(--custom-dropdown-highlight) !important;
+}
+
+.ranking-header,
+.table-round-battle tbody tr td:first-child,
+.table-round-battle tbody tr td:not(:first-child) {
+  background-color: var(--background-default);
+  color: var(--text-primary);
+}
+
+.loading-spin-container {
+  background: radial-gradient(closest-side, var(--loading-spinner-bg-start), var(--loading-spinner-bg-end));
+}
+
+.ranking-header .ranking-sort:not(.ranking-selected) {
+  color: var(--table-sort) !important;
+}
+
+.stats-border {
+  background-color: var(--background-stats-performance);
+}
+
+.play-line {
+  background-color: var(--background-revert);
+}
+
+.league-opened .accordion-button.collapsed {
+  background-color: var(--custom-according-highlight);
+}
