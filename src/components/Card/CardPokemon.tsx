@@ -13,6 +13,7 @@ const CardPokemon = (props: ICardPokemonComponent) => {
           <img
             height={38}
             alt="Pokémon Logo"
+            title={splitAndCapitalize(props.value.name.replaceAll('_', '-'), '-', ' ')}
             style={{ marginRight: 10 }}
             src={APIService.getPokeIconSprite(props.value.sprite, true)}
             onError={(e) => {

@@ -72,6 +72,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
           className={combineClasses('shiny-pokemon', props.isDefaultImg ? 'active' : '')}
           height={32}
           src={APIService.getShinyIcon()}
+          title="Shiny Pokemon"
           alt="Icon Shiny"
         />
       )}
@@ -84,6 +85,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
                   ref={imageRef}
                   className="pokemon-sprite-large"
                   alt={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
+                  title={`#${props.id} ${splitAndCapitalize(props.name.replaceAll('_', '-'), '-', ' ')}`}
                   src={props.image.shiny && (isShiny || props.isDefaultImg) ? props.image.shiny : props.image.default}
                   onError={(e) => {
                     const form =
