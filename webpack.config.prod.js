@@ -103,67 +103,6 @@ const common = {
     }),
     new CleanWebpackPlugin(),
   ],
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: {
-      chunks: 'all',
-      maxInitialRequests: 20,
-      minSize: 20000,
-      cacheGroups: {
-        reactVendor: {
-          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: 'reactVendor',
-          priority: 30,
-          enforce: true,
-        },
-        utilityVendor: {
-          test: /[\\/]node_modules[\\/](lodash|moment|moment-timezone)[\\/]/,
-          name: 'utilityVendor',
-          priority: 20,
-          enforce: true,
-        },
-        bootstrapVendor: {
-          test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
-          name: 'bootstrapVendor',
-          priority: 20,
-          enforce: true,
-        },
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendor',
-          priority: 10,
-          enforce: true,
-          reuseExistingChunk: true,
-        },
-      },
-    },
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          parse: {
-            ecma: 8,
-          },
-          compress: {
-            ecma: 5,
-            warnings: false,
-            comparisons: false,
-            inline: 2,
-          },
-          mangle: {
-            safari10: true,
-          },
-          output: {
-            ecma: 5,
-            comments: false,
-            ascii_only: true,
-          },
-        },
-        extractComments: false,
-      }),
-      new CssMinimizerPlugin(),
-    ],
-  },
   mode: 'production',
   bail: true,
   target: 'web',
@@ -207,68 +146,11 @@ const common = {
           },
         ],
       },
-      {
-        test: /\.s?css$/i,
-        include: path.resolve(__dirname, 'src'),
-        exclude: /node_modules/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              url: true,
-              importLoaders: 2,
-              sourceMap: false,
-            },
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                plugins: ['postcss-preset-env', autoprefixer, 'postcss-flexbugs-fixes'],
-              },
-            },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sassOptions: {
-                indentWidth: 2,
-              },
-              sourceMap: false,
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(gif|png|jpe?g)$/i,
-        include: path.resolve(__dirname, 'src'),
-        exclude: /node_modules/,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 4 * 1024, // 4kb - inline if smaller
-          },
-        },
-        generator: {
-          filename: 'static/media/[name].[hash:8][ext]',
-        },
-      },
-      {
-        test: /\.svg$/i,
-        type: 'asset/resource',
-        generator: {
-          filename: 'static/media/[name].[hash:8][ext]',
-        },
-      },
     ],
   },
 };
 
 module.exports = merge(common, {
-  mode: 'production',
-  bail: true,
-  devtool: false, // No source maps in production
   plugins: [
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({
@@ -302,23 +184,20 @@ module.exports = merge(common, {
     splitChunks: {
       chunks: 'all',
       maxInitialRequests: Infinity,
-      minSize: 20000, // Increase from 0 to avoid too many small chunks
-      maxSize: 244000, // Add a maximum chunk size
+      minSize: 20000,
+      maxSize: 244000,
     },
     minimizer: [
       new TerserPlugin({
-        parallel: true,
         terserOptions: {
           parse: {
             ecma: 8,
           },
           compress: {
-            passes: 2,
             ecma: 5,
             warnings: false,
             comparisons: false,
             inline: 2,
-            drop_console: true,
           },
           mangle: {
             safari10: true,
@@ -329,6 +208,7 @@ module.exports = merge(common, {
             ascii_only: true,
           },
         },
+        extractComments: false,
       }),
       new CssMinimizerPlugin({
         minimizerOptions: {
@@ -361,6 +241,10 @@ module.exports = merge(common, {
             options: {
               importLoaders: 2,
               sourceMap: false,
+              modules: {
+                auto: true,
+                localIdentName: '[hash:base64:8]',
+              },
             },
           },
           {
@@ -391,6 +275,27 @@ module.exports = merge(common, {
             },
           },
         ],
+      },
+      {
+        test: /\.(gif|png|jpe?g)$/i,
+        include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024,
+          },
+        },
+        generator: {
+          filename: 'static/media/[name].[hash:8][ext]',
+        },
+      },
+      {
+        test: /\.svg$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/media/[name].[hash:8][ext]',
+        },
       },
     ],
   },

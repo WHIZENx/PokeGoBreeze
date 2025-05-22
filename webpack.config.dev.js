@@ -10,6 +10,8 @@ const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -26,8 +28,8 @@ module.exports = {
       inject: true,
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
-      chunkFilename: '[id].[contenthash].css',
+      filename: 'static/css/[name].[contenthash:8].css',
+      chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
@@ -73,8 +75,8 @@ module.exports = {
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
-      maxInitialRequests: 20, // Increase to allow for finer chunks
-      minSize: 20000, // Avoid too small chunks
+      maxInitialRequests: 20,
+      minSize: 20000,
       cacheGroups: {
         reactVendor: {
           test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
@@ -103,21 +105,44 @@ module.exports = {
         },
       },
     },
-    // Only add minimizers for production
-    minimizer: [],
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          parse: {
+            ecma: 8,
+          },
+          compress: {
+            ecma: 5,
+            warnings: false,
+            comparisons: false,
+            inline: 2,
+          },
+          mangle: {
+            safari10: true,
+          },
+          output: {
+            ecma: 5,
+            comments: false,
+            ascii_only: true,
+          },
+        },
+        extractComments: false,
+      }),
+      new CssMinimizerPlugin(),
+    ],
   },
   mode: 'development',
   bail: false,
   target: 'web',
-  // Use eval-source-map for better debugging but faster builds than inline-source-map
   devtool: 'eval-source-map',
   performance: {
     hints: false,
   },
   cache: {
-    type: 'filesystem', // Use filesystem caching for faster rebuilds
+    type: 'filesystem',
     buildDependencies: {
-      config: [__filename], // Invalidate cache when webpack config changes
+      config: [__filename],
     },
   },
   devServer: {
@@ -130,7 +155,7 @@ module.exports = {
     client: {
       overlay: {
         errors: true,
-        warnings: false, // Don't show warnings in browser overlay for cleaner dev experience
+        warnings: false,
       },
       progress: true,
     },
@@ -140,8 +165,8 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].[contenthash].js',
-    chunkFilename: '[name].[chunkhash].js',
+    filename: 'static/js/[name].[contenthash:8].js',
+    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
     publicPath,
     clean: true,
   },
@@ -165,7 +190,7 @@ module.exports = {
           {
             loader: 'ts-loader',
             options: {
-              transpileOnly: true, // Speed up compilation in development
+              transpileOnly: true,
               experimentalWatchApi: true,
             },
           },
@@ -176,7 +201,7 @@ module.exports = {
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
-          'style-loader', // Use style-loader in development for HMR
+          'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -189,7 +214,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: ['postcss-preset-env', autoprefixer],
+                plugins: ['postcss-preset-env', autoprefixer, 'postcss-flexbugs-fixes'],
               },
             },
           },
@@ -208,18 +233,21 @@ module.exports = {
         test: /\.(gif|png|jpe?g)$/i,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
-        type: 'asset', // Use asset modules instead of file-loader
+        type: 'asset',
         parser: {
           dataUrlCondition: {
-            maxSize: 8 * 1024, // 8kb - inline if smaller
+            maxSize: 4 * 1024,
           },
+        },
+        generator: {
+          filename: 'static/media/[name].[hash:8][ext]',
         },
       },
       {
         test: /\.svg$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'images/[hash][ext][query]',
+          filename: 'static/media/[name].[hash:8][ext]',
         },
       },
     ],

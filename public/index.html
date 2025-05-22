@@ -4,7 +4,7 @@
     <base href="/">
     <meta charset="utf-8" />
     <link rel="icon" href="favicon.ico" />
-    <link rel="apple-touch-icon" href="../src/assets/pokedex.png" />
+    <link rel="apple-touch-icon" href="og-image.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#212529" />
     <meta name="description" content="Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools. Find the best Pokémon for battles, raids, and more." />
@@ -16,13 +16,13 @@
     <meta property="og:url" id="og-url" content="/" />
     <meta property="og:title" content="PokéGo Breeze - Comprehensive Pokémon GO Database & Tools" />
     <meta property="og:description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
-    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
+    <meta id="og-image" property="og:image" />
     
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" id="twitter-url" content="/" />
     <meta property="twitter:title" content="PokéGo Breeze - Comprehensive Pokémon GO Database & Tools" />
     <meta property="twitter:description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
-    <meta property="twitter:image" content="%PUBLIC_URL%/og-image.png" />
+    <meta id="twitter-image" property="twitter:image" />
     
     <link rel="canonical" id="canonical-url" href="/" />
     
@@ -34,6 +34,8 @@
         document.getElementById('og-url').setAttribute('content', origin + '/');
         document.getElementById('twitter-url').setAttribute('content', origin + '/');
         document.getElementById('canonical-url').setAttribute('href', origin + '/');
+        document.getElementById('og-image').setAttribute('content', origin + '/og-image.png');
+        document.getElementById('twitter-image').setAttribute('content', origin + '/og-image.png');
       })();
     </script>
     <script type="application/ld+json">
