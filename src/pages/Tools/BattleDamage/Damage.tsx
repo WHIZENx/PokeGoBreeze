@@ -369,7 +369,7 @@ const Damage = () => {
                     </FormControl>
                   </Box>
                   <button type="submit" className="btn btn-primary element-top">
-                    <img alt="atk" width={20} height={20} src={ATK_LOGO} /> Battle
+                    <img alt="ATK" width={20} height={20} src={ATK_LOGO} /> Battle
                   </button>
                 </div>
               </div>

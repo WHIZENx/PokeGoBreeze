@@ -76,9 +76,9 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                   style={{ width: 'fit-content', height: 'fit-content' }}
                 >
                   <img
-                    id="img-pokemon"
+                    id="Pokémon Image"
                     height="96"
-                    alt="img-pokemon"
+                    alt="Pokémon Image"
                     src={APIService.getPokeGifSprite(value.name)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
@@ -112,7 +112,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                   <span className="caption">
                     {`${getKeyWithData(PokemonType, pokemonType)} evolution: `}
                     <img
-                      alt="img-primal"
+                      alt="Image Primal"
                       width={25}
                       height={25}
                       src={
@@ -133,7 +133,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                       <IconType
                         width={25}
                         height={25}
-                        alt="type-logo"
+                        alt="Pokémon GO Type Logo"
                         style={{ marginRight: 5 }}
                         type={getCombatMove(getQuestEvo(value.name).requireMove)?.type}
                       />

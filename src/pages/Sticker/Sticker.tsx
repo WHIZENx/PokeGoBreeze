@@ -140,7 +140,7 @@ const Sticker = () => {
                     >
                       <img
                         height={64}
-                        alt="img-sticker"
+                        alt="Image Sticker"
                         src={value.stickerUrl ?? APIService.getSticker(value.id.toLowerCase())}
                         onError={(e) => {
                           e.currentTarget.onerror = null;

@@ -60,7 +60,7 @@ const NavbarComponent = (props: INavbarComponent) => {
             width="30"
             height="30"
             className="d-inline-block align-top"
-            alt="home"
+            alt="Home"
             style={{ marginLeft: 10, marginRight: 10 }}
           />
           PokéGoBreeze

@@ -341,7 +341,7 @@ const Pokedex = (props: IStyleSheetData) => {
                           width={28}
                           height={28}
                           style={{ marginLeft: 5 }}
-                          alt="pokemon-go-icon"
+                          alt="Pokémon GO Icon"
                           src={APIService.getPokemonGoIcon(icon)}
                         />
                       </span>
@@ -361,7 +361,7 @@ const Pokedex = (props: IStyleSheetData) => {
                           width={28}
                           height={28}
                           style={{ marginLeft: 5 }}
-                          alt="pokemon-go-icon"
+                          alt="Pokémon GO Icon"
                           src={APIService.getShinyIcon()}
                         />
                       </span>

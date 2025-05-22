@@ -56,7 +56,8 @@ const Trainer = () => {
                       <img
                         className="pokemon-sprite-medium"
                         style={{ width: 64 }}
-                        alt="img-pokemon"
+                        alt="Pokémon Image"
+                        title={splitAndCapitalize(value.name.replace('ITEM_', ''), '_', ' ')}
                         src={getItemSpritePath(value.name)}
                       />
                       <span className="caption text-black">
@@ -80,7 +81,8 @@ const Trainer = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title={splitAndCapitalize(value.replace('ITEM_', ''), '_', ' ')}
                             src={getItemSpritePath(value)}
                           />
                           <span className="caption text-black">

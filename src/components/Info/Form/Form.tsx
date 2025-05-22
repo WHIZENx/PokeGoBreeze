@@ -172,7 +172,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = APIService.getPokeIconSprite();
                               }}
-                              alt="img-icon-form"
+                              alt="Image Icon Form"
                               src={formIconAssets(value)}
                             />
                           </PokemonIconType>

@@ -162,7 +162,12 @@ const Leagues = () => {
       <Accordion.Header className={isOpened ? 'league-opened' : ''}>
         <div className="d-flex justify-content-between w-100" style={{ marginRight: 15, columnGap: 10 }}>
           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
-            <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl)} />
+            <img
+              alt="Image League"
+              title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
+              height={50}
+              src={APIService.getAssetPokeGo(league.iconUrl)}
+            />
             <b className={league.enabled ? '' : 'text-danger'}>
               {splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
             </b>
@@ -186,7 +191,7 @@ const Leagues = () => {
             !isInclude(league.iconUrl, 'pogo') ? (
               <div className="league">
                 <img
-                  alt="img-league"
+                  alt="Image League"
                   height={140}
                   src={APIService.getAssetPokeGo(
                     dataStore.leagues.data.find((item) =>
@@ -196,13 +201,23 @@ const Leagues = () => {
                 />
                 <span className={combineClasses('badge-league', league.league?.toLowerCase()?.replaceAll('_', '-'))}>
                   <div className="sub-badge">
-                    <img alt="img-league" height={50} src={APIService.getAssetPokeGo(league.iconUrl)} />
+                    <img
+                      alt="Image League"
+                      title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
+                      height={50}
+                      src={APIService.getAssetPokeGo(league.iconUrl)}
+                    />
                   </div>
                 </span>
               </div>
             ) : (
               <div>
-                <img alt="img-league" height={140} src={APIService.getAssetPokeGo(league.iconUrl)} />
+                <img
+                  alt="Image League"
+                  title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
+                  height={140}
+                  src={APIService.getAssetPokeGo(league.iconUrl)}
+                />
               </div>
             )}
           </div>
@@ -271,7 +286,8 @@ const Leagues = () => {
                       <span style={{ width: 64 }}>
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
-                          alt="img-pokemon"
+                          alt="Pokémon Image"
+                          title={splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}
                           src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
@@ -309,7 +325,8 @@ const Leagues = () => {
                       <span style={{ width: 64 }}>
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
-                          alt="img-pokemon"
+                          alt="Pokémon Image"
+                          title={splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}
                           src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
@@ -396,7 +413,7 @@ const Leagues = () => {
                   <img
                     className="pokemon-sprite-medium"
                     style={{ width: 64 }}
-                    alt="img-pokemon"
+                    alt="Pokémon Image"
                     src={APIService.getPokeOtherLeague('BattleIconColor')}
                   />
                   <span className="caption theme-text-primary">Free</span>
@@ -411,7 +428,7 @@ const Leagues = () => {
                 >
                   <img
                     className="pokemon-sprite-medium"
-                    alt="img-pokemon"
+                    alt="Pokémon Image"
                     src={getItemSpritePath(ItemName.PaidRaidTicket)}
                   />
                   <span className="caption theme-text-primary">Premium</span>
@@ -445,7 +462,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="Random Pokémon"
                             src={APIService.getIconSprite('ic_grass')}
                           />
                           <span className="caption theme-text-primary">Random Pokémon</span>
@@ -461,7 +479,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="Random Item"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
                           <span className="caption theme-text-primary">Random Item</span>
@@ -473,7 +492,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="Rare Candy"
                             src={getItemSpritePath(ItemName.RareCandy)}
                           />
                           <span className="caption theme-text-primary">Rare Candy</span>
@@ -484,7 +504,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="Stardust"
                             src={APIService.getItemSprite('stardust_painted')}
                           />
                           <span className="caption theme-text-primary">Stardust</span>
@@ -495,7 +516,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="TM Charged Move"
                             src={APIService.getItemSprite('Item_1202')}
                           />
                           <span className="caption theme-text-primary">TM Charged Move</span>
@@ -529,7 +551,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="Random Pokémon"
                             src={APIService.getIconSprite('ic_grass')}
                           />
                           <span className="caption theme-text-primary">Random Pokémon</span>
@@ -551,7 +574,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="Random Item"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
                           <span className="caption theme-text-primary">Random Item</span>
@@ -573,7 +597,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="Rare Candy"
                             src={getItemSpritePath(ItemName.RareCandy)}
                           />
                           <span className="caption theme-text-primary">Rare Candy</span>
@@ -584,7 +609,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="Stardust"
                             src={APIService.getItemSprite('stardust_painted')}
                           />
                           <span className="caption theme-text-primary">Stardust</span>
@@ -595,7 +621,8 @@ const Leagues = () => {
                           <img
                             className="pokemon-sprite-medium"
                             style={{ width: 64 }}
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title="TM Charged Move"
                             src={APIService.getItemSprite('Item_1202')}
                           />
                           <span className="caption theme-text-primary">TM Charged Move</span>
@@ -610,12 +637,17 @@ const Leagues = () => {
           <div className="w-100 text-center" style={{ marginTop: 15, marginBottom: 15 }}>
             <div className="d-flex justify-content-center" style={{ marginBottom: 10, columnGap: '10%' }}>
               <div id="currRank" className="combat-league-info">
-                <img className="main-combat-league-info" alt="img-pokemon" src={rankIconName(rank)} />
+                <img
+                  className="main-combat-league-info"
+                  alt="Pokémon Image"
+                  title={`Rank ${rank}`}
+                  src={rankIconName(rank)}
+                />
                 {rank > 20 ? (
                   <Fragment>
                     <span className="combat-center-league-top">{rankName(rank)}</span>
                     <span className="combat-center-league-info">
-                      <img alt="img-league" height={36} src={rankIconCenterName(rank)} />
+                      <img alt="Image League" title={`Rank ${rank} Icon`} height={36} src={rankIconCenterName(rank)} />
                     </span>
                   </Fragment>
                 ) : (
@@ -624,12 +656,22 @@ const Leagues = () => {
               </div>
               {rank < 24 && (
                 <div id="nextRank" className="combat-league-info">
-                  <img className="main-combat-league-info" alt="img-pokemon" src={rankIconName(rank + 1)} />
+                  <img
+                    className="main-combat-league-info"
+                    alt="Pokémon Image"
+                    title={`Rank ${rank + 1}`}
+                    src={rankIconName(rank + 1)}
+                  />
                   {rank + 1 > 20 ? (
                     <Fragment>
                       <span className="combat-center-league-top">{rankName(rank + 1)}</span>
                       <span className="combat-center-league-info">
-                        <img alt="img-league" height={36} src={rankIconCenterName(rank + 1)} />
+                        <img
+                          alt="Image League"
+                          title={`Rank ${rank + 1} Icon`}
+                          height={36}
+                          src={rankIconCenterName(rank + 1)}
+                        />
                       </span>
                     </Fragment>
                   ) : (
@@ -698,9 +740,19 @@ const Leagues = () => {
                 <span>
                   {rank > 20 && (
                     <div className="combat-league">
-                      <img className="main-combat-league" alt="img-pokemon" src={rankIconName(rank)} />
+                      <img
+                        className="main-combat-league"
+                        alt="Pokémon Image"
+                        title={`Rank ${rank}`}
+                        src={rankIconName(rank)}
+                      />
                       <span className="combat-center-league">
-                        <img alt="img-league" height={24} src={rankIconCenterName(rank)} />
+                        <img
+                          alt="Image League"
+                          title={`Rank ${rank} Icon`}
+                          height={24}
+                          src={rankIconCenterName(rank)}
+                        />
                       </span>
                     </div>
                   )}
@@ -713,7 +765,8 @@ const Leagues = () => {
                     <img
                       className="pokemon-sprite-small filter-shadow"
                       style={{ width: 16 }}
-                      alt="img-pokemon"
+                      alt="Pokémon Image"
+                      title="Battle Icon"
                       src={APIService.getPokeOtherLeague('BattleIconColor')}
                     />
                     <span>Free</span> (Win stack {showData.step})
@@ -723,7 +776,8 @@ const Leagues = () => {
                     <img
                       className="pokemon-sprite-small filter-shadow"
                       style={{ width: 16 }}
-                      alt="img-pokemon"
+                      alt="Pokémon Image"
+                      title="Paid Raid Ticket"
                       src={getItemSpritePath(ItemName.PaidRaidTicket)}
                     />
                     <span style={{ color: 'crimson' }}>Premium</span> (Win stack {showData.step})
@@ -747,7 +801,8 @@ const Leagues = () => {
                     <span style={{ width: 64 }}>
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
-                        alt="img-pokemon"
+                        alt="Pokémon Image"
+                        title={splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
                         src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
@@ -780,7 +835,8 @@ const Leagues = () => {
                         <span style={{ width: 64 }}>
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
+                            title={splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
                             src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
                             onError={(e) => {
                               e.currentTarget.onerror = null;

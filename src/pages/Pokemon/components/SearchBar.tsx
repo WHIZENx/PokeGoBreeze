@@ -40,7 +40,7 @@ const SearchBar = (props: ISearchBarComponent) => {
               <img
                 style={{ padding: '5px 5px 5px 0' }}
                 className="pokemon-navigate-sprite"
-                alt="img-full-pokemon"
+                alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(props.data.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
@@ -83,7 +83,7 @@ const SearchBar = (props: ISearchBarComponent) => {
               <img
                 style={{ padding: '5px 0 5px 5px' }}
                 className="pokemon-navigate-sprite"
-                alt="img-full-pokemon"
+                alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(props.data.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;

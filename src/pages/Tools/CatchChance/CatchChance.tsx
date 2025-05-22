@@ -441,7 +441,7 @@ const CatchChance = () => {
                   }
                   label={
                     <span>
-                      <img alt="icon-item" height={32} src={getItemSpritePath(ItemName.RazzBerry)} /> Razz Berry
+                      <img alt="Icon Item" height={32} src={getItemSpritePath(ItemName.RazzBerry)} /> Razz Berry
                     </span>
                   }
                 />
@@ -463,7 +463,7 @@ const CatchChance = () => {
                   }
                   label={
                     <span>
-                      <img alt="icon-item" height={32} src={APIService.getItemSprite('Item_0706')} /> Golden Razz Berry
+                      <img alt="Icon Item" height={32} src={APIService.getItemSprite('Item_0706')} /> Golden Razz Berry
                     </span>
                   }
                 />
@@ -485,7 +485,7 @@ const CatchChance = () => {
                   }
                   label={
                     <span>
-                      <img alt="icon-item" height={32} src={getItemSpritePath(ItemName.GoldenPinapBerry)} /> Silver
+                      <img alt="Icon Item" height={32} src={getItemSpritePath(ItemName.GoldenPinapBerry)} /> Silver
                       Pinaps
                     </span>
                   }
@@ -591,7 +591,7 @@ const CatchChance = () => {
                 }
                 label={
                   <span>
-                    <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} />{' '}
+                    <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
                     {getKeyWithData(PokemonType, PokemonType.Shadow)}
                   </span>
                 }
@@ -622,7 +622,7 @@ const CatchChance = () => {
                   <Select value={ballType.toString()} label="Ball" onChange={handleChangeBallType}>
                     {balls.map((value, index) => (
                       <MenuItem key={index} value={value.pokeBallType} className="d-flex" style={{ gap: 5 }}>
-                        <img alt="icon-item" height={16} src={getItemSpritePath(value.itemName)} /> {value.name}
+                        <img alt="Icon Item" height={16} src={getItemSpritePath(value.itemName)} /> {value.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -699,7 +699,7 @@ const CatchChance = () => {
                     <th>Throwing</th>
                     {balls.map((value, index) => (
                       <th key={index}>
-                        <img alt="icon-item" height={48} src={getItemSpritePath(value.itemName)} /> {value.name}
+                        <img alt="Icon Item" height={48} src={getItemSpritePath(value.itemName)} /> {value.name}
                       </th>
                     ))}
                   </tr>
@@ -754,7 +754,7 @@ const CatchChance = () => {
                   <tr>
                     <th>Throwing</th>
                     <th>
-                      <img alt="icon-item" height={48} src={getItemSpritePath(dataAdv.ballItemName)} />{' '}
+                      <img alt="Icon Item" height={48} src={getItemSpritePath(dataAdv.ballItemName)} />{' '}
                       {dataAdv.ballName}
                     </th>
                   </tr>

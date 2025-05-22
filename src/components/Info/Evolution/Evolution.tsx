@@ -398,8 +398,8 @@ const Evolution = (props: IEvolutionComponent) => {
     <PokemonIconType pokemonType={props.pokemonData?.pokemonType} size={30}>
       <img
         className="pokemon-sprite"
-        id="img-pokemon"
-        alt="img-pokemon"
+        id="Pokémon Image"
+        alt="Pokémon Image"
         src={APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')}
         onError={(e) => {
           e.currentTarget.onerror = null;
@@ -525,7 +525,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {data?.quest?.evolutionItemRequirement && (
                           <Fragment>
                             <img
-                              alt="img-item-required"
+                              alt="Image Item Required"
                               height={20}
                               src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}
                             />
@@ -539,7 +539,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         )}
                         {data?.quest?.lureItemRequirement && (
                           <img
-                            alt="img-troy-required"
+                            alt="Image Troy Required"
                             height={20}
                             src={APIService.getItemTroy(data.quest.lureItemRequirement)}
                           />
@@ -560,7 +560,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             {data?.quest.condition.desc === ConditionType.Pokemon && (
                               <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
                                 {data.quest.condition.pokemonType?.map((value, index) => (
-                                  <IconType key={index} height={20} alt="type-logo" type={value} />
+                                  <IconType key={index} height={20} alt="Pokémon GO Type Logo" type={value} />
                                 ))}
                                 <span style={{ marginLeft: 2 }}>{`x${data.quest.goal}`}</span>
                               </div>
@@ -575,7 +575,13 @@ const Evolution = (props: IEvolutionComponent) => {
                               <Fragment>
                                 <div className="inline-flex" style={{ gap: 3 }}>
                                   {data.quest.condition.opponentPokemonBattle?.types.map((value, index) => (
-                                    <IconType key={index} width={20} height={20} alt="type-logo" type={value} />
+                                    <IconType
+                                      key={index}
+                                      width={20}
+                                      height={20}
+                                      alt="Pokémon GO Type Logo"
+                                      type={value}
+                                    />
                                   ))}
                                 </div>
                                 <span style={{ fontSize: 11, lineHeight: 1 }}>{`Battle x${data.quest.goal} ${
@@ -605,7 +611,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           <span className="caption">
                             <Fragment>
                               <img
-                                alt="icon-incense"
+                                alt="Icon Incense"
                                 width={20}
                                 height={20}
                                 src={getItemSpritePath(ItemName.Incense)}
@@ -697,7 +703,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <PopoverConfig id="popover-info">
               <span className="info-evo">
                 <span className="d-block caption">
-                  - <img alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of
+                  - <img alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of
                   pokemon.
                 </span>
                 <span className="d-block caption">
@@ -720,7 +726,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <DarkModeIcon fontSize="small" /> : Evolution during at night.
                 </span>
                 <span className="d-block caption">
-                  - <img alt="img-troy-required" height={20} src={APIService.getItemTroy()} /> : Evolution in lure
+                  - <img alt="Image Troy Required" height={20} src={APIService.getItemTroy()} /> : Evolution in lure
                   module.
                 </span>
                 <span className="d-block caption">
@@ -730,7 +736,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.
                 </span>
                 <span className="d-block caption">
-                  - <img alt="img-stardust" height={20} src={APIService.getPokeSprite()} /> : Catch pokemon with type.
+                  - <img alt="Image Stardust" height={20} src={APIService.getPokeSprite()} /> : Catch pokemon with type.
                 </span>
                 <span className="d-block caption">
                   - <SportsMartialArtsIcon fontSize="small" /> : Win raid.

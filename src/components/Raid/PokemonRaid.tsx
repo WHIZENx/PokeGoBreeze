@@ -43,7 +43,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               LV: {dataTargetPokemon.stats?.level} {dataTargetPokemon.stats?.iv.atkIV}/
               {dataTargetPokemon.stats?.iv.defIV}/{`${dataTargetPokemon.stats?.iv.staIV} `}
               {dataTargetPokemon.stats?.pokemonType === PokemonType.Shadow && (
-                <img height={24} alt="img-shadow" src={APIService.getPokeShadow()} />
+                <img height={24} alt="Image Shadow" src={APIService.getPokeShadow()} />
               )}
             </span>
           </div>

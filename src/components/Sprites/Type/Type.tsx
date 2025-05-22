@@ -16,7 +16,7 @@ const TypeInfo = (props: ITypeComponent) => {
             <img
               width={toNumber(props.height, 36)}
               height={toNumber(props.height, 36)}
-              alt="img-pokemon"
+              alt="Pokémon Image"
               src={APIService.getPokeSprite()}
             />
             <span className="caption theme-text-primary">None</span>
@@ -38,7 +38,7 @@ const TypeInfo = (props: ITypeComponent) => {
                         className={props.isShowShadow ? 'filter-shadow' : ''}
                         width={props.height}
                         height={props.height}
-                        alt="type-logo"
+                        alt="Pokémon GO Type Logo"
                         type={value}
                       />
                     ) : (
@@ -47,7 +47,7 @@ const TypeInfo = (props: ITypeComponent) => {
                           className={props.isShowShadow ? 'filter-shadow' : ''}
                           width={36}
                           height={36}
-                          alt="type-logo"
+                          alt="Pokémon GO Type Logo"
                           type={value}
                         />
                         <span

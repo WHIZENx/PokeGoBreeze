@@ -59,7 +59,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
       >
         <img
           height={48}
-          alt="img-pokemon"
+          alt="Pokémon Image"
           style={{ marginRight: 10 }}
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
@@ -84,7 +84,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           width={25}
           height={25}
           style={{ marginRight: 10 }}
-          alt="type-logo"
+          alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
         />
@@ -309,7 +309,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               width={28}
               height={28}
               style={{ marginLeft: 5, marginRight: 5 }}
-              alt="pokemon-go-icon"
+              alt="Pokémon GO Icon"
               src={APIService.getPokemonGoIcon(icon)}
             />
             <b>{`Filter from ${allData?.pokemon} Pokémon`}</b>
@@ -329,7 +329,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               <img
                 style={{ padding: 15, backgroundColor: 'black', borderRadius: '50%' }}
                 className="sprite-type-large"
-                alt="img-type-pokemon"
+                alt="Pokémon GO Type Logo"
                 src={APIService.getTypeHqSprite(currentType)}
               />
             </div>
@@ -343,14 +343,14 @@ const SearchTypes = (props: IStyleSheetData) => {
               <div style={{ display: 'contents', width: 16 }}>
                 <img
                   className="pokemon-sprite-small sprite-type-select filter-shadow"
-                  alt="img-type-pokemon"
+                  alt="Pokémon GO Type Logo"
                   src={APIService.getTypeHqSprite(currentType)}
                 />
               </div>
               <span className="filter-shadow">{capitalize(currentType)}</span>
             </span>
             <span className="element-top text-white text-shadow">
-              <img alt="icon-item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
+              <img alt="Icon Item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
               <b>{` Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
                 toNumber(allData?.pokemon) > 0 &&
@@ -380,13 +380,13 @@ const SearchTypes = (props: IStyleSheetData) => {
               </ul>
             </span>
             <span className="element-top text-white text-shadow">
-              <img alt="icon-item" height={36} src={APIService.getItemSprite('Item_1201')} />
+              <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1201')} />
               <b>{` Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
                 (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
             <span className="element-top text-white text-shadow">
-              <img alt="icon-item" height={36} src={APIService.getItemSprite('Item_1202')} />
+              <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1202')} />
               <b>{` Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
                 (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
               )}%)`}</b>

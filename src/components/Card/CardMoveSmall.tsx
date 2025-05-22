@@ -37,7 +37,13 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
               )}
               style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
             >
-              <IconType width={18} height={18} alt="type-logo" style={{ marginRight: 10 }} type={move.type} />
+              <IconType
+                width={18}
+                height={18}
+                alt="Pokémon GO Type Logo"
+                style={{ marginRight: 10 }}
+                type={move.type}
+              />
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(move.name, '_', ' ')}</span>
               <span className="d-flex">
                 {props.value.moveType !== MoveType.None && (

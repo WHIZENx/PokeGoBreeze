@@ -93,7 +93,7 @@ const BodyPVP = (props: BodyComponent) => {
           <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
             <PokemonIconType pokemonType={data.pokemonType} size={28}>
               <img
-                alt="img-league"
+                alt="Image League"
                 className="pokemon-sprite-accordion"
                 src={APIService.getPokemonModel(data.form, data.id)}
                 onError={(e) => {

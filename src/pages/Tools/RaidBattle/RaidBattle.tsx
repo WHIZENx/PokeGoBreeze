@@ -906,7 +906,7 @@ const RaidBattle = () => {
                 width={28}
                 height={28}
                 style={{ marginLeft: 5 }}
-                alt="pokemon-go-icon"
+                alt="Pokémon GO Icon"
                 src={APIService.getPokemonGoIcon(icon)}
               />
             </span>
@@ -952,7 +952,7 @@ const RaidBattle = () => {
           <div className="position-relative" style={{ width: 96 }}>
             <PokemonIconType pokemonType={showSettingPokemon.pokemon?.stats?.pokemonType} size={36}>
               <img
-                alt="img-pokemon"
+                alt="Pokémon Image"
                 className="pokemon-sprite-large"
                 src={APIService.getPokeIconSprite(pokemon.sprite)}
                 onError={(e) => {
@@ -999,7 +999,7 @@ const RaidBattle = () => {
                   className={showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? '' : 'filter-gray'}
                   width={28}
                   height={28}
-                  alt="pokemon-go-icon"
+                  alt="Pokémon GO Icon"
                   src={APIService.getPokeShadow()}
                 />
                 <span
@@ -1150,7 +1150,7 @@ const RaidBattle = () => {
       <div style={{ display: 'contents', width: 16 }}>
         <img
           className="pokemon-sprite-small sprite-type-select filter-shadow"
-          alt="img-type-pokemon"
+          alt="Pokémon GO Type Logo"
           src={APIService.getTypeHqSprite(value?.type)}
         />
       </div>
@@ -1198,7 +1198,7 @@ const RaidBattle = () => {
               <PokemonIconType pokemonType={pokemon.pokemonType} size={18}>
                 <img
                   className="pokemon-sprite-battle"
-                  alt="img-pokemon"
+                  alt="Pokémon Image"
                   src={APIService.getPokeIconSprite(pokemon.pokemon?.sprite, false)}
                   onError={(e) => {
                     e.currentTarget.onerror = null;
@@ -1229,7 +1229,7 @@ const RaidBattle = () => {
                 <img
                   width={80}
                   height={80}
-                  alt="img-trainer"
+                  alt="Image Trainer"
                   src={APIService.getTrainerModel(trainer.trainerId % 294)}
                 />
               </Badge>
@@ -1258,7 +1258,7 @@ const RaidBattle = () => {
                         >
                           <img
                             className="pokemon-sprite-battle"
-                            alt="img-pokemon"
+                            alt="Pokémon Image"
                             src={APIService.getPokeIconSprite(
                               hoverSlot === `${trainer.trainerId}-${index}`
                                 ? pokemon.pokemon?.sprite
@@ -1309,7 +1309,7 @@ const RaidBattle = () => {
         <PokemonIconType pokemonType={value.pokemonType} size={64}>
           <img
             className="pokemon-sprite-raid"
-            alt="img-pokemon"
+            alt="Pokémon Image"
             src={APIService.getPokemonModel(assets, value.pokemon?.num)}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -1576,7 +1576,7 @@ const RaidBattle = () => {
                   <img
                     width={80}
                     height={80}
-                    alt="img-trainer"
+                    alt="Image Trainer"
                     src={APIService.getTrainerModel(trainer.trainerId % 294)}
                   />
                 </Badge>
@@ -1595,7 +1595,7 @@ const RaidBattle = () => {
                           <PokemonIconType pokemonType={pokemon.dataTargetPokemon.stats?.pokemonType} size={18}>
                             <img
                               className="pokemon-sprite-battle"
-                              alt="img-pokemon"
+                              alt="Pokémon Image"
                               src={APIService.getPokeIconSprite(pokemon.dataTargetPokemon.sprite, false)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
@@ -1800,7 +1800,7 @@ const RaidBattle = () => {
                                           <img
                                             className="pokemon-sprite-battle"
                                             height={36}
-                                            alt="img-pokemon"
+                                            alt="Pokémon Image"
                                             src={APIService.getPokeIconSprite(data.pokemon?.sprite, false)}
                                             onError={(e) => {
                                               e.currentTarget.onerror = null;

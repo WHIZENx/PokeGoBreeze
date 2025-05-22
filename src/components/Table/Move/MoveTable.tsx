@@ -248,7 +248,7 @@ const TableMove = (props: ITableMoveComponent) => {
         <td className="text-origin theme-table-primary">
           <LinkToTop to={`../move/${value.fMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <IconType width={20} height={20} alt="type-logo" type={value.fMove.type} />
+              <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.fMove.type} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
@@ -268,7 +268,7 @@ const TableMove = (props: ITableMoveComponent) => {
         <td className="text-origin theme-table-primary">
           <LinkToTop to={`../move/${value.cMove.id}`} className="d-block">
             <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <IconType width={20} height={20} alt="type-logo" type={value.cMove.type} />
+              <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.cMove.type} />
             </div>
             <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
@@ -297,7 +297,7 @@ const TableMove = (props: ITableMoveComponent) => {
           <td className="text-origin theme-table-primary">
             <LinkToTop to={`../move/${value.id}`} className="d-block">
               <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                <IconType width={20} height={20} alt="type-logo" type={value.type} />
+                <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
               </div>
               <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
               <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>

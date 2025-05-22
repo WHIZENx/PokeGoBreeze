@@ -244,7 +244,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         {league && (
           <div className="d-flex flex-wrap align-items-center element-top" style={{ columnGap: 10 }}>
             <img
-              alt="img-league"
+              alt="Image League"
               width={64}
               height={64}
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
@@ -417,7 +417,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                   <span className="position-relative filter-shadow" style={{ width: 96 }}>
                     <PokemonIconType pokemonType={value.pokemonType} size={48}>
                       <img
-                        alt="img-league"
+                        alt="Image League"
                         className="pokemon-sprite"
                         src={APIService.getPokemonModel(value.form, value.id)}
                         onError={(e) => {
@@ -554,7 +554,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                               <div className="position-relative filter-shadow" style={{ width: 96 }}>
                                 <PokemonIconType pokemonType={value.pokemonType} size={48}>
                                   <img
-                                    alt="img-league"
+                                    alt="Image League"
                                     className="pokemon-sprite"
                                     src={APIService.getPokemonModel(value.form, value.id)}
                                     onError={(e) => {
@@ -618,7 +618,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                             <div className="position-relative filter-shadow" style={{ width: 96 }}>
                               <PokemonIconType pokemonType={value.pokemonType} size={48}>
                                 <img
-                                  alt="img-league"
+                                  alt="Image League"
                                   className="pokemon-sprite"
                                   src={APIService.getPokemonModel(value.form, value.id)}
                                   onError={(e) => {

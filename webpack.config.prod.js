@@ -12,8 +12,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -27,6 +27,27 @@ const common = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
       favicon: './public/favicon.ico',
+      inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        keepClosingSlash: true,
+        minifyJS: true,
+        minifyCSS: true,
+        minifyURLs: true,
+      },
+      templateParameters: {
+        PUBLIC_URL: publicPath.endsWith('/') ? publicPath.slice(0, -1) : publicPath,
+      },
+      hash: true,
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'static/css/[name].[contenthash:8].css',
+      chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
@@ -48,67 +69,55 @@ const common = {
       theme_color: '#000',
       icons: {
         favicons: true,
+        android: true,
+        appleIcon: true,
+        appleStartup: true,
       },
     }),
     new WebpackManifestPlugin({
       fileName: './manifest.json',
       seed: manifest,
     }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'public/og-image.png',
+          to: 'og-image.png',
+          toType: 'file',
+          priority: 10,
+        },
+        {
+          from: 'public',
+          to: '',
+          globOptions: {
+            ignore: ['**/index.html', '**/favicon.ico', '**/manifest.json', '**/og-image.png'],
+          },
+          transform: {
+            transformer: (content) => {
+              return content;
+            },
+            cache: true,
+          },
+        },
+      ],
+    }),
     new CleanWebpackPlugin(),
-    new ReactRefreshPlugin(),
   ],
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: {
-      chunks: 'all',
-      maxInitialRequests: Infinity,
-      minSize: 0,
-      cacheGroups: {
-        reactVendor: {
-          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: 'reactVendor',
-          enforce: true,
-        },
-        utilityVendor: {
-          test: /[\\/]node_modules[\\/](lodash|moment|moment-timezone)[\\/]/,
-          name: 'utilityVendor',
-          enforce: true,
-        },
-        bootstrapVendor: {
-          test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
-          name: 'bootstrapVendor',
-          enforce: true,
-        },
-        vendor: {
-          test: /[\\/]node_modules[\\/](!react-bootstrap)(!lodash)(!moment)(!moment-timezone)[\\/]/,
-          name: 'vendor',
-          enforce: true,
-        },
-      },
-    },
-  },
   mode: 'production',
   bail: true,
   target: 'web',
+  devtool: false,
   performance: {
     hints: false,
   },
-  devServer: {
-    static: [{ directory: path.resolve(__dirname, 'dist') }, { directory: path.resolve(__dirname, 'public') }],
-    historyApiFallback: true,
-    open: true,
-    compress: true,
-    port: 9000,
-    hot: true,
-  },
+  cache: false,
   entry: {
-    src: ['./src/index.tsx'],
-    vendors: ['react'],
+    main: './src/index.tsx',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[contenthash].js',
-    chunkFilename: '[chunkhash].js',
+    filename: 'static/js/[name].[contenthash:8].js',
+    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
     publicPath,
     clean: true,
   },
@@ -132,26 +141,7 @@ const common = {
           {
             loader: 'ts-loader',
             options: {
-              transpileOnly: true, // Skip type-checking for faster builds
-              experimentalWatchApi: true,
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(gif|png|jpe?g|svg)$/i,
-        include: path.resolve(__dirname, 'src'),
-        exclude: /node_modules/,
-        use: [
-          'file-loader',
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              disable: true, // Disable in production
-              mozjpeg: false,
-              optipng: false,
-              pngquant: false,
-              gifsicle: false,
+              transpileOnly: false,
             },
           },
         ],
@@ -161,14 +151,7 @@ const common = {
 };
 
 module.exports = merge(common, {
-  mode: 'production',
-  bail: true,
-  devtool: false, // No source maps in production
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'css/[name].[contenthash].css',
-      chunkFilename: 'css/[id].[contenthash].css',
-    }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({
         REACT_APP_TOKEN_PRIVATE_REPO: process.env.REACT_APP_TOKEN_PRIVATE_REPO,
@@ -201,23 +184,20 @@ module.exports = merge(common, {
     splitChunks: {
       chunks: 'all',
       maxInitialRequests: Infinity,
-      minSize: 20000, // Increase from 0 to avoid too many small chunks
-      maxSize: 244000, // Add a maximum chunk size
+      minSize: 20000,
+      maxSize: 244000,
     },
     minimizer: [
       new TerserPlugin({
-        parallel: true,
         terserOptions: {
           parse: {
             ecma: 8,
           },
           compress: {
-            passes: 2,
             ecma: 5,
             warnings: false,
             comparisons: false,
             inline: 2,
-            drop_console: true,
           },
           mangle: {
             safari10: true,
@@ -228,6 +208,7 @@ module.exports = merge(common, {
             ascii_only: true,
           },
         },
+        extractComments: false,
       }),
       new CssMinimizerPlugin({
         minimizerOptions: {
@@ -260,6 +241,10 @@ module.exports = merge(common, {
             options: {
               importLoaders: 2,
               sourceMap: false,
+              modules: {
+                auto: true,
+                localIdentName: '[hash:base64:8]',
+              },
             },
           },
           {
@@ -290,6 +275,27 @@ module.exports = merge(common, {
             },
           },
         ],
+      },
+      {
+        test: /\.(gif|png|jpe?g)$/i,
+        include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024,
+          },
+        },
+        generator: {
+          filename: 'static/media/[name].[hash:8][ext]',
+        },
+      },
+      {
+        test: /\.svg$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/media/[name].[hash:8][ext]',
+        },
       },
     ],
   },
