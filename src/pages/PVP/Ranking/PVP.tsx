@@ -268,7 +268,7 @@ const RankingPVP = (props: IStyleSheetData) => {
             <span className="position-relative" style={{ width: 50 }}>
               <PokemonIconType pokemonType={data.pokemonType} size={28}>
                 <img
-                  alt="img-league"
+                  alt="Image League"
                   className="pokemon-sprite-accordion"
                   src={APIService.getPokemonModel(data.form, data.id)}
                   onError={(e) => {
@@ -354,7 +354,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         {league ? (
           <div className="d-flex flex-wrap align-items-center element-top" style={{ columnGap: 10 }}>
             <img
-              alt="img-league"
+              alt="Image League"
               width={64}
               height={64}
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}

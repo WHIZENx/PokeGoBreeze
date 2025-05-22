@@ -101,7 +101,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
       <PokemonIconType pokemonType={row.pokemonType} size={24}>
         <img
           height={48}
-          alt="img-pokemon"
+          alt="Pokémon Image"
           style={{ marginRight: 10 }}
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
@@ -124,7 +124,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           width={25}
           height={25}
           style={{ marginRight: 10 }}
-          alt="type-logo"
+          alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
         />
@@ -526,7 +526,7 @@ const StatsRanking = () => {
             <img
               className="pokemon-main-sprite"
               style={{ verticalAlign: 'baseline' }}
-              alt="img-full-pokemon"
+              alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 select?.num,
                 convertPokemonImageName(select && isEqual(select.baseForme, select.form) ? '' : select?.form)
@@ -606,7 +606,7 @@ const StatsRanking = () => {
                 width={28}
                 height={28}
                 style={{ marginLeft: 5 }}
-                alt="pokemon-go-icon"
+                alt="Pokémon GO Icon"
                 src={APIService.getPokemonGoIcon(icon)}
               />
             </span>

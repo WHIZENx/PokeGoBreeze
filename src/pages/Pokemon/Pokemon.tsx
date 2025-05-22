@@ -577,7 +577,7 @@ const Pokemon = (props: IPokemonPage) => {
             <img
               className="pokemon-main-sprite"
               style={{ verticalAlign: 'baseline' }}
-              alt="img-full-pokemon"
+              alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 dataStorePokemon?.current?.id,
                 convertPokemonImageName(
@@ -614,7 +614,7 @@ const Pokemon = (props: IPokemonPage) => {
                 </tr>
                 <tr className="info-costs">
                   <td>
-                    <img alt="img-cost-info" width={100} src={APIService.getItemSprite('Item_1202')} />
+                    <img alt="Image Cost Info" width={100} src={APIService.getItemSprite('Item_1202')} />
                   </td>
                   <td style={{ padding: 0 }}>
                     <div className="d-flex align-items-center row-extra td-costs">
@@ -629,7 +629,7 @@ const Pokemon = (props: IPokemonPage) => {
                     </div>
                     <div className="row-extra d-flex">
                       <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
-                        <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                        <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(
                         <span>
@@ -647,7 +647,7 @@ const Pokemon = (props: IPokemonPage) => {
                 </tr>
                 <tr className="info-costs">
                   <td>
-                    <img alt="img-cost-info" width={60} height={60} src={APIService.getPokePurified()} />
+                    <img alt="Image Cost Info" width={60} height={60} src={APIService.getPokePurified()} />
                   </td>
                   <td style={{ padding: 0 }}>
                     <div className="d-flex align-items-center row-extra td-costs">
@@ -662,7 +662,7 @@ const Pokemon = (props: IPokemonPage) => {
                     </div>
                     <div className="row-extra d-flex">
                       <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
-                        <img alt="img-stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
+                        <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(
                         <span>

@@ -244,8 +244,8 @@ const News = () => {
               .map((value, index) => (
                 <div key={index}>
                   <div className="position-relative info-container">
-                    <img alt="info-background" className="info-background" src={value.backgroundImgUrl} />
-                    <img alt="info-banner" className="info-banner-img" src={value.bannerUrl} />
+                    <img alt="Info Background" className="info-background" src={value.backgroundImgUrl} />
+                    <img alt="Info Banner" className="info-banner-img" src={value.bannerUrl} />
                   </div>
                   <Accordion>
                     <Accordion.Item key={index} eventKey={index.toString()}>
@@ -255,7 +255,7 @@ const News = () => {
                           style={{ marginRight: 15, columnGap: 15 }}
                         >
                           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
-                            {value.titleImgUrl && <img alt="img-league" height={50} src={value.titleImgUrl} />}
+                            {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
                             <b>{value.title}</b>
                           </div>
                           <div className="d-flex align-items-center flex-end">

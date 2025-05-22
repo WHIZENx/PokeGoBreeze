@@ -88,7 +88,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
       <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form)}`}>
         <img
           height={48}
-          alt="img-pokemon"
+          alt="Pokémon Image"
           style={{ marginRight: 10 }}
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
@@ -265,7 +265,7 @@ const Move = (props: IMovePage) => {
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
       <div style={{ width: 35 }}>
-        <img alt="icon-item" className="sprite-type" src={getItemSpritePath(itemName)} />
+        <img alt="Icon Item" className="sprite-type" src={getItemSpritePath(itemName)} />
       </div>
       <span className="caption">{splitAndCapitalize(itemName.replace('ITEM_', ''), '_', ' ')}</span>
     </div>
@@ -365,7 +365,7 @@ const Move = (props: IMovePage) => {
                         style={{ marginRight: 15 }}
                         className="img-type-icon"
                         height={25}
-                        alt="img-type"
+                        alt="Image Weather"
                         src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
                       />
                       <span className="d-inline-block caption">
@@ -680,7 +680,7 @@ const Move = (props: IMovePage) => {
                                 <td className="table-bonus-cost">
                                   <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
                                     <img
-                                      alt="img-stardust"
+                                      alt="Image Stardust"
                                       height={20}
                                       src={APIService.getItemSprite('stardust_painted')}
                                     />
@@ -738,7 +738,7 @@ const Move = (props: IMovePage) => {
                             width={28}
                             height={28}
                             style={{ marginLeft: 5 }}
-                            alt="pokemon-go-icon"
+                            alt="Pokémon GO Icon"
                             src={APIService.getPokemonGoIcon(icon)}
                           />
                         </span>

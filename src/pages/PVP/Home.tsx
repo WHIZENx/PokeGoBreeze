@@ -146,7 +146,13 @@ const PVPHome = () => {
           {rank.cp.map((value, index) => (
             <Link key={index} to={`/pvp/rankings/${rank.id}/${value}`}>
               <Button className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
+                <img
+                  alt="Image League"
+                  title={renderLeagueName(rank.name, value)}
+                  width={128}
+                  height={128}
+                  src={renderLeagueLogo(rank.logo, value)}
+                />
                 <div>
                   <b>{renderLeagueName(rank.name, value)}</b>
                 </div>
@@ -185,7 +191,13 @@ const PVPHome = () => {
           {team.cp.map((value, index) => (
             <Link key={index} to={`/pvp/teams/${team.id}/${value}`}>
               <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(team.logo, value)} />
+                <img
+                  alt="Image League"
+                  title={renderLeagueName(team.name, value)}
+                  width={128}
+                  height={128}
+                  src={renderLeagueLogo(team.logo, value)}
+                />
                 <div>
                   <b>{renderLeagueName(team.name, value)}</b>
                 </div>
@@ -208,7 +220,13 @@ const PVPHome = () => {
               {value.cp.map((cp, index) => (
                 <Link key={index} to={`/pvp/battle/${cp}`}>
                   <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                    <img alt="img-league" width={128} height={128} src={value.logo ?? getPokemonBattleLeagueIcon(cp)} />
+                    <img
+                      alt="Image League"
+                      title={value.name}
+                      width={128}
+                      height={128}
+                      src={value.logo ?? getPokemonBattleLeagueIcon(cp)}
+                    />
                     <div>
                       <b>{value.name}</b>
                     </div>

@@ -54,7 +54,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
             <img
               style={{ padding: 5, backgroundColor: 'black' }}
               className="sprite-type"
-              alt="img-type-pokemon"
+              alt="Pokémon GO Type Logo"
               src={APIService.getTypeHqSprite(move?.type)}
             />
           </div>

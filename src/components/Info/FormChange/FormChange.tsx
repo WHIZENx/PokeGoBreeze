@@ -81,7 +81,7 @@ const FromChange = (props: IFromChangeComponent) => {
                     <div style={{ width: 96 }}>
                       <img
                         className="pokemon-sprite-large"
-                        alt="pokemon-model"
+                        alt="Pokémon Model"
                         src={APIService.getPokemonModel(dataSrc, props.pokemonData.id)}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
@@ -113,7 +113,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           <div style={{ width: 96 }}>
                             <img
                               className="pokemon-sprite-large"
-                              alt="pokemon-model"
+                              alt="Pokémon Model"
                               src={APIService.getPokemonModel(findPokeAsset(name), pokemon.id)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
@@ -166,7 +166,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                 >
                                   <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
                                     <img
-                                      alt="img-stardust"
+                                      alt="Image Stardust"
                                       height={20}
                                       src={APIService.getItemSprite('stardust_painted')}
                                     />
