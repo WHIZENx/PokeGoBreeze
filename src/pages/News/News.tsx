@@ -231,12 +231,12 @@ const News = () => {
 
   return (
     <div className="container mb-3">
-      <div className="info-main-container mt-2" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
+      <div className="info-main-container pb-3 mt-2">
         <h1 className="text-center" style={{ textDecoration: 'underline' }}>
           News
         </h1>
         {reload(
-          <>
+          <div className="w-100 h-100" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
             {data
               .filter((info) => info.giftAble || isInclude(info.id, ItemTicketRewardType.BattlePass))
               .map((value, index) => (
@@ -308,7 +308,7 @@ const News = () => {
                   </Accordion>
                 </div>
               ))}
-          </>
+          </div>
         )}
       </div>
     </div>
