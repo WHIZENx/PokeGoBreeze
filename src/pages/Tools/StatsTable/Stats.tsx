@@ -214,7 +214,7 @@ const StatsTable = () => {
       </h1>
       <div className="w-100" style={{ overflowX: 'auto' }}>
         <div style={{ width: 'fit-content', margin: '0 auto' }}>
-          <div className="d-flex text-center" style={{ marginTop: 15, marginBottom: 15, gap: 10 }}>
+          <div className="d-flex text-center my-3" style={{ gap: 10 }}>
             {leaguesTeamBattle.map((value, index) => (
               <button
                 key={index}

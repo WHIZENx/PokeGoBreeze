@@ -120,7 +120,7 @@ const Tools = (props: IToolsComponent) => {
   return (
     <Fragment>
       {props.isRaid ? (
-        <div className="element-top" style={{ marginBottom: 15 }}>
+        <div className="element-top mb-3">
           <Form.Select
             className="w-100"
             onChange={(e) => {

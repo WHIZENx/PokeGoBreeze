@@ -400,7 +400,7 @@ const Calculate = () => {
               />
             </Box>
           </div>
-          <div className="d-flex justify-content-center" style={{ marginTop: 15 }}>
+          <div className="d-flex justify-content-center mt-3">
             <Box sx={{ width: '80%', minWidth: 320 }}>
               <div className="row">
                 <div className="col" style={{ padding: 0 }}>

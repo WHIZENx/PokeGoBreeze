@@ -558,7 +558,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               </Fragment>
                             )}
                             {data?.quest.condition.desc === ConditionType.Pokemon && (
-                              <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
+                              <div className="d-flex align-items-center mt-1">
                                 {data.quest.condition.pokemonType?.map((value, index) => (
                                   <IconType key={index} height={20} alt="Pokémon GO Type Logo" type={value} />
                                 ))}

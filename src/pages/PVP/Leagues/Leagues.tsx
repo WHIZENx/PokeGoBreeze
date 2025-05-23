@@ -524,7 +524,7 @@ const Leagues = () => {
                         </Fragment>
                       )}
                     </Badge>
-                    <hr style={{ marginTop: 0 }} />
+                    <hr className="mt-0" />
                     <Badge
                       color="primary"
                       className="position-relative d-inline-block img-link"
@@ -634,7 +634,7 @@ const Leagues = () => {
               ))}
             </div>
           </div>
-          <div className="w-100 text-center" style={{ marginTop: 15, marginBottom: 15 }}>
+          <div className="w-100 text-center my-3">
             <div className="d-flex justify-content-center" style={{ marginBottom: 10, columnGap: '10%' }}>
               <div id="currRank" className="combat-league-info">
                 <img

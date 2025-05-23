@@ -144,8 +144,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   const defaultInput = () => (
     <div
-      className="position-relative card-input"
-      style={{ marginBottom: 15 }}
+      className="position-relative card-input mb-3"
       tabIndex={0}
       onClick={() => setShowMove(true)}
       onBlur={() => setShowMove(false)}

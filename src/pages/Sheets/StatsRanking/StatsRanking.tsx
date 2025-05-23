@@ -521,7 +521,7 @@ const StatsRanking = () => {
 
   return (
     <div className="element-bottom position-relative poke-container container">
-      <div className="w-100 d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
+      <div className="w-100 d-inline-block align-middle my-3">
         <div className="d-flex justify-content-center w-100">
           <div className="d-inline-block img-desc">
             <img

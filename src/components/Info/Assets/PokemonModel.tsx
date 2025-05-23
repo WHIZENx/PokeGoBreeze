@@ -134,11 +134,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
               <div className="desc text-black">{splitAndCapitalize(assets.form, '_', ' ')}</div>
             </div>
           ))}
-          {!isNotEmpty(pokeAssets) && (
-            <div className="text-danger" style={{ marginBottom: 15 }}>
-              &emsp;Assets in Pokémon GO unavailable
-            </div>
-          )}
+          {!isNotEmpty(pokeAssets) && <div className="text-danger mb-3">&emsp;Assets in Pokémon GO unavailable</div>}
         </div>
       )}
       <h4 className="title-evo">

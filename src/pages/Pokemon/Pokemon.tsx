@@ -571,7 +571,7 @@ const Pokemon = (props: IPokemonPage) => {
           props.isSearch ? '' : 'container'
         )}
       >
-        <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
+        <div className="w-100 text-center d-inline-block align-middle my-3">
           <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={icon} />
           <div className="d-inline-block img-desc">
             <img

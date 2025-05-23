@@ -18,7 +18,7 @@ const Weather = () => {
       <div className="container-fluid">
         <Affect weathers={weatherBoosts} />
       </div>
-      <hr style={{ marginTop: 15, marginBottom: 15 }} />
+      <hr className="my-3" />
       <div className="container w-75">
         <Effect weathers={weatherBoosts} types={typeEffective} />
       </div>

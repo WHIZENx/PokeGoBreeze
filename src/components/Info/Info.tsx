@@ -58,7 +58,7 @@ const Info = () => {
   };
 
   return (
-    <div style={{ marginBottom: 15 }}>
+    <div className="mb-3">
       <h4 className="element-top info-title">
         <b>Information</b>
       </h4>
