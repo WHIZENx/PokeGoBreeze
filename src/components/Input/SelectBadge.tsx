@@ -31,13 +31,13 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
   );
 
   return (
-    <div className="w-100 element-top">
+    <div className="w-100 mt-2">
       <div className="d-flex justify-content-center align-items-center">
         <div className={combineClasses('type-icon-small', props.type.toLowerCase())} style={{ width: 'max-content' }}>
           {capitalize(props.type)} Badge
         </div>
       </div>
-      <div className="d-flex flex-wrap justify-content-center align-items-center element-top" style={{ gap: 10 }}>
+      <div className="d-flex flex-wrap justify-content-center align-items-center mt-2" style={{ gap: 10 }}>
         {getKeysObj(BadgeType).map((value, i) => (
           <Fragment key={i}>{Badge(props, getDataWithKey(BadgeType, value))}</Fragment>
         ))}

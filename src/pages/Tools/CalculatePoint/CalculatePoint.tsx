@@ -335,11 +335,11 @@ const CalculatePoint = () => {
 
   return (
     <Fragment>
-      <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
-        <div className="col-lg" style={{ padding: 0 }}>
+      <div className="row m-0" style={{ overflowX: 'hidden' }}>
+        <div className="col-lg p-0">
           <Find isHide={true} title="Attacker Pokémon" clearStats={clearData} />
         </div>
-        <div className="col-lg d-flex justify-content-center" style={{ padding: 0 }}>
+        <div className="col-lg d-flex justify-content-center p-0">
           <Find
             isSwap={true}
             isRaid={isRaid}
@@ -691,7 +691,7 @@ const CalculatePoint = () => {
               <div className="row">
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
-                  <div style={{ marginBottom: 15 }}>
+                  <div className="mb-3">
                     <Move
                       text="Fast Moves"
                       id={searching?.object?.pokemon?.id}
@@ -709,7 +709,7 @@ const CalculatePoint = () => {
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {fMove && (
-                      <div className="element-top" style={{ width: 300, margin: 'auto' }}>
+                      <div className="mt-2" style={{ width: 300, margin: 'auto' }}>
                         <p>
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                         </p>
@@ -750,7 +750,7 @@ const CalculatePoint = () => {
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {cMove && (
-                      <div className="element-top" style={{ width: 300, margin: 'auto' }}>
+                      <div className="mt-2" style={{ width: 300, margin: 'auto' }}>
                         <p>
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                         </p>

@@ -7,7 +7,7 @@ import { getValueOrDefault } from '../../util/extension';
 
 const Gender = (props: IGenderComponent) => {
   return (
-    <div className="element-top" style={{ marginRight: 15 }}>
+    <div className="mt-3 me-3">
       <div className="d-flex align-items-center" style={{ columnGap: 15 }}>
         <img
           className="img-gender"
@@ -16,13 +16,13 @@ const Gender = (props: IGenderComponent) => {
           alt="Image Pokémon Sex"
           src={APIService.getGenderSprite(getKeyWithData(TypeSex, props.sex))}
         />
-        <h6 className="ratio-gender" style={{ margin: 0 }}>
+        <h6 className="ratio-gender m-0">
           {`${getKeyWithData(TypeSex, props.sex)} ${
             props.ratio ? `ratio: ${props.sex === TypeSex.Male ? props.ratio.M * 100 : props.ratio.F * 100}%` : ''
           }`}
         </h6>
       </div>
-      <div className="element-top d-flex" style={{ marginLeft: 30, columnGap: 15 }}>
+      <div className="mt-2 d-flex ms-4" style={{ columnGap: 15 }}>
         <div className="img-form-gender-group">
           <div className="img-gender-group">
             <img

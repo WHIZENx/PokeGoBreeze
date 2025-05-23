@@ -14,11 +14,11 @@ const Weather = () => {
   const weatherBoosts = useSelector((state: StoreState) => state.store.data.weatherBoost);
 
   return (
-    <div className="container element-top">
+    <div className="container mt-2">
       <div className="container-fluid">
         <Affect weathers={weatherBoosts} />
       </div>
-      <hr style={{ marginTop: 15, marginBottom: 15 }} />
+      <hr className="my-3" />
       <div className="container w-75">
         <Effect weathers={weatherBoosts} types={typeEffective} />
       </div>

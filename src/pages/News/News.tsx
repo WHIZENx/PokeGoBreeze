@@ -13,6 +13,7 @@ import {
   splitAndCapitalize,
 } from '../../util/utils';
 import {
+  combineClasses,
   getValueOrDefault,
   isEqual,
   isInclude,
@@ -200,7 +201,7 @@ const News = () => {
           />
         )}
       </div>
-      <p className="element-top" style={{ fontWeight: 'bold' }}>
+      <p className="mt-2" style={{ fontWeight: 'bold' }}>
         <span className={value.type === TicketRewardType.Pokemon ? 'select-evo' : ''}>{value.title}</span>
         {value.count > 0 && ` x${value.count}`}
       </p>
@@ -215,7 +216,7 @@ const News = () => {
       <div className="w-100 h-100 counter-none" style={{ verticalAlign: 'top' }}>
         <div className="text-origin text-center">
           <div className="ph-item" style={{ backgroundColor: 'transparent' }}>
-            <div className="ph-col-12" style={{ padding: 0, margin: 0, gap: 20 }}>
+            <div className="ph-col-12 m-0 p-0" style={{ gap: 20 }}>
               {[...Array(3).keys()].map((_, index) => (
                 <div key={index} className="ph-row">
                   <div className="ph-picture" style={{ width: '100%', height: 256 }} />
@@ -229,16 +230,13 @@ const News = () => {
   };
 
   return (
-    <div className="info-main-bg">
-      <div
-        className="container info-main-container element-top"
-        style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}
-      >
+    <div className="container mb-3">
+      <div className="info-main-container pb-3 mt-2">
         <h1 className="text-center" style={{ textDecoration: 'underline' }}>
           News
         </h1>
         {reload(
-          <>
+          <div className="w-100 h-100" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
             {data
               .filter((info) => info.giftAble || isInclude(info.id, ItemTicketRewardType.BattlePass))
               .map((value, index) => (
@@ -250,24 +248,22 @@ const News = () => {
                   <Accordion>
                     <Accordion.Item key={index} eventKey={index.toString()}>
                       <Accordion.Header>
-                        <div
-                          className="w-100 d-flex justify-content-between"
-                          style={{ marginRight: 15, columnGap: 15 }}
-                        >
+                        <div className="w-100 d-flex justify-content-between me-3" style={{ columnGap: 15 }}>
                           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
                             {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
                             <b>{value.title}</b>
                           </div>
                           <div className="d-flex align-items-center flex-end">
                             <div
-                              className={
+                              className={combineClasses(
+                                'p-1',
                                 value.eventType === DateEvent.End
                                   ? 'info-event-ending'
                                   : DateEvent.Progressing
                                   ? 'info-event-progress'
                                   : 'info-event-future'
-                              }
-                              style={{ padding: 6, borderRadius: 4, fontSize: 14 }}
+                              )}
+                              style={{ borderRadius: 4, fontSize: 14 }}
                             >
                               <b>{getKeyWithData(DateEvent, value.eventType)}</b>
                             </div>
@@ -287,7 +283,7 @@ const News = () => {
                               <h6 style={{ textDecoration: 'underline' }}>Rewards</h6>
                               <div className="w-100 text-center d-inline-block align-middle">
                                 {value.rewardNews.map((value, i) => (
-                                  <div key={i} className="d-inline-block" style={{ margin: '0 10px' }}>
+                                  <div key={i} className="d-inline-block mx-2">
                                     {value.type === TicketRewardType.Pokemon && value.pokemon ? (
                                       <LinkToTop
                                         className="select-evo"
@@ -304,7 +300,7 @@ const News = () => {
                             </>
                           )}
                           {value.detailsLink && (
-                            <p className="element-top" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
+                            <p className="mt-2" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
                           )}
                         </div>
                       </Accordion.Body>
@@ -312,7 +308,7 @@ const News = () => {
                   </Accordion>
                 </div>
               ))}
-          </>
+          </div>
         )}
       </div>
     </div>

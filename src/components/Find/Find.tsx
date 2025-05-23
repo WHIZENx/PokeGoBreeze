@@ -208,8 +208,8 @@ const Find = (props: IFindComponent) => {
   );
 
   return (
-    <div className="container element-top">
-      <h1 id="main" className="text-center" style={{ marginBottom: 15 }}>
+    <div className="container mt-2">
+      <h1 id="main" className="text-center mb-3">
         {getValueOrDefault(String, props.title, 'Pokémon GO Tools')}
       </h1>
       {isNotEmpty(pokemonList) ? (

@@ -123,11 +123,11 @@ const Search = () => {
 
   return (
     <Fragment>
-      <div className="container element-top">
+      <div className="container mt-2">
         <h1 id="main" className="text-center">
           Pokémon Info Search
         </h1>
-        <div className="input-group mb-12 element-top">
+        <div className="input-group mb-12 mt-2">
           <div className="input-group-prepend">
             <span className="input-group-text">Search</span>
           </div>

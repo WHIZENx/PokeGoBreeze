@@ -320,7 +320,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <img
-        style={{ padding: 10 }}
+        className="p-2"
         height={200}
         alt="Image Pokemon"
         src={
@@ -358,7 +358,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           </div>
         )}
       </div>
-      <div className="element-top" style={{ height: 64 }}>
+      <div className="mt-2" style={{ height: 64 }}>
         {currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}
       </div>
       <h4>

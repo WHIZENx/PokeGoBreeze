@@ -78,7 +78,7 @@ class ErrorBoundary extends Component<Props, IState> {
           <Typography variant="body1" gutterBottom>
             The application encountered an error.
           </Typography>
-          <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+          <div className="d-flex gap-10 mt-3" style={{ gap: '10px' }}>
             <Button variant="contained" color="primary" onClick={this.handleGoHome}>
               Back to Home
             </Button>
@@ -92,9 +92,8 @@ class ErrorBoundary extends Component<Props, IState> {
                 Error Details (Deployment Only):
               </Typography>
               <pre
-                className="theme-custom-selected-bg"
+                className="theme-custom-selected-bg p-2"
                 style={{
-                  padding: '10px',
                   borderRadius: '4px',
                   overflowX: 'auto',
                   maxWidth: '100%',

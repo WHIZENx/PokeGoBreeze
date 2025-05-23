@@ -44,7 +44,7 @@ const Candy = (props: ICandyComponent) => {
   }, [props.id]);
 
   return (
-    <Background style={props.style} candyBgColor={bgColor}>
+    <Background style={props.style} className={props.className} candyBgColor={bgColor}>
       <Fill candyColor={color} size={props.size} />
     </Background>
   );

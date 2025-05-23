@@ -134,7 +134,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                         width={25}
                         height={25}
                         alt="Pokémon GO Type Logo"
-                        style={{ marginRight: 5 }}
+                        className="me-1"
                         type={getCombatMove(getQuestEvo(value.name).requireMove)?.type}
                       />
                       <LinkToTop to={`../move/${getCombatMove(getQuestEvo(value.name).requireMove)?.id}`}>

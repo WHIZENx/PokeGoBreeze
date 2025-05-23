@@ -75,7 +75,7 @@ const FromChange = (props: IFromChangeComponent) => {
               <b>Form Change</b>
             </h4>
             {isNotEmpty(pokeAssets) && (
-              <div className="element-top d-flex">
+              <div className="mt-2 d-flex">
                 <div className="d-flex flex-column align-items-center justify-content-center w-50">
                   <div className="d-flex flex-column align-items-center justify-content-center" id="form-origin">
                     <div style={{ width: 96 }}>
@@ -158,10 +158,9 @@ const FromChange = (props: IFromChangeComponent) => {
                               )}
                               {value.stardustCost && (
                                 <span
-                                  className="d-flex align-items-center caption"
+                                  className="d-flex align-items-center caption mt-1"
                                   style={{
                                     width: 'max-content',
-                                    marginTop: 5,
                                   }}
                                 >
                                   <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
@@ -174,10 +173,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                   <span style={{ marginLeft: 2 }}>{`x${value.stardustCost}`}</span>
                                 </span>
                               )}
-                              <span
-                                className="d-flex flex-column caption"
-                                style={{ width: 'max-content', marginTop: 5 }}
-                              >
+                              <span className="d-flex flex-column caption mt-1" style={{ width: 'max-content' }}>
                                 {value.item && (
                                   <>
                                     <span>Required Item</span>

@@ -178,20 +178,15 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           <span className="pokemon-select-right">
             {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
               <span
-                style={{ marginRight: 5 }}
                 className={combineClasses(
-                  'type-icon-small ic',
+                  'type-icon-small ic me-1',
                   `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
                 )}
               >
                 {getKeyWithData(MoveType, MoveType.Shadow)}
               </span>
             )}
-            {score > 0 && (
-              <span style={{ marginRight: 5 }} className="type-icon-small ic elite-ic">
-                {score}
-              </span>
-            )}
+            {score > 0 && <span className="type-icon-small ic elite-ic me-1">{score}</span>}
             {isNotEmpty(pokemonIcon) && (
               <span onClick={() => removePokemon()} className="remove-pokemon-select">
                 <CloseIcon sx={{ color: 'red' }} />
@@ -247,10 +242,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       <h5>Fast Moves</h5>
       <div
         className={combineClasses(
-          'position-relative d-flex align-items-center form-control',
+          'position-relative d-flex align-items-center form-control p-0',
           pokemon ? 'card-select-enabled' : 'card-select-disabled'
         )}
-        style={{ padding: 0, borderRadius: 0 }}
+        style={{ borderRadius: 0 }}
       >
         <div
           className="card-move-input"
@@ -298,10 +293,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         />
         <div
           className={combineClasses(
-            'position-relative d-flex align-items-center form-control',
+            'position-relative d-flex align-items-center form-control p-0',
             pokemon ? 'card-select-enabled' : 'card-select-disabled'
           )}
-          style={{ padding: 0, borderRadius: 0 }}
+          style={{ borderRadius: 0 }}
         >
           <div
             className={combineClasses(
@@ -382,10 +377,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         />
         <div
           className={combineClasses(
-            'position-relative d-flex align-items-center form-control',
+            'position-relative d-flex align-items-center form-control p-0',
             pokemon ? 'card-select-enabled' : 'card-select-disabled'
           )}
-          style={{ padding: 0, borderRadius: 0 }}
+          style={{ borderRadius: 0 }}
         >
           <div
             className={combineClasses(

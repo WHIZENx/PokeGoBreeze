@@ -234,8 +234,8 @@ const Damage = () => {
         Battle Damage Calculate
       </h1>
       <div className="d-flex justify-content-center">
-        <div className="element-top container row" style={{ marginBottom: 20 }}>
-          <div className="col" style={{ marginBottom: 15 }}>
+        <div className="mt-2 container row" style={{ marginBottom: 20 }}>
+          <div className="col mb-3">
             <form onSubmit={onCalculateDamagePoke.bind(this)}>
               <div className="d-flex justify-content-center">
                 <div className="row text-center" style={{ width: 520 }}>
@@ -264,7 +264,7 @@ const Damage = () => {
                 isHighlight={true}
                 pokemonType={searching?.current?.form?.form?.pokemonType}
               />
-              <div className="element-top">
+              <div className="mt-2">
                 {move && (
                   <div style={{ width: 300, margin: 'auto' }}>
                     <p>
@@ -368,7 +368,7 @@ const Damage = () => {
                       </Select>
                     </FormControl>
                   </Box>
-                  <button type="submit" className="btn btn-primary element-top">
+                  <button type="submit" className="btn btn-primary mt-2">
                     <img alt="ATK" width={20} height={20} src={ATK_LOGO} /> Battle
                   </button>
                 </div>

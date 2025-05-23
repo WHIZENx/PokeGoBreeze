@@ -11,7 +11,7 @@ const TypeInfo = (props: ITypeComponent) => {
   return (
     <Fragment>
       {!isNotEmpty(props.arr) && props.isShow ? (
-        <div className="element-top d-flex" style={{ marginLeft: 15 }}>
+        <div className="mt-2 d-flex ms-3">
           <div className="text-center" key={0}>
             <img
               width={toNumber(props.height, 36)}
@@ -26,7 +26,11 @@ const TypeInfo = (props: ITypeComponent) => {
         <>
           {isNotEmpty(props.arr) && (
             <div
-              className={combineClasses(props.isBlock ? '' : 'element-top', props.isShowShadow ? 'filter-shadow' : '')}
+              className={combineClasses(
+                props.className,
+                props.isBlock ? '' : 'mt-2',
+                props.isShowShadow ? 'filter-shadow' : ''
+              )}
               style={props.style}
             >
               {props.text && <p>{props.text}</p>}

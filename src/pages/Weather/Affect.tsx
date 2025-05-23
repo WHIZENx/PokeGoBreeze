@@ -35,7 +35,7 @@ const Affect = (prop: IWeatherAffComponent) => {
   };
 
   return (
-    <div className="element-top">
+    <div className="mt-2">
       <h5 className="text-center">
         <b>As Weather</b>
       </h5>
