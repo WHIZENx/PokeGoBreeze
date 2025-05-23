@@ -247,10 +247,7 @@ const News = () => {
                   <Accordion>
                     <Accordion.Item key={index} eventKey={index.toString()}>
                       <Accordion.Header>
-                        <div
-                          className="w-100 d-flex justify-content-between"
-                          style={{ marginRight: 15, columnGap: 15 }}
-                        >
+                        <div className="w-100 d-flex justify-content-between me-3" style={{ columnGap: 15 }}>
                           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
                             {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
                             <b>{value.title}</b>

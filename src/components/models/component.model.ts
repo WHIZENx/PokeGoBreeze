@@ -273,6 +273,7 @@ export interface IRaidComponent {
 
 export interface ICandyComponent {
   id: number | undefined;
+  className?: string;
   style?: React.CSSProperties;
   size?: number;
 }

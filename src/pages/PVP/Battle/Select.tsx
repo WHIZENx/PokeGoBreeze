@@ -178,20 +178,15 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           <span className="pokemon-select-right">
             {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
               <span
-                style={{ marginRight: 5 }}
                 className={combineClasses(
-                  'type-icon-small ic',
+                  'type-icon-small ic me-1',
                   `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
                 )}
               >
                 {getKeyWithData(MoveType, MoveType.Shadow)}
               </span>
             )}
-            {score > 0 && (
-              <span style={{ marginRight: 5 }} className="type-icon-small ic elite-ic">
-                {score}
-              </span>
-            )}
+            {score > 0 && <span className="type-icon-small ic elite-ic me-1">{score}</span>}
             {isNotEmpty(pokemonIcon) && (
               <span onClick={() => removePokemon()} className="remove-pokemon-select">
                 <CloseIcon sx={{ color: 'red' }} />

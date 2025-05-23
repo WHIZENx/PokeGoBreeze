@@ -247,10 +247,10 @@ const TableMove = (props: ITableMoveComponent) => {
       <tr>
         <td className="text-origin theme-table-primary">
           <LinkToTop to={`../move/${value.fMove.id}`} className="d-block">
-            <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+            <div className="d-inline-block me-1" style={{ verticalAlign: 'text-bottom' }}>
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.fMove.type} />
             </div>
-            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
+            <span className="me-1">{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.fMove.moveType !== MoveType.None && (
                 <span
@@ -267,10 +267,10 @@ const TableMove = (props: ITableMoveComponent) => {
         </td>
         <td className="text-origin theme-table-primary">
           <LinkToTop to={`../move/${value.cMove.id}`} className="d-block">
-            <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+            <div className="d-inline-block me-1" style={{ verticalAlign: 'text-bottom' }}>
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.cMove.type} />
             </div>
-            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
+            <span className="me-1">{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
             <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
               {value.cMove.moveType !== MoveType.None && (
                 <span
@@ -296,10 +296,10 @@ const TableMove = (props: ITableMoveComponent) => {
         <tr key={index}>
           <td className="text-origin theme-table-primary">
             <LinkToTop to={`../move/${value.id}`} className="d-block">
-              <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+              <div className="d-inline-block me-1" style={{ verticalAlign: 'text-bottom' }}>
                 <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
               </div>
-              <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
+              <span className="me-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
               <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
                 {value.moveType !== MoveType.None && (
                   <span

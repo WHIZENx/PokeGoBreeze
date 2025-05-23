@@ -281,7 +281,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           </div>
           <div className="ranking-group w-100">
             <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
-            <div style={{ marginRight: 15 }}>
+            <div className="ms-3">
               <span className="ranking-score score-ic text-black">{data.data?.score}</span>
             </div>
           </div>
@@ -421,7 +421,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
           <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
             <div />
-            <div className="d-flex" style={{ marginRight: 15 }}>
+            <div className="d-flex me-3">
               <div
                 className="text-center"
                 style={{ width: 'max-content' }}

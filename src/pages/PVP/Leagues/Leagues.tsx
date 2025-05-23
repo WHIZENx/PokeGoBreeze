@@ -160,7 +160,7 @@ const Leagues = () => {
   const showAccording = (league: ILeague, index: number, isOpened = false) => (
     <Accordion.Item key={index} eventKey={index.toString()}>
       <Accordion.Header className={isOpened ? 'league-opened' : ''}>
-        <div className="d-flex justify-content-between w-100" style={{ marginRight: 15, columnGap: 10 }}>
+        <div className="d-flex justify-content-between w-100 me-3" style={{ columnGap: 10 }}>
           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
             <img
               alt="Image League"

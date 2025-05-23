@@ -103,7 +103,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
         <img
           height={48}
           alt="Pokémon Image"
-          style={{ marginRight: 10 }}
+          className="me-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -124,7 +124,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           key={index}
           width={25}
           height={25}
-          style={{ marginRight: 10 }}
+          className="me-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}

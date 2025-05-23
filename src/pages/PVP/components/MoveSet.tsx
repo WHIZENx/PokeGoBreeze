@@ -99,7 +99,7 @@ const MoveSet = (props: MoveSetComponent) => {
             </span>
             <span className="d-block caption">
               {'- '}
-              <span className="position-relative filter-shadow" style={{ marginRight: 5 }}>
+              <span className="position-relative filter-shadow me-1">
                 <PersonIcon sx={{ color: 'black' }} />
                 <KeyboardDoubleArrowDownIcon
                   fontSize="small"

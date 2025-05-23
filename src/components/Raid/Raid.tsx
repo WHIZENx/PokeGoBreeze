@@ -164,7 +164,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center theme-text-primary">
@@ -173,7 +173,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center theme-text-primary">
@@ -182,7 +182,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={STA_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} />
                   STA
                 </td>
                 <td className="text-center theme-text-primary">

@@ -618,7 +618,7 @@ const Pokemon = (props: IPokemonPage) => {
                   </td>
                   <td style={{ padding: 0 }}>
                     <div className="d-flex align-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
+                      <Candy id={dataStorePokemon?.current?.id} className="me-1" />
                       {reload(
                         <span>
                           {!isUndefined(costModifier?.thirdMove.candy)
@@ -628,7 +628,7 @@ const Pokemon = (props: IPokemonPage) => {
                       )}
                     </div>
                     <div className="row-extra d-flex">
-                      <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
+                      <div className="d-inline-flex justify-content-center me-1" style={{ width: 20 }}>
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(
@@ -651,7 +651,7 @@ const Pokemon = (props: IPokemonPage) => {
                   </td>
                   <td style={{ padding: 0 }}>
                     <div className="d-flex align-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
+                      <Candy id={dataStorePokemon?.current?.id} className="me-1" />
                       {reload(
                         <span>
                           {!isUndefined(costModifier?.purified.candy)
@@ -661,7 +661,7 @@ const Pokemon = (props: IPokemonPage) => {
                       )}
                     </div>
                     <div className="row-extra d-flex">
-                      <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
+                      <div className="d-inline-flex justify-content-center me-1" style={{ width: 20 }}>
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(

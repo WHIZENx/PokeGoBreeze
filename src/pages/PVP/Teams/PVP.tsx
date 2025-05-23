@@ -327,7 +327,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         <div className="ranking-container card-container">
           <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
             <div className="ranking-score">Pokémon</div>
-            <div className="d-flex" style={{ marginRight: 15, columnGap: 30 }}>
+            <div className="d-flex me-3" style={{ columnGap: 30 }}>
               <div
                 className="text-center"
                 style={{ width: 'max-content' }}
@@ -470,7 +470,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                       )}
                     </div>
                   </div>
-                  <div className="d-flex filter-shadow align-items-center" style={{ marginRight: 35, columnGap: 30 }}>
+                  <div className="d-flex filter-shadow align-items-center me-3" style={{ columnGap: 30 }}>
                     <div className="text-center" style={{ width: 120 }}>
                       <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                     </div>
@@ -577,7 +577,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                           </div>
                         ))}
                       </div>
-                      <div className="d-flex align-items-center" style={{ marginRight: 15, columnGap: 30 }}>
+                      <div className="d-flex align-items-center me-3" style={{ columnGap: 30 }}>
                         <div className="text-center" style={{ width: 200 }}>
                           <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                         </div>

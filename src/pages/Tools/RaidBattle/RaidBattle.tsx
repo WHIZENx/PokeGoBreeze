@@ -1579,11 +1579,7 @@ const RaidBattle = () => {
                     src={APIService.getTrainerModel(trainer.trainerId % 294)}
                   />
                 </Badge>
-                <button
-                  className="btn btn-primary"
-                  style={{ marginRight: 10 }}
-                  onClick={() => handleShow(trainer.pokemons, index)}
-                >
+                <button className="btn btn-primary me-2" onClick={() => handleShow(trainer.pokemons, index)}>
                   <EditIcon fontSize="small" />
                 </button>
                 <div className="pokemon-battle-group">
@@ -1614,11 +1610,10 @@ const RaidBattle = () => {
                 <span className="d-flex ic-group">
                   <span
                     className={combineClasses(
-                      'ic-copy text-white',
+                      'ic-copy text-white me-1',
                       trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
                     )}
                     title="Copy"
-                    style={{ marginRight: 5 }}
                     onClick={() => {
                       if (trainer.pokemons.at(0)?.dataTargetPokemon) {
                         setCountTrainer(countTrainer + 1);

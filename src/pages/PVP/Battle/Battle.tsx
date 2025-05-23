@@ -1305,7 +1305,7 @@ const Battle = () => {
               {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
             {'Attack: '}
             <b>
               {Math.floor(
@@ -1314,7 +1314,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
             {'Defense: '}
             <b>
               {Math.floor(
@@ -1323,7 +1323,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={HP_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
             HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
             <br />
             {'Stats Prod: '}

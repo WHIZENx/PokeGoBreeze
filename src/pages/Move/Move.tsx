@@ -89,7 +89,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
         <img
           height={48}
           alt="Pokémon Image"
-          style={{ marginRight: 10 }}
+          className="me-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -362,8 +362,7 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <>
                       <img
-                        style={{ marginRight: 15 }}
-                        className="img-type-icon"
+                        className="img-type-icon me-3"
                         height={25}
                         alt="Image Weather"
                         src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}

@@ -165,10 +165,10 @@ const Counter = (props: ICounterComponent) => {
       name: 'Fast',
       selector: (row) => (
         <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
-          <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+          <div className="me-1" style={{ verticalAlign: 'text-bottom' }}>
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
-          <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
+          <span className="me-1" style={{ fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
@@ -192,10 +192,10 @@ const Counter = (props: ICounterComponent) => {
       name: 'Charged',
       selector: (row) => (
         <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
-          <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+          <div className="me-1" style={{ verticalAlign: 'text-bottom' }}>
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
-          <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
+          <span className="me-1" style={{ fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">

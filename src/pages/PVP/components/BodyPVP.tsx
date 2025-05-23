@@ -111,7 +111,7 @@ const BodyPVP = (props: BodyComponent) => {
           <TypeInfo isShowShadow={true} isHideText={true} height={20} arr={data.pokemon?.types} />
         </div>
       </div>
-      <div style={{ marginRight: 15 }}>
+      <div className="ms-3">
         <span
           className="ranking-score text-white text-shadow filter-shadow"
           style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
@@ -127,7 +127,7 @@ const BodyPVP = (props: BodyComponent) => {
       <div className="col-lg-6 element-top" style={{ padding: 0 }}>
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Matchups</h4>
-          <div style={{ marginRight: 15 }}>
+          <div className="ms-3">
             <span className="ranking-score score-ic text-black">Rating</span>
           </div>
         </div>
@@ -138,7 +138,7 @@ const BodyPVP = (props: BodyComponent) => {
       <div className="col-lg-6 element-top" style={{ padding: 0 }}>
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Counters</h4>
-          <div style={{ marginRight: 15 }}>
+          <div className="ms-3">
             <span className="ranking-score score-ic text-black">Rating</span>
           </div>
         </div>

@@ -585,8 +585,8 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <Candy id={item.id} style={{ marginRight: 5 }} />
-                                          <span className="d-flex align-items-center" style={{ marginRight: 5 }}>
+                                          <Candy id={item.id} className="me-1" />
+                                          <span className="d-flex align-items-center me-1">
                                             {toNumber(item.battleLeague.little.resultBetweenCandy) +
                                               getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">
@@ -599,7 +599,7 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <img
-                                          style={{ marginRight: 5 }}
+                                          className="me-1"
                                           alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
@@ -653,7 +653,7 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <Candy id={item.id} style={{ marginRight: 5 }} />
+                                          <Candy id={item.id} className="me-1" />
                                           <span className="d-flex align-items-center">
                                             {toNumber(item.battleLeague.great.resultBetweenCandy) +
                                               getCandyEvo(value, item.id)}
@@ -667,7 +667,7 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <img
-                                          style={{ marginRight: 5 }}
+                                          className="me-1"
                                           alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
@@ -721,7 +721,7 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <Candy id={item.id} style={{ marginRight: 5 }} />
+                                          <Candy id={item.id} className="me-1" />
                                           <span className="d-flex align-items-center">
                                             {toNumber(item.battleLeague.ultra.resultBetweenCandy) +
                                               getCandyEvo(value, item.id)}
@@ -735,7 +735,7 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <img
-                                          style={{ marginRight: 5 }}
+                                          className="me-1"
                                           alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
@@ -785,7 +785,7 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <Candy id={item.id} style={{ marginRight: 5 }} />
+                                          <Candy id={item.id} className="me-1" />
                                           <span className="d-flex align-items-center">
                                             {toNumber(item.battleLeague.master.resultBetweenCandy) +
                                               getCandyEvo(value, item.id)}
@@ -799,7 +799,7 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <img
-                                          style={{ marginRight: 5 }}
+                                          className="me-1"
                                           alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}

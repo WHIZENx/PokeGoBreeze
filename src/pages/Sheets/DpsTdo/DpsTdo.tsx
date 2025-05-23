@@ -144,7 +144,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           <img
             height={48}
             alt="Pokémon Image"
-            style={{ marginRight: 10 }}
+            className="me-2"
             src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -168,7 +168,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           key={index}
           width={25}
           height={25}
-          style={{ marginRight: 10 }}
+          className="me-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -185,13 +185,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/move/${row.fMove?.id}`}
         title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}
       >
-        <IconType
-          width={25}
-          height={25}
-          style={{ marginRight: 10 }}
-          alt="Pokémon GO Type Logo"
-          type={row.fMove?.type}
-        />
+        <IconType width={25} height={25} className="me-2" alt="Pokémon GO Type Logo" type={row.fMove?.type} />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
@@ -220,13 +214,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/move/${row.cMove?.id}`}
         title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}
       >
-        <IconType
-          width={25}
-          height={25}
-          style={{ marginRight: 10 }}
-          alt="Pokémon GO Type Logo"
-          type={row.cMove?.type}
-        />
+        <IconType width={25} height={25} className="me-2" alt="Pokémon GO Type Logo" type={row.cMove?.type} />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
@@ -966,8 +954,8 @@ const DpsTdo = () => {
                   <div className="input-group">
                     <span className="input-group-text">Filter best move sets</span>
                     <FormControlLabel
-                      className="border-input"
-                      style={{ marginRight: 0, paddingRight: 16 }}
+                      className="border-input me-0"
+                      style={{ paddingRight: 16 }}
                       control={
                         <Switch
                           checked={enableBest}

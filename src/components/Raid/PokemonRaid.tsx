@@ -53,7 +53,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           <div className="d-flex ic-group-small">
             <span
               className={combineClasses(
-                'ic-copy-small text-white',
+                'ic-copy-small text-white me-1',
                 dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
               )}
               title="Options"
@@ -62,13 +62,12 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                   props.onOptionsPokemon(props.id, dataTargetPokemon);
                 }
               }}
-              style={{ marginRight: 5 }}
             >
               <SettingsIcon sx={{ fontSize: 16 }} />
             </span>
             <span
               className={combineClasses(
-                'ic-copy-small text-white',
+                'ic-copy-small text-white me-1',
                 dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
               )}
               title="Copy"
@@ -77,7 +76,6 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                   props.onCopyPokemon(props.id);
                 }
               }}
-              style={{ marginRight: 5 }}
             >
               <ContentCopyIcon sx={{ fontSize: 16 }} />
             </span>
