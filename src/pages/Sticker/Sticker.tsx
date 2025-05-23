@@ -80,7 +80,7 @@ const Sticker = () => {
   }, [id, shopType, pokeStickerList]);
 
   return (
-    <div className="container" style={{ padding: 15 }}>
+    <div className="container p-3">
       <h2 className="title-leagues mb-3">Sticker List</h2>
       <hr />
       <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>

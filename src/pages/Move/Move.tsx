@@ -310,14 +310,14 @@ const Move = (props: IMovePage) => {
         </>
       ) : (
         <div className="ph-item">
-          <div className="ph-row h-100 head-box d-flex mb-0" style={{ paddingLeft: 0 }}>
+          <div className="ph-row h-100 head-box d-flex mb-0 ps-0">
             <div className="ph-picture" style={{ width: '40%', height: 45 }} />
           </div>
         </div>
       )}
       <hr />
       <div className="row m-0">
-        <div className="col" style={{ padding: 0 }}>
+        <div className="col p-0">
           <table className="table-info move-table">
             <thead className="text-center">
               <tr>
@@ -534,7 +534,7 @@ const Move = (props: IMovePage) => {
             </tbody>
           </table>
         </div>
-        <div className="col" style={{ padding: 0 }}>
+        <div className="col p-0">
           <table className="table-info move-damage-table">
             <thead className="text-center">
               <tr>
@@ -620,7 +620,7 @@ const Move = (props: IMovePage) => {
               </tr>
               {move?.bonus && (
                 <tr>
-                  <td className="table-sub-header" colSpan={2} style={{ padding: 0 }}>
+                  <td className="table-sub-header p-0" colSpan={2}>
                     <Accordion defaultActiveKey="0">
                       <Accordion.Item key={0} eventKey="0" className="table-sub-bonus">
                         <Accordion.Header className="table-sub-bonus">
@@ -746,7 +746,7 @@ const Move = (props: IMovePage) => {
                 </td>
               </tr>
               <tr>
-                <td className="table-top-of-move" colSpan={2} style={{ padding: 0 }}>
+                <td className="table-top-of-move p-0" colSpan={2}>
                   <DataTable
                     columns={convertColumnDataType(columns)}
                     data={topListFilter}

@@ -540,7 +540,7 @@ const StatsRanking = () => {
           </div>
         </div>
         <div className="row w-100 element-top m-0">
-          <div className="col-xl-5" style={{ padding: 0 }}>
+          <div className="col-xl-5 p-0">
             <PokemonTable
               id={select?.num}
               gen={select?.gen}
@@ -556,7 +556,7 @@ const StatsRanking = () => {
             />
           </div>
           {select && (
-            <div className="col-xl-7" style={{ padding: 0 }}>
+            <div className="col-xl-7 p-0">
               <TableMove pokemonData={pokemon} maxHeight={400} />
             </div>
           )}

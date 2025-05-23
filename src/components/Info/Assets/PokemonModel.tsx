@@ -51,10 +51,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
         <img className="ms-1" width={36} height={36} alt="Pokémon GO Icon" src={APIService.getPokemonGoIcon(icon)} />
       </h4>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0" style={{ padding: 0, height: 176 }}>
+        <div className="ph-item w-100 m-0 p-0" style={{ height: 176 }}>
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0"
-            style={{ padding: 0, background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
+            style={{ background: 'var(--background-default)' }}
           />
         </div>
       ) : (
@@ -142,10 +142,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0" style={{ padding: 0, height: 65 }}>
+        <div className="ph-item w-100 m-0 p-0" style={{ height: 65 }}>
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0"
-            style={{ padding: 0, background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
+            style={{ background: 'var(--background-default)' }}
           />
         </div>
       ) : (
@@ -181,10 +181,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       )}
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0" style={{ padding: 0, height: 65 }}>
+        <div className="ph-item w-100 m-0 p-0" style={{ height: 65 }}>
           <div
-            className="ph-picture ph-col-3 w-100 h-100 m-0"
-            style={{ padding: 0, background: 'var(--background-default)' }}
+            className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
+            style={{ background: 'var(--background-default)' }}
           />
         </div>
       ) : (

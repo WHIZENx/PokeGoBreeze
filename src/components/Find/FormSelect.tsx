@@ -320,7 +320,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <img
-        style={{ padding: 10 }}
+        className="p-2"
         height={200}
         alt="Image Pokemon"
         src={

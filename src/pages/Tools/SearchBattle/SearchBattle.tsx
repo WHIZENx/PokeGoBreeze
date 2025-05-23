@@ -377,7 +377,7 @@ const FindBattle = () => {
       <h1 id="main" className="text-center">
         Search Battle Leagues Stats
       </h1>
-      <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)} style={{ paddingBottom: 15 }}>
+      <form className="element-top pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="justify-content-center input-group mb-3">
@@ -512,7 +512,7 @@ const FindBattle = () => {
               ))}
             </div>
             {evoChain.map((value, index) => (
-              <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
+              <Accordion className="pb-3" key={index} style={{ marginTop: '3%', marginBottom: '5%' }}>
                 <div className="form-header">
                   {!value.at(0)?.form ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0)?.form, '_', ' ')}
                   {' Form'}
@@ -521,15 +521,11 @@ const FindBattle = () => {
                   <Accordion.Header>
                     <b>More information</b>
                   </Accordion.Header>
-                  <Accordion.Body style={{ padding: 0 }}>
+                  <Accordion.Body className="p-0">
                     <div className="sub-body">
                       <div className="row justify-content-center league-info-content m-0">
                         {value.map((item, index) => (
-                          <div
-                            className="col d-inline-block evo-item-desc justify-content-center"
-                            key={index}
-                            style={{ padding: 0 }}
-                          >
+                          <div className="col d-inline-block evo-item-desc justify-content-center p-0" key={index}>
                             <div className="pokemon-best-league">
                               <LinkToTop
                                 to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -617,7 +613,7 @@ const FindBattle = () => {
                                         />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
                                       </h6>
-                                      <b style={{ padding: '1rem' }} className="text-danger">
+                                      <b className="text-danger p-3">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                       </b>
                                     </div>
@@ -685,7 +681,7 @@ const FindBattle = () => {
                                         />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
                                       </h6>
-                                      <b style={{ padding: '1rem' }} className="text-danger">
+                                      <b className="text-danger p-3">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                       </b>
                                     </div>
@@ -753,7 +749,7 @@ const FindBattle = () => {
                                         />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
                                       </h6>
-                                      <b style={{ padding: '1rem' }} className="text-danger">
+                                      <b className="text-danger p-3">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                       </b>
                                     </div>
@@ -813,7 +809,7 @@ const FindBattle = () => {
                                         <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
                                         <b>{` ${getPokemonBattleLeagueName()}`}</b>
                                       </h6>
-                                      <b style={{ padding: '1rem' }} className="text-danger">
+                                      <b className="text-danger p-3">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                       </b>
                                     </div>

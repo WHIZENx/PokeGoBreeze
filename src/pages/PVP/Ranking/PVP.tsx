@@ -288,8 +288,8 @@ const RankingPVP = (props: IStyleSheetData) => {
         </div>
       </Accordion.Header>
       <Accordion.Body
+        className="p-0"
         style={{
-          padding: 0,
           backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, props.styleSheet, 0.3),
         }}
       >
@@ -369,7 +369,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           </div>
         ) : (
           <div className="ph-item element-top">
-            <div className="ph-picture mb-0" style={{ width: '40%', height: 64, paddingLeft: 0, paddingRight: 0 }} />
+            <div className="ph-picture mb-0 px-0" style={{ width: '40%', height: 64 }} />
           </div>
         )}
       </Fragment>

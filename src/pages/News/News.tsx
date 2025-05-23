@@ -13,6 +13,7 @@ import {
   splitAndCapitalize,
 } from '../../util/utils';
 import {
+  combineClasses,
   getValueOrDefault,
   isEqual,
   isInclude,
@@ -215,7 +216,7 @@ const News = () => {
       <div className="w-100 h-100 counter-none" style={{ verticalAlign: 'top' }}>
         <div className="text-origin text-center">
           <div className="ph-item" style={{ backgroundColor: 'transparent' }}>
-            <div className="ph-col-12 m-0" style={{ padding: 0, gap: 20 }}>
+            <div className="ph-col-12 m-0 p-0" style={{ gap: 20 }}>
               {[...Array(3).keys()].map((_, index) => (
                 <div key={index} className="ph-row">
                   <div className="ph-picture" style={{ width: '100%', height: 256 }} />
@@ -254,14 +255,15 @@ const News = () => {
                           </div>
                           <div className="d-flex align-items-center flex-end">
                             <div
-                              className={
+                              className={combineClasses(
+                                'p-1',
                                 value.eventType === DateEvent.End
                                   ? 'info-event-ending'
                                   : DateEvent.Progressing
                                   ? 'info-event-progress'
                                   : 'info-event-future'
-                              }
-                              style={{ padding: 6, borderRadius: 4, fontSize: 14 }}
+                              )}
+                              style={{ borderRadius: 4, fontSize: 14 }}
                             >
                               <b>{getKeyWithData(DateEvent, value.eventType)}</b>
                             </div>

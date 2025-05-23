@@ -130,10 +130,10 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         />
       ) : (
         <div
-          className="d-flex align-items-center w-100 card-select-disabled disable-card-move"
-          style={{ height: 36, padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1"
+          style={{ height: 36, overflowX: 'hidden', whiteSpace: 'nowrap' }}
         >
-          <span style={{ paddingLeft: 8 }}>- Please select Pokémon -</span>
+          <span className="ps-2">- Please select Pokémon -</span>
         </div>
       )}
       <span className="input-group-text justify-content-center">
@@ -154,10 +154,10 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         />
       ) : (
         <div
-          className="d-flex align-items-center w-100 card-select-disabled disable-card-move"
-          style={{ height: 36, padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1"
+          style={{ height: 36, overflowX: 'hidden', whiteSpace: 'nowrap' }}
         >
-          <span style={{ paddingLeft: 8 }}>- Please select Pokémon -</span>
+          <span className="ps-2">- Please select Pokémon -</span>
         </div>
       )}
     </div>

@@ -14,7 +14,7 @@ const TypeEffect = () => {
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
 
   return (
-    <div className="container element-top" style={{ paddingBottom: 15 }}>
+    <div className="container element-top pb-3">
       <Row>
         <Col>
           <Attacker types={typeEffective} />

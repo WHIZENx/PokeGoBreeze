@@ -10,8 +10,8 @@ const PokemonTable = (props: IPokemonTableComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 h-100 m-0" style={{ padding: 0 }}>
-        <div className="ph-picture ph-col-3 w-100 h-100 m-0" style={{ padding: 0, background: color }} />
+      <div className="ph-item w-75 h-100 m-0 p-0">
+        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
   };
@@ -88,7 +88,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           <td>
             <h5 className="d-flex">Body</h5>
           </td>
-          <td colSpan={2} style={{ padding: 0 }}>
+          <td colSpan={2} className="p-0">
             <div className="d-flex align-items-center first-extra-col h-100 w-50" style={{ float: 'left' }}>
               <div>
                 <div className="d-inline-block me-1">

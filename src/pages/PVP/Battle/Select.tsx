@@ -242,10 +242,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       <h5>Fast Moves</h5>
       <div
         className={combineClasses(
-          'position-relative d-flex align-items-center form-control',
+          'position-relative d-flex align-items-center form-control p-0',
           pokemon ? 'card-select-enabled' : 'card-select-disabled'
         )}
-        style={{ padding: 0, borderRadius: 0 }}
+        style={{ borderRadius: 0 }}
       >
         <div
           className="card-move-input"
@@ -293,10 +293,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         />
         <div
           className={combineClasses(
-            'position-relative d-flex align-items-center form-control',
+            'position-relative d-flex align-items-center form-control p-0',
             pokemon ? 'card-select-enabled' : 'card-select-disabled'
           )}
-          style={{ padding: 0, borderRadius: 0 }}
+          style={{ borderRadius: 0 }}
         >
           <div
             className={combineClasses(
@@ -377,10 +377,10 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         />
         <div
           className={combineClasses(
-            'position-relative d-flex align-items-center form-control',
+            'position-relative d-flex align-items-center form-control p-0',
             pokemon ? 'card-select-enabled' : 'card-select-disabled'
           )}
-          style={{ padding: 0, borderRadius: 0 }}
+          style={{ borderRadius: 0 }}
         >
           <div
             className={combineClasses(

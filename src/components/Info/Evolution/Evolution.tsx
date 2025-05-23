@@ -687,8 +687,8 @@ const Evolution = (props: IEvolutionComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75" style={{ padding: 0, margin: 'auto', height: 120 }}>
-        <div className="ph-picture ph-col-3 w-100 h-100 m-0" style={{ padding: 0, background: color }} />
+      <div className="ph-item w-75 p-0" style={{ margin: 'auto', height: 120 }}>
+        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
   };

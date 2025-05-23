@@ -1658,7 +1658,7 @@ const Battle = () => {
                 <Fragment>
                   <Accordion defaultActiveKey={[]}>
                     <Card className="position-relative">
-                      <Card.Header style={{ padding: 0 }}>
+                      <Card.Header className="p-0">
                         <div className="d-flex timeline-vertical">
                           <div className="w-50">
                             <div
@@ -1720,7 +1720,7 @@ const Battle = () => {
                         <CustomToggle eventKey="0" />
                       </Card.Header>
                       <Accordion.Collapse eventKey="0">
-                        <Card.Body style={{ padding: 0 }}>{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
+                        <Card.Body className="p-0">{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
                       </Accordion.Collapse>
                     </Card>
                   </Accordion>

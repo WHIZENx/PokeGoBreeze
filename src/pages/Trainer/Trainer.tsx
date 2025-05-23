@@ -30,7 +30,7 @@ const Trainer = () => {
   }, [trainers, level]);
 
   return (
-    <div className="container" style={{ padding: 15 }}>
+    <div className="container p-3">
       <h2 className="title-leagues mb-3">Trainer</h2>
       <hr />
       <div>

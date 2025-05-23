@@ -1191,7 +1191,7 @@ const RaidBattle = () => {
     }
     return (
       <Fragment>
-        <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 5, paddingLeft: 10 }}>
+        <div className="d-flex flex-wrap align-items-center ps-2" style={{ columnGap: 5 }}>
           <div className="pokemon-battle">
             <span className="position-relative">
               <PokemonIconType pokemonType={pokemon.pokemonType} size={18}>
@@ -1213,7 +1213,7 @@ const RaidBattle = () => {
           </div>
         </div>
         <p className="element-top">Select slot Pokémon that you want to replace.</p>
-        <div className="element-top justify-content-center" style={{ padding: '0 10px' }}>
+        <div className="element-top justify-content-center px-2">
           {trainerBattle.map((trainer) => (
             <div className="trainer-battle d-flex align-items-center position-relative" key={trainer.trainerId}>
               <Badge
@@ -1323,10 +1323,10 @@ const RaidBattle = () => {
   return (
     <Fragment>
       <div className="row m-0" style={{ overflowX: 'hidden' }}>
-        <div className="col-lg" style={{ padding: 0 }}>
+        <div className="col-lg p-0">
           <Find isHide={true} title="Raid Boss" clearStats={clearDataBoss} />
         </div>
-        <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+        <div className="col-lg d-flex justify-content-center align-items-center p-0">
           <div className="element-top position-relative">
             {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
               <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
@@ -1417,7 +1417,7 @@ const RaidBattle = () => {
               </div>
             </div>
             <div className="row align-items-center element-top m-0">
-              <div className="col-6 d-flex justify-content-end" style={{ paddingRight: 0 }}>
+              <div className="col-6 d-flex justify-content-end pe-0">
                 <FormControlLabel
                   control={
                     <Switch
@@ -1428,7 +1428,7 @@ const RaidBattle = () => {
                   label={`Time Allow (Default: ${RAID_BOSS_TIER[tier].timer}sec)`}
                 />
               </div>
-              <div className="col-6" style={{ paddingLeft: 0 }}>
+              <div className="col-6 ps-0">
                 <div className="input-group">
                   <input
                     type="number"
@@ -1459,7 +1459,7 @@ const RaidBattle = () => {
         </div>
       </div>
       <hr />
-      <div className="container" style={{ paddingBottom: 15 }}>
+      <div className="container pb-3">
         <div className="d-flex flex-wrap align-items-center justify-content-between">
           <div>
             <h4>

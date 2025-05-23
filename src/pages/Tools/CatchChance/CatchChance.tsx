@@ -367,9 +367,9 @@ const CatchChance = () => {
   };
 
   return (
-    <div className="container element-top" style={{ paddingBottom: 15 }}>
+    <div className="container element-top pb-3">
       <div className="row m-0">
-        <div className="col-md-6" style={{ padding: 0 }}>
+        <div className="col-md-6 p-0">
           <div className="d-flex justify-content-center">
             <Find
               isHide={true}
@@ -382,7 +382,7 @@ const CatchChance = () => {
             />
           </div>
         </div>
-        <div className="col-md-6 position-relative" style={{ padding: 0 }}>
+        <div className="col-md-6 position-relative p-0">
           {!isEncounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
@@ -491,10 +491,7 @@ const CatchChance = () => {
                   }
                 />
               </div>
-              <div
-                className="d-flex w-100 justify-content-center element-top"
-                style={{ paddingLeft: 15, paddingRight: 15 }}
-              >
+              <div className="d-flex w-100 justify-content-center element-top px-3">
                 <LevelSlider
                   aria-label="Level"
                   className="w-75"
@@ -666,10 +663,7 @@ const CatchChance = () => {
                     </div>
                   </div>
                 </div>
-                <div
-                  className="col-md-6 d-flex flex-column justify-content-center align-items-center"
-                  style={{ padding: 0 }}
-                >
+                <div className="col-md-6 d-flex flex-column justify-content-center align-items-center p-0">
                   {advThrow && <h5 className="text-center">{getKeyWithData(ThrowType, advThrow.throwType)}!</h5>}
                   <div className="d-flex justify-content-center position-relative">
                     <Circle line={2} color="lightgray" size={circleDistance.current} />

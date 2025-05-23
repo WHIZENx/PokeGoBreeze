@@ -590,14 +590,13 @@ const TeamPVP = (props: IStyleSheetData) => {
                       </div>
                     </div>
                   </Accordion.Header>
-                  <Accordion.Body style={{ padding: 0 }}>
+                  <Accordion.Body className="p-0">
                     <Fragment>
                       {value.teamsData.map((value, index) => (
                         <div
-                          className="d-flex align-items-center"
+                          className="d-flex align-items-center p-3"
                           key={index}
                           style={{
-                            padding: 15,
                             gap: '1rem',
                             backgroundImage: computeBgType(
                               value.pokemonData?.types,

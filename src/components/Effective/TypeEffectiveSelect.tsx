@@ -68,7 +68,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       });
 
       return (
-        <div className="container d-flex flex-column" style={{ paddingBottom: '0.5rem', gap: '0.5rem' }}>
+        <div className="container d-flex flex-column pb-2" style={{ gap: '0.5rem' }}>
           {renderEffective(EffectiveType.VeryWeakness, data.veryWeak)}
           {renderEffective(EffectiveType.Weakness, data.weak)}
         </div>
@@ -84,7 +84,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         }
       });
       return (
-        <div className="container d-flex flex-column" style={{ paddingBottom: '0.5rem', gap: '0.5rem' }}>
+        <div className="container d-flex flex-column pb-2" style={{ gap: '0.5rem' }}>
           {renderEffective(EffectiveType.Neutral, data.neutral)}
         </div>
       );
@@ -103,7 +103,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         }
       });
       return (
-        <div className="container d-flex flex-column" style={{ paddingBottom: '0.5rem', gap: '0.5rem' }}>
+        <div className="container d-flex flex-column pb-2" style={{ gap: '0.5rem' }}>
           {renderEffective(EffectiveType.SuperResistance, data.superResist)}
           {renderEffective(EffectiveType.VeryResistance, data.veryResist)}
           {renderEffective(EffectiveType.Resistance, data.resist)}

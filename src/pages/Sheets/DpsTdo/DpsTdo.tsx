@@ -696,22 +696,21 @@ const DpsTdo = () => {
     <div className="position-relative">
       {!isNotEmpty(dpsTable) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
-          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0" style={{ padding: 0 }} />
+          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}
       <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100 m-0">
           {types.map((item, index) => (
-            <div key={index} className="col img-group m-0" style={{ padding: 0 }}>
+            <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
-                  'btn-select-type w-100 border-types',
+                  'btn-select-type w-100 border-types p-2',
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
-                style={{ padding: 10 }}
               >
                 <TypeInfo isBlock={true} arr={[item]} />
               </button>
@@ -719,10 +718,10 @@ const DpsTdo = () => {
           ))}
         </div>
         <div className="row w-100 m-0">
-          <div className="col-xxl border-input" style={{ padding: 0, height: 'fit-content' }}>
+          <div className="col-xxl border-input p-0" style={{ height: 'fit-content' }}>
             <div className="border-input">
               <div className="row w-100 m-0">
-                <div className="d-flex col-md-9" style={{ padding: 0 }}>
+                <div className="d-flex col-md-9 p-0">
                   <span className="input-group-text">Search name or ID</span>
                   <input
                     type="text"
@@ -950,12 +949,11 @@ const DpsTdo = () => {
             </div>
             <div className="input-group">
               <div className="row w-100 m-0">
-                <Box className="col-xxl-8" style={{ padding: 0 }}>
+                <Box className="col-xxl-8 p-0">
                   <div className="input-group">
                     <span className="input-group-text">Filter best move sets</span>
                     <FormControlLabel
-                      className="border-input me-0"
-                      style={{ paddingRight: 16 }}
+                      className="border-input me-0 pe-3"
                       control={
                         <Switch
                           checked={enableBest}
@@ -1005,7 +1003,7 @@ const DpsTdo = () => {
             </div>
             <div className="input-group">
               <div className="row w-100 m-0">
-                <Box className="col-xl-4" style={{ padding: 0 }}>
+                <Box className="col-xl-4 p-0">
                   <div className="input-group h-100">
                     <span className="input-group-text">Defender</span>
                     <SelectPokemon
@@ -1018,7 +1016,7 @@ const DpsTdo = () => {
                     />
                   </div>
                 </Box>
-                <Box className="col-xl-4" style={{ padding: 0 }}>
+                <Box className="col-xl-4 p-0">
                   <div className="input-group h-100">
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
@@ -1037,7 +1035,7 @@ const DpsTdo = () => {
                     />
                   </div>
                 </Box>
-                <Box className="col-xl-4" style={{ padding: 0 }}>
+                <Box className="col-xl-4 p-0">
                   <div className="input-group h-100">
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
@@ -1059,7 +1057,7 @@ const DpsTdo = () => {
               </div>
             </div>
           </div>
-          <div className="col-xxl border-input" style={{ padding: 0, height: 'fit-content' }}>
+          <div className="col-xxl border-input p-0" style={{ height: 'fit-content' }}>
             <div className="head-types">Options</div>
             <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
               <div className="input-group">
@@ -1126,7 +1124,7 @@ const DpsTdo = () => {
                 />
               </div>
               <div className="row m-0">
-                <Box className="col-5 input-group" style={{ padding: 0 }}>
+                <Box className="col-5 input-group p-0">
                   <span className="input-group-text">IV ATK</span>
                   <input
                     defaultValue={ivAtk}
@@ -1202,7 +1200,7 @@ const DpsTdo = () => {
                     ))}
                   </Form.Select>
                 </Box>
-                <Box className="col-7 input-group" style={{ padding: 0 }}>
+                <Box className="col-7 input-group p-0">
                   <span className="input-group-text">DEF Target</span>
                   <input
                     defaultValue={pokemonDefObj}

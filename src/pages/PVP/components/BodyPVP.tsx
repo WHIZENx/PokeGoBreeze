@@ -124,7 +124,7 @@ const BodyPVP = (props: BodyComponent) => {
 
   return (
     <div className="row m-0">
-      <div className="col-lg-6 element-top" style={{ padding: 0 }}>
+      <div className="col-lg-6 element-top p-0">
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Matchups</h4>
           <div className="ms-3">
@@ -135,7 +135,7 @@ const BodyPVP = (props: BodyComponent) => {
           <Fragment key={index}>{renderItemList(matchup, BackgroundType.Matchup)}</Fragment>
         ))}
       </div>
-      <div className="col-lg-6 element-top" style={{ padding: 0 }}>
+      <div className="col-lg-6 element-top p-0">
         <div className="title-item-ranking">
           <h4 className="text-white text-shadow">Best Counters</h4>
           <div className="ms-3">

@@ -176,7 +176,7 @@ const MoveSet = (props: MoveSetComponent) => {
 
   return (
     <div className="row m-0">
-      <div className="col-xl-6 moves-title-container" style={{ padding: 0 }}>
+      <div className="col-xl-6 moves-title-container p-0">
         <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {fastMoves?.map((value, index) => (
@@ -184,7 +184,7 @@ const MoveSet = (props: MoveSetComponent) => {
           ))}
         </div>
       </div>
-      <div className="col-xl-6 moves-title-container" style={{ padding: 0 }}>
+      <div className="col-xl-6 moves-title-container p-0">
         <div className="moves-title">Charged Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {chargedMoves?.map((value, index) => (

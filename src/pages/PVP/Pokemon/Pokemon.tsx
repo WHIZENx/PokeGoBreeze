@@ -227,6 +227,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   return (
     <Error isError={!isFound}>
       <div
+        className="py-3"
         style={{
           backgroundImage: computeBgType(
             rankingPoke?.pokemon?.types,
@@ -235,14 +236,12 @@ const PokemonPVP = (props: IStyleSheetData) => {
             0.3,
             rankingPoke ? undefined : '#646464'
           ),
-          paddingTop: 15,
-          paddingBottom: 15,
         }}
       >
         <div className="pokemon-ranking-body container pvp-container">
           {renderLeague()}
           <hr />
-          <div className="ranking-link-group" style={{ paddingTop: 10 }}>
+          <div className="ranking-link-group pt-2">
             {getKeysObj(ScoreType).map((type, index) => (
               <Button
                 key={index}

@@ -98,7 +98,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
         getKeyWithData(ScoreType, ScoreType.Overall),
         EqualMode.IgnoreCaseSensitive
       ) && (
-        <div className="col-lg-4 d-flex justify-content-center" style={{ padding: 10 }}>
+        <div className="col-lg-4 d-flex justify-content-center p-2">
           <div>
             <h5>
               <b>Overall Performance</b>

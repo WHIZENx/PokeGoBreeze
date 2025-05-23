@@ -92,9 +92,8 @@ class ErrorBoundary extends Component<Props, IState> {
                 Error Details (Deployment Only):
               </Typography>
               <pre
-                className="theme-custom-selected-bg"
+                className="theme-custom-selected-bg p-2"
                 style={{
-                  padding: '10px',
                   borderRadius: '4px',
                   overflowX: 'auto',
                   maxWidth: '100%',

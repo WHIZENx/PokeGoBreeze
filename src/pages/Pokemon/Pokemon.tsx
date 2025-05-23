@@ -550,8 +550,8 @@ const Pokemon = (props: IPokemonPage) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 m-0" style={{ padding: 0, height: 24 }}>
-        <div className="ph-picture ph-col-3 w-100 h-100 m-0" style={{ padding: 0, background: color }} />
+      <div className="ph-item w-75 m-0 p-0" style={{ height: 24 }}>
+        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
   };
@@ -604,7 +604,7 @@ const Pokemon = (props: IPokemonPage) => {
               isLoadedForms={progress.isLoadedForms}
             />
           </div>
-          <div className="d-inline-block" style={{ padding: 0 }}>
+          <div className="d-inline-block p-0">
             <table className="table-info table-main">
               <thead />
               <tbody>
@@ -616,7 +616,7 @@ const Pokemon = (props: IPokemonPage) => {
                   <td>
                     <img alt="Image Cost Info" width={100} src={APIService.getItemSprite('Item_1202')} />
                   </td>
-                  <td style={{ padding: 0 }}>
+                  <td className="p-0">
                     <div className="d-flex align-items-center row-extra td-costs">
                       <Candy id={dataStorePokemon?.current?.id} className="me-1" />
                       {reload(
@@ -649,7 +649,7 @@ const Pokemon = (props: IPokemonPage) => {
                   <td>
                     <img alt="Image Cost Info" width={60} height={60} src={APIService.getPokePurified()} />
                   </td>
-                  <td style={{ padding: 0 }}>
+                  <td className="p-0">
                     <div className="d-flex align-items-center row-extra td-costs">
                       <Candy id={dataStorePokemon?.current?.id} className="me-1" />
                       {reload(

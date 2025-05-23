@@ -403,7 +403,7 @@ const Calculate = () => {
           <div className="d-flex justify-content-center mt-3">
             <Box sx={{ width: '80%', minWidth: 320 }}>
               <div className="row">
-                <div className="col" style={{ padding: 0 }}>
+                <div className="col p-0">
                   <table className="table-info table-stats">
                     <thead>
                       <tr className="text-center">
@@ -630,7 +630,7 @@ const Calculate = () => {
                     </tbody>
                   </table>
                 </div>
-                <div className="col" style={{ padding: 0 }}>
+                <div className="col p-0">
                   <table className="table-info battle-league">
                     <thead className="text-center">
                       <tr>
@@ -687,7 +687,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Candy Required</td>
-                        <td colSpan={3} style={{ padding: 0 }}>
+                        <td colSpan={3} className="p-0">
                           <div
                             className="d-flex align-items-center td-style"
                             style={{
@@ -821,7 +821,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Candy Required</td>
-                        <td colSpan={3} style={{ padding: 0 }}>
+                        <td colSpan={3} className="p-0">
                           <div
                             className="d-flex align-items-center td-style"
                             style={{
@@ -955,7 +955,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Candy Required</td>
-                        <td colSpan={3} style={{ padding: 0 }}>
+                        <td colSpan={3} className="p-0">
                           <div
                             className="d-flex align-items-center td-style"
                             style={{
@@ -1086,7 +1086,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Candy Required</td>
-                        <td colSpan={3} style={{ padding: 0 }}>
+                        <td colSpan={3} className="p-0">
                           <div
                             className="d-flex align-items-center td-style"
                             style={{

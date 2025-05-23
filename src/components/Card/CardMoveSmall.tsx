@@ -32,10 +32,10 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
           {props.value && move && (
             <div
               className={combineClasses(
-                'd-flex align-items-center w-100 h-100',
+                'd-flex align-items-center w-100 h-100 p-1',
                 props.isDisable ? 'disable-card-move' : ''
               )}
-              style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+              style={{ overflowX: 'hidden', whiteSpace: 'nowrap' }}
             >
               <IconType width={18} height={18} alt="Pokémon GO Type Logo" className="me-2" type={move.type} />
               <span className="me-1">{splitAndCapitalize(move.name, '_', ' ')}</span>

@@ -144,10 +144,10 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   return (
     <div
       className={combineClasses(
-        'position-relative d-flex align-items-center form-control',
+        'position-relative d-flex align-items-center form-control p-0',
         props.isDisable ? 'card-select-disabled' : ''
       )}
-      style={{ padding: 0, borderRadius: 0 }}
+      style={{ borderRadius: 0 }}
     >
       <div className="card-pokemon-input">
         {isUndefined(props.position) || props.position === SelectPosition.Down ? (

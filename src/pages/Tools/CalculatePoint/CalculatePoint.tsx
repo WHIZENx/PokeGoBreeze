@@ -336,10 +336,10 @@ const CalculatePoint = () => {
   return (
     <Fragment>
       <div className="row m-0" style={{ overflowX: 'hidden' }}>
-        <div className="col-lg" style={{ padding: 0 }}>
+        <div className="col-lg p-0">
           <Find isHide={true} title="Attacker Pokémon" clearStats={clearData} />
         </div>
-        <div className="col-lg d-flex justify-content-center" style={{ padding: 0 }}>
+        <div className="col-lg d-flex justify-content-center p-0">
           <Find
             isSwap={true}
             isRaid={isRaid}
