@@ -734,10 +734,9 @@ const Move = (props: IMovePage) => {
                         <span className="d-flex align-items-center">
                           Released in GO
                           <img
-                            className={releasedGO ? '' : 'filter-gray'}
+                            className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
                             width={28}
                             height={28}
-                            style={{ marginLeft: 5 }}
                             alt="Pokémon GO Icon"
                             src={APIService.getPokemonGoIcon(icon)}
                           />

@@ -361,6 +361,7 @@ export interface ITypeComponent {
   arr: string[] | undefined;
   isBlock?: boolean;
   isShowShadow?: boolean;
+  className?: string;
   style?: React.CSSProperties;
   text?: string;
   isHideText?: boolean;
@@ -412,6 +413,7 @@ export interface IPokemonIconTypeComponent {
 
 export interface IWeatherComponent {
   arr: string[] | undefined;
+  className?: string;
   style?: React.CSSProperties;
   text?: string;
 }

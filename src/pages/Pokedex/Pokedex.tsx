@@ -337,10 +337,9 @@ const Pokedex = (props: IStyleSheetData) => {
                       <span className="d-flex align-items-center">
                         Released in GO
                         <img
-                          className={releasedGO ? '' : 'filter-gray'}
+                          className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
                           width={28}
                           height={28}
-                          style={{ marginLeft: 5 }}
                           alt="Pokémon GO Icon"
                           src={APIService.getPokemonGoIcon(icon)}
                         />
@@ -357,10 +356,9 @@ const Pokedex = (props: IStyleSheetData) => {
                       <span className="d-flex align-items-center">
                         Show All Shiny Pokémon (Only Possible)
                         <img
-                          className={isShiny ? 'filter-shiny' : 'filter-gray'}
+                          className={combineClasses('ms-1', isShiny ? 'filter-shiny' : 'filter-gray')}
                           width={28}
                           height={28}
-                          style={{ marginLeft: 5 }}
                           alt="Pokémon GO Icon"
                           src={APIService.getShinyIcon()}
                         />

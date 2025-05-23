@@ -902,10 +902,9 @@ const RaidBattle = () => {
             <span className="d-flex align-items-center">
               Released in GO
               <img
-                className={filters.selected.onlyReleasedGO ? '' : 'filter-gray'}
+                className={combineClasses('ms-1', filters.selected.onlyReleasedGO ? '' : 'filter-gray')}
                 width={28}
                 height={28}
-                style={{ marginLeft: 5 }}
                 alt="Pokémon GO Icon"
                 src={APIService.getPokemonGoIcon(icon)}
               />
@@ -1560,7 +1559,7 @@ const RaidBattle = () => {
               ))}
           </div>
         )}
-        <div className="row" style={{ marginLeft: 0, marginRight: 0, marginBottom: 15, marginTop: 15 }}>
+        <div className="row my-3 mx-0">
           <div className="col-lg-5 justify-content-center" style={{ marginBottom: 20 }}>
             {trainerBattle.map((trainer, index) => (
               <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
@@ -1753,7 +1752,7 @@ const RaidBattle = () => {
                         <span className="caption text-danger">Hard</span>
                       )}
                     </div>
-                    <h3 style={{ marginBottom: 15, marginLeft: 10, marginRight: 10 }}> - </h3>
+                    <h3 className="mx-2 mb-3"> - </h3>
                     <div className="d-inline-block text-center">
                       <h3 className="d-block" style={{ margin: 0 }}>
                         {Math.ceil(statBossHP / (statBossHP - Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)))}+

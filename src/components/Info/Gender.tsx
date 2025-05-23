@@ -7,7 +7,7 @@ import { getValueOrDefault } from '../../util/extension';
 
 const Gender = (props: IGenderComponent) => {
   return (
-    <div className="element-top" style={{ marginRight: 15 }}>
+    <div className="mt-3 me-3">
       <div className="d-flex align-items-center" style={{ columnGap: 15 }}>
         <img
           className="img-gender"
@@ -22,7 +22,7 @@ const Gender = (props: IGenderComponent) => {
           }`}
         </h6>
       </div>
-      <div className="element-top d-flex" style={{ marginLeft: 30, columnGap: 15 }}>
+      <div className="mt-2 d-flex ms-4" style={{ columnGap: 15 }}>
         <div className="img-form-gender-group">
           <div className="img-gender-group">
             <img

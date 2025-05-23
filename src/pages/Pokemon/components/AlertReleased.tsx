@@ -26,7 +26,7 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
             <img
               width={50}
               height={50}
-              style={{ marginLeft: 10 }}
+              className="ms-2"
               alt="Pokémon GO Icon"
               src={APIService.getPokemonGoIcon(props.icon)}
             />

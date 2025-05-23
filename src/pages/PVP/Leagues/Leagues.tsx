@@ -269,7 +269,7 @@ const Leagues = () => {
             {isNotEmpty(league.conditions.uniqueType) && (
               <li style={{ fontWeight: 500 }} className="unique-type">
                 <h6 className="title-leagues">Unique Type</h6>
-                <TypeInfo arr={league.conditions.uniqueType} style={{ marginLeft: 15 }} />
+                <TypeInfo arr={league.conditions.uniqueType} className="ms-3" />
               </li>
             )}
             {isNotEmpty(league.conditions.whiteList) && (

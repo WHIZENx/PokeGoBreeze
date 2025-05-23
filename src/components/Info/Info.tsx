@@ -65,7 +65,7 @@ const Info = () => {
       <h5 className="element-top">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={types} style={{ marginLeft: 15 }} isShow={true} />
+      <TypeInfo arr={types} className="ms-3" isShow={true} />
       <WeatherTypeEffective weatherEffective={getWeatherEffective(types)} />
       <TypeEffective typeEffective={getTypeEffective(types)} />
     </div>

@@ -350,10 +350,9 @@ const Counter = (props: ICounterComponent) => {
           <span className="d-flex align-items-center">
             Released in GO
             <img
-              className={releasedGO && !showFrame ? '' : 'filter-gray'}
+              className={combineClasses('ms-1', releasedGO && !showFrame ? '' : 'filter-gray')}
               width={28}
               height={28}
-              style={{ marginLeft: 5 }}
               alt="Pokémon GO Icon"
               src={APIService.getPokemonGoIcon(icon)}
             />

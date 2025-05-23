@@ -8,7 +8,7 @@ import { getKeyWithData } from '../../util/utils';
 
 const TypeEffective = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => (
-    <div className="element-top d-flex" style={{ marginLeft: 15 }}>
+    <div className="element-top d-flex ms-3">
       <div className="text-center" key={0}>
         <img height={50} alt="Pokémon Image" src={APIService.getPokeSprite()} />
         <span className="caption text-black">{getKeyWithData(EffectiveType, EffectiveType.None)}</span>
@@ -33,12 +33,12 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               <TypeInfo
                 text={`${toFloat(EffectiveType.VeryWeakness, 3)}x damage from`}
                 arr={props.typeEffective.veryWeak}
-                style={{ marginLeft: 15 }}
+                className="ms-3"
               />
               <TypeInfo
                 text={`${toFloat(EffectiveType.Weakness, 3)}x damage from`}
                 arr={props.typeEffective.weak}
-                style={{ marginLeft: 15 }}
+                className="ms-3"
               />
             </Fragment>
           )}
@@ -54,17 +54,17 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               <TypeInfo
                 text={`${toFloat(EffectiveType.SuperResistance, 3)}x damage from`}
                 arr={props.typeEffective.superResist}
-                style={{ marginLeft: 15 }}
+                className="ms-3"
               />
               <TypeInfo
                 text={`${toFloat(EffectiveType.VeryResistance, 3)}x damage from`}
                 arr={props.typeEffective.veryResist}
-                style={{ marginLeft: 15 }}
+                className="ms-3"
               />
               <TypeInfo
                 text={`${toFloat(EffectiveType.Resistance, 3)}x damage from`}
                 arr={props.typeEffective.resist}
-                style={{ marginLeft: 15 }}
+                className="ms-3"
               />
             </Fragment>
           )}
@@ -77,7 +77,7 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
             <TypeInfo
               text={`${toFloat(EffectiveType.Neutral, 3)}x damage from`}
               arr={props.typeEffective.neutral}
-              style={{ marginLeft: 15 }}
+              className="ms-3"
             />
           ) : (
             noneSprit()

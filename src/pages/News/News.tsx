@@ -229,11 +229,8 @@ const News = () => {
   };
 
   return (
-    <div className="info-main-bg">
-      <div
-        className="container info-main-container element-top"
-        style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}
-      >
+    <div className="container mb-3">
+      <div className="info-main-container element-top" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
         <h1 className="text-center" style={{ textDecoration: 'underline' }}>
           News
         </h1>

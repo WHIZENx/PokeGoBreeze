@@ -10,7 +10,7 @@ const WeatherEffective = (props: IWeatherEffectiveComponent) => {
           <h5 className="element-top">
             <li>Types Pokémon for Boosts</li>
           </h5>
-          <TypeInfo arr={props.weatherEffective} style={{ marginLeft: 15 }} isShow={true} />
+          <TypeInfo arr={props.weatherEffective} className="ms-3" isShow={true} />
         </div>
       )}
     </Fragment>

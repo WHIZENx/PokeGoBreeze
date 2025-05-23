@@ -41,6 +41,7 @@ import { FORM_NORMAL, Params } from '../../../util/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
+  combineClasses,
   convertColumnDataType,
   DynamicObj,
   getPropertyName,
@@ -602,10 +603,9 @@ const StatsRanking = () => {
             <span className="d-flex align-items-center">
               Released in GO
               <img
-                className={releasedGO ? '' : 'filter-gray'}
+                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
                 width={28}
                 height={28}
-                style={{ marginLeft: 5 }}
                 alt="Pokémon GO Icon"
                 src={APIService.getPokemonGoIcon(icon)}
               />

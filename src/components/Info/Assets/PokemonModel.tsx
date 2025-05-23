@@ -48,13 +48,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
     <div className="element-top position-relative">
       <h4 className="title-evo">
         <b>{`Assets of ${splitAndCapitalize(pokemonData?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
-        <img
-          style={{ marginLeft: 5 }}
-          width={36}
-          height={36}
-          alt="Pokémon GO Icon"
-          src={APIService.getPokemonGoIcon(icon)}
-        />
+        <img className="ms-1" width={36} height={36} alt="Pokémon GO Icon" src={APIService.getPokemonGoIcon(icon)} />
       </h4>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100" style={{ padding: 0, margin: 0, height: 176 }}>

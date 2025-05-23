@@ -10,7 +10,7 @@ const WeatherTypeEffective = (props: IWeatherEffectiveComponent) => {
           <h5 className="element-top">
             <li>Weather Boosts</li>
           </h5>
-          <Weather arr={props.weatherEffective} style={{ marginLeft: 15 }} />
+          <Weather arr={props.weatherEffective} className="ms-3" />
         </div>
       )}
     </Fragment>
