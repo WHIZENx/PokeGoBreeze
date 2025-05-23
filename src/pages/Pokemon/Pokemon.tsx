@@ -567,7 +567,7 @@ const Pokemon = (props: IPokemonPage) => {
       </div>
       <div
         className={combineClasses(
-          'element-bottom position-relative poke-container theme-text-primary',
+          'pb-3 position-relative poke-container theme-text-primary',
           props.isSearch ? '' : 'container'
         )}
       >

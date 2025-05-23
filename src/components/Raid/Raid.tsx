@@ -128,7 +128,7 @@ const Raid = (props: IRaidComponent) => {
           )}
         </Form.Select>
       </div>
-      <div className="row w-100 element-top m-0">
+      <div className="row w-100 mt-2 m-0">
         <div className="col-4 text-center d-inline-block">
           <h1>CP</h1>
           <hr className="w-100" />
@@ -145,7 +145,7 @@ const Raid = (props: IRaidComponent) => {
           <h5>{RAID_BOSS_TIER[tier].level}</h5>
         </div>
       </div>
-      <div className="row element-top container m-0">
+      <div className="row mt-2 container m-0">
         <div className="col d-flex justify-content-center align-items-center mb-3">
           <img
             className={tier === 2 ? 'img-type-icon' : ''}

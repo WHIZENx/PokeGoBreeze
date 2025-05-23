@@ -20,7 +20,7 @@ const HeaderPVP = (props: HeaderComponent) => {
       <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
         Recommend Moveset in PVP
       </h6>
-      <div className="d-flex flex-wrap element-top" style={{ columnGap: 10 }}>
+      <div className="d-flex flex-wrap mt-2" style={{ columnGap: 10 }}>
         <TypeBadge
           isGrow={true}
           isFind={true}

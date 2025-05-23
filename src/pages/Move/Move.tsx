@@ -272,7 +272,7 @@ const Move = (props: IMovePage) => {
   );
 
   return (
-    <div className={combineClasses('element-bottom poke-container', props.id ? '' : 'container')}>
+    <div className={combineClasses('pb-3 poke-container', props.id ? '' : 'container')}>
       {move ? (
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
@@ -284,7 +284,7 @@ const Move = (props: IMovePage) => {
           {move.isMultipleWithType && (
             <Form.Select
               style={{ maxWidth: 250 }}
-              className="element-top w-50"
+              className="mt-2 w-50"
               onChange={(e) => {
                 searchParams.set(Params.MoveType, e.target.value.toLowerCase());
                 setSearchParams(searchParams);

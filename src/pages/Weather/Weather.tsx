@@ -14,7 +14,7 @@ const Weather = () => {
   const weatherBoosts = useSelector((state: StoreState) => state.store.data.weatherBoost);
 
   return (
-    <div className="container element-top">
+    <div className="container mt-2">
       <div className="container-fluid">
         <Affect weathers={weatherBoosts} />
       </div>

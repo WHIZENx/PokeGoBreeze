@@ -965,7 +965,7 @@ const RaidBattle = () => {
             <b>{splitAndCapitalize(pokemon.name, '-', ' ')}</b>
           </div>
         </div>
-        <form className="element-top">
+        <form className="mt-2">
           <FormControlLabel
             control={
               <Checkbox
@@ -1212,8 +1212,8 @@ const RaidBattle = () => {
             {renderMove({ ...pokemon.cMove, moveType: pokemon.cMoveType })}
           </div>
         </div>
-        <p className="element-top">Select slot Pokémon that you want to replace.</p>
-        <div className="element-top justify-content-center px-2">
+        <p className="mt-2">Select slot Pokémon that you want to replace.</p>
+        <div className="mt-2 justify-content-center px-2">
           {trainerBattle.map((trainer) => (
             <div className="trainer-battle d-flex align-items-center position-relative" key={trainer.trainerId}>
               <Badge
@@ -1327,7 +1327,7 @@ const RaidBattle = () => {
           <Find isHide={true} title="Raid Boss" clearStats={clearDataBoss} />
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center p-0">
-          <div className="element-top position-relative">
+          <div className="mt-2 position-relative">
             {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
               <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
                 <div className="moveset-error" />
@@ -1335,7 +1335,7 @@ const RaidBattle = () => {
               </div>
             )}
             <h3 className="text-center text-decoration-underline">Select Boss Moveset</h3>
-            <div className="row element-top">
+            <div className="row mt-2">
               <div className="col d-flex justify-content-center">
                 <div>
                   <h6 className="text-center">
@@ -1392,7 +1392,7 @@ const RaidBattle = () => {
               isLoadedForms={isLoadedForms}
             />
             <hr />
-            <div className="row align-items-center element-top m-0">
+            <div className="row align-items-center mt-2 m-0">
               <div className="col-6 d-flex justify-content-end">
                 <FormControlLabel
                   control={
@@ -1416,7 +1416,7 @@ const RaidBattle = () => {
                 />
               </div>
             </div>
-            <div className="row align-items-center element-top m-0">
+            <div className="row align-items-center mt-2 m-0">
               <div className="col-6 d-flex justify-content-end pe-0">
                 <FormControlLabel
                   control={
@@ -1445,7 +1445,7 @@ const RaidBattle = () => {
               </div>
             </div>
             {resultFMove && resultCMove && (
-              <div className="text-center element-top">
+              <div className="text-center mt-2">
                 <button
                   className="btn btn-primary w-50"
                   disabled={Boolean(resultBoss)}
@@ -1534,7 +1534,7 @@ const RaidBattle = () => {
                       #{value.pokemon?.num} {splitAndCapitalize(value.pokemon?.name, '-', ' ')}
                     </b>
                   </span>
-                  <span className="d-block element-top">
+                  <span className="d-block mt-2">
                     DPS: <b>{toFloatWithPadding(value.dpsAtk, 2)}</b>
                   </span>
                   <span className="d-block">
@@ -1644,7 +1644,7 @@ const RaidBattle = () => {
                 </span>
               </div>
             ))}
-            <div className="text-center element-top">
+            <div className="text-center mt-2">
               <button
                 className="btn btn-primary"
                 onClick={() => calculateTrainerBattle(trainerBattle)}
@@ -1653,7 +1653,7 @@ const RaidBattle = () => {
                 Raid Battle
               </button>
             </div>
-            <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
+            <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
               <RemoveCircleIcon
                 className={combineClasses('cursor-pointer link-danger', trainerBattle.length > 1 ? '' : 'click-none')}
                 fontSize="large"
@@ -1700,7 +1700,7 @@ const RaidBattle = () => {
                 <hr />
                 <div className="row m-0">
                   <div className="col-lg-6" style={{ marginBottom: 20 }}>
-                    <span className="d-block element-top">
+                    <span className="d-block mt-2">
                       {`DPS: `}
                       <b>
                         {toFloatWithPadding(resultBoss.minDPS, 2)} - {toFloatWithPadding(resultBoss.maxDPS, 2)}
@@ -1759,7 +1759,7 @@ const RaidBattle = () => {
             {isNotEmpty(resultRaid) && (
               <Fragment>
                 <hr />
-                <ul className="element-top" style={{ listStyleType: 'initial' }}>
+                <ul className="mt-2" style={{ listStyleType: 'initial' }}>
                   {resultRaid?.map((result, turn) => (
                     <li className="mb-3" key={turn}>
                       <h4>
@@ -1879,7 +1879,7 @@ const RaidBattle = () => {
         <Modal.Body>
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>
             {pokemonBattle.map((pokemon, index) => (
-              <div className={index === 0 ? '' : 'element-top'} key={index}>
+              <div className={index === 0 ? '' : 'mt-2'} key={index}>
                 <PokemonRaid
                   isControls={true}
                   id={index}
@@ -1894,7 +1894,7 @@ const RaidBattle = () => {
               </div>
             ))}
           </div>
-          <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
+          <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
             <RemoveCircleIcon
               className={combineClasses('cursor-pointer link-danger', pokemonBattle.length > 1 ? '' : 'click-none')}
               fontSize="large"

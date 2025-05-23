@@ -17,7 +17,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
     <Fragment>
       {isNotEmpty(data) && (
         <Fragment>
-          <h6 className={combineClasses('mb-0', props.isBlock ? 'element-top' : '')}>
+          <h6 className={combineClasses('mb-0', props.isBlock ? 'mt-2' : '')}>
             <b className="text-shadow">x{toFloat(amount, 3)}</b>
           </h6>
           <div className="d-flex flex-wrap" style={{ gap: 5 }}>

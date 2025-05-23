@@ -232,7 +232,7 @@ const StatsTable = () => {
           </div>
         </div>
       </div>
-      <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)}>
+      <form className="mt-2" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="input-group mb-3" style={{ justifyContent: 'center' }}>
@@ -310,7 +310,7 @@ const StatsTable = () => {
             />
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center element-top">
+        <div className="form-group d-flex justify-content-center text-center mt-2">
           <button type="submit" className="btn btn-primary">
             Search
           </button>

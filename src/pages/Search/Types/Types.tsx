@@ -267,7 +267,7 @@ const SearchTypes = (props: IStyleSheetData) => {
   };
 
   return (
-    <div className="container element-top">
+    <div className="container mt-2">
       <div className="d-flex justify-content-end">
         <div>
           <h6 className="text-center">
@@ -315,7 +315,7 @@ const SearchTypes = (props: IStyleSheetData) => {
         }
       />
       <div className="row">
-        <div className="col-xl-4 element-top">
+        <div className="col-xl-4 mt-2">
           <div
             className={combineClasses(
               'd-flex flex-column align-items-center type-info-container',
@@ -335,7 +335,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               style={{ width: 'max-content' }}
               className={combineClasses(
                 currentType.toLowerCase(),
-                'type-select-bg d-flex align-items-center filter-shadow element-top'
+                'type-select-bg d-flex align-items-center filter-shadow mt-2'
               )}
             >
               <div style={{ display: 'contents', width: 16 }}>
@@ -347,7 +347,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               </div>
               <span className="filter-shadow">{capitalize(currentType)}</span>
             </span>
-            <span className="element-top text-white text-shadow">
+            <span className="mt-2 text-white text-shadow">
               <img alt="Icon Item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
               <b>{` Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
@@ -377,13 +377,13 @@ const SearchTypes = (props: IStyleSheetData) => {
                 </li>
               </ul>
             </span>
-            <span className="element-top text-white text-shadow">
+            <span className="mt-2 text-white text-shadow">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1201')} />
               <b>{` Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
                 (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
-            <span className="element-top text-white text-shadow">
+            <span className="mt-2 text-white text-shadow">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1202')} />
               <b>{` Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
                 (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
@@ -391,7 +391,7 @@ const SearchTypes = (props: IStyleSheetData) => {
             </span>
           </div>
         </div>
-        <div className="col-xl-8 element-top">
+        <div className="col-xl-8 mt-2">
           <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
             <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
               <DataTable

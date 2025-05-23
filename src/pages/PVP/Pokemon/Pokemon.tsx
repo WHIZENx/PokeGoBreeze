@@ -268,7 +268,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
               </Button>
             ))}
           </div>
-          <div className="w-100 ranking-info element-top">
+          <div className="w-100 ranking-info mt-2">
             <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
                 <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>

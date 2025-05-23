@@ -45,7 +45,7 @@ const Attacker = (prop: ITypeEffComponent) => {
   };
 
   return (
-    <div className="element-top">
+    <div className="mt-2">
       <h5 className="text-center">
         <b>As Attacker</b>
       </h5>

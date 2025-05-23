@@ -520,7 +520,7 @@ const StatsRanking = () => {
   }, [router, pokemonList, searchParams]);
 
   return (
-    <div className="element-bottom position-relative poke-container container">
+    <div className="pb-3 position-relative poke-container container">
       <div className="w-100 d-inline-block align-middle my-3">
         <div className="d-flex justify-content-center w-100">
           <div className="d-inline-block img-desc">
@@ -539,7 +539,7 @@ const StatsRanking = () => {
             />
           </div>
         </div>
-        <div className="row w-100 element-top m-0">
+        <div className="row w-100 mt-2 m-0">
           <div className="col-xl-5 p-0">
             <PokemonTable
               id={select?.num}

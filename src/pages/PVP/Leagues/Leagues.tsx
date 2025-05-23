@@ -221,7 +221,7 @@ const Leagues = () => {
               </div>
             )}
           </div>
-          <h5 className="title-leagues element-top">Conditions</h5>
+          <h5 className="title-leagues mt-2">Conditions</h5>
           <ul style={{ listStyleType: 'inherit' }}>
             <li style={{ fontWeight: 500 }}>
               <h6>
@@ -393,7 +393,7 @@ const Leagues = () => {
       </div>
       {isNotEmpty(dataStore.leagues.data) ? (
         <Fragment>
-          <div className="d-flex justify-content-center element-top">
+          <div className="d-flex justify-content-center mt-2">
             <div className="season-league">
               <div className="group-rank-league reward-league text-center">
                 <div className="rank-header">Season {dataStore.leagues.season.season}</div>
@@ -702,7 +702,7 @@ const Leagues = () => {
           </div>
         </Fragment>
       ) : (
-        <div className="ph-item element-top">
+        <div className="ph-item mt-2">
           <div className="ph-picture px-0" style={{ height: 450 }} />
         </div>
       )}
@@ -713,7 +713,7 @@ const Leagues = () => {
       </div>
       <Accordion alwaysOpen={true}>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 
-      <div className="w-25 input-group border-input element-top" style={{ minWidth: 300 }}>
+      <div className="w-25 input-group border-input mt-2" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find League</span>
         <input
           type="text"

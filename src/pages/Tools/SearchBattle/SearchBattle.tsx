@@ -377,7 +377,7 @@ const FindBattle = () => {
       <h1 id="main" className="text-center">
         Search Battle Leagues Stats
       </h1>
-      <form className="element-top pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
+      <form className="mt-2 pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="justify-content-center input-group mb-3">
@@ -455,7 +455,7 @@ const FindBattle = () => {
             />
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center element-top">
+        <div className="form-group d-flex justify-content-center text-center mt-2">
           <button type="submit" className="btn btn-primary">
             Search
           </button>
@@ -551,10 +551,7 @@ const FindBattle = () => {
                             ) : (
                               <Fragment>
                                 <hr />
-                                <div
-                                  className="element-top d-flex justify-content-center"
-                                  style={{ textAlign: 'start' }}
-                                >
+                                <div className="mt-2 d-flex justify-content-center" style={{ textAlign: 'start' }}>
                                   {item.battleLeague.little.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
@@ -619,10 +616,7 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div
-                                  className="element-top d-flex justify-content-center"
-                                  style={{ textAlign: 'start' }}
-                                >
+                                <div className="mt-2 d-flex justify-content-center" style={{ textAlign: 'start' }}>
                                   {item.battleLeague.great.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
@@ -687,10 +681,7 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div
-                                  className="element-top d-flex justify-content-center"
-                                  style={{ textAlign: 'start' }}
-                                >
+                                <div className="mt-2 d-flex justify-content-center" style={{ textAlign: 'start' }}>
                                   {item.battleLeague.ultra.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
@@ -755,10 +746,7 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div
-                                  className="element-top d-flex justify-content-center"
-                                  style={{ textAlign: 'start' }}
-                                >
+                                <div className="mt-2 d-flex justify-content-center" style={{ textAlign: 'start' }}>
                                   {item.battleLeague.master.rank ? (
                                     <ul className="list-best-league">
                                       <h6>

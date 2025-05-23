@@ -226,12 +226,12 @@ const Calculate = () => {
 
   return (
     <Fragment>
-      <div className="container element-top">
+      <div className="container mt-2">
         <Find isHide={true} clearStats={clearArrStats} />
         <h1 id="main" className="text-center">
           Calculate Stats
         </h1>
-        <form className="element-top" onSubmit={onCalculateStatsPoke.bind(this)}>
+        <form className="mt-2" onSubmit={onCalculateStatsPoke.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
             <Box sx={{ width: '50%', minWidth: 350 }}>
               <div style={{ justifyContent: 'center' }} className="input-group mb-3">
@@ -373,7 +373,7 @@ const Calculate = () => {
               />
             </TypeRadioGroup>
           </div>
-          <div className="form-group d-flex justify-content-center text-center element-top">
+          <div className="form-group d-flex justify-content-center text-center mt-2">
             <button type="submit" className="btn btn-primary">
               Calculate
             </button>

@@ -99,7 +99,7 @@ const Sticker = () => {
             ))}
         </Form.Select>
       </div>
-      <FormControl className="element-top">
+      <FormControl className="mt-2">
         <FormLabel>Filter sticker shopping</FormLabel>
         <RadioGroup row={true} value={shopType} onChange={(e) => setShopType(toNumber(e.target.value))}>
           <FormControlLabel value={ShopType.All} control={<Radio />} label="All" />

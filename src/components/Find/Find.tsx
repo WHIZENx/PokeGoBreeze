@@ -208,7 +208,7 @@ const Find = (props: IFindComponent) => {
   );
 
   return (
-    <div className="container element-top">
+    <div className="container mt-2">
       <h1 id="main" className="text-center mb-3">
         {getValueOrDefault(String, props.title, 'Pokémon GO Tools')}
       </h1>

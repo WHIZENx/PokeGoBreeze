@@ -44,8 +44,8 @@ const Trainer = () => {
       </div>
       {data && (
         <>
-          <p className="title-leagues element-top">Receive Items</p>
-          <div className="d-flex justify-content-center element-top">
+          <p className="title-leagues mt-2">Receive Items</p>
+          <div className="d-flex justify-content-center mt-2">
             <div className="trainer-levelup">
               <div className="levelup-container">
                 <>
@@ -69,8 +69,8 @@ const Trainer = () => {
           </div>
           {isNotEmpty(data.itemUnlocks) && (
             <>
-              <p className="title-leagues element-top">Receive Items</p>
-              <div className="d-flex justify-content-center element-top">
+              <p className="title-leagues mt-2">Receive Items</p>
+              <div className="d-flex justify-content-center mt-2">
                 <div className="trainer-levelup">
                   <div className="levelup-container justify-content-center">
                     <>

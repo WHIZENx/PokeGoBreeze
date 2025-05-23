@@ -242,7 +242,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league && (
-          <div className="d-flex flex-wrap align-items-center element-top" style={{ columnGap: 10 }}>
+          <div className="d-flex flex-wrap align-items-center mt-2" style={{ columnGap: 10 }}>
             <img
               alt="Image League"
               width={64}
@@ -311,7 +311,7 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container pvp-container element-bottom">
+      <div className="container pvp-container pb-3">
         {renderLeague()}
         <hr />
         <h2>Top Performer Pokémon</h2>

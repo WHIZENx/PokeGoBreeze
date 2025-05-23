@@ -47,8 +47,8 @@ const OverAllStats = (props: OverAllStatsComponent) => {
   }, [pokemonAllStats, props.data?.stats, props.data?.id]);
 
   const renderTopStats = (data: IPokemonAllStats | undefined) => (
-    <ul className="element-top">
-      <li className="element-top">
+    <ul className="mt-2">
+      <li className="mt-2">
         {'CP: '}
         <b>
           {toNumber(data?.maxCP) > BattleLeagueCPType.Ultra
@@ -56,7 +56,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             : `${toNumber(data?.currentStats.CP)}`}
         </b>
       </li>
-      <li className={toNumber(data?.level) <= 40 ? 'element-top' : ''}>
+      <li className={toNumber(data?.level) <= 40 ? 'mt-2' : ''}>
         Level:{' '}
         <b>
           {toNumber(data?.maxCP) > BattleLeagueCPType.Ultra
@@ -71,7 +71,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
           </b>
         )}
       </li>
-      <li className="element-top">
+      <li className="mt-2">
         <IVBar
           title="Attack"
           iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.atkIV)}

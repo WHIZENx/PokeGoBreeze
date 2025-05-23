@@ -45,7 +45,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   }, [assets, pokemonData]);
 
   return (
-    <div className="element-top position-relative">
+    <div className="mt-2 position-relative">
       <h4 className="title-evo">
         <b>{`Assets of ${splitAndCapitalize(pokemonData?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
         <img className="ms-1" width={36} height={36} alt="Pokémon GO Icon" src={APIService.getPokemonGoIcon(icon)} />

@@ -75,7 +75,7 @@ const FromChange = (props: IFromChangeComponent) => {
               <b>Form Change</b>
             </h4>
             {isNotEmpty(pokeAssets) && (
-              <div className="element-top d-flex">
+              <div className="mt-2 d-flex">
                 <div className="d-flex flex-column align-items-center justify-content-center w-50">
                   <div className="d-flex flex-column align-items-center justify-content-center" id="form-origin">
                     <div style={{ width: 96 }}>

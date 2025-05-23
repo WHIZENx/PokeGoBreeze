@@ -1341,7 +1341,7 @@ const Battle = () => {
                 calculateStatPokemon(e, type, pokemon, setPokemon);
               }}
             >
-              <div className="element-top input-group">
+              <div className="mt-2 input-group">
                 <span className="input-group-text">Level</span>
                 <input
                   className="form-control shadow-none"
@@ -1389,18 +1389,18 @@ const Battle = () => {
                   max={MAX_IV}
                 />
               </div>
-              <div className="w-100 element-top">
+              <div className="w-100 mt-2">
                 <Button type="submit" className="w-100" color="primary">
                   Calculate Stats
                 </Button>
               </div>
             </form>
-            <div className="w-100 element-top">
+            <div className="w-100 mt-2">
               <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
                 Set Random Stats
               </Button>
             </div>
-            <div className="w-100 element-top">
+            <div className="w-100 mt-2">
               <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon)}>
                 Set Best Stats
               </Button>
@@ -1633,7 +1633,7 @@ const Battle = () => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container element-top battle-body-container">
+      <div className="container mt-2 battle-body-container">
         <Form.Select
           onChange={(e) => {
             navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
@@ -1646,7 +1646,7 @@ const Battle = () => {
           <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
           <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
         </Form.Select>
-        <div className="row element-top m-0">
+        <div className="row mt-2 m-0">
           <div className="col-lg-3">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>
@@ -1829,7 +1829,7 @@ const Battle = () => {
           </div>
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-          <div className="text-center element-top">
+          <div className="text-center mt-2">
             <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
               {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
                 <Fragment>

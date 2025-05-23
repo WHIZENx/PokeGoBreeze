@@ -269,13 +269,13 @@ const FindTable = () => {
       <Fragment>
         {isNotEmpty(preIvArr?.result) && (
           <Fragment>
-            <p className="element-top">
+            <p className="mt-2">
               All of result: <b>{preIvArr?.result.length}</b>
             </p>
-            <p className="element-top">
+            <p className="mt-2">
               Average of percent: <b>{toFloatWithPadding(avgPercent, 2)}</b>
             </p>
-            <p className="element-top">
+            <p className="mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             {renderStar(fourStar, 3, 'four')}
@@ -311,10 +311,10 @@ const FindTable = () => {
       <Fragment>
         {isNotEmpty(preCpArr?.result) && (
           <Fragment>
-            <p className="element-top">
+            <p className="mt-2">
               Average of CP: <b>{Math.round(avgCp)}</b>
             </p>
-            <p className="element-top">
+            <p className="mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <DataTable
@@ -366,12 +366,12 @@ const FindTable = () => {
 
   return (
     <Fragment>
-      <div className="container element-top">
+      <div className="container mt-2">
         <Find isHide={true} clearStats={clearArrStats} />
         <h1 id="main" className="text-center">
           Find IV
         </h1>
-        <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
+        <form className="d-flex justify-content-center mt-2" onSubmit={onFindStats.bind(this)}>
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="input-group mb-3">
               <div className="input-group-prepend">
@@ -401,7 +401,7 @@ const FindTable = () => {
         <h1 id="main" className="text-center">
           Find CP
         </h1>
-        <form id="formCP" className="element-top" onSubmit={onFindCP.bind(this)}>
+        <form id="formCP" className="mt-2" onSubmit={onFindCP.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
             <Box sx={{ width: '50%', minWidth: 300 }}>
               <div className="d-flex justify-content-between">
@@ -451,7 +451,7 @@ const FindTable = () => {
               />
             </Box>
           </div>
-          <div className="form-group d-flex justify-content-center text-center element-top">
+          <div className="form-group d-flex justify-content-center text-center mt-2">
             <button type="submit" className="btn btn-primary">
               Search
             </button>
@@ -459,7 +459,7 @@ const FindTable = () => {
         </form>
         {preCpArr && <Fragment>{showResultTableCP()}</Fragment>}
         <hr />
-        <div className="element-top">{findMinMax()}</div>
+        <div className="mt-2">{findMinMax()}</div>
       </div>
     </Fragment>
   );

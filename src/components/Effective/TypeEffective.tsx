@@ -8,7 +8,7 @@ import { getKeyWithData } from '../../util/utils';
 
 const TypeEffective = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => (
-    <div className="element-top d-flex ms-3">
+    <div className="mt-2 d-flex ms-3">
       <div className="text-center" key={0}>
         <img height={50} alt="Pokémon Image" src={APIService.getPokeSprite()} />
         <span className="caption text-black">{getKeyWithData(EffectiveType, EffectiveType.None)}</span>
@@ -19,13 +19,13 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
   return (
     <Fragment>
       {props.typeEffective && (
-        <div className="element-top">
-          <h5 className="element-top">
+        <div className="mt-2">
+          <h5 className="mt-2">
             <li>Pokémon Type Effective</li>
           </h5>
           {(isNotEmpty(props.typeEffective.veryWeak) || isNotEmpty(props.typeEffective.weak)) && (
             <Fragment>
-              <h6 className="element-top">
+              <h6 className="mt-2">
                 <span className="type-title weakness-title">
                   <b>{getKeyWithData(EffectiveType, EffectiveType.Weakness)}</b>
                 </span>
@@ -46,7 +46,7 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
             isNotEmpty(props.typeEffective.veryResist) ||
             isNotEmpty(props.typeEffective.resist)) && (
             <Fragment>
-              <h6 className="element-top">
+              <h6 className="mt-2">
                 <span className="type-title resistance-title">
                   <b>{getKeyWithData(EffectiveType, EffectiveType.Resistance)}</b>
                 </span>
@@ -68,7 +68,7 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
               />
             </Fragment>
           )}
-          <h6 className="element-top">
+          <h6 className="mt-2">
             <span className="type-title neutral-title">
               <b>{getKeyWithData(EffectiveType, EffectiveType.Neutral)}</b>
             </span>

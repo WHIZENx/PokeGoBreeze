@@ -224,7 +224,7 @@ export const TimeLine = (
 ) => {
   const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
     <Fragment>
-      <div className="element-top" style={{ height: 12 }}>
+      <div className="mt-2" style={{ height: 12 }}>
         <div className="d-flex" style={{ columnGap: 10, width: 'max-content' }}>
           {poke.timeline.map((value, index) => (
             <span className="position-relative" key={index} style={{ width: value.size }}>
@@ -361,7 +361,7 @@ export const TimeLineFit = (
 
   const renderTimelineFit = (poke: IPokemonBattle, pokeObj: IPokemonBattle) => (
     <Fragment>
-      <div className="element-top" style={{ height: 12 }}>
+      <div className="mt-2" style={{ height: 12 }}>
         <div className="position-relative timeline-fit-container">
           {poke.timeline.map((value, index) => (
             <Fragment key={index}>

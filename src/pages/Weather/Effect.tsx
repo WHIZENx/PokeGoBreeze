@@ -61,7 +61,7 @@ const Effect = (prop: IWeatherEffComponent) => {
   };
 
   return (
-    <div className="element-top">
+    <div className="mt-2">
       <h5 className="text-center">
         <b>As Pokémon Types</b>
       </h5>

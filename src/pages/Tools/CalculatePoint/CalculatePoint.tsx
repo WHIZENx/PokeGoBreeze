@@ -709,7 +709,7 @@ const CalculatePoint = () => {
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {fMove && (
-                      <div className="element-top" style={{ width: 300, margin: 'auto' }}>
+                      <div className="mt-2" style={{ width: 300, margin: 'auto' }}>
                         <p>
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                         </p>
@@ -750,7 +750,7 @@ const CalculatePoint = () => {
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {cMove && (
-                      <div className="element-top" style={{ width: 300, margin: 'auto' }}>
+                      <div className="mt-2" style={{ width: 300, margin: 'auto' }}>
                         <p>
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                         </p>

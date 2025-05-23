@@ -105,7 +105,7 @@ const PVPHome = () => {
   };
 
   return (
-    <div className="container element-top element-bottom">
+    <div className="container mt-2 pb-3">
       {timestamp.pvp > 0 && (
         <h4>
           <b>Updated: {getTime(timestamp.pvp, true)}</b>

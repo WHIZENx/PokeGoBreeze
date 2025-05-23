@@ -201,7 +201,7 @@ const News = () => {
           />
         )}
       </div>
-      <p className="element-top" style={{ fontWeight: 'bold' }}>
+      <p className="mt-2" style={{ fontWeight: 'bold' }}>
         <span className={value.type === TicketRewardType.Pokemon ? 'select-evo' : ''}>{value.title}</span>
         {value.count > 0 && ` x${value.count}`}
       </p>
@@ -231,7 +231,7 @@ const News = () => {
 
   return (
     <div className="container mb-3">
-      <div className="info-main-container element-top" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
+      <div className="info-main-container mt-2" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
         <h1 className="text-center" style={{ textDecoration: 'underline' }}>
           News
         </h1>
@@ -300,7 +300,7 @@ const News = () => {
                             </>
                           )}
                           {value.detailsLink && (
-                            <p className="element-top" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
+                            <p className="mt-2" dangerouslySetInnerHTML={{ __html: value.detailsLink }} />
                           )}
                         </div>
                       </Accordion.Body>

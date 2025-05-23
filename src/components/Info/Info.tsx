@@ -59,10 +59,10 @@ const Info = () => {
 
   return (
     <div className="mb-3">
-      <h4 className="element-top info-title">
+      <h4 className="mt-2 info-title">
         <b>Information</b>
       </h4>
-      <h5 className="element-top">
+      <h5 className="mt-2">
         <li>Pokémon Type</li>
       </h5>
       <TypeInfo arr={types} className="ms-3" isShow={true} />
