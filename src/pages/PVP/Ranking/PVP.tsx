@@ -369,10 +369,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           </div>
         ) : (
           <div className="ph-item element-top">
-            <div
-              className="ph-picture"
-              style={{ width: '40%', height: 64, paddingLeft: 0, paddingRight: 0, marginBottom: 0 }}
-            />
+            <div className="ph-picture mb-0" style={{ width: '40%', height: 64, paddingLeft: 0, paddingRight: 0 }} />
           </div>
         )}
       </Fragment>

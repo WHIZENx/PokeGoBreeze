@@ -70,7 +70,7 @@ const Raid = (props: IRaidComponent) => {
     }
     return (
       <div className="ph-item w-75" style={{ padding: 0, margin: 'auto', height: 24 }}>
-        <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: color }} />
+        <div className="ph-picture ph-col-3 w-100 h-100 m-0" style={{ padding: 0, background: color }} />
       </div>
     );
   };
@@ -128,7 +128,7 @@ const Raid = (props: IRaidComponent) => {
           )}
         </Form.Select>
       </div>
-      <div className="row w-100 element-top" style={{ margin: 0 }}>
+      <div className="row w-100 element-top m-0">
         <div className="col-4 text-center d-inline-block">
           <h1>CP</h1>
           <hr className="w-100" />
@@ -145,15 +145,15 @@ const Raid = (props: IRaidComponent) => {
           <h5>{RAID_BOSS_TIER[tier].level}</h5>
         </div>
       </div>
-      <div className="row element-top container" style={{ margin: 0 }}>
-        <div className="col d-flex justify-content-center align-items-center" style={{ marginBottom: 15 }}>
+      <div className="row element-top container m-0">
+        <div className="col d-flex justify-content-center align-items-center mb-3">
           <img
             className={tier === 2 ? 'img-type-icon' : ''}
             alt="Image Raid Egg"
             src={raidEgg(tier, props.currForm?.form?.pokemonType, pokemonClass)}
           />
         </div>
-        <div className="col d-flex justify-content-center" style={{ marginBottom: 15 }}>
+        <div className="col d-flex justify-content-center mb-3">
           <table className="table-info table-raid">
             <thead />
             <tbody>

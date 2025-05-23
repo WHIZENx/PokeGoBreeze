@@ -1646,7 +1646,7 @@ const Battle = () => {
           <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
           <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
         </Form.Select>
-        <div className="row element-top" style={{ margin: 0 }}>
+        <div className="row element-top m-0">
           <div className="col-lg-3">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>

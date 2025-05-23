@@ -229,7 +229,7 @@ const Counter = (props: ICounterComponent) => {
     <div className="w-100 counter-none" style={{ verticalAlign: 'top' }}>
       <div className="text-origin text-center theme-table-primary">
         <div className="ph-item">
-          <div className="ph-col-12 theme-table-primary" style={{ padding: 10, margin: 0, gap: 10 }}>
+          <div className="ph-col-12 theme-table-primary m-0" style={{ padding: 10, gap: 10 }}>
             {[...Array(5).keys()].map((_, index) => (
               <div key={index} className="ph-row d-flex" style={{ gap: '5%' }}>
                 <div className="ph-picture" style={{ width: '25%', height: 100 }} />

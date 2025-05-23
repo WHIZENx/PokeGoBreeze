@@ -31,9 +31,7 @@ const Trainer = () => {
 
   return (
     <div className="container" style={{ padding: 15 }}>
-      <h2 className="title-leagues" style={{ marginBottom: 15 }}>
-        Trainer
-      </h2>
+      <h2 className="title-leagues mb-3">Trainer</h2>
       <hr />
       <div>
         <Form.Select onChange={(e) => setLevel(toNumber(e.target.value))} defaultValue={level}>

@@ -92,7 +92,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
   );
 
   return (
-    <div className="row w-100" style={{ margin: 0 }}>
+    <div className="row w-100 m-0">
       {isEqual(
         getValueOrDefault(String, props.type, getKeyWithData(ScoreType, ScoreType.Overall)),
         getKeyWithData(ScoreType, ScoreType.Overall),

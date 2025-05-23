@@ -367,8 +367,8 @@ const CatchChance = () => {
   };
 
   return (
-    <div className="contanier element-top" style={{ paddingBottom: 15 }}>
-      <div className="row" style={{ margin: 0 }}>
+    <div className="container element-top" style={{ paddingBottom: 15 }}>
+      <div className="row m-0">
         <div className="col-md-6" style={{ padding: 0 }}>
           <div className="d-flex justify-content-center">
             <Find
@@ -397,7 +397,7 @@ const CatchChance = () => {
               </h5>
             </div>
           )}
-          <div className="d-flex justify-content-center " style={{ margin: 0 }}>
+          <div className="d-flex justify-content-center m-0">
             <div>
               {medal && (
                 <SelectBadge
@@ -637,7 +637,7 @@ const CatchChance = () => {
                   label="Normal Throw "
                 />
               </div>
-              <div className="row element-top position-relative" style={{ margin: 0 }}>
+              <div className="row element-top position-relative m-0">
                 {isNormalThrow && (
                   <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter" />
                 )}
@@ -659,7 +659,7 @@ const CatchChance = () => {
                         onChange={(_, v) => onHandleRadius(v as number)}
                       />
                     </div>
-                    <div className="w-50 text-center d-inline-block" style={{ marginBottom: 15 }}>
+                    <div className="w-50 text-center d-inline-block mb-3">
                       <h1>Radius</h1>
                       <hr className="w-100" />
                       <h5>{radius}</h5>

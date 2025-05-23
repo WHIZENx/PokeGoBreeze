@@ -229,7 +229,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         isDisabled={!stats}
       />
       <hr className="w-100" />
-      <div className="row w-100" style={{ margin: 0 }}>
+      <div className="row w-100 m-0">
         <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
           <Info />
           {!isSpecialFormType(form?.form?.pokemonType) && (
@@ -254,7 +254,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       </div>
       <hr className="w-100" />
       {pokemonData?.pokemonType !== PokemonType.GMax && !isSpecialFormType(pokemonData?.pokemonType) ? (
-        <div className="row w-100" style={{ margin: 0 }}>
+        <div className="row w-100 m-0">
           <div className="col-xl h-100 position-relative" style={{ padding: 0 }}>
             {renderEvolution()}
           </div>

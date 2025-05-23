@@ -215,7 +215,7 @@ const News = () => {
       <div className="w-100 h-100 counter-none" style={{ verticalAlign: 'top' }}>
         <div className="text-origin text-center">
           <div className="ph-item" style={{ backgroundColor: 'transparent' }}>
-            <div className="ph-col-12" style={{ padding: 0, margin: 0, gap: 20 }}>
+            <div className="ph-col-12 m-0" style={{ padding: 0, gap: 20 }}>
               {[...Array(3).keys()].map((_, index) => (
                 <div key={index} className="ph-row">
                   <div className="ph-picture" style={{ width: '100%', height: 256 }} />
@@ -281,7 +281,7 @@ const News = () => {
                               <h6 style={{ textDecoration: 'underline' }}>Rewards</h6>
                               <div className="w-100 text-center d-inline-block align-middle">
                                 {value.rewardNews.map((value, i) => (
-                                  <div key={i} className="d-inline-block" style={{ margin: '0 10px' }}>
+                                  <div key={i} className="d-inline-block mx-2">
                                     {value.type === TicketRewardType.Pokemon && value.pokemon ? (
                                       <LinkToTop
                                         className="select-evo"

@@ -1322,7 +1322,7 @@ const RaidBattle = () => {
 
   return (
     <Fragment>
-      <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
+      <div className="row m-0" style={{ overflowX: 'hidden' }}>
         <div className="col-lg" style={{ padding: 0 }}>
           <Find isHide={true} title="Raid Boss" clearStats={clearDataBoss} />
         </div>
@@ -1392,7 +1392,7 @@ const RaidBattle = () => {
               isLoadedForms={isLoadedForms}
             />
             <hr />
-            <div className="row align-items-center element-top" style={{ margin: 0 }}>
+            <div className="row align-items-center element-top m-0">
               <div className="col-6 d-flex justify-content-end">
                 <FormControlLabel
                   control={
@@ -1416,7 +1416,7 @@ const RaidBattle = () => {
                 />
               </div>
             </div>
-            <div className="row align-items-center element-top" style={{ margin: 0 }}>
+            <div className="row align-items-center element-top m-0">
               <div className="col-6 d-flex justify-content-end" style={{ paddingRight: 0 }}>
                 <FormControlLabel
                   control={
@@ -1551,7 +1551,7 @@ const RaidBattle = () => {
                     Time is Killed: <b>{toFloatWithPadding(value.ttkDef, 2)} sec</b>
                   </span>
                   <hr />
-                  <div className="container" style={{ marginBottom: 15 }}>
+                  <div className="container mb-3">
                     <TypeBadge title="Fast Move" move={value.fMove} moveType={value.fMoveType ?? MoveType.None} />
                     <TypeBadge title="Charged Move" move={value.cMove} moveType={value.cMoveType ?? MoveType.None} />
                   </div>
@@ -1698,7 +1698,7 @@ const RaidBattle = () => {
             {resultBoss && (
               <Fragment>
                 <hr />
-                <div className="row" style={{ margin: 0 }}>
+                <div className="row m-0">
                   <div className="col-lg-6" style={{ marginBottom: 20 }}>
                     <span className="d-block element-top">
                       {`DPS: `}
@@ -1733,12 +1733,10 @@ const RaidBattle = () => {
                     className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center"
                     style={{ marginBottom: 20 }}
                   >
-                    <h2 className="text-center" style={{ margin: 0 }}>
-                      Suggested players
-                    </h2>
+                    <h2 className="text-center m-0">Suggested players</h2>
                     <hr className="w-100" />
                     <div className="d-inline-block text-center">
-                      <h3 className="d-block" style={{ margin: 0 }}>
+                      <h3 className="d-block m-0">
                         {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP)))}
                       </h3>
                       {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP))) === 1 ? (
@@ -1749,7 +1747,7 @@ const RaidBattle = () => {
                     </div>
                     <h3 className="mx-2 mb-3"> - </h3>
                     <div className="d-inline-block text-center">
-                      <h3 className="d-block" style={{ margin: 0 }}>
+                      <h3 className="d-block m-0">
                         {Math.ceil(statBossHP / (statBossHP - Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)))}+
                       </h3>
                       <span className="caption text-success">Easy</span>
@@ -1763,7 +1761,7 @@ const RaidBattle = () => {
                 <hr />
                 <ul className="element-top" style={{ listStyleType: 'initial' }}>
                   {resultRaid?.map((result, turn) => (
-                    <li style={{ marginBottom: 15 }} key={turn}>
+                    <li className="mb-3" key={turn}>
                       <h4>
                         <b>Pokémon Round {turn + 1}</b>
                       </h4>

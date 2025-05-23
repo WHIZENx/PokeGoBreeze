@@ -81,9 +81,7 @@ const Sticker = () => {
 
   return (
     <div className="container" style={{ padding: 15 }}>
-      <h2 className="title-leagues" style={{ marginBottom: 15 }}>
-        Sticker List
-      </h2>
+      <h2 className="title-leagues mb-3">Sticker List</h2>
       <hr />
       <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find Sticker</span>

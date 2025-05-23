@@ -235,7 +235,7 @@ const Damage = () => {
       </h1>
       <div className="d-flex justify-content-center">
         <div className="element-top container row" style={{ marginBottom: 20 }}>
-          <div className="col" style={{ marginBottom: 15 }}>
+          <div className="col mb-3">
             <form onSubmit={onCalculateDamagePoke.bind(this)}>
               <div className="d-flex justify-content-center">
                 <div className="row text-center" style={{ width: 520 }}>

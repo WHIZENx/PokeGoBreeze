@@ -72,8 +72,7 @@ const Effect = (prop: IWeatherEffComponent) => {
               <b>Type 1</b>
             </h6>
             <div
-              className="card-input"
-              style={{ marginBottom: 15 }}
+              className="card-input mb-3"
               tabIndex={0}
               onClick={() => setShowTypePri(true)}
               onBlur={() => setShowTypePri(false)}
@@ -101,8 +100,7 @@ const Effect = (prop: IWeatherEffComponent) => {
               <b>Type 2</b>
             </h6>
             <div
-              className="card-input"
-              style={{ marginBottom: 15 }}
+              className="card-input mb-3"
               tabIndex={0}
               onClick={() => setShowTypeSec(true)}
               onBlur={() => setShowTypeSec(false)}

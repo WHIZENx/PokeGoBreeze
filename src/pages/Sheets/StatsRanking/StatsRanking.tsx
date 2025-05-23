@@ -539,7 +539,7 @@ const StatsRanking = () => {
             />
           </div>
         </div>
-        <div className="row w-100 element-top" style={{ margin: 0 }}>
+        <div className="row w-100 element-top m-0">
           <div className="col-xl-5" style={{ padding: 0 }}>
             <PokemonTable
               id={select?.num}

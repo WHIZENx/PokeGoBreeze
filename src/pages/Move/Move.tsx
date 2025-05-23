@@ -310,13 +310,13 @@ const Move = (props: IMovePage) => {
         </>
       ) : (
         <div className="ph-item">
-          <div className="ph-row h-100 head-box d-flex" style={{ marginBottom: 0, paddingLeft: 0 }}>
+          <div className="ph-row h-100 head-box d-flex mb-0" style={{ paddingLeft: 0 }}>
             <div className="ph-picture" style={{ width: '40%', height: 45 }} />
           </div>
         </div>
       )}
       <hr />
-      <div className="row" style={{ margin: 0 }}>
+      <div className="row m-0">
         <div className="col" style={{ padding: 0 }}>
           <table className="table-info move-table">
             <thead className="text-center">

@@ -504,7 +504,7 @@ export const TimeLineFit = (
             onTouchMove={(e) => move(e as unknown as TimelineEvent<HTMLDivElement>)}
           >
             {renderTimelineFit(pokemonCurr, pokemonObj)}
-            <hr className="w-100" style={{ margin: 0 }} />
+            <hr className="w-100 m-0" />
             {renderTimelineFit(pokemonObj, pokemonCurr)}
             <div id="play-line" ref={eRef} className="play-line" />
           </div>

@@ -175,7 +175,7 @@ const MoveSet = (props: MoveSetComponent) => {
   }, [fastMoves, chargedMoves, props.moves?.fastMoves, props.moves?.chargedMoves]);
 
   return (
-    <div className="row" style={{ margin: 0 }}>
+    <div className="row m-0">
       <div className="col-xl-6 moves-title-container" style={{ padding: 0 }}>
         <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">

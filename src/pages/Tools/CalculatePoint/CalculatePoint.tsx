@@ -335,7 +335,7 @@ const CalculatePoint = () => {
 
   return (
     <Fragment>
-      <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
+      <div className="row m-0" style={{ overflowX: 'hidden' }}>
         <div className="col-lg" style={{ padding: 0 }}>
           <Find isHide={true} title="Attacker Pokémon" clearStats={clearData} />
         </div>
@@ -691,7 +691,7 @@ const CalculatePoint = () => {
               <div className="row">
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
-                  <div style={{ marginBottom: 15 }}>
+                  <div className="mb-3">
                     <Move
                       text="Fast Moves"
                       id={searching?.object?.pokemon?.id}

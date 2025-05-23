@@ -16,7 +16,7 @@ const Gender = (props: IGenderComponent) => {
           alt="Image Pokémon Sex"
           src={APIService.getGenderSprite(getKeyWithData(TypeSex, props.sex))}
         />
-        <h6 className="ratio-gender" style={{ margin: 0 }}>
+        <h6 className="ratio-gender m-0">
           {`${getKeyWithData(TypeSex, props.sex)} ${
             props.ratio ? `ratio: ${props.sex === TypeSex.Male ? props.ratio.M * 100 : props.ratio.F * 100}%` : ''
           }`}

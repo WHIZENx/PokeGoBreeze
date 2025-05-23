@@ -244,7 +244,7 @@ const FindTable = () => {
         ) : (
           <Rating name={`${style}-rate`} value={starAmount} max={3} readOnly={true} />
         )}
-        <hr style={{ margin: 0 }} />
+        <hr className="m-0" />
         <div>
           <b>{star}</b>
         </div>

@@ -696,14 +696,14 @@ const DpsTdo = () => {
     <div className="position-relative">
       {!isNotEmpty(dpsTable) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
-          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner" style={{ padding: 0, margin: 0 }} />
+          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0" style={{ padding: 0 }} />
         </div>
       )}
       <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
-        <div className="row w-100" style={{ margin: 0 }}>
+        <div className="row w-100 m-0">
           {types.map((item, index) => (
-            <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
+            <div key={index} className="col img-group m-0" style={{ padding: 0 }}>
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
@@ -718,10 +718,10 @@ const DpsTdo = () => {
             </div>
           ))}
         </div>
-        <div className="row w-100" style={{ margin: 0 }}>
+        <div className="row w-100 m-0">
           <div className="col-xxl border-input" style={{ padding: 0, height: 'fit-content' }}>
             <div className="border-input">
-              <div className="row w-100" style={{ margin: 0 }}>
+              <div className="row w-100 m-0">
                 <div className="d-flex col-md-9" style={{ padding: 0 }}>
                   <span className="input-group-text">Search name or ID</span>
                   <input
@@ -949,7 +949,7 @@ const DpsTdo = () => {
               />
             </div>
             <div className="input-group">
-              <div className="row w-100" style={{ margin: 0 }}>
+              <div className="row w-100 m-0">
                 <Box className="col-xxl-8" style={{ padding: 0 }}>
                   <div className="input-group">
                     <span className="input-group-text">Filter best move sets</span>
@@ -1004,7 +1004,7 @@ const DpsTdo = () => {
               </div>
             </div>
             <div className="input-group">
-              <div className="row w-100" style={{ margin: 0 }}>
+              <div className="row w-100 m-0">
                 <Box className="col-xl-4" style={{ padding: 0 }}>
                   <div className="input-group h-100">
                     <span className="input-group-text">Defender</span>
@@ -1125,7 +1125,7 @@ const DpsTdo = () => {
                   }
                 />
               </div>
-              <div className="row" style={{ margin: 0 }}>
+              <div className="row m-0">
                 <Box className="col-5 input-group" style={{ padding: 0 }}>
                   <span className="input-group-text">IV ATK</span>
                   <input

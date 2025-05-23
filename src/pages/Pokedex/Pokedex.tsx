@@ -282,14 +282,14 @@ const Pokedex = (props: IStyleSheetData) => {
     <div className="position-relative">
       {!isNotEmpty(dataList) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
-          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner" style={{ padding: 0, margin: 0 }} />
+          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0" style={{ padding: 0 }} />
         </div>
       )}
       <div className="border-types text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
-        <div className="row w-100" style={{ margin: 0 }}>
+        <div className="row w-100 m-0">
           {types.map((item, index) => (
-            <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
+            <div key={index} className="col img-group m-0" style={{ padding: 0 }}>
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
@@ -307,7 +307,7 @@ const Pokedex = (props: IStyleSheetData) => {
         <div className="w-100">
           <div className="border-input">
             <div className="head-types">Options</div>
-            <div className="row" style={{ margin: 0 }}>
+            <div className="row m-0">
               <div className="col-xl-4" style={{ padding: 0 }}>
                 <div className="d-flex">
                   <span className="input-group-text">Search name or ID</span>

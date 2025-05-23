@@ -359,11 +359,9 @@ const Leagues = () => {
 
   return (
     <div className="container" style={{ padding: 15 }}>
-      <h2 className="title-leagues" style={{ marginBottom: 15 }}>
-        Battle Leagues List
-      </h2>
+      <h2 className="title-leagues mb-3">Battle Leagues List</h2>
       <hr />
-      <div className="row" style={{ rowGap: 10, margin: 0 }}>
+      <div className="row m-0" style={{ rowGap: 10 }}>
         <div className="col-md-8 d-flex justify-content-start align-items-center" style={{ padding: 0 }}>
           <span style={{ fontWeight: 500 }}>
             <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>
@@ -635,7 +633,7 @@ const Leagues = () => {
             </div>
           </div>
           <div className="w-100 text-center my-3">
-            <div className="d-flex justify-content-center" style={{ marginBottom: 10, columnGap: '10%' }}>
+            <div className="d-flex justify-content-center mb-2" style={{ columnGap: '10%' }}>
               <div id="currRank" className="combat-league-info">
                 <img
                   className="main-combat-league-info"

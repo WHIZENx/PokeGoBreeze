@@ -523,7 +523,7 @@ const FindBattle = () => {
                   </Accordion.Header>
                   <Accordion.Body style={{ padding: 0 }}>
                     <div className="sub-body">
-                      <div className="row justify-content-center league-info-content" style={{ margin: 0 }}>
+                      <div className="row justify-content-center league-info-content m-0">
                         {value.map((item, index) => (
                           <div
                             className="col d-inline-block evo-item-desc justify-content-center"

@@ -274,8 +274,7 @@ const SearchTypes = (props: IStyleSheetData) => {
             <b>Select Type</b>
           </h6>
           <div
-            className="card-input"
-            style={{ marginBottom: 15 }}
+            className="card-input mb-3"
             tabIndex={0}
             onClick={() => setShowType(true)}
             onBlur={() => setShowType(false)}

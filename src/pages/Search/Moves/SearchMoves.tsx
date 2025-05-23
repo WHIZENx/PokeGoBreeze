@@ -166,19 +166,19 @@ const Search = () => {
   return (
     <div className="container" style={{ marginTop: 20, marginBottom: 20 }}>
       <div className="table-head">Moveset list in Pokémon GO</div>
-      <div className="row w-100" style={{ margin: 0 }}>
+      <div className="row w-100 m-0">
         <div className="col-xl table-movesets-col" style={{ padding: 0 }}>
           <table className="table-info table-movesets">
             <thead />
             <tbody>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={3}>
-                  <div className="row" style={{ margin: 0 }}>
+                  <div className="row m-0">
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       Fast Moves List
                     </div>
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
-                      <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
+                      <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
                         <InputLabel>Type</InputLabel>
                         <Select
                           value={fMoveType}
@@ -234,12 +234,12 @@ const Search = () => {
             <tbody>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={3}>
-                  <div className="row" style={{ margin: 0 }}>
+                  <div className="row m-0">
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
                       Charged Moves List
                     </div>
                     <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
-                      <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
+                      <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
                         <InputLabel>Type</InputLabel>
                         <Select
                           value={cMoveType}

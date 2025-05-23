@@ -13,7 +13,7 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
     <>
       {pokemon && !pokemon.releasedGO && (
         <Alert variant={VariantType.Danger}>
-          <h5 className="text-danger" style={{ margin: 0 }}>
+          <h5 className="text-danger m-0">
             {'* '}
             <b>
               {splitAndCapitalize(

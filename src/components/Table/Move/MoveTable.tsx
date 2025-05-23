@@ -376,7 +376,7 @@ const TableMove = (props: ITableMoveComponent) => {
   return (
     <Tabs defaultActiveKey="movesList" className="lg-2">
       <Tab eventKey="movesList" title="Moves List">
-        <div className="row w-100 theme-table-info-bg theme-table-info-bg-border" style={{ margin: 0 }}>
+        <div className="row w-100 theme-table-info-bg theme-table-info-bg-border m-0">
           <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
@@ -414,7 +414,7 @@ const TableMove = (props: ITableMoveComponent) => {
         </div>
       </Tab>
       <Tab eventKey="bestEffList" title="Best Moves List">
-        <div className="row w-100" style={{ margin: 0 }}>
+        <div className="row w-100 m-0">
           {renderTable(TableType.Offensive)}
           {renderTable(TableType.Defensive)}
         </div>
