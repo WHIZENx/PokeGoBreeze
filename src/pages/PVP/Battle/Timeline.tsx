@@ -276,7 +276,7 @@ export const TimeLine = (
         style={{
           columnGap: 10,
           width: 'max-content',
-          borderBottom: border ? '1px solid lightgray' : 'none',
+          borderBottom: border ? 'var(--custom-table-border)' : 'none',
         }}
       >
         {poke.timeline.map((value, index) => (

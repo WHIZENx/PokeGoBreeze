@@ -689,11 +689,10 @@ const Calculate = () => {
                         <td>Candy Required</td>
                         <td colSpan={3} className="p-0">
                           <div
-                            className="d-flex align-items-center td-style"
+                            className="d-flex align-items-center td-style custom-border-right"
                             style={{
                               float: 'left',
                               width: '50%',
-                              borderRight: '1px solid #b8d4da',
                             }}
                           >
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
@@ -823,11 +822,10 @@ const Calculate = () => {
                         <td>Candy Required</td>
                         <td colSpan={3} className="p-0">
                           <div
-                            className="d-flex align-items-center td-style"
+                            className="d-flex align-items-center td-style custom-border-right"
                             style={{
                               float: 'left',
                               width: '50%',
-                              borderRight: '1px solid #b8d4da',
                             }}
                           >
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
@@ -957,11 +955,10 @@ const Calculate = () => {
                         <td>Candy Required</td>
                         <td colSpan={3} className="p-0">
                           <div
-                            className="d-flex align-items-center td-style"
+                            className="d-flex align-items-center td-style custom-border-right"
                             style={{
                               float: 'left',
                               width: '50%',
-                              borderRight: '1px solid #b8d4da',
                             }}
                           >
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
@@ -1088,11 +1085,10 @@ const Calculate = () => {
                         <td>Candy Required</td>
                         <td colSpan={3} className="p-0">
                           <div
-                            className="d-flex align-items-center td-style"
+                            className="d-flex align-items-center td-style custom-border-right"
                             style={{
                               float: 'left',
                               width: '50%',
-                              borderRight: '1px solid #b8d4da',
                             }}
                           >
                             {dataMasterLeague ? (
