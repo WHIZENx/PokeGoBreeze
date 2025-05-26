@@ -165,10 +165,10 @@ const Counter = (props: ICounterComponent) => {
       name: 'Fast',
       selector: (row) => (
         <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
-          <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+          <div className="me-1" style={{ verticalAlign: 'text-bottom' }}>
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
-          <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
+          <span className="me-1" style={{ fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.fMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
@@ -192,10 +192,10 @@ const Counter = (props: ICounterComponent) => {
       name: 'Charged',
       selector: (row) => (
         <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
-          <div style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
+          <div className="me-1" style={{ verticalAlign: 'text-bottom' }}>
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
-          <span style={{ marginRight: 5, fontSize: '0.9rem', whiteSpace: 'normal' }}>
+          <span className="me-1" style={{ fontSize: '0.9rem', whiteSpace: 'normal' }}>
             {splitAndCapitalize(row.cMove.name.toLowerCase(), '_', ' ')}
           </span>
           <span className="w-100">
@@ -229,7 +229,7 @@ const Counter = (props: ICounterComponent) => {
     <div className="w-100 counter-none" style={{ verticalAlign: 'top' }}>
       <div className="text-origin text-center theme-table-primary">
         <div className="ph-item">
-          <div className="ph-col-12 theme-table-primary" style={{ padding: 10, margin: 0, gap: 10 }}>
+          <div className="ph-col-12 theme-table-primary m-0 p-2" style={{ gap: 10 }}>
             {[...Array(5).keys()].map((_, index) => (
               <div key={index} className="ph-row d-flex" style={{ gap: '5%' }}>
                 <div className="ph-picture" style={{ width: '25%', height: 100 }} />
@@ -350,10 +350,9 @@ const Counter = (props: ICounterComponent) => {
           <span className="d-flex align-items-center">
             Released in GO
             <img
-              className={releasedGO && !showFrame ? '' : 'filter-gray'}
+              className={combineClasses('ms-1', releasedGO && !showFrame ? '' : 'filter-gray')}
               width={28}
               height={28}
-              style={{ marginLeft: 5 }}
               alt="Pokémon GO Icon"
               src={APIService.getPokemonGoIcon(icon)}
             />
@@ -397,9 +396,9 @@ const Counter = (props: ICounterComponent) => {
         columns={convertColumnDataType(columns)}
         defaultSortFieldId={ColumnType.Percent}
         defaultSortAsc={false}
-        pagination={true}
+        pagination
         customStyles={getCustomThemeDataTable(customStyles)}
-        fixedHeader={true}
+        fixedHeader
         paginationComponentOptions={{
           noRowsPerPage: true,
         }}
@@ -410,8 +409,8 @@ const Counter = (props: ICounterComponent) => {
         data={counterFilter}
       />
 
-      <Modal show={showOption} onHide={handleCloseOption} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={showOption} onHide={handleCloseOption} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Pokémon counter options</Modal.Title>
         </Modal.Header>
         <Modal.Body>

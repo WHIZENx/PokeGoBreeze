@@ -6,11 +6,11 @@ const WeatherEffective = (props: IWeatherEffectiveComponent) => {
   return (
     <Fragment>
       {props.weatherEffective && (
-        <div className="element-top">
-          <h5 className="element-top">
+        <div className="mt-2">
+          <h5 className="mt-2">
             <li>Types Pokémon for Boosts</li>
           </h5>
-          <TypeInfo arr={props.weatherEffective} style={{ marginLeft: 15 }} isShow={true} />
+          <TypeInfo arr={props.weatherEffective} className="ms-3" isShow />
         </div>
       )}
     </Fragment>

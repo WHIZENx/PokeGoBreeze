@@ -6,7 +6,7 @@ import { EffectiveType } from '../../../components/Effective/enums/type-effectiv
 
 const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
   const renderTypeEffective = (effType: EffectiveType) => (
-    <div className="col-lg-4" style={{ marginBottom: 15 }}>
+    <div className="col-lg-4 mb-3">
       <div className="h-100">
         <h6
           className={`d-flex justify-content-center ${getKeyWithData(EffectiveType, effType)?.toLowerCase()}-bg-text`}
@@ -16,7 +16,7 @@ const TypeEffectivePVP = (props: TypeEffectiveComponent) => {
         <hr className="w-100" />
         {<TypeEffectiveSelect effect={effType} types={props.types} />}
       </div>
-      <hr className="w-100" style={{ margin: 0 }} />
+      <hr className="w-100 m-0" />
     </div>
   );
   return (

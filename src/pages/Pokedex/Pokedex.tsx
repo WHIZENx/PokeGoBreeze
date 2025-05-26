@@ -282,24 +282,24 @@ const Pokedex = (props: IStyleSheetData) => {
     <div className="position-relative">
       {!isNotEmpty(dataList) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
-          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner" style={{ padding: 0, margin: 0 }} />
+          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}
       <div className="border-types text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
-        <div className="row w-100" style={{ margin: 0 }}>
+        <div className="row w-100 m-0">
           {types.map((item, index) => (
-            <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
+            <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
-                  `btn-select-type w-100 border-types`,
+                  'btn-select-type w-100 border-types p-2',
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
-                style={{ padding: 10, transition: TRANSITION_TIME }}
+                style={{ transition: TRANSITION_TIME }}
               >
-                <TypeInfo isBlock={true} arr={[item]} />
+                <TypeInfo isBlock arr={[item]} />
               </button>
             </div>
           ))}
@@ -307,8 +307,8 @@ const Pokedex = (props: IStyleSheetData) => {
         <div className="w-100">
           <div className="border-input">
             <div className="head-types">Options</div>
-            <div className="row" style={{ margin: 0 }}>
-              <div className="col-xl-4" style={{ padding: 0 }}>
+            <div className="row m-0">
+              <div className="col-xl-4 p-0">
                 <div className="d-flex">
                   <span className="input-group-text">Search name or ID</span>
                   <input
@@ -319,7 +319,7 @@ const Pokedex = (props: IStyleSheetData) => {
                     onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
                   />
                 </div>
-                <div className="d-flex flex-wrap" style={{ paddingLeft: 8, paddingRight: 8 }}>
+                <div className="d-flex flex-wrap px-2">
                   <FormControlLabel
                     control={
                       <Checkbox checked={isMatch} onChange={(_, check) => setFilters({ ...filters, isMatch: check })} />
@@ -337,10 +337,9 @@ const Pokedex = (props: IStyleSheetData) => {
                       <span className="d-flex align-items-center">
                         Released in GO
                         <img
-                          className={releasedGO ? '' : 'filter-gray'}
+                          className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
                           width={28}
                           height={28}
-                          style={{ marginLeft: 5 }}
                           alt="Pokémon GO Icon"
                           src={APIService.getPokemonGoIcon(icon)}
                         />
@@ -348,7 +347,7 @@ const Pokedex = (props: IStyleSheetData) => {
                     }
                   />
                 </div>
-                <div className="d-flex" style={{ paddingLeft: 8, paddingRight: 8 }}>
+                <div className="d-flex px-2">
                   <FormControlLabel
                     control={
                       <Switch checked={isShiny} onChange={(_, check) => setFilters({ ...filters, isShiny: check })} />
@@ -357,10 +356,9 @@ const Pokedex = (props: IStyleSheetData) => {
                       <span className="d-flex align-items-center">
                         Show All Shiny Pokémon (Only Possible)
                         <img
-                          className={isShiny ? 'filter-shiny' : 'filter-gray'}
+                          className={combineClasses('ms-1', isShiny ? 'filter-shiny' : 'filter-gray')}
                           width={28}
                           height={28}
-                          style={{ marginLeft: 5 }}
                           alt="Pokémon GO Icon"
                           src={APIService.getShinyIcon()}
                         />
@@ -369,18 +367,18 @@ const Pokedex = (props: IStyleSheetData) => {
                   />
                 </div>
               </div>
-              <div className="col-xl-8 border-input" style={{ padding: 8, gap: 10 }}>
+              <div className="col-xl-8 border-input p-2" style={{ gap: 10 }}>
                 <div className="d-flex">
                   <FormControl sx={{ m: 1, width: '50%' }} size="small">
                     <InputLabel>Generation(s)</InputLabel>
                     <Select
-                      multiple={true}
+                      multiple
                       value={gen}
                       onChange={handleChangeGen}
                       input={<OutlinedInput label="Generation(s)" />}
                       renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
                     >
-                      <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
+                      <MenuItem disableRipple disableTouchRipple value={-1}>
                         <ListItemText
                           primary={
                             <button
@@ -400,14 +398,14 @@ const Pokedex = (props: IStyleSheetData) => {
                   <FormControl sx={{ m: 1, width: '50%' }} size="small">
                     <InputLabel>Version(s)</InputLabel>
                     <Select
-                      multiple={true}
+                      multiple
                       value={version}
                       onChange={handleChangeVersion}
                       input={<OutlinedInput label="Version(s)" />}
                       renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
                       MenuProps={versionProps}
                     >
-                      <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
+                      <MenuItem disableRipple disableTouchRipple value={-1}>
                         <ListItemText
                           primary={
                             <button

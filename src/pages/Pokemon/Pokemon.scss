@@ -15,7 +15,6 @@
 .img-desc {
   width: 210px;
   height: 210px;
-  border: 2px solid lightgray;
   padding: 5px;
 }
 
@@ -57,10 +56,6 @@ td h6 {
   margin: 0;
 }
 
-.table-desc tbody tr td {
-  border: 1px solid lightgray;
-}
-
 .table-info tbody tr td:nth-child(1) {
   width: 25%;
   min-width: 180px;
@@ -100,10 +95,6 @@ td h6 {
   text-align: start;
 }
 
-.table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs {
-  border-bottom: 1px solid #b8d4da;
-}
-
 .table-info tbody tr:nth-child(even) td:nth-child(2) div.row-extra {
   padding: 5px 10px;
 }
@@ -117,7 +108,6 @@ td h6 {
 }
 
 .prev-next-block {
-  border: 1px solid lightgray;
   z-index: 3 !important;
   box-shadow: 0 5px 3px #0000004d;
   margin: 0;

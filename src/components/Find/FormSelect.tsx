@@ -320,17 +320,13 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <img
-        style={{ padding: 10 }}
+        className="p-2"
         height={200}
         alt="Image Pokemon"
-        src={
-          currentForm?.form
-            ? APIService.getPokeFullSprite(
-                dataStorePokemon?.current?.id,
-                convertPokemonImageName(currentForm?.form.formName)
-              )
-            : APIService.getPokeFullSprite(dataStorePokemon?.current?.id)
-        }
+        src={APIService.getPokeFullSprite(
+          dataStorePokemon?.current?.id,
+          convertPokemonImageName(currentForm?.form.formName)
+        )}
         onError={(e) => {
           e.currentTarget.onerror = null;
           e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
@@ -358,7 +354,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           </div>
         )}
       </div>
-      <div className="element-top" style={{ height: 64 }}>
+      <div className="mt-2" style={{ height: 64 }}>
         {currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}
       </div>
       <h4>
@@ -408,13 +404,13 @@ const FormSelect = (props: IFormSelectComponent) => {
             ))}
           </Fragment>
         ) : (
-          <LoadGroup isShow={true} isVertical={true} isHideAttr={true} size={40} />
+          <LoadGroup isShow isVertical isHideAttr size={40} />
         )}
       </div>
       {!props.isHide && (
         <div className="d-flex justify-content-center text-center">
           <TypeRadioGroup
-            row={true}
+            row
             aria-labelledby="row-types-group-label"
             name="row-types-group"
             value={typePoke}

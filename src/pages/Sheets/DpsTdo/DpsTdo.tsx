@@ -144,7 +144,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           <img
             height={48}
             alt="Pokémon Image"
-            style={{ marginRight: 10 }}
+            className="me-2"
             src={APIService.getPokeIconSprite(row.pokemon.sprite, false)}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -168,7 +168,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
           key={index}
           width={25}
           height={25}
-          style={{ marginRight: 10 }}
+          className="me-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -185,13 +185,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/move/${row.fMove?.id}`}
         title={`${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}
       >
-        <IconType
-          width={25}
-          height={25}
-          style={{ marginRight: 10 }}
-          alt="Pokémon GO Type Logo"
-          type={row.fMove?.type}
-        />
+        <IconType width={25} height={25} className="me-2" alt="Pokémon GO Type Logo" type={row.fMove?.type} />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.fMove?.name, '_', ' ')}`}</span>
           {row.fMoveType !== MoveType.None && (
@@ -220,13 +214,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
         to={`/move/${row.cMove?.id}`}
         title={`${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}
       >
-        <IconType
-          width={25}
-          height={25}
-          style={{ marginRight: 10 }}
-          alt="Pokémon GO Type Logo"
-          type={row.cMove?.type}
-        />
+        <IconType width={25} height={25} className="me-2" alt="Pokémon GO Type Logo" type={row.cMove?.type} />
         <div>
           <span className="text-b-ic">{` ${splitAndCapitalize(row.cMove?.name, '_', ' ')}`}</span>
           {row.cMoveType !== MoveType.None && (
@@ -708,33 +696,32 @@ const DpsTdo = () => {
     <div className="position-relative">
       {!isNotEmpty(dpsTable) && (
         <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
-          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner" style={{ padding: 0, margin: 0 }} />
+          <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}
       <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
-        <div className="row w-100" style={{ margin: 0 }}>
+        <div className="row w-100 m-0">
           {types.map((item, index) => (
-            <div key={index} className="col img-group" style={{ margin: 0, padding: 0 }}>
+            <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
-                  'btn-select-type w-100 border-types',
+                  'btn-select-type w-100 border-types p-2',
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
-                style={{ padding: 10 }}
               >
-                <TypeInfo isBlock={true} arr={[item]} />
+                <TypeInfo isBlock arr={[item]} />
               </button>
             </div>
           ))}
         </div>
-        <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xxl border-input" style={{ padding: 0, height: 'fit-content' }}>
+        <div className="row w-100 m-0">
+          <div className="col-xxl border-input p-0" style={{ height: 'fit-content' }}>
             <div className="border-input">
-              <div className="row w-100" style={{ margin: 0 }}>
-                <div className="d-flex col-md-9" style={{ padding: 0 }}>
+              <div className="row w-100 m-0">
+                <div className="d-flex col-md-9 p-0">
                   <span className="input-group-text">Search name or ID</span>
                   <input
                     type="text"
@@ -961,13 +948,12 @@ const DpsTdo = () => {
               />
             </div>
             <div className="input-group">
-              <div className="row w-100" style={{ margin: 0 }}>
-                <Box className="col-xxl-8" style={{ padding: 0 }}>
+              <div className="row w-100 m-0">
+                <Box className="col-xxl-8 p-0">
                   <div className="input-group">
                     <span className="input-group-text">Filter best move sets</span>
                     <FormControlLabel
-                      className="border-input"
-                      style={{ marginRight: 0, paddingRight: 16 }}
+                      className="border-input me-0 pe-3"
                       control={
                         <Switch
                           checked={enableBest}
@@ -1002,10 +988,9 @@ const DpsTdo = () => {
                         <span className="d-flex align-items-center">
                           Released in GO
                           <img
-                            className={releasedGO ? '' : 'filter-gray'}
+                            className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
                             width={28}
                             height={28}
-                            style={{ marginLeft: 5 }}
                             alt="Pokémon GO Icon"
                             src={APIService.getPokemonGoIcon(icon)}
                           />
@@ -1017,13 +1002,13 @@ const DpsTdo = () => {
               </div>
             </div>
             <div className="input-group">
-              <div className="row w-100" style={{ margin: 0 }}>
-                <Box className="col-xl-4" style={{ padding: 0 }}>
+              <div className="row w-100 m-0">
+                <Box className="col-xl-4 p-0">
                   <div className="input-group h-100">
                     <span className="input-group-text">Defender</span>
                     <SelectPokemon
                       pokemon={dataTargetPokemon}
-                      isSelected={true}
+                      isSelected
                       setCurrentPokemon={setDataTargetPokemon}
                       setFMovePokemon={setFMoveTargetPokemon}
                       setCMovePokemon={setCMoveTargetPokemon}
@@ -1031,7 +1016,7 @@ const DpsTdo = () => {
                     />
                   </div>
                 </Box>
-                <Box className="col-xl-4" style={{ padding: 0 }}>
+                <Box className="col-xl-4 p-0">
                   <div className="input-group h-100">
                     <span className="input-group-text">Fast Move</span>
                     <SelectMove
@@ -1050,7 +1035,7 @@ const DpsTdo = () => {
                     />
                   </div>
                 </Box>
-                <Box className="col-xl-4" style={{ padding: 0 }}>
+                <Box className="col-xl-4 p-0">
                   <div className="input-group h-100">
                     <span className="input-group-text">Charged Move</span>
                     <SelectMove
@@ -1072,7 +1057,7 @@ const DpsTdo = () => {
               </div>
             </div>
           </div>
-          <div className="col-xxl border-input" style={{ padding: 0, height: 'fit-content' }}>
+          <div className="col-xxl border-input p-0" style={{ height: 'fit-content' }}>
             <div className="head-types">Options</div>
             <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
               <div className="input-group">
@@ -1138,8 +1123,8 @@ const DpsTdo = () => {
                   }
                 />
               </div>
-              <div className="row" style={{ margin: 0 }}>
-                <Box className="col-5 input-group" style={{ padding: 0 }}>
+              <div className="row m-0">
+                <Box className="col-5 input-group p-0">
                   <span className="input-group-text">IV ATK</span>
                   <input
                     defaultValue={ivAtk}
@@ -1148,7 +1133,7 @@ const DpsTdo = () => {
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
-                    required={true}
+                    required
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -1166,7 +1151,7 @@ const DpsTdo = () => {
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
-                    required={true}
+                    required
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -1184,7 +1169,7 @@ const DpsTdo = () => {
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
-                    required={true}
+                    required
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -1215,7 +1200,7 @@ const DpsTdo = () => {
                     ))}
                   </Form.Select>
                 </Box>
-                <Box className="col-7 input-group" style={{ padding: 0 }}>
+                <Box className="col-7 input-group p-0">
                   <span className="input-group-text">DEF Target</span>
                   <input
                     defaultValue={pokemonDefObj}
@@ -1224,7 +1209,7 @@ const DpsTdo = () => {
                     placeholder="Defense target"
                     min={1}
                     disabled={Boolean(dataTargetPokemon)}
-                    required={true}
+                    required
                     onInput={(e) =>
                       setOptions(
                         OptionOtherDPS.create({
@@ -1315,11 +1300,11 @@ const DpsTdo = () => {
           columns={convertColumnDataType(columns)}
           data={dataFilter}
           noDataComponent={null}
-          pagination={true}
+          pagination
           defaultSortFieldId={defaultSorted.selectedColumn}
           defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC}
-          highlightOnHover={true}
-          striped={true}
+          highlightOnHover
+          striped
           paginationDefaultPage={defaultPage}
           paginationPerPage={defaultRowPerPage}
           customStyles={getCustomThemeDataTable()}

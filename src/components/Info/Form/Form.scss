@@ -29,19 +29,11 @@
 .btn-form {
   min-height: 142px;
   margin: 2px 0;
-  border: 1px solid gray;
-  color: black;
 }
 
 .btn-form:focus {
-  border: 1px solid black;
   outline: none;
   box-shadow: 0 0 0 3px #64646466 !important;
-}
-
-.btn-form:hover:not(.form-selected) {
-  border: 1px solid black !important;
-  color: black;
 }
 
 .form-border {

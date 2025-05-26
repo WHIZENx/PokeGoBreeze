@@ -1022,10 +1022,16 @@ export const getPokemonDetails = (
 ) => {
   if (form) {
     const name = getPokemonFormWithNoneSpecialForm(
-      form.replace(/10$/, 'TEN_PERCENT').replace(/50$/, 'FIFTY_PERCENT').replaceAll(' ', '-'),
+      form
+        .replace(/10$/, 'TEN_PERCENT')
+        .replace(/50$/, 'FIFTY_PERCENT')
+        .replace(/UNOWN-/i, '')
+        .replaceAll(' ', '-'),
       pokemonType
     );
-    let pokemonForm = pokemonData.find((item) => item.num === id && isEqual(item.fullName, name));
+    let pokemonForm = pokemonData.find(
+      (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
+    );
 
     if (isDefault && !pokemonForm) {
       pokemonForm = pokemonData.find(

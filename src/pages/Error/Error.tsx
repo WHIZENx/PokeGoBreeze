@@ -48,7 +48,7 @@ const Error = (props: IErrorPage) => {
                 </p>
               </span>
               <span>Maybe try one of the links in the menu or press Back to Home to go to the home page.</span>
-              <div style={{ marginTop: 15 }}>
+              <div className="mt-3">
                 <LinkToTop className="btn btn-danger" to="/">
                   Back to Home
                 </LinkToTop>

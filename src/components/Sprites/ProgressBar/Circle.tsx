@@ -17,7 +17,7 @@ const Circle = styled.div<Element>`
   height: ${(props) => props.size + 5}px;
   background: #0000003b;
   border-radius: 50%;
-  border: 5px solid lightgray;
+  border: 5px solid var(--custom-table-border);
   position: relative;
 `;
 

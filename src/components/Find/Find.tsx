@@ -208,8 +208,8 @@ const Find = (props: IFindComponent) => {
   );
 
   return (
-    <div className="container element-top">
-      <h1 id="main" className="text-center" style={{ marginBottom: 15 }}>
+    <div className="container mt-2">
+      <h1 id="main" className="text-center mb-3">
         {getValueOrDefault(String, props.title, 'Pokémon GO Tools')}
       </h1>
       {isNotEmpty(pokemonList) ? (
@@ -232,7 +232,7 @@ const Find = (props: IFindComponent) => {
             className="ph-picture d-flex align-item-center justify-content-center position-relative w-50 theme-spinner-bg"
             style={{ height: 600 }}
           >
-            <LoadGroup isShow={true} isVertical={true} isHideAttr={true} size={40} />
+            <LoadGroup isShow isVertical isHideAttr size={40} />
           </div>
         </div>
       )}

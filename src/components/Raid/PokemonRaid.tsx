@@ -53,7 +53,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
           <div className="d-flex ic-group-small">
             <span
               className={combineClasses(
-                'ic-copy-small text-white',
+                'ic-copy-small text-white me-1',
                 dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
               )}
               title="Options"
@@ -62,13 +62,12 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                   props.onOptionsPokemon(props.id, dataTargetPokemon);
                 }
               }}
-              style={{ marginRight: 5 }}
             >
               <SettingsIcon sx={{ fontSize: 16 }} />
             </span>
             <span
               className={combineClasses(
-                'ic-copy-small text-white',
+                'ic-copy-small text-white me-1',
                 dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
               )}
               title="Copy"
@@ -77,7 +76,6 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                   props.onCopyPokemon(props.id);
                 }
               }}
-              style={{ marginRight: 5 }}
             >
               <ContentCopyIcon sx={{ fontSize: 16 }} />
             </span>
@@ -105,7 +103,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       <SelectPokemon
         clearData={props.clearData}
-        isSelected={true}
+        isSelected
         pokemon={dataTargetPokemon}
         defaultSetting={props.defaultSetting}
         setCurrentPokemon={setDataTargetPokemon}
@@ -118,7 +116,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       {dataTargetPokemon ? (
         <SelectMove
-          isSelected={true}
+          isSelected
           inputType={InputType.Small}
           clearData={props.clearData}
           pokemon={
@@ -132,10 +130,10 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         />
       ) : (
         <div
-          className="d-flex align-items-center w-100 card-select-disabled disable-card-move"
-          style={{ height: 36, padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1"
+          style={{ height: 36, overflowX: 'hidden', whiteSpace: 'nowrap' }}
         >
-          <span style={{ paddingLeft: 8 }}>- Please select Pokémon -</span>
+          <span className="ps-2">- Please select Pokémon -</span>
         </div>
       )}
       <span className="input-group-text justify-content-center">
@@ -143,7 +141,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       {dataTargetPokemon ? (
         <SelectMove
-          isSelected={true}
+          isSelected
           inputType={InputType.Small}
           clearData={props.clearData}
           pokemon={
@@ -156,10 +154,10 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         />
       ) : (
         <div
-          className="d-flex align-items-center w-100 card-select-disabled disable-card-move"
-          style={{ height: 36, padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1"
+          style={{ height: 36, overflowX: 'hidden', whiteSpace: 'nowrap' }}
         >
-          <span style={{ paddingLeft: 8 }}>- Please select Pokémon -</span>
+          <span className="ps-2">- Please select Pokémon -</span>
         </div>
       )}
     </div>

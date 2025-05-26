@@ -100,7 +100,7 @@ const StatsTable = (props: IStatsTableComponent) => {
       <div>
         <div className="d-flex justify-content-center text-center">
           <TypeRadioGroup
-            row={true}
+            row
             aria-labelledby="row-types-group-label"
             name="row-types-group"
             value={currStatType}
@@ -163,7 +163,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                  <img className="me-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center">
@@ -178,7 +178,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                  <img className="me-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center">
@@ -193,7 +193,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={HP_LOGO} />
+                  <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
                   HP
                 </td>
                 <td className="text-center">{calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel, true)}</td>

@@ -41,6 +41,7 @@ import { FORM_NORMAL, Params } from '../../../util/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
+  combineClasses,
   convertColumnDataType,
   DynamicObj,
   getPropertyName,
@@ -102,7 +103,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
         <img
           height={48}
           alt="Pokémon Image"
-          style={{ marginRight: 10 }}
+          className="me-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -123,7 +124,7 @@ const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
           key={index}
           width={25}
           height={25}
-          style={{ marginRight: 10 }}
+          className="me-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -519,8 +520,8 @@ const StatsRanking = () => {
   }, [router, pokemonList, searchParams]);
 
   return (
-    <div className="element-bottom position-relative poke-container container">
-      <div className="w-100 d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
+    <div className="pb-3 position-relative poke-container container">
+      <div className="w-100 d-inline-block align-middle my-3">
         <div className="d-flex justify-content-center w-100">
           <div className="d-inline-block img-desc">
             <img
@@ -538,8 +539,8 @@ const StatsRanking = () => {
             />
           </div>
         </div>
-        <div className="row w-100 element-top" style={{ margin: 0 }}>
-          <div className="col-xl-5" style={{ padding: 0 }}>
+        <div className="row w-100 mt-2 m-0">
+          <div className="col-xl-5 p-0">
             <PokemonTable
               id={select?.num}
               gen={select?.gen}
@@ -555,7 +556,7 @@ const StatsRanking = () => {
             />
           </div>
           {select && (
-            <div className="col-xl-7" style={{ padding: 0 }}>
+            <div className="col-xl-7 p-0">
               <TableMove pokemonData={pokemon} maxHeight={400} />
             </div>
           )}
@@ -569,7 +570,7 @@ const StatsRanking = () => {
         pokemonStats={stats}
         id={select?.num}
         form={select?.form}
-        isDisabled={true}
+        isDisabled
       />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
@@ -602,10 +603,9 @@ const StatsRanking = () => {
             <span className="d-flex align-items-center">
               Released in GO
               <img
-                className={releasedGO ? '' : 'filter-gray'}
+                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
                 width={28}
                 height={28}
-                style={{ marginLeft: 5 }}
                 alt="Pokémon GO Icon"
                 src={APIService.getPokemonGoIcon(icon)}
               />
@@ -616,10 +616,10 @@ const StatsRanking = () => {
       <DataTable
         columns={convertColumnDataType(columnPokemon)}
         data={pokemonFilter}
-        pagination={true}
+        pagination
         defaultSortFieldId={getSortId()}
         defaultSortAsc={false}
-        highlightOnHover={true}
+        highlightOnHover
         onRowClicked={(row) => {
           if (select?.id !== row.id) {
             setFilterParams(row);

@@ -53,16 +53,9 @@ const NavbarComponent = (props: INavbarComponent) => {
 
   return (
     <Fragment>
-      <Navbar collapseOnSelect={true} bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
+      <Navbar collapseOnSelect bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
         <Link className="navbar-brand" to="/">
-          <img
-            src={logo}
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-            alt="Home"
-            style={{ marginLeft: 10, marginRight: 10 }}
-          />
+          <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
           PokéGoBreeze
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -146,10 +139,8 @@ const NavbarComponent = (props: INavbarComponent) => {
           </Nav>
           {timestamp?.gamemaster && (
             <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
-              <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
-                Updated: {getTime(timestamp?.gamemaster, true)}
-              </span>
-              <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
+              <span className="text-white mx-2">Updated: {getTime(timestamp?.gamemaster, true)}</span>
+              <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
                 <b>
                   {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
                     `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
@@ -159,9 +150,9 @@ const NavbarComponent = (props: INavbarComponent) => {
             </Navbar.Text>
           )}
           <IconButton
-            className={`${stateTheme}-mode`}
+            className={`${stateTheme}-mode me-2 p-0`}
             onClick={onChangeTheme}
-            style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
+            style={{ cursor: isDelay ? 'default' : 'pointer' }}
             color="inherit"
           >
             {props.mode === TypeTheme.Light ? (
