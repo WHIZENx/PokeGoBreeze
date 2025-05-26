@@ -73,8 +73,10 @@
   @include theme-border(2px);
 }
 
-.theme-text-shadow {
-  text-shadow: var(--shadow-default-revert) 1px 1px;
+// Text shadow
+.text-shadow,
+.type-icon-small {
+  text-shadow: 1px 1px var(--shadow-default-revert);
 }
 
 // Override some of the existing styles to use theme variables
@@ -177,7 +179,7 @@
 }
 
 .filter-shadow-hover:hover {
-  filter: drop-shadow(2px 2px 2px #000000cc);
+  filter: drop-shadow(2px 2px 2px var(--shadow-hover));
 }
 
 // Navigation block
@@ -382,30 +384,30 @@ td,
 .border-type-stat,
 .border-best-poke,
 .stats-border {
-  @include custom-table-border;
+  @include theme-border(1px, all, var(--custom-table-border));
 }
 
 .btn-form,
 .border-window,
 .count-pokemon {
-  @include custom-table-border(1px, all, var(--custom-gray));
+  @include theme-border(1px, all, var(--custom-gray), true);
 }
 
 .timeline-vertical .w-50:first-child .pokemon-battle-header {
-  @include custom-table-border(1px, left, var(--custom-gray));
+  @include theme-border(1px, left, var(--custom-gray));
 }
 
 .pokemon-battle-header {
-  @include custom-table-border(1px, right, var(--custom-gray));
-  @include custom-table-border(1px, top, var(--custom-gray));
-  @include custom-table-border(1px, bottom, var(--custom-gray));
+  @include theme-border(1px, right, var(--custom-gray));
+  @include theme-border(1px, top, var(--custom-gray));
+  @include theme-border(1px, bottom, var(--custom-gray));
 }
 
 .move-img-desc img,
 .img-desc,
 .border-box-battle,
 .stats-boss {
-  @include custom-table-border(2px);
+  @include theme-border(2px, all, var(--custom-table-border));
 }
 
 // Table header styling
@@ -477,4 +479,9 @@ td,
 .click-none,
 .click-none.link-danger:hover {
   @include theme-text(var(--custom-validator-disable), true);
+}
+
+.btn-form:focus,
+.btn-form:hover:not(.form-selected) {
+  @include theme-border(1px, all, var(--custom-black), true);
 }

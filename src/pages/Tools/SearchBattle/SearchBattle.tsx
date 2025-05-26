@@ -501,7 +501,7 @@ const FindBattle = () => {
                         <div>
                           <b>{toFloatWithPadding(value.ratio, 2)}</b>
                         </div>
-                        <span className="caption caption-constant theme-text-shadow">CP: {value.CP}</span>
+                        <span className="caption caption-constant text-shadow">CP: {value.CP}</span>
                       </div>
                       <span className="caption text-black border-best-poke">
                         <b>#{value.rank}</b>

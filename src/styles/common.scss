@@ -61,10 +61,6 @@
   }
 }
 
-@mixin custom-table-border($width: 1px, $direction: all, $color: var(--custom-table-border)) {
-  @include theme-border($width, $direction, $color);
-}
-
 @mixin table-head-style {
   @include theme-background(var(--custom-table-background-head));
   @include theme-text(white);

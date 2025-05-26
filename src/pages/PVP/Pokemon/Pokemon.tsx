@@ -202,7 +202,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
       <Fragment>
         {league && (
           <div
-            className="d-flex flex-wrap align-items-center filter-shadow text-shadow text-white"
+            className="d-flex flex-wrap align-items-center filter-shadow text-shadow-black text-white"
             style={{ columnGap: 10 }}
           >
             <img

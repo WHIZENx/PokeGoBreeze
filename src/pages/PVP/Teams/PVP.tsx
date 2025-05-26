@@ -431,7 +431,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 <div className="ranking-group w-100" style={{ columnGap: 15 }}>
                   <div>
                     <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-                      <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(
+                      <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
                         value.name,
                         '-',
                         ' '
@@ -635,7 +635,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                           <div className="ranking-group">
                             <div>
                               <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-                                <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(
+                                <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
                                   value.name,
                                   '-',
                                   ' '

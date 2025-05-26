@@ -7,6 +7,8 @@
 
 :root {
   --text-constant: black;
+  --primary-contrast-text: white;
+  --secondary-contrast-text: white;
   --border-radius: 4px;
   --spacing-unit: 8px;
 }
@@ -19,15 +21,15 @@
   --primary-main: #3f51b5;
   --primary-light: #757de8;
   --primary-dark: #002984;
-  --primary-contrast-text: white;
-
+  
   // Secondary colors
   --secondary-main: #f50057;
   --secondary-light: #ff4081;
   --secondary-dark: #c51162;
-  --secondary-contrast-text: white;
 
   // Custom colors
+  --custom-white: white;
+  --custom-black: black;
   --custom-lightgray: lightgray;
   --custom-gray: gray;
 
@@ -59,7 +61,7 @@
   --shadow-default: black;
   --shadow-default-revert: white;
   --shadow-custom: #00000000;
-  --shadow-hover: white;
+  --shadow-hover: #000000cc;
 
   // Placeholder
   --loading-placeholder: #e2eaf1;
@@ -124,15 +126,15 @@
   --primary-main: #7986cb;
   --primary-light: #9fa8da;
   --primary-dark: #5c6bc0;
-  --primary-contrast-text: white;
 
   // Secondary colors
   --secondary-main: #ff4081;
   --secondary-light: #ff79b0;
   --secondary-dark: #c60055;
-  --secondary-contrast-text: white;
 
   // Custom colors
+  --custom-white: black;
+  --custom-black: white;
   --custom-lightgray: #3d3d3d;
   --custom-gray: #b0b0b0;
 
@@ -164,7 +166,7 @@
   --shadow-default: white;
   --shadow-default-revert: white;
   --shadow-custom: white;
-  --shadow-hover: #000000cc;
+  --shadow-hover: white;
 
   // Placeholder
   --loading-placeholder: #2a3038;

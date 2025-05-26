@@ -105,7 +105,7 @@ const BodyPVP = (props: BodyComponent) => {
           </span>
         </div>
         <div>
-          <b className="text-white text-shadow">
+          <b className="text-white text-shadow-black">
             #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
           </b>
           <TypeInfo isShowShadow={true} isHideText={true} height={20} arr={data.pokemon?.types} />
@@ -113,7 +113,7 @@ const BodyPVP = (props: BodyComponent) => {
       </div>
       <div className="ms-3">
         <span
-          className="ranking-score text-white text-shadow filter-shadow"
+          className="ranking-score text-white text-shadow-black filter-shadow"
           style={{ backgroundColor: bgType === BackgroundType.Matchup ? 'lightgreen' : 'lightcoral' }}
         >
           {data.rating}
@@ -126,7 +126,7 @@ const BodyPVP = (props: BodyComponent) => {
     <div className="row m-0">
       <div className="col-lg-6 mt-2 p-0">
         <div className="title-item-ranking">
-          <h4 className="text-white text-shadow">Best Matchups</h4>
+          <h4 className="text-white text-shadow-black">Best Matchups</h4>
           <div className="ms-3">
             <span className="ranking-score score-ic text-black">Rating</span>
           </div>
@@ -137,7 +137,7 @@ const BodyPVP = (props: BodyComponent) => {
       </div>
       <div className="col-lg-6 mt-2 p-0">
         <div className="title-item-ranking">
-          <h4 className="text-white text-shadow">Best Counters</h4>
+          <h4 className="text-white text-shadow-black">Best Counters</h4>
           <div className="ms-3">
             <span className="ranking-score score-ic text-black">Rating</span>
           </div>

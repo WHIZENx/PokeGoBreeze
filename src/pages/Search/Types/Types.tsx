@@ -347,7 +347,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               </div>
               <span className="filter-shadow">{capitalize(currentType)}</span>
             </span>
-            <span className="mt-2 text-white text-shadow">
+            <span className="mt-2 text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
               <b>{` Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
@@ -377,13 +377,13 @@ const SearchTypes = (props: IStyleSheetData) => {
                 </li>
               </ul>
             </span>
-            <span className="mt-2 text-white text-shadow">
+            <span className="mt-2 text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1201')} />
               <b>{` Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
                 (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
-            <span className="mt-2 text-white text-shadow">
+            <span className="mt-2 text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1202')} />
               <b>{` Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
                 (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)

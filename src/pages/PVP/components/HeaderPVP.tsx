@@ -9,7 +9,7 @@ const HeaderPVP = (props: HeaderComponent) => {
     <>
       <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
         {props.data && (
-          <h3 className="text-white text-shadow">
+          <h3 className="text-white text-shadow-black">
             <b>
               #{props.data.id} {splitAndCapitalize(props.data.name, '-', ' ')}
             </b>
@@ -17,7 +17,7 @@ const HeaderPVP = (props: HeaderComponent) => {
         )}
         <TypeInfo isShowShadow={true} isBlock={true} color="white" arr={props.data?.pokemon?.types} />
       </div>
-      <h6 className="text-white text-shadow" style={{ textDecoration: 'underline' }}>
+      <h6 className="text-white text-shadow-black" style={{ textDecoration: 'underline' }}>
         Recommend Moveset in PVP
       </h6>
       <div className="d-flex flex-wrap mt-2" style={{ columnGap: 10 }}>

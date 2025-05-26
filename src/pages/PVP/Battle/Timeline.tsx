@@ -78,7 +78,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               overlap="circular"
               badgeContent={value.isTap ? 'Tap' : undefined}
               className={combineClasses(
-                'fast-attack-container text-shadow turn-battle',
+                'fast-attack-container text-shadow-black turn-battle',
                 end ? 'justify-content-end' : ''
               )}
               anchorOrigin={{
@@ -101,7 +101,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               badgeContent={value.isTap ? 'Tap' : undefined}
               className={combineClasses(
                 pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune
-                  ? 'fast-attack-container text-shadow'
+                  ? 'fast-attack-container text-shadow-black'
                   : 'wait-attack-container',
                 end ? 'justify-content-end' : '',
                 'turn-battle',
@@ -140,7 +140,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
           {value.type === AttackType.Charge && (
             <div
               className={combineClasses(
-                'charged-attack-container text-shadow turn-battle',
+                'charged-attack-container text-shadow-black turn-battle',
                 end ? 'justify-content-end' : ''
               )}
             >
