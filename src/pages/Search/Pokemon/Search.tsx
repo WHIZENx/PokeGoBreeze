@@ -187,7 +187,7 @@ const Search = () => {
           setSearchOption={setSearchOption}
           onIncId={incId}
           onDecId={decId}
-          isSearch={true}
+          isSearch
           searching={searching}
         />
       </div>

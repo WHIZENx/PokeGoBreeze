@@ -208,7 +208,7 @@ const StatsTable = () => {
 
   return (
     <div className="container" style={{ minHeight: 1650 }}>
-      <Find isHide={true} clearStats={clearStats} />
+      <Find isHide clearStats={clearStats} />
       <h1 id="main" className="text-center">
         Stats Battle Table
       </h1>
@@ -320,10 +320,10 @@ const StatsTable = () => {
         title={`Stat Battle for ${splitAndCapitalize(pokemon?.fullName, '_', ' ')}`}
         columns={columnsStats}
         data={filterStatsBattle}
-        pagination={true}
+        pagination
         defaultSortFieldId={ColumnType.Level}
-        striped={true}
-        highlightOnHover={true}
+        striped
+        highlightOnHover
         progressPending={isLoading}
         customStyles={getCustomThemeDataTable()}
         progressComponent={<CircularProgressTable />}

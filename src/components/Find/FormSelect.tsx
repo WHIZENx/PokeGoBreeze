@@ -408,13 +408,13 @@ const FormSelect = (props: IFormSelectComponent) => {
             ))}
           </Fragment>
         ) : (
-          <LoadGroup isShow={true} isVertical={true} isHideAttr={true} size={40} />
+          <LoadGroup isShow isVertical isHideAttr size={40} />
         )}
       </div>
       {!props.isHide && (
         <div className="d-flex justify-content-center text-center">
           <TypeRadioGroup
-            row={true}
+            row
             aria-labelledby="row-types-group-label"
             name="row-types-group"
             value={typePoke}

@@ -1258,7 +1258,7 @@ const Battle = () => {
   ) => {
     const battleType = getKeyWithData(BattleType, type);
     return (
-      <Accordion defaultActiveKey={[]} alwaysOpen={true}>
+      <Accordion defaultActiveKey={[]} alwaysOpen>
         <Accordion.Item eventKey="0">
           <Accordion.Header>Information</Accordion.Header>
           <Accordion.Body>
@@ -1407,14 +1407,14 @@ const Battle = () => {
             </div>
             <hr />
             <TypeBadge
-              isFind={true}
+              isFind
               title="Fast Move"
               move={pokemon.fMove}
               moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
-                isFind={true}
+                isFind
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
                 moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMovePri?.name)}
@@ -1424,7 +1424,7 @@ const Battle = () => {
             {pokemon.cMoveSec && (
               <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
                 <TypeBadge
-                  isFind={true}
+                  isFind
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
                   moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMoveSec.name)}
@@ -1761,7 +1761,7 @@ const Battle = () => {
                         label="Show Tap Move"
                       />
                       <RadioGroup
-                        row={true}
+                        row
                         aria-labelledby="row-timeline-group-label"
                         name="row-timeline-group"
                         value={timelineType}

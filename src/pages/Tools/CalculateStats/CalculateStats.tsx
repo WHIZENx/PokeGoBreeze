@@ -227,7 +227,7 @@ const Calculate = () => {
   return (
     <Fragment>
       <div className="container mt-2">
-        <Find isHide={true} clearStats={clearArrStats} />
+        <Find isHide clearStats={clearArrStats} />
         <h1 id="main" className="text-center">
           Calculate Stats
         </h1>
@@ -311,7 +311,7 @@ const Calculate = () => {
           </div>
           <div className="d-flex justify-content-center text-center">
             <TypeRadioGroup
-              row={true}
+              row
               aria-labelledby="row-types-group-label"
               name="row-types-group"
               defaultValue={PokemonType.Normal}

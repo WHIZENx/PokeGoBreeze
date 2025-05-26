@@ -299,7 +299,7 @@ const Pokedex = (props: IStyleSheetData) => {
                 )}
                 style={{ transition: TRANSITION_TIME }}
               >
-                <TypeInfo isBlock={true} arr={[item]} />
+                <TypeInfo isBlock arr={[item]} />
               </button>
             </div>
           ))}
@@ -372,13 +372,13 @@ const Pokedex = (props: IStyleSheetData) => {
                   <FormControl sx={{ m: 1, width: '50%' }} size="small">
                     <InputLabel>Generation(s)</InputLabel>
                     <Select
-                      multiple={true}
+                      multiple
                       value={gen}
                       onChange={handleChangeGen}
                       input={<OutlinedInput label="Generation(s)" />}
                       renderValue={(selected) => `Gen ${selected.map((item) => (item + 1).toString()).join(', Gen ')}`}
                     >
-                      <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
+                      <MenuItem disableRipple disableTouchRipple value={-1}>
                         <ListItemText
                           primary={
                             <button
@@ -398,14 +398,14 @@ const Pokedex = (props: IStyleSheetData) => {
                   <FormControl sx={{ m: 1, width: '50%' }} size="small">
                     <InputLabel>Version(s)</InputLabel>
                     <Select
-                      multiple={true}
+                      multiple
                       value={version}
                       onChange={handleChangeVersion}
                       input={<OutlinedInput label="Version(s)" />}
                       renderValue={(selected) => selected.map((item) => versionList[item]).join(', ')}
                       MenuProps={versionProps}
                     >
-                      <MenuItem disableRipple={true} disableTouchRipple={true} value={-1}>
+                      <MenuItem disableRipple disableTouchRipple value={-1}>
                         <ListItemText
                           primary={
                             <button

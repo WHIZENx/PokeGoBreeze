@@ -438,7 +438,7 @@ const RankingPVP = (props: IStyleSheetData) => {
               </div>
             </div>
           </div>
-          <Accordion alwaysOpen={true}>
+          <Accordion alwaysOpen>
             {rankingData
               .filter(
                 (pokemon) =>

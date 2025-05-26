@@ -164,7 +164,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           {v && (
                             <li style={{ listStyleType: 'circle' }}>
                               <h6>Type: {capitalize(k)}</h6>
-                              <audio src={v} className="w-100" controls={true} style={{ height: 30 }}>
+                              <audio src={v} className="w-100" controls style={{ height: 30 }}>
                                 <source type="audio/ogg" />
                                 Your browser does not support the audio element.
                               </audio>
@@ -199,7 +199,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                   <audio
                     src={APIService.getSoundPokemonGO(value.path)}
                     className="w-100"
-                    controls={true}
+                    controls
                     style={{ height: 30 }}
                   >
                     <source type="audio/wav" />

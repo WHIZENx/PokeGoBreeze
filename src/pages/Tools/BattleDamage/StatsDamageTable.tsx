@@ -100,7 +100,7 @@ const StatsTable = (props: IStatsTableComponent) => {
       <div>
         <div className="d-flex justify-content-center text-center">
           <TypeRadioGroup
-            row={true}
+            row
             aria-labelledby="row-types-group-label"
             name="row-types-group"
             value={currStatType}

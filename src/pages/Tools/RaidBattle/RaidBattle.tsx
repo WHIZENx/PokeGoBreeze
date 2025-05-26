@@ -816,7 +816,7 @@ const RaidBattle = () => {
           type="number"
           min={MIN_IV}
           max={MAX_IV}
-          required={true}
+          required
           className="form-control"
           placeholder="IV ATK"
           onInput={(e) =>
@@ -832,7 +832,7 @@ const RaidBattle = () => {
           type="number"
           min={MIN_IV}
           max={MAX_IV}
-          required={true}
+          required
           className="form-control"
           placeholder="IV DEF"
           onInput={(e) =>
@@ -848,7 +848,7 @@ const RaidBattle = () => {
           type="number"
           min={MIN_IV}
           max={MAX_IV}
-          required={true}
+          required
           className="form-control"
           placeholder="IV STA"
           onInput={(e) =>
@@ -1049,7 +1049,7 @@ const RaidBattle = () => {
               type="number"
               min={MIN_IV}
               max={MAX_IV}
-              required={true}
+              required
               className="form-control"
               placeholder="IV ATK"
               onInput={(e) => {
@@ -1075,7 +1075,7 @@ const RaidBattle = () => {
               type="number"
               min={MIN_IV}
               max={MAX_IV}
-              required={true}
+              required
               className="form-control"
               placeholder="IV DEF"
               onInput={(e) => {
@@ -1101,7 +1101,7 @@ const RaidBattle = () => {
               type="number"
               min={MIN_IV}
               max={MAX_IV}
-              required={true}
+              required
               className="form-control"
               placeholder="IV STA"
               onInput={(e) => {
@@ -1324,7 +1324,7 @@ const RaidBattle = () => {
     <Fragment>
       <div className="row m-0" style={{ overflowX: 'hidden' }}>
         <div className="col-lg p-0">
-          <Find isHide={true} title="Raid Boss" clearStats={clearDataBoss} />
+          <Find isHide title="Raid Boss" clearStats={clearDataBoss} />
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center p-0">
           <div className="mt-2 position-relative">
@@ -1872,8 +1872,8 @@ const RaidBattle = () => {
           </div>
         </div>
       </div>
-      <Modal show={show && !showSettingPokemon.isShow} onHide={handleClose} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={show && !showSettingPokemon.isShow} onHide={handleClose} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Trainer #{trainerBattleId + 1}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -1881,7 +1881,7 @@ const RaidBattle = () => {
             {pokemonBattle.map((pokemon, index) => (
               <div className={index === 0 ? '' : 'mt-2'} key={index}>
                 <PokemonRaid
-                  isControls={true}
+                  isControls
                   id={index}
                   pokemon={pokemon}
                   data={pokemonBattle}
@@ -1922,8 +1922,8 @@ const RaidBattle = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showOption} onHide={handleCloseOption} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={showOption} onHide={handleCloseOption} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Search Options</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -1939,8 +1939,8 @@ const RaidBattle = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showSettingPokemon.isShow} onHide={handleCloseSettingPokemon} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={showSettingPokemon.isShow} onHide={handleCloseSettingPokemon} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Pokémon Settings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -1956,8 +1956,8 @@ const RaidBattle = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showMovePokemon.isShow} onHide={handleCloseMovePokemon} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={showMovePokemon.isShow} onHide={handleCloseMovePokemon} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Move Pokémon</Modal.Title>
         </Modal.Header>
         <Modal.Body>

@@ -128,7 +128,7 @@ const MoveSet = (props: MoveSetComponent) => {
       )}
     >
       <div className="d-flex" style={{ columnGap: 10 }}>
-        <IconType width={24} height={24} alt="Pokémon GO Type Logo" type={move?.type} />
+        <IconType width={24} height={24} alt="Pokémon GO Type Logo" type={move?.type} isBorder />
         <span className="filter-shadow">
           {splitAndCapitalize(move.name, '_', ' ')}{' '}
           {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}

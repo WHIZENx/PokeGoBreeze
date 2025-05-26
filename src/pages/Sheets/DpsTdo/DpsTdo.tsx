@@ -712,7 +712,7 @@ const DpsTdo = () => {
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
               >
-                <TypeInfo isBlock={true} arr={[item]} />
+                <TypeInfo isBlock arr={[item]} />
               </button>
             </div>
           ))}
@@ -1008,7 +1008,7 @@ const DpsTdo = () => {
                     <span className="input-group-text">Defender</span>
                     <SelectPokemon
                       pokemon={dataTargetPokemon}
-                      isSelected={true}
+                      isSelected
                       setCurrentPokemon={setDataTargetPokemon}
                       setFMovePokemon={setFMoveTargetPokemon}
                       setCMovePokemon={setCMoveTargetPokemon}
@@ -1133,7 +1133,7 @@ const DpsTdo = () => {
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
-                    required={true}
+                    required
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -1151,7 +1151,7 @@ const DpsTdo = () => {
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
-                    required={true}
+                    required
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -1169,7 +1169,7 @@ const DpsTdo = () => {
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
-                    required={true}
+                    required
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -1209,7 +1209,7 @@ const DpsTdo = () => {
                     placeholder="Defense target"
                     min={1}
                     disabled={Boolean(dataTargetPokemon)}
-                    required={true}
+                    required
                     onInput={(e) =>
                       setOptions(
                         OptionOtherDPS.create({
@@ -1300,11 +1300,11 @@ const DpsTdo = () => {
           columns={convertColumnDataType(columns)}
           data={dataFilter}
           noDataComponent={null}
-          pagination={true}
+          pagination
           defaultSortFieldId={defaultSorted.selectedColumn}
           defaultSortAsc={defaultSorted.sortDirection === SortDirectionType.ASC}
-          highlightOnHover={true}
-          striped={true}
+          highlightOnHover
+          striped
           paginationDefaultPage={defaultPage}
           paginationPerPage={defaultRowPerPage}
           customStyles={getCustomThemeDataTable()}

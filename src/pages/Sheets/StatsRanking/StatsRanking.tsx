@@ -570,7 +570,7 @@ const StatsRanking = () => {
         pokemonStats={stats}
         id={select?.num}
         form={select?.form}
-        isDisabled={true}
+        isDisabled
       />
       <div className="d-flex flex-wrap" style={{ gap: 15 }}>
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
@@ -616,10 +616,10 @@ const StatsRanking = () => {
       <DataTable
         columns={convertColumnDataType(columnPokemon)}
         data={pokemonFilter}
-        pagination={true}
+        pagination
         defaultSortFieldId={getSortId()}
         defaultSortAsc={false}
-        highlightOnHover={true}
+        highlightOnHover
         onRowClicked={(row) => {
           if (select?.id !== row.id) {
             setFilterParams(row);

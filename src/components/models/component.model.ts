@@ -308,6 +308,7 @@ export interface IIconTypeComponent {
   height?: string | number;
   alt?: string;
   title?: string;
+  isBorder?: boolean;
 }
 
 export interface IIVBarComponent {

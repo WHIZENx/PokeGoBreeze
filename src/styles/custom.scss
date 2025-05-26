@@ -337,7 +337,6 @@ td,
 .table-info,
 .table-moves-col,
 .table-counter-container,
-.border-types,
 .table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs,
 .list-item-ranking,
 .season-league,
@@ -387,6 +386,7 @@ td,
   @include theme-border(1px, all, var(--custom-table-border));
 }
 
+.border-types,
 .btn-form,
 .border-window,
 .count-pokemon {

@@ -372,7 +372,7 @@ const CatchChance = () => {
         <div className="col-md-6 p-0">
           <div className="d-flex justify-content-center">
             <Find
-              isHide={true}
+              isHide
               clearStats={clearStats}
               title="Select Pokémon"
               setStatATK={setStatATK}

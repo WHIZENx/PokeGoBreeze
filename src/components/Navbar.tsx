@@ -53,7 +53,7 @@ const NavbarComponent = (props: INavbarComponent) => {
 
   return (
     <Fragment>
-      <Navbar collapseOnSelect={true} bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
+      <Navbar collapseOnSelect bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
         <Link className="navbar-brand" to="/">
           <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
           PokéGoBreeze

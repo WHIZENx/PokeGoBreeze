@@ -101,7 +101,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
                 />
               </span>
             </div>
-            <TypeInfo arr={props.types} isHideText={true} height={24} />
+            <TypeInfo arr={props.types} isHideText height={24} />
             <b>
               <span style={{ fontSize: 14 }} className="text-center theme-text-primary">{`#${
                 props.id

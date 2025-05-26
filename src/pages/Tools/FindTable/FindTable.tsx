@@ -240,9 +240,9 @@ const FindTable = () => {
     <div className="d-inline-block text-center">
       <div className={`${style}-star`}>
         {isEqual(style, 'four') ? (
-          <HundoRate name="hundo-rate" value={starAmount} max={3} readOnly={true} />
+          <HundoRate name="hundo-rate" value={starAmount} max={3} readOnly />
         ) : (
-          <Rating name={`${style}-rate`} value={starAmount} max={3} readOnly={true} />
+          <Rating name={`${style}-rate`} value={starAmount} max={3} readOnly />
         )}
         <hr className="m-0" />
         <div>
@@ -289,11 +289,11 @@ const FindTable = () => {
           title={`Levels/IV for CP: ${preIvArr?.CP}`}
           columns={columnsIV}
           data={getValueOrDefault(Array, preIvArr?.result)}
-          pagination={true}
+          pagination
           defaultSortFieldId={ColumnType.Percent}
           defaultSortAsc={false}
           conditionalRowStyles={conditionalRowStyles}
-          highlightOnHover={true}
+          highlightOnHover
           customStyles={getCustomThemeDataTable()}
         />
       </Fragment>
@@ -321,10 +321,10 @@ const FindTable = () => {
               title={`Levels/CP for IV: ${preCpArr?.IV.atkIV}/${preCpArr?.IV.defIV}/${preCpArr?.IV.staIV}`}
               columns={columnsCP}
               data={getValueOrDefault(Array, preCpArr?.result)}
-              pagination={true}
+              pagination
               defaultSortFieldId={ColumnType.Level}
-              highlightOnHover={true}
-              striped={true}
+              highlightOnHover
+              striped
               customStyles={getCustomThemeDataTable()}
             />
           </Fragment>
@@ -355,10 +355,10 @@ const FindTable = () => {
         title="Pokémon MIN/MAX CP"
         columns={columns}
         data={dataTable}
-        pagination={true}
+        pagination
         defaultSortFieldId={ColumnType.Level}
-        striped={true}
-        highlightOnHover={true}
+        striped
+        highlightOnHover
         customStyles={getCustomThemeDataTable()}
       />
     );
@@ -367,7 +367,7 @@ const FindTable = () => {
   return (
     <Fragment>
       <div className="container mt-2">
-        <Find isHide={true} clearStats={clearArrStats} />
+        <Find isHide clearStats={clearArrStats} />
         <h1 id="main" className="text-center">
           Find IV
         </h1>
@@ -378,7 +378,7 @@ const FindTable = () => {
                 <span className="input-group-text">CP</span>
               </div>
               <input
-                required={true}
+                required
                 value={searchCP}
                 type="number"
                 min={MIN_CP}

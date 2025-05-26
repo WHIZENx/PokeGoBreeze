@@ -185,7 +185,7 @@ const Search = () => {
                             setFilters(Filter.create({ ...filters, fMoveType: toNumber(e.target.value) }))
                           }
                         >
-                          <MenuItem value={SelectType.All} defaultChecked={true}>
+                          <MenuItem value={SelectType.All} defaultChecked>
                             {getKeyWithData(SelectType, SelectType.All)}
                           </MenuItem>
                           {Object.keys(types).map((value, index) => (
@@ -215,7 +215,7 @@ const Search = () => {
                     columns={convertColumnDataType(columns)}
                     data={resultFMove}
                     defaultSortFieldId={ColumnSearchMoveType.Name}
-                    fixedHeader={true}
+                    fixedHeader
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable()}
                     progressPending={!fMoveIsLoad}
@@ -272,7 +272,7 @@ const Search = () => {
                     columns={convertColumnDataType(columns)}
                     data={resultCMove}
                     defaultSortFieldId={ColumnSearchMoveType.Name}
-                    fixedHeader={true}
+                    fixedHeader
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable()}
                     progressPending={!cMoveIsLoad}

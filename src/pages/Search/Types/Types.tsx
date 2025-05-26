@@ -397,10 +397,10 @@ const SearchTypes = (props: IStyleSheetData) => {
               <DataTable
                 columns={convertColumnDataType(columnPokemon)}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
-                pagination={true}
+                pagination
                 defaultSortFieldId={ColumnType.Name}
-                highlightOnHover={true}
-                striped={true}
+                highlightOnHover
+                striped
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
@@ -410,10 +410,10 @@ const SearchTypes = (props: IStyleSheetData) => {
               <DataTable
                 columns={convertColumnDataType(columnPokemon)}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
-                pagination={true}
+                pagination
                 defaultSortFieldId={ColumnType.Name}
-                highlightOnHover={true}
-                striped={true}
+                highlightOnHover
+                striped
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
@@ -423,10 +423,10 @@ const SearchTypes = (props: IStyleSheetData) => {
               <DataTable
                 columns={convertColumnDataType(columnMove)}
                 data={result.fastMove}
-                pagination={true}
+                pagination
                 defaultSortFieldId={ColumnType.Name}
-                highlightOnHover={true}
-                striped={true}
+                highlightOnHover
+                striped
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
@@ -436,10 +436,10 @@ const SearchTypes = (props: IStyleSheetData) => {
               <DataTable
                 columns={convertColumnDataType(columnMove)}
                 data={result.chargedMove}
-                pagination={true}
+                pagination
                 defaultSortFieldId={ColumnType.Name}
-                highlightOnHover={true}
-                striped={true}
+                highlightOnHover
+                striped
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}

@@ -205,7 +205,7 @@ const Damage = () => {
     <Fragment>
       <div className="row battle-game">
         <div className="col-lg border-window">
-          <Find isHide={true} title="Attacker Pokémon" clearStats={clearMove} />
+          <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
           <StatsTable
             setStatLvATK={setStatLvATK}
             setStatLevel={setStatLevel}
@@ -217,7 +217,7 @@ const Damage = () => {
           />
         </div>
         <div className="col-lg border-window">
-          <Find isHide={true} title="Defender Pokémon" isSwap={true} clearStats={clearData} isObjective={true} />
+          <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
           <StatsTable
             setStatLvDEF={setStatLvDEFObj}
             setStatLvSTA={setStatLvSTAObj}
@@ -252,7 +252,7 @@ const Damage = () => {
               <Move
                 text="Select Moves"
                 id={searching?.current?.form?.defaultId}
-                isSelectDefault={true}
+                isSelectDefault
                 form={getValueOrDefault(
                   String,
                   searching?.current?.form
@@ -261,7 +261,7 @@ const Damage = () => {
                 )}
                 setMove={setMove}
                 move={move}
-                isHighlight={true}
+                isHighlight
                 pokemonType={searching?.current?.form?.form?.pokemonType}
               />
               <div className="mt-2">

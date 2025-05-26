@@ -103,7 +103,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       <SelectPokemon
         clearData={props.clearData}
-        isSelected={true}
+        isSelected
         pokemon={dataTargetPokemon}
         defaultSetting={props.defaultSetting}
         setCurrentPokemon={setDataTargetPokemon}
@@ -116,7 +116,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       {dataTargetPokemon ? (
         <SelectMove
-          isSelected={true}
+          isSelected
           inputType={InputType.Small}
           clearData={props.clearData}
           pokemon={
@@ -141,7 +141,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
       </span>
       {dataTargetPokemon ? (
         <SelectMove
-          isSelected={true}
+          isSelected
           inputType={InputType.Small}
           clearData={props.clearData}
           pokemon={

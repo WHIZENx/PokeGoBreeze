@@ -373,7 +373,7 @@ const FindBattle = () => {
 
   return (
     <div className="container">
-      <Find isHide={true} clearStats={clearArrStats} />
+      <Find isHide clearStats={clearArrStats} />
       <h1 id="main" className="text-center">
         Search Battle Leagues Stats
       </h1>

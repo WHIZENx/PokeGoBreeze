@@ -108,7 +108,7 @@ const BodyPVP = (props: BodyComponent) => {
           <b className="text-white text-shadow-black">
             #{data.id} {splitAndCapitalize(data.name, '-', ' ')}
           </b>
-          <TypeInfo isShowShadow={true} isHideText={true} height={20} arr={data.pokemon?.types} />
+          <TypeInfo isShowShadow isHideText height={20} arr={data.pokemon?.types} />
         </div>
       </div>
       <div className="ms-3">

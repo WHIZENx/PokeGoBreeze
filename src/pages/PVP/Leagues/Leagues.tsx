@@ -711,7 +711,7 @@ const Leagues = () => {
           Opened Leagues
         </span>
       </div>
-      <Accordion alwaysOpen={true}>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
+      <Accordion alwaysOpen>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 
       <div className="w-25 input-group border-input mt-2" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find League</span>
@@ -723,13 +723,13 @@ const Leagues = () => {
           onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>
-      <Accordion className="accordion-league" alwaysOpen={true}>
+      <Accordion className="accordion-league" alwaysOpen>
         {leagueFilter.map((value, index) => showAccording(value, index))}
       </Accordion>
 
       {showData && (
-        <Modal size="lg" show={show} onHide={handleClose} centered={true}>
-          <Modal.Header closeButton={true}>
+        <Modal size="lg" show={show} onHide={handleClose} centered>
+          <Modal.Header closeButton>
             <Modal.Title className="d-flex flex-column" style={{ rowGap: 10 }}>
               <div>
                 <span>

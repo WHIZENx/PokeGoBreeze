@@ -522,7 +522,7 @@ const Move = (props: IMovePage) => {
                 <td>Sound</td>
                 <td colSpan={2}>
                   {move?.sound ? (
-                    <audio className="d-flex w-100" controls={true} style={{ height: 30 }}>
+                    <audio className="d-flex w-100" controls style={{ height: 30 }}>
                       <source src={APIService.getSoundMove(move.sound)} type="audio/wav" />
                       Your browser does not support the audio element.
                     </audio>
@@ -750,12 +750,12 @@ const Move = (props: IMovePage) => {
                   <DataTable
                     columns={convertColumnDataType(columns)}
                     data={topListFilter}
-                    pagination={true}
+                    pagination
                     defaultSortFieldId={ColumnType.DPS}
                     defaultSortAsc={false}
-                    highlightOnHover={true}
-                    striped={true}
-                    fixedHeader={true}
+                    highlightOnHover
+                    striped
+                    fixedHeader
                     fixedHeaderScrollHeight="35vh"
                     progressPending={!progress}
                     customStyles={getCustomThemeDataTable()}

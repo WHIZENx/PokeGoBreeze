@@ -337,18 +337,18 @@ const CalculatePoint = () => {
     <Fragment>
       <div className="row m-0" style={{ overflowX: 'hidden' }}>
         <div className="col-lg p-0">
-          <Find isHide={true} title="Attacker Pokémon" clearStats={clearData} />
+          <Find isHide title="Attacker Pokémon" clearStats={clearData} />
         </div>
         <div className="col-lg d-flex justify-content-center p-0">
           <Find
-            isSwap={true}
+            isSwap
             isRaid={isRaid}
             setRaid={setIsRaid}
             tier={tier}
             setTier={setTier}
             title="Defender Pokémon"
             clearStats={clearData}
-            isObjective={true}
+            isObjective
           />
         </div>
       </div>
@@ -363,7 +363,7 @@ const CalculatePoint = () => {
                   <Move
                     text="Select Moves"
                     id={searching?.current?.pokemon?.id}
-                    isSelectDefault={true}
+                    isSelectDefault
                     form={
                       searching?.current?.form
                         ? searching?.current?.form.form?.name
@@ -372,7 +372,7 @@ const CalculatePoint = () => {
                     setMove={setMove}
                     move={move}
                     clearData={clearDataAtk}
-                    isHighlight={true}
+                    isHighlight
                     pokemonType={searching?.current?.form?.form?.pokemonType}
                   />
                   <FormControlLabel
@@ -501,7 +501,7 @@ const CalculatePoint = () => {
                   <Move
                     text="Select Moves"
                     id={searching?.object?.pokemon?.id}
-                    isSelectDefault={true}
+                    isSelectDefault
                     form={
                       searching?.object?.form
                         ? searching?.object?.form.form?.name
@@ -510,7 +510,7 @@ const CalculatePoint = () => {
                     setMove={setMoveDef}
                     move={moveDef}
                     clearData={clearDataDef}
-                    isHighlight={true}
+                    isHighlight
                     pokemonType={searching?.object?.form?.form?.pokemonType}
                   />
                   <FormControlLabel
@@ -695,7 +695,7 @@ const CalculatePoint = () => {
                     <Move
                       text="Fast Moves"
                       id={searching?.object?.pokemon?.id}
-                      isSelectDefault={true}
+                      isSelectDefault
                       form={
                         searching?.object?.form
                           ? searching?.object?.form.form?.name
@@ -705,7 +705,7 @@ const CalculatePoint = () => {
                       move={fMove}
                       type={TypeMove.Fast}
                       clearData={clearDataBulk}
-                      isHighlight={true}
+                      isHighlight
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {fMove && (
@@ -736,7 +736,7 @@ const CalculatePoint = () => {
                     <Move
                       text="Charged Moves"
                       id={searching?.object?.pokemon?.id}
-                      isSelectDefault={true}
+                      isSelectDefault
                       form={
                         searching?.object?.form
                           ? searching?.object?.form.form?.name
@@ -746,7 +746,7 @@ const CalculatePoint = () => {
                       move={cMove}
                       type={TypeMove.Charge}
                       clearData={clearDataBulk}
-                      isHighlight={true}
+                      isHighlight
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {cMove && (

@@ -436,33 +436,27 @@ const TeamPVP = (props: IStyleSheetData) => {
                         '-',
                         ' '
                       )}`}</b>
-                      <TypeInfo
-                        isHideText={true}
-                        isBlock={true}
-                        isShowShadow={true}
-                        height={20}
-                        arr={value.pokemonData?.types}
-                      />
+                      <TypeInfo isHideText isBlock isShowShadow height={20} arr={value.pokemonData?.types} />
                     </div>
                     <div className="d-flex" style={{ columnGap: 10 }}>
                       <TypeBadge
-                        isGrow={true}
-                        isFind={true}
+                        isGrow
+                        isFind
                         title="Fast Move"
                         move={value.fMove}
                         moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                       />
                       <TypeBadge
-                        isGrow={true}
-                        isFind={true}
+                        isGrow
+                        isFind
                         title="Primary Charged Move"
                         move={value.cMovePri}
                         moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                       />
                       {value.cMoveSec && (
                         <TypeBadge
-                          isGrow={true}
-                          isFind={true}
+                          isGrow
+                          isFind
                           title="Secondary Charged Move"
                           move={value.cMoveSec}
                           moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
@@ -540,7 +534,7 @@ const TeamPVP = (props: IStyleSheetData) => {
               </div>
             </div>
           </div>
-          <Accordion alwaysOpen={true}>
+          <Accordion alwaysOpen>
             {rankingData?.teams
               .sort((a, b) => setSortedPokemonTeam(a, b))
               .map((value, index) => (
@@ -641,9 +635,9 @@ const TeamPVP = (props: IStyleSheetData) => {
                                   ' '
                                 )}`}</b>
                                 <TypeInfo
-                                  isHideText={true}
-                                  isBlock={true}
-                                  isShowShadow={true}
+                                  isHideText
+                                  isBlock
+                                  isShowShadow
                                   height={20}
                                   color="white"
                                   arr={value.pokemonData?.types}
@@ -651,23 +645,23 @@ const TeamPVP = (props: IStyleSheetData) => {
                               </div>
                               <div className="d-flex" style={{ gap: 10 }}>
                                 <TypeBadge
-                                  isGrow={true}
-                                  isFind={true}
+                                  isGrow
+                                  isFind
                                   title="Fast Move"
                                   move={value.fMove}
                                   moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                                 />
                                 <TypeBadge
-                                  isGrow={true}
-                                  isFind={true}
+                                  isGrow
+                                  isFind
                                   title="Primary Charged Move"
                                   move={value.cMovePri}
                                   moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                                 />
                                 {value.cMoveSec && (
                                   <TypeBadge
-                                    isGrow={true}
-                                    isFind={true}
+                                    isGrow
+                                    isFind
                                     title="Secondary Charged Move"
                                     move={value.cMoveSec}
                                     moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}

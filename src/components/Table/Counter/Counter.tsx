@@ -396,9 +396,9 @@ const Counter = (props: ICounterComponent) => {
         columns={convertColumnDataType(columns)}
         defaultSortFieldId={ColumnType.Percent}
         defaultSortAsc={false}
-        pagination={true}
+        pagination
         customStyles={getCustomThemeDataTable(customStyles)}
-        fixedHeader={true}
+        fixedHeader
         paginationComponentOptions={{
           noRowsPerPage: true,
         }}
@@ -409,8 +409,8 @@ const Counter = (props: ICounterComponent) => {
         data={counterFilter}
       />
 
-      <Modal show={showOption} onHide={handleCloseOption} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={showOption} onHide={handleCloseOption} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Pokémon counter options</Modal.Title>
         </Modal.Header>
         <Modal.Body>
