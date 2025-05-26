@@ -208,13 +208,13 @@ const StatsTable = () => {
 
   return (
     <div className="container" style={{ minHeight: 1650 }}>
-      <Find isHide={true} clearStats={clearStats} />
+      <Find isHide clearStats={clearStats} />
       <h1 id="main" className="text-center">
         Stats Battle Table
       </h1>
       <div className="w-100" style={{ overflowX: 'auto' }}>
         <div style={{ width: 'fit-content', margin: '0 auto' }}>
-          <div className="d-flex text-center" style={{ marginTop: 15, marginBottom: 15, gap: 10 }}>
+          <div className="d-flex text-center my-3" style={{ gap: 10 }}>
             {leaguesTeamBattle.map((value, index) => (
               <button
                 key={index}
@@ -232,7 +232,7 @@ const StatsTable = () => {
           </div>
         </div>
       </div>
-      <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)}>
+      <form className="mt-2" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
             <div className="input-group mb-3" style={{ justifyContent: 'center' }}>
@@ -310,7 +310,7 @@ const StatsTable = () => {
             />
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center element-top">
+        <div className="form-group d-flex justify-content-center text-center mt-2">
           <button type="submit" className="btn btn-primary">
             Search
           </button>
@@ -320,10 +320,10 @@ const StatsTable = () => {
         title={`Stat Battle for ${splitAndCapitalize(pokemon?.fullName, '_', ' ')}`}
         columns={columnsStats}
         data={filterStatsBattle}
-        pagination={true}
+        pagination
         defaultSortFieldId={ColumnType.Level}
-        striped={true}
-        highlightOnHover={true}
+        striped
+        highlightOnHover
         progressPending={isLoading}
         customStyles={getCustomThemeDataTable()}
         progressComponent={<CircularProgressTable />}

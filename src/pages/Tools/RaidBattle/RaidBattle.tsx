@@ -739,16 +739,16 @@ const RaidBattle = () => {
       <Fragment>
         <div className="progress position-relative">
           <div
-            className="progress-bar bg-success"
-            style={{ marginTop: 0, width: `${percent}%` }}
+            className="progress-bar bg-success mt-0"
+            style={{ width: `${percent}%` }}
             role="progressbar"
             aria-valuenow={percent}
             aria-valuemin={0}
             aria-valuemax={100}
           />
           <div
-            className="progress-bar bg-danger"
-            style={{ marginTop: 0, width: `${100 - percent}%` }}
+            className="progress-bar bg-danger mt-0"
+            style={{ width: `${100 - percent}%` }}
             role="progressbar"
             aria-valuenow={100 - percent}
             aria-valuemin={0}
@@ -816,7 +816,7 @@ const RaidBattle = () => {
           type="number"
           min={MIN_IV}
           max={MAX_IV}
-          required={true}
+          required
           className="form-control"
           placeholder="IV ATK"
           onInput={(e) =>
@@ -832,7 +832,7 @@ const RaidBattle = () => {
           type="number"
           min={MIN_IV}
           max={MAX_IV}
-          required={true}
+          required
           className="form-control"
           placeholder="IV DEF"
           onInput={(e) =>
@@ -848,7 +848,7 @@ const RaidBattle = () => {
           type="number"
           min={MIN_IV}
           max={MAX_IV}
-          required={true}
+          required
           className="form-control"
           placeholder="IV STA"
           onInput={(e) =>
@@ -902,10 +902,9 @@ const RaidBattle = () => {
             <span className="d-flex align-items-center">
               Released in GO
               <img
-                className={filters.selected.onlyReleasedGO ? '' : 'filter-gray'}
+                className={combineClasses('ms-1', filters.selected.onlyReleasedGO ? '' : 'filter-gray')}
                 width={28}
                 height={28}
-                style={{ marginLeft: 5 }}
                 alt="Pokémon GO Icon"
                 src={APIService.getPokemonGoIcon(icon)}
               />
@@ -966,7 +965,7 @@ const RaidBattle = () => {
             <b>{splitAndCapitalize(pokemon.name, '-', ' ')}</b>
           </div>
         </div>
-        <form className="element-top">
+        <form className="mt-2">
           <FormControlLabel
             control={
               <Checkbox
@@ -1050,7 +1049,7 @@ const RaidBattle = () => {
               type="number"
               min={MIN_IV}
               max={MAX_IV}
-              required={true}
+              required
               className="form-control"
               placeholder="IV ATK"
               onInput={(e) => {
@@ -1076,7 +1075,7 @@ const RaidBattle = () => {
               type="number"
               min={MIN_IV}
               max={MAX_IV}
-              required={true}
+              required
               className="form-control"
               placeholder="IV DEF"
               onInput={(e) => {
@@ -1102,7 +1101,7 @@ const RaidBattle = () => {
               type="number"
               min={MIN_IV}
               max={MAX_IV}
-              required={true}
+              required
               className="form-control"
               placeholder="IV STA"
               onInput={(e) => {
@@ -1192,7 +1191,7 @@ const RaidBattle = () => {
     }
     return (
       <Fragment>
-        <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 5, paddingLeft: 10 }}>
+        <div className="d-flex flex-wrap align-items-center ps-2" style={{ columnGap: 5 }}>
           <div className="pokemon-battle">
             <span className="position-relative">
               <PokemonIconType pokemonType={pokemon.pokemonType} size={18}>
@@ -1213,8 +1212,8 @@ const RaidBattle = () => {
             {renderMove({ ...pokemon.cMove, moveType: pokemon.cMoveType })}
           </div>
         </div>
-        <p className="element-top">Select slot Pokémon that you want to replace.</p>
-        <div className="element-top justify-content-center" style={{ padding: '0 10px' }}>
+        <p className="mt-2">Select slot Pokémon that you want to replace.</p>
+        <div className="mt-2 justify-content-center px-2">
           {trainerBattle.map((trainer) => (
             <div className="trainer-battle d-flex align-items-center position-relative" key={trainer.trainerId}>
               <Badge
@@ -1323,12 +1322,12 @@ const RaidBattle = () => {
 
   return (
     <Fragment>
-      <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
-        <div className="col-lg" style={{ padding: 0 }}>
-          <Find isHide={true} title="Raid Boss" clearStats={clearDataBoss} />
+      <div className="row m-0" style={{ overflowX: 'hidden' }}>
+        <div className="col-lg p-0">
+          <Find isHide title="Raid Boss" clearStats={clearDataBoss} />
         </div>
-        <div className="col-lg d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
-          <div className="element-top position-relative">
+        <div className="col-lg d-flex justify-content-center align-items-center p-0">
+          <div className="mt-2 position-relative">
             {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
               <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
                 <div className="moveset-error" />
@@ -1336,7 +1335,7 @@ const RaidBattle = () => {
               </div>
             )}
             <h3 className="text-center text-decoration-underline">Select Boss Moveset</h3>
-            <div className="row element-top">
+            <div className="row mt-2">
               <div className="col d-flex justify-content-center">
                 <div>
                   <h6 className="text-center">
@@ -1393,7 +1392,7 @@ const RaidBattle = () => {
               isLoadedForms={isLoadedForms}
             />
             <hr />
-            <div className="row align-items-center element-top" style={{ margin: 0 }}>
+            <div className="row align-items-center mt-2 m-0">
               <div className="col-6 d-flex justify-content-end">
                 <FormControlLabel
                   control={
@@ -1417,8 +1416,8 @@ const RaidBattle = () => {
                 />
               </div>
             </div>
-            <div className="row align-items-center element-top" style={{ margin: 0 }}>
-              <div className="col-6 d-flex justify-content-end" style={{ paddingRight: 0 }}>
+            <div className="row align-items-center mt-2 m-0">
+              <div className="col-6 d-flex justify-content-end pe-0">
                 <FormControlLabel
                   control={
                     <Switch
@@ -1429,7 +1428,7 @@ const RaidBattle = () => {
                   label={`Time Allow (Default: ${RAID_BOSS_TIER[tier].timer}sec)`}
                 />
               </div>
-              <div className="col-6" style={{ paddingLeft: 0 }}>
+              <div className="col-6 ps-0">
                 <div className="input-group">
                   <input
                     type="number"
@@ -1446,7 +1445,7 @@ const RaidBattle = () => {
               </div>
             </div>
             {resultFMove && resultCMove && (
-              <div className="text-center element-top">
+              <div className="text-center mt-2">
                 <button
                   className="btn btn-primary w-50"
                   disabled={Boolean(resultBoss)}
@@ -1460,7 +1459,7 @@ const RaidBattle = () => {
         </div>
       </div>
       <hr />
-      <div className="container" style={{ paddingBottom: 15 }}>
+      <div className="container pb-3">
         <div className="d-flex flex-wrap align-items-center justify-content-between">
           <div>
             <h4>
@@ -1535,7 +1534,7 @@ const RaidBattle = () => {
                       #{value.pokemon?.num} {splitAndCapitalize(value.pokemon?.name, '-', ' ')}
                     </b>
                   </span>
-                  <span className="d-block element-top">
+                  <span className="d-block mt-2">
                     DPS: <b>{toFloatWithPadding(value.dpsAtk, 2)}</b>
                   </span>
                   <span className="d-block">
@@ -1552,7 +1551,7 @@ const RaidBattle = () => {
                     Time is Killed: <b>{toFloatWithPadding(value.ttkDef, 2)} sec</b>
                   </span>
                   <hr />
-                  <div className="container" style={{ marginBottom: 15 }}>
+                  <div className="container mb-3">
                     <TypeBadge title="Fast Move" move={value.fMove} moveType={value.fMoveType ?? MoveType.None} />
                     <TypeBadge title="Charged Move" move={value.cMove} moveType={value.cMoveType ?? MoveType.None} />
                   </div>
@@ -1560,7 +1559,7 @@ const RaidBattle = () => {
               ))}
           </div>
         )}
-        <div className="row" style={{ marginLeft: 0, marginRight: 0, marginBottom: 15, marginTop: 15 }}>
+        <div className="row my-3 mx-0">
           <div className="col-lg-5 justify-content-center" style={{ marginBottom: 20 }}>
             {trainerBattle.map((trainer, index) => (
               <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
@@ -1580,11 +1579,7 @@ const RaidBattle = () => {
                     src={APIService.getTrainerModel(trainer.trainerId % 294)}
                   />
                 </Badge>
-                <button
-                  className="btn btn-primary"
-                  style={{ marginRight: 10 }}
-                  onClick={() => handleShow(trainer.pokemons, index)}
-                >
+                <button className="btn btn-primary me-2" onClick={() => handleShow(trainer.pokemons, index)}>
                   <EditIcon fontSize="small" />
                 </button>
                 <div className="pokemon-battle-group">
@@ -1615,11 +1610,10 @@ const RaidBattle = () => {
                 <span className="d-flex ic-group">
                   <span
                     className={combineClasses(
-                      'ic-copy text-white',
+                      'ic-copy text-white me-1',
                       trainer.pokemons.at(0)?.dataTargetPokemon ? 'bg-primary' : 'click-none bg-secondary'
                     )}
                     title="Copy"
-                    style={{ marginRight: 5 }}
                     onClick={() => {
                       if (trainer.pokemons.at(0)?.dataTargetPokemon) {
                         setCountTrainer(countTrainer + 1);
@@ -1650,7 +1644,7 @@ const RaidBattle = () => {
                 </span>
               </div>
             ))}
-            <div className="text-center element-top">
+            <div className="text-center mt-2">
               <button
                 className="btn btn-primary"
                 onClick={() => calculateTrainerBattle(trainerBattle)}
@@ -1659,7 +1653,7 @@ const RaidBattle = () => {
                 Raid Battle
               </button>
             </div>
-            <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
+            <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
               <RemoveCircleIcon
                 className={combineClasses('cursor-pointer link-danger', trainerBattle.length > 1 ? '' : 'click-none')}
                 fontSize="large"
@@ -1704,9 +1698,9 @@ const RaidBattle = () => {
             {resultBoss && (
               <Fragment>
                 <hr />
-                <div className="row" style={{ margin: 0 }}>
+                <div className="row m-0">
                   <div className="col-lg-6" style={{ marginBottom: 20 }}>
-                    <span className="d-block element-top">
+                    <span className="d-block mt-2">
                       {`DPS: `}
                       <b>
                         {toFloatWithPadding(resultBoss.minDPS, 2)} - {toFloatWithPadding(resultBoss.maxDPS, 2)}
@@ -1739,12 +1733,10 @@ const RaidBattle = () => {
                     className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center"
                     style={{ marginBottom: 20 }}
                   >
-                    <h2 className="text-center" style={{ margin: 0 }}>
-                      Suggested players
-                    </h2>
+                    <h2 className="text-center m-0">Suggested players</h2>
                     <hr className="w-100" />
                     <div className="d-inline-block text-center">
-                      <h3 className="d-block" style={{ margin: 0 }}>
+                      <h3 className="d-block m-0">
                         {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP)))}
                       </h3>
                       {Math.ceil(statBossHP / (statBossHP - Math.round(resultBoss.minHP))) === 1 ? (
@@ -1753,9 +1745,9 @@ const RaidBattle = () => {
                         <span className="caption text-danger">Hard</span>
                       )}
                     </div>
-                    <h3 style={{ marginBottom: 15, marginLeft: 10, marginRight: 10 }}> - </h3>
+                    <h3 className="mx-2 mb-3"> - </h3>
                     <div className="d-inline-block text-center">
-                      <h3 className="d-block" style={{ margin: 0 }}>
+                      <h3 className="d-block m-0">
                         {Math.ceil(statBossHP / (statBossHP - Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)))}+
                       </h3>
                       <span className="caption text-success">Easy</span>
@@ -1767,9 +1759,9 @@ const RaidBattle = () => {
             {isNotEmpty(resultRaid) && (
               <Fragment>
                 <hr />
-                <ul className="element-top" style={{ listStyleType: 'initial' }}>
+                <ul className="mt-2" style={{ listStyleType: 'initial' }}>
                   {resultRaid?.map((result, turn) => (
-                    <li style={{ marginBottom: 15 }} key={turn}>
+                    <li className="mb-3" key={turn}>
                       <h4>
                         <b>Pokémon Round {turn + 1}</b>
                       </h4>
@@ -1880,16 +1872,16 @@ const RaidBattle = () => {
           </div>
         </div>
       </div>
-      <Modal show={show && !showSettingPokemon.isShow} onHide={handleClose} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={show && !showSettingPokemon.isShow} onHide={handleClose} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Trainer #{trainerBattleId + 1}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>
             {pokemonBattle.map((pokemon, index) => (
-              <div className={index === 0 ? '' : 'element-top'} key={index}>
+              <div className={index === 0 ? '' : 'mt-2'} key={index}>
                 <PokemonRaid
-                  isControls={true}
+                  isControls
                   id={index}
                   pokemon={pokemon}
                   data={pokemonBattle}
@@ -1902,7 +1894,7 @@ const RaidBattle = () => {
               </div>
             ))}
           </div>
-          <div className="d-flex flex-wrap justify-content-center align-items-center element-top">
+          <div className="d-flex flex-wrap justify-content-center align-items-center mt-2">
             <RemoveCircleIcon
               className={combineClasses('cursor-pointer link-danger', pokemonBattle.length > 1 ? '' : 'click-none')}
               fontSize="large"
@@ -1930,8 +1922,8 @@ const RaidBattle = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showOption} onHide={handleCloseOption} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={showOption} onHide={handleCloseOption} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Search Options</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -1947,8 +1939,8 @@ const RaidBattle = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showSettingPokemon.isShow} onHide={handleCloseSettingPokemon} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={showSettingPokemon.isShow} onHide={handleCloseSettingPokemon} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Pokémon Settings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -1964,8 +1956,8 @@ const RaidBattle = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showMovePokemon.isShow} onHide={handleCloseMovePokemon} centered={true}>
-        <Modal.Header closeButton={true}>
+      <Modal show={showMovePokemon.isShow} onHide={handleCloseMovePokemon} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Move Pokémon</Modal.Title>
         </Modal.Header>
         <Modal.Body>

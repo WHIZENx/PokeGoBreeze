@@ -15,7 +15,7 @@ const Bar = styled.div<Element>`
   width: 100%;
   height: ${(props) => props.height}px;
   background: #00000024;
-  border: 2px ridge lightgray;
+  border: 2px ridge var(--custom-table-border);
   position: relative;
 `;
 

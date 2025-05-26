@@ -242,7 +242,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league && (
-          <div className="d-flex flex-wrap align-items-center element-top" style={{ columnGap: 10 }}>
+          <div className="d-flex flex-wrap align-items-center mt-2" style={{ columnGap: 10 }}>
             <img
               alt="Image League"
               width={64}
@@ -311,7 +311,7 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container pvp-container element-bottom">
+      <div className="container pvp-container pb-3">
         {renderLeague()}
         <hr />
         <h2>Top Performer Pokémon</h2>
@@ -327,7 +327,7 @@ const TeamPVP = (props: IStyleSheetData) => {
         <div className="ranking-container card-container">
           <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
             <div className="ranking-score">Pokémon</div>
-            <div className="d-flex" style={{ marginRight: 15, columnGap: 30 }}>
+            <div className="d-flex me-3" style={{ columnGap: 30 }}>
               <div
                 className="text-center"
                 style={{ width: 'max-content' }}
@@ -431,38 +431,32 @@ const TeamPVP = (props: IStyleSheetData) => {
                 <div className="ranking-group w-100" style={{ columnGap: 15 }}>
                   <div>
                     <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-                      <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(
+                      <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
                         value.name,
                         '-',
                         ' '
                       )}`}</b>
-                      <TypeInfo
-                        isHideText={true}
-                        isBlock={true}
-                        isShowShadow={true}
-                        height={20}
-                        arr={value.pokemonData?.types}
-                      />
+                      <TypeInfo isHideText isBlock isShowShadow height={20} arr={value.pokemonData?.types} />
                     </div>
                     <div className="d-flex" style={{ columnGap: 10 }}>
                       <TypeBadge
-                        isGrow={true}
-                        isFind={true}
+                        isGrow
+                        isFind
                         title="Fast Move"
                         move={value.fMove}
                         moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                       />
                       <TypeBadge
-                        isGrow={true}
-                        isFind={true}
+                        isGrow
+                        isFind
                         title="Primary Charged Move"
                         move={value.cMovePri}
                         moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                       />
                       {value.cMoveSec && (
                         <TypeBadge
-                          isGrow={true}
-                          isFind={true}
+                          isGrow
+                          isFind
                           title="Secondary Charged Move"
                           move={value.cMoveSec}
                           moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}
@@ -470,7 +464,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                       )}
                     </div>
                   </div>
-                  <div className="d-flex filter-shadow align-items-center" style={{ marginRight: 35, columnGap: 30 }}>
+                  <div className="d-flex filter-shadow align-items-center me-3" style={{ columnGap: 30 }}>
                     <div className="text-center" style={{ width: 120 }}>
                       <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                     </div>
@@ -540,7 +534,7 @@ const TeamPVP = (props: IStyleSheetData) => {
               </div>
             </div>
           </div>
-          <Accordion alwaysOpen={true}>
+          <Accordion alwaysOpen>
             {rankingData?.teams
               .sort((a, b) => setSortedPokemonTeam(a, b))
               .map((value, index) => (
@@ -577,7 +571,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                           </div>
                         ))}
                       </div>
-                      <div className="d-flex align-items-center" style={{ marginRight: 15, columnGap: 30 }}>
+                      <div className="d-flex align-items-center me-3" style={{ columnGap: 30 }}>
                         <div className="text-center" style={{ width: 200 }}>
                           <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                         </div>
@@ -590,14 +584,13 @@ const TeamPVP = (props: IStyleSheetData) => {
                       </div>
                     </div>
                   </Accordion.Header>
-                  <Accordion.Body style={{ padding: 0 }}>
+                  <Accordion.Body className="p-0">
                     <Fragment>
                       {value.teamsData.map((value, index) => (
                         <div
-                          className="d-flex align-items-center"
+                          className="d-flex align-items-center p-3"
                           key={index}
                           style={{
-                            padding: 15,
                             gap: '1rem',
                             backgroundImage: computeBgType(
                               value.pokemonData?.types,
@@ -636,15 +629,15 @@ const TeamPVP = (props: IStyleSheetData) => {
                           <div className="ranking-group">
                             <div>
                               <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
-                                <b className="text-white text-shadow">{`#${value.id} ${splitAndCapitalize(
+                                <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
                                   value.name,
                                   '-',
                                   ' '
                                 )}`}</b>
                                 <TypeInfo
-                                  isHideText={true}
-                                  isBlock={true}
-                                  isShowShadow={true}
+                                  isHideText
+                                  isBlock
+                                  isShowShadow
                                   height={20}
                                   color="white"
                                   arr={value.pokemonData?.types}
@@ -652,23 +645,23 @@ const TeamPVP = (props: IStyleSheetData) => {
                               </div>
                               <div className="d-flex" style={{ gap: 10 }}>
                                 <TypeBadge
-                                  isGrow={true}
-                                  isFind={true}
+                                  isGrow
+                                  isFind
                                   title="Fast Move"
                                   move={value.fMove}
                                   moveType={getMoveType(value.pokemonData, value.fMove?.name)}
                                 />
                                 <TypeBadge
-                                  isGrow={true}
-                                  isFind={true}
+                                  isGrow
+                                  isFind
                                   title="Primary Charged Move"
                                   move={value.cMovePri}
                                   moveType={getMoveType(value.pokemonData, value.cMovePri?.name)}
                                 />
                                 {value.cMoveSec && (
                                   <TypeBadge
-                                    isGrow={true}
-                                    isFind={true}
+                                    isGrow
+                                    isFind
                                     title="Secondary Charged Move"
                                     move={value.cMoveSec}
                                     moveType={getMoveType(value.pokemonData, value.cMoveSec.name)}

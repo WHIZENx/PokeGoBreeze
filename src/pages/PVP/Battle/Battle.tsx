@@ -1258,7 +1258,7 @@ const Battle = () => {
   ) => {
     const battleType = getKeyWithData(BattleType, type);
     return (
-      <Accordion defaultActiveKey={[]} alwaysOpen={true}>
+      <Accordion defaultActiveKey={[]} alwaysOpen>
         <Accordion.Item eventKey="0">
           <Accordion.Header>Information</Accordion.Header>
           <Accordion.Body>
@@ -1305,7 +1305,7 @@ const Battle = () => {
               {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
             {'Attack: '}
             <b>
               {Math.floor(
@@ -1314,7 +1314,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
             {'Defense: '}
             <b>
               {Math.floor(
@@ -1323,7 +1323,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="Image Logo" width={20} height={20} src={HP_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
             HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
             <br />
             {'Stats Prod: '}
@@ -1341,7 +1341,7 @@ const Battle = () => {
                 calculateStatPokemon(e, type, pokemon, setPokemon);
               }}
             >
-              <div className="element-top input-group">
+              <div className="mt-2 input-group">
                 <span className="input-group-text">Level</span>
                 <input
                   className="form-control shadow-none"
@@ -1389,32 +1389,32 @@ const Battle = () => {
                   max={MAX_IV}
                 />
               </div>
-              <div className="w-100 element-top">
+              <div className="w-100 mt-2">
                 <Button type="submit" className="w-100" color="primary">
                   Calculate Stats
                 </Button>
               </div>
             </form>
-            <div className="w-100 element-top">
+            <div className="w-100 mt-2">
               <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
                 Set Random Stats
               </Button>
             </div>
-            <div className="w-100 element-top">
+            <div className="w-100 mt-2">
               <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon)}>
                 Set Best Stats
               </Button>
             </div>
             <hr />
             <TypeBadge
-              isFind={true}
+              isFind
               title="Fast Move"
               move={pokemon.fMove}
               moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
             />
             <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
               <TypeBadge
-                isFind={true}
+                isFind
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
                 moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMovePri?.name)}
@@ -1424,7 +1424,7 @@ const Battle = () => {
             {pokemon.cMoveSec && (
               <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
                 <TypeBadge
-                  isFind={true}
+                  isFind
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
                   moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMoveSec.name)}
@@ -1633,7 +1633,7 @@ const Battle = () => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container element-top battle-body-container">
+      <div className="container mt-2 battle-body-container">
         <Form.Select
           onChange={(e) => {
             navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
@@ -1646,7 +1646,7 @@ const Battle = () => {
           <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
           <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
         </Form.Select>
-        <div className="row element-top" style={{ margin: 0 }}>
+        <div className="row mt-2 m-0">
           <div className="col-lg-3">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>
@@ -1658,7 +1658,7 @@ const Battle = () => {
                 <Fragment>
                   <Accordion defaultActiveKey={[]}>
                     <Card className="position-relative">
-                      <Card.Header style={{ padding: 0 }}>
+                      <Card.Header className="p-0">
                         <div className="d-flex timeline-vertical">
                           <div className="w-50">
                             <div
@@ -1720,7 +1720,7 @@ const Battle = () => {
                         <CustomToggle eventKey="0" />
                       </Card.Header>
                       <Accordion.Collapse eventKey="0">
-                        <Card.Body style={{ padding: 0 }}>{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
+                        <Card.Body className="p-0">{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
                       </Accordion.Collapse>
                     </Card>
                   </Accordion>
@@ -1761,7 +1761,7 @@ const Battle = () => {
                         label="Show Tap Move"
                       />
                       <RadioGroup
-                        row={true}
+                        row
                         aria-labelledby="row-timeline-group-label"
                         name="row-timeline-group"
                         value={timelineType}
@@ -1829,7 +1829,7 @@ const Battle = () => {
           </div>
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-          <div className="text-center element-top">
+          <div className="text-center mt-2">
             <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
               {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
                 <Fragment>

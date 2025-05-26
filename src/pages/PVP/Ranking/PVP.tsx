@@ -281,22 +281,22 @@ const RankingPVP = (props: IStyleSheetData) => {
           </div>
           <div className="ranking-group w-100">
             <b>{`#${data.id} ${splitAndCapitalize(data.name, '-', ' ')}`}</b>
-            <div style={{ marginRight: 15 }}>
+            <div className="ms-3">
               <span className="ranking-score score-ic text-black">{data.data?.score}</span>
             </div>
           </div>
         </div>
       </Accordion.Header>
       <Accordion.Body
+        className="p-0"
         style={{
-          padding: 0,
           backgroundImage: computeBgType(data.pokemon?.types, data.pokemonType, props.styleSheet, 0.3),
         }}
       >
         {storeStats && storeStats[key] && (
           <Fragment>
             <div className="pokemon-ranking-body ranking-body">
-              <div className="w-100 ranking-info element-top">
+              <div className="w-100 ranking-info mt-2">
                 <HeaderPVP data={data} />
                 <hr />
                 <BodyPVP
@@ -352,7 +352,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league ? (
-          <div className="d-flex flex-wrap align-items-center element-top" style={{ columnGap: 10 }}>
+          <div className="d-flex flex-wrap align-items-center mt-2" style={{ columnGap: 10 }}>
             <img
               alt="Image League"
               width={64}
@@ -368,11 +368,8 @@ const RankingPVP = (props: IStyleSheetData) => {
             </h2>
           </div>
         ) : (
-          <div className="ph-item element-top">
-            <div
-              className="ph-picture"
-              style={{ width: '40%', height: 64, paddingLeft: 0, paddingRight: 0, marginBottom: 0 }}
-            />
+          <div className="ph-item mt-2">
+            <div className="ph-picture mb-0 px-0" style={{ width: '40%', height: 64 }} />
           </div>
         )}
       </Fragment>
@@ -381,10 +378,10 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container pvp-container element-bottom">
+      <div className="container pvp-container pb-3">
         {renderLeague()}
         <hr />
-        <div className="element-top ranking-link-group">
+        <div className="mt-2 ranking-link-group">
           {getKeysObj(ScoreType).map((type, index) => (
             <Button
               key={index}
@@ -421,7 +418,7 @@ const RankingPVP = (props: IStyleSheetData) => {
         <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
           <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
             <div />
-            <div className="d-flex" style={{ marginRight: 15 }}>
+            <div className="d-flex me-3">
               <div
                 className="text-center"
                 style={{ width: 'max-content' }}
@@ -441,7 +438,7 @@ const RankingPVP = (props: IStyleSheetData) => {
               </div>
             </div>
           </div>
-          <Accordion alwaysOpen={true}>
+          <Accordion alwaysOpen>
             {rankingData
               .filter(
                 (pokemon) =>

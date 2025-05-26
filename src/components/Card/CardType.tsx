@@ -10,7 +10,7 @@ const CardType = (props: ICardTypeComponent) => {
     <Fragment>
       {props.value ? (
         <Fragment>
-          <IconType width={64} height={64} alt="Pokémon GO Type Logo" style={{ marginRight: 10 }} type={props.value} />
+          <IconType width={64} height={64} alt="Pokémon GO Type Logo" className="me-2" type={props.value} />
           <b>{`${getValueOrDefault(String, props.name, props.value)} `}</b>
           {props.moveType !== MoveType.None && (
             <span

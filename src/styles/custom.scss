@@ -1,79 +1,52 @@
-// Mixins for common styles
-@mixin theme-transition {
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-}
-
-@mixin theme-border($color: var(--custom-table-background-sub-head-border)) {
-  border: 1px solid $color;
-}
-
-@mixin table-head-style {
-  background-color: var(--custom-table-background-head);
-  color: white;
-
-  @include theme-transition;
-}
-
-@mixin sub-head-style {
-  background-color: var(--custom-table-background-sub-head) !important;
-  color: var(--custom-table-background-sub-head-text) !important;
-
-  @include theme-border;
-}
-
-@mixin table-info-style {
-  background-color: var(--custom-table-background-info);
-  color: var(--custom-table-background-sub-head-text);
-
-  @include theme-border;
-}
+@use "./common.scss" as *;
 
 // Dynamic theme classes
 .theme-card {
-  background-color: var(--background-paper);
-  color: var(--text-primary);
+  @include theme-background(var(--background-paper));
+  @include theme-text(var(--text-primary));
+  
   border-radius: var(--border-radius);
 
   @include theme-transition;
 }
 
 .theme-input {
-  background-color: var(--background-input);
-  color: var(--text-primary);
-
+  @include theme-background(var(--background-input));
+  @include theme-text(var(--text-primary));
   @include theme-border(var(--background-table-divided));
 
   &::placeholder {
-    color: var(--text-secondary);
+    @include theme-text(var(--text-secondary));
   }
 }
 
 .theme-btn {
-  background-color: var(--primary-main);
-  color: var(--primary-contrast-text);
+  @include theme-background(var(--primary-main));
+  @include theme-text(var(--primary-contrast-text));
+  
   border-radius: var(--border-radius);
 
   &:hover {
-    background-color: var(--primary-dark);
+    @include theme-background(var(--primary-dark));
   }
 }
 
 // Text color classes
 .theme-text-primary {
-  color: var(--text-primary) !important;
+  @include theme-text(var(--text-primary), true);
 }
 
 .theme-text-secondary {
-  color: var(--text-secondary);
+  @include theme-text(var(--text-secondary));
 }
 
 // Background color classes
 .theme-bg-default {
-  background-color: var(--background-default);
+  @include theme-background(var(--background-default));
 }
 
 .theme-table-primary {
-  background-color: var(--background-table-primary) !important;
+  @include theme-background(var(--background-table-primary), true);
 }
 
 // Theme spinner classes
@@ -87,33 +60,35 @@
 
 // Selection and highlighting classes
 .theme-custom-selected-bg {
-  background-color: var(--custom-selected-bg);
+  @include theme-background(var(--custom-selected-bg));
 }
 
 // Table-related theme classes
 .theme-table-info-bg {
-  background-color: var(--custom-table-background-info);
-  border: 2px solid var(--custom-table-background-sub-head-border);
+  @include theme-background(var(--custom-table-background-info));
 }
 
+.theme-table-info-bg,
 .theme-table-info-bg-border {
-  border: 2px solid var(--custom-table-background-sub-head-border);
+  @include theme-border(2px);
 }
 
-.theme-text-shadow {
-  text-shadow: var(--shadow-default-revert) 1px 1px;
+// Text shadow
+.text-shadow {
+  text-shadow: 1px 1px var(--shadow-default-revert);
 }
 
 // Override some of the existing styles to use theme variables
-.caption {
-  color: var(--text-caption);
+.caption,
+.text-gen {
+  @include theme-text(var(--text-caption));
 }
 
 // Selection classes
 .highlight-select-pokemon,
 .current-select-pokemon,
 .selected {
-  background-color: var(--custom-selected) !important;
+  @include theme-background(var(--custom-selected), true);
 }
 
 // Result classes with shared styles
@@ -121,59 +96,59 @@
 .result-pokemon,
 .result-move-select,
 .result-move-select-default {
-  background-color: var(--custom-selected-bg);
+  @include theme-background(var(--custom-selected-bg));
+  
   box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
-  color: var(--text-primary);
+
+  @include theme-text(var(--text-primary));
 }
 
 // Card classes with shared border
 .card-pokemon,
 .card-move,
 .card-pokemon-select {
-  border-top: 1px solid var(--background-table-divided);
+  @include theme-border(1px, top, var(--background-table-divided));
   
   &:hover,
   .ranking-container .accordion-button.collapsed:hover {
-    background-color: var(--custom-selected-hover) !important;
+    @include theme-background(var(--custom-selected-hover), true);
   }
 }
 
 // Error message classes
 .moveset-error {
-  background-color: var(--background-paper);
+  @include theme-background(var(--background-paper));
 }
 
 .moveset-error-msg {
-  background-color: var(--background-default);
-  color: var(--error-main, #f44336);
+  @include theme-background(var(--background-default));
+  @include theme-text(var(--error-main, #f44336));
 }
 
 // Button styling using CSS variables
 .btn-select-type {
-  background-color: var(--background-btn-type);
-  color: var(--text-primary);
-
+  @include theme-background(var(--background-btn-type));
+  @include theme-text(var(--text-primary));
   @include theme-border;
   @include theme-transition;
   
   &:hover:not(.select-type) {
-    background-color: var(--background-table-hover);
+    @include theme-background(var(--background-table-hover));
   }
   
   &.select-type {
-    background-color: var(--background-btn-type-select);
-    border-color: white;
+    @include theme-background(var(--background-btn-type-select));
+    @include theme-border(1px, all, white);
 
     span {
-      color: white !important;
+      @include theme-text(white, true);
     }
   }
 }
 
 // Border input styling
 .border-input {
-  background-color: var(--background-paper);
-
+  @include theme-background(var(--background-paper));
   @include theme-border;
   @include theme-transition;
 }
@@ -181,7 +156,7 @@
 // Table head classes
 .head-types {
   @include table-head-style;
-
+  
   padding: 10px;
   font-weight: bolder;
 }
@@ -192,9 +167,8 @@
 }
 
 .sticker-container h5 {
-  background-color: var(--custom-table-background-head);
-  color: var(--custom-table-background-info);
-
+  @include theme-background(var(--custom-table-background-head));
+  @include theme-text(var(--custom-table-background-info));
   @include theme-border;
 }
 
@@ -204,16 +178,16 @@
 }
 
 .filter-shadow-hover:hover {
-  filter: drop-shadow(2px 2px 2px #000000cc);
+  filter: drop-shadow(2px 2px 2px var(--shadow-hover));
 }
 
 // Navigation block
 .prev-next-block {
-  background-color: var(--background-btn-type);
-  color: var(--text-primary) !important;
+  @include theme-background(var(--background-btn-type));
+  @include theme-text(var(--text-primary), true);
 
   a {
-    color: var(--text-primary) !important;
+    @include theme-text(var(--text-primary), true);
   }
 }
 
@@ -222,19 +196,19 @@
   tbody {
     tr {
       td:nth-child(1) {
-        color: var(--text-primary) !important;
+        @include theme-text(var(--text-primary), true);
       }
       
       td:nth-child(2) {
-        color: var(--text-primary);
+        @include theme-text(var(--text-primary));
       }
       
       &:nth-child(odd) td {
-        background-color: var(--custom-table-background-odd) !important;
+        @include theme-background(var(--custom-table-background-odd), true);
       }
       
       &:nth-child(even) td {
-        background-color: var(--custom-table-background-even) !important;
+        @include theme-background(var(--custom-table-background-even), true);
       }
     }
   }
@@ -246,12 +220,7 @@
 .table-raid-cal tbody tr td,
 .table-info tbody tr td:nth-child(2),
 .battle-league tbody tr td {
-  color: var(--text-primary);
-}
-
-// Text generation class
-.text-gen {
-  color: var(--text-caption);
+  @include theme-text(var(--text-primary));
 }
 
 // Classes with background-default
@@ -266,12 +235,12 @@
 .ranking-header,
 .table-round-battle tbody tr td:first-child,
 .table-round-battle tbody tr td:not(:first-child, .bg-summary) {
-  background-color: var(--background-default) !important;
+  @include theme-background(var(--background-default), true);
 }
 
 // Add text color to ranking headers
 .table-round-battle tbody tr td:first-child {
-  color: var(--text-primary) !important;
+  @include theme-text(var(--text-primary), true);
 }
 
 // Table classes with shared sub-head style
@@ -288,7 +257,7 @@
 
 // Special case for raid-cal table cells
 .table-raid-cal tbody tr td:nth-child(1) {
-  color: var(--text-primary) !important;
+  @include theme-text(var(--text-primary), true);
 }
 
 // Table info styling
@@ -301,13 +270,13 @@
 // Special table styles
 .table-catch-chance thead th,
 .table-info tbody tr.info-costs td:nth-child(2) {
-  color: var(--text-primary);
-  background-color: var(--custom-table-background-info) !important;
+  @include theme-text(var(--text-primary));
+  @include theme-background(var(--custom-table-background-info), true);
 }
 
 .ranking-link-group button {
-  color: var(--text-primary);
-  background-color: var(--custom-table-background-info);
+  @include theme-text(var(--text-primary));
+  @include theme-background(var(--custom-table-background-info));
 }
 
 // Table classes with sub-header styles
@@ -321,44 +290,44 @@
 
 // Form button styling
 .btn-form {
-  background-color: var(--custom-btn-form) !important;
-  color: var(--text-primary) !important;
+  @include theme-background(var(--custom-btn-form), true);
+  @include theme-text(var(--text-primary), true);
 
   &:hover:not(.form-selected) {
-    background-color: var(--custom-btn-form-hover);
+    @include theme-background(var(--custom-btn-form-hover));
   }
 
   &:focus {
-    background-color: var(--custom-btn-form-focus);
+    @include theme-background(var(--custom-btn-form-focus));
   }
 
   &.form-selected {
-    background-color: var(--custom-btn-form-selected) !important;
+    @include theme-background(var(--custom-btn-form-selected), true);
   }
 }
 
 // Card selection classes
 .card-select-enabled {
-  background-color: var(--background-paper);
+  @include theme-background(var(--background-paper));
 }
 
 .card-select-disabled {
-  background-color: var(--bs-secondary-bg) !important;
-  color: var(--bs-body-color) !important;
+  @include theme-background(var(--bs-secondary-bg), true);
+  @include theme-text(var(--bs-body-color), true);
 }
 
 .select-down {
-  background-color: var(--bs-body-bg);
+  @include theme-background(var(--bs-body-bg));
 }
 
 .stats-container {
-  background-color: var(--background-stats-container);
+  @include theme-background(var(--background-stats-container));
 }
 
 // Table text colors
 .table-movesets tbody tr td,
 .table-moves tbody tr td {
-  color: var(--custom-table-background-sub-head-text);
+  @include theme-text(var(--custom-table-background-sub-head-text));
 }
 
 // Table border styling
@@ -366,8 +335,78 @@ th,
 td,
 .table-info,
 .table-moves-col,
-.table-counter-container {
-  border: 1px solid var(--custom-table-background-sub-head-border) !important;
+.table-counter-container,
+.table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs,
+.list-item-ranking,
+.season-league,
+.group-rank-league,
+.sticker-detail,
+.sticker-container,
+.top-raid-group,
+.top-raid-pokemon,
+.trainer-battle,
+.pokemon-battle,
+.trainer-levelup {
+  @include theme-border(1px, all, var(--custom-table-background-sub-head-border), true);
+}
+
+.custom-border-right {
+  @include theme-border(1px, right);
+}
+
+.card-ranking,
+.custom-border-left-2 {
+  @include theme-border(2px, left);
+}
+
+.card-ranking,
+.custom-border-right-2 {
+  @include theme-border(2px, right);
+}
+
+.card-ranking,
+.custom-border-bottom-2 {
+  @include theme-border(2px, bottom);
+}
+
+.card-ranking:first-of-type,
+.custom-border-top-2 {
+  @include theme-border(2px, top);
+}
+
+.model,
+.frame-badge,
+.table-desc tbody tr td,
+.prev-next-block,
+.bg-ref-pokemon,
+.border-type-stat,
+.border-best-poke,
+.stats-border {
+  @include theme-border(1px, all, var(--custom-table-border));
+}
+
+.border-types,
+.btn-form,
+.border-window,
+.count-pokemon {
+  @include theme-border(1px, all, var(--custom-gray), true);
+}
+
+.timeline-vertical .w-50:first-child .pokemon-battle-header {
+  @include theme-border(1px, left, var(--custom-gray));
+}
+
+.pokemon-battle-header {
+  @include theme-border(1px, right, var(--custom-gray));
+  @include theme-border(1px, top, var(--custom-gray));
+  @include theme-border(1px, bottom, var(--custom-gray));
+}
+
+.move-img-desc img,
+.img-desc,
+.border-box-battle,
+.stats-boss {
+  @include theme-border(2px, all, var(--custom-table-border));
 }
 
 // Table header styling
@@ -389,24 +428,24 @@ td,
 .frame-badge-select,
 .frame-badge:hover,
 .form-header {
-  background-color: var(--custom-according-header);
+  @include theme-background(var(--custom-according-header));
 }
 
 .accordion-footer {
-  background-color: var(--custom-according-footer);
+  @include theme-background(var(--custom-according-footer));
 }
 
 .card-header {
-  background-color: var(--custom-dropdown-header) !important;
+  @include theme-background(var(--custom-dropdown-header), true);
 }
 
 .bg-card-highlight {
-  background-color: var(--custom-dropdown-highlight) !important;
+  @include theme-background(var(--custom-dropdown-highlight), true);
 }
 
 // Table sort styling
 .ranking-header .ranking-sort:not(.ranking-selected) {
-  color: var(--table-sort) !important;
+  @include theme-text(var(--table-sort), true);
 }
 
 // Loading container
@@ -416,17 +455,32 @@ td,
 
 // Stats and UI elements
 .stats-border {
-  background-color: var(--background-stats-performance);
+  @include theme-background(var(--background-stats-performance));
 }
 
 .play-line {
-  background-color: var(--background-revert);
+  @include theme-background(var(--background-revert));
 }
 
 .league-opened .accordion-button.collapsed {
-  background-color: var(--custom-according-highlight);
+  @include theme-background(var(--custom-according-highlight));
 }
 
 .table-catch-chance tbody td:not(.table-catch-chance tbody td:nth-child(1)) {
-  background-color: var(--custom-btn-form-selected);
+  @include theme-background(var(--custom-btn-form-selected));
+}
+
+.table-sub-bonus .accordion-button {
+  @include theme-background(var(--custom-table-background-sub-head));
+  @include theme-text(var(--custom-table-background-sub-head-text));
+}
+
+.click-none,
+.click-none.link-danger:hover {
+  @include theme-text(var(--custom-validator-disable), true);
+}
+
+.btn-form:focus,
+.btn-form:hover:not(.form-selected) {
+  @include theme-border(1px, all, var(--custom-black), true);
 }

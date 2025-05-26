@@ -160,7 +160,7 @@ const Leagues = () => {
   const showAccording = (league: ILeague, index: number, isOpened = false) => (
     <Accordion.Item key={index} eventKey={index.toString()}>
       <Accordion.Header className={isOpened ? 'league-opened' : ''}>
-        <div className="d-flex justify-content-between w-100" style={{ marginRight: 15, columnGap: 10 }}>
+        <div className="d-flex justify-content-between w-100 me-3" style={{ columnGap: 10 }}>
           <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
             <img
               alt="Image League"
@@ -174,7 +174,7 @@ const Leagues = () => {
           </div>
           {isEqual(league.leagueType, LeagueType.Premier) && (
             <div className="d-flex align-items-center flex-end">
-              <div className="info-event-future" style={{ padding: 6, borderRadius: 4, fontSize: 14 }}>
+              <div className="info-event-future p-1" style={{ borderRadius: 4, fontSize: 14 }}>
                 <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
               </div>
             </div>
@@ -221,7 +221,7 @@ const Leagues = () => {
               </div>
             )}
           </div>
-          <h5 className="title-leagues element-top">Conditions</h5>
+          <h5 className="title-leagues mt-2">Conditions</h5>
           <ul style={{ listStyleType: 'inherit' }}>
             <li style={{ fontWeight: 500 }}>
               <h6>
@@ -269,7 +269,7 @@ const Leagues = () => {
             {isNotEmpty(league.conditions.uniqueType) && (
               <li style={{ fontWeight: 500 }} className="unique-type">
                 <h6 className="title-leagues">Unique Type</h6>
-                <TypeInfo arr={league.conditions.uniqueType} style={{ marginLeft: 15 }} />
+                <TypeInfo arr={league.conditions.uniqueType} className="ms-3" />
               </li>
             )}
             {isNotEmpty(league.conditions.whiteList) && (
@@ -358,13 +358,11 @@ const Leagues = () => {
   );
 
   return (
-    <div className="container" style={{ padding: 15 }}>
-      <h2 className="title-leagues" style={{ marginBottom: 15 }}>
-        Battle Leagues List
-      </h2>
+    <div className="container p-3">
+      <h2 className="title-leagues mb-3">Battle Leagues List</h2>
       <hr />
-      <div className="row" style={{ rowGap: 10, margin: 0 }}>
-        <div className="col-md-8 d-flex justify-content-start align-items-center" style={{ padding: 0 }}>
+      <div className="row m-0" style={{ rowGap: 10 }}>
+        <div className="col-md-8 d-flex justify-content-start align-items-center p-0">
           <span style={{ fontWeight: 500 }}>
             <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>
             <span>
@@ -373,7 +371,7 @@ const Leagues = () => {
             </span>
           </span>
         </div>
-        <div className="col-md-4 d-flex justify-content-end" style={{ padding: 0 }}>
+        <div className="col-md-4 d-flex justify-content-end p-0">
           <Form.Select
             onChange={(e) => {
               setRank(toNumber(e.target.value));
@@ -395,18 +393,16 @@ const Leagues = () => {
       </div>
       {isNotEmpty(dataStore.leagues.data) ? (
         <Fragment>
-          <div className="d-flex justify-content-center element-top">
+          <div className="d-flex justify-content-center mt-2">
             <div className="season-league">
               <div className="group-rank-league reward-league text-center">
                 <div className="rank-header">Season {dataStore.leagues.season.season}</div>
                 <Badge
                   color="primary"
-                  className="position-relative d-inline-block img-link"
+                  className="position-relative d-inline-block img-link pt-4 pb-2"
                   overlap="circular"
                   badgeContent={null}
                   sx={{
-                    paddingTop: '1.5rem !important',
-                    paddingBottom: '0.5rem !important',
                     maxWidth: 64,
                   }}
                 >
@@ -421,10 +417,10 @@ const Leagues = () => {
                 <hr />
                 <Badge
                   color="primary"
-                  className="position-relative d-inline-block img-link"
+                  className="position-relative d-inline-block img-link pb-4"
                   overlap="circular"
                   badgeContent={null}
-                  sx={{ paddingBottom: '1.5rem !important', maxWidth: 64 }}
+                  sx={{ maxWidth: 64 }}
                 >
                   <img
                     className="pokemon-sprite-medium"
@@ -440,15 +436,14 @@ const Leagues = () => {
                     <div className="rank-header">Win Stack {value.step}</div>
                     <Badge
                       color="primary"
-                      className="position-relative d-inline-block img-link"
+                      className={combineClasses(
+                        'position-relative d-inline-block img-link pt-4',
+                        value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? 'pb-0' : 'pb-4'
+                      )}
                       overlap="circular"
                       badgeContent={value.count}
                       max={BattleLeagueCPType.InsMaster}
                       sx={{
-                        paddingBottom: `${
-                          value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? '0' : '1.5rem'
-                        } !important`,
-                        paddingTop: '1.5rem !important',
                         minWidth: 64,
                       }}
                     >
@@ -524,20 +519,20 @@ const Leagues = () => {
                         </Fragment>
                       )}
                     </Badge>
-                    <hr style={{ marginTop: 0 }} />
+                    <hr className="mt-0" />
                     <Badge
                       color="primary"
-                      className="position-relative d-inline-block img-link"
+                      className={combineClasses(
+                        'position-relative d-inline-block img-link',
+                        dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
+                          dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
+                          ? 'pb-0'
+                          : 'pb-4'
+                      )}
                       overlap="circular"
                       badgeContent={dataStore.leagues.season.rewards.rank[rank].premium[index].count}
                       max={BattleLeagueCPType.InsMaster}
                       sx={{
-                        paddingBottom: `${
-                          dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
-                          dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
-                            ? '0'
-                            : '1.5rem'
-                        } !important`,
                         minWidth: 64,
                       }}
                     >
@@ -634,8 +629,8 @@ const Leagues = () => {
               ))}
             </div>
           </div>
-          <div className="w-100 text-center" style={{ marginTop: 15, marginBottom: 15 }}>
-            <div className="d-flex justify-content-center" style={{ marginBottom: 10, columnGap: '10%' }}>
+          <div className="w-100 text-center my-3">
+            <div className="d-flex justify-content-center mb-2" style={{ columnGap: '10%' }}>
               <div id="currRank" className="combat-league-info">
                 <img
                   className="main-combat-league-info"
@@ -707,8 +702,8 @@ const Leagues = () => {
           </div>
         </Fragment>
       ) : (
-        <div className="ph-item element-top">
-          <div className="ph-picture" style={{ height: 450, paddingLeft: 0, paddingRight: 0 }} />
+        <div className="ph-item mt-2">
+          <div className="ph-picture px-0" style={{ height: 450 }} />
         </div>
       )}
       <div className="input-group border-input" style={{ width: 'fit-content' }}>
@@ -716,9 +711,9 @@ const Leagues = () => {
           Opened Leagues
         </span>
       </div>
-      <Accordion alwaysOpen={true}>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
+      <Accordion alwaysOpen>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 
-      <div className="w-25 input-group border-input element-top" style={{ minWidth: 300 }}>
+      <div className="w-25 input-group border-input mt-2" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find League</span>
         <input
           type="text"
@@ -728,13 +723,13 @@ const Leagues = () => {
           onKeyUp={(e) => setSearch(e.currentTarget.value)}
         />
       </div>
-      <Accordion className="accordion-league" alwaysOpen={true}>
+      <Accordion className="accordion-league" alwaysOpen>
         {leagueFilter.map((value, index) => showAccording(value, index))}
       </Accordion>
 
       {showData && (
-        <Modal size="lg" show={show} onHide={handleClose} centered={true}>
-          <Modal.Header closeButton={true}>
+        <Modal size="lg" show={show} onHide={handleClose} centered>
+          <Modal.Header closeButton>
             <Modal.Title className="d-flex flex-column" style={{ rowGap: 10 }}>
               <div>
                 <span>

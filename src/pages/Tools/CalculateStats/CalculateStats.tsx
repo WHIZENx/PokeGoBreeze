@@ -226,12 +226,12 @@ const Calculate = () => {
 
   return (
     <Fragment>
-      <div className="container element-top">
-        <Find isHide={true} clearStats={clearArrStats} />
+      <div className="container mt-2">
+        <Find isHide clearStats={clearArrStats} />
         <h1 id="main" className="text-center">
           Calculate Stats
         </h1>
-        <form className="element-top" onSubmit={onCalculateStatsPoke.bind(this)}>
+        <form className="mt-2" onSubmit={onCalculateStatsPoke.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
             <Box sx={{ width: '50%', minWidth: 350 }}>
               <div style={{ justifyContent: 'center' }} className="input-group mb-3">
@@ -311,7 +311,7 @@ const Calculate = () => {
           </div>
           <div className="d-flex justify-content-center text-center">
             <TypeRadioGroup
-              row={true}
+              row
               aria-labelledby="row-types-group-label"
               name="row-types-group"
               defaultValue={PokemonType.Normal}
@@ -373,7 +373,7 @@ const Calculate = () => {
               />
             </TypeRadioGroup>
           </div>
-          <div className="form-group d-flex justify-content-center text-center element-top">
+          <div className="form-group d-flex justify-content-center text-center mt-2">
             <button type="submit" className="btn btn-primary">
               Calculate
             </button>
@@ -400,10 +400,10 @@ const Calculate = () => {
               />
             </Box>
           </div>
-          <div className="d-flex justify-content-center" style={{ marginTop: 15 }}>
+          <div className="d-flex justify-content-center mt-3">
             <Box sx={{ width: '80%', minWidth: 320 }}>
               <div className="row">
-                <div className="col" style={{ padding: 0 }}>
+                <div className="col p-0">
                   <table className="table-info table-stats">
                     <thead>
                       <tr className="text-center">
@@ -432,7 +432,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image Stardust"
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
@@ -469,10 +469,10 @@ const Calculate = () => {
                       <tr>
                         <td>
                           {statData ? (
-                            <Candy id={pokemon?.id} style={{ marginRight: 8 }} />
+                            <Candy id={pokemon?.id} className="me-2" />
                           ) : (
                             <img
-                              style={{ marginRight: 8 }}
+                              className="me-2"
                               alt="Image Stardust"
                               height={20}
                               src={getItemSpritePath(ItemName.RareCandy)}
@@ -513,7 +513,7 @@ const Calculate = () => {
                             <CandyXL id={pokemon?.id} />
                           ) : (
                             <img
-                              style={{ marginRight: 10 }}
+                              className="me-2"
                               alt="Image Stardust"
                               height={20}
                               src={getItemSpritePath(ItemName.XlRareCandy)}
@@ -555,7 +555,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
                           ATK
                         </td>
                         <td>
@@ -584,7 +584,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
                           DEF
                         </td>
                         <td>
@@ -613,7 +613,7 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={HP_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
                           HP
                         </td>
                         <td>
@@ -630,7 +630,7 @@ const Calculate = () => {
                     </tbody>
                   </table>
                 </div>
-                <div className="col" style={{ padding: 0 }}>
+                <div className="col p-0">
                   <table className="table-info battle-league">
                     <thead className="text-center">
                       <tr>
@@ -641,7 +641,7 @@ const Calculate = () => {
                       <tr className="text-center">
                         <td className="table-sub-header" colSpan={4}>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image League"
                             width={30}
                             height={30}
@@ -666,7 +666,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image Stardust"
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
@@ -687,20 +687,19 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Candy Required</td>
-                        <td colSpan={3} style={{ padding: 0 }}>
+                        <td colSpan={3} className="p-0">
                           <div
-                            className="d-flex align-items-center td-style"
+                            className="d-flex align-items-center td-style custom-border-right"
                             style={{
                               float: 'left',
                               width: '50%',
-                              borderRight: '1px solid #b8d4da',
                             }}
                           >
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
-                              <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
+                              <Candy id={pokemon?.id} className="me-2" />
                             ) : (
                               <img
-                                style={{ marginRight: 10 }}
+                                className="me-2"
                                 alt="Image Stardust"
                                 height={20}
                                 src={getItemSpritePath(ItemName.RareCandy)}
@@ -725,7 +724,7 @@ const Calculate = () => {
                               <CandyXL id={pokemon?.id} />
                             ) : (
                               <img
-                                style={{ marginRight: 10 }}
+                                className="me-2"
                                 alt="Image Stardust"
                                 height={20}
                                 src={getItemSpritePath(ItemName.XlRareCandy)}
@@ -750,7 +749,7 @@ const Calculate = () => {
                       <tr>
                         <td>Stats</td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
                           {dataLittleLeague && dataLittleLeague.isElidge ? (
                             <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
                               {dataLittleLeague.stats?.atk}
@@ -760,7 +759,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
                           {dataLittleLeague && dataLittleLeague.isElidge ? (
                             <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
                               {dataLittleLeague.stats?.def}
@@ -770,14 +769,14 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={HP_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
                           {dataLittleLeague && dataLittleLeague.isElidge ? dataLittleLeague.stats?.sta : '-'}
                         </td>
                       </tr>
                       <tr className="text-center">
                         <td className="table-sub-header" colSpan={4}>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image League"
                             width={30}
                             height={30}
@@ -800,7 +799,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image Stardust"
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
@@ -821,20 +820,19 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Candy Required</td>
-                        <td colSpan={3} style={{ padding: 0 }}>
+                        <td colSpan={3} className="p-0">
                           <div
-                            className="d-flex align-items-center td-style"
+                            className="d-flex align-items-center td-style custom-border-right"
                             style={{
                               float: 'left',
                               width: '50%',
-                              borderRight: '1px solid #b8d4da',
                             }}
                           >
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
-                              <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
+                              <Candy id={pokemon?.id} className="me-2" />
                             ) : (
                               <img
-                                style={{ marginRight: 10 }}
+                                className="me-2"
                                 alt="Image Stardust"
                                 height={20}
                                 src={getItemSpritePath(ItemName.RareCandy)}
@@ -859,7 +857,7 @@ const Calculate = () => {
                               <CandyXL id={pokemon?.id} />
                             ) : (
                               <img
-                                style={{ marginRight: 10 }}
+                                className="me-2"
                                 alt="Image Stardust"
                                 height={20}
                                 src={getItemSpritePath(ItemName.XlRareCandy)}
@@ -884,7 +882,7 @@ const Calculate = () => {
                       <tr>
                         <td>Stats</td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
                           {dataGreatLeague && dataGreatLeague.isElidge ? (
                             <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
                               {dataGreatLeague.stats?.atk}
@@ -894,7 +892,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
                           {dataGreatLeague && dataGreatLeague.isElidge ? (
                             <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
                               {dataGreatLeague.stats?.def}
@@ -904,14 +902,14 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={HP_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
                           {dataGreatLeague && dataGreatLeague.isElidge ? dataGreatLeague.stats?.sta : '-'}
                         </td>
                       </tr>
                       <tr className="text-center">
                         <td className="table-sub-header" colSpan={4}>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image League"
                             width={30}
                             height={30}
@@ -934,7 +932,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image Stardust"
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
@@ -955,20 +953,19 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Candy Required</td>
-                        <td colSpan={3} style={{ padding: 0 }}>
+                        <td colSpan={3} className="p-0">
                           <div
-                            className="d-flex align-items-center td-style"
+                            className="d-flex align-items-center td-style custom-border-right"
                             style={{
                               float: 'left',
                               width: '50%',
-                              borderRight: '1px solid #b8d4da',
                             }}
                           >
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
-                              <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
+                              <Candy id={pokemon?.id} className="me-2" />
                             ) : (
                               <img
-                                style={{ marginRight: 10 }}
+                                className="me-2"
                                 alt="Image Stardust"
                                 height={20}
                                 src={getItemSpritePath(ItemName.RareCandy)}
@@ -993,7 +990,7 @@ const Calculate = () => {
                               <CandyXL id={pokemon?.id} />
                             ) : (
                               <img
-                                style={{ marginRight: 10 }}
+                                className="me-2"
                                 alt="Image Stardust"
                                 height={20}
                                 src={getItemSpritePath(ItemName.XlRareCandy)}
@@ -1018,7 +1015,7 @@ const Calculate = () => {
                       <tr>
                         <td>Stats</td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
                           {dataUltraLeague && dataUltraLeague.isElidge ? (
                             <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
                               {dataUltraLeague.stats?.atk}
@@ -1028,7 +1025,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
                           {dataUltraLeague && dataUltraLeague.isElidge ? (
                             <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
                               {dataUltraLeague.stats?.def}
@@ -1038,14 +1035,14 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={HP_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
                           {dataUltraLeague && dataUltraLeague.isElidge ? dataUltraLeague.stats?.sta : '-'}
                         </td>
                       </tr>
                       <tr className="text-center">
                         <td className="table-sub-header" colSpan={4}>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image League"
                             width={30}
                             height={30}
@@ -1065,7 +1062,7 @@ const Calculate = () => {
                       <tr>
                         <td>
                           <img
-                            style={{ marginRight: 10 }}
+                            className="me-2"
                             alt="Image Stardust"
                             height={20}
                             src={APIService.getItemSprite('stardust_painted')}
@@ -1086,20 +1083,19 @@ const Calculate = () => {
                       </tr>
                       <tr>
                         <td>Candy Required</td>
-                        <td colSpan={3} style={{ padding: 0 }}>
+                        <td colSpan={3} className="p-0">
                           <div
-                            className="d-flex align-items-center td-style"
+                            className="d-flex align-items-center td-style custom-border-right"
                             style={{
                               float: 'left',
                               width: '50%',
-                              borderRight: '1px solid #b8d4da',
                             }}
                           >
                             {dataMasterLeague ? (
-                              <Candy id={pokemon?.id} style={{ marginRight: 10 }} />
+                              <Candy id={pokemon?.id} className="me-2" />
                             ) : (
                               <img
-                                style={{ marginRight: 10 }}
+                                className="me-2"
                                 alt="Image Stardust"
                                 height={20}
                                 src={getItemSpritePath(ItemName.RareCandy)}
@@ -1124,7 +1120,7 @@ const Calculate = () => {
                               <CandyXL id={pokemon?.id} />
                             ) : (
                               <img
-                                style={{ marginRight: 10 }}
+                                className="me-2"
                                 alt="Image Stardust"
                                 height={20}
                                 src={getItemSpritePath(ItemName.XlRareCandy)}
@@ -1149,7 +1145,7 @@ const Calculate = () => {
                       <tr>
                         <td>Stats</td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={ATK_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
                           {dataMasterLeague ? (
                             <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-success' : ''}>
                               {dataMasterLeague.stats?.atk}
@@ -1159,7 +1155,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={DEF_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
                           {dataMasterLeague ? (
                             <span className={statData?.pokemonType === PokemonType.Shadow ? 'text-danger' : ''}>
                               {dataMasterLeague.stats?.def}
@@ -1169,7 +1165,7 @@ const Calculate = () => {
                           )}
                         </td>
                         <td className="text-center">
-                          <img style={{ marginRight: 10 }} alt="Image League" width={20} height={20} src={HP_LOGO} />
+                          <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
                           {dataMasterLeague ? dataMasterLeague.stats?.sta : '-'}
                         </td>
                       </tr>

@@ -10,8 +10,8 @@ const TypeBar = (props: ITypeBarComponent) => {
     <div className={combineClasses('d-flex align-items-center border-type', props.type?.toLowerCase())}>
       <span style={{ width: 35 }}>
         <img
-          style={{ padding: 5, backgroundColor: 'black' }}
-          className="sprite-type"
+          style={{ backgroundColor: 'black' }}
+          className="sprite-type p-1"
           alt="Pokémon GO Type Logo"
           src={APIService.getTypeHqSprite(props.type)}
         />

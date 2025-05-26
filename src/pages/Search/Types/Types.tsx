@@ -60,7 +60,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
         <img
           height={48}
           alt="Pokémon Image"
-          style={{ marginRight: 10 }}
+          className="me-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -83,7 +83,7 @@ const columnPokemon: TableColumnModify<IPokemonData>[] = [
           key={index}
           width={25}
           height={25}
-          style={{ marginRight: 10 }}
+          className="me-2"
           alt="Pokémon GO Type Logo"
           title={capitalize(value)}
           type={value}
@@ -267,15 +267,14 @@ const SearchTypes = (props: IStyleSheetData) => {
   };
 
   return (
-    <div className="container element-top">
+    <div className="container mt-2">
       <div className="d-flex justify-content-end">
         <div>
           <h6 className="text-center">
             <b>Select Type</b>
           </h6>
           <div
-            className="card-input"
-            style={{ marginBottom: 15 }}
+            className="card-input mb-3"
             tabIndex={0}
             onClick={() => setShowType(true)}
             onBlur={() => setShowType(false)}
@@ -305,10 +304,9 @@ const SearchTypes = (props: IStyleSheetData) => {
           <span className="d-flex align-items-center">
             Released in GO
             <img
-              className={releasedGO ? '' : 'filter-gray'}
+              className={combineClasses('mx-1', releasedGO ? '' : 'filter-gray')}
               width={28}
               height={28}
-              style={{ marginLeft: 5, marginRight: 5 }}
               alt="Pokémon GO Icon"
               src={APIService.getPokemonGoIcon(icon)}
             />
@@ -317,7 +315,7 @@ const SearchTypes = (props: IStyleSheetData) => {
         }
       />
       <div className="row">
-        <div className="col-xl-4 element-top">
+        <div className="col-xl-4 mt-2">
           <div
             className={combineClasses(
               'd-flex flex-column align-items-center type-info-container',
@@ -327,8 +325,8 @@ const SearchTypes = (props: IStyleSheetData) => {
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img
-                style={{ padding: 15, backgroundColor: 'black', borderRadius: '50%' }}
-                className="sprite-type-large"
+                style={{ backgroundColor: 'black', borderRadius: '50%' }}
+                className="sprite-type-large p-3"
                 alt="Pokémon GO Type Logo"
                 src={APIService.getTypeHqSprite(currentType)}
               />
@@ -337,7 +335,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               style={{ width: 'max-content' }}
               className={combineClasses(
                 currentType.toLowerCase(),
-                'type-select-bg d-flex align-items-center filter-shadow element-top'
+                'type-select-bg d-flex align-items-center filter-shadow mt-2'
               )}
             >
               <div style={{ display: 'contents', width: 16 }}>
@@ -349,7 +347,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               </div>
               <span className="filter-shadow">{capitalize(currentType)}</span>
             </span>
-            <span className="element-top text-white text-shadow">
+            <span className="mt-2 text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={getItemSpritePath(ItemName.PokeBall)} />
               <b>{` Pokémon: ${result.pokemonList.length} (${
                 isNotEmpty(result.pokemonList) &&
@@ -379,13 +377,13 @@ const SearchTypes = (props: IStyleSheetData) => {
                 </li>
               </ul>
             </span>
-            <span className="element-top text-white text-shadow">
+            <span className="mt-2 text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1201')} />
               <b>{` Fast Moves: ${result.fastMove.length}/${toNumber(allData?.fastMoves)} (${Math.round(
                 (result.fastMove.length * 100) / toNumber(allData?.fastMoves, 1)
               )}%)`}</b>
             </span>
-            <span className="element-top text-white text-shadow">
+            <span className="mt-2 text-white text-shadow-black">
               <img alt="Icon Item" height={36} src={APIService.getItemSprite('Item_1202')} />
               <b>{` Charged Moves: ${result.chargedMove.length}/${toNumber(allData?.chargedMoves)} (${Math.round(
                 (result.chargedMove.length * 100) / toNumber(allData?.chargedMoves, 1)
@@ -393,16 +391,16 @@ const SearchTypes = (props: IStyleSheetData) => {
             </span>
           </div>
         </div>
-        <div className="col-xl-8 element-top">
+        <div className="col-xl-8 mt-2">
           <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
             <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
               <DataTable
                 columns={convertColumnDataType(columnPokemon)}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
-                pagination={true}
+                pagination
                 defaultSortFieldId={ColumnType.Name}
-                highlightOnHover={true}
-                striped={true}
+                highlightOnHover
+                striped
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
@@ -412,10 +410,10 @@ const SearchTypes = (props: IStyleSheetData) => {
               <DataTable
                 columns={convertColumnDataType(columnPokemon)}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
-                pagination={true}
+                pagination
                 defaultSortFieldId={ColumnType.Name}
-                highlightOnHover={true}
-                striped={true}
+                highlightOnHover
+                striped
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
@@ -425,10 +423,10 @@ const SearchTypes = (props: IStyleSheetData) => {
               <DataTable
                 columns={convertColumnDataType(columnMove)}
                 data={result.fastMove}
-                pagination={true}
+                pagination
                 defaultSortFieldId={ColumnType.Name}
-                highlightOnHover={true}
-                striped={true}
+                highlightOnHover
+                striped
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
@@ -438,10 +436,10 @@ const SearchTypes = (props: IStyleSheetData) => {
               <DataTable
                 columns={convertColumnDataType(columnMove)}
                 data={result.chargedMove}
-                pagination={true}
+                pagination
                 defaultSortFieldId={ColumnType.Name}
-                highlightOnHover={true}
-                striped={true}
+                highlightOnHover
+                striped
                 customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}

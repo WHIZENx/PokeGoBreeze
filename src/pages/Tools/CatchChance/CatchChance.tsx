@@ -367,12 +367,12 @@ const CatchChance = () => {
   };
 
   return (
-    <div className="contanier element-top" style={{ paddingBottom: 15 }}>
-      <div className="row" style={{ margin: 0 }}>
-        <div className="col-md-6" style={{ padding: 0 }}>
+    <div className="container mt-2 pb-3">
+      <div className="row m-0">
+        <div className="col-md-6 p-0">
           <div className="d-flex justify-content-center">
             <Find
-              isHide={true}
+              isHide
               clearStats={clearStats}
               title="Select Pokémon"
               setStatATK={setStatATK}
@@ -382,7 +382,7 @@ const CatchChance = () => {
             />
           </div>
         </div>
-        <div className="col-md-6 position-relative" style={{ padding: 0 }}>
+        <div className="col-md-6 position-relative p-0">
           {!isEncounter && (
             <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter">
               <h5 className="text-not-encounter">
@@ -397,7 +397,7 @@ const CatchChance = () => {
               </h5>
             </div>
           )}
-          <div className="d-flex justify-content-center " style={{ margin: 0 }}>
+          <div className="d-flex justify-content-center m-0">
             <div>
               {medal && (
                 <SelectBadge
@@ -413,7 +413,7 @@ const CatchChance = () => {
                   setPriority={onSetPrioritySec}
                 />
               )}
-              <div className="d-flex flex-wrap justify-content-center w-100 element-top" style={{ gap: 10 }}>
+              <div className="d-flex flex-wrap justify-content-center w-100 mt-2" style={{ gap: 10 }}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -491,10 +491,7 @@ const CatchChance = () => {
                   }
                 />
               </div>
-              <div
-                className="d-flex w-100 justify-content-center element-top"
-                style={{ paddingLeft: 15, paddingRight: 15 }}
-              >
+              <div className="d-flex w-100 justify-content-center mt-2 px-3">
                 <LevelSlider
                   aria-label="Level"
                   className="w-75"
@@ -527,7 +524,7 @@ const CatchChance = () => {
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />
               </div>
-              <div className="d-flex w-100 element-top justify-content-center" style={{ gap: 20 }}>
+              <div className="d-flex w-100 mt-2 justify-content-center" style={{ gap: 20 }}>
                 {data?.baseFleeRate && (
                   <div className="w-25 text-center d-inline-block">
                     <h1>FLEE</h1>
@@ -546,7 +543,7 @@ const CatchChance = () => {
                   <h5>{level}</h5>
                 </div>
               </div>
-              <div className="d-flex w-100 element-top justify-content-center" style={{ gap: 20 }}>
+              <div className="d-flex w-100 mt-2 justify-content-center" style={{ gap: 20 }}>
                 {data?.baseFleeRate && (
                   <div className="w-25 text-center d-inline-block">
                     <h1>Attack</h1>
@@ -637,7 +634,7 @@ const CatchChance = () => {
                   label="Normal Throw "
                 />
               </div>
-              <div className="row element-top position-relative" style={{ margin: 0 }}>
+              <div className="row mt-2 position-relative m-0">
                 {isNormalThrow && (
                   <div className="w-100 h-100 position-absolute d-flex justify-content-center align-items-center text-center impossible-encounter" />
                 )}
@@ -659,17 +656,14 @@ const CatchChance = () => {
                         onChange={(_, v) => onHandleRadius(v as number)}
                       />
                     </div>
-                    <div className="w-50 text-center d-inline-block" style={{ marginBottom: 15 }}>
+                    <div className="w-50 text-center d-inline-block mb-3">
                       <h1>Radius</h1>
                       <hr className="w-100" />
                       <h5>{radius}</h5>
                     </div>
                   </div>
                 </div>
-                <div
-                  className="col-md-6 d-flex flex-column justify-content-center align-items-center"
-                  style={{ padding: 0 }}
-                >
+                <div className="col-md-6 d-flex flex-column justify-content-center align-items-center p-0">
                   {advThrow && <h5 className="text-center">{getKeyWithData(ThrowType, advThrow.throwType)}!</h5>}
                   <div className="d-flex justify-content-center position-relative">
                     <Circle line={2} color="lightgray" size={circleDistance.current} />
@@ -726,7 +720,7 @@ const CatchChance = () => {
                 </tbody>
               </table>
             </div>
-            <div className="container element-top">
+            <div className="container mt-2">
               <table>
                 <thead />
                 <tbody>

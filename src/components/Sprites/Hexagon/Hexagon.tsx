@@ -107,9 +107,9 @@ const Hexagon = (props: IHexagonComponent) => {
         ctx.closePath();
         const pointer = new Pointer(hexSize, (hexBorderSize + 4) / 2);
         drawLineHex(ctx, pointer, hexSize, 'white', true);
-        drawLineHex(ctx, pointer, 25, 'lightgray', false);
-        drawLineHex(ctx, pointer, 50, 'lightgray', false);
-        drawLineHex(ctx, pointer, 75, 'lightgray', false);
+        drawLineHex(ctx, pointer, 25, 'var(--custom-table-border)', false);
+        drawLineHex(ctx, pointer, 50, 'var(--custom-table-border)', false);
+        drawLineHex(ctx, pointer, 75, 'var(--custom-table-border)', false);
         drawStatsHex(ctx, pointer, stats, hexSize);
         setInitHex(true);
       }

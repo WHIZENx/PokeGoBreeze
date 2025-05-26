@@ -273,6 +273,7 @@ export interface IRaidComponent {
 
 export interface ICandyComponent {
   id: number | undefined;
+  className?: string;
   style?: React.CSSProperties;
   size?: number;
 }
@@ -307,6 +308,7 @@ export interface IIconTypeComponent {
   height?: string | number;
   alt?: string;
   title?: string;
+  isBorder?: boolean;
 }
 
 export interface IIVBarComponent {
@@ -361,6 +363,7 @@ export interface ITypeComponent {
   arr: string[] | undefined;
   isBlock?: boolean;
   isShowShadow?: boolean;
+  className?: string;
   style?: React.CSSProperties;
   text?: string;
   isHideText?: boolean;
@@ -412,6 +415,7 @@ export interface IPokemonIconTypeComponent {
 
 export interface IWeatherComponent {
   arr: string[] | undefined;
+  className?: string;
   style?: React.CSSProperties;
   text?: string;
 }

@@ -58,14 +58,14 @@ const Info = () => {
   };
 
   return (
-    <div style={{ marginBottom: 15 }}>
-      <h4 className="element-top info-title">
+    <div className="mb-3">
+      <h4 className="mt-2 info-title">
         <b>Information</b>
       </h4>
-      <h5 className="element-top">
+      <h5 className="mt-2">
         <li>Pokémon Type</li>
       </h5>
-      <TypeInfo arr={types} style={{ marginLeft: 15 }} isShow={true} />
+      <TypeInfo arr={types} className="ms-3" isShow />
       <WeatherTypeEffective weatherEffective={getWeatherEffective(types)} />
       <TypeEffective typeEffective={getTypeEffective(types)} />
     </div>

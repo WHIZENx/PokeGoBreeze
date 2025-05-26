@@ -205,7 +205,7 @@ const Damage = () => {
     <Fragment>
       <div className="row battle-game">
         <div className="col-lg border-window">
-          <Find isHide={true} title="Attacker Pokémon" clearStats={clearMove} />
+          <Find isHide title="Attacker Pokémon" clearStats={clearMove} />
           <StatsTable
             setStatLvATK={setStatLvATK}
             setStatLevel={setStatLevel}
@@ -217,7 +217,7 @@ const Damage = () => {
           />
         </div>
         <div className="col-lg border-window">
-          <Find isHide={true} title="Defender Pokémon" isSwap={true} clearStats={clearData} isObjective={true} />
+          <Find isHide title="Defender Pokémon" isSwap clearStats={clearData} isObjective />
           <StatsTable
             setStatLvDEF={setStatLvDEFObj}
             setStatLvSTA={setStatLvSTAObj}
@@ -234,8 +234,8 @@ const Damage = () => {
         Battle Damage Calculate
       </h1>
       <div className="d-flex justify-content-center">
-        <div className="element-top container row" style={{ marginBottom: 20 }}>
-          <div className="col" style={{ marginBottom: 15 }}>
+        <div className="mt-2 container row" style={{ marginBottom: 20 }}>
+          <div className="col mb-3">
             <form onSubmit={onCalculateDamagePoke.bind(this)}>
               <div className="d-flex justify-content-center">
                 <div className="row text-center" style={{ width: 520 }}>
@@ -252,7 +252,7 @@ const Damage = () => {
               <Move
                 text="Select Moves"
                 id={searching?.current?.form?.defaultId}
-                isSelectDefault={true}
+                isSelectDefault
                 form={getValueOrDefault(
                   String,
                   searching?.current?.form
@@ -261,10 +261,10 @@ const Damage = () => {
                 )}
                 setMove={setMove}
                 move={move}
-                isHighlight={true}
+                isHighlight
                 pokemonType={searching?.current?.form?.form?.pokemonType}
               />
-              <div className="element-top">
+              <div className="mt-2">
                 {move && (
                   <div style={{ width: 300, margin: 'auto' }}>
                     <p>
@@ -368,7 +368,7 @@ const Damage = () => {
                       </Select>
                     </FormControl>
                   </Box>
-                  <button type="submit" className="btn btn-primary element-top">
+                  <button type="submit" className="btn btn-primary mt-2">
                     <img alt="ATK" width={20} height={20} src={ATK_LOGO} /> Battle
                   </button>
                 </div>

@@ -9,7 +9,7 @@ const PopoverConfig = forwardRef<HTMLDivElement, PopoverProps>(({ id, popper, ch
   }, [children, popper?.scheduleUpdate]);
 
   return (
-    <Popover id={id} ref={ref} body={true} {...props}>
+    <Popover id={id} ref={ref} body {...props}>
       {children}
     </Popover>
   );

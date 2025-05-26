@@ -14,8 +14,8 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
       {props.data?.prev && (
         <div
           title="Previous Pokémon"
-          className={combineClasses('prev-block', 'h-100', `col${props.data.next ? '-6' : ''}`)}
-          style={{ float: 'left', padding: 0 }}
+          className={combineClasses('prev-block p-0 h-100', `col${props.data.next ? '-6' : ''}`)}
+          style={{ float: 'left' }}
         >
           <Link
             to={`/pokemon/${props.data.prev.id}`}
@@ -51,8 +51,8 @@ const SearchBarMain = (props: ISearchBarMainComponent) => {
       {props.data?.next && (
         <div
           title="Next Pokémon"
-          className={combineClasses('next-block', 'h-100', `col${props.data.prev ? '-6' : ''}`)}
-          style={{ float: 'right', padding: 0 }}
+          className={combineClasses('next-block p-0 h-100', `col${props.data.prev ? '-6' : ''}`)}
+          style={{ float: 'right' }}
         >
           <Link
             to={`/pokemon/${props.data.next.id}`}

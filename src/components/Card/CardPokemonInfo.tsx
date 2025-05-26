@@ -79,7 +79,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
       <LinkToTop className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.form)}`}>
         <div style={{ gap: 10 }} className="h-100 d-flex flex-column justify-content-between">
           <div>
-            <div className="d-flex justify-content-center" style={{ padding: 8 }}>
+            <div className="d-flex justify-content-center p-2">
               <span style={{ width: 96 }}>
                 <img
                   ref={imageRef}
@@ -101,7 +101,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
                 />
               </span>
             </div>
-            <TypeInfo arr={props.types} isHideText={true} height={24} />
+            <TypeInfo arr={props.types} isHideText height={24} />
             <b>
               <span style={{ fontSize: 14 }} className="text-center theme-text-primary">{`#${
                 props.id

@@ -550,8 +550,8 @@ const Pokemon = (props: IPokemonPage) => {
       return element;
     }
     return (
-      <div className="ph-item w-75" style={{ padding: 0, margin: 0, height: 24 }}>
-        <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: color }} />
+      <div className="ph-item w-75 m-0 p-0" style={{ height: 24 }}>
+        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
   };
@@ -567,11 +567,11 @@ const Pokemon = (props: IPokemonPage) => {
       </div>
       <div
         className={combineClasses(
-          'element-bottom position-relative poke-container theme-text-primary',
+          'pb-3 position-relative poke-container theme-text-primary',
           props.isSearch ? '' : 'container'
         )}
       >
-        <div className="w-100 text-center d-inline-block align-middle" style={{ marginTop: 15, marginBottom: 15 }}>
+        <div className="w-100 text-center d-inline-block align-middle my-3">
           <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={icon} />
           <div className="d-inline-block img-desc">
             <img
@@ -604,7 +604,7 @@ const Pokemon = (props: IPokemonPage) => {
               isLoadedForms={progress.isLoadedForms}
             />
           </div>
-          <div className="d-inline-block" style={{ padding: 0 }}>
+          <div className="d-inline-block p-0">
             <table className="table-info table-main">
               <thead />
               <tbody>
@@ -616,9 +616,9 @@ const Pokemon = (props: IPokemonPage) => {
                   <td>
                     <img alt="Image Cost Info" width={100} src={APIService.getItemSprite('Item_1202')} />
                   </td>
-                  <td style={{ padding: 0 }}>
+                  <td className="p-0">
                     <div className="d-flex align-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
+                      <Candy id={dataStorePokemon?.current?.id} className="me-1" />
                       {reload(
                         <span>
                           {!isUndefined(costModifier?.thirdMove.candy)
@@ -628,7 +628,7 @@ const Pokemon = (props: IPokemonPage) => {
                       )}
                     </div>
                     <div className="row-extra d-flex">
-                      <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
+                      <div className="d-inline-flex justify-content-center me-1" style={{ width: 20 }}>
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(
@@ -649,9 +649,9 @@ const Pokemon = (props: IPokemonPage) => {
                   <td>
                     <img alt="Image Cost Info" width={60} height={60} src={APIService.getPokePurified()} />
                   </td>
-                  <td style={{ padding: 0 }}>
+                  <td className="p-0">
                     <div className="d-flex align-items-center row-extra td-costs">
-                      <Candy id={dataStorePokemon?.current?.id} style={{ marginRight: 5 }} />
+                      <Candy id={dataStorePokemon?.current?.id} className="me-1" />
                       {reload(
                         <span>
                           {!isUndefined(costModifier?.purified.candy)
@@ -661,7 +661,7 @@ const Pokemon = (props: IPokemonPage) => {
                       )}
                     </div>
                     <div className="row-extra d-flex">
-                      <div className="d-inline-flex justify-content-center" style={{ width: 20, marginRight: 5 }}>
+                      <div className="d-inline-flex justify-content-center me-1" style={{ width: 20 }}>
                         <img alt="Image Stardust" height={20} src={APIService.getItemSprite('stardust_painted')} />
                       </div>
                       {reload(

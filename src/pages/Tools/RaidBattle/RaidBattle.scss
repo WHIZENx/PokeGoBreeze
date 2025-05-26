@@ -1,5 +1,4 @@
 .top-raid-group {
-  border: 1px solid #b8d4da;
   white-space: nowrap;
   overflow-x: auto;
 }
@@ -7,20 +6,17 @@
 .top-raid-pokemon {
   min-width: 250px;
   display: inline-block;
-  border: 1px solid #b8d4da;
   padding: 10px;
 }
 
 .trainer-battle {
   width: 100%;
-  border: 1px solid #b8d4da;
   padding: 10px;
   margin-bottom: 15px;
 }
 
 .pokemon-battle {
   display: inline-block;
-  border: 1px solid #b8d4da;
 }
 
 .pokemon-battle span {
@@ -54,7 +50,6 @@ img.pokemon-sprite-battle {
 }
 
 .stats-boss {
-  border: 2px solid lightgray;
   padding: 1rem;
 }
 
@@ -98,7 +93,6 @@ img.pokemon-sprite-battle {
 }
 
 .count-pokemon {
-  border: 1px solid gray;
   border-radius: 5px;
   padding: 8px 15px;
   margin: 0 15px;
@@ -106,11 +100,6 @@ img.pokemon-sprite-battle {
 
 .click-none {
   cursor: not-allowed !important;
-  color: lightgray !important;
-}
-
-.click-none.link-danger:hover {
-  color: lightgray !important;
 }
 
 .flag-pokemon {

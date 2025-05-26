@@ -7,6 +7,8 @@
 
 :root {
   --text-constant: black;
+  --primary-contrast-text: white;
+  --secondary-contrast-text: white;
   --border-radius: 4px;
   --spacing-unit: 8px;
 }
@@ -19,13 +21,17 @@
   --primary-main: #3f51b5;
   --primary-light: #757de8;
   --primary-dark: #002984;
-  --primary-contrast-text: white;
-
+  
   // Secondary colors
   --secondary-main: #f50057;
   --secondary-light: #ff4081;
   --secondary-dark: #c51162;
-  --secondary-contrast-text: white;
+
+  // Custom colors
+  --custom-white: white;
+  --custom-black: black;
+  --custom-lightgray: lightgray;
+  --custom-gray: gray;
 
   // Background colors
   --background-default: #fafafa;
@@ -46,7 +52,7 @@
   --text-secondary: #757575;
   --text-disabled: rgb(0 0 0 / 38%);
   --text-custom: black;
-  --text-caption: grey;
+  --text-caption: gray;
 
   // Divider color
   --divider: rgb(0 0 0 / 12%); 
@@ -55,7 +61,7 @@
   --shadow-default: black;
   --shadow-default-revert: white;
   --shadow-custom: #00000000;
-  --shadow-hover: white;
+  --shadow-hover: #000000cc;
 
   // Placeholder
   --loading-placeholder: #e2eaf1;
@@ -91,6 +97,7 @@
   --custom-table-background-sub-head-text: #0571c2;
   --custom-table-background-sub-head-border: #b8d4da;
   --custom-table-background-sub-head-hover: #3386d2;
+  --custom-table-border: lightgray;
 
   // According
   --custom-according-header: lightgray;
@@ -106,6 +113,9 @@
   --custom-btn-form-selected: #969696;
   --custom-btn-form-hover: #c8c8c8;
   --custom-btn-form-focus: grey;
+
+  // Validator
+  --custom-validator-disable: lightgray;
 }
 
 :root[data-theme="dark"] {
@@ -116,13 +126,17 @@
   --primary-main: #7986cb;
   --primary-light: #9fa8da;
   --primary-dark: #5c6bc0;
-  --primary-contrast-text: white;
 
   // Secondary colors
   --secondary-main: #ff4081;
   --secondary-light: #ff79b0;
   --secondary-dark: #c60055;
-  --secondary-contrast-text: white;
+
+  // Custom colors
+  --custom-white: black;
+  --custom-black: white;
+  --custom-lightgray: #3d3d3d;
+  --custom-gray: #b0b0b0;
 
   // Background colors
   --background-default: #222222;
@@ -152,7 +166,7 @@
   --shadow-default: white;
   --shadow-default-revert: white;
   --shadow-custom: white;
-  --shadow-hover: #000000cc;
+  --shadow-hover: white;
 
   // Placeholder
   --loading-placeholder: #2a3038;
@@ -186,8 +200,9 @@
   --custom-table-hover: #111111;
   --custom-table-background-sub-head: #1e78c2;
   --custom-table-background-sub-head-text: #90caf9;
-  --custom-table-background-sub-head-border: #b8d4da;
+  --custom-table-background-sub-head-border: #495559;
   --custom-table-background-sub-head-hover: #0d5ca0;
+  --custom-table-border: #3d3d3d;
 
   // According
   --custom-according-header: #3d3d3d;
@@ -203,6 +218,9 @@
   --custom-btn-form-selected: #4f4f5c;
   --custom-btn-form-hover: #454550;
   --custom-btn-form-focus: #5a5a6a;
+
+  // Validator
+  --custom-validator-disable: #3d3d3d;
 }
 
 // Theme mixins to make theme usage easier
