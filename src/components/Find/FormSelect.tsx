@@ -323,14 +323,10 @@ const FormSelect = (props: IFormSelectComponent) => {
         className="p-2"
         height={200}
         alt="Image Pokemon"
-        src={
-          currentForm?.form
-            ? APIService.getPokeFullSprite(
-                dataStorePokemon?.current?.id,
-                convertPokemonImageName(currentForm?.form.formName)
-              )
-            : APIService.getPokeFullSprite(dataStorePokemon?.current?.id)
-        }
+        src={APIService.getPokeFullSprite(
+          dataStorePokemon?.current?.id,
+          convertPokemonImageName(currentForm?.form.formName)
+        )}
         onError={(e) => {
           e.currentTarget.onerror = null;
           e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);

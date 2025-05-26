@@ -255,7 +255,9 @@ class APIService {
           '-'
         );
       }
-      return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${form ? `-${form}` : ''}.png`;
+      return `${APIUrl.POKE_SPRITES_FULL_API_URL}${id.toString().padStart(3, '0')}${
+        form && id !== 201 ? `-${form}` : ''
+      }.png`;
     }
     return this.getPokeFullAsset();
   }
