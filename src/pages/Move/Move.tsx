@@ -486,7 +486,7 @@ const Move = (props: IMovePage) => {
                           </span>
                         </span>
                       </td>
-                      <td>{toNumber(value.buffChance) * 100}%</td>
+                      <td className="theme-text-primary">{toNumber(value.buffChance) * 100}%</td>
                     </tr>
                   ))}
                 </Fragment>
