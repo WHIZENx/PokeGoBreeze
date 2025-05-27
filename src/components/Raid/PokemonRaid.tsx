@@ -130,8 +130,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         />
       ) : (
         <div
-          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1"
-          style={{ height: 36, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1 overflow-x-hidden text-nowrap"
+          style={{ height: 36 }}
         >
           <span className="ps-2">- Please select Pokémon -</span>
         </div>
@@ -154,8 +154,8 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
         />
       ) : (
         <div
-          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1"
-          style={{ height: 36, overflowX: 'hidden', whiteSpace: 'nowrap' }}
+          className="d-flex align-items-center w-100 card-select-disabled disable-card-move p-1 overflow-x-hidden text-nowrap"
+          style={{ height: 36 }}
         >
           <span className="ps-2">- Please select Pokémon -</span>
         </div>

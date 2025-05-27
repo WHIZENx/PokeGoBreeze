@@ -19,6 +19,7 @@ import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/localStorage';
 import { loadTheme } from '../store/effects/theme.effects';
+import { toNumber } from '../util/extension';
 
 const NavbarComponent = (props: INavbarComponent) => {
   const dispatch = useDispatch();
@@ -59,7 +60,7 @@ const NavbarComponent = (props: INavbarComponent) => {
           PokéGoBreeze
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav" style={{ flexWrap: 'wrap' }}>
+        <Navbar.Collapse id="responsive-navbar-nav" className="flex-wrap">
           <Nav className="me-auto">
             <Link className="nav-link" to="/">
               Pokédex
@@ -137,9 +138,9 @@ const NavbarComponent = (props: INavbarComponent) => {
               Stickers
             </Link>
           </Nav>
-          {timestamp?.gamemaster && (
+          {toNumber(timestamp?.gamemaster) > 0 && (
             <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
-              <span className="text-white mx-2">Updated: {getTime(timestamp?.gamemaster, true)}</span>
+              <span className="text-white mx-2">Updated: {getTime(timestamp.gamemaster, true)}</span>
               <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
                 <b>
                   {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&

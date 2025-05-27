@@ -17,7 +17,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
       return <></>;
     }
     return (
-      <div className="d-flex flex-wrap align-items-center" style={{ gap: 5 }}>
+      <div className="d-flex flex-wrap align-items-center gap-1">
         <span
           className={combineClasses(
             `${move.type?.toLowerCase()}${isBorder ? '-border' : ''}`,
@@ -196,12 +196,10 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
       {!isHide && (
         <div className="d-flex timeline-vertical battle-container">
           <div className="w-50">
-            <div className="d-flex flex-column" style={{ gap: 10 }}>
-              {renderTimeline(pokemonCurr, pokemonObj)}
-            </div>
+            <div className="d-flex flex-column gap-2">{renderTimeline(pokemonCurr, pokemonObj)}</div>
           </div>
           <div className="w-50">
-            <div className="d-flex flex-column align-items-end" style={{ gap: 10 }}>
+            <div className="d-flex flex-column align-items-end gap-2">
               {renderTimeline(pokemonObj, pokemonCurr, true)}
             </div>
           </div>
@@ -225,7 +223,7 @@ export const TimeLine = (
   const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
     <Fragment>
       <div className="mt-2" style={{ height: 12 }}>
-        <div className="d-flex" style={{ columnGap: 10, width: 'max-content' }}>
+        <div className="d-flex column-gap-2" style={{ width: 'max-content' }}>
           {poke.timeline.map((value, index) => (
             <span className="position-relative" key={index} style={{ width: value.size }}>
               {value.isTap && (
@@ -272,9 +270,8 @@ export const TimeLine = (
         </div>
       </div>
       <div
-        className="d-flex align-items-center"
+        className="d-flex align-items-center column-gap-2"
         style={{
-          columnGap: 10,
           width: 'max-content',
           borderBottom: border ? 'var(--custom-table-border)' : 'none',
         }}

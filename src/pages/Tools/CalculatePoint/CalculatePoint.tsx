@@ -335,7 +335,7 @@ const CalculatePoint = () => {
 
   return (
     <Fragment>
-      <div className="row m-0" style={{ overflowX: 'hidden' }}>
+      <div className="row m-0 overflow-x-hidden">
         <div className="col-lg p-0">
           <Find isHide title="Attacker Pokémon" clearStats={clearData} />
         </div>
@@ -353,7 +353,7 @@ const CalculatePoint = () => {
         </div>
       </div>
       <hr />
-      <div className="container" style={{ marginBottom: 20 }}>
+      <div className="container mb-3">
         <Tabs defaultActiveKey="breakpointAtk" className="lg-2">
           <Tab eventKey="breakpointAtk" title="Breakpoint Attacker">
             <div className="tab-body">
@@ -402,7 +402,7 @@ const CalculatePoint = () => {
                     disabled={isRaid}
                   />
                   {move && (
-                    <div style={{ width: 300, margin: 'auto' }}>
+                    <div className="m-auto" style={{ width: 300 }}>
                       <p>
                         - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                       </p>
@@ -425,8 +425,7 @@ const CalculatePoint = () => {
                     </div>
                   )}
                   <button
-                    className="text-center btn btn-primary w-100"
-                    style={{ marginBottom: 20 }}
+                    className="text-center btn btn-primary w-100 mb-3"
                     onClick={() => calculateBreakpointAtk()}
                     disabled={!move}
                   >
@@ -436,7 +435,7 @@ const CalculatePoint = () => {
                 <div className="col-lg-8">
                   <h3>Attacker Breakpoint</h3>
                   {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div style={{ overflowX: 'auto' }}>
+                  <div className="overflow-x-auto">
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
                         <tr className="table-header">
@@ -540,7 +539,7 @@ const CalculatePoint = () => {
                     disabled={isRaid}
                   />
                   {moveDef && (
-                    <div style={{ width: 300, margin: 'auto' }}>
+                    <div className="m-auto" style={{ width: 300 }}>
                       <p>
                         - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
                       </p>
@@ -563,8 +562,7 @@ const CalculatePoint = () => {
                     </div>
                   )}
                   <button
-                    className="text-center btn btn-primary w-100"
-                    style={{ marginBottom: 20 }}
+                    className="text-center btn btn-primary w-100 mb-3"
                     onClick={() => calculateBreakpointDef()}
                     disabled={!moveDef}
                   >
@@ -574,7 +572,7 @@ const CalculatePoint = () => {
                 <div className="col-lg-8">
                   <h3>Defender Breakpoint</h3>
                   {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div style={{ overflowX: 'auto' }}>
+                  <div className="overflow-x-auto">
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
                         <tr className="table-header">
@@ -629,7 +627,7 @@ const CalculatePoint = () => {
                   </div>
                   <hr />
                   <h3>Stamina Breakpoint</h3>
-                  <div style={{ overflowX: 'auto' }}>
+                  <div className="overflow-x-auto">
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'max-content' }}>
                       <thead className="text-center">
                         <tr className="table-header">
@@ -709,7 +707,7 @@ const CalculatePoint = () => {
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {fMove && (
-                      <div className="mt-2" style={{ width: 300, margin: 'auto' }}>
+                      <div className="mt-2 m-auto" style={{ width: 300 }}>
                         <p>
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                         </p>
@@ -750,7 +748,7 @@ const CalculatePoint = () => {
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {cMove && (
-                      <div className="mt-2" style={{ width: 300, margin: 'auto' }}>
+                      <div className="mt-2 m-auto" style={{ width: 300 }}>
                         <p>
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                         </p>
@@ -834,18 +832,17 @@ const CalculatePoint = () => {
                     />
                   </div>
                   <button
-                    className="text-center btn btn-primary w-100"
-                    style={{ marginBottom: 20 }}
+                    className="text-center btn btn-primary w-100 mb-3"
                     onClick={() => calculateBulkPointDef()}
                     disabled={!(fMove && cMove)}
                   >
                     Calculate
                   </button>
                 </div>
-                <div className="col-lg-8" style={{ overflowX: 'auto' }}>
+                <div className="col-lg-8 overflow-x-auto">
                   <h3>BulkPoint</h3>
                   {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div style={{ overflowX: 'auto' }}>
+                  <div className="overflow-x-auto">
                     <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
                       <thead className="text-center">
                         <tr className="table-header">

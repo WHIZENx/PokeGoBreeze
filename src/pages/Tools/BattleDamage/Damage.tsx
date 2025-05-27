@@ -234,7 +234,7 @@ const Damage = () => {
         Battle Damage Calculate
       </h1>
       <div className="d-flex justify-content-center">
-        <div className="mt-2 container row" style={{ marginBottom: 20 }}>
+        <div className="mt-2 container row mb-3">
           <div className="col mb-3">
             <form onSubmit={onCalculateDamagePoke.bind(this)}>
               <div className="d-flex justify-content-center">
@@ -266,7 +266,7 @@ const Damage = () => {
               />
               <div className="mt-2">
                 {move && (
-                  <div style={{ width: 300, margin: 'auto' }}>
+                  <div className="m-auto" style={{ width: 300 }}>
                     <p>
                       - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                     </p>

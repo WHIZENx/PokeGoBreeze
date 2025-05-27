@@ -77,7 +77,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
         />
       )}
       <LinkToTop className="d-block h-100 pokemon-link" to={`/pokemon/${props.id}${generateParamForm(props.form)}`}>
-        <div style={{ gap: 10 }} className="h-100 d-flex flex-column justify-content-between">
+        <div className="h-100 d-flex flex-column justify-content-between gap-2">
           <div>
             <div className="d-flex justify-content-center p-2">
               <span style={{ width: 96 }}>

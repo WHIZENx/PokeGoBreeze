@@ -572,7 +572,7 @@ const StatsRanking = () => {
         form={select?.form}
         isDisabled
       />
-      <div className="d-flex flex-wrap" style={{ gap: 15 }}>
+      <div className="d-flex flex-wrap gap-3">
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
           <span className="input-group-text">Find Pokémon</span>
           <input

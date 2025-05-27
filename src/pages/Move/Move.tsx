@@ -486,7 +486,7 @@ const Move = (props: IMovePage) => {
                           </span>
                         </span>
                       </td>
-                      <td>{toNumber(value.buffChance) * 100}%</td>
+                      <td className="theme-text-primary">{toNumber(value.buffChance) * 100}%</td>
                     </tr>
                   ))}
                 </Fragment>
@@ -702,7 +702,7 @@ const Move = (props: IMovePage) => {
                                         isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
                                           value
                                         ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
-                                          <div className="d-flex flex-wrap" style={{ gap: 10 }}>
+                                          <div className="d-flex flex-wrap gap-2">
                                             {getValueOrDefault<string[]>(Array, value).map((item) =>
                                               renderReward(item)
                                             )}

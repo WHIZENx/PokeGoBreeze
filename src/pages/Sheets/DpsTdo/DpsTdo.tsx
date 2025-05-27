@@ -963,8 +963,7 @@ const DpsTdo = () => {
                       label="Best move set of"
                     />
                     <Form.Select
-                      style={{ borderRadius: 0 }}
-                      className="form-control"
+                      className="form-control rounded-0"
                       value={bestOf}
                       disabled={!enableBest}
                       onChange={(e) => setFilters({ ...filters, bestOf: toNumber(e.target.value) })}
@@ -1103,8 +1102,8 @@ const DpsTdo = () => {
                 <span className="input-group-text">Charged Move Time</span>
                 <input
                   type="number"
-                  className="form-control"
-                  style={{ height: 42, borderRadius: 0 }}
+                  className="form-control rounded-0"
+                  style={{ height: 42 }}
                   placeholder="Delay time (sec)"
                   aria-label="Charged Move Time"
                   min={0}
@@ -1183,8 +1182,7 @@ const DpsTdo = () => {
                     <label className="input-group-text">Levels</label>
                   </div>
                   <Form.Select
-                    style={{ borderRadius: 0 }}
-                    className="form-control"
+                    className="form-control rounded-0"
                     defaultValue={pokemonLevel}
                     onChange={(e) =>
                       setFilters({
@@ -1224,8 +1222,7 @@ const DpsTdo = () => {
                     <label className="input-group-text">Weather Boosts</label>
                   </div>
                   <Form.Select
-                    style={{ borderRadius: 0 }}
-                    className="form-control"
+                    className="form-control rounded-0"
                     defaultValue={getValueOrDefault(String, weatherBoosts)}
                     onChange={(e) =>
                       setOptions(
@@ -1286,7 +1283,7 @@ const DpsTdo = () => {
                     />
                   </Box>
                 </Box>
-                <button type="submit" className="btn btn-primary w-100" style={{ borderRadius: 0 }}>
+                <button type="submit" className="btn btn-primary w-100 rounded-0">
                   Calculate
                 </button>
               </div>

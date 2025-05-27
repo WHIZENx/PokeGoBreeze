@@ -134,11 +134,11 @@ export class Bonus implements IBonus {
 
 export interface ICombat {
   name: string;
-  type: string | undefined;
-  typeMove: TypeMove | undefined;
+  type?: string;
+  typeMove?: TypeMove;
   pvpPower: number;
   pvpEnergy: number;
-  sound: string | undefined;
+  sound?: string;
   buffs: IBuff[];
   id: number;
   track: number;
@@ -150,8 +150,8 @@ export interface ICombat {
   accuracyChance: number;
   criticalChance: number;
   staminaLossScalar: number;
-  archetype: ArcheType | undefined;
-  abbreviation: string | undefined;
+  archetype?: ArcheType;
+  abbreviation?: string;
   isMultipleWithType: boolean;
   moveType?: MoveType;
   bonus?: IBonus;
@@ -159,11 +159,11 @@ export interface ICombat {
 
 export class Combat implements ICombat {
   name = '';
-  type: string | undefined;
-  typeMove: TypeMove | undefined;
+  type?: string;
+  typeMove?: TypeMove;
   pvpPower = 0;
   pvpEnergy = 0;
-  sound: string | undefined;
+  sound?: string;
   buffs: IBuff[] = [];
   id = 0;
   track = 0;
@@ -175,8 +175,8 @@ export class Combat implements ICombat {
   accuracyChance = 0;
   criticalChance = 0;
   staminaLossScalar = 0;
-  archetype: ArcheType | undefined;
-  abbreviation: string | undefined;
+  archetype?: ArcheType;
+  abbreviation?: string;
   isMultipleWithType = false;
   moveType?: MoveType;
   bonus?: IBonus;

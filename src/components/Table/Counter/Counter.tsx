@@ -229,7 +229,7 @@ const Counter = (props: ICounterComponent) => {
     <div className="w-100 counter-none" style={{ verticalAlign: 'top' }}>
       <div className="text-origin text-center theme-table-primary">
         <div className="ph-item">
-          <div className="ph-col-12 theme-table-primary m-0 p-2" style={{ gap: 10 }}>
+          <div className="ph-col-12 theme-table-primary m-0 p-2 gap-2">
             {[...Array(5).keys()].map((_, index) => (
               <div key={index} className="ph-row d-flex" style={{ gap: '5%' }}>
                 <div className="ph-picture" style={{ width: '25%', height: 100 }} />
@@ -414,7 +414,9 @@ const Counter = (props: ICounterComponent) => {
           <Modal.Title>Pokémon counter options</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{ overflowY: 'auto', maxHeight: '60vh', maxWidth: 400 }}>{modalOptions()}</div>
+          <div className="overflow-y-auto" style={{ maxHeight: '60vh', maxWidth: 400 }}>
+            {modalOptions()}
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant={VariantType.Secondary} onClick={handleCloseOption}>

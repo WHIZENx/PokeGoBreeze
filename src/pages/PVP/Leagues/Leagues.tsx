@@ -160,8 +160,8 @@ const Leagues = () => {
   const showAccording = (league: ILeague, index: number, isOpened = false) => (
     <Accordion.Item key={index} eventKey={index.toString()}>
       <Accordion.Header className={isOpened ? 'league-opened' : ''}>
-        <div className="d-flex justify-content-between w-100 me-3" style={{ columnGap: 10 }}>
-          <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
+        <div className="d-flex justify-content-between w-100 me-3 column-gap-2">
+          <div className="d-flex align-items-center flex-start column-gap-2">
             <img
               alt="Image League"
               title={splitAndCapitalize(league.id?.toLowerCase(), '_', ' ')}
@@ -174,7 +174,7 @@ const Leagues = () => {
           </div>
           {isEqual(league.leagueType, LeagueType.Premier) && (
             <div className="d-flex align-items-center flex-end">
-              <div className="info-event-future p-1" style={{ borderRadius: 4, fontSize: 14 }}>
+              <div className="info-event-future p-1 rounded-1" style={{ fontSize: 14 }}>
                 <b>{getKeyWithData(LeagueType, league.leagueType)}</b>
               </div>
             </div>
@@ -361,7 +361,7 @@ const Leagues = () => {
     <div className="container p-3">
       <h2 className="title-leagues mb-3">Battle Leagues List</h2>
       <hr />
-      <div className="row m-0" style={{ rowGap: 10 }}>
+      <div className="row m-0 row-gap-2">
         <div className="col-md-8 d-flex justify-content-start align-items-center p-0">
           <span style={{ fontWeight: 500 }}>
             <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>
@@ -730,7 +730,7 @@ const Leagues = () => {
       {showData && (
         <Modal size="lg" show={show} onHide={handleClose} centered>
           <Modal.Header closeButton>
-            <Modal.Title className="d-flex flex-column" style={{ rowGap: 10 }}>
+            <Modal.Title className="d-flex flex-column row-gap-2">
               <div>
                 <span>
                   {rank > 20 && (
@@ -756,7 +756,7 @@ const Leagues = () => {
               </div>
               <div className="reward-info">
                 {showData.track === LeagueRewardType.Free ? (
-                  <div className="d-flex" style={{ columnGap: 8 }}>
+                  <div className="d-flex column-gap-2">
                     <img
                       className="pokemon-sprite-small filter-shadow"
                       style={{ width: 16 }}
@@ -767,7 +767,7 @@ const Leagues = () => {
                     <span>Free</span> (Win stack {showData.step})
                   </div>
                 ) : (
-                  <div className="d-flex" style={{ columnGap: 8 }}>
+                  <div className="d-flex column-gap-2">
                     <img
                       className="pokemon-sprite-small filter-shadow"
                       style={{ width: 16 }}

@@ -88,7 +88,7 @@ const BodyPVP = (props: BodyComponent) => {
         ),
       }}
     >
-      <div className="container d-flex align-items-center" style={{ columnGap: 10 }}>
+      <div className="container d-flex align-items-center column-gap-2">
         <div className="d-flex justify-content-center">
           <span className="d-inline-block position-relative filter-shadow" style={{ width: 50 }}>
             <PokemonIconType pokemonType={data.pokemonType} size={28}>

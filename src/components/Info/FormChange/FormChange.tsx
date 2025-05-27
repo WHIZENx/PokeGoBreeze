@@ -98,10 +98,7 @@ const FromChange = (props: IFromChangeComponent) => {
                     </span>
                   </div>
                 </div>
-                <div
-                  className="d-flex flex-column align-items-center justify-content-center w-50"
-                  style={{ rowGap: 15 }}
-                >
+                <div className="d-flex flex-column align-items-center justify-content-center w-50 row-gap-3">
                   {pokemon.formChange.map((value, key) => (
                     <Fragment key={key}>
                       {value.availableForm.map((name, index) => (
@@ -146,14 +143,14 @@ const FromChange = (props: IFromChangeComponent) => {
                                     id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id}
                                   />
                                   <LinkToTop
-                                    style={{ marginLeft: 2 }}
+                                    className="ms-1"
                                     to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(
                                       pokemon.form
                                     )}`}
                                   >
                                     {splitAndCapitalize(value.componentPokemonSettings?.pokedexId, '_', ' ')}
                                   </LinkToTop>
-                                  <span style={{ marginLeft: 2 }}>{`x${value.candyCost}`}</span>
+                                  <span className="ms-1">{`x${value.candyCost}`}</span>
                                 </span>
                               )}
                               {value.stardustCost && (
@@ -170,7 +167,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                       src={APIService.getItemSprite('stardust_painted')}
                                     />
                                   </div>
-                                  <span style={{ marginLeft: 2 }}>{`x${value.stardustCost}`}</span>
+                                  <span className="ms-1">{`x${value.stardustCost}`}</span>
                                 </span>
                               )}
                               <span className="d-flex flex-column caption mt-1" style={{ width: 'max-content' }}>

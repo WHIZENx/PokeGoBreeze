@@ -201,10 +201,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league && (
-          <div
-            className="d-flex flex-wrap align-items-center filter-shadow text-shadow-black text-white"
-            style={{ columnGap: 10 }}
-          >
+          <div className="d-flex flex-wrap align-items-center filter-shadow text-shadow-black text-white column-gap-2">
             <img
               alt="Image League"
               width={64}
@@ -269,7 +266,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
             ))}
           </div>
           <div className="w-100 ranking-info mt-2">
-            <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
+            <div className="d-flex flex-wrap align-items-center justify-content-center gap-4">
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
                 <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
                   <img
