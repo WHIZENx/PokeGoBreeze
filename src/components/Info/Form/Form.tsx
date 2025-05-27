@@ -197,9 +197,9 @@ const FormComponent = (props: IFormInfoComponent) => {
               ))}
             </Fragment>
           ) : (
-            <div className="ph-item flex-nowrap" style={{ width: '100%', columnGap: 10 }}>
+            <div className="ph-item flex-nowrap column-gap-2" style={{ width: '100%' }}>
               {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
-                <div key={index} className="ph-col-3 p-0" style={{ margin: '2px 0' }}>
+                <div key={index} className="ph-col-3 p-0 my-1">
                   <div className="ph-row">
                     <div className="ph-picture ph-col-3" style={{ height: 142, width: 90 }} />
                   </div>
@@ -210,7 +210,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       </div>
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
-        <div className="d-flex flex-wrap" style={{ columnGap: 50, rowGap: 15 }}>
+        <div className="d-flex flex-wrap row-gap-3" style={{ columnGap: 50 }}>
           {genderRatio.M !== 0 && <Gender ratio={genderRatio} sex={TypeSex.Male} sprit={form?.form?.sprites} />}
           {genderRatio.F !== 0 && <Gender ratio={genderRatio} sex={TypeSex.Female} sprit={form?.form?.sprites} />}
         </div>

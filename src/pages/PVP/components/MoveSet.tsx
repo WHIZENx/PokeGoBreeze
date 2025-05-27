@@ -127,14 +127,14 @@ const MoveSet = (props: MoveSetComponent) => {
         'filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
       )}
     >
-      <div className="d-flex" style={{ columnGap: 10 }}>
+      <div className="d-flex column-gap-2">
         <IconType width={24} height={24} alt="Pokémon GO Type Logo" type={move?.type} isBorder />
         <span className="filter-shadow">
           {splitAndCapitalize(move.name, '_', ' ')}{' '}
           {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}
         </span>
       </div>
-      <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
+      <div className="d-flex align-items-center column-gap-2">
         {move?.archetype && findArchetype(move.archetype)}
         <span className="ranking-score score-ic text-black filter-shadow">{move.uses}</span>
       </div>
