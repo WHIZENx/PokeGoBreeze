@@ -61,7 +61,13 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
         minWidth: !isNullOrUndefined(props.minWidth) ? props.minWidth : 'auto',
       }}
       freeSolo
-      renderInput={(params) => <TextField {...params} label={props.label} />}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={props.label}
+          inputProps={{ ...params.inputProps, pattern: '[0-9]*', inputMode: 'numeric', type: 'number', min: 0 }}
+        />
+      )}
     />
   );
 };

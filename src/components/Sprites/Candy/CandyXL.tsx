@@ -7,7 +7,7 @@ import bgCandyXL from '../../../assets/bg_CandyXL.png';
 import candy from '../../../data/pokemon_candy_color_data.json';
 import { ICandy } from '../../../core/models/candy.model';
 import { ICandyComponent } from '../../models/component.model';
-import { toNumber } from '../../../util/extension';
+import { combineClasses, toNumber } from '../../../util/extension';
 
 const DEFAULT_SIZE = 30;
 
@@ -44,7 +44,7 @@ const CandyXL = (props: ICandyComponent) => {
   }, [props.id]);
 
   return (
-    <div className="position-relative d-inline-block" style={props.style}>
+    <div className={combineClasses('position-relative d-inline-block', props.className)} style={props.style}>
       <Background candyBgColor={bgColor} size={props.size} />
       <Fill candyColor={color} size={props.size} />
     </div>
