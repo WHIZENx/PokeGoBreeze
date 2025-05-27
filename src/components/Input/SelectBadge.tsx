@@ -37,7 +37,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
           {capitalize(props.type)} Badge
         </div>
       </div>
-      <div className="d-flex flex-wrap justify-content-center align-items-center mt-2" style={{ gap: 10 }}>
+      <div className="d-flex flex-wrap justify-content-center align-items-center mt-2 gap-2">
         {getKeysObj(BadgeType).map((value, i) => (
           <Fragment key={i}>{Badge(props, getDataWithKey(BadgeType, value))}</Fragment>
         ))}

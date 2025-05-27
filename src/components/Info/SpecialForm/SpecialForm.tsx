@@ -68,7 +68,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
             <b>{getKeyWithData(PokemonType, pokemonType)} Evolution</b>
           </h4>
           <div className="form-special-container scroll-evolution">
-            <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
+            <ul className="ul-evo d-flex justify-content-center gap-3">
               {arrEvoList?.map((value, evo) => (
                 <li
                   key={evo}

@@ -66,7 +66,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
         {(toNumber(data?.level) > 40 || toNumber(data?.maxCP) > BattleLeagueCPType.Ultra) && (
           <b>
             (
-            <CandyXL id={data?.id} style={{ filter: 'drop-shadow(1px 1px 1px black)' }} />
+            <CandyXL className="filter-shadow" id={data?.id} />
             XL Candy required)
           </b>
         )}

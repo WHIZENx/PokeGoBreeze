@@ -90,7 +90,7 @@ const PVPHome = () => {
 
   const renderLoading = () => {
     return (
-      <div style={{ overflowX: 'hidden' }}>
+      <div className="overflow-x-hidden">
         <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
           {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
             <div key={index} className="ph-col-3 m-0 p-2">

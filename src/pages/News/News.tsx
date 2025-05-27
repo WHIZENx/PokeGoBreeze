@@ -216,10 +216,10 @@ const News = () => {
       <div className="w-100 h-100 counter-none" style={{ verticalAlign: 'top' }}>
         <div className="text-origin text-center">
           <div className="ph-item" style={{ backgroundColor: 'transparent' }}>
-            <div className="ph-col-12 m-0 p-0" style={{ gap: 20 }}>
+            <div className="ph-col-12 m-0 p-0 gap-3">
               {[...Array(3).keys()].map((_, index) => (
                 <div key={index} className="ph-row">
-                  <div className="ph-picture" style={{ width: '100%', height: 256 }} />
+                  <div className="ph-picture w-100" style={{ height: 256 }} />
                 </div>
               ))}
             </div>
@@ -248,22 +248,22 @@ const News = () => {
                   <Accordion>
                     <Accordion.Item key={index} eventKey={index.toString()}>
                       <Accordion.Header>
-                        <div className="w-100 d-flex justify-content-between me-3" style={{ columnGap: 15 }}>
-                          <div className="d-flex align-items-center flex-start" style={{ columnGap: 10 }}>
+                        <div className="w-100 d-flex justify-content-between me-3 column-gap-3">
+                          <div className="d-flex align-items-center flex-start column-gap-2">
                             {value.titleImgUrl && <img alt="Image League" height={50} src={value.titleImgUrl} />}
                             <b>{value.title}</b>
                           </div>
                           <div className="d-flex align-items-center flex-end">
                             <div
                               className={combineClasses(
-                                'p-1',
+                                'p-1 rounded-1',
                                 value.eventType === DateEvent.End
                                   ? 'info-event-ending'
                                   : DateEvent.Progressing
                                   ? 'info-event-progress'
                                   : 'info-event-future'
                               )}
-                              style={{ borderRadius: 4, fontSize: 14 }}
+                              style={{ fontSize: 14 }}
                             >
                               <b>{getKeyWithData(DateEvent, value.eventType)}</b>
                             </div>

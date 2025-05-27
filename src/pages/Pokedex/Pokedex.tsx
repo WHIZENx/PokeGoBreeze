@@ -367,7 +367,7 @@ const Pokedex = (props: IStyleSheetData) => {
                   />
                 </div>
               </div>
-              <div className="col-xl-8 border-input p-2" style={{ gap: 10 }}>
+              <div className="col-xl-8 border-input p-2 gap-2">
                 <div className="d-flex">
                   <FormControl sx={{ m: 1, width: '50%' }} size="small">
                     <InputLabel>Generation(s)</InputLabel>

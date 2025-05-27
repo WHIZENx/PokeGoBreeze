@@ -252,7 +252,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           }
         }}
       >
-        <div className="d-flex align-items-center w-100" style={{ gap: '1rem' }}>
+        <div className="d-flex align-items-center w-100 gap-3">
           <LinkToTop
             to={`/pvp/${params.cp}/${params.serie?.toLowerCase()}/${data.data?.speciesId?.replaceAll('_', '-')}?${
               Params.LeagueType
@@ -352,7 +352,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league ? (
-          <div className="d-flex flex-wrap align-items-center mt-2" style={{ columnGap: 10 }}>
+          <div className="d-flex flex-wrap align-items-center mt-2 column-gap-2">
             <img
               alt="Image League"
               width={64}
@@ -416,7 +416,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           />
         </div>
         <div className="ranking-container" onScroll={listenScrollEvent.bind(this)}>
-          <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
+          <div className="ranking-group w-100 ranking-header column-gap-3">
             <div />
             <div className="d-flex me-3">
               <div

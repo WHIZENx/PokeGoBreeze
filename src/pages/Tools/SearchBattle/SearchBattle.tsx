@@ -551,7 +551,7 @@ const FindBattle = () => {
                             ) : (
                               <Fragment>
                                 <hr />
-                                <div className="mt-2 d-flex justify-content-center" style={{ textAlign: 'start' }}>
+                                <div className="mt-2 d-flex justify-content-center text-start">
                                   {item.battleLeague.little.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
@@ -616,7 +616,7 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div className="mt-2 d-flex justify-content-center" style={{ textAlign: 'start' }}>
+                                <div className="mt-2 d-flex justify-content-center text-start">
                                   {item.battleLeague.great.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
@@ -681,7 +681,7 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div className="mt-2 d-flex justify-content-center" style={{ textAlign: 'start' }}>
+                                <div className="mt-2 d-flex justify-content-center text-start">
                                   {item.battleLeague.ultra.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
@@ -746,7 +746,7 @@ const FindBattle = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div className="mt-2 d-flex justify-content-center" style={{ textAlign: 'start' }}>
+                                <div className="mt-2 d-flex justify-content-center text-start">
                                   {item.battleLeague.master.rank ? (
                                     <ul className="list-best-league">
                                       <h6>

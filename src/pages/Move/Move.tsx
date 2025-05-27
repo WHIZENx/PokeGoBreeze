@@ -702,7 +702,7 @@ const Move = (props: IMovePage) => {
                                         isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
                                           value
                                         ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
-                                          <div className="d-flex flex-wrap" style={{ gap: 10 }}>
+                                          <div className="d-flex flex-wrap gap-2">
                                             {getValueOrDefault<string[]>(Array, value).map((item) =>
                                               renderReward(item)
                                             )}

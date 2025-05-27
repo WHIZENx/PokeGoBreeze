@@ -212,9 +212,9 @@ const StatsTable = () => {
       <h1 id="main" className="text-center">
         Stats Battle Table
       </h1>
-      <div className="w-100" style={{ overflowX: 'auto' }}>
+      <div className="w-100 overflow-x-auto">
         <div style={{ width: 'fit-content', margin: '0 auto' }}>
-          <div className="d-flex text-center my-3" style={{ gap: 10 }}>
+          <div className="d-flex text-center my-3 gap-2">
             {leaguesTeamBattle.map((value, index) => (
               <button
                 key={index}
@@ -235,7 +235,7 @@ const StatsTable = () => {
       <form className="mt-2" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group d-flex justify-content-center text-center">
           <Box sx={{ width: '50%', minWidth: 350 }}>
-            <div className="input-group mb-3" style={{ justifyContent: 'center' }}>
+            <div className="input-group mb-3 justify-content-center">
               <DynamicInputCP
                 statATK={pokemon?.statsGO?.atk}
                 statDEF={pokemon?.statsGO?.def}

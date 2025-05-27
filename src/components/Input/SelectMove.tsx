@@ -84,13 +84,12 @@ const SelectMove = (props: ISelectMoveComponent) => {
   const smallInput = () => (
     <div
       className={combineClasses(
-        'position-relative d-flex align-items-center form-control p-0',
+        'position-relative d-flex align-items-center form-control p-0 rounded-0',
         !props.isDisable && toNumber(props.pokemon.id) > 0 ? 'card-select-enabled' : 'card-select-disabled'
       )}
-      style={{ borderRadius: 0 }}
     >
       {props.pokemon && !isNotEmpty(resultMove) && (
-        <div style={{ overflowX: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+        <div className="text-truncate">
           <span className="px-2">Moves unavailable</span>
         </div>
       )}

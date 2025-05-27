@@ -69,7 +69,7 @@ const Raid = (props: IRaidComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 p-0" style={{ margin: 'auto', height: 24 }}>
+      <div className="ph-item w-75 p-0 m-auto" style={{ height: 24 }}>
         <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
