@@ -186,8 +186,7 @@ const News = () => {
           </div>
         ) : (
           <img
-            style={{ width: 64 }}
-            className="pokemon-sprite-medium"
+            className="pokemon-sprite-medium w-9"
             alt="pokemon-sprite"
             src={
               value.type === TicketRewardType.Pokemon

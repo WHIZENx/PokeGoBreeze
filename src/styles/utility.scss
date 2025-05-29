@@ -1,0 +1,223 @@
+$rem-sizes: (
+  0: 0rem,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 1rem,
+  4: 1.5rem,
+  5: 2rem,
+  6: 2.5rem,
+  7: 3rem,
+  8: 3.5rem,
+  9: 4rem,
+);
+
+@for $i from 0 through 100 {
+  .w-pct-#{$i} {
+    width: #{$i}#{'%'};
+  }
+  
+  .h-pct-#{$i} {
+    height: #{$i}#{'%'};
+  }
+}
+
+@for $i from 0 through 10 {
+  .opacity-#{$i * 10} {
+    opacity: #{$i * 0.1};
+  }
+}
+
+@each $size-name, $size-value in $rem-sizes {
+  // Width classes (rem)
+  .w-#{$size-name} {
+    width: #{$size-value} !important;
+  }
+
+  .mw-#{$size-name} {
+    max-width: #{$size-value} !important;
+  }
+
+  .mnw-#{$size-name} {
+    min-width: #{$size-value} !important;
+  }
+  
+  // Height classes (rem)
+  .h-#{$size-name} {
+    height: #{$size-value} !important;
+  }
+
+  .mh-#{$size-name} {
+    max-height: #{$size-value} !important;
+  }
+
+  .mnw-#{$size-name} {
+    min-height: #{$size-value} !important;
+  }
+  
+  // Margin classes (rem)
+  .m-#{$size-name} {
+    margin: #{$size-value} !important;
+  }
+
+  .-m-#{$size-name} {
+    margin: #{-1 * $size-value} !important;
+  }
+  
+  .mt-#{$size-name} {
+    margin-top: #{$size-value} !important;
+  }
+  
+  .-mt-#{$size-name} {
+    margin-top: #{-1 * $size-value} !important;
+  }
+  
+  .mb-#{$size-name} {
+    margin-bottom: #{$size-value} !important;
+  }
+
+  .-mb-#{$size-name} {
+    margin-bottom: #{-1 * $size-value} !important;
+  }
+  
+  .ms-#{$size-name} {
+    margin-left: #{$size-value} !important;
+  }
+
+  .-ms-#{$size-name} {
+    margin-left: #{-1 * $size-value} !important;
+  }
+  
+  .me-#{$size-name} {
+    margin-right: #{$size-value} !important;
+  }
+  
+  .-me-#{$size-name} {
+    margin-right: #{-1 * $size-value} !important;
+  }
+  
+  // Padding classes (rem)
+  .p-#{$size-name} {
+    padding: #{$size-value} !important;
+  }
+
+  .-p-#{$size-name} {
+    padding: #{-1 * $size-value} !important;
+  }
+  
+  .pt-#{$size-name} {
+    padding-top: #{$size-value} !important;
+  }
+  
+  .-pt-#{$size-name} {
+    padding-top: #{-1 * $size-value} !important;
+  }
+  
+  .pb-#{$size-name} {
+    padding-bottom: #{$size-value} !important;
+  }
+  
+  .-pb-#{$size-name} {
+    padding-bottom: #{-1 * $size-value} !important;
+  }
+  
+  .ps-#{$size-name} {
+    padding-left: #{$size-value} !important;
+  }
+  
+  .-ps-#{$size-name} {
+    padding-left: #{-1 * $size-value} !important;
+  }
+  
+  .pe-#{$size-name} {
+    padding-right: #{$size-value} !important;
+  }
+
+  .-pe-#{$size-name} {
+    padding-right: #{-1 * $size-value} !important;
+  }
+  
+  // Font size classes (rem)
+  .text-#{$size-name} {
+    font-size: #{$size-value} !important;
+  }
+
+  // Gap classes (rem)
+  .gap-#{$size-name} {
+    gap: #{$size-value} !important;
+  }
+}
+
+$text-colors: (
+  'primary': var(--primary-main),
+  'primary-light': var(--primary-light),
+  'primary-dark': var(--primary-dark),
+  'secondary': var(--secondary-main),
+  'secondary-light': var(--secondary-light),
+  'secondary-dark': var(--secondary-dark),
+  'text-primary': var(--text-primary),
+  'text-secondary': var(--text-secondary),
+  'text-disabled': var(--text-disabled),
+  'white': var(--custom-white),
+  'black': var(--custom-black),
+  'lightgray': var(--custom-lightgray),
+  'gray': var(--custom-gray),
+  'caption': var(--text-caption),
+  'custom': var(--custom-text),
+);
+
+@each $color-name, $color-value in $text-colors {
+  .text-#{$color-name} {
+    color: #{$color-value};
+  }
+}
+
+$bg-colors: (
+  'primary': var(--primary-main),
+  'primary-light': var(--primary-light),
+  'primary-dark': var(--primary-dark),
+  'secondary': var(--secondary-main),
+  'secondary-light': var(--secondary-light),
+  'secondary-dark': var(--secondary-dark),
+  'default': var(--background-default),
+  'paper': var(--background-paper),
+  'table-primary': var(--background-table-primary),
+  'table-strip': var(--background-table-strip),
+  'table-hover': var(--background-table-hover),
+  'input': var(--background-input),
+  'table-odd': var(--custom-table-background-odd),
+  'table-even': var(--custom-table-background-even),
+  'table-head': var(--custom-table-background-head),
+);
+
+@each $color-name, $color-value in $bg-colors {
+  .bg-#{$color-name} {
+    background-color: #{$color-value};
+  }
+}
+
+$border-colors: (
+  'primary': var(--primary-main),
+  'secondary': var(--secondary-main),
+  'divider': var(--divider),
+  'gray': var(--custom-gray),
+  'lightgray': var(--custom-lightgray),
+  'table': var(--custom-table-border),
+);
+
+@each $color-name, $color-value in $border-colors {
+  .border-#{$color-name} {
+    border-color: #{$color-value};
+  }
+}
+
+@each $color-name, $color-value in $bg-colors {
+  .hover-bg-#{$color-name}:hover {
+    background-color: #{$color-value} !important;
+  }
+}
+
+@each $color-name, $color-value in $text-colors {
+  .hover-text-#{$color-name}:hover {
+    color: #{$color-value} !important;
+  }
+}

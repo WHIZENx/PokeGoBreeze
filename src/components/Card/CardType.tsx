@@ -24,7 +24,7 @@ const CardType = (props: ICardTypeComponent) => {
           )}
         </Fragment>
       ) : (
-        <div className="d-flex justify-content-center align-items-center w-100" style={{ height: 64 }}>
+        <div className="d-flex justify-content-center align-items-center w-100 h-9">
           <b>- Select -</b>
         </div>
       )}

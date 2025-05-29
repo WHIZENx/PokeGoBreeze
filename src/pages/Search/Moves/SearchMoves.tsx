@@ -164,7 +164,7 @@ const Search = () => {
   };
 
   return (
-    <div className="container" style={{ marginTop: 20, marginBottom: 20 }}>
+    <div className="container my-4">
       <div className="table-head">Moveset list in Pokémon GO</div>
       <div className="row w-100 m-0">
         <div className="col-xl table-movesets-col p-0">

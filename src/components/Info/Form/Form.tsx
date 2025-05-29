@@ -164,7 +164,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                       }
                     >
                       <div className="d-flex w-100 justify-content-center">
-                        <div className="position-relative" style={{ width: 64 }}>
+                        <div className="position-relative w-9">
                           <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
                             <img
                               className="pokemon-sprite-medium"

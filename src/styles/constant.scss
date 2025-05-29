@@ -70,3 +70,19 @@
   -ms-max-height: max-content !important;
   -o-max-height: max-content !important;
 }
+
+.w-auto {
+  width: auto !important;
+  -webkit-width: auto !important;
+  -moz-width: auto !important;
+  -ms-width: auto !important;
+  -o-width: auto !important;
+}
+
+.h-auto {
+  height: auto !important;
+  -webkit-height: auto !important;
+  -moz-height: auto !important;
+  -ms-height: auto !important;
+  -o-height: auto !important;
+}

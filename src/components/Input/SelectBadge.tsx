@@ -13,7 +13,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
         className={combineClasses('position-relative frame-badge', props.priority === type ? 'frame-badge-select' : '')}
         onClick={() => props.setPriority(type)}
       >
-        <span style={{ width: 40 }}>
+        <span className="w-6">
           <img
             alt="Frame Type"
             className={combineClasses('frame-type-sprit', type === BadgeType.Platinum ? 'filter-platinum' : '')}
@@ -21,7 +21,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
           />
         </span>
         {type !== BadgeType.None && (
-          <span className="position-badge" style={{ width: 20 }}>
+          <span className="position-badge w-3">
             <img alt="Badge Type" className="badge-type-sprit" src={APIService.getTypeHqSprite(props.type)} />
           </span>
         )}

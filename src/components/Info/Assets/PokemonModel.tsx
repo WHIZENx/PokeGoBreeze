@@ -12,7 +12,7 @@ import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
-import { isNotEmpty, UniqValueInArray } from '../../../util/extension';
+import { combineClasses, isNotEmpty, UniqValueInArray } from '../../../util/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
@@ -64,8 +64,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
               {assets.image.map((value, index) => (
                 <div
                   key={index}
-                  className="d-inline-block"
-                  style={{ width: value.gender === GenderType.GenderLess ? '100%' : 'auto' }}
+                  className={combineClasses(
+                    'd-inline-block',
+                    value.gender === GenderType.GenderLess ? 'w-100' : 'w-auto'
+                  )}
                 >
                   <div className="sub-group-model">
                     {gender && !gender.genderlessPercent && (
@@ -164,7 +166,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                           {v && (
                             <li style={{ listStyleType: 'circle' }}>
                               <h6>Type: {capitalize(k)}</h6>
-                              <audio src={v} className="w-100" controls style={{ height: 30 }}>
+                              <audio src={v} className="w-100 h-5" controls>
                                 <source type="audio/ogg" />
                                 Your browser does not support the audio element.
                               </audio>
@@ -196,12 +198,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
               {asset?.sound.cry.map((value, index) => (
                 <li key={index} style={{ listStyleType: 'disc' }}>
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <audio
-                    src={APIService.getSoundPokemonGO(value.path)}
-                    className="w-100"
-                    controls
-                    style={{ height: 30 }}
-                  >
+                  <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100 h-5" controls>
                     <source type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>

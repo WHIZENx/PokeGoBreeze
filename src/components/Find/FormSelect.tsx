@@ -354,9 +354,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           </div>
         )}
       </div>
-      <div className="mt-2" style={{ height: 64 }}>
-        {currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}
-      </div>
+      <div className="mt-2 h-9">{currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}</div>
       <h4>
         <b>
           {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}

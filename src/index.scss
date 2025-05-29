@@ -10,6 +10,7 @@
 @use "../node_modules/placeholder-loading/src/scss/placeholder-loading.scss" as *;
 @use "./styles/constant.scss";
 @use "./styles/popover.scss";
+@use "./styles/utility.scss";
 
 html {
   height: 100%;

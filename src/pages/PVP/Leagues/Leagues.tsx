@@ -283,7 +283,7 @@ const Leagues = () => {
                     title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                   >
                     <div className="d-flex justify-content-center">
-                      <span style={{ width: 64 }}>
+                      <span className="w-9">
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="Pokémon Image"
@@ -322,7 +322,7 @@ const Leagues = () => {
                     title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                   >
                     <div className="d-flex justify-content-center">
-                      <span style={{ width: 64 }}>
+                      <span className="w-9">
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="Pokémon Image"
@@ -399,16 +399,12 @@ const Leagues = () => {
                 <div className="rank-header">Season {dataStore.leagues.season.season}</div>
                 <Badge
                   color="primary"
-                  className="position-relative d-inline-block img-link pt-4 pb-2"
+                  className="position-relative d-inline-block img-link pt-4 pb-2 mw-9"
                   overlap="circular"
                   badgeContent={null}
-                  sx={{
-                    maxWidth: 64,
-                  }}
                 >
                   <img
-                    className="pokemon-sprite-medium"
-                    style={{ width: 64 }}
+                    className="pokemon-sprite-medium w-9"
                     alt="Pokémon Image"
                     src={APIService.getPokeOtherLeague('BattleIconColor')}
                   />
@@ -417,10 +413,9 @@ const Leagues = () => {
                 <hr />
                 <Badge
                   color="primary"
-                  className="position-relative d-inline-block img-link pb-4"
+                  className="position-relative d-inline-block img-link pb-4 mw-9"
                   overlap="circular"
                   badgeContent={null}
-                  sx={{ maxWidth: 64 }}
                 >
                   <img
                     className="pokemon-sprite-medium"
@@ -437,15 +432,12 @@ const Leagues = () => {
                     <Badge
                       color="primary"
                       className={combineClasses(
-                        'position-relative d-inline-block img-link pt-4',
+                        'position-relative d-inline-block img-link pt-4 mnw-9',
                         value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? 'pb-0' : 'pb-4'
                       )}
                       overlap="circular"
                       badgeContent={value.count}
                       max={BattleLeagueCPType.InsMaster}
-                      sx={{
-                        minWidth: 64,
-                      }}
                     >
                       {!value.type && (
                         <Fragment>
@@ -455,8 +447,7 @@ const Leagues = () => {
                       {value.type === RewardType.Pokemon && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Random Pokémon"
                             src={APIService.getIconSprite('ic_grass')}
@@ -472,8 +463,7 @@ const Leagues = () => {
                       {value.type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Random Item"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
@@ -485,8 +475,7 @@ const Leagues = () => {
                       {value.type === RewardType.RareCandy && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Rare Candy"
                             src={getItemSpritePath(ItemName.RareCandy)}
@@ -497,8 +486,7 @@ const Leagues = () => {
                       {value.type === RewardType.Stardust && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Stardust"
                             src={APIService.getItemSprite('stardust_painted')}
@@ -509,8 +497,7 @@ const Leagues = () => {
                       {value.type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="TM Charged Move"
                             src={APIService.getItemSprite('Item_1202')}
@@ -523,7 +510,7 @@ const Leagues = () => {
                     <Badge
                       color="primary"
                       className={combineClasses(
-                        'position-relative d-inline-block img-link',
+                        'position-relative d-inline-block img-link mnw-9',
                         dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
                           dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
                           ? 'pb-0'
@@ -532,9 +519,6 @@ const Leagues = () => {
                       overlap="circular"
                       badgeContent={dataStore.leagues.season.rewards.rank[rank].premium[index].count}
                       max={BattleLeagueCPType.InsMaster}
-                      sx={{
-                        minWidth: 64,
-                      }}
                     >
                       {!dataStore.leagues.season.rewards.rank[rank].premium[index].type && (
                         <Fragment>
@@ -544,8 +528,7 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Random Pokémon"
                             src={APIService.getIconSprite('ic_grass')}
@@ -567,8 +550,7 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Random Item"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
@@ -590,8 +572,7 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.RareCandy && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Rare Candy"
                             src={getItemSpritePath(ItemName.RareCandy)}
@@ -602,8 +583,7 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Stardust && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Stardust"
                             src={APIService.getItemSprite('stardust_painted')}
@@ -614,8 +594,7 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="TM Charged Move"
                             src={APIService.getItemSprite('Item_1202')}
@@ -793,7 +772,7 @@ const Leagues = () => {
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
                   <div className="d-flex justify-content-center">
-                    <span style={{ width: 64 }}>
+                    <span className="w-9">
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="Pokémon Image"
@@ -827,7 +806,7 @@ const Leagues = () => {
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
-                        <span style={{ width: 64 }}>
+                        <span className="w-9">
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="Pokémon Image"

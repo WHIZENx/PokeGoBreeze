@@ -1080,8 +1080,7 @@ const DpsTdo = () => {
                 <span className="input-group-text">Fast Move Time</span>
                 <input
                   type="number"
-                  className="form-control"
-                  style={{ height: 42 }}
+                  className="form-control h-6"
                   placeholder="Delay time (sec)"
                   aria-label="Fast Move Time"
                   min={0}
@@ -1102,8 +1101,7 @@ const DpsTdo = () => {
                 <span className="input-group-text">Charged Move Time</span>
                 <input
                   type="number"
-                  className="form-control rounded-0"
-                  style={{ height: 42 }}
+                  className="form-control rounded-0 h-6"
                   placeholder="Delay time (sec)"
                   aria-label="Charged Move Time"
                   min={0}
@@ -1128,7 +1126,7 @@ const DpsTdo = () => {
                   <input
                     defaultValue={ivAtk}
                     type="number"
-                    className="form-control"
+                    className="form-control w-6"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
@@ -1140,13 +1138,12 @@ const DpsTdo = () => {
                       })
                     }
                     name="ivAtk"
-                    style={{ width: 40 }}
                   />
                   <span className="input-group-text">IV DEF</span>
                   <input
                     defaultValue={ivDef}
                     type="number"
-                    className="form-control"
+                    className="form-control w-6"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
@@ -1158,13 +1155,12 @@ const DpsTdo = () => {
                       })
                     }
                     name="ivDef"
-                    style={{ width: 40 }}
                   />
                   <span className="input-group-text">IV HP</span>
                   <input
                     defaultValue={ivHp}
                     type="number"
-                    className="form-control"
+                    className="form-control w-6"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
@@ -1176,7 +1172,6 @@ const DpsTdo = () => {
                       })
                     }
                     name="ivHp"
-                    style={{ width: 40 }}
                   />
                   <div className="input-group-prepend">
                     <label className="input-group-text">Levels</label>

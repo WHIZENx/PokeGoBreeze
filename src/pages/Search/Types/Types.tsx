@@ -337,7 +337,7 @@ const SearchTypes = (props: IStyleSheetData) => {
                 'type-select-bg d-flex align-items-center filter-shadow mt-2 w-max-content'
               )}
             >
-              <div style={{ display: 'contents', width: 16 }}>
+              <div className="w-3" style={{ display: 'contents' }}>
                 <img
                   className="pokemon-sprite-small sprite-type-select filter-shadow"
                   alt="Pokémon GO Type Logo"
