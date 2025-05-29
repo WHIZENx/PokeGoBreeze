@@ -230,7 +230,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       />
       <hr className="w-100" />
       <div className="row w-100 m-0">
-        <div className="col-md-5 p-0" style={{ overflow: 'auto' }}>
+        <div className="col-md-5 p-0 overflow-auto">
           <Info />
           {!isSpecialFormType(form?.form?.pokemonType) && (
             <Fragment>

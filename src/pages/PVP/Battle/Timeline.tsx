@@ -24,7 +24,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             'type-select-bg d-flex align-items-center border-type-init'
           )}
         >
-          <div style={{ display: 'contents', width: 16 }}>
+          <div className="w-1" style={{ display: 'contents' }}>
             <img
               className={combineClasses('pokemon-sprite-small sprite-type-select', isShowShadow ? 'filter-shadow' : '')}
               alt="Pokémon GO Type Logo"
@@ -137,7 +137,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
           {value.type === AttackType.Charge && (
             <div className={combineClasses('charged-attack-container turn-battle', end ? 'justify-content-end' : '')}>
               <div className={combineClasses('charged-attack-content text-center', value.color)}>
-                <span className="text-warning text-shadow-black" style={{ fontSize: 16 }}>
+                <span className="text-warning text-shadow-black u-fs-1">
                   <b>Charged Attack!</b>
                 </span>
               </div>

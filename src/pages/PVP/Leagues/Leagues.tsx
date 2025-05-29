@@ -454,8 +454,7 @@ const Leagues = () => {
                           />
                           <span className="caption theme-text-primary">Random Pokémon</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary"
-                            sx={{ fontSize: '1rem' }}
+                            className="view-pokemon theme-text-primary u-fs-3"
                             onClick={() => handleShow(value.type, LeagueRewardType.Free, value.step)}
                           />
                         </Fragment>
@@ -469,7 +468,7 @@ const Leagues = () => {
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
                           <span className="caption theme-text-primary">Random Item</span>
-                          <VisibilityIcon className="view-pokemon theme-text-primary" sx={{ fontSize: '1rem' }} />
+                          <VisibilityIcon className="view-pokemon theme-text-primary u-fs-3" />
                         </Fragment>
                       )}
                       {value.type === RewardType.RareCandy && (
@@ -535,8 +534,7 @@ const Leagues = () => {
                           />
                           <span className="caption theme-text-primary">Random Pokémon</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary"
-                            sx={{ fontSize: '1rem' }}
+                            className="view-pokemon theme-text-primary u-fs-3"
                             onClick={() =>
                               handleShow(
                                 dataStore.leagues.season.rewards.rank[rank].premium[index].type,
@@ -557,8 +555,7 @@ const Leagues = () => {
                           />
                           <span className="caption theme-text-primary">Random Item</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary"
-                            sx={{ fontSize: '1rem' }}
+                            className="view-pokemon theme-text-primary u-fs-3"
                             onClick={() =>
                               handleShow(
                                 dataStore.leagues.season.rewards.rank[rank].premium[index].type,
@@ -737,8 +734,7 @@ const Leagues = () => {
                 {showData.track === LeagueRewardType.Free ? (
                   <div className="d-flex column-gap-2">
                     <img
-                      className="pokemon-sprite-small filter-shadow"
-                      style={{ width: 16 }}
+                      className="pokemon-sprite-small filter-shadow w-1"
                       alt="Pokémon Image"
                       title="Battle Icon"
                       src={APIService.getPokeOtherLeague('BattleIconColor')}
@@ -748,8 +744,7 @@ const Leagues = () => {
                 ) : (
                   <div className="d-flex column-gap-2">
                     <img
-                      className="pokemon-sprite-small filter-shadow"
-                      style={{ width: 16 }}
+                      className="pokemon-sprite-small filter-shadow w-1"
                       alt="Pokémon Image"
                       title="Paid Raid Ticket"
                       src={getItemSpritePath(ItemName.PaidRaidTicket)}

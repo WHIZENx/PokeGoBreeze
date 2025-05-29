@@ -388,7 +388,7 @@ const Counter = (props: ICounterComponent) => {
       <div className="sub-header input-group align-items-center justify-content-center">
         <span className="sub-title">Best Pokémon Counter</span>
         <div className="counter-setting" onClick={handleShowOption}>
-          <SettingsIcon sx={{ fontSize: 32 }} />
+          <SettingsIcon className="u-fs-5" />
         </div>
       </div>
       <DataTable

@@ -63,7 +63,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 }
               }}
             >
-              <SettingsIcon sx={{ fontSize: 16 }} />
+              <SettingsIcon className="u-fs-3" />
             </span>
             <span
               className={combineClasses(
@@ -77,7 +77,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 }
               }}
             >
-              <ContentCopyIcon sx={{ fontSize: 16 }} />
+              <ContentCopyIcon className="u-fs-3" />
             </span>
             <span
               className={combineClasses(
@@ -96,7 +96,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 }
               }}
             >
-              <DeleteIcon sx={{ fontSize: 16 }} />
+              <DeleteIcon className="u-fs-3" />
             </span>
           </div>
         )}

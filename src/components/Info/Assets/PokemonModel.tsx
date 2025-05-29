@@ -144,7 +144,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0" style={{ height: 65 }}>
+        <div className="ph-item w-100 m-0 p-0 h-9">
           <div
             className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
             style={{ background: 'var(--background-default)' }}
@@ -183,7 +183,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       )}
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0" style={{ height: 65 }}>
+        <div className="ph-item w-100 m-0 p-0 h-9">
           <div
             className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
             style={{ background: 'var(--background-default)' }}

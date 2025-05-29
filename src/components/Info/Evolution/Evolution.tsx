@@ -442,7 +442,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <Xarrow
               labels={{
                 end: (
-                  <div className="position-absolute" style={{ left: -40 }}>
+                  <div className="position-absolute -left-6">
                     {value.pokemonType !== PokemonType.GMax && (
                       <div>
                         {toNumber(data?.evoToId) > 0 &&
@@ -504,7 +504,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               data.quest.isMustBeBuddy ? (
                                 <div className="d-flex align-items-end">
                                   <DirectionsWalkIcon fontSize="small" />
-                                  <PetsIcon sx={{ fontSize: '1rem' }} />
+                                  <PetsIcon className="u-fs-3" />
                                 </div>
                               ) : (
                                 <DirectionsWalkIcon fontSize="small" />
@@ -711,7 +711,7 @@ const Evolution = (props: IEvolutionComponent) => {
                 </span>
                 <span className="d-block caption">
                   - <DirectionsWalkIcon fontSize="small" />
-                  <PetsIcon sx={{ fontSize: '1rem' }} /> : Walk together with buddy.
+                  <PetsIcon className="u-fs-3" /> : Walk together with buddy.
                 </span>
                 <span className="d-block caption">
                   - <DirectionsWalkIcon fontSize="small" /> : Buddy walk with trainer.

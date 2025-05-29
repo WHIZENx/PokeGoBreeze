@@ -297,12 +297,12 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   return (
     <Fragment>
-      <div className="d-inline-block" style={{ width: 60, height: 60 }}>
+      <div className="d-inline-block w-9 h-9">
         {dataStorePokemon?.prev && (
           <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
             <div>
               <img
-                height={60}
+                height={64}
                 alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
                 onError={(e) => {
@@ -332,12 +332,12 @@ const FormSelect = (props: IFormSelectComponent) => {
           e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
         }}
       />
-      <div className="d-inline-block" style={{ width: 60, height: 60 }}>
+      <div className="d-inline-block w-9 h-9">
         {dataStorePokemon?.next && (
           <div style={{ cursor: 'pointer' }} onClick={() => props.onSetNext?.()}>
             <div>
               <img
-                height={60}
+                height={64}
                 alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
                 onError={(e) => {

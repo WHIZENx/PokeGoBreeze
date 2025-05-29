@@ -136,7 +136,7 @@ const FromChange = (props: IFromChangeComponent) => {
                       <Xarrow
                         labels={{
                           end: (
-                            <div className="position-absolute" style={{ left: '-5rem' }}>
+                            <div className="position-absolute -left-10">
                               {value.candyCost && (
                                 <span className="d-flex align-items-center caption w-max-content">
                                   <Candy

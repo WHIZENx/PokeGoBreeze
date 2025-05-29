@@ -9,21 +9,20 @@ $rem-sizes: (
   7: 3rem,
   8: 3.5rem,
   9: 4rem,
+  10: 5rem,
 );
 
 @for $i from 0 through 100 {
   .w-pct-#{$i} {
-    width: #{$i}#{'%'};
+    width: #{$i}#{'%'} !important;
   }
   
   .h-pct-#{$i} {
-    height: #{$i}#{'%'};
+    height: #{$i}#{'%'} !important;
   }
-}
 
-@for $i from 0 through 10 {
-  .opacity-#{$i * 10} {
-    opacity: #{$i * 0.1};
+  .opacity-#{$i} {
+    opacity: #{$i * 0.01} !important;
   }
 }
 
@@ -137,13 +136,46 @@ $rem-sizes: (
   }
   
   // Font size classes (rem)
-  .text-#{$size-name} {
+  .u-fs-#{$size-name} {
     font-size: #{$size-value} !important;
   }
 
   // Gap classes (rem)
   .gap-#{$size-name} {
     gap: #{$size-value} !important;
+  }
+
+  // Position classes (rem)
+  .left-#{$size-name} {
+    left: #{$size-value} !important;
+  }
+
+  .-left-#{$size-name} {
+    left: #{-1 * $size-value} !important;
+  }
+
+  .top-#{$size-name} {
+    top: #{$size-value} !important;
+  }
+
+  .-top-#{$size-name} {
+    top: #{-1 * $size-value} !important;
+  }
+
+  .right-#{$size-name} {
+    right: #{$size-value} !important;
+  }
+
+  .-right-#{$size-name} {
+    right: #{-1 * $size-value} !important;
+  }
+
+  .bottom-#{$size-name} {
+    bottom: #{$size-value} !important;
+  }
+
+  .-bottom-#{$size-name} {
+    bottom: #{-1 * $size-value} !important;
   }
 }
 
