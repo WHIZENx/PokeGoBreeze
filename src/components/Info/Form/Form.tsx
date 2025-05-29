@@ -197,11 +197,11 @@ const FormComponent = (props: IFormInfoComponent) => {
               ))}
             </Fragment>
           ) : (
-            <div className="ph-item flex-nowrap column-gap-2" style={{ width: '100%' }}>
+            <div className="ph-item flex-nowrap column-gap-2 w-100">
               {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
                 <div key={index} className="ph-col-3 p-0 my-1">
                   <div className="ph-row">
-                    <div className="ph-picture ph-col-3" style={{ height: 142, width: 90 }} />
+                    <div className="ph-picture ph-col-3 m-0" style={{ height: 146, width: 90 }} />
                   </div>
                 </div>
               ))}

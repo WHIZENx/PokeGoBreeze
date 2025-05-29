@@ -251,7 +251,7 @@ const TableMove = (props: ITableMoveComponent) => {
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.fMove.type} />
             </div>
             <span className="me-1">{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
-            <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
+            <span className="w-max-content" style={{ verticalAlign: 'text-bottom' }}>
               {value.fMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -271,7 +271,7 @@ const TableMove = (props: ITableMoveComponent) => {
               <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.cMove.type} />
             </div>
             <span className="me-1">{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
-            <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
+            <span className="w-max-content" style={{ verticalAlign: 'text-bottom' }}>
               {value.cMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -300,7 +300,7 @@ const TableMove = (props: ITableMoveComponent) => {
                 <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
               </div>
               <span className="me-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
-              <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
+              <span className="w-max-content" style={{ verticalAlign: 'text-bottom' }}>
                 {value.moveType !== MoveType.None && (
                   <span
                     className={combineClasses(

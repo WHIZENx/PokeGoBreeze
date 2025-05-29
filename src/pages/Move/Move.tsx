@@ -341,10 +341,7 @@ const Move = (props: IMovePage) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div
-                      style={{ width: 'fit-content' }}
-                      className={combineClasses('type-icon-small', move.type?.toLowerCase())}
-                    >
+                    <div className={combineClasses('type-icon-small w-fit-content', move.type?.toLowerCase())}>
                       {capitalize(move.type)}
                     </div>
                   )}

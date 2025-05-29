@@ -1329,7 +1329,7 @@ const RaidBattle = () => {
         <div className="col-lg d-flex justify-content-center align-items-center p-0">
           <div className="mt-2 position-relative">
             {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
-              <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
+              <div className="position-absolute w-100 h-100 z-2">
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>
               </div>

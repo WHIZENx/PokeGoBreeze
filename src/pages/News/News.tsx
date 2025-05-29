@@ -215,7 +215,7 @@ const News = () => {
     return (
       <div className="w-100 h-100 counter-none" style={{ verticalAlign: 'top' }}>
         <div className="text-origin text-center">
-          <div className="ph-item" style={{ backgroundColor: 'transparent' }}>
+          <div className="ph-item bg-transparent">
             <div className="ph-col-12 m-0 p-0 gap-3">
               {[...Array(3).keys()].map((_, index) => (
                 <div key={index} className="ph-row">

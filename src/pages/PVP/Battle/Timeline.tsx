@@ -223,7 +223,7 @@ export const TimeLine = (
   const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
     <Fragment>
       <div className="mt-2" style={{ height: 12 }}>
-        <div className="d-flex column-gap-2" style={{ width: 'max-content' }}>
+        <div className="d-flex column-gap-2 w-max-content">
           {poke.timeline.map((value, index) => (
             <span className="position-relative" key={index} style={{ width: value.size }}>
               {value.isTap && (
@@ -270,9 +270,8 @@ export const TimeLine = (
         </div>
       </div>
       <div
-        className="d-flex align-items-center column-gap-2"
+        className="d-flex align-items-center column-gap-2 w-max-content"
         style={{
-          width: 'max-content',
           borderBottom: border ? 'var(--custom-table-border)' : 'none',
         }}
       >

@@ -448,7 +448,7 @@ const Evolution = (props: IEvolutionComponent) => {
                         {toNumber(data?.evoToId) > 0 &&
                           !data?.itemCost &&
                           (data?.candyCost || data?.purificationEvoCandyCost) && (
-                            <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
+                            <span className="d-flex align-items-center caption w-max-content">
                               <Candy id={value.id} />
                               <span className="ms-1">{`x${
                                 props.pokemonData?.pokemonType === PokemonType.Purified
@@ -530,10 +530,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}
                             />
                             {data.itemCost && (
-                              <span
-                                className="d-flex align-items-center caption ms-1"
-                                style={{ width: 'max-content' }}
-                              >{`x${data.itemCost}`}</span>
+                              <span className="d-flex align-items-center caption ms-1 w-max-content">{`x${data.itemCost}`}</span>
                             )}
                           </Fragment>
                         )}

@@ -329,8 +329,7 @@ const TeamPVP = (props: IStyleSheetData) => {
             <div className="ranking-score">Pokémon</div>
             <div className="d-flex me-3" style={{ columnGap: 30 }}>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedBy(SortType.TeamScore);
                   if (sortedBy === SortType.TeamScore) {
@@ -349,8 +348,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedBy(SortType.IndividualScore);
                   if (sortedBy === SortType.IndividualScore) {
@@ -369,8 +367,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedBy(SortType.Games);
                   if (sortedBy === SortType.Games) {
@@ -470,7 +467,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                     <div className="text-center" style={{ width: 160 }}>
                       <span className="ranking-score score-ic text-black">{value.individualScore}</span>
                     </div>
-                    <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic text-black">
+                    <div className="text-center ranking-score score-ic text-black w-fit-content">
                       {toFloatWithPadding((value.games * 100) / value.performersTotalGames, 2)}
                       <span className="caption text-black">
                         {value.games}/{value.performersTotalGames}
@@ -488,8 +485,7 @@ const TeamPVP = (props: IStyleSheetData) => {
             <div className="ranking-score">Team</div>
             <div className="d-flex" style={{ marginRight: 20, columnGap: 60 }}>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedTeamBy(SortType.TeamScore);
                   if (sortedTeamBy === SortType.TeamScore) {
@@ -510,8 +506,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedTeamBy(SortType.Games);
                   if (sortedTeamBy === SortType.Games) {
@@ -574,7 +569,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                         <div className="text-center" style={{ width: 200 }}>
                           <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                         </div>
-                        <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic text-black">
+                        <div className="text-center ranking-score score-ic text-black w-fit-content">
                           {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
                           <span className="caption text-black">
                             {value.games}/{value.teamsTotalGames}

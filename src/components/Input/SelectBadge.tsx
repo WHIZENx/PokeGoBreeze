@@ -33,7 +33,7 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
   return (
     <div className="w-100 mt-2">
       <div className="d-flex justify-content-center align-items-center">
-        <div className={combineClasses('type-icon-small', props.type.toLowerCase())} style={{ width: 'max-content' }}>
+        <div className={combineClasses('type-icon-small w-max-content', props.type.toLowerCase())}>
           {capitalize(props.type)} Badge
         </div>
       </div>

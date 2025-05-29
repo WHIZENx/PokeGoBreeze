@@ -212,8 +212,8 @@ const StatsTable = () => {
       <h1 id="main" className="text-center">
         Stats Battle Table
       </h1>
-      <div className="w-100 overflow-x-auto">
-        <div style={{ width: 'fit-content', margin: '0 auto' }}>
+      <div className="w-100 overflow-x-auto w-fit-content">
+        <div style={{ margin: '0 auto' }}>
           <div className="d-flex text-center my-3 gap-2">
             {leaguesTeamBattle.map((value, index) => (
               <button

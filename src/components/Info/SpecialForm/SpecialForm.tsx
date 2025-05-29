@@ -70,11 +70,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
           <div className="form-special-container scroll-evolution">
             <ul className="ul-evo d-flex justify-content-center gap-3">
               {arrEvoList?.map((value, evo) => (
-                <li
-                  key={evo}
-                  className="img-form-gender-group li-evo"
-                  style={{ width: 'fit-content', height: 'fit-content' }}
-                >
+                <li key={evo} className="img-form-gender-group li-evo w-fit-content h-fit-content">
                   <img
                     id="Pokémon Image"
                     height="96"

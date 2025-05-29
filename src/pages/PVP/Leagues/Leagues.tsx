@@ -706,8 +706,8 @@ const Leagues = () => {
           <div className="ph-picture px-0" style={{ height: 450 }} />
         </div>
       )}
-      <div className="input-group border-input" style={{ width: 'fit-content' }}>
-        <span className="input-group-text text-success" style={{ backgroundColor: 'transparent', fontWeight: 500 }}>
+      <div className="input-group border-input w-fit-content">
+        <span className="input-group-text text-success bg-transparent" style={{ fontWeight: 500 }}>
           Opened Leagues
         </span>
       </div>

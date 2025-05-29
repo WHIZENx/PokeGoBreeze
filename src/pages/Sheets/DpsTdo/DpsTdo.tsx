@@ -695,7 +695,7 @@ const DpsTdo = () => {
   return (
     <div className="position-relative">
       {!isNotEmpty(dpsTable) && (
-        <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
+        <div className="ph-item w-100 h-100 position-absolute z-2 bg-transparent">
           <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}
@@ -718,7 +718,7 @@ const DpsTdo = () => {
           ))}
         </div>
         <div className="row w-100 m-0">
-          <div className="col-xxl border-input p-0" style={{ height: 'fit-content' }}>
+          <div className="col-xxl border-input p-0 w-fit-content">
             <div className="border-input">
               <div className="row w-100 m-0">
                 <div className="d-flex col-md-9 p-0">
@@ -1056,7 +1056,7 @@ const DpsTdo = () => {
               </div>
             </div>
           </div>
-          <div className="col-xxl border-input p-0" style={{ height: 'fit-content' }}>
+          <div className="col-xxl border-input p-0 w-fit-content">
             <div className="head-types">Options</div>
             <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
               <div className="input-group">

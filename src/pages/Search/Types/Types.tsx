@@ -332,10 +332,9 @@ const SearchTypes = (props: IStyleSheetData) => {
               />
             </div>
             <span
-              style={{ width: 'max-content' }}
               className={combineClasses(
                 currentType.toLowerCase(),
-                'type-select-bg d-flex align-items-center filter-shadow mt-2'
+                'type-select-bg d-flex align-items-center filter-shadow mt-2 w-max-content'
               )}
             >
               <div style={{ display: 'contents', width: 16 }}>

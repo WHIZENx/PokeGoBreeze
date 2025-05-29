@@ -281,7 +281,7 @@ const Pokedex = (props: IStyleSheetData) => {
   return (
     <div className="position-relative">
       {!isNotEmpty(dataList) && (
-        <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
+        <div className="ph-item w-100 h-100 position-absolute z-2 bg-transparent">
           <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}

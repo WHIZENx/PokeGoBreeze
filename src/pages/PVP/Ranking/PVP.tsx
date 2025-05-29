@@ -420,8 +420,7 @@ const RankingPVP = (props: IStyleSheetData) => {
             <div />
             <div className="d-flex me-3">
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() =>
                   setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC)
                 }
