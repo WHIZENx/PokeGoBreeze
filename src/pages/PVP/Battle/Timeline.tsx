@@ -77,17 +77,14 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               color="primary"
               overlap="circular"
               badgeContent={value.isTap ? 'Tap' : undefined}
-              className={combineClasses(
-                'fast-attack-container text-shadow-black turn-battle',
-                end ? 'justify-content-end' : ''
-              )}
+              className={combineClasses('fast-attack-container turn-battle', end ? 'justify-content-end' : '')}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: end ? 'right' : 'left',
               }}
             >
               <div className={combineClasses('fast-attack-content text-center', value.color)}>
-                <span className="text-warning" style={{ fontSize: 12 }}>
+                <span className="text-warning text-shadow-black" style={{ fontSize: 12 }}>
                   <b>Fast Attack!</b>
                 </span>
                 {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
@@ -101,7 +98,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               badgeContent={value.isTap ? 'Tap' : undefined}
               className={combineClasses(
                 pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune
-                  ? 'fast-attack-container text-shadow-black'
+                  ? 'fast-attack-container'
                   : 'wait-attack-container',
                 end ? 'justify-content-end' : '',
                 'turn-battle',
@@ -114,7 +111,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             >
               {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune ? (
                 <div className={combineClasses('fast-attack-content text-center', value.move?.type?.toLowerCase())}>
-                  <span className="text-warning" style={{ fontSize: 12 }}>
+                  <span className="text-warning text-shadow-black" style={{ fontSize: 12 }}>
                     <b>Fast Attack!</b>
                   </span>
                   {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
@@ -138,14 +135,9 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             </div>
           )}
           {value.type === AttackType.Charge && (
-            <div
-              className={combineClasses(
-                'charged-attack-container text-shadow-black turn-battle',
-                end ? 'justify-content-end' : ''
-              )}
-            >
+            <div className={combineClasses('charged-attack-container turn-battle', end ? 'justify-content-end' : '')}>
               <div className={combineClasses('charged-attack-content text-center', value.color)}>
-                <span className="text-warning" style={{ fontSize: 16 }}>
+                <span className="text-warning text-shadow-black" style={{ fontSize: 16 }}>
                   <b>Charged Attack!</b>
                 </span>
               </div>

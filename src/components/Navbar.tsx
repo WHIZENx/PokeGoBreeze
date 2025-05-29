@@ -139,7 +139,7 @@ const NavbarComponent = (props: INavbarComponent) => {
             </Link>
           </Nav>
           {toNumber(timestamp?.gamemaster) > 0 && (
-            <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
+            <Navbar.Text className="d-flex flex-column mw-max-content" style={{ height: 40 }}>
               <span className="text-white mx-2">Updated: {getTime(timestamp.gamemaster, true)}</span>
               <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
                 <b>
