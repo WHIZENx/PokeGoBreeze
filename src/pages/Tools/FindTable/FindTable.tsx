@@ -10,7 +10,7 @@ import {
 } from '../../../util/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
-import DataTable, { ConditionalStyles, TableColumn } from 'react-data-table-component';
+import DataTable, { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
 import dataCPM from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
@@ -108,6 +108,19 @@ const columnsCP: TableColumn<IPredictCPModel>[] = [
   },
 ];
 
+const customStyles: TableStyles = {
+  rows: {
+    highlightOnHoverStyle: {
+      color: 'white !important',
+    },
+  },
+  cells: {
+    style: {
+      color: 'black',
+    },
+  },
+};
+
 const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
   {
     when: (row) => row.percent === 100,
@@ -131,6 +144,12 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
     when: (row) => row.percent > 51 && row.percent <= 64,
     style: {
       backgroundColor: '#ececc8',
+    },
+  },
+  {
+    when: (row) => row.percent <= 51,
+    style: {
+      backgroundColor: '#d7d7d7',
     },
   },
 ];
@@ -246,7 +265,7 @@ const FindTable = () => {
         )}
         <hr className="m-0" />
         <div>
-          <b>{star}</b>
+          <b className="text-black text-shadow">{star}</b>
         </div>
       </div>
       <p>{toFloatWithPadding((toNumber(star) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
@@ -294,7 +313,7 @@ const FindTable = () => {
           defaultSortAsc={false}
           conditionalRowStyles={conditionalRowStyles}
           highlightOnHover
-          customStyles={getCustomThemeDataTable()}
+          customStyles={getCustomThemeDataTable(customStyles)}
         />
       </Fragment>
     );
