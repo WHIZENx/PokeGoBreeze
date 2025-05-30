@@ -200,7 +200,7 @@ const News = () => {
           />
         )}
       </div>
-      <p className="mt-2" style={{ fontWeight: 'bold' }}>
+      <p className="mt-2 fw-bold">
         <span className={value.type === TicketRewardType.Pokemon ? 'select-evo' : ''}>{value.title}</span>
         {value.count > 0 && ` x${value.count}`}
       </p>

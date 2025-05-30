@@ -571,7 +571,7 @@ const Calculate = () => {
                               <Fragment>
                                 {statData.atkStat}
                                 {toNumber(statData.atkStatDiff) > 0 && (
-                                  <span className="text-success fw-semi-bold">{` (+${statData.atkStatDiff})`}</span>
+                                  <span className="text-success fw-medium">{` (+${statData.atkStatDiff})`}</span>
                                 )}
                               </Fragment>
                             )
@@ -598,7 +598,7 @@ const Calculate = () => {
                               <Fragment>
                                 {statData.defStat}
                                 {toNumber(statData.defStatDiff) > 0 && (
-                                  <span className="text-danger fw-semi-bold">{` (-${statData.defStatDiff})`}</span>
+                                  <span className="text-danger fw-medium">{` (-${statData.defStatDiff})`}</span>
                                 )}
                               </Fragment>
                             )

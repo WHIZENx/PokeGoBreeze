@@ -341,21 +341,3 @@ $vertical-align-types: (
     vertical-align: #{$valign-value} !important;
   }
 }
-
-$font-weights: (
-  'normal': normal,
-  'light': light,
-  'lighter': lighter,
-  'bold': bold,
-  'bolder': bolder,
-  'thin': thin,
-  'medium': medium,
-  'semi-bold': 600,
-  'extra-bold': 900,
-);
-
-@each $weight-name, $weight-value in $font-weights {
-  .fw-#{$weight-name} {
-    font-weight: #{$weight-value} !important;
-  }
-}

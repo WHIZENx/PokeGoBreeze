@@ -325,8 +325,7 @@ const SearchTypes = (props: IStyleSheetData) => {
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img
-                style={{ backgroundColor: 'black' }}
-                className="sprite-type-large p-3 rounded-circle"
+                className="sprite-type-large p-3 rounded-circle bg-black"
                 alt="Pokémon GO Type Logo"
                 src={APIService.getTypeHqSprite(currentType)}
               />

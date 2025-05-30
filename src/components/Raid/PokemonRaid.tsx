@@ -36,7 +36,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
 
   return (
     <div className="position-relative">
-      <span className="input-group-text justify-content-center position-relative" style={{ height: 38 }}>
+      <span className="input-group-text justify-content-center position-relative h-6">
         {dataTargetPokemon && (
           <div className="d-flex text-group-small">
             <span>

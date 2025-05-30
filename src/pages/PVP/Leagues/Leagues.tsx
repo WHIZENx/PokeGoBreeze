@@ -223,20 +223,20 @@ const Leagues = () => {
           </div>
           <h5 className="title-leagues mt-2">Conditions</h5>
           <ul className="list-style-inherit">
-            <li style={{ fontWeight: 500 }}>
+            <li className="fw-medium">
               <h6>
                 <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
               </h6>
             </li>
             {league.conditions.maxLevel && (
-              <li style={{ fontWeight: 500 }}>
+              <li className="fw-medium">
                 <h6>
                   <b>Max Level:</b> <span>{league.conditions.maxLevel}</span>
                 </h6>
               </li>
             )}
             {league.pokemonCount > 0 && (
-              <li style={{ fontWeight: 500 }}>
+              <li className="fw-medium">
                 <h6>
                   <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
                 </h6>
@@ -245,20 +245,20 @@ const Leagues = () => {
             {league.conditions.timestamp && (
               <li>
                 <h6 className="title-leagues">Event time</h6>
-                <span style={{ fontWeight: 500 }}>Start Date: {getTime(league.conditions.timestamp.start)}</span>
+                <span className="fw-medium">Start Date: {getTime(league.conditions.timestamp.start)}</span>
                 {league.conditions.timestamp.end && (
-                  <span style={{ fontWeight: 500 }}>
+                  <span className="fw-medium">
                     <br />
                     End Date: {getTime(league.conditions.timestamp.end)}
                   </span>
                 )}
               </li>
             )}
-            <li style={{ fontWeight: 500 }}>
+            <li className="fw-medium">
               <h6 className="title-leagues">Allow Forms Evolution</h6>
               {league.allowEvolutions ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
             </li>
-            <li style={{ fontWeight: 500 }}>
+            <li className="fw-medium">
               <h6 className="title-leagues">Unique Selected</h6>
               {league.conditions.uniqueSelected ? (
                 <DoneIcon sx={{ color: 'green' }} />
@@ -267,13 +267,13 @@ const Leagues = () => {
               )}
             </li>
             {isNotEmpty(league.conditions.uniqueType) && (
-              <li style={{ fontWeight: 500 }} className="unique-type">
+              <li className="fw-medium unique-type">
                 <h6 className="title-leagues">Unique Type</h6>
                 <TypeInfo arr={league.conditions.uniqueType} className="ms-3" />
               </li>
             )}
             {isNotEmpty(league.conditions.whiteList) && (
-              <li style={{ fontWeight: 500 }}>
+              <li className="fw-medium">
                 <h6 className="title-leagues text-success">White List</h6>
                 {league.conditions.whiteList.map((item, index) => (
                   <LinkToTop
@@ -312,7 +312,7 @@ const Leagues = () => {
               </li>
             )}
             {isNotEmpty(league.conditions.banned) && (
-              <li style={{ fontWeight: 500 }}>
+              <li className="fw-medium">
                 <h6 className="title-leagues text-danger">Ban List</h6>
                 {league.conditions.banned.map((item, index) => (
                   <LinkToTop
@@ -363,7 +363,7 @@ const Leagues = () => {
       <hr />
       <div className="row m-0 row-gap-2">
         <div className="col-md-8 d-flex justify-content-start align-items-center p-0">
-          <span style={{ fontWeight: 500 }}>
+          <span className="fw-medium">
             <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>
             <span>
               {' - '}
@@ -683,9 +683,7 @@ const Leagues = () => {
         </div>
       )}
       <div className="input-group border-input w-fit-content">
-        <span className="input-group-text text-success bg-transparent" style={{ fontWeight: 500 }}>
-          Opened Leagues
-        </span>
+        <span className="input-group-text text-success bg-transparent fw-medium">Opened Leagues</span>
       </div>
       <Accordion alwaysOpen>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 

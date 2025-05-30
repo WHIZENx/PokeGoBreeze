@@ -48,8 +48,7 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
         <span className={combineClasses(move?.type?.toLowerCase(), 'type-icon-border')}>
           <div style={{ width: 35 }}>
             <img
-              style={{ backgroundColor: 'black' }}
-              className="sprite-type p-1"
+              className="sprite-type p-1 bg-black"
               alt="Pokémon GO Type Logo"
               src={APIService.getTypeHqSprite(move?.type)}
             />
