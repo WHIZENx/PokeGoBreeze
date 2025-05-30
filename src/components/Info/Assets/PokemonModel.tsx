@@ -157,14 +157,14 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           ) : (
             <ul className="m-0">
               {props.originSoundCry.map((value, index) => (
-                <li key={index} style={{ listStyleType: 'disc' }}>
+                <li key={index} className="list-style-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
                   <ul className="m-0">
                     {value.cries &&
                       Object.entries(value.cries).map(([k, v], i) => (
                         <Fragment key={i}>
                           {v && (
-                            <li style={{ listStyleType: 'circle' }}>
+                            <li className="list-style-circle">
                               <h6>Type: {capitalize(k)}</h6>
                               <audio src={v} className="w-100 h-5" controls>
                                 <source type="audio/ogg" />
@@ -196,7 +196,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           ) : (
             <ul className="m-0">
               {asset?.sound.cry.map((value, index) => (
-                <li key={index} style={{ listStyleType: 'disc' }}>
+                <li key={index} className="list-style-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
                   <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100 h-5" controls>
                     <source type="audio/wav" />

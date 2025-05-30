@@ -24,7 +24,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             'type-select-bg d-flex align-items-center border-type-init'
           )}
         >
-          <div className="w-1" style={{ display: 'contents' }}>
+          <div className="w-1 d-contents">
             <img
               className={combineClasses('pokemon-sprite-small sprite-type-select', isShowShadow ? 'filter-shadow' : '')}
               alt="Pokémon GO Type Logo"
@@ -221,11 +221,9 @@ export const TimeLine = (
               {value.isTap && (
                 <div
                   style={{
-                    display: !showTap ? 'none' : 'block',
-                    opacity: 0.5,
                     borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
-                  className="charge-attack"
+                  className={combineClasses('charge-attack opacity-50', showTap ? 'd-block' : 'd-none')}
                 />
               )}
               {!value.isTap && (
@@ -251,7 +249,7 @@ export const TimeLine = (
                           ))}
                         </div>
                       ) : (
-                        <div style={{ display: !showTap ? 'none' : 'block' }} className="wait-attack" />
+                        <div className={combineClasses('wait-attack', showTap ? 'd-block' : 'd-none')} />
                       )}
                     </Fragment>
                   )}
@@ -355,10 +353,8 @@ export const TimeLineFit = (
             <Fragment key={index}>
               {value.isTap && (
                 <div
-                  className="charge-attack"
+                  className={combineClasses('charge-attack opacity-50', showTap ? 'd-block' : 'd-none')}
                   style={{
-                    display: !showTap ? 'none' : 'block',
-                    opacity: 0.5,
                     width: value.size,
                     left: calculateFitPoint(poke.timeline.length, index),
                     borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
@@ -398,9 +394,8 @@ export const TimeLineFit = (
                         </div>
                       ) : (
                         <div
-                          className="wait-attack"
+                          className={combineClasses('wait-attack', showTap ? 'd-block' : 'd-none')}
                           style={{
-                            display: !showTap ? 'none' : 'block',
                             width: value.size,
                             left: calculateFitPoint(poke.timeline.length, index),
                           }}

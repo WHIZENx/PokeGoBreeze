@@ -337,7 +337,7 @@ const SearchTypes = (props: IStyleSheetData) => {
                 'type-select-bg d-flex align-items-center filter-shadow mt-2 w-max-content'
               )}
             >
-              <div className="w-3" style={{ display: 'contents' }}>
+              <div className="w-3 d-contents">
                 <img
                   className="pokemon-sprite-small sprite-type-select filter-shadow"
                   alt="Pokémon GO Type Logo"
@@ -353,7 +353,7 @@ const SearchTypes = (props: IStyleSheetData) => {
                 toNumber(allData?.pokemon) > 0 &&
                 Math.round((result.pokemonList.length * 100) / toNumber(allData?.pokemon, 1))
               }%)`}</b>
-              <ul style={{ listStyleType: 'disc' }}>
+              <ul className="list-style-disc">
                 <li>
                   <b>{`Legacy Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length} (${
                     isNotEmpty(result.pokemonList) &&

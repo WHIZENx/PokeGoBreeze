@@ -186,7 +186,7 @@ const TableMove = (props: ITableMoveComponent) => {
               >
                 Fast
                 {!disableSortFM && (
-                  <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Fast ? 1 : 0.3 }}>
+                  <span className={stateSorted[tableType].sortBy === TypeSorted.Fast ? 'opacity-100' : 'opacity-30'}>
                     {stateSorted[tableType].fast ? (
                       <ArrowDropDownIcon fontSize="small" />
                     ) : (
@@ -201,7 +201,7 @@ const TableMove = (props: ITableMoveComponent) => {
               >
                 Charged
                 {!disableSortCM && (
-                  <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Charge ? 1 : 0.3 }}>
+                  <span className={stateSorted[tableType].sortBy === TypeSorted.Charge ? 'opacity-100' : 'opacity-30'}>
                     {stateSorted[tableType].charged ? (
                       <ArrowDropDownIcon fontSize="small" />
                     ) : (
@@ -212,7 +212,7 @@ const TableMove = (props: ITableMoveComponent) => {
               </th>
               <th className="table-column-head cursor-pointer" onClick={() => arrowSort(table, TypeSorted.Effective)}>
                 %
-                <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Effective ? 1 : 0.3 }}>
+                <span className={stateSorted[tableType].sortBy === TypeSorted.Effective ? 'opacity-100' : 'opacity-30'}>
                   {stateSorted[tableType].effective ? (
                     <ArrowDropDownIcon fontSize="small" />
                   ) : (

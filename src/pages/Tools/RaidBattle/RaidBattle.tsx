@@ -1144,7 +1144,7 @@ const RaidBattle = () => {
           </span>
         </span>
       )}
-      <div className="w-3" style={{ display: 'contents' }}>
+      <div className="w-3 d-contents">
         <img
           className="pokemon-sprite-small sprite-type-select filter-shadow"
           alt="Pokémon GO Type Logo"
@@ -1754,7 +1754,7 @@ const RaidBattle = () => {
             {isNotEmpty(resultRaid) && (
               <Fragment>
                 <hr />
-                <ul className="mt-2" style={{ listStyleType: 'initial' }}>
+                <ul className="mt-2 list-style-initial">
                   {resultRaid?.map((result, turn) => (
                     <li className="mb-3" key={turn}>
                       <h4>

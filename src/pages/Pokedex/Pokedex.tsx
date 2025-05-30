@@ -532,7 +532,7 @@ const Pokedex = (props: IStyleSheetData) => {
       </div>
       <LoadGroup className={'position-fixed text-center'} isShow={isLoading} isVertical={false} isHideAttr={false} />
       <div className="text-center bg-white">
-        <div className="loading-group-spin-table" style={{ display: !isLoading ? 'none' : 'block' }} />
+        <div className={combineClasses('loading-group-spin-table', isLoading ? 'd-block' : 'd-none')} />
         <ul className="d-grid pokemon-content">
           {listOfPokemon.map((row, index) => (
             <CardPokemonInfo

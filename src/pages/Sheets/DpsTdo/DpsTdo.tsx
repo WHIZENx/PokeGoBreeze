@@ -1236,10 +1236,8 @@ const DpsTdo = () => {
                     ))}
                   </Form.Select>
                   <Box
+                    className="d-flex align-items-center justify-content-center"
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
                       paddingLeft: 1,
                       paddingRight: 1,
                     }}

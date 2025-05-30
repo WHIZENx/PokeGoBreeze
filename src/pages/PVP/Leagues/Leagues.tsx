@@ -222,7 +222,7 @@ const Leagues = () => {
             )}
           </div>
           <h5 className="title-leagues mt-2">Conditions</h5>
-          <ul style={{ listStyleType: 'inherit' }}>
+          <ul className="list-style-inherit">
             <li style={{ fontWeight: 500 }}>
               <h6>
                 <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
