@@ -29,7 +29,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
                   'type-select-bg d-flex align-items-center filter-shadow'
                 )}
               >
-                <div className="w-3" style={{ display: 'contents' }}>
+                <div className="w-3 d-contents">
                   <img
                     className="pokemon-sprite-small sprite-type-select filter-shadow"
                     alt="Pokémon GO Type Logo"

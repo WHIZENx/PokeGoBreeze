@@ -311,7 +311,7 @@ const Move = (props: IMovePage) => {
       ) : (
         <div className="ph-item">
           <div className="ph-row h-100 head-box d-flex mb-0 ps-0">
-            <div className="ph-picture" style={{ width: '40%', height: 45 }} />
+            <div className="ph-picture w-pct-40" style={{ height: 45 }} />
           </div>
         </div>
       )}

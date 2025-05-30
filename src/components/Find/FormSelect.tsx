@@ -299,7 +299,7 @@ const FormSelect = (props: IFormSelectComponent) => {
     <Fragment>
       <div className="d-inline-block w-9 h-9">
         {dataStorePokemon?.prev && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
+          <div className="cursor-pointer" onClick={() => props.onSetPrev?.()}>
             <div>
               <img
                 height={64}
@@ -334,7 +334,7 @@ const FormSelect = (props: IFormSelectComponent) => {
       />
       <div className="d-inline-block w-9 h-9">
         {dataStorePokemon?.next && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetNext?.()}>
+          <div className="cursor-pointer" onClick={() => props.onSetNext?.()}>
             <div>
               <img
                 height={64}

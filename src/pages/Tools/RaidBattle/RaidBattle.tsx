@@ -916,9 +916,8 @@ const RaidBattle = () => {
       <div className="input-group mb-3">
         <span className="input-group-text">Sort By</span>
         <Form.Select
-          style={{ width: '40%' }}
           value={filters.selected.sortBy}
-          className="form-control"
+          className="form-control w-pct-40"
           onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
         >
           <option value={SortType.DPS}>Damage Per Second</option>
@@ -928,9 +927,8 @@ const RaidBattle = () => {
         </Form.Select>
         <span className="input-group-text">Priority</span>
         <Form.Select
-          style={{ width: '15%' }}
+          className="form-control w-pct-15"
           value={filters.selected.sorted}
-          className="form-control"
           onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
         >
           <option value={SortDirectionType.ASC}>Best</option>

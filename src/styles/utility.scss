@@ -21,8 +21,16 @@ $rem-sizes: (
     height: #{$i}#{'%'} !important;
   }
 
+  .gap-pct-#{$i} {
+    gap: #{$i}#{'%'} !important;
+  }
+
   .opacity-#{$i} {
     opacity: #{$i * 0.01} !important;
+  }
+
+  .z-#{$i} {
+    z-index: #{$i} !important;
   }
 }
 
@@ -49,7 +57,7 @@ $rem-sizes: (
     max-height: #{$size-value} !important;
   }
 
-  .mnw-#{$size-name} {
+  .mnh-#{$size-name} {
     min-height: #{$size-value} !important;
   }
   
@@ -251,5 +259,102 @@ $border-colors: (
 @each $color-name, $color-value in $text-colors {
   .hover-text-#{$color-name}:hover {
     color: #{$color-value} !important;
+  }
+}
+
+$cursor-types: (
+  'auto': auto,
+  'default': default,
+  'pointer': pointer,
+  'text': text,
+  'move': move,
+  'not-allowed': not-allowed,
+  'grab': grab,
+  'grabbing': grabbing,
+  'zoom-in': zoom-in,
+  'zoom-out': zoom-out,
+  'help': help,
+  'wait': wait,
+  'crosshair': crosshair,
+);
+
+@each $cursor-name, $cursor-value in $cursor-types {
+  .cursor-#{$cursor-name} {
+    cursor: #{$cursor-value} !important;
+  }
+}
+
+$list-style-types: (
+  'none': none,
+  'disc': disc,
+  'circle': circle,
+  'square': square,
+  'decimal': decimal,
+  'decimal-leading-zero': decimal-leading-zero,
+  'lower-roman': lower-roman,
+  'upper-roman': upper-roman,
+  'lower-alpha': lower-alpha,
+  'upper-alpha': upper-alpha,
+);
+
+@each $list-type-name, $list-type-value in $list-style-types {
+  .list-style-#{$list-type-name} {
+    list-style-type: #{$list-type-value} !important;
+  }
+}
+
+$display-types: (
+  'none': none,
+  'block': block,
+  'inline': inline,
+  'inline-block': inline-block,
+  'flex': flex,
+  'inline-flex': inline-flex,
+  'grid': grid,
+  'inline-grid': inline-grid,
+  'table': table,
+  'table-cell': table-cell,
+  'table-row': table-row,
+  'contents': contents,
+);
+
+@each $display-name, $display-value in $display-types {
+  .d-#{$display-name} {
+    display: #{$display-value} !important;
+  }
+}
+
+$vertical-align-types: (
+  'baseline': baseline,
+  'top': top,
+  'middle': middle,
+  'bottom': bottom,
+  'text-top': text-top,
+  'text-bottom': text-bottom,
+  'sub': sub,
+  'super': super,
+);
+
+@each $valign-name, $valign-value in $vertical-align-types {
+  .v-align-#{$valign-name} {
+    vertical-align: #{$valign-value} !important;
+  }
+}
+
+$font-weights: (
+  'normal': 400,
+  'light': 300,
+  'lighter': 200,
+  'bold': 700,
+  'bolder': 800,
+  'thin': 100,
+  'medium': 500,
+  'semi-bold': 600,
+  'extra-bold': 900,
+);
+
+@each $weight-name, $weight-value in $font-weights {
+  .fw-#{$weight-name} {
+    font-weight: #{$weight-value} !important;
   }
 }

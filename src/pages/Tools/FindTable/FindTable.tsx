@@ -391,7 +391,7 @@ const FindTable = () => {
           Find IV
         </h1>
         <form className="d-flex justify-content-center mt-2" onSubmit={onFindStats.bind(this)}>
-          <Box sx={{ width: '50%', minWidth: 350 }}>
+          <Box className="w-50" sx={{ minWidth: 350 }}>
             <div className="input-group mb-3">
               <div className="input-group-prepend">
                 <span className="input-group-text">CP</span>
@@ -422,7 +422,7 @@ const FindTable = () => {
         </h1>
         <form id="formCP" className="mt-2" onSubmit={onFindCP.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
-            <Box sx={{ width: '50%', minWidth: 300 }}>
+            <Box className="w-50" sx={{ minWidth: 300 }}>
               <div className="d-flex justify-content-between">
                 <b>ATK</b>
                 <b>{searchATKIv}</b>

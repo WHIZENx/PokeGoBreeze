@@ -24,7 +24,7 @@ const IVBar = (props: IIVBarComponent) => {
 
   return (
     <div className="iv-container mt-2" style={props.style}>
-      <div className="d-flex justify-content-between" style={{ width: '99%' }}>
+      <div className="d-flex justify-content-between w-pct-99">
         <b>{props.title}</b>
         <b>{props.iv}</b>
       </div>

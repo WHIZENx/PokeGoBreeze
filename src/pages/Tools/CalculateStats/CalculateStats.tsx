@@ -233,7 +233,7 @@ const Calculate = () => {
         </h1>
         <form className="mt-2" onSubmit={onCalculateStatsPoke.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
-            <Box sx={{ width: '50%', minWidth: 350 }}>
+            <Box className="w-50" sx={{ minWidth: 350 }}>
               <div className="input-group mb-3 justify-content-center">
                 <DynamicInputCP
                   statATK={pokemon?.statsGO?.atk}
@@ -252,7 +252,7 @@ const Calculate = () => {
             </Box>
           </div>
           <div className="form-group d-flex justify-content-center text-center">
-            <Box sx={{ width: '50%', minWidth: 300 }}>
+            <Box className="w-50" sx={{ minWidth: 300 }}>
               <div className="d-flex justify-content-between">
                 <b>ATK</b>
                 <b>{ATKIv}</b>
@@ -381,7 +381,7 @@ const Calculate = () => {
         </form>
         <div>
           <div className="d-flex justify-content-center text-center" style={{ height: 80 }}>
-            <Box sx={{ width: '60%', minWidth: 320 }}>
+            <Box className="w-pct-60" sx={{ minWidth: 320 }}>
               <div className="d-flex justify-content-between">
                 <b>Level</b>
                 <b>{statData ? statLevel : 'None'}</b>
@@ -401,7 +401,7 @@ const Calculate = () => {
             </Box>
           </div>
           <div className="d-flex justify-content-center mt-3">
-            <Box sx={{ width: '80%', minWidth: 320 }}>
+            <Box className="w-pct-80" sx={{ minWidth: 320 }}>
               <div className="row">
                 <div className="col p-0">
                   <table className="table-info table-stats">

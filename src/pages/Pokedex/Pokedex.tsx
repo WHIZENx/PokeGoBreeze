@@ -369,7 +369,7 @@ const Pokedex = (props: IStyleSheetData) => {
               </div>
               <div className="col-xl-8 border-input p-2 gap-2">
                 <div className="d-flex">
-                  <FormControl sx={{ m: 1, width: '50%' }} size="small">
+                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
                     <InputLabel>Generation(s)</InputLabel>
                     <Select
                       multiple
@@ -395,7 +395,7 @@ const Pokedex = (props: IStyleSheetData) => {
                       ))}
                     </Select>
                   </FormControl>
-                  <FormControl sx={{ m: 1, width: '50%' }} size="small">
+                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
                     <InputLabel>Version(s)</InputLabel>
                     <Select
                       multiple

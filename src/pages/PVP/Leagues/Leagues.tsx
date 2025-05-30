@@ -756,7 +756,7 @@ const Leagues = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body className="text-center">
-            <h5 style={{ textDecoration: 'underline' }}>Random Pokémon</h5>
+            <h5 className="text-decoration-underline">Random Pokémon</h5>
             {showData.data
               .filter((item) => !item.guaranteedLimited)
               .map((item, index) => (
@@ -790,7 +790,7 @@ const Leagues = () => {
             {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
               <Fragment>
                 <hr />
-                <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>
+                <h5 className="text-decoration-underline">Guaranteed Pokémon in first time</h5>
                 {showData.data
                   .filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)
                   .map((item, index) => (

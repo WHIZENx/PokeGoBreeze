@@ -575,8 +575,7 @@ const Pokemon = (props: IPokemonPage) => {
           <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={icon} />
           <div className="d-inline-block img-desc">
             <img
-              className="pokemon-main-sprite"
-              style={{ verticalAlign: 'baseline' }}
+              className="pokemon-main-sprite v-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 dataStorePokemon?.current?.id,

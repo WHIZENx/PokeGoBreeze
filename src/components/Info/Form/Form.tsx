@@ -142,7 +142,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         <h4 className="info-title">
           <b>Form varieties</b>
         </h4>
-        <div className="scroll-form" style={{ width: props.isLoadedForms ? '100%' : '' }}>
+        <div className={combineClasses('scroll-form', props.isLoadedForms ? 'w-100' : '')}>
           {props.isLoadedForms ? (
             <Fragment>
               {props.formList.map((value, index) => (

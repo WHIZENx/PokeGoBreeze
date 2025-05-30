@@ -165,7 +165,7 @@ const Counter = (props: ICounterComponent) => {
       name: 'Fast',
       selector: (row) => (
         <LinkToTop to={`../move/${row.fMove.id}`} className="d-grid">
-          <div className="me-1" style={{ verticalAlign: 'text-bottom' }}>
+          <div className="me-1 v-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.fMove.type} />
           </div>
           <span className="me-1" style={{ fontSize: '0.9rem', whiteSpace: 'normal' }}>
@@ -192,7 +192,7 @@ const Counter = (props: ICounterComponent) => {
       name: 'Charged',
       selector: (row) => (
         <LinkToTop to={`../move/${row.cMove.id}`} className="d-grid">
-          <div className="me-1" style={{ verticalAlign: 'text-bottom' }}>
+          <div className="me-1 v-align-text-bottom">
             <IconType width={28} height={28} alt="Pokémon GO Type Logo" type={row.cMove.type} />
           </div>
           <span className="me-1" style={{ fontSize: '0.9rem', whiteSpace: 'normal' }}>
@@ -226,14 +226,14 @@ const Counter = (props: ICounterComponent) => {
   ];
 
   const CounterLoader = () => (
-    <div className="w-100 counter-none" style={{ verticalAlign: 'top' }}>
+    <div className="w-100 counter-none v-align-top">
       <div className="text-origin text-center theme-table-primary">
         <div className="ph-item">
           <div className="ph-col-12 theme-table-primary m-0 p-2 gap-2">
             {[...Array(5).keys()].map((_, index) => (
-              <div key={index} className="ph-row d-flex" style={{ gap: '5%' }}>
-                <div className="ph-picture" style={{ width: '25%', height: 100 }} />
-                <div className="ph-picture" style={{ width: '70%', height: 100 }} />
+              <div key={index} className="ph-row d-flex gap-pct-5">
+                <div className="ph-picture w-pct-25" style={{ height: 100 }} />
+                <div className="ph-picture w-pct-70" style={{ height: 100 }} />
               </div>
             ))}
           </div>

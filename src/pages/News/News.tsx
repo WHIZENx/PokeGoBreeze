@@ -212,7 +212,7 @@ const News = () => {
       return element;
     }
     return (
-      <div className="w-100 h-100 counter-none" style={{ verticalAlign: 'top' }}>
+      <div className="w-100 h-100 counter-none v-align-top">
         <div className="text-origin text-center">
           <div className="ph-item bg-transparent">
             <div className="ph-col-12 m-0 p-0 gap-3">
@@ -231,9 +231,7 @@ const News = () => {
   return (
     <div className="container mb-3">
       <div className="info-main-container pb-3 mt-2">
-        <h1 className="text-center" style={{ textDecoration: 'underline' }}>
-          News
-        </h1>
+        <h1 className="text-center text-decoration-underline">News</h1>
         {reload(
           <div className="w-100 h-100" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
             {data
@@ -279,7 +277,7 @@ const News = () => {
                           </div>
                           {isNotEmpty(value.rewardNews) && (
                             <>
-                              <h6 style={{ textDecoration: 'underline' }}>Rewards</h6>
+                              <h6 className="text-decoration-underline">Rewards</h6>
                               <div className="w-100 text-center d-inline-block align-middle">
                                 {value.rewardNews.map((value, i) => (
                                   <div key={i} className="d-inline-block mx-2">
