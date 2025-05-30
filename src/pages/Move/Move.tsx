@@ -311,7 +311,7 @@ const Move = (props: IMovePage) => {
       ) : (
         <div className="ph-item">
           <div className="ph-row h-100 head-box d-flex mb-0 ps-0">
-            <div className="ph-picture" style={{ width: '40%', height: 45 }} />
+            <div className="ph-picture w-pct-40" style={{ height: 45 }} />
           </div>
         </div>
       )}
@@ -341,10 +341,7 @@ const Move = (props: IMovePage) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div
-                      style={{ width: 'fit-content' }}
-                      className={combineClasses('type-icon-small', move.type?.toLowerCase())}
-                    >
+                    <div className={combineClasses('type-icon-small w-fit-content', move.type?.toLowerCase())}>
                       {capitalize(move.type)}
                     </div>
                   )}
@@ -410,7 +407,7 @@ const Move = (props: IMovePage) => {
               {move?.typeMove === TypeMove.Charge && (
                 <tr>
                   <td>PVE Bar Charged</td>
-                  <td colSpan={2} style={{ border: 'none' }}>
+                  <td colSpan={2}>
                     <ChargedBar barCount={getBarCharge(move.pveEnergy, true)} color={move.type?.toLowerCase()} />
                   </td>
                 </tr>
@@ -451,7 +448,7 @@ const Move = (props: IMovePage) => {
               {move?.typeMove === TypeMove.Charge && (
                 <tr>
                   <td>PVP Bar Charged</td>
-                  <td colSpan={2} style={{ border: 'none' }}>
+                  <td colSpan={2}>
                     <ChargedBar barCount={getBarCharge(move.pvpEnergy)} color={move.type?.toLowerCase()} />
                   </td>
                 </tr>

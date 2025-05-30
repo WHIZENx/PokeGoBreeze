@@ -411,6 +411,7 @@ export interface IPokemonIconTypeComponent {
   size: number;
   children?: React.ReactNode;
   style?: React.CSSProperties;
+  className?: string;
 }
 
 export interface IWeatherComponent {

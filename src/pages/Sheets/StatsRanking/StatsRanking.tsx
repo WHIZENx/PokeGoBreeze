@@ -525,8 +525,7 @@ const StatsRanking = () => {
         <div className="d-flex justify-content-center w-100">
           <div className="d-inline-block img-desc">
             <img
-              className="pokemon-main-sprite"
-              style={{ verticalAlign: 'baseline' }}
+              className="pokemon-main-sprite v-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 select?.num,

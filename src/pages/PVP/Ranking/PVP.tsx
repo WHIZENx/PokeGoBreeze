@@ -369,7 +369,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           </div>
         ) : (
           <div className="ph-item mt-2">
-            <div className="ph-picture mb-0 px-0" style={{ width: '40%', height: 64 }} />
+            <div className="ph-picture mb-0 px-0 h-9 w-pct-40" />
           </div>
         )}
       </Fragment>
@@ -420,8 +420,7 @@ const RankingPVP = (props: IStyleSheetData) => {
             <div />
             <div className="d-flex me-3">
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() =>
                   setSorted(sorted === SortDirectionType.DESC ? SortDirectionType.ASC : SortDirectionType.DESC)
                 }

@@ -142,7 +142,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         <h4 className="info-title">
           <b>Form varieties</b>
         </h4>
-        <div className="scroll-form" style={{ width: props.isLoadedForms ? '100%' : '' }}>
+        <div className={combineClasses('scroll-form', props.isLoadedForms ? 'w-100' : '')}>
           {props.isLoadedForms ? (
             <Fragment>
               {props.formList.map((value, index) => (
@@ -164,7 +164,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                       }
                     >
                       <div className="d-flex w-100 justify-content-center">
-                        <div className="position-relative" style={{ width: 64 }}>
+                        <div className="position-relative w-9">
                           <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
                             <img
                               className="pokemon-sprite-medium"
@@ -197,11 +197,11 @@ const FormComponent = (props: IFormInfoComponent) => {
               ))}
             </Fragment>
           ) : (
-            <div className="ph-item flex-nowrap column-gap-2" style={{ width: '100%' }}>
+            <div className="ph-item flex-nowrap column-gap-2 w-100">
               {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
                 <div key={index} className="ph-col-3 p-0 my-1">
                   <div className="ph-row">
-                    <div className="ph-picture ph-col-3" style={{ height: 142, width: 90 }} />
+                    <div className="ph-picture ph-col-3 m-0" style={{ height: 146, width: 90 }} />
                   </div>
                 </div>
               ))}
@@ -230,7 +230,7 @@ const FormComponent = (props: IFormInfoComponent) => {
       />
       <hr className="w-100" />
       <div className="row w-100 m-0">
-        <div className="col-md-5 p-0" style={{ overflow: 'auto' }}>
+        <div className="col-md-5 p-0 overflow-auto">
           <Info />
           {!isSpecialFormType(form?.form?.pokemonType) && (
             <Fragment>

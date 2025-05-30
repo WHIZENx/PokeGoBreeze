@@ -10,7 +10,7 @@ import {
 } from '../../../util/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
-import DataTable, { ConditionalStyles, TableColumn } from 'react-data-table-component';
+import DataTable, { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
 import dataCPM from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
@@ -108,6 +108,19 @@ const columnsCP: TableColumn<IPredictCPModel>[] = [
   },
 ];
 
+const customStyles: TableStyles = {
+  rows: {
+    highlightOnHoverStyle: {
+      color: 'white !important',
+    },
+  },
+  cells: {
+    style: {
+      color: 'black',
+    },
+  },
+};
+
 const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
   {
     when: (row) => row.percent === 100,
@@ -131,6 +144,12 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
     when: (row) => row.percent > 51 && row.percent <= 64,
     style: {
       backgroundColor: '#ececc8',
+    },
+  },
+  {
+    when: (row) => row.percent <= 51,
+    style: {
+      backgroundColor: '#d7d7d7',
     },
   },
 ];
@@ -246,7 +265,7 @@ const FindTable = () => {
         )}
         <hr className="m-0" />
         <div>
-          <b>{star}</b>
+          <b className="text-black text-shadow">{star}</b>
         </div>
       </div>
       <p>{toFloatWithPadding((toNumber(star) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
@@ -294,7 +313,7 @@ const FindTable = () => {
           defaultSortAsc={false}
           conditionalRowStyles={conditionalRowStyles}
           highlightOnHover
-          customStyles={getCustomThemeDataTable()}
+          customStyles={getCustomThemeDataTable(customStyles)}
         />
       </Fragment>
     );
@@ -372,7 +391,7 @@ const FindTable = () => {
           Find IV
         </h1>
         <form className="d-flex justify-content-center mt-2" onSubmit={onFindStats.bind(this)}>
-          <Box sx={{ width: '50%', minWidth: 350 }}>
+          <Box className="w-50" sx={{ minWidth: 350 }}>
             <div className="input-group mb-3">
               <div className="input-group-prepend">
                 <span className="input-group-text">CP</span>
@@ -403,7 +422,7 @@ const FindTable = () => {
         </h1>
         <form id="formCP" className="mt-2" onSubmit={onFindCP.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
-            <Box sx={{ width: '50%', minWidth: 300 }}>
+            <Box className="w-50" sx={{ minWidth: 300 }}>
               <div className="d-flex justify-content-between">
                 <b>ATK</b>
                 <b>{searchATKIv}</b>

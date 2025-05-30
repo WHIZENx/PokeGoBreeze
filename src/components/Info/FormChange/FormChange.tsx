@@ -136,9 +136,9 @@ const FromChange = (props: IFromChangeComponent) => {
                       <Xarrow
                         labels={{
                           end: (
-                            <div className="position-absolute" style={{ left: '-5rem' }}>
+                            <div className="position-absolute -left-10">
                               {value.candyCost && (
-                                <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
+                                <span className="d-flex align-items-center caption w-max-content">
                                   <Candy
                                     id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id}
                                   />
@@ -154,12 +154,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                 </span>
                               )}
                               {value.stardustCost && (
-                                <span
-                                  className="d-flex align-items-center caption mt-1"
-                                  style={{
-                                    width: 'max-content',
-                                  }}
-                                >
+                                <span className="d-flex align-items-center caption mt-1 w-max-content">
                                   <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
                                     <img
                                       alt="Image Stardust"
@@ -170,7 +165,7 @@ const FromChange = (props: IFromChangeComponent) => {
                                   <span className="ms-1">{`x${value.stardustCost}`}</span>
                                 </span>
                               )}
-                              <span className="d-flex flex-column caption mt-1" style={{ width: 'max-content' }}>
+                              <span className="d-flex flex-column caption mt-1 w-max-content">
                                 {value.item && (
                                   <>
                                     <span>Required Item</span>

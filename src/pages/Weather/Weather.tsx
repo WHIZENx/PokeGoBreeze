@@ -15,7 +15,7 @@ const Weather = () => {
 
   return (
     <div className="container mt-2">
-      <div className="container-fluid">
+      <div className="container w-75">
         <Affect weathers={weatherBoosts} />
       </div>
       <hr className="my-3" />

@@ -96,9 +96,13 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   const setPos = (position = SelectPosition.Down) => (
     <div
-      className={combineClasses('result-pokemon', position === SelectPosition.Up ? 'pos-up' : '')}
+      className={combineClasses(
+        'result-pokemon',
+        position === SelectPosition.Up ? 'pos-up' : '',
+        showPokemon ? 'd-block' : 'd-none'
+      )}
       onScroll={listenScrollEvent.bind(this)}
-      style={{ display: showPokemon ? 'block' : 'none', maxHeight: props.maxHeight ?? 274 }}
+      style={{ maxHeight: props.maxHeight ?? 274 }}
     >
       <div>
         {pokemonData

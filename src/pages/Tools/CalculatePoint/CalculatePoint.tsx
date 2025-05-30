@@ -436,7 +436,7 @@ const CalculatePoint = () => {
                   <h3>Attacker Breakpoint</h3>
                   {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                   <div className="overflow-x-auto">
-                    <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
+                    <table className="table-info table-raid-cal sticky-left w-fit-content">
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
@@ -573,7 +573,7 @@ const CalculatePoint = () => {
                   <h3>Defender Breakpoint</h3>
                   {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                   <div className="overflow-x-auto">
-                    <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
+                    <table className="table-info table-raid-cal sticky-left w-fit-content">
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
@@ -628,7 +628,7 @@ const CalculatePoint = () => {
                   <hr />
                   <h3>Stamina Breakpoint</h3>
                   <div className="overflow-x-auto">
-                    <table className="table-info table-raid-cal sticky-left" style={{ width: 'max-content' }}>
+                    <table className="table-info table-raid-cal sticky-left w-max-content">
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
@@ -843,7 +843,7 @@ const CalculatePoint = () => {
                   <h3>BulkPoint</h3>
                   {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
                   <div className="overflow-x-auto">
-                    <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
+                    <table className="table-info table-raid-cal sticky-left w-fit-content">
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />

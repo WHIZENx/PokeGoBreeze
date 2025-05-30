@@ -695,7 +695,7 @@ const DpsTdo = () => {
   return (
     <div className="position-relative">
       {!isNotEmpty(dpsTable) && (
-        <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
+        <div className="ph-item w-100 h-100 position-absolute z-2 bg-transparent">
           <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}
@@ -718,7 +718,7 @@ const DpsTdo = () => {
           ))}
         </div>
         <div className="row w-100 m-0">
-          <div className="col-xxl border-input p-0" style={{ height: 'fit-content' }}>
+          <div className="col-xxl border-input p-0 w-fit-content">
             <div className="border-input">
               <div className="row w-100 m-0">
                 <div className="d-flex col-md-9 p-0">
@@ -1056,7 +1056,7 @@ const DpsTdo = () => {
               </div>
             </div>
           </div>
-          <div className="col-xxl border-input p-0" style={{ height: 'fit-content' }}>
+          <div className="col-xxl border-input p-0 w-fit-content">
             <div className="head-types">Options</div>
             <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
               <div className="input-group">
@@ -1080,8 +1080,7 @@ const DpsTdo = () => {
                 <span className="input-group-text">Fast Move Time</span>
                 <input
                   type="number"
-                  className="form-control"
-                  style={{ height: 42 }}
+                  className="form-control h-6"
                   placeholder="Delay time (sec)"
                   aria-label="Fast Move Time"
                   min={0}
@@ -1102,8 +1101,7 @@ const DpsTdo = () => {
                 <span className="input-group-text">Charged Move Time</span>
                 <input
                   type="number"
-                  className="form-control rounded-0"
-                  style={{ height: 42 }}
+                  className="form-control rounded-0 h-6"
                   placeholder="Delay time (sec)"
                   aria-label="Charged Move Time"
                   min={0}
@@ -1128,7 +1126,7 @@ const DpsTdo = () => {
                   <input
                     defaultValue={ivAtk}
                     type="number"
-                    className="form-control"
+                    className="form-control w-6"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
@@ -1140,13 +1138,12 @@ const DpsTdo = () => {
                       })
                     }
                     name="ivAtk"
-                    style={{ width: 40 }}
                   />
                   <span className="input-group-text">IV DEF</span>
                   <input
                     defaultValue={ivDef}
                     type="number"
-                    className="form-control"
+                    className="form-control w-6"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
@@ -1158,13 +1155,12 @@ const DpsTdo = () => {
                       })
                     }
                     name="ivDef"
-                    style={{ width: 40 }}
                   />
                   <span className="input-group-text">IV HP</span>
                   <input
                     defaultValue={ivHp}
                     type="number"
-                    className="form-control"
+                    className="form-control w-6"
                     placeholder={`${MIN_IV}-${MAX_IV}`}
                     min={MIN_IV}
                     max={MAX_IV}
@@ -1176,7 +1172,6 @@ const DpsTdo = () => {
                       })
                     }
                     name="ivHp"
-                    style={{ width: 40 }}
                   />
                   <div className="input-group-prepend">
                     <label className="input-group-text">Levels</label>
@@ -1241,10 +1236,8 @@ const DpsTdo = () => {
                     ))}
                   </Form.Select>
                   <Box
+                    className="d-flex align-items-center justify-content-center"
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
                       paddingLeft: 1,
                       paddingRight: 1,
                     }}

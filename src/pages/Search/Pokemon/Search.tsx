@@ -149,8 +149,7 @@ const Search = () => {
           />
         </div>
         <div
-          className="result"
-          style={{ display: showResult ? 'block' : 'none' }}
+          className={combineClasses('result', showResult ? 'd-block' : 'd-none')}
           onScroll={listenScrollEvent.bind(this)}
         >
           <Fragment>

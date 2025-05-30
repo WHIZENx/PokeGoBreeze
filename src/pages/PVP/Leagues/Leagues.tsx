@@ -222,21 +222,21 @@ const Leagues = () => {
             )}
           </div>
           <h5 className="title-leagues mt-2">Conditions</h5>
-          <ul style={{ listStyleType: 'inherit' }}>
-            <li style={{ fontWeight: 500 }}>
+          <ul className="list-style-inherit">
+            <li className="fw-medium">
               <h6>
                 <b>Max CP:</b> <span>{league.conditions.maxCp}</span>
               </h6>
             </li>
             {league.conditions.maxLevel && (
-              <li style={{ fontWeight: 500 }}>
+              <li className="fw-medium">
                 <h6>
                   <b>Max Level:</b> <span>{league.conditions.maxLevel}</span>
                 </h6>
               </li>
             )}
             {league.pokemonCount > 0 && (
-              <li style={{ fontWeight: 500 }}>
+              <li className="fw-medium">
                 <h6>
                   <b>Pokémon count:</b> <span>{league.pokemonCount}</span>
                 </h6>
@@ -245,20 +245,20 @@ const Leagues = () => {
             {league.conditions.timestamp && (
               <li>
                 <h6 className="title-leagues">Event time</h6>
-                <span style={{ fontWeight: 500 }}>Start Date: {getTime(league.conditions.timestamp.start)}</span>
+                <span className="fw-medium">Start Date: {getTime(league.conditions.timestamp.start)}</span>
                 {league.conditions.timestamp.end && (
-                  <span style={{ fontWeight: 500 }}>
+                  <span className="fw-medium">
                     <br />
                     End Date: {getTime(league.conditions.timestamp.end)}
                   </span>
                 )}
               </li>
             )}
-            <li style={{ fontWeight: 500 }}>
+            <li className="fw-medium">
               <h6 className="title-leagues">Allow Forms Evolution</h6>
               {league.allowEvolutions ? <DoneIcon sx={{ color: 'green' }} /> : <CloseIcon sx={{ color: 'red' }} />}
             </li>
-            <li style={{ fontWeight: 500 }}>
+            <li className="fw-medium">
               <h6 className="title-leagues">Unique Selected</h6>
               {league.conditions.uniqueSelected ? (
                 <DoneIcon sx={{ color: 'green' }} />
@@ -267,13 +267,13 @@ const Leagues = () => {
               )}
             </li>
             {isNotEmpty(league.conditions.uniqueType) && (
-              <li style={{ fontWeight: 500 }} className="unique-type">
+              <li className="fw-medium unique-type">
                 <h6 className="title-leagues">Unique Type</h6>
                 <TypeInfo arr={league.conditions.uniqueType} className="ms-3" />
               </li>
             )}
             {isNotEmpty(league.conditions.whiteList) && (
-              <li style={{ fontWeight: 500 }}>
+              <li className="fw-medium">
                 <h6 className="title-leagues text-success">White List</h6>
                 {league.conditions.whiteList.map((item, index) => (
                   <LinkToTop
@@ -283,7 +283,7 @@ const Leagues = () => {
                     title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                   >
                     <div className="d-flex justify-content-center">
-                      <span style={{ width: 64 }}>
+                      <span className="w-9">
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="Pokémon Image"
@@ -312,7 +312,7 @@ const Leagues = () => {
               </li>
             )}
             {isNotEmpty(league.conditions.banned) && (
-              <li style={{ fontWeight: 500 }}>
+              <li className="fw-medium">
                 <h6 className="title-leagues text-danger">Ban List</h6>
                 {league.conditions.banned.map((item, index) => (
                   <LinkToTop
@@ -322,7 +322,7 @@ const Leagues = () => {
                     title={`#${item.id} ${splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}`}
                   >
                     <div className="d-flex justify-content-center">
-                      <span style={{ width: 64 }}>
+                      <span className="w-9">
                         <img
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="Pokémon Image"
@@ -363,7 +363,7 @@ const Leagues = () => {
       <hr />
       <div className="row m-0 row-gap-2">
         <div className="col-md-8 d-flex justify-content-start align-items-center p-0">
-          <span style={{ fontWeight: 500 }}>
+          <span className="fw-medium">
             <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>
             <span>
               {' - '}
@@ -399,16 +399,12 @@ const Leagues = () => {
                 <div className="rank-header">Season {dataStore.leagues.season.season}</div>
                 <Badge
                   color="primary"
-                  className="position-relative d-inline-block img-link pt-4 pb-2"
+                  className="position-relative d-inline-block img-link pt-4 pb-2 mw-9"
                   overlap="circular"
                   badgeContent={null}
-                  sx={{
-                    maxWidth: 64,
-                  }}
                 >
                   <img
-                    className="pokemon-sprite-medium"
-                    style={{ width: 64 }}
+                    className="pokemon-sprite-medium w-9"
                     alt="Pokémon Image"
                     src={APIService.getPokeOtherLeague('BattleIconColor')}
                   />
@@ -417,10 +413,9 @@ const Leagues = () => {
                 <hr />
                 <Badge
                   color="primary"
-                  className="position-relative d-inline-block img-link pb-4"
+                  className="position-relative d-inline-block img-link pb-4 mw-9"
                   overlap="circular"
                   badgeContent={null}
-                  sx={{ maxWidth: 64 }}
                 >
                   <img
                     className="pokemon-sprite-medium"
@@ -437,15 +432,12 @@ const Leagues = () => {
                     <Badge
                       color="primary"
                       className={combineClasses(
-                        'position-relative d-inline-block img-link pt-4',
+                        'position-relative d-inline-block img-link pt-4 mnw-9',
                         value.type === RewardType.Pokemon || value.type === RewardType.ItemLoot ? 'pb-0' : 'pb-4'
                       )}
                       overlap="circular"
                       badgeContent={value.count}
                       max={BattleLeagueCPType.InsMaster}
-                      sx={{
-                        minWidth: 64,
-                      }}
                     >
                       {!value.type && (
                         <Fragment>
@@ -455,16 +447,14 @@ const Leagues = () => {
                       {value.type === RewardType.Pokemon && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Random Pokémon"
                             src={APIService.getIconSprite('ic_grass')}
                           />
                           <span className="caption theme-text-primary">Random Pokémon</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary"
-                            sx={{ fontSize: '1rem' }}
+                            className="view-pokemon theme-text-primary u-fs-3"
                             onClick={() => handleShow(value.type, LeagueRewardType.Free, value.step)}
                           />
                         </Fragment>
@@ -472,21 +462,19 @@ const Leagues = () => {
                       {value.type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Random Item"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
                           <span className="caption theme-text-primary">Random Item</span>
-                          <VisibilityIcon className="view-pokemon theme-text-primary" sx={{ fontSize: '1rem' }} />
+                          <VisibilityIcon className="view-pokemon theme-text-primary u-fs-3" />
                         </Fragment>
                       )}
                       {value.type === RewardType.RareCandy && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Rare Candy"
                             src={getItemSpritePath(ItemName.RareCandy)}
@@ -497,8 +485,7 @@ const Leagues = () => {
                       {value.type === RewardType.Stardust && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Stardust"
                             src={APIService.getItemSprite('stardust_painted')}
@@ -509,8 +496,7 @@ const Leagues = () => {
                       {value.type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="TM Charged Move"
                             src={APIService.getItemSprite('Item_1202')}
@@ -523,7 +509,7 @@ const Leagues = () => {
                     <Badge
                       color="primary"
                       className={combineClasses(
-                        'position-relative d-inline-block img-link',
+                        'position-relative d-inline-block img-link mnw-9',
                         dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
                           dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
                           ? 'pb-0'
@@ -532,9 +518,6 @@ const Leagues = () => {
                       overlap="circular"
                       badgeContent={dataStore.leagues.season.rewards.rank[rank].premium[index].count}
                       max={BattleLeagueCPType.InsMaster}
-                      sx={{
-                        minWidth: 64,
-                      }}
                     >
                       {!dataStore.leagues.season.rewards.rank[rank].premium[index].type && (
                         <Fragment>
@@ -544,16 +527,14 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Random Pokémon"
                             src={APIService.getIconSprite('ic_grass')}
                           />
                           <span className="caption theme-text-primary">Random Pokémon</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary"
-                            sx={{ fontSize: '1rem' }}
+                            className="view-pokemon theme-text-primary u-fs-3"
                             onClick={() =>
                               handleShow(
                                 dataStore.leagues.season.rewards.rank[rank].premium[index].type,
@@ -567,16 +548,14 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Random Item"
                             src={APIService.getIconSprite('btn_question_02_normal_white_shadow')}
                           />
                           <span className="caption theme-text-primary">Random Item</span>
                           <VisibilityIcon
-                            className="view-pokemon theme-text-primary"
-                            sx={{ fontSize: '1rem' }}
+                            className="view-pokemon theme-text-primary u-fs-3"
                             onClick={() =>
                               handleShow(
                                 dataStore.leagues.season.rewards.rank[rank].premium[index].type,
@@ -590,8 +569,7 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.RareCandy && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Rare Candy"
                             src={getItemSpritePath(ItemName.RareCandy)}
@@ -602,8 +580,7 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Stardust && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="Stardust"
                             src={APIService.getItemSprite('stardust_painted')}
@@ -614,8 +591,7 @@ const Leagues = () => {
                       {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title="TM Charged Move"
                             src={APIService.getItemSprite('Item_1202')}
@@ -706,10 +682,8 @@ const Leagues = () => {
           <div className="ph-picture px-0" style={{ height: 450 }} />
         </div>
       )}
-      <div className="input-group border-input" style={{ width: 'fit-content' }}>
-        <span className="input-group-text text-success" style={{ backgroundColor: 'transparent', fontWeight: 500 }}>
-          Opened Leagues
-        </span>
+      <div className="input-group border-input w-fit-content">
+        <span className="input-group-text text-success bg-transparent fw-medium">Opened Leagues</span>
       </div>
       <Accordion alwaysOpen>{openedLeague.map((value, index) => showAccording(value, index, true))}</Accordion>
 
@@ -758,8 +732,7 @@ const Leagues = () => {
                 {showData.track === LeagueRewardType.Free ? (
                   <div className="d-flex column-gap-2">
                     <img
-                      className="pokemon-sprite-small filter-shadow"
-                      style={{ width: 16 }}
+                      className="pokemon-sprite-small filter-shadow w-1"
                       alt="Pokémon Image"
                       title="Battle Icon"
                       src={APIService.getPokeOtherLeague('BattleIconColor')}
@@ -769,8 +742,7 @@ const Leagues = () => {
                 ) : (
                   <div className="d-flex column-gap-2">
                     <img
-                      className="pokemon-sprite-small filter-shadow"
-                      style={{ width: 16 }}
+                      className="pokemon-sprite-small filter-shadow w-1"
                       alt="Pokémon Image"
                       title="Paid Raid Ticket"
                       src={getItemSpritePath(ItemName.PaidRaidTicket)}
@@ -782,7 +754,7 @@ const Leagues = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body className="text-center">
-            <h5 style={{ textDecoration: 'underline' }}>Random Pokémon</h5>
+            <h5 className="text-decoration-underline">Random Pokémon</h5>
             {showData.data
               .filter((item) => !item.guaranteedLimited)
               .map((item, index) => (
@@ -793,7 +765,7 @@ const Leagues = () => {
                   title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                 >
                   <div className="d-flex justify-content-center">
-                    <span style={{ width: 64 }}>
+                    <span className="w-9">
                       <img
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="Pokémon Image"
@@ -816,7 +788,7 @@ const Leagues = () => {
             {isNotEmpty(showData.data.filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)) && (
               <Fragment>
                 <hr />
-                <h5 style={{ textDecoration: 'underline' }}>Guaranteed Pokémon in first time</h5>
+                <h5 className="text-decoration-underline">Guaranteed Pokémon in first time</h5>
                 {showData.data
                   .filter((item) => item.guaranteedLimited && toNumber(item.rank) === rank)
                   .map((item, index) => (
@@ -827,7 +799,7 @@ const Leagues = () => {
                       title={`#${item.id} ${splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}`}
                     >
                       <div className="d-flex justify-content-center">
-                        <span style={{ width: 64 }}>
+                        <span className="w-9">
                           <img
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="Pokémon Image"

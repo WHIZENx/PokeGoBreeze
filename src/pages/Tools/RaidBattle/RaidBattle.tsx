@@ -739,16 +739,14 @@ const RaidBattle = () => {
       <Fragment>
         <div className="progress position-relative">
           <div
-            className="progress-bar bg-success mt-0"
-            style={{ width: `${percent}%` }}
+            className={`progress-bar bg-success mt-0 w-pct-${Math.round(percent)}`}
             role="progressbar"
             aria-valuenow={percent}
             aria-valuemin={0}
             aria-valuemax={100}
           />
           <div
-            className="progress-bar bg-danger mt-0"
-            style={{ width: `${100 - percent}%` }}
+            className={`progress-bar bg-danger mt-0 w-pct-${Math.round(100 - percent)}`}
             role="progressbar"
             aria-valuenow={100 - percent}
             aria-valuemin={0}
@@ -916,9 +914,8 @@ const RaidBattle = () => {
       <div className="input-group mb-3">
         <span className="input-group-text">Sort By</span>
         <Form.Select
-          style={{ width: '40%' }}
           value={filters.selected.sortBy}
-          className="form-control"
+          className="form-control w-pct-40"
           onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
         >
           <option value={SortType.DPS}>Damage Per Second</option>
@@ -928,9 +925,8 @@ const RaidBattle = () => {
         </Form.Select>
         <span className="input-group-text">Priority</span>
         <Form.Select
-          style={{ width: '15%' }}
+          className="form-control w-pct-15"
           value={filters.selected.sorted}
-          className="form-control"
           onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
         >
           <option value={SortDirectionType.ASC}>Best</option>
@@ -1146,7 +1142,7 @@ const RaidBattle = () => {
           </span>
         </span>
       )}
-      <div style={{ display: 'contents', width: 16 }}>
+      <div className="w-3 d-contents">
         <img
           className="pokemon-sprite-small sprite-type-select filter-shadow"
           alt="Pokémon GO Type Logo"
@@ -1329,7 +1325,7 @@ const RaidBattle = () => {
         <div className="col-lg d-flex justify-content-center align-items-center p-0">
           <div className="mt-2 position-relative">
             {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
-              <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
+              <div className="position-absolute w-100 h-100 z-2">
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>
               </div>
@@ -1756,7 +1752,7 @@ const RaidBattle = () => {
             {isNotEmpty(resultRaid) && (
               <Fragment>
                 <hr />
-                <ul className="mt-2" style={{ listStyleType: 'initial' }}>
+                <ul className="mt-2 list-style-initial">
                   {resultRaid?.map((result, turn) => (
                     <li className="mb-3" key={turn}>
                       <h4>

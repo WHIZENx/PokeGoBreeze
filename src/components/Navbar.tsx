@@ -19,7 +19,7 @@ import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/localStorage';
 import { loadTheme } from '../store/effects/theme.effects';
-import { toNumber } from '../util/extension';
+import { combineClasses, toNumber } from '../util/extension';
 
 const NavbarComponent = (props: INavbarComponent) => {
   const dispatch = useDispatch();
@@ -139,7 +139,7 @@ const NavbarComponent = (props: INavbarComponent) => {
             </Link>
           </Nav>
           {toNumber(timestamp?.gamemaster) > 0 && (
-            <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
+            <Navbar.Text className="d-flex flex-column mw-max-content h-6">
               <span className="text-white mx-2">Updated: {getTime(timestamp.gamemaster, true)}</span>
               <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
                 <b>
@@ -151,9 +151,8 @@ const NavbarComponent = (props: INavbarComponent) => {
             </Navbar.Text>
           )}
           <IconButton
-            className={`${stateTheme}-mode me-2 p-0`}
+            className={combineClasses(`${stateTheme}-mode me-2 p-0`, isDelay ? 'cursor-default' : 'cursor-pointer')}
             onClick={onChangeTheme}
-            style={{ cursor: isDelay ? 'default' : 'pointer' }}
             color="inherit"
           >
             {props.mode === TypeTheme.Light ? (
@@ -165,7 +164,7 @@ const NavbarComponent = (props: INavbarComponent) => {
         </Navbar.Collapse>
       </Navbar>
       {spinner.bar.isShow && (
-        <Box sx={{ width: '100%', position: 'absolute', zIndex: 7 }}>
+        <Box className="w-100 position-absolute z-7">
           <LinearProgress variant={VariantType.Determinate} value={spinner.bar.percent} />
         </Box>
       )}

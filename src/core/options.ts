@@ -1003,7 +1003,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
       });
   }
 
-  function processGmaxMoves(data: PokemonDataGM[], lastTrackId: number) {
+  function processGMaxMoves(data: PokemonDataGM[], lastTrackId: number) {
     return data
       .filter((item) => /^VN_BM_\d{3}$/g.test(item.templateId))
       .map((item) => {
@@ -1168,8 +1168,8 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
       });
 
     const lastTrackId = result.sort((a, b) => b.track - a.track)[0].track;
-    const gmaxMoves = processGmaxMoves(data, lastTrackId);
-    return [...result, ...gmaxMoves];
+    const gMaxMoves = processGMaxMoves(data, lastTrackId);
+    return [...result, ...gMaxMoves];
   }
 };
 

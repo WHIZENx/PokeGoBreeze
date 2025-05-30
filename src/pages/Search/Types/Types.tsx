@@ -325,20 +325,18 @@ const SearchTypes = (props: IStyleSheetData) => {
           >
             <div className="filter-shadow" style={{ width: 128 }}>
               <img
-                style={{ backgroundColor: 'black', borderRadius: '50%' }}
-                className="sprite-type-large p-3"
+                className="sprite-type-large p-3 rounded-circle bg-black"
                 alt="Pokémon GO Type Logo"
                 src={APIService.getTypeHqSprite(currentType)}
               />
             </div>
             <span
-              style={{ width: 'max-content' }}
               className={combineClasses(
                 currentType.toLowerCase(),
-                'type-select-bg d-flex align-items-center filter-shadow mt-2'
+                'type-select-bg d-flex align-items-center filter-shadow mt-2 w-max-content'
               )}
             >
-              <div style={{ display: 'contents', width: 16 }}>
+              <div className="w-3 d-contents">
                 <img
                   className="pokemon-sprite-small sprite-type-select filter-shadow"
                   alt="Pokémon GO Type Logo"
@@ -354,7 +352,7 @@ const SearchTypes = (props: IStyleSheetData) => {
                 toNumber(allData?.pokemon) > 0 &&
                 Math.round((result.pokemonList.length * 100) / toNumber(allData?.pokemon, 1))
               }%)`}</b>
-              <ul style={{ listStyleType: 'disc' }}>
+              <ul className="list-style-disc">
                 <li>
                   <b>{`Legacy Type: ${result.pokemonList.filter((pokemon) => pokemon.types.length === 1).length} (${
                     isNotEmpty(result.pokemonList) &&

@@ -36,7 +36,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
 
   return (
     <div className="position-relative">
-      <span className="input-group-text justify-content-center position-relative" style={{ height: 38 }}>
+      <span className="input-group-text justify-content-center position-relative h-6">
         {dataTargetPokemon && (
           <div className="d-flex text-group-small">
             <span>
@@ -63,7 +63,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 }
               }}
             >
-              <SettingsIcon sx={{ fontSize: 16 }} />
+              <SettingsIcon className="u-fs-3" />
             </span>
             <span
               className={combineClasses(
@@ -72,12 +72,12 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               )}
               title="Copy"
               onClick={() => {
-                if (dataTargetPokemon && props.id > 0) {
+                if (dataTargetPokemon && props.id >= 0) {
                   props.onCopyPokemon(props.id);
                 }
               }}
             >
-              <ContentCopyIcon sx={{ fontSize: 16 }} />
+              <ContentCopyIcon className="u-fs-3" />
             </span>
             <span
               className={combineClasses(
@@ -96,7 +96,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
                 }
               }}
             >
-              <DeleteIcon sx={{ fontSize: 16 }} />
+              <DeleteIcon className="u-fs-3" />
             </span>
           </div>
         )}

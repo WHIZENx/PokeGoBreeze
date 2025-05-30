@@ -303,7 +303,7 @@ const Damage = () => {
                       label="Trainer"
                     />
                   </FormGroup>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Box className="d-flex align-items-center justify-content-center">
                     <FormControlLabel
                       control={
                         <Switch

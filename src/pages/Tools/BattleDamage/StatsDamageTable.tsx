@@ -135,7 +135,7 @@ const StatsTable = (props: IStatsTableComponent) => {
           </TypeRadioGroup>
         </div>
         <div className="d-flex justify-content-center text-center" style={{ height: 80 }}>
-          <Box sx={{ width: '60%', minWidth: 320 }}>
+          <Box className="w-pct-60" sx={{ minWidth: 320 }}>
             <div className="d-flex justify-content-between">
               <b>Level</b>
               <b>{currStatLevel}</b>
@@ -153,7 +153,7 @@ const StatsTable = (props: IStatsTableComponent) => {
           </Box>
         </div>
         <div className="d-flex justify-content-center text-center">
-          <table className="table-info" style={{ width: '40%', minWidth: 270 }}>
+          <table className="table-info w-pct-40" style={{ minWidth: 270 }}>
             <thead />
             <tbody>
               <tr className="text-center">

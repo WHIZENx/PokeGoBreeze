@@ -148,7 +148,7 @@ function App() {
   };
 
   return (
-    <Box sx={{ minHeight: '100%', backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
+    <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
       <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
       <Routes>
         <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />

@@ -379,7 +379,7 @@ const FindBattle = () => {
       </h1>
       <form className="mt-2 pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group d-flex justify-content-center text-center">
-          <Box sx={{ width: '50%', minWidth: 350 }}>
+          <Box className="w-50" sx={{ minWidth: 350 }}>
             <div className="justify-content-center input-group mb-3">
               <DynamicInputCP
                 statATK={pokemon?.pokemon?.statsGO?.atk}
@@ -398,7 +398,7 @@ const FindBattle = () => {
           </Box>
         </div>
         <div className="form-group d-flex justify-content-center text-center">
-          <Box sx={{ width: '50%', minWidth: 300 }}>
+          <Box className="w-50" sx={{ minWidth: 300 }}>
             <div className="d-flex justify-content-between">
               <b>ATK</b>
               <b>{ATKIv}</b>
@@ -570,8 +570,10 @@ const FindBattle = () => {
                                       <li>
                                         {'Stats Prod (%): '}
                                         <span
-                                          style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.little.ratio)}
+                                          className={combineClasses(
+                                            'bg-transparent',
+                                            getTextColorRatio(item.battleLeague.little.ratio)
+                                          )}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.little.ratio, 2)}</b>
                                         </span>
@@ -635,8 +637,10 @@ const FindBattle = () => {
                                       <li>
                                         {'Stats Prod (%): '}
                                         <span
-                                          style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.great.ratio)}
+                                          className={combineClasses(
+                                            'bg-transparent',
+                                            getTextColorRatio(item.battleLeague.great.ratio)
+                                          )}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.great.ratio, 2)}</b>
                                         </span>
@@ -700,8 +704,10 @@ const FindBattle = () => {
                                       <li>
                                         {'Stats Prod (%): '}
                                         <span
-                                          style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.ultra.ratio)}
+                                          className={combineClasses(
+                                            'bg-transparent',
+                                            getTextColorRatio(item.battleLeague.ultra.ratio)
+                                          )}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.ultra.ratio, 2)}</b>
                                         </span>
@@ -761,8 +767,10 @@ const FindBattle = () => {
                                       <li>
                                         {'Stats Prod (%): '}
                                         <span
-                                          style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.master.ratio)}
+                                          className={combineClasses(
+                                            'bg-transparent',
+                                            getTextColorRatio(item.battleLeague.master.ratio)
+                                          )}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.master.ratio, 2)}</b>
                                         </span>

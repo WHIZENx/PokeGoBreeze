@@ -210,8 +210,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       </div>
       {isNotEmpty(props.data) && (
         <div
-          className="result-pokemon"
-          style={{ display: show ? 'block' : 'none', maxHeight: 274 }}
+          className={combineClasses('result-pokemon', show ? 'd-block' : 'd-none')}
+          style={{ maxHeight: 274 }}
           onScroll={listenScrollEvent.bind(this)}
         >
           {props.data
