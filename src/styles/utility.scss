@@ -1,5 +1,5 @@
 $rem-sizes: (
-  0: 0rem,
+  0: 0,
   1: 0.25rem,
   2: 0.5rem,
   3: 1rem,
@@ -14,15 +14,15 @@ $rem-sizes: (
 
 @for $i from 0 through 100 {
   .w-pct-#{$i} {
-    width: #{$i}#{'%'} !important;
+    width: #{$i}#{"%"} !important;
   }
   
   .h-pct-#{$i} {
-    height: #{$i}#{'%'} !important;
+    height: #{$i}#{"%"} !important;
   }
 
   .gap-pct-#{$i} {
-    gap: #{$i}#{'%'} !important;
+    gap: #{$i}#{"%"} !important;
   }
 
   .opacity-#{$i} {
@@ -188,21 +188,21 @@ $rem-sizes: (
 }
 
 $text-colors: (
-  'primary': var(--primary-main),
-  'primary-light': var(--primary-light),
-  'primary-dark': var(--primary-dark),
-  'secondary': var(--secondary-main),
-  'secondary-light': var(--secondary-light),
-  'secondary-dark': var(--secondary-dark),
-  'text-primary': var(--text-primary),
-  'text-secondary': var(--text-secondary),
-  'text-disabled': var(--text-disabled),
-  'white': var(--custom-white),
-  'black': var(--custom-black),
-  'lightgray': var(--custom-lightgray),
-  'gray': var(--custom-gray),
-  'caption': var(--text-caption),
-  'custom': var(--custom-text),
+  "primary": var(--primary-main),
+  "primary-light": var(--primary-light),
+  "primary-dark": var(--primary-dark),
+  "secondary": var(--secondary-main),
+  "secondary-light": var(--secondary-light),
+  "secondary-dark": var(--secondary-dark),
+  "text-primary": var(--text-primary),
+  "text-secondary": var(--text-secondary),
+  "text-disabled": var(--text-disabled),
+  "white": var(--custom-white),
+  "black": var(--custom-black),
+  "lightgray": var(--custom-lightgray),
+  "gray": var(--custom-gray),
+  "caption": var(--text-caption),
+  "custom": var(--custom-text),
 );
 
 @each $color-name, $color-value in $text-colors {
@@ -212,21 +212,21 @@ $text-colors: (
 }
 
 $bg-colors: (
-  'primary': var(--primary-main),
-  'primary-light': var(--primary-light),
-  'primary-dark': var(--primary-dark),
-  'secondary': var(--secondary-main),
-  'secondary-light': var(--secondary-light),
-  'secondary-dark': var(--secondary-dark),
-  'default': var(--background-default),
-  'paper': var(--background-paper),
-  'table-primary': var(--background-table-primary),
-  'table-strip': var(--background-table-strip),
-  'table-hover': var(--background-table-hover),
-  'input': var(--background-input),
-  'table-odd': var(--custom-table-background-odd),
-  'table-even': var(--custom-table-background-even),
-  'table-head': var(--custom-table-background-head),
+  "primary": var(--primary-main),
+  "primary-light": var(--primary-light),
+  "primary-dark": var(--primary-dark),
+  "secondary": var(--secondary-main),
+  "secondary-light": var(--secondary-light),
+  "secondary-dark": var(--secondary-dark),
+  "default": var(--background-default),
+  "paper": var(--background-paper),
+  "table-primary": var(--background-table-primary),
+  "table-strip": var(--background-table-strip),
+  "table-hover": var(--background-table-hover),
+  "input": var(--background-input),
+  "table-odd": var(--custom-table-background-odd),
+  "table-even": var(--custom-table-background-even),
+  "table-head": var(--custom-table-background-head),
 );
 
 @each $color-name, $color-value in $bg-colors {
@@ -236,12 +236,12 @@ $bg-colors: (
 }
 
 $border-colors: (
-  'primary': var(--primary-main),
-  'secondary': var(--secondary-main),
-  'divider': var(--divider),
-  'gray': var(--custom-gray),
-  'lightgray': var(--custom-lightgray),
-  'table': var(--custom-table-border),
+  "primary": var(--primary-main),
+  "secondary": var(--secondary-main),
+  "divider": var(--divider),
+  "gray": var(--custom-gray),
+  "lightgray": var(--custom-lightgray),
+  "table": var(--custom-table-border),
 );
 
 @each $color-name, $color-value in $border-colors {
@@ -263,19 +263,19 @@ $border-colors: (
 }
 
 $cursor-types: (
-  'auto': auto,
-  'default': default,
-  'pointer': pointer,
-  'text': text,
-  'move': move,
-  'not-allowed': not-allowed,
-  'grab': grab,
-  'grabbing': grabbing,
-  'zoom-in': zoom-in,
-  'zoom-out': zoom-out,
-  'help': help,
-  'wait': wait,
-  'crosshair': crosshair,
+  "auto": auto,
+  "default": default,
+  "pointer": pointer,
+  "text": text,
+  "move": move,
+  "not-allowed": not-allowed,
+  "grab": grab,
+  "grabbing": grabbing,
+  "zoom-in": zoom-in,
+  "zoom-out": zoom-out,
+  "help": help,
+  "wait": wait,
+  "crosshair": crosshair,
 );
 
 @each $cursor-name, $cursor-value in $cursor-types {
@@ -285,17 +285,17 @@ $cursor-types: (
 }
 
 $list-style-types: (
-  'inherit': inherit,
-  'none': none,
-  'disc': disc,
-  'circle': circle,
-  'square': square,
-  'decimal': decimal,
-  'decimal-leading-zero': decimal-leading-zero,
-  'lower-roman': lower-roman,
-  'upper-roman': upper-roman,
-  'lower-alpha': lower-alpha,
-  'upper-alpha': upper-alpha,
+  "inherit": inherit,
+  "none": none,
+  "disc": disc,
+  "circle": circle,
+  "square": square,
+  "decimal": decimal,
+  "decimal-leading-zero": decimal-leading-zero,
+  "lower-roman": lower-roman,
+  "upper-roman": upper-roman,
+  "lower-alpha": lower-alpha,
+  "upper-alpha": upper-alpha,
 );
 
 @each $list-type-name, $list-type-value in $list-style-types {
@@ -305,18 +305,18 @@ $list-style-types: (
 }
 
 $display-types: (
-  'none': none,
-  'block': block,
-  'inline': inline,
-  'inline-block': inline-block,
-  'flex': flex,
-  'inline-flex': inline-flex,
-  'grid': grid,
-  'inline-grid': inline-grid,
-  'table': table,
-  'table-cell': table-cell,
-  'table-row': table-row,
-  'contents': contents,
+  "none": none,
+  "block": block,
+  "inline": inline,
+  "inline-block": inline-block,
+  "flex": flex,
+  "inline-flex": inline-flex,
+  "grid": grid,
+  "inline-grid": inline-grid,
+  "table": table,
+  "table-cell": table-cell,
+  "table-row": table-row,
+  "contents": contents,
 );
 
 @each $display-name, $display-value in $display-types {
@@ -326,14 +326,14 @@ $display-types: (
 }
 
 $vertical-align-types: (
-  'baseline': baseline,
-  'top': top,
-  'middle': middle,
-  'bottom': bottom,
-  'text-top': text-top,
-  'text-bottom': text-bottom,
-  'sub': sub,
-  'super': super,
+  "baseline": baseline,
+  "top": top,
+  "middle": middle,
+  "bottom": bottom,
+  "text-top": text-top,
+  "text-bottom": text-bottom,
+  "sub": sub,
+  "super": super,
 );
 
 @each $valign-name, $valign-value in $vertical-align-types {
