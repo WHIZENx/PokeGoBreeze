@@ -16,9 +16,25 @@ $rem-sizes: (
   .w-pct-#{$i} {
     width: #{$i}#{"%"} !important;
   }
-  
+
+  .mw-pct-#{$i} {
+    max-width: #{$i}#{"%"} !important;
+  }
+
+  .mnw-pct-#{$i} {
+    min-width: #{$i}#{"%"} !important;
+  }
+
   .h-pct-#{$i} {
     height: #{$i}#{"%"} !important;
+  }
+
+  .mh-pct-#{$i} {
+    max-height: #{$i}#{"%"} !important;
+  }
+
+  .mnh-pct-#{$i} {
+    min-height: #{$i}#{"%"} !important;
   }
 
   .gap-pct-#{$i} {

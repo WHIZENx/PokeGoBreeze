@@ -88,7 +88,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                         )}
                       </div>
                     )}
-                    <div className="model text-center" style={{ minWidth: value.shiny ? '50%' : '100%' }}>
+                    <div className={combineClasses('model text-center', value.shiny ? 'w-pct-50' : 'w-pct-100')}>
                       <div className="d-flex w-100 justify-content-center">
                         <div style={{ width: 80 }}>
                           <img
