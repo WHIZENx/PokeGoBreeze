@@ -502,19 +502,11 @@ const CatchChance = () => {
                   marks={[
                     {
                       value: playerSetting.maxQuestEncounterPlayerLevel,
-                      label: (
-                        <span className="position-absolute" style={{ top: '-0.25rem' }}>
-                          Max LV encounter in quest
-                        </span>
-                      ),
+                      label: <span className="position-absolute -top-1">Max LV encounter in quest</span>,
                     },
                     {
                       value: playerSetting.maxEncounterPlayerLevel,
-                      label: (
-                        <span className="position-absolute" style={{ bottom: '1.75rem' }}>
-                          Max LV encounter in wild
-                        </span>
-                      ),
+                      label: <span className="position-absolute bottom-4">Max LV encounter in wild</span>,
                     },
                   ]}
                   step={0.5}

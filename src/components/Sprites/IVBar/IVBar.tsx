@@ -31,23 +31,29 @@ const IVBar = (props: IIVBarComponent) => {
       <div className="iv-bg-group">
         <div className="iv iv-first-child position-relative">
           <div
-            style={{ width: `${ivWidthFirst}%` }}
-            className={combineClasses('position-absolute iv-bar', props.iv <= 5 ? 'border-right-iv' : '')}
+            className={combineClasses(
+              `position-absolute iv-bar w-pct-${ivWidthFirst}`,
+              props.iv <= 5 ? 'border-right-iv' : ''
+            )}
           />
           <div className="iv-bg-bar w-100" />
         </div>
         <div className="iv position-relative">
           <div
-            style={{ width: `${ivWidthSec}%` }}
             className={combineClasses(
-              'position-absolute iv-bar',
+              `position-absolute iv-bar w-pct-${ivWidthSec}`,
               props.iv > 5 && props.iv <= 10 ? 'border-right-iv' : ''
             )}
           />
           <div className="iv-bg-bar w-100" />
         </div>
         <div className="iv iv-last-child position-relative">
-          <div style={{ width: `${ivWidthThird}%` }} className="position-absolute iv-bar" />
+          <div
+            className={combineClasses(
+              `position-absolute iv-bar w-pct-${ivWidthThird}`,
+              props.iv > 10 ? 'border-right-iv' : ''
+            )}
+          />
           <div className="iv-bg-bar w-100" />
         </div>
       </div>

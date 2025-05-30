@@ -233,7 +233,7 @@ const News = () => {
       <div className="info-main-container pb-3 mt-2">
         <h1 className="text-center text-decoration-underline">News</h1>
         {reload(
-          <div className="w-100 h-100" style={{ overflow: isNotEmpty(data) ? 'auto' : 'hidden' }}>
+          <div className={combineClasses('w-100 h-100', isNotEmpty(data) ? 'overflow-auto' : 'overflow-hidden')}>
             {data
               .filter((info) => info.giftAble || isInclude(info.id, ItemTicketRewardType.BattlePass))
               .map((value, index) => (

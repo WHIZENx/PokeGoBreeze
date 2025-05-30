@@ -739,16 +739,14 @@ const RaidBattle = () => {
       <Fragment>
         <div className="progress position-relative">
           <div
-            className="progress-bar bg-success mt-0"
-            style={{ width: `${percent}%` }}
+            className={`progress-bar bg-success mt-0 w-pct-${percent}`}
             role="progressbar"
             aria-valuenow={percent}
             aria-valuemin={0}
             aria-valuemax={100}
           />
           <div
-            className="progress-bar bg-danger mt-0"
-            style={{ width: `${100 - percent}%` }}
+            className={`progress-bar bg-danger mt-0 w-pct-${100 - percent}`}
             role="progressbar"
             aria-valuenow={100 - percent}
             aria-valuemin={0}

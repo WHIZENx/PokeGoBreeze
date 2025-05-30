@@ -343,13 +343,13 @@ $vertical-align-types: (
 }
 
 $font-weights: (
-  'normal': 400,
-  'light': 300,
-  'lighter': 200,
-  'bold': 700,
-  'bolder': 800,
-  'thin': 100,
-  'medium': 500,
+  'normal': normal,
+  'light': light,
+  'lighter': lighter,
+  'bold': bold,
+  'bolder': bolder,
+  'thin': thin,
+  'medium': medium,
   'semi-bold': 600,
   'extra-bold': 900,
 );

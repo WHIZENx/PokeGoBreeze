@@ -407,7 +407,7 @@ const Move = (props: IMovePage) => {
               {move?.typeMove === TypeMove.Charge && (
                 <tr>
                   <td>PVE Bar Charged</td>
-                  <td colSpan={2} style={{ border: 'none' }}>
+                  <td colSpan={2}>
                     <ChargedBar barCount={getBarCharge(move.pveEnergy, true)} color={move.type?.toLowerCase()} />
                   </td>
                 </tr>
@@ -448,7 +448,7 @@ const Move = (props: IMovePage) => {
               {move?.typeMove === TypeMove.Charge && (
                 <tr>
                   <td>PVP Bar Charged</td>
-                  <td colSpan={2} style={{ border: 'none' }}>
+                  <td colSpan={2}>
                     <ChargedBar barCount={getBarCharge(move.pvpEnergy)} color={move.type?.toLowerCase()} />
                   </td>
                 </tr>
