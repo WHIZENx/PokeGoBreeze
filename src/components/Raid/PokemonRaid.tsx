@@ -72,7 +72,7 @@ const PokemonRaid = (props: IPokemonRaidComponent) => {
               )}
               title="Copy"
               onClick={() => {
-                if (dataTargetPokemon && props.id > 0) {
+                if (dataTargetPokemon && props.id >= 0) {
                   props.onCopyPokemon(props.id);
                 }
               }}
