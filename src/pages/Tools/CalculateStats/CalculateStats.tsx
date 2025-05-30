@@ -233,8 +233,8 @@ const Calculate = () => {
         </h1>
         <form className="mt-2" onSubmit={onCalculateStatsPoke.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
-            <Box sx={{ width: '50%', minWidth: 350 }}>
-              <div style={{ justifyContent: 'center' }} className="input-group mb-3">
+            <Box className="w-50" sx={{ minWidth: 350 }}>
+              <div className="input-group mb-3 justify-content-center">
                 <DynamicInputCP
                   statATK={pokemon?.statsGO?.atk}
                   statDEF={pokemon?.statsGO?.def}
@@ -252,7 +252,7 @@ const Calculate = () => {
             </Box>
           </div>
           <div className="form-group d-flex justify-content-center text-center">
-            <Box sx={{ width: '50%', minWidth: 300 }}>
+            <Box className="w-50" sx={{ minWidth: 300 }}>
               <div className="d-flex justify-content-between">
                 <b>ATK</b>
                 <b>{ATKIv}</b>
@@ -381,7 +381,7 @@ const Calculate = () => {
         </form>
         <div>
           <div className="d-flex justify-content-center text-center" style={{ height: 80 }}>
-            <Box sx={{ width: '60%', minWidth: 320 }}>
+            <Box className="w-pct-60" sx={{ minWidth: 320 }}>
               <div className="d-flex justify-content-between">
                 <b>Level</b>
                 <b>{statData ? statLevel : 'None'}</b>
@@ -401,7 +401,7 @@ const Calculate = () => {
             </Box>
           </div>
           <div className="d-flex justify-content-center mt-3">
-            <Box sx={{ width: '80%', minWidth: 320 }}>
+            <Box className="w-pct-80" sx={{ minWidth: 320 }}>
               <div className="row">
                 <div className="col p-0">
                   <table className="table-info table-stats">
@@ -571,9 +571,7 @@ const Calculate = () => {
                               <Fragment>
                                 {statData.atkStat}
                                 {toNumber(statData.atkStatDiff) > 0 && (
-                                  <span className="text-success" style={{ fontWeight: 500 }}>
-                                    {` (+${statData.atkStatDiff})`}
-                                  </span>
+                                  <span className="text-success fw-medium">{` (+${statData.atkStatDiff})`}</span>
                                 )}
                               </Fragment>
                             )
@@ -600,9 +598,7 @@ const Calculate = () => {
                               <Fragment>
                                 {statData.defStat}
                                 {toNumber(statData.defStatDiff) > 0 && (
-                                  <span className="text-danger" style={{ fontWeight: 500 }}>
-                                    {` (-${statData.defStatDiff})`}
-                                  </span>
+                                  <span className="text-danger fw-medium">{` (-${statData.defStatDiff})`}</span>
                                 )}
                               </Fragment>
                             )
@@ -688,13 +684,7 @@ const Calculate = () => {
                       <tr>
                         <td>Candy Required</td>
                         <td colSpan={3} className="p-0">
-                          <div
-                            className="d-flex align-items-center td-style custom-border-right"
-                            style={{
-                              float: 'left',
-                              width: '50%',
-                            }}
-                          >
+                          <div className="d-flex align-items-center td-style custom-border-right float-start w-50">
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
                               <Candy id={pokemon?.id} className="me-2" />
                             ) : (
@@ -719,7 +709,7 @@ const Calculate = () => {
                               '-'
                             )}
                           </div>
-                          <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
+                          <div className="d-flex align-items-center td-style float-end w-50">
                             {dataLittleLeague && dataLittleLeague.isElidge ? (
                               <CandyXL id={pokemon?.id} />
                             ) : (
@@ -821,13 +811,7 @@ const Calculate = () => {
                       <tr>
                         <td>Candy Required</td>
                         <td colSpan={3} className="p-0">
-                          <div
-                            className="d-flex align-items-center td-style custom-border-right"
-                            style={{
-                              float: 'left',
-                              width: '50%',
-                            }}
-                          >
+                          <div className="d-flex align-items-center td-style custom-border-right float-start w-50">
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
                               <Candy id={pokemon?.id} className="me-2" />
                             ) : (
@@ -852,7 +836,7 @@ const Calculate = () => {
                               '-'
                             )}
                           </div>
-                          <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
+                          <div className="d-flex align-items-center td-style float-end w-50">
                             {dataGreatLeague && dataGreatLeague.isElidge ? (
                               <CandyXL id={pokemon?.id} />
                             ) : (
@@ -954,13 +938,7 @@ const Calculate = () => {
                       <tr>
                         <td>Candy Required</td>
                         <td colSpan={3} className="p-0">
-                          <div
-                            className="d-flex align-items-center td-style custom-border-right"
-                            style={{
-                              float: 'left',
-                              width: '50%',
-                            }}
-                          >
+                          <div className="d-flex align-items-center td-style custom-border-right float-start w-50">
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
                               <Candy id={pokemon?.id} className="me-2" />
                             ) : (
@@ -985,7 +963,7 @@ const Calculate = () => {
                               '-'
                             )}
                           </div>
-                          <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
+                          <div className="d-flex align-items-center td-style float-end w-50">
                             {dataUltraLeague && dataUltraLeague.isElidge ? (
                               <CandyXL id={pokemon?.id} />
                             ) : (
@@ -1084,13 +1062,7 @@ const Calculate = () => {
                       <tr>
                         <td>Candy Required</td>
                         <td colSpan={3} className="p-0">
-                          <div
-                            className="d-flex align-items-center td-style custom-border-right"
-                            style={{
-                              float: 'left',
-                              width: '50%',
-                            }}
-                          >
+                          <div className="d-flex align-items-center td-style custom-border-right float-start w-50">
                             {dataMasterLeague ? (
                               <Candy id={pokemon?.id} className="me-2" />
                             ) : (
@@ -1115,7 +1087,7 @@ const Calculate = () => {
                               '-'
                             )}
                           </div>
-                          <div className="d-flex align-items-center td-style" style={{ float: 'right', width: '50%' }}>
+                          <div className="d-flex align-items-center td-style float-end w-50">
                             {dataMasterLeague ? (
                               <CandyXL id={pokemon?.id} />
                             ) : (

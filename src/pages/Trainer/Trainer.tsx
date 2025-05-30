@@ -52,8 +52,7 @@ const Trainer = () => {
                   {data.levelUps.map((value, index) => (
                     <div className="d-flex justify-content-center flex-column align-items-center" key={index}>
                       <img
-                        className="pokemon-sprite-medium"
-                        style={{ width: 64 }}
+                        className="pokemon-sprite-medium w-9"
                         alt="Pokémon Image"
                         title={splitAndCapitalize(value.name.replace('ITEM_', ''), '_', ' ')}
                         src={getItemSpritePath(value.name)}
@@ -77,8 +76,7 @@ const Trainer = () => {
                       {data.itemUnlocks?.map((value, index) => (
                         <div className="d-flex justify-content-center flex-column align-items-center" key={index}>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
+                            className="pokemon-sprite-medium w-9"
                             alt="Pokémon Image"
                             title={splitAndCapitalize(value.replace('ITEM_', ''), '_', ' ')}
                             src={getItemSpritePath(value)}

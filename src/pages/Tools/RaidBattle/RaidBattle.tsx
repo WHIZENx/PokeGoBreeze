@@ -739,16 +739,14 @@ const RaidBattle = () => {
       <Fragment>
         <div className="progress position-relative">
           <div
-            className="progress-bar bg-success mt-0"
-            style={{ width: `${percent}%` }}
+            className={`progress-bar bg-success mt-0 w-pct-${Math.round(percent)}`}
             role="progressbar"
             aria-valuenow={percent}
             aria-valuemin={0}
             aria-valuemax={100}
           />
           <div
-            className="progress-bar bg-danger mt-0"
-            style={{ width: `${100 - percent}%` }}
+            className={`progress-bar bg-danger mt-0 w-pct-${Math.round(100 - percent)}`}
             role="progressbar"
             aria-valuenow={100 - percent}
             aria-valuemin={0}
@@ -916,9 +914,8 @@ const RaidBattle = () => {
       <div className="input-group mb-3">
         <span className="input-group-text">Sort By</span>
         <Form.Select
-          style={{ width: '40%' }}
           value={filters.selected.sortBy}
-          className="form-control"
+          className="form-control w-pct-40"
           onChange={(e) => setFilters({ ...filters, selected: { ...selected, sortBy: toNumber(e.target.value) } })}
         >
           <option value={SortType.DPS}>Damage Per Second</option>
@@ -928,9 +925,8 @@ const RaidBattle = () => {
         </Form.Select>
         <span className="input-group-text">Priority</span>
         <Form.Select
-          style={{ width: '15%' }}
+          className="form-control w-pct-15"
           value={filters.selected.sorted}
-          className="form-control"
           onChange={(e) => setFilters({ ...filters, selected: { ...selected, sorted: toNumber(e.target.value) } })}
         >
           <option value={SortDirectionType.ASC}>Best</option>
@@ -1146,7 +1142,7 @@ const RaidBattle = () => {
           </span>
         </span>
       )}
-      <div style={{ display: 'contents', width: 16 }}>
+      <div className="w-3 d-contents">
         <img
           className="pokemon-sprite-small sprite-type-select filter-shadow"
           alt="Pokémon GO Type Logo"
@@ -1191,7 +1187,7 @@ const RaidBattle = () => {
     }
     return (
       <Fragment>
-        <div className="d-flex flex-wrap align-items-center ps-2" style={{ columnGap: 5 }}>
+        <div className="d-flex flex-wrap align-items-center ps-2 column-gap-1">
           <div className="pokemon-battle">
             <span className="position-relative">
               <PokemonIconType pokemonType={pokemon.pokemonType} size={18}>
@@ -1207,7 +1203,7 @@ const RaidBattle = () => {
               </PokemonIconType>
             </span>
           </div>
-          <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 8 }}>
+          <div className="d-flex flex-wrap align-items-center column-gap-2">
             {renderMove({ ...pokemon.fMove, moveType: pokemon.fMoveType })}
             {renderMove({ ...pokemon.cMove, moveType: pokemon.cMoveType })}
           </div>
@@ -1291,7 +1287,7 @@ const RaidBattle = () => {
       return <></>;
     }
     return (
-      <div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
+      <div className="d-flex flex-wrap align-items-center gap-2">
         {renderMove(pokemon.fMove)}
         {renderMove(pokemon.cMove)}
       </div>
@@ -1322,14 +1318,14 @@ const RaidBattle = () => {
 
   return (
     <Fragment>
-      <div className="row m-0" style={{ overflowX: 'hidden' }}>
+      <div className="row m-0 overflow-x-hidden">
         <div className="col-lg p-0">
           <Find isHide title="Raid Boss" clearStats={clearDataBoss} />
         </div>
         <div className="col-lg d-flex justify-content-center align-items-center p-0">
           <div className="mt-2 position-relative">
             {!isNotEmpty(resultFMove) && !isNotEmpty(resultCMove) && (
-              <div className="position-absolute w-100 h-100" style={{ zIndex: 2 }}>
+              <div className="position-absolute w-100 h-100 z-2">
                 <div className="moveset-error" />
                 <span className="moveset-error-msg">Moveset not Available</span>
               </div>
@@ -1560,7 +1556,7 @@ const RaidBattle = () => {
           </div>
         )}
         <div className="row my-3 mx-0">
-          <div className="col-lg-5 justify-content-center" style={{ marginBottom: 20 }}>
+          <div className="col-lg-5 justify-content-center mb-3">
             {trainerBattle.map((trainer, index) => (
               <div className="trainer-battle d-flex align-items-center position-relative" key={index}>
                 <Badge
@@ -1679,7 +1675,7 @@ const RaidBattle = () => {
             </div>
           </div>
           <div className="col-lg-7 stats-boss h-100">
-            <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
+            <div className="d-flex flex-wrap align-items-center column-gap-3">
               <h3>
                 <b>
                   {pokemon?.form ? `#${pokemon?.form?.defaultId}` : ''}{' '}
@@ -1691,7 +1687,7 @@ const RaidBattle = () => {
               </h3>
               <TypeInfo arr={pokemon?.form?.form?.types} />
             </div>
-            <div className="d-flex flex-wrap align-items-center" style={{ columnGap: 15 }}>
+            <div className="d-flex flex-wrap align-items-center column-gap-3">
               <TypeBadge title="Fast Move" move={fMove} moveType={fMove?.moveType ?? MoveType.None} />
               <TypeBadge title="Charged Move" move={cMove} moveType={cMove?.moveType ?? MoveType.None} />
             </div>
@@ -1699,7 +1695,7 @@ const RaidBattle = () => {
               <Fragment>
                 <hr />
                 <div className="row m-0">
-                  <div className="col-lg-6" style={{ marginBottom: 20 }}>
+                  <div className="col-lg-6 mb-3">
                     <span className="d-block mt-2">
                       {`DPS: `}
                       <b>
@@ -1729,10 +1725,7 @@ const RaidBattle = () => {
                       Boss Average HP Remaining: <b>{Math.round((resultBoss.minHP + resultBoss.maxHP) / 2)}</b>
                     </span>
                   </div>
-                  <div
-                    className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center"
-                    style={{ marginBottom: 20 }}
-                  >
+                  <div className="col-lg-6 d-flex flex-wrap justify-content-center align-items-center mb-3">
                     <h2 className="text-center m-0">Suggested players</h2>
                     <hr className="w-100" />
                     <div className="d-inline-block text-center">
@@ -1759,13 +1752,13 @@ const RaidBattle = () => {
             {isNotEmpty(resultRaid) && (
               <Fragment>
                 <hr />
-                <ul className="mt-2" style={{ listStyleType: 'initial' }}>
+                <ul className="mt-2 list-style-initial">
                   {resultRaid?.map((result, turn) => (
                     <li className="mb-3" key={turn}>
                       <h4>
                         <b>Pokémon Round {turn + 1}</b>
                       </h4>
-                      <div className="w-100" style={{ overflowX: 'auto' }}>
+                      <div className="w-100 overflow-x-auto">
                         <table className="table-info table-round-battle">
                           <thead className="text-center">
                             <tr className="table-header">
@@ -1877,7 +1870,7 @@ const RaidBattle = () => {
           <Modal.Title>Trainer #{trainerBattleId + 1}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>
+          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
             {pokemonBattle.map((pokemon, index) => (
               <div className={index === 0 ? '' : 'mt-2'} key={index}>
                 <PokemonRaid
@@ -1927,7 +1920,9 @@ const RaidBattle = () => {
           <Modal.Title>Search Options</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalFormFilters()}</div>
+          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
+            {modalFormFilters()}
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant={VariantType.Secondary} onClick={handleCloseOption}>
@@ -1944,7 +1939,9 @@ const RaidBattle = () => {
           <Modal.Title>Pokémon Settings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalFormSetting()}</div>
+          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
+            {modalFormSetting()}
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant={VariantType.Secondary} onClick={handleCloseSettingPokemon}>
@@ -1961,7 +1958,9 @@ const RaidBattle = () => {
           <Modal.Title>Move Pokémon</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{ overflowY: 'auto', maxHeight: '60vh' }}>{modalMovePokemon()}</div>
+          <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
+            {modalMovePokemon()}
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant={VariantType.Secondary} onClick={handleCloseMovePokemon}>

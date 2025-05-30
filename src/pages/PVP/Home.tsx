@@ -90,8 +90,8 @@ const PVPHome = () => {
 
   const renderLoading = () => {
     return (
-      <div style={{ overflowX: 'hidden' }}>
-        <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
+      <div className="overflow-x-hidden">
+        <div className="ph-item flex-nowrap w-fit-content">
           {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
             <div key={index} className="ph-col-3 m-0 p-2">
               <div className="ph-row">
@@ -122,8 +122,7 @@ const PVPHome = () => {
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Rank Pokémon Leagues</h1>
         <Form.Select
-          style={{ height: 'fit-content' }}
-          className="w-25 form-control"
+          className="w-25 form-control h-fit-content"
           value={rank?.id}
           onChange={(e) =>
             setOptions(
@@ -167,8 +166,7 @@ const PVPHome = () => {
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Teams Pokémon Leagues</h1>
         <Form.Select
-          style={{ height: 'fit-content' }}
-          className="w-25 form-control"
+          className="w-25 form-control h-fit-content"
           value={team?.id}
           onChange={(e) =>
             setOptions(

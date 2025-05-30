@@ -50,7 +50,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
           </td>
           <td colSpan={2}>
             {reload(
-              <h5 className="d-flex align-items-center" style={{ gap: 5 }}>
+              <h5 className="d-flex align-items-center gap-1">
                 {isUndefined(props.gen) || !isNumber(props.gen) ? (
                   <></>
                 ) : props.gen === 0 ? (
@@ -89,7 +89,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
             <h5 className="d-flex">Body</h5>
           </td>
           <td colSpan={2} className="p-0">
-            <div className="d-flex align-items-center first-extra-col h-100 w-50" style={{ float: 'left' }}>
+            <div className="d-flex align-items-center first-extra-col h-100 w-50 float-start">
               <div>
                 <div className="d-inline-block me-1">
                   <h6>Weight:</h6>
@@ -99,7 +99,7 @@ const PokemonTable = (props: IPokemonTableComponent) => {
                 </div>
               </div>
             </div>
-            <div className="d-flex align-items-center h-100 w-50" style={{ float: 'left' }}>
+            <div className="d-flex align-items-center h-100 w-50 float-start">
               <div>
                 <div className="d-inline-block me-1">
                   <h6>Height:</h6>

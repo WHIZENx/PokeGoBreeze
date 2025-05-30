@@ -43,7 +43,7 @@ const FillDmg = styled.div<Element>`
 
 const HpBar = (props: IHpBarComponent) => {
   return (
-    <div className="d-flex align-items-center w-100" style={{ columnGap: 5 }}>
+    <div className="d-flex align-items-center w-100 column-gap-1">
       {props.text && (
         <span>
           <b>{props.text}</b>
@@ -60,7 +60,7 @@ const HpBar = (props: IHpBarComponent) => {
           <FillDmg height={props.height} hp={props.hp} maxHp={props.maxHp} color="orange" dmg={props.dmg} />
         )}
       </Bar>
-      <span className="text-center" style={{ whiteSpace: 'nowrap', minWidth: 72, maxWidth: 72 }}>
+      <span className="text-center text-nowrap" style={{ minWidth: 72, maxWidth: 72 }}>
         <b>
           {props.hp} / {props.maxHp}
         </b>

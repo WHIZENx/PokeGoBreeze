@@ -96,9 +96,13 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
 
   const setPos = (position = SelectPosition.Down) => (
     <div
-      className={combineClasses('result-pokemon', position === SelectPosition.Up ? 'pos-up' : '')}
+      className={combineClasses(
+        'result-pokemon',
+        position === SelectPosition.Up ? 'pos-up' : '',
+        showPokemon ? 'd-block' : 'd-none'
+      )}
       onScroll={listenScrollEvent.bind(this)}
-      style={{ display: showPokemon ? 'block' : 'none', maxHeight: props.maxHeight ?? 274 }}
+      style={{ maxHeight: props.maxHeight ?? 274 }}
     >
       <div>
         {pokemonData
@@ -144,10 +148,9 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   return (
     <div
       className={combineClasses(
-        'position-relative d-flex align-items-center form-control p-0',
+        'position-relative d-flex align-items-center form-control p-0 rounded-0',
         props.isDisable ? 'card-select-disabled' : ''
       )}
-      style={{ borderRadius: 0 }}
     >
       <div className="card-pokemon-input">
         {isUndefined(props.position) || props.position === SelectPosition.Down ? (

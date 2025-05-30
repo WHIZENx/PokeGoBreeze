@@ -968,9 +968,9 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
   const moves = extractBasicMoves(data);
   const sequence = extractMoveSequences(data);
   const moveSet = processCombatMoves(data, moves, sequence);
-  return processSpecialMoves(moveSet, types);
+  return processSpecialMoves(data, moveSet, types);
 
-  function extractBasicMoves(data: PokemonDataGM[]): Move[] {
+  function extractBasicMoves(data: PokemonDataGM[]) {
     return data
       .filter((item) => /^V\d{4}_MOVE_*/g.test(item.templateId))
       .map((item) => {
@@ -986,7 +986,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
       });
   }
 
-  function extractMoveSequences(data: PokemonDataGM[]): Sequence[] {
+  function extractMoveSequences(data: PokemonDataGM[]) {
     return data
       .filter(
         (item) =>
@@ -1003,7 +1003,28 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
       });
   }
 
-  function processCombatMoves(data: PokemonDataGM[], moves: Move[], sequence: Sequence[]): Combat[] {
+  function processGMaxMoves(data: PokemonDataGM[], lastTrackId: number) {
+    return data
+      .filter((item) => /^VN_BM_\d{3}$/g.test(item.templateId))
+      .map((item) => {
+        const id = toNumber(getValueOrDefault(Array, item.templateId.match(/\d{3}/g))[0]);
+        const result = new Combat();
+        result.id = lastTrackId + id;
+        result.track = lastTrackId + id;
+        result.name = item.data.moveSettings.vfxName.split('_')[1].toUpperCase();
+        result.type = item.data.moveSettings.pokemonType.replace(`${PokemonConfig.Type}_`, '');
+        result.typeMove = TypeMove.Charge;
+        result.moveType = MoveType.Dynamax;
+        result.durationMs = item.data.moveSettings.durationMs;
+        result.damageWindowStartMs = item.data.moveSettings.damageWindowStartMs;
+        result.damageWindowEndMs = item.data.moveSettings.damageWindowEndMs;
+        result.accuracyChance = item.data.moveSettings.accuracyChance;
+        result.staminaLossScalar = item.data.moveSettings.staminaLossScalar;
+        return result;
+      });
+  }
+
+  function processCombatMoves(data: PokemonDataGM[], moves: Move[], sequence: Sequence[]) {
     return data
       .filter((item) => /^COMBAT_V\d{4}_MOVE_*/g.test(item.templateId))
       .map((item) => {
@@ -1049,7 +1070,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
       });
   }
 
-  function processBuffs(buffs: MoveBuff): IBuff[] {
+  function processBuffs(buffs: MoveBuff) {
     const buffsResult: IBuff[] = [];
 
     if (buffs.attackerAttackStatStageChange) {
@@ -1099,7 +1120,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
     return buffsResult;
   }
 
-  function setMoveStats(result: Combat, move: Move): void {
+  function setMoveStats(result: Combat, move: Move) {
     result.id = move.id;
     result.track = move.id;
     result.pvePower = move.power;
@@ -1116,7 +1137,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
     result.staminaLossScalar = move.staminaLossScalar;
   }
 
-  function processSpecialMoves(moveSet: Combat[], types: ITypeEff): Combat[] {
+  function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEff) {
     const result = [...moveSet];
 
     moveSet
@@ -1146,7 +1167,9 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
           );
       });
 
-    return result;
+    const lastTrackId = result.sort((a, b) => b.track - a.track)[0].track;
+    const gMaxMoves = processGMaxMoves(data, lastTrackId);
+    return [...result, ...gMaxMoves];
   }
 };
 
@@ -1415,7 +1438,7 @@ export const mappingReleasedPokemonGO = (pokemonData: IPokemonData[], assets: IA
   });
 };
 
-const convertMoveName = (combat: ICombat[], moves: string[] | undefined) => {
+const convertMoveName = (combat: ICombat[], moves: string[] | undefined, lastTrackId: number) => {
   return moves?.map((move) => {
     if (isNumber(move)) {
       const id = toNumber(move);
@@ -1426,7 +1449,7 @@ const convertMoveName = (combat: ICombat[], moves: string[] | undefined) => {
     }
     if (/^VN_BM_\d{3}$/g.test(move)) {
       const id = toNumber(getValueOrDefault(Array, move.match(/\d{3}/g))[0]);
-      const result = combat.find((item) => item.track === id && isEqual(item.moveType, MoveType.Dynamax));
+      const result = combat.find((item) => item.track === lastTrackId + id && isEqual(item.moveType, MoveType.Dynamax));
       if (result) {
         return result.name;
       }
@@ -1436,16 +1459,19 @@ const convertMoveName = (combat: ICombat[], moves: string[] | undefined) => {
 };
 
 export const mappingMoveSetPokemonGO = (pokemonData: IPokemonData[], combat: ICombat[]) => {
+  const lastTrackId = combat
+    .filter((item) => item.moveType !== MoveType.Dynamax)
+    .sort((a, b) => b.track - a.track)[0].track;
   pokemonData.forEach((pokemon) => {
-    pokemon.quickMoves = convertMoveName(combat, pokemon.quickMoves);
-    pokemon.cinematicMoves = convertMoveName(combat, pokemon.cinematicMoves);
-    pokemon.eliteQuickMoves = convertMoveName(combat, pokemon.eliteQuickMoves);
-    pokemon.eliteCinematicMoves = convertMoveName(combat, pokemon.eliteCinematicMoves);
-    pokemon.specialMoves = convertMoveName(combat, pokemon.specialMoves);
-    pokemon.exclusiveMoves = convertMoveName(combat, pokemon.exclusiveMoves);
-    pokemon.dynamaxMoves = convertMoveName(combat, pokemon.dynamaxMoves);
-    pokemon.purifiedMoves = convertMoveName(combat, pokemon.purifiedMoves);
-    pokemon.shadowMoves = convertMoveName(combat, pokemon.shadowMoves);
+    pokemon.quickMoves = convertMoveName(combat, pokemon.quickMoves, lastTrackId);
+    pokemon.cinematicMoves = convertMoveName(combat, pokemon.cinematicMoves, lastTrackId);
+    pokemon.eliteQuickMoves = convertMoveName(combat, pokemon.eliteQuickMoves, lastTrackId);
+    pokemon.eliteCinematicMoves = convertMoveName(combat, pokemon.eliteCinematicMoves, lastTrackId);
+    pokemon.specialMoves = convertMoveName(combat, pokemon.specialMoves, lastTrackId);
+    pokemon.exclusiveMoves = convertMoveName(combat, pokemon.exclusiveMoves, lastTrackId);
+    pokemon.dynamaxMoves = convertMoveName(combat, pokemon.dynamaxMoves, lastTrackId);
+    pokemon.purifiedMoves = convertMoveName(combat, pokemon.purifiedMoves, lastTrackId);
+    pokemon.shadowMoves = convertMoveName(combat, pokemon.shadowMoves, lastTrackId);
   });
 };
 

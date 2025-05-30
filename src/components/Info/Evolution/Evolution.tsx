@@ -442,15 +442,15 @@ const Evolution = (props: IEvolutionComponent) => {
             <Xarrow
               labels={{
                 end: (
-                  <div className="position-absolute" style={{ left: -40 }}>
+                  <div className="position-absolute -left-6">
                     {value.pokemonType !== PokemonType.GMax && (
                       <div>
                         {toNumber(data?.evoToId) > 0 &&
                           !data?.itemCost &&
                           (data?.candyCost || data?.purificationEvoCandyCost) && (
-                            <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
+                            <span className="d-flex align-items-center caption w-max-content">
                               <Candy id={value.id} />
-                              <span style={{ marginLeft: 2 }}>{`x${
+                              <span className="ms-1">{`x${
                                 props.pokemonData?.pokemonType === PokemonType.Purified
                                   ? data.purificationEvoCandyCost
                                   : data.candyCost
@@ -504,7 +504,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               data.quest.isMustBeBuddy ? (
                                 <div className="d-flex align-items-end">
                                   <DirectionsWalkIcon fontSize="small" />
-                                  <PetsIcon sx={{ fontSize: '1rem' }} />
+                                  <PetsIcon className="u-fs-3" />
                                 </div>
                               ) : (
                                 <DirectionsWalkIcon fontSize="small" />
@@ -530,10 +530,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}
                             />
                             {data.itemCost && (
-                              <span
-                                className="d-flex align-items-center caption"
-                                style={{ width: 'max-content', marginLeft: 2 }}
-                              >{`x${data.itemCost}`}</span>
+                              <span className="d-flex align-items-center caption ms-1 w-max-content">{`x${data.itemCost}`}</span>
                             )}
                           </Fragment>
                         )}
@@ -562,7 +559,7 @@ const Evolution = (props: IEvolutionComponent) => {
                                 {data.quest.condition.pokemonType?.map((value, index) => (
                                   <IconType key={index} height={20} alt="Pokémon GO Type Logo" type={value} />
                                 ))}
-                                <span style={{ marginLeft: 2 }}>{`x${data.quest.goal}`}</span>
+                                <span className="ms-1">{`x${data.quest.goal}`}</span>
                               </div>
                             )}
                             {data.quest.condition.desc === ConditionType.WinRaid && (
@@ -573,7 +570,7 @@ const Evolution = (props: IEvolutionComponent) => {
                             )}
                             {data.quest.condition.desc === ConditionType.PokemonBattle && (
                               <Fragment>
-                                <div className="inline-flex" style={{ gap: 3 }}>
+                                <div className="inline-flex gap-1">
                                   {data.quest.condition.opponentPokemonBattle?.types.map((value, index) => (
                                     <IconType
                                       key={index}
@@ -687,7 +684,7 @@ const Evolution = (props: IEvolutionComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 p-0" style={{ margin: 'auto', height: 120 }}>
+      <div className="ph-item w-75 p-0 m-auto" style={{ height: 120 }}>
         <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
@@ -714,7 +711,7 @@ const Evolution = (props: IEvolutionComponent) => {
                 </span>
                 <span className="d-block caption">
                   - <DirectionsWalkIcon fontSize="small" />
-                  <PetsIcon sx={{ fontSize: '1rem' }} /> : Walk together with buddy.
+                  <PetsIcon className="u-fs-3" /> : Walk together with buddy.
                 </span>
                 <span className="d-block caption">
                   - <DirectionsWalkIcon fontSize="small" /> : Buddy walk with trainer.

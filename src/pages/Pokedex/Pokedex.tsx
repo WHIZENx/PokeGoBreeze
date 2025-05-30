@@ -281,7 +281,7 @@ const Pokedex = (props: IStyleSheetData) => {
   return (
     <div className="position-relative">
       {!isNotEmpty(dataList) && (
-        <div className="ph-item w-100 h-100 position-absolute" style={{ zIndex: 2, background: 'transparent' }}>
+        <div className="ph-item w-100 h-100 position-absolute z-2 bg-transparent">
           <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}
@@ -367,9 +367,9 @@ const Pokedex = (props: IStyleSheetData) => {
                   />
                 </div>
               </div>
-              <div className="col-xl-8 border-input p-2" style={{ gap: 10 }}>
+              <div className="col-xl-8 border-input p-2 gap-2">
                 <div className="d-flex">
-                  <FormControl sx={{ m: 1, width: '50%' }} size="small">
+                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
                     <InputLabel>Generation(s)</InputLabel>
                     <Select
                       multiple
@@ -395,7 +395,7 @@ const Pokedex = (props: IStyleSheetData) => {
                       ))}
                     </Select>
                   </FormControl>
-                  <FormControl sx={{ m: 1, width: '50%' }} size="small">
+                  <FormControl className="w-50" sx={{ m: 1 }} size="small">
                     <InputLabel>Version(s)</InputLabel>
                     <Select
                       multiple
@@ -532,7 +532,7 @@ const Pokedex = (props: IStyleSheetData) => {
       </div>
       <LoadGroup className={'position-fixed text-center'} isShow={isLoading} isVertical={false} isHideAttr={false} />
       <div className="text-center bg-white">
-        <div className="loading-group-spin-table" style={{ display: !isLoading ? 'none' : 'block' }} />
+        <div className={combineClasses('loading-group-spin-table', isLoading ? 'd-block' : 'd-none')} />
         <ul className="d-grid pokemon-content">
           {listOfPokemon.map((row, index) => (
             <CardPokemonInfo

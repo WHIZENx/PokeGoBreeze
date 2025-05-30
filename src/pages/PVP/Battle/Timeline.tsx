@@ -17,14 +17,14 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
       return <></>;
     }
     return (
-      <div className="d-flex flex-wrap align-items-center" style={{ gap: 5 }}>
+      <div className="d-flex flex-wrap align-items-center gap-1">
         <span
           className={combineClasses(
             `${move.type?.toLowerCase()}${isBorder ? '-border' : ''}`,
             'type-select-bg d-flex align-items-center border-type-init'
           )}
         >
-          <div style={{ display: 'contents', width: 16 }}>
+          <div className="w-1 d-contents">
             <img
               className={combineClasses('pokemon-sprite-small sprite-type-select', isShowShadow ? 'filter-shadow' : '')}
               alt="Pokémon GO Type Logo"
@@ -77,17 +77,14 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               color="primary"
               overlap="circular"
               badgeContent={value.isTap ? 'Tap' : undefined}
-              className={combineClasses(
-                'fast-attack-container text-shadow-black turn-battle',
-                end ? 'justify-content-end' : ''
-              )}
+              className={combineClasses('fast-attack-container turn-battle', end ? 'justify-content-end' : '')}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: end ? 'right' : 'left',
               }}
             >
               <div className={combineClasses('fast-attack-content text-center', value.color)}>
-                <span className="text-warning" style={{ fontSize: 12 }}>
+                <span className="text-warning text-shadow-black" style={{ fontSize: 12 }}>
                   <b>Fast Attack!</b>
                 </span>
                 {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
@@ -101,7 +98,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
               badgeContent={value.isTap ? 'Tap' : undefined}
               className={combineClasses(
                 pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune
-                  ? 'fast-attack-container text-shadow-black'
+                  ? 'fast-attack-container'
                   : 'wait-attack-container',
                 end ? 'justify-content-end' : '',
                 'turn-battle',
@@ -114,7 +111,7 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             >
               {pokeCurr.timeline.at(index - 1) && pokeCurr.timeline.at(index - 1)?.isDmgImmune ? (
                 <div className={combineClasses('fast-attack-content text-center', value.move?.type?.toLowerCase())}>
-                  <span className="text-warning" style={{ fontSize: 12 }}>
+                  <span className="text-warning text-shadow-black" style={{ fontSize: 12 }}>
                     <b>Fast Attack!</b>
                   </span>
                   {value.isTap && <Fragment>{renderMoveBadgeBorder(value.move, false, true)}</Fragment>}
@@ -138,14 +135,9 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
             </div>
           )}
           {value.type === AttackType.Charge && (
-            <div
-              className={combineClasses(
-                'charged-attack-container text-shadow-black turn-battle',
-                end ? 'justify-content-end' : ''
-              )}
-            >
+            <div className={combineClasses('charged-attack-container turn-battle', end ? 'justify-content-end' : '')}>
               <div className={combineClasses('charged-attack-content text-center', value.color)}>
-                <span className="text-warning" style={{ fontSize: 16 }}>
+                <span className="text-warning text-shadow-black u-fs-1">
                   <b>Charged Attack!</b>
                 </span>
               </div>
@@ -196,12 +188,10 @@ export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokem
       {!isHide && (
         <div className="d-flex timeline-vertical battle-container">
           <div className="w-50">
-            <div className="d-flex flex-column" style={{ gap: 10 }}>
-              {renderTimeline(pokemonCurr, pokemonObj)}
-            </div>
+            <div className="d-flex flex-column gap-2">{renderTimeline(pokemonCurr, pokemonObj)}</div>
           </div>
           <div className="w-50">
-            <div className="d-flex flex-column align-items-end" style={{ gap: 10 }}>
+            <div className="d-flex flex-column align-items-end gap-2">
               {renderTimeline(pokemonObj, pokemonCurr, true)}
             </div>
           </div>
@@ -225,17 +215,15 @@ export const TimeLine = (
   const renderTimeline = (poke: IPokemonBattle, pokeObj: IPokemonBattle, border = false) => (
     <Fragment>
       <div className="mt-2" style={{ height: 12 }}>
-        <div className="d-flex" style={{ columnGap: 10, width: 'max-content' }}>
+        <div className="d-flex column-gap-2 w-max-content">
           {poke.timeline.map((value, index) => (
             <span className="position-relative" key={index} style={{ width: value.size }}>
               {value.isTap && (
                 <div
                   style={{
-                    display: !showTap ? 'none' : 'block',
-                    opacity: 0.5,
                     borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
                   }}
-                  className="charge-attack"
+                  className={combineClasses('charge-attack opacity-50', showTap ? 'd-block' : 'd-none')}
                 />
               )}
               {!value.isTap && (
@@ -261,7 +249,7 @@ export const TimeLine = (
                           ))}
                         </div>
                       ) : (
-                        <div style={{ display: !showTap ? 'none' : 'block' }} className="wait-attack" />
+                        <div className={combineClasses('wait-attack', showTap ? 'd-block' : 'd-none')} />
                       )}
                     </Fragment>
                   )}
@@ -272,10 +260,8 @@ export const TimeLine = (
         </div>
       </div>
       <div
-        className="d-flex align-items-center"
+        className="d-flex align-items-center column-gap-2 w-max-content"
         style={{
-          columnGap: 10,
-          width: 'max-content',
           borderBottom: border ? 'var(--custom-table-border)' : 'none',
         }}
       >
@@ -367,10 +353,8 @@ export const TimeLineFit = (
             <Fragment key={index}>
               {value.isTap && (
                 <div
-                  className="charge-attack"
+                  className={combineClasses('charge-attack opacity-50', showTap ? 'd-block' : 'd-none')}
                   style={{
-                    display: !showTap ? 'none' : 'block',
-                    opacity: 0.5,
                     width: value.size,
                     left: calculateFitPoint(poke.timeline.length, index),
                     borderColor: value.isDmgImmune ? 'red' : 'var(--text-primary)',
@@ -410,9 +394,8 @@ export const TimeLineFit = (
                         </div>
                       ) : (
                         <div
-                          className="wait-attack"
+                          className={combineClasses('wait-attack', showTap ? 'd-block' : 'd-none')}
                           style={{
-                            display: !showTap ? 'none' : 'block',
                             width: value.size,
                             left: calculateFitPoint(poke.timeline.length, index),
                           }}

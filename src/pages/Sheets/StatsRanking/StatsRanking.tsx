@@ -525,8 +525,7 @@ const StatsRanking = () => {
         <div className="d-flex justify-content-center w-100">
           <div className="d-inline-block img-desc">
             <img
-              className="pokemon-main-sprite"
-              style={{ verticalAlign: 'baseline' }}
+              className="pokemon-main-sprite v-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 select?.num,
@@ -572,7 +571,7 @@ const StatsRanking = () => {
         form={select?.form}
         isDisabled
       />
-      <div className="d-flex flex-wrap" style={{ gap: 15 }}>
+      <div className="d-flex flex-wrap gap-3">
         <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
           <span className="input-group-text">Find Pokémon</span>
           <input

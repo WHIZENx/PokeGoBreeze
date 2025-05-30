@@ -9,7 +9,7 @@ const CardPokemon = (props: ICardPokemonComponent) => {
   return (
     <div className="d-flex align-items-center w-100">
       <div className="position-relative">
-        <PokemonIconType pokemonType={props.pokemonType} size={24} style={{ left: -5 }}>
+        <PokemonIconType pokemonType={props.pokemonType} size={24} className="-left-1">
           <img
             height={38}
             alt="Pokémon Logo"

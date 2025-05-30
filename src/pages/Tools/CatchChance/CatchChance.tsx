@@ -413,7 +413,7 @@ const CatchChance = () => {
                   setPriority={onSetPrioritySec}
                 />
               )}
-              <div className="d-flex flex-wrap justify-content-center w-100 mt-2" style={{ gap: 10 }}>
+              <div className="d-flex flex-wrap justify-content-center w-100 mt-2 gap-2">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -502,19 +502,11 @@ const CatchChance = () => {
                   marks={[
                     {
                       value: playerSetting.maxQuestEncounterPlayerLevel,
-                      label: (
-                        <span className="position-absolute" style={{ top: '-0.25rem' }}>
-                          Max LV encounter in quest
-                        </span>
-                      ),
+                      label: <span className="position-absolute -top-1">Max LV encounter in quest</span>,
                     },
                     {
                       value: playerSetting.maxEncounterPlayerLevel,
-                      label: (
-                        <span className="position-absolute" style={{ bottom: '1.75rem' }}>
-                          Max LV encounter in wild
-                        </span>
-                      ),
+                      label: <span className="position-absolute bottom-4">Max LV encounter in wild</span>,
                     },
                   ]}
                   step={0.5}
@@ -524,7 +516,7 @@ const CatchChance = () => {
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />
               </div>
-              <div className="d-flex w-100 mt-2 justify-content-center" style={{ gap: 20 }}>
+              <div className="d-flex w-100 mt-2 justify-content-center gap-3">
                 {data?.baseFleeRate && (
                   <div className="w-25 text-center d-inline-block">
                     <h1>FLEE</h1>
@@ -543,7 +535,7 @@ const CatchChance = () => {
                   <h5>{level}</h5>
                 </div>
               </div>
-              <div className="d-flex w-100 mt-2 justify-content-center" style={{ gap: 20 }}>
+              <div className="d-flex w-100 mt-2 justify-content-center gap-3">
                 {data?.baseFleeRate && (
                   <div className="w-25 text-center d-inline-block">
                     <h1>Attack</h1>
@@ -613,12 +605,12 @@ const CatchChance = () => {
           </div>
           {isAdvance && (
             <Fragment>
-              <div className="d-flex flex-wrap justify-content-center" style={{ gap: 10 }}>
+              <div className="d-flex flex-wrap justify-content-center gap-2">
                 <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
                   <InputLabel id="demo-select-small">Ball</InputLabel>
                   <Select value={ballType.toString()} label="Ball" onChange={handleChangeBallType}>
                     {balls.map((value, index) => (
-                      <MenuItem key={index} value={value.pokeBallType} className="d-flex" style={{ gap: 5 }}>
+                      <MenuItem key={index} value={value.pokeBallType} className="d-flex gap-1">
                         <img alt="Icon Item" height={16} src={getItemSpritePath(value.itemName)} /> {value.name}
                       </MenuItem>
                     ))}

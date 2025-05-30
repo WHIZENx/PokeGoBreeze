@@ -550,7 +550,7 @@ const Pokemon = (props: IPokemonPage) => {
       return element;
     }
     return (
-      <div className="ph-item w-75 m-0 p-0" style={{ height: 24 }}>
+      <div className="ph-item w-75 m-0 p-0 h-4">
         <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
@@ -575,8 +575,7 @@ const Pokemon = (props: IPokemonPage) => {
           <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={icon} />
           <div className="d-inline-block img-desc">
             <img
-              className="pokemon-main-sprite"
-              style={{ verticalAlign: 'baseline' }}
+              className="pokemon-main-sprite v-align-baseline"
               alt="Image Pokemon"
               src={APIService.getPokeFullSprite(
                 dataStorePokemon?.current?.id,

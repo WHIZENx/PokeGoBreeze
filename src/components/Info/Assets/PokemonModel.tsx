@@ -12,7 +12,7 @@ import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
 import { IAssetPokemonModelComponent } from '../../models/component.model';
-import { isNotEmpty, UniqValueInArray } from '../../../util/extension';
+import { combineClasses, isNotEmpty, UniqValueInArray } from '../../../util/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
@@ -64,8 +64,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
               {assets.image.map((value, index) => (
                 <div
                   key={index}
-                  className="d-inline-block"
-                  style={{ width: value.gender === GenderType.GenderLess ? '100%' : 'auto' }}
+                  className={combineClasses(
+                    'd-inline-block',
+                    value.gender === GenderType.GenderLess ? 'w-100' : 'w-auto'
+                  )}
                 >
                   <div className="sub-group-model">
                     {gender && !gender.genderlessPercent && (
@@ -86,7 +88,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
                         )}
                       </div>
                     )}
-                    <div className="model text-center" style={{ minWidth: value.shiny ? '50%' : '100%' }}>
+                    <div className={combineClasses('model text-center', value.shiny ? 'w-pct-50' : 'w-pct-100')}>
                       <div className="d-flex w-100 justify-content-center">
                         <div style={{ width: 80 }}>
                           <img
@@ -142,7 +144,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       </h4>
       <h6>Pokémon Origin:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0" style={{ height: 65 }}>
+        <div className="ph-item w-100 m-0 p-0 h-9">
           <div
             className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
             style={{ background: 'var(--background-default)' }}
@@ -155,16 +157,16 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           ) : (
             <ul className="m-0">
               {props.originSoundCry.map((value, index) => (
-                <li key={index} style={{ listStyleType: 'disc' }}>
+                <li key={index} className="list-style-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
                   <ul className="m-0">
                     {value.cries &&
                       Object.entries(value.cries).map(([k, v], i) => (
                         <Fragment key={i}>
                           {v && (
-                            <li style={{ listStyleType: 'circle' }}>
+                            <li className="list-style-circle">
                               <h6>Type: {capitalize(k)}</h6>
-                              <audio src={v} className="w-100" controls style={{ height: 30 }}>
+                              <audio src={v} className="w-100 h-5" controls>
                                 <source type="audio/ogg" />
                                 Your browser does not support the audio element.
                               </audio>
@@ -181,7 +183,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
       )}
       <h6>Pokémon GO:</h6>
       {!props.isLoadedForms ? (
-        <div className="ph-item w-100 m-0 p-0" style={{ height: 65 }}>
+        <div className="ph-item w-100 m-0 p-0 h-9">
           <div
             className="ph-picture ph-col-3 w-100 h-100 m-0 p-0"
             style={{ background: 'var(--background-default)' }}
@@ -194,14 +196,9 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
           ) : (
             <ul className="m-0">
               {asset?.sound.cry.map((value, index) => (
-                <li key={index} style={{ listStyleType: 'disc' }}>
+                <li key={index} className="list-style-disc">
                   <h6>Form: {splitAndCapitalize(value.form, '_', ' ')}</h6>
-                  <audio
-                    src={APIService.getSoundPokemonGO(value.path)}
-                    className="w-100"
-                    controls
-                    style={{ height: 30 }}
-                  >
+                  <audio src={APIService.getSoundPokemonGO(value.path)} className="w-100 h-5" controls>
                     <source type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>

@@ -242,7 +242,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league && (
-          <div className="d-flex flex-wrap align-items-center mt-2" style={{ columnGap: 10 }}>
+          <div className="d-flex flex-wrap align-items-center mt-2 column-gap-2">
             <img
               alt="Image League"
               width={64}
@@ -325,12 +325,11 @@ const TeamPVP = (props: IStyleSheetData) => {
           />
         </div>
         <div className="ranking-container card-container">
-          <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
+          <div className="ranking-group w-100 ranking-header column-gap-3">
             <div className="ranking-score">Pokémon</div>
             <div className="d-flex me-3" style={{ columnGap: 30 }}>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedBy(SortType.TeamScore);
                   if (sortedBy === SortType.TeamScore) {
@@ -349,8 +348,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedBy(SortType.IndividualScore);
                   if (sortedBy === SortType.IndividualScore) {
@@ -369,8 +367,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedBy(SortType.Games);
                   if (sortedBy === SortType.Games) {
@@ -399,10 +396,9 @@ const TeamPVP = (props: IStyleSheetData) => {
             .sort((a, b) => setSortedPokemonPerformers(a, b))
             .map((value, index) => (
               <div
-                className="d-flex align-items-center card-ranking"
+                className="d-flex align-items-center card-ranking column-gap-3"
                 key={index}
                 style={{
-                  columnGap: '1rem',
                   backgroundImage: computeBgType(value.pokemonData?.types, value.pokemonType, props.styleSheet, 0.3),
                 }}
               >
@@ -428,9 +424,9 @@ const TeamPVP = (props: IStyleSheetData) => {
                     </PokemonIconType>
                   </span>
                 </div>
-                <div className="ranking-group w-100" style={{ columnGap: 15 }}>
+                <div className="ranking-group w-100 column-gap-3">
                   <div>
-                    <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
+                    <div className="d-flex align-items-center column-gap-2">
                       <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
                         value.name,
                         '-',
@@ -438,7 +434,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                       )}`}</b>
                       <TypeInfo isHideText isBlock isShowShadow height={20} arr={value.pokemonData?.types} />
                     </div>
-                    <div className="d-flex" style={{ columnGap: 10 }}>
+                    <div className="d-flex column-gap-2">
                       <TypeBadge
                         isGrow
                         isFind
@@ -471,7 +467,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                     <div className="text-center" style={{ width: 160 }}>
                       <span className="ranking-score score-ic text-black">{value.individualScore}</span>
                     </div>
-                    <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic text-black">
+                    <div className="text-center ranking-score score-ic text-black w-fit-content">
                       {toFloatWithPadding((value.games * 100) / value.performersTotalGames, 2)}
                       <span className="caption text-black">
                         {value.games}/{value.performersTotalGames}
@@ -485,12 +481,11 @@ const TeamPVP = (props: IStyleSheetData) => {
         <hr />
         <h2>Top Team Pokémon</h2>
         <div className="d-grid ranking-container">
-          <div className="ranking-group w-100 ranking-header" style={{ columnGap: '1rem' }}>
+          <div className="ranking-group w-100 ranking-header column-gap-3">
             <div className="ranking-score">Team</div>
             <div className="d-flex" style={{ marginRight: 20, columnGap: 60 }}>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedTeamBy(SortType.TeamScore);
                   if (sortedTeamBy === SortType.TeamScore) {
@@ -511,8 +506,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                 </span>
               </div>
               <div
-                className="text-center"
-                style={{ width: 'max-content' }}
+                className="text-center w-max-content"
                 onClick={() => {
                   setSortedTeamBy(SortType.Games);
                   if (sortedTeamBy === SortType.Games) {
@@ -540,8 +534,8 @@ const TeamPVP = (props: IStyleSheetData) => {
               .map((value, index) => (
                 <Accordion.Item key={index} eventKey={index.toString()}>
                   <Accordion.Header>
-                    <div className="d-flex align-items-center w-100 justify-content-between" style={{ gap: 15 }}>
-                      <div className="d-flex" style={{ gap: 15 }}>
+                    <div className="d-flex align-items-center w-100 justify-content-between gap-3">
+                      <div className="d-flex gap-3">
                         {value.teamsData.map((value, index) => (
                           <div className="text-center" key={index}>
                             <div className="d-flex justify-content-center">
@@ -575,7 +569,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                         <div className="text-center" style={{ width: 200 }}>
                           <span className="ranking-score score-ic text-black">{value.teamScore}</span>
                         </div>
-                        <div style={{ width: 'fit-content' }} className="text-center ranking-score score-ic text-black">
+                        <div className="text-center ranking-score score-ic text-black w-fit-content">
                           {toFloatWithPadding((value.games * 100) / value.teamsTotalGames, 2)}
                           <span className="caption text-black">
                             {value.games}/{value.teamsTotalGames}
@@ -588,10 +582,9 @@ const TeamPVP = (props: IStyleSheetData) => {
                     <Fragment>
                       {value.teamsData.map((value, index) => (
                         <div
-                          className="d-flex align-items-center p-3"
+                          className="d-flex align-items-center p-3 gap-3"
                           key={index}
                           style={{
-                            gap: '1rem',
                             backgroundImage: computeBgType(
                               value.pokemonData?.types,
                               value.pokemonType,
@@ -628,7 +621,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                           </div>
                           <div className="ranking-group">
                             <div>
-                              <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
+                              <div className="d-flex align-items-center column-gap-2">
                                 <b className="text-white text-shadow-black">{`#${value.id} ${splitAndCapitalize(
                                   value.name,
                                   '-',
@@ -643,7 +636,7 @@ const TeamPVP = (props: IStyleSheetData) => {
                                   arr={value.pokemonData?.types}
                                 />
                               </div>
-                              <div className="d-flex" style={{ gap: 10 }}>
+                              <div className="d-flex gap-2">
                                 <TypeBadge
                                   isGrow
                                   isFind
