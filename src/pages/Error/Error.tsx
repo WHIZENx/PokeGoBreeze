@@ -15,7 +15,10 @@ const Error = (props: IErrorPage) => {
   const dispatch = useDispatch();
   const location = useLocation() as unknown as Location<LocationState>;
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  useChangeTitle(location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found');
+  useChangeTitle(
+    location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found',
+    props.isShowTitle
+  );
 
   useEffect(() => {
     if (spinner.isLoading) {
@@ -45,7 +48,7 @@ const Error = (props: IErrorPage) => {
                 </p>
               </span>
               <span>Maybe try one of the links in the menu or press Back to Home to go to the home page.</span>
-              <div style={{ marginTop: 15 }}>
+              <div className="mt-3">
                 <LinkToTop className="btn btn-danger" to="/">
                   Back to Home
                 </LinkToTop>

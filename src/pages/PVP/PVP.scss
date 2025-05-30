@@ -88,7 +88,6 @@
   justify-content: space-between;
   width: 100%;
   padding: 1rem 0.5rem;
-  border: 1px solid #b8d4da;
   align-items: center;
 }
 
@@ -185,13 +184,6 @@
 
 .card-ranking {
   padding: 10px;
-  border-left: 2px solid #b8d4da;
-  border-right: 2px solid #b8d4da;
-  border-bottom: 2px solid #b8d4da;
-}
-
-.card-ranking:first-of-type {
-  border-top: 2px solid #b8d4da;
 }
 
 .view-pokemon {
@@ -252,19 +244,8 @@
   background-color: lightgray;
 }
 
-.border-box-battle {
-  border: 2px solid lightgray;
-}
-
 .pokemon-battle-header {
   padding: 10px;
-  border-right: 1px solid gray;
-  border-top: 1px solid gray;
-  border-bottom: 1px solid gray;
-}
-
-.timeline-vertical .w-50:first-child .pokemon-battle-header {
-  border-left: 1px solid gray;
 }
 
 .battle-container {
@@ -384,7 +365,6 @@
 }
 
 .bg-ref-pokemon {
-  border: 1px solid lightgray;
   padding: 10px;
   display: flex;
   flex-direction: column;

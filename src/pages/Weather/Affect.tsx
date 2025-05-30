@@ -35,34 +35,40 @@ const Affect = (prop: IWeatherAffComponent) => {
   };
 
   return (
-    <div className="element-top">
+    <div className="mt-2">
       <h5 className="text-center">
         <b>As Weather</b>
       </h5>
-      <h6 className="text-center">
-        <b>Select Weather</b>
-      </h6>
-      <div className=" d-flex justify-content-center">
-        <div
-          className="card-input"
-          tabIndex={0}
-          onClick={() => setShowWeather(true)}
-          onBlur={() => setShowWeather(false)}
-        >
-          <div className="card-select">
-            <CardWeather value={splitAndCapitalize(currentWeather, '_', ' ')} />
-          </div>
-          {showWeather && (
-            <div className="result-weather">
-              <ul>
-                {weathers.map((value, index) => (
-                  <li className="container card-pokemon" key={index} onMouseDown={() => changeWeather(value)}>
-                    <CardWeather value={splitAndCapitalize(value, '_', ' ')} />
-                  </li>
-                ))}
-              </ul>
+      <div className="row">
+        <div className="col d-flex justify-content-center">
+          <div>
+            <h6 className="text-center">
+              <b>Select Weather</b>
+            </h6>
+            <div className=" d-flex justify-content-center">
+              <div
+                className="card-input mb-3"
+                tabIndex={0}
+                onClick={() => setShowWeather(true)}
+                onBlur={() => setShowWeather(false)}
+              >
+                <div className="card-select">
+                  <CardWeather value={splitAndCapitalize(currentWeather, '_', ' ')} />
+                </div>
+                {showWeather && (
+                  <div className="result-weather">
+                    <ul>
+                      {weathers.map((value, index) => (
+                        <li className="container card-pokemon" key={index} onMouseDown={() => changeWeather(value)}>
+                          <CardWeather value={splitAndCapitalize(value, '_', ' ')} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
       <WeatherEffective weatherEffective={weatherEffective} />

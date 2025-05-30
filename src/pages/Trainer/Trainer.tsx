@@ -30,10 +30,8 @@ const Trainer = () => {
   }, [trainers, level]);
 
   return (
-    <div className="container" style={{ padding: 15 }}>
-      <h2 className="title-leagues" style={{ marginBottom: 15 }}>
-        Trainer
-      </h2>
+    <div className="container p-3">
+      <h2 className="title-leagues mb-3">Trainer</h2>
       <hr />
       <div>
         <Form.Select onChange={(e) => setLevel(toNumber(e.target.value))} defaultValue={level}>
@@ -46,17 +44,17 @@ const Trainer = () => {
       </div>
       {data && (
         <>
-          <p className="title-leagues element-top">Receive Items</p>
-          <div className="d-flex justify-content-center element-top">
+          <p className="title-leagues mt-2">Receive Items</p>
+          <div className="d-flex justify-content-center mt-2">
             <div className="trainer-levelup">
               <div className="levelup-container">
                 <>
                   {data.levelUps.map((value, index) => (
                     <div className="d-flex justify-content-center flex-column align-items-center" key={index}>
                       <img
-                        className="pokemon-sprite-medium"
-                        style={{ width: 64 }}
-                        alt="img-pokemon"
+                        className="pokemon-sprite-medium w-9"
+                        alt="Pokémon Image"
+                        title={splitAndCapitalize(value.name.replace('ITEM_', ''), '_', ' ')}
                         src={getItemSpritePath(value.name)}
                       />
                       <span className="caption text-black">
@@ -70,17 +68,17 @@ const Trainer = () => {
           </div>
           {isNotEmpty(data.itemUnlocks) && (
             <>
-              <p className="title-leagues element-top">Receive Items</p>
-              <div className="d-flex justify-content-center element-top">
+              <p className="title-leagues mt-2">Receive Items</p>
+              <div className="d-flex justify-content-center mt-2">
                 <div className="trainer-levelup">
                   <div className="levelup-container justify-content-center">
                     <>
                       {data.itemUnlocks?.map((value, index) => (
                         <div className="d-flex justify-content-center flex-column align-items-center" key={index}>
                           <img
-                            className="pokemon-sprite-medium"
-                            style={{ width: 64 }}
-                            alt="img-pokemon"
+                            className="pokemon-sprite-medium w-9"
+                            alt="Pokémon Image"
+                            title={splitAndCapitalize(value.replace('ITEM_', ''), '_', ' ')}
                             src={getItemSpritePath(value)}
                           />
                           <span className="caption text-black">

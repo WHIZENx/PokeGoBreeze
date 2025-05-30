@@ -75,13 +75,13 @@ const FromChange = (props: IFromChangeComponent) => {
               <b>Form Change</b>
             </h4>
             {isNotEmpty(pokeAssets) && (
-              <div className="element-top d-flex">
+              <div className="mt-2 d-flex">
                 <div className="d-flex flex-column align-items-center justify-content-center w-50">
                   <div className="d-flex flex-column align-items-center justify-content-center" id="form-origin">
                     <div style={{ width: 96 }}>
                       <img
                         className="pokemon-sprite-large"
-                        alt="pokemon-model"
+                        alt="Pokémon Model"
                         src={APIService.getPokemonModel(dataSrc, props.pokemonData.id)}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
@@ -98,10 +98,7 @@ const FromChange = (props: IFromChangeComponent) => {
                     </span>
                   </div>
                 </div>
-                <div
-                  className="d-flex flex-column align-items-center justify-content-center w-50"
-                  style={{ rowGap: 15 }}
-                >
+                <div className="d-flex flex-column align-items-center justify-content-center w-50 row-gap-3">
                   {pokemon.formChange.map((value, key) => (
                     <Fragment key={key}>
                       {value.availableForm.map((name, index) => (
@@ -113,7 +110,7 @@ const FromChange = (props: IFromChangeComponent) => {
                           <div style={{ width: 96 }}>
                             <img
                               className="pokemon-sprite-large"
-                              alt="pokemon-model"
+                              alt="Pokémon Model"
                               src={APIService.getPokemonModel(findPokeAsset(name), pokemon.id)}
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
@@ -139,45 +136,36 @@ const FromChange = (props: IFromChangeComponent) => {
                       <Xarrow
                         labels={{
                           end: (
-                            <div className="position-absolute" style={{ left: '-5rem' }}>
+                            <div className="position-absolute -left-10">
                               {value.candyCost && (
-                                <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
+                                <span className="d-flex align-items-center caption w-max-content">
                                   <Candy
                                     id={value.componentPokemonSettings ? value.componentPokemonSettings.id : pokemon.id}
                                   />
                                   <LinkToTop
-                                    style={{ marginLeft: 2 }}
+                                    className="ms-1"
                                     to={`/pokemon/${value.componentPokemonSettings?.id}${generateParamForm(
                                       pokemon.form
                                     )}`}
                                   >
                                     {splitAndCapitalize(value.componentPokemonSettings?.pokedexId, '_', ' ')}
                                   </LinkToTop>
-                                  <span style={{ marginLeft: 2 }}>{`x${value.candyCost}`}</span>
+                                  <span className="ms-1">{`x${value.candyCost}`}</span>
                                 </span>
                               )}
                               {value.stardustCost && (
-                                <span
-                                  className="d-flex align-items-center caption"
-                                  style={{
-                                    width: 'max-content',
-                                    marginTop: 5,
-                                  }}
-                                >
+                                <span className="d-flex align-items-center caption mt-1 w-max-content">
                                   <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
                                     <img
-                                      alt="img-stardust"
+                                      alt="Image Stardust"
                                       height={20}
                                       src={APIService.getItemSprite('stardust_painted')}
                                     />
                                   </div>
-                                  <span style={{ marginLeft: 2 }}>{`x${value.stardustCost}`}</span>
+                                  <span className="ms-1">{`x${value.stardustCost}`}</span>
                                 </span>
                               )}
-                              <span
-                                className="d-flex flex-column caption"
-                                style={{ width: 'max-content', marginTop: 5 }}
-                              >
+                              <span className="d-flex flex-column caption mt-1 w-max-content">
                                 {value.item && (
                                   <>
                                     <span>Required Item</span>

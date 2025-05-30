@@ -398,8 +398,8 @@ const Evolution = (props: IEvolutionComponent) => {
     <PokemonIconType pokemonType={props.pokemonData?.pokemonType} size={30}>
       <img
         className="pokemon-sprite"
-        id="img-pokemon"
-        alt="img-pokemon"
+        id="Pokémon Image"
+        alt="Pokémon Image"
         src={APIService.getPokemonAsset('pokemon-animation', 'all', convertFormGif(value.sprite), 'gif')}
         onError={(e) => {
           e.currentTarget.onerror = null;
@@ -442,15 +442,15 @@ const Evolution = (props: IEvolutionComponent) => {
             <Xarrow
               labels={{
                 end: (
-                  <div className="position-absolute" style={{ left: -40 }}>
+                  <div className="position-absolute -left-6">
                     {value.pokemonType !== PokemonType.GMax && (
                       <div>
                         {toNumber(data?.evoToId) > 0 &&
                           !data?.itemCost &&
                           (data?.candyCost || data?.purificationEvoCandyCost) && (
-                            <span className="d-flex align-items-center caption" style={{ width: 'max-content' }}>
+                            <span className="d-flex align-items-center caption w-max-content">
                               <Candy id={value.id} />
-                              <span style={{ marginLeft: 2 }}>{`x${
+                              <span className="ms-1">{`x${
                                 props.pokemonData?.pokemonType === PokemonType.Purified
                                   ? data.purificationEvoCandyCost
                                   : data.candyCost
@@ -504,7 +504,7 @@ const Evolution = (props: IEvolutionComponent) => {
                               data.quest.isMustBeBuddy ? (
                                 <div className="d-flex align-items-end">
                                   <DirectionsWalkIcon fontSize="small" />
-                                  <PetsIcon sx={{ fontSize: '1rem' }} />
+                                  <PetsIcon className="u-fs-3" />
                                 </div>
                               ) : (
                                 <DirectionsWalkIcon fontSize="small" />
@@ -525,21 +525,18 @@ const Evolution = (props: IEvolutionComponent) => {
                         {data?.quest?.evolutionItemRequirement && (
                           <Fragment>
                             <img
-                              alt="img-item-required"
+                              alt="Image Item Required"
                               height={20}
                               src={APIService.getItemEvo(data.quest.evolutionItemRequirement)}
                             />
                             {data.itemCost && (
-                              <span
-                                className="d-flex align-items-center caption"
-                                style={{ width: 'max-content', marginLeft: 2 }}
-                              >{`x${data.itemCost}`}</span>
+                              <span className="d-flex align-items-center caption ms-1 w-max-content">{`x${data.itemCost}`}</span>
                             )}
                           </Fragment>
                         )}
                         {data?.quest?.lureItemRequirement && (
                           <img
-                            alt="img-troy-required"
+                            alt="Image Troy Required"
                             height={20}
                             src={APIService.getItemTroy(data.quest.lureItemRequirement)}
                           />
@@ -558,11 +555,11 @@ const Evolution = (props: IEvolutionComponent) => {
                               </Fragment>
                             )}
                             {data?.quest.condition.desc === ConditionType.Pokemon && (
-                              <div className="d-flex align-items-center" style={{ marginTop: 5 }}>
+                              <div className="d-flex align-items-center mt-1">
                                 {data.quest.condition.pokemonType?.map((value, index) => (
-                                  <IconType key={index} height={20} alt="type-logo" type={value} />
+                                  <IconType key={index} height={20} alt="Pokémon GO Type Logo" type={value} />
                                 ))}
-                                <span style={{ marginLeft: 2 }}>{`x${data.quest.goal}`}</span>
+                                <span className="ms-1">{`x${data.quest.goal}`}</span>
                               </div>
                             )}
                             {data.quest.condition.desc === ConditionType.WinRaid && (
@@ -573,9 +570,15 @@ const Evolution = (props: IEvolutionComponent) => {
                             )}
                             {data.quest.condition.desc === ConditionType.PokemonBattle && (
                               <Fragment>
-                                <div className="inline-flex" style={{ gap: 3 }}>
+                                <div className="inline-flex gap-1">
                                   {data.quest.condition.opponentPokemonBattle?.types.map((value, index) => (
-                                    <IconType key={index} width={20} height={20} alt="type-logo" type={value} />
+                                    <IconType
+                                      key={index}
+                                      width={20}
+                                      height={20}
+                                      alt="Pokémon GO Type Logo"
+                                      type={value}
+                                    />
                                   ))}
                                 </div>
                                 <span style={{ fontSize: 11, lineHeight: 1 }}>{`Battle x${data.quest.goal} ${
@@ -605,7 +608,7 @@ const Evolution = (props: IEvolutionComponent) => {
                           <span className="caption">
                             <Fragment>
                               <img
-                                alt="icon-incense"
+                                alt="Icon Incense"
                                 width={20}
                                 height={20}
                                 src={getItemSpritePath(ItemName.Incense)}
@@ -681,8 +684,8 @@ const Evolution = (props: IEvolutionComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75" style={{ padding: 0, margin: 'auto', height: 120 }}>
-        <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: color }} />
+      <div className="ph-item w-75 p-0 m-auto" style={{ height: 120 }}>
+        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
   };
@@ -697,7 +700,7 @@ const Evolution = (props: IEvolutionComponent) => {
             <PopoverConfig id="popover-info">
               <span className="info-evo">
                 <span className="d-block caption">
-                  - <img alt="img-stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of
+                  - <img alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of
                   pokemon.
                 </span>
                 <span className="d-block caption">
@@ -708,7 +711,7 @@ const Evolution = (props: IEvolutionComponent) => {
                 </span>
                 <span className="d-block caption">
                   - <DirectionsWalkIcon fontSize="small" />
-                  <PetsIcon sx={{ fontSize: '1rem' }} /> : Walk together with buddy.
+                  <PetsIcon className="u-fs-3" /> : Walk together with buddy.
                 </span>
                 <span className="d-block caption">
                   - <DirectionsWalkIcon fontSize="small" /> : Buddy walk with trainer.
@@ -720,7 +723,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <DarkModeIcon fontSize="small" /> : Evolution during at night.
                 </span>
                 <span className="d-block caption">
-                  - <img alt="img-troy-required" height={20} src={APIService.getItemTroy()} /> : Evolution in lure
+                  - <img alt="Image Troy Required" height={20} src={APIService.getItemTroy()} /> : Evolution in lure
                   module.
                 </span>
                 <span className="d-block caption">
@@ -730,7 +733,7 @@ const Evolution = (props: IEvolutionComponent) => {
                   - <CallMadeIcon fontSize="small" /> : Throw pokeball with condition.
                 </span>
                 <span className="d-block caption">
-                  - <img alt="img-stardust" height={20} src={APIService.getPokeSprite()} /> : Catch pokemon with type.
+                  - <img alt="Image Stardust" height={20} src={APIService.getPokeSprite()} /> : Catch pokemon with type.
                 </span>
                 <span className="d-block caption">
                   - <SportsMartialArtsIcon fontSize="small" /> : Win raid.

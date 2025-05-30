@@ -88,8 +88,8 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
       <LinkToTop to={`/pokemon/${row.num}${generateParamForm(row.form)}`}>
         <img
           height={48}
-          alt="img-pokemon"
-          style={{ marginRight: 10 }}
+          alt="Pokémon Image"
+          className="me-2"
           src={APIService.getPokeIconSprite(row.sprite, false)}
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -265,14 +265,14 @@ const Move = (props: IMovePage) => {
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
       <div style={{ width: 35 }}>
-        <img alt="icon-item" className="sprite-type" src={getItemSpritePath(itemName)} />
+        <img alt="Icon Item" className="sprite-type" src={getItemSpritePath(itemName)} />
       </div>
       <span className="caption">{splitAndCapitalize(itemName.replace('ITEM_', ''), '_', ' ')}</span>
     </div>
   );
 
   return (
-    <div className={combineClasses('element-bottom poke-container', props.id ? '' : 'container')}>
+    <div className={combineClasses('pb-3 poke-container', props.id ? '' : 'container')}>
       {move ? (
         <>
           <div className="h-100 head-box d-flex flex-wrap align-items-center">
@@ -284,7 +284,7 @@ const Move = (props: IMovePage) => {
           {move.isMultipleWithType && (
             <Form.Select
               style={{ maxWidth: 250 }}
-              className="element-top w-50"
+              className="mt-2 w-50"
               onChange={(e) => {
                 searchParams.set(Params.MoveType, e.target.value.toLowerCase());
                 setSearchParams(searchParams);
@@ -310,14 +310,14 @@ const Move = (props: IMovePage) => {
         </>
       ) : (
         <div className="ph-item">
-          <div className="ph-row h-100 head-box d-flex" style={{ marginBottom: 0, paddingLeft: 0 }}>
-            <div className="ph-picture" style={{ width: '40%', height: 45 }} />
+          <div className="ph-row h-100 head-box d-flex mb-0 ps-0">
+            <div className="ph-picture w-pct-40" style={{ height: 45 }} />
           </div>
         </div>
       )}
       <hr />
-      <div className="row" style={{ margin: 0 }}>
-        <div className="col" style={{ padding: 0 }}>
+      <div className="row m-0">
+        <div className="col p-0">
           <table className="table-info move-table">
             <thead className="text-center">
               <tr>
@@ -341,10 +341,7 @@ const Move = (props: IMovePage) => {
                 <td>Type</td>
                 <td colSpan={2}>
                   {move && (
-                    <div
-                      style={{ width: 'fit-content' }}
-                      className={combineClasses('type-icon-small', move.type?.toLowerCase())}
-                    >
+                    <div className={combineClasses('type-icon-small w-fit-content', move.type?.toLowerCase())}>
                       {capitalize(move.type)}
                     </div>
                   )}
@@ -362,10 +359,9 @@ const Move = (props: IMovePage) => {
                   {move && (
                     <>
                       <img
-                        style={{ marginRight: 15 }}
-                        className="img-type-icon"
+                        className="img-type-icon me-3"
                         height={25}
-                        alt="img-type"
+                        alt="Image Weather"
                         src={APIService.getWeatherIconSprite(getWeatherEffective(move.type))}
                       />
                       <span className="d-inline-block caption">
@@ -411,7 +407,7 @@ const Move = (props: IMovePage) => {
               {move?.typeMove === TypeMove.Charge && (
                 <tr>
                   <td>PVE Bar Charged</td>
-                  <td colSpan={2} style={{ border: 'none' }}>
+                  <td colSpan={2}>
                     <ChargedBar barCount={getBarCharge(move.pveEnergy, true)} color={move.type?.toLowerCase()} />
                   </td>
                 </tr>
@@ -452,7 +448,7 @@ const Move = (props: IMovePage) => {
               {move?.typeMove === TypeMove.Charge && (
                 <tr>
                   <td>PVP Bar Charged</td>
-                  <td colSpan={2} style={{ border: 'none' }}>
+                  <td colSpan={2}>
                     <ChargedBar barCount={getBarCharge(move.pvpEnergy)} color={move.type?.toLowerCase()} />
                   </td>
                 </tr>
@@ -487,7 +483,7 @@ const Move = (props: IMovePage) => {
                           </span>
                         </span>
                       </td>
-                      <td>{toNumber(value.buffChance) * 100}%</td>
+                      <td className="theme-text-primary">{toNumber(value.buffChance) * 100}%</td>
                     </tr>
                   ))}
                 </Fragment>
@@ -523,7 +519,7 @@ const Move = (props: IMovePage) => {
                 <td>Sound</td>
                 <td colSpan={2}>
                   {move?.sound ? (
-                    <audio className="d-flex w-100" controls={true} style={{ height: 30 }}>
+                    <audio className="d-flex w-100" controls style={{ height: 30 }}>
                       <source src={APIService.getSoundMove(move.sound)} type="audio/wav" />
                       Your browser does not support the audio element.
                     </audio>
@@ -535,7 +531,7 @@ const Move = (props: IMovePage) => {
             </tbody>
           </table>
         </div>
-        <div className="col" style={{ padding: 0 }}>
+        <div className="col p-0">
           <table className="table-info move-damage-table">
             <thead className="text-center">
               <tr>
@@ -621,7 +617,7 @@ const Move = (props: IMovePage) => {
               </tr>
               {move?.bonus && (
                 <tr>
-                  <td className="table-sub-header" colSpan={2} style={{ padding: 0 }}>
+                  <td className="table-sub-header p-0" colSpan={2}>
                     <Accordion defaultActiveKey="0">
                       <Accordion.Item key={0} eventKey="0" className="table-sub-bonus">
                         <Accordion.Header className="table-sub-bonus">
@@ -680,7 +676,7 @@ const Move = (props: IMovePage) => {
                                 <td className="table-bonus-cost">
                                   <div className="d-inline-flex justify-content-center" style={{ width: 20 }}>
                                     <img
-                                      alt="img-stardust"
+                                      alt="Image Stardust"
                                       height={20}
                                       src={APIService.getItemSprite('stardust_painted')}
                                     />
@@ -703,7 +699,7 @@ const Move = (props: IMovePage) => {
                                         isEqual(move.bonus?.bonusType, BonusType.SlowFreezeBonus) ? (
                                           value
                                         ) : isEqual(move.bonus?.bonusType, BonusType.TimeBonus) ? (
-                                          <div className="d-flex flex-wrap" style={{ gap: 10 }}>
+                                          <div className="d-flex flex-wrap gap-2">
                                             {getValueOrDefault<string[]>(Array, value).map((item) =>
                                               renderReward(item)
                                             )}
@@ -734,11 +730,10 @@ const Move = (props: IMovePage) => {
                         <span className="d-flex align-items-center">
                           Released in GO
                           <img
-                            className={releasedGO ? '' : 'filter-gray'}
+                            className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
                             width={28}
                             height={28}
-                            style={{ marginLeft: 5 }}
-                            alt="pokemon-go-icon"
+                            alt="Pokémon GO Icon"
                             src={APIService.getPokemonGoIcon(icon)}
                           />
                         </span>
@@ -748,16 +743,16 @@ const Move = (props: IMovePage) => {
                 </td>
               </tr>
               <tr>
-                <td className="table-top-of-move" colSpan={2} style={{ padding: 0 }}>
+                <td className="table-top-of-move p-0" colSpan={2}>
                   <DataTable
                     columns={convertColumnDataType(columns)}
                     data={topListFilter}
-                    pagination={true}
+                    pagination
                     defaultSortFieldId={ColumnType.DPS}
                     defaultSortAsc={false}
-                    highlightOnHover={true}
-                    striped={true}
-                    fixedHeader={true}
+                    highlightOnHover
+                    striped
+                    fixedHeader
                     fixedHeaderScrollHeight="35vh"
                     progressPending={!progress}
                     customStyles={getCustomThemeDataTable()}

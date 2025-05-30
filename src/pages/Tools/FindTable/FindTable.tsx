@@ -10,7 +10,7 @@ import {
 } from '../../../util/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
-import DataTable, { ConditionalStyles, TableColumn } from 'react-data-table-component';
+import DataTable, { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
 import dataCPM from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
@@ -108,6 +108,19 @@ const columnsCP: TableColumn<IPredictCPModel>[] = [
   },
 ];
 
+const customStyles: TableStyles = {
+  rows: {
+    highlightOnHoverStyle: {
+      color: 'white !important',
+    },
+  },
+  cells: {
+    style: {
+      color: 'black',
+    },
+  },
+};
+
 const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
   {
     when: (row) => row.percent === 100,
@@ -131,6 +144,12 @@ const conditionalRowStyles: ConditionalStyles<IPredictStatsModel>[] = [
     when: (row) => row.percent > 51 && row.percent <= 64,
     style: {
       backgroundColor: '#ececc8',
+    },
+  },
+  {
+    when: (row) => row.percent <= 51,
+    style: {
+      backgroundColor: '#d7d7d7',
     },
   },
 ];
@@ -240,13 +259,13 @@ const FindTable = () => {
     <div className="d-inline-block text-center">
       <div className={`${style}-star`}>
         {isEqual(style, 'four') ? (
-          <HundoRate name="hundo-rate" value={starAmount} max={3} readOnly={true} />
+          <HundoRate name="hundo-rate" value={starAmount} max={3} readOnly />
         ) : (
-          <Rating name={`${style}-rate`} value={starAmount} max={3} readOnly={true} />
+          <Rating name={`${style}-rate`} value={starAmount} max={3} readOnly />
         )}
-        <hr style={{ margin: 0 }} />
+        <hr className="m-0" />
         <div>
-          <b>{star}</b>
+          <b className="text-black text-shadow">{star}</b>
         </div>
       </div>
       <p>{toFloatWithPadding((toNumber(star) * 100) / toNumber(preIvArr?.result.length, 1), 2)}%</p>
@@ -269,13 +288,13 @@ const FindTable = () => {
       <Fragment>
         {isNotEmpty(preIvArr?.result) && (
           <Fragment>
-            <p className="element-top">
+            <p className="mt-2">
               All of result: <b>{preIvArr?.result.length}</b>
             </p>
-            <p className="element-top">
+            <p className="mt-2">
               Average of percent: <b>{toFloatWithPadding(avgPercent, 2)}</b>
             </p>
-            <p className="element-top">
+            <p className="mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             {renderStar(fourStar, 3, 'four')}
@@ -289,12 +308,12 @@ const FindTable = () => {
           title={`Levels/IV for CP: ${preIvArr?.CP}`}
           columns={columnsIV}
           data={getValueOrDefault(Array, preIvArr?.result)}
-          pagination={true}
+          pagination
           defaultSortFieldId={ColumnType.Percent}
           defaultSortAsc={false}
           conditionalRowStyles={conditionalRowStyles}
-          highlightOnHover={true}
-          customStyles={getCustomThemeDataTable()}
+          highlightOnHover
+          customStyles={getCustomThemeDataTable(customStyles)}
         />
       </Fragment>
     );
@@ -311,20 +330,20 @@ const FindTable = () => {
       <Fragment>
         {isNotEmpty(preCpArr?.result) && (
           <Fragment>
-            <p className="element-top">
+            <p className="mt-2">
               Average of CP: <b>{Math.round(avgCp)}</b>
             </p>
-            <p className="element-top">
+            <p className="mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
             <DataTable
               title={`Levels/CP for IV: ${preCpArr?.IV.atkIV}/${preCpArr?.IV.defIV}/${preCpArr?.IV.staIV}`}
               columns={columnsCP}
               data={getValueOrDefault(Array, preCpArr?.result)}
-              pagination={true}
+              pagination
               defaultSortFieldId={ColumnType.Level}
-              highlightOnHover={true}
-              striped={true}
+              highlightOnHover
+              striped
               customStyles={getCustomThemeDataTable()}
             />
           </Fragment>
@@ -355,10 +374,10 @@ const FindTable = () => {
         title="Pokémon MIN/MAX CP"
         columns={columns}
         data={dataTable}
-        pagination={true}
+        pagination
         defaultSortFieldId={ColumnType.Level}
-        striped={true}
-        highlightOnHover={true}
+        striped
+        highlightOnHover
         customStyles={getCustomThemeDataTable()}
       />
     );
@@ -366,19 +385,19 @@ const FindTable = () => {
 
   return (
     <Fragment>
-      <div className="container element-top">
-        <Find isHide={true} clearStats={clearArrStats} />
+      <div className="container mt-2">
+        <Find isHide clearStats={clearArrStats} />
         <h1 id="main" className="text-center">
           Find IV
         </h1>
-        <form className="d-flex justify-content-center element-top" onSubmit={onFindStats.bind(this)}>
-          <Box sx={{ width: '50%', minWidth: 350 }}>
+        <form className="d-flex justify-content-center mt-2" onSubmit={onFindStats.bind(this)}>
+          <Box className="w-50" sx={{ minWidth: 350 }}>
             <div className="input-group mb-3">
               <div className="input-group-prepend">
                 <span className="input-group-text">CP</span>
               </div>
               <input
-                required={true}
+                required
                 value={searchCP}
                 type="number"
                 min={MIN_CP}
@@ -401,9 +420,9 @@ const FindTable = () => {
         <h1 id="main" className="text-center">
           Find CP
         </h1>
-        <form id="formCP" className="element-top" onSubmit={onFindCP.bind(this)}>
+        <form id="formCP" className="mt-2" onSubmit={onFindCP.bind(this)}>
           <div className="form-group d-flex justify-content-center text-center">
-            <Box sx={{ width: '50%', minWidth: 300 }}>
+            <Box className="w-50" sx={{ minWidth: 300 }}>
               <div className="d-flex justify-content-between">
                 <b>ATK</b>
                 <b>{searchATKIv}</b>
@@ -451,7 +470,7 @@ const FindTable = () => {
               />
             </Box>
           </div>
-          <div className="form-group d-flex justify-content-center text-center element-top">
+          <div className="form-group d-flex justify-content-center text-center mt-2">
             <button type="submit" className="btn btn-primary">
               Search
             </button>
@@ -459,7 +478,7 @@ const FindTable = () => {
         </form>
         {preCpArr && <Fragment>{showResultTableCP()}</Fragment>}
         <hr />
-        <div className="element-top">{findMinMax()}</div>
+        <div className="mt-2">{findMinMax()}</div>
       </div>
     </Fragment>
   );

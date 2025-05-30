@@ -17,10 +17,10 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
     <Fragment>
       {isNotEmpty(data) && (
         <Fragment>
-          <h6 className={props.isBlock ? 'element-top' : ''} style={{ marginBottom: 0 }}>
-            <b className="text-shadow">x{toFloat(amount, 3)}</b>
+          <h6 className={combineClasses('mb-0', props.isBlock ? 'mt-2' : '')}>
+            <b className="text-shadow-black">x{toFloat(amount, 3)}</b>
           </h6>
-          <div className="d-flex flex-wrap" style={{ gap: 5 }}>
+          <div className="d-flex flex-wrap gap-1">
             {data?.map((value, index) => (
               <span
                 key={index}
@@ -29,10 +29,10 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
                   'type-select-bg d-flex align-items-center filter-shadow'
                 )}
               >
-                <div style={{ display: 'contents', width: 16 }}>
+                <div className="w-3 d-contents">
                   <img
                     className="pokemon-sprite-small sprite-type-select filter-shadow"
-                    alt="img-type-pokemon"
+                    alt="Pokémon GO Type Logo"
                     src={APIService.getTypeHqSprite(value)}
                   />
                 </div>
@@ -68,7 +68,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       });
 
       return (
-        <div className="container d-flex flex-column" style={{ paddingBottom: '0.5rem', gap: '0.5rem' }}>
+        <div className="container d-flex flex-column pb-2 gap-2">
           {renderEffective(EffectiveType.VeryWeakness, data.veryWeak)}
           {renderEffective(EffectiveType.Weakness, data.weak)}
         </div>
@@ -84,7 +84,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         }
       });
       return (
-        <div className="container d-flex flex-column" style={{ paddingBottom: '0.5rem', gap: '0.5rem' }}>
+        <div className="container d-flex flex-column pb-2 gap-2">
           {renderEffective(EffectiveType.Neutral, data.neutral)}
         </div>
       );
@@ -103,7 +103,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         }
       });
       return (
-        <div className="container d-flex flex-column" style={{ paddingBottom: '0.5rem', gap: '0.5rem' }}>
+        <div className="container d-flex flex-column pb-2 gap-2">
           {renderEffective(EffectiveType.SuperResistance, data.superResist)}
           {renderEffective(EffectiveType.VeryResistance, data.veryResist)}
           {renderEffective(EffectiveType.Resistance, data.resist)}

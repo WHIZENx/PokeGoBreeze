@@ -18,8 +18,7 @@ const SearchBar = (props: ISearchBarComponent) => {
       {props.data?.prev && (
         <div
           title="Previous Pokémon"
-          className={combineClasses('prev-block', 'h-100', `col${props.data.next ? '-6' : ''}`)}
-          style={{ float: 'left', padding: 0 }}
+          className={combineClasses('prev-block p-0 h-100 float-start', `col${props.data.next ? '-6' : ''}`)}
         >
           <div
             className="d-flex justify-content-start align-items-center h-100"
@@ -31,16 +30,16 @@ const SearchBar = (props: ISearchBarComponent) => {
             }}
             title={`#${props.data.prev.id} ${splitAndCapitalize(props.data.prev.name, '-', ' ')}`}
           >
-            <div style={{ cursor: 'pointer' }}>
+            <div className="cursor-pointer">
               <b>
                 <NavigateBeforeIcon fontSize="large" />
               </b>
             </div>
-            <div className="h-100" style={{ width: 60, cursor: 'pointer' }}>
+            <div className="h-100 cursor-pointer" style={{ width: 60 }}>
               <img
                 style={{ padding: '5px 5px 5px 0' }}
                 className="pokemon-navigate-sprite"
-                alt="img-full-pokemon"
+                alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(props.data.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
@@ -48,8 +47,8 @@ const SearchBar = (props: ISearchBarComponent) => {
                 }}
               />
             </div>
-            <div className="w-100" style={{ cursor: 'pointer', textAlign: 'start', overflow: 'hidden' }}>
-              <div style={{ textAlign: 'start' }}>
+            <div className="w-100 cursor-pointer text-start overflow-hidden">
+              <div className="text-start">
                 <b>#{props.data.prev.id}</b>
               </div>
               <div className="text-navigate">{splitAndCapitalize(props.data.prev.name, '-', ' ')}</div>
@@ -60,8 +59,7 @@ const SearchBar = (props: ISearchBarComponent) => {
       {props.data?.next && (
         <div
           title="Next Pokémon"
-          className={combineClasses('next-block', 'h-100', `col${props.data.prev ? '-6' : ''}`)}
-          style={{ float: 'right', padding: 0 }}
+          className={combineClasses('next-block p-0 h-100 float-end', `col${props.data.prev ? '-6' : ''}`)}
         >
           <div
             className="d-flex justify-content-end align-items-center h-100"
@@ -73,17 +71,17 @@ const SearchBar = (props: ISearchBarComponent) => {
             }}
             title={`#${props.data.next.id} ${splitAndCapitalize(props.data.next.name, '-', ' ')}`}
           >
-            <div className="w-100" style={{ cursor: 'pointer', textAlign: 'end', overflow: 'hidden' }}>
-              <div style={{ textAlign: 'end' }}>
+            <div className="w-100 cursor-pointer text-end overflow-hidden">
+              <div className="text-end">
                 <b>#{props.data.next.id}</b>
               </div>
               <div className="text-navigate">{splitAndCapitalize(props.data.next.name, '-', ' ')}</div>
             </div>
-            <div className="h-100" style={{ width: 60, cursor: 'pointer' }}>
+            <div className="h-100 cursor-pointer" style={{ width: 60 }}>
               <img
                 style={{ padding: '5px 0 5px 5px' }}
                 className="pokemon-navigate-sprite"
-                alt="img-full-pokemon"
+                alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(props.data.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
@@ -91,7 +89,7 @@ const SearchBar = (props: ISearchBarComponent) => {
                 }}
               />
             </div>
-            <div style={{ cursor: 'pointer' }}>
+            <div className="cursor-pointer">
               <b>
                 <NavigateNextIcon fontSize="large" />
               </b>

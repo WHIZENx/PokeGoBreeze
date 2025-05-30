@@ -50,9 +50,9 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
         }
         return `Level: ${option.level} | CP: ${option.CP}`;
       }}
-      selectOnFocus={true}
-      clearOnBlur={true}
-      handleHomeEndKeys={true}
+      selectOnFocus
+      clearOnBlur
+      handleHomeEndKeys
       renderOption={(props, option) => (
         <li {...props} key={props.key}>{`Level: ${option.level} | CP: ${option.CP}`}</li>
       )}
@@ -60,8 +60,14 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
         width: !isNullOrUndefined(props.width) ? props.width : 'auto',
         minWidth: !isNullOrUndefined(props.minWidth) ? props.minWidth : 'auto',
       }}
-      freeSolo={true}
-      renderInput={(params) => <TextField {...params} label={props.label} />}
+      freeSolo
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={props.label}
+          inputProps={{ ...params.inputProps, pattern: '[0-9]*', inputMode: 'numeric', type: 'number', min: 0 }}
+        />
+      )}
     />
   );
 };

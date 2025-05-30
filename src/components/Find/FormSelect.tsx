@@ -297,13 +297,13 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   return (
     <Fragment>
-      <div className="d-inline-block" style={{ width: 60, height: 60 }}>
+      <div className="d-inline-block w-9 h-9">
         {dataStorePokemon?.prev && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetPrev?.()}>
+          <div className="cursor-pointer" onClick={() => props.onSetPrev?.()}>
             <div>
               <img
-                height={60}
-                alt="img-full-pokemon"
+                height={64}
+                alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(dataStorePokemon.prev.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
@@ -320,29 +320,25 @@ const FormSelect = (props: IFormSelectComponent) => {
         )}
       </div>
       <img
-        style={{ padding: 10 }}
+        className="p-2"
         height={200}
-        alt="img-full-pokemon"
-        src={
-          currentForm?.form
-            ? APIService.getPokeFullSprite(
-                dataStorePokemon?.current?.id,
-                convertPokemonImageName(currentForm?.form.formName)
-              )
-            : APIService.getPokeFullSprite(dataStorePokemon?.current?.id)
-        }
+        alt="Image Pokemon"
+        src={APIService.getPokeFullSprite(
+          dataStorePokemon?.current?.id,
+          convertPokemonImageName(currentForm?.form.formName)
+        )}
         onError={(e) => {
           e.currentTarget.onerror = null;
           e.currentTarget.src = getValidPokemonImgPath(e.currentTarget.src, dataStorePokemon?.current?.id);
         }}
       />
-      <div className="d-inline-block" style={{ width: 60, height: 60 }}>
+      <div className="d-inline-block w-9 h-9">
         {dataStorePokemon?.next && (
-          <div style={{ cursor: 'pointer' }} onClick={() => props.onSetNext?.()}>
+          <div className="cursor-pointer" onClick={() => props.onSetNext?.()}>
             <div>
               <img
-                height={60}
-                alt="img-full-pokemon"
+                height={64}
+                alt="Image Pokemon"
                 src={APIService.getPokeFullSprite(dataStorePokemon.next.id)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
@@ -358,9 +354,7 @@ const FormSelect = (props: IFormSelectComponent) => {
           </div>
         )}
       </div>
-      <div className="element-top" style={{ height: 64 }}>
-        {currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}
-      </div>
+      <div className="mt-2 h-9">{currentForm?.defaultId && <TypeInfo arr={currentForm.form.types} />}</div>
       <h4>
         <b>
           {dataStorePokemon?.current?.id && <>{`#${dataStorePokemon.current.id} `}</>}
@@ -388,7 +382,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = APIService.getPokeIconSprite();
                       }}
-                      alt="img-icon-form"
+                      alt="Image Icon Form"
                       src={formIconAssets(value)}
                     />
                     <p>
@@ -408,13 +402,13 @@ const FormSelect = (props: IFormSelectComponent) => {
             ))}
           </Fragment>
         ) : (
-          <LoadGroup isShow={true} isVertical={true} isHideAttr={true} size={40} />
+          <LoadGroup isShow isVertical isHideAttr size={40} />
         )}
       </div>
       {!props.isHide && (
         <div className="d-flex justify-content-center text-center">
           <TypeRadioGroup
-            row={true}
+            row
             aria-labelledby="row-types-group-label"
             name="row-types-group"
             value={typePoke}
@@ -425,7 +419,7 @@ const FormSelect = (props: IFormSelectComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-pokemon" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
+                  <img height={32} alt="Pokémon Image" src={getItemSpritePath(ItemName.PokeBall)} /> Pokémon Stats
                 </span>
               }
             />

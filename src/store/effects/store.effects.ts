@@ -3,7 +3,7 @@ import { calculateBaseCPM, calculateCPM } from '../../core/cpm';
 import { Database } from '../../core/models/API/db.model';
 import { PokemonDataGM } from '../../core/models/options.model';
 import { IPokemonData, PokemonEncounter } from '../../core/models/pokemon.model';
-import { PokemonPVPMove } from '../../core/models/pvp.model';
+import { IPVPDataModel, PokemonPVPMove } from '../../core/models/pvp.model';
 import {
   optionPokemonData,
   optionLeagues,
@@ -253,23 +253,33 @@ export const loadAssets = async (
   });
 };
 
-export const loadPVP = (dispatch: Dispatch, timestamp: TimestampModel) => {
+export const loadPVP = (dispatch: Dispatch, timestamp: TimestampModel, pvp: IPVPDataModel | undefined) => {
   APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, options).then((res) => {
     if (isNotEmpty(res.data)) {
       const pvpTimestamp = new Date(getValueOrDefault(String, res.data[0].commit.committer.date)).getTime();
-      if (pvpTimestamp !== timestamp.pvp) {
+      if (pvpTimestamp !== timestamp.pvp || !pvp || !isNotEmpty(pvp.rankings) || !isNotEmpty(pvp.trains)) {
         const pvpUrl = res.data[0].commit.tree.url;
         if (pvpUrl) {
           APIService.getFetchUrl<APITree>(pvpUrl, options)
             .then((pvpRoot) => {
               const pvpRootPath = pvpRoot.data.tree.find((item) => isEqual(item.path, 'src'));
-              return APIService.getFetchUrl<APITree>(`${pvpRootPath?.url}`, options);
+              if (pvpRootPath) {
+                return APIService.getFetchUrl<APITree>(`${pvpRootPath.url}`, options);
+              }
             })
             .then((pvpFolder) => {
+              if (!pvpFolder) {
+                return;
+              }
               const pvpFolderPath = pvpFolder.data.tree.find((item) => isEqual(item.path, 'data'));
-              return APIService.getFetchUrl<APITree>(`${pvpFolderPath?.url}?recursive=1`, options);
+              if (pvpFolderPath) {
+                return APIService.getFetchUrl<APITree>(`${pvpFolderPath.url}?recursive=1`, options);
+              }
             })
             .then((pvp) => {
+              if (!pvp) {
+                return;
+              }
               const pvpRank = pvpConvertPath(pvp.data, 'rankings/');
               const pvpTrain = pvpConvertPath(pvp.data, 'training/analysis/');
 

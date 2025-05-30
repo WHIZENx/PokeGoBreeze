@@ -13,7 +13,7 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
     <>
       {pokemon && !pokemon.releasedGO && (
         <Alert variant={VariantType.Danger}>
-          <h5 className="text-danger" style={{ margin: 0 }}>
+          <h5 className="text-danger m-0">
             {'* '}
             <b>
               {splitAndCapitalize(
@@ -26,8 +26,8 @@ const AlertReleased = (props: IAlertReleasedComponent) => {
             <img
               width={50}
               height={50}
-              style={{ marginLeft: 10 }}
-              alt="pokemon-go-icon"
+              className="ms-2"
+              alt="Pokémon GO Icon"
               src={APIService.getPokemonGoIcon(props.icon)}
             />
           </h5>

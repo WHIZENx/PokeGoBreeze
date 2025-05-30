@@ -1,47 +1,55 @@
+@use "./common.scss" as *;
+
 // Dynamic theme classes
 .theme-card {
-  background-color: var(--background-paper);
-  color: var(--text-primary);
+  @include theme-background(var(--background-paper));
+  @include theme-text(var(--text-primary));
+  
   border-radius: var(--border-radius);
-  transition: background-color 0.3s, color 0.3s;
+
+  @include theme-transition;
 }
 
 .theme-input {
-  background-color: var(--background-input);
-  color: var(--text-primary);
-  border: 1px solid var(--background-table-divided);
+  @include theme-background(var(--background-input));
+  @include theme-text(var(--text-primary));
+  @include theme-border(var(--background-table-divided));
 
   &::placeholder {
-    color: var(--text-secondary);
+    @include theme-text(var(--text-secondary));
   }
 }
 
 .theme-btn {
-  background-color: var(--primary-main);
-  color: var(--primary-contrast-text);
+  @include theme-background(var(--primary-main));
+  @include theme-text(var(--primary-contrast-text));
+  
   border-radius: var(--border-radius);
 
   &:hover {
-    background-color: var(--primary-dark);
+    @include theme-background(var(--primary-dark));
   }
 }
 
+// Text color classes
 .theme-text-primary {
-  color: var(--text-primary) !important;
+  @include theme-text(var(--text-primary), true);
 }
 
 .theme-text-secondary {
-  color: var(--text-secondary);
+  @include theme-text(var(--text-secondary));
 }
 
+// Background color classes
 .theme-bg-default {
-  background-color: var(--background-default);
+  @include theme-background(var(--background-default));
 }
 
 .theme-table-primary {
-  background-color: var(--background-table-primary) !important;
+  @include theme-background(var(--background-table-primary), true);
 }
 
+// Theme spinner classes
 .theme-spinner {
   background: var(--loading-spinner) !important;
 }
@@ -50,152 +58,176 @@
   background: var(--loading-spinner-bg) !important;
 }
 
+// Selection and highlighting classes
 .theme-custom-selected-bg {
-  background-color: var(--custom-selected-bg);
+  @include theme-background(var(--custom-selected-bg));
 }
 
+// Table-related theme classes
 .theme-table-info-bg {
-  background-color: var(--custom-table-background-info);
-  border: 2px solid var(--custom-table-background-sub-head-border);
+  @include theme-background(var(--custom-table-background-info));
 }
 
+.theme-table-info-bg,
 .theme-table-info-bg-border {
-  border: 2px solid var(--custom-table-background-sub-head-border);
+  @include theme-border(2px);
 }
 
-.theme-text-shadow {
-  text-shadow: var(--shadow-default-revert) 1px 1px;
+// Text shadow
+.text-shadow {
+  text-shadow: 1px 1px var(--shadow-default-revert);
 }
 
 // Override some of the existing styles to use theme variables
-.caption {
-  color: var(--text-caption);
+.caption,
+.text-gen {
+  @include theme-text(var(--text-caption));
 }
 
+// Selection classes
 .highlight-select-pokemon,
 .current-select-pokemon,
 .selected {
-  background-color: var(--custom-selected) !important;
+  @include theme-background(var(--custom-selected), true);
 }
 
+// Result classes with shared styles
 .result,
 .result-pokemon,
 .result-move-select,
 .result-move-select-default {
-  background-color: var(--custom-selected-bg);
+  @include theme-background(var(--custom-selected-bg));
+  
   box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
-  color: var(--text-primary);
+
+  @include theme-text(var(--text-primary));
 }
 
+// Card classes with shared border
 .card-pokemon,
 .card-move,
 .card-pokemon-select {
-  border-top: 1px solid var(--background-table-divided);
+  @include theme-border(1px, top, var(--background-table-divided));
+  
+  &:hover,
+  .ranking-container .accordion-button.collapsed:hover {
+    @include theme-background(var(--custom-selected-hover), true);
+  }
 }
 
-.card-pokemon:hover,
-.card-move:hover,
-.card-pokemon-select:hover,
-.ranking-container .accordion-button.collapsed:hover {
-  background-color: var(--custom-selected-hover) !important;
-}
-
+// Error message classes
 .moveset-error {
-  background-color: var(--background-paper);
+  @include theme-background(var(--background-paper));
 }
 
 .moveset-error-msg {
-  background-color: var(--background-default);
-  color: var(--error-main, #f44336);
+  @include theme-background(var(--background-default));
+  @include theme-text(var(--error-main, #f44336));
 }
 
 // Button styling using CSS variables
 .btn-select-type {
-  background-color: var(--background-btn-type);
-  color: var(--text-primary);
-  border: 1px solid var(--divider);
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  @include theme-background(var(--background-btn-type));
+  @include theme-text(var(--text-primary));
+  @include theme-border;
+  @include theme-transition;
   
   &:hover:not(.select-type) {
-    background-color: var(--background-table-hover);
+    @include theme-background(var(--background-table-hover));
   }
   
   &.select-type {
-    background-color: var(--background-btn-type-select);
-    border-color: white;
+    @include theme-background(var(--background-btn-type-select));
+    @include theme-border(1px, all, white);
 
     span {
-      color: white !important;
+      @include theme-text(white, true);
     }
   }
 }
 
 // Border input styling
 .border-input {
-  border: 1px solid var(--divider);
-  background-color: var(--background-paper);
-  transition: background-color 0.3s, border-color 0.3s;
+  @include theme-background(var(--background-paper));
+  @include theme-border;
+  @include theme-transition;
 }
 
+// Table head classes
 .head-types {
-  background-color: var(--custom-table-background-head);
-  color: white;
-  transition: background-color 0.3s, color 0.3s;
+  @include table-head-style;
+  
   padding: 10px;
   font-weight: bolder;
 }
 
 .table-head {
-  background-color: var(--custom-table-background-head);
-  color: white;
-  border: 1px solid var(--custom-table-background-sub-head-border);
+  @include table-head-style;
+  @include theme-border;
 }
 
 .sticker-container h5 {
-  background-color: var(--custom-table-background-head);
-  color: var(--custom-table-background-info);
-  border: 1px solid var(--custom-table-background-sub-head-border);
+  @include theme-background(var(--custom-table-background-head));
+  @include theme-text(var(--custom-table-background-info));
+  @include theme-border;
 }
 
+// Shadow classes
 .theme-shadow {
   text-shadow: 1px 1px var(--shadow-custom);
 }
 
 .filter-shadow-hover:hover {
-  filter: drop-shadow(2px 2px 2px #000000cc);
+  filter: drop-shadow(2px 2px 2px var(--shadow-hover));
 }
 
+a.pokemon-link:hover {
+  box-shadow: inset 0 0 8px 1px var(--shadow-hover);
+}
+
+// Navigation block
 .prev-next-block {
-  background-color: var(--background-btn-type);
-  color: var(--text-primary) !important;
+  @include theme-background(var(--background-btn-type));
+  @include theme-text(var(--text-primary), true);
 
   a {
-    color: var(--text-primary) !important;
+    @include theme-text(var(--text-primary), true);
   }
 }
 
-.table-desc tbody tr td:nth-child(1) {
-  color: var(--text-primary) !important;
+// Table description classes
+.table-desc {
+  tbody {
+    tr {
+      td:nth-child(1) {
+        @include theme-text(var(--text-primary), true);
+      }
+      
+      td:nth-child(2) {
+        @include theme-text(var(--text-primary));
+      }
+      
+      &:nth-child(odd) td {
+        @include theme-background(var(--custom-table-background-odd), true);
+      }
+      
+      &:nth-child(even) td {
+        @include theme-background(var(--custom-table-background-even), true);
+      }
+    }
+  }
 }
 
+// Table cell styles with shared text color
+.ranking-header,
+.table-round-battle tbody tr td:not(:first-child),
 .table-raid-cal tbody tr td,
 .table-info tbody tr td:nth-child(2),
-.table-desc tbody tr td:nth-child(2) {
-  color: var(--text-primary);
+.battle-league tbody tr td {
+  @include theme-text(var(--text-primary));
 }
 
-.table-desc tbody tr:nth-child(odd) td {
-  background-color: var(--custom-table-background-odd) !important;
-}
-
-.table-desc tbody tr:nth-child(even) td {
-  background-color: var(--custom-table-background-even) !important;
-}
-
-.text-gen {
-  color: var(--text-caption);
-}
-
+// Classes with background-default
 .reward-league.group-rank-league,
 .bg-ref-pokemon,
 .result-type ul,
@@ -203,160 +235,257 @@
 .result-move ul,
 .pokemon-content,
 .table-raid-cal thead tr th:nth-child(1),
-.table-info tbody tr.info-costs td:nth-child(1) {
-  background-color: var(--background-default) !important;
+.table-info tbody tr.info-costs td:nth-child(1),
+.ranking-header,
+.table-round-battle tbody tr td:first-child,
+.table-round-battle tbody tr td:not(:first-child, .bg-summary) {
+  @include theme-background(var(--background-default), true);
 }
 
-.table-raid tbody tr td:nth-child(1) {
-  color: var(--custom-table-background-sub-head-text);
-  background-color: var(--custom-table-background-info) !important;
+// Add text color to ranking headers
+.table-round-battle tbody tr td:first-child {
+  @include theme-text(var(--text-primary), true);
 }
 
-.table-catch-chance thead th,
-.table-info tbody tr.info-costs td:nth-child(2) {
-  color: var(--text-primary);
-  background-color: var(--custom-table-background-info) !important;
-}
-
-.ranking-link-group button {
-  color: var(--text-primary);
-  background-color: var(--custom-table-background-info);
-}
-
-.table-info,
-.table-main,
-.table-moves {
-  tbody tr td.table-sub-header {
-    background-color: var(--custom-table-background-sub-head) !important;
-    color: var(--custom-table-background-sub-head-text) !important;
-    border: 1px solid var(--custom-table-background-sub-head-border);
-  }
-}
-
-.btn-form {
-  background-color: var(--custom-btn-form) !important;
-  color: var(--text-primary) !important;
-
-  &:hover:not(.form-selected) {
-    background-color: var(--custom-btn-form-hover);
-  }
-
-  &:focus {
-    background-color: var(--custom-btn-form-focus);
-  }
-
-  &.form-selected {
-    background-color: var(--custom-btn-form-selected) !important;
-  }
-}
-
-.card-select-enabled {
-  background-color: var(--background-paper);
-}
-
-.card-select-disabled {
-  background-color: var(--bs-secondary-bg) !important;
-  color: var(--bs-body-color) !important;
-}
-
-.select-down {
-  background-color: var(--bs-body-bg);
-}
-
-.stats-container {
-  background-color: var(--background-stats-container);
-}
-
-.table-movesets tbody tr td,
-.table-moves tbody tr td {
-  color: var(--custom-table-background-sub-head-text);
-}
-
-th,
-td,
-.table-info,
-.table-moves-col,
-.table-counter-container {
-  border: 1px solid var(--custom-table-background-sub-head-border) !important;
-}
-
-.table-info tbody tr td:first-child,
-.sub-group-model .gender {
-  background-color: var(--custom-table-background-info);
-  color: var(--custom-table-background-sub-head-text);
-  border: 1px solid var(--custom-table-background-sub-head-border);
-}
-
-.table-raid-cal tbody tr td:nth-child(1) {
-  background-color: var(--custom-table-background-sub-head) !important;
-  color: var(--text-primary) !important;
-}
-
+// Table classes with shared sub-head style
 .rank-header,
 .moves-title,
 .table-round-battle thead tr.table-header th,
 .table-raid-cal thead tr.table-header th:not(:first-child),
 .group-model .desc,
 .sub-header,
-.table-column-head {
-  background-color: var(--custom-table-background-sub-head) !important;
-  color: var(--custom-table-background-sub-head-text) !important;
-  border: 1px solid var(--custom-table-background-sub-head-border);
+.table-column-head,
+.table-raid-cal tbody tr td:nth-child(1) {
+  @include sub-head-style;
 }
 
+// Special case for raid-cal table cells
+.table-raid-cal tbody tr td:nth-child(1) {
+  @include theme-text(var(--text-primary), true);
+}
+
+// Table info styling
+.table-raid tbody tr td:nth-child(1),
+.table-info tbody tr td:first-child,
+.sub-group-model .gender {
+  @include table-info-style;
+}
+
+// Special table styles
+.table-catch-chance thead th,
+.table-info tbody tr.info-costs td:nth-child(2) {
+  @include theme-text(var(--text-primary));
+  @include theme-background(var(--custom-table-background-info), true);
+}
+
+.ranking-link-group button {
+  @include theme-text(var(--text-primary));
+  @include theme-background(var(--custom-table-background-info));
+}
+
+// Table classes with sub-header styles
+.table-info,
+.table-main,
+.table-moves {
+  tbody tr td.table-sub-header {
+    @include sub-head-style;
+  }
+}
+
+// Form button styling
+.btn-form {
+  @include theme-background(var(--custom-btn-form), true);
+  @include theme-text(var(--text-primary), true);
+
+  &:hover:not(.form-selected) {
+    @include theme-background(var(--custom-btn-form-hover));
+  }
+
+  &:focus {
+    @include theme-background(var(--custom-btn-form-focus));
+  }
+
+  &.form-selected {
+    @include theme-background(var(--custom-btn-form-selected), true);
+  }
+}
+
+// Card selection classes
+.card-select-enabled {
+  @include theme-background(var(--background-paper));
+}
+
+.card-select-disabled {
+  @include theme-background(var(--bs-secondary-bg), true);
+  @include theme-text(var(--bs-body-color), true);
+}
+
+.select-down {
+  @include theme-background(var(--bs-body-bg));
+}
+
+.stats-container {
+  @include theme-background(var(--background-stats-container));
+}
+
+// Table text colors
+.table-movesets tbody tr td,
+.table-moves tbody tr td {
+  @include theme-text(var(--custom-table-background-sub-head-text));
+}
+
+// Table border styling
+th,
+td,
+.table-info,
+.table-moves-col,
+.table-counter-container,
+.table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs,
+.list-item-ranking,
+.season-league,
+.group-rank-league,
+.sticker-detail,
+.sticker-container,
+.top-raid-group,
+.top-raid-pokemon,
+.trainer-battle,
+.pokemon-battle,
+.trainer-levelup {
+  @include theme-border(1px, all, var(--custom-table-background-sub-head-border), true);
+}
+
+.custom-border-right {
+  @include theme-border(1px, right);
+}
+
+.card-ranking,
+.custom-border-left-2 {
+  @include theme-border(2px, left);
+}
+
+.card-ranking,
+.custom-border-right-2 {
+  @include theme-border(2px, right);
+}
+
+.card-ranking,
+.custom-border-bottom-2 {
+  @include theme-border(2px, bottom);
+}
+
+.card-ranking:first-of-type,
+.custom-border-top-2 {
+  @include theme-border(2px, top);
+}
+
+.model,
+.frame-badge,
+.table-desc tbody tr td,
+.prev-next-block,
+.bg-ref-pokemon,
+.border-type-stat,
+.border-best-poke,
+.stats-border {
+  @include theme-border(1px, all, var(--custom-table-border));
+}
+
+.border-types,
+.btn-form,
+.border-window,
+.count-pokemon {
+  @include theme-border(1px, all, var(--custom-gray), true);
+}
+
+.timeline-vertical .w-50:first-child .pokemon-battle-header {
+  @include theme-border(1px, left, var(--custom-gray));
+}
+
+.pokemon-battle-header {
+  @include theme-border(1px, right, var(--custom-gray));
+  @include theme-border(1px, top, var(--custom-gray));
+  @include theme-border(1px, bottom, var(--custom-gray));
+}
+
+.move-img-desc img,
+.img-desc,
+.border-box-battle,
+.stats-boss {
+  @include theme-border(2px, all, var(--custom-table-border));
+}
+
+// Table header styling
 .table-info thead tr {
-  background-color: var(--custom-table-background-head) !important;
-  color: white !important;
+  @include table-head-style;
+
   font-weight: bold;
 }
 
-.img-type-icon {
+// Icon shadow
+.img-type-icon,
+.pokemon-link .pokemon-sprite-large {
   filter: drop-shadow(1px 1px 1px var(--shadow-default));
 }
 
+// Header backgrounds
+.bg-zero,
 .pokemon-battle-header,
 .moves-title-container,
 .frame-badge-select,
 .frame-badge:hover,
 .form-header {
-  background-color: var(--custom-according-header);
+  @include theme-background(var(--custom-according-header));
 }
 
 .accordion-footer {
-  background-color: var(--custom-according-footer);
+  @include theme-background(var(--custom-according-footer));
 }
 
 .card-header {
-  background-color: var(--custom-dropdown-header) !important;
+  @include theme-background(var(--custom-dropdown-header), true);
 }
 
 .bg-card-highlight {
-  background-color: var(--custom-dropdown-highlight) !important;
+  @include theme-background(var(--custom-dropdown-highlight), true);
 }
 
-.ranking-header,
-.table-round-battle tbody tr td:first-child,
-.table-round-battle tbody tr td:not(:first-child) {
-  background-color: var(--background-default);
-  color: var(--text-primary);
+// Table sort styling
+.ranking-header .ranking-sort:not(.ranking-selected) {
+  @include theme-text(var(--table-sort), true);
 }
 
+// Loading container
 .loading-spin-container {
   background: radial-gradient(closest-side, var(--loading-spinner-bg-start), var(--loading-spinner-bg-end));
 }
 
-.ranking-header .ranking-sort:not(.ranking-selected) {
-  color: var(--table-sort) !important;
-}
-
+// Stats and UI elements
 .stats-border {
-  background-color: var(--background-stats-performance);
+  @include theme-background(var(--background-stats-performance));
 }
 
 .play-line {
-  background-color: var(--background-revert);
+  @include theme-background(var(--background-revert));
 }
 
 .league-opened .accordion-button.collapsed {
-  background-color: var(--custom-according-highlight);
+  @include theme-background(var(--custom-according-highlight));
+}
+
+.table-catch-chance tbody td:not(.table-catch-chance tbody td:nth-child(1)) {
+  @include theme-background(var(--custom-btn-form-selected));
+}
+
+.table-sub-bonus .accordion-button {
+  @include theme-background(var(--custom-table-background-sub-head));
+  @include theme-text(var(--custom-table-background-sub-head-text));
+}
+
+.click-none,
+.click-none.link-danger:hover {
+  @include theme-text(var(--custom-validator-disable), true);
+}
+
+.btn-form:focus,
+.btn-form:hover:not(.form-selected) {
+  @include theme-border(1px, all, var(--custom-black), true);
 }

@@ -62,13 +62,8 @@ class ErrorBoundary extends Component<Props, IState> {
 
       return (
         <div
+          className="d-flex flex-column align-items-center justify-content-center text-center p-4"
           style={{
-            padding: '20px',
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
             minHeight: '50vh',
           }}
         >
@@ -78,7 +73,7 @@ class ErrorBoundary extends Component<Props, IState> {
           <Typography variant="body1" gutterBottom>
             The application encountered an error.
           </Typography>
-          <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+          <div className="d-flex gap-2 mt-3">
             <Button variant="contained" color="primary" onClick={this.handleGoHome}>
               Back to Home
             </Button>
@@ -86,22 +81,16 @@ class ErrorBoundary extends Component<Props, IState> {
               Refresh Page
             </Button>
           </div>
-          {this.state.error && process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
-            <div style={{ marginTop: '20px', textAlign: 'left', maxWidth: '100%', overflow: 'auto' }}>
+          {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
+            <div className="mt-4 text-left mw-100 overflow-auto">
               <Typography variant="subtitle2" component="h3" gutterBottom>
                 Error Details (Deployment Only):
               </Typography>
-              <pre
-                className="theme-custom-selected-bg"
-                style={{
-                  padding: '10px',
-                  borderRadius: '4px',
-                  overflowX: 'auto',
-                  maxWidth: '100%',
-                }}
-              >
-                {this.state.error.toString()}
-              </pre>
+              {this.state.error && (
+                <pre className="theme-custom-selected-bg p-2 rounded-1 mw-100 overflow-x-auto">
+                  {this.state.error.toString()}
+                </pre>
+              )}
             </div>
           )}
         </div>

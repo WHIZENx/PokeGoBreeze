@@ -142,7 +142,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         <h4 className="info-title">
           <b>Form varieties</b>
         </h4>
-        <div className="scroll-form" style={{ width: props.isLoadedForms ? '100%' : '' }}>
+        <div className={combineClasses('scroll-form', props.isLoadedForms ? 'w-100' : '')}>
           {props.isLoadedForms ? (
             <Fragment>
               {props.formList.map((value, index) => (
@@ -164,7 +164,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                       }
                     >
                       <div className="d-flex w-100 justify-content-center">
-                        <div className="position-relative" style={{ width: 64 }}>
+                        <div className="position-relative w-9">
                           <PokemonIconType pokemonType={value.form.pokemonType} size={24}>
                             <img
                               className="pokemon-sprite-medium"
@@ -172,7 +172,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = APIService.getPokeIconSprite();
                               }}
-                              alt="img-icon-form"
+                              alt="Image Icon Form"
                               src={formIconAssets(value)}
                             />
                           </PokemonIconType>
@@ -197,11 +197,11 @@ const FormComponent = (props: IFormInfoComponent) => {
               ))}
             </Fragment>
           ) : (
-            <div className="ph-item flex-nowrap" style={{ width: '100%', columnGap: 10 }}>
+            <div className="ph-item flex-nowrap column-gap-2 w-100">
               {[...Array(Math.ceil(window.innerWidth / 150) + 1).keys()].map((_, index) => (
-                <div key={index} className="ph-col-3" style={{ padding: 0, margin: '2px 0' }}>
+                <div key={index} className="ph-col-3 p-0 my-1">
                   <div className="ph-row">
-                    <div className="ph-picture ph-col-3" style={{ height: 142, width: 90 }} />
+                    <div className="ph-picture ph-col-3 m-0" style={{ height: 146, width: 90 }} />
                   </div>
                 </div>
               ))}
@@ -210,7 +210,7 @@ const FormComponent = (props: IFormInfoComponent) => {
         </div>
       </div>
       {genderRatio.M !== 0 || genderRatio.F !== 0 ? (
-        <div className="d-flex flex-wrap" style={{ columnGap: 50, rowGap: 15 }}>
+        <div className="d-flex flex-wrap row-gap-3" style={{ columnGap: 50 }}>
           {genderRatio.M !== 0 && <Gender ratio={genderRatio} sex={TypeSex.Male} sprit={form?.form?.sprites} />}
           {genderRatio.F !== 0 && <Gender ratio={genderRatio} sex={TypeSex.Female} sprit={form?.form?.sprites} />}
         </div>
@@ -229,8 +229,8 @@ const FormComponent = (props: IFormInfoComponent) => {
         isDisabled={!stats}
       />
       <hr className="w-100" />
-      <div className="row w-100" style={{ margin: 0 }}>
-        <div className="col-md-5" style={{ padding: 0, overflow: 'auto' }}>
+      <div className="row w-100 m-0">
+        <div className="col-md-5 p-0 overflow-auto">
           <Info />
           {!isSpecialFormType(form?.form?.pokemonType) && (
             <Fragment>
@@ -247,23 +247,16 @@ const FormComponent = (props: IFormInfoComponent) => {
             </Fragment>
           )}
         </div>
-        <div className="col-md-7" style={{ padding: 0 }}>
+        <div className="col-md-7 p-0">
           <TableMove pokemonData={pokemonData} />
           <Counter pokemonData={pokemonData} />
         </div>
       </div>
       <hr className="w-100" />
       {pokemonData?.pokemonType !== PokemonType.GMax && !isSpecialFormType(pokemonData?.pokemonType) ? (
-        <div className="row w-100" style={{ margin: 0 }}>
-          <div className="col-xl h-100 position-relative" style={{ padding: 0 }}>
-            {renderEvolution()}
-          </div>
-          <SpecialForm
-            className="col-xl h-100 position-relative"
-            style={{ padding: 0 }}
-            formList={props.formList}
-            id={props.defaultId}
-          />
+        <div className="row w-100 m-0 p-0">
+          <div className="col-xl h-100 position-relative">{renderEvolution()}</div>
+          <SpecialForm className="col-xl h-100 position-relative p-0" formList={props.formList} id={props.defaultId} />
         </div>
       ) : (
         renderEvolution()

@@ -45,7 +45,7 @@ const PVPHome = () => {
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp);
+    loadPVP(dispatch, timestamp, pvp);
   }, []);
 
   useEffect(() => {
@@ -88,8 +88,24 @@ const PVPHome = () => {
     return name;
   };
 
+  const renderLoading = () => {
+    return (
+      <div className="overflow-x-hidden">
+        <div className="ph-item flex-nowrap w-fit-content">
+          {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
+            <div key={index} className="ph-col-3 m-0 p-2">
+              <div className="ph-row">
+                <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="container element-top element-bottom">
+    <div className="container mt-2 pb-3">
       {timestamp.pvp > 0 && (
         <h4>
           <b>Updated: {getTime(timestamp.pvp, true)}</b>
@@ -106,8 +122,7 @@ const PVPHome = () => {
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Rank Pokémon Leagues</h1>
         <Form.Select
-          style={{ height: 'fit-content' }}
-          className="w-25 form-control"
+          className="w-25 form-control h-fit-content"
           value={rank?.id}
           onChange={(e) =>
             setOptions(
@@ -130,7 +145,13 @@ const PVPHome = () => {
           {rank.cp.map((value, index) => (
             <Link key={index} to={`/pvp/rankings/${rank.id}/${value}`}>
               <Button className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(rank.logo, value)} />
+                <img
+                  alt="Image League"
+                  title={renderLeagueName(rank.name, value)}
+                  width={128}
+                  height={128}
+                  src={renderLeagueLogo(rank.logo, value)}
+                />
                 <div>
                   <b>{renderLeagueName(rank.name, value)}</b>
                 </div>
@@ -140,23 +161,12 @@ const PVPHome = () => {
           ))}
         </div>
       ) : (
-        <div style={{ overflowX: 'hidden' }}>
-          <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
-            {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
-              <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
-                <div className="ph-row">
-                  <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        renderLoading()
       )}
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="w-75 d-block">Top Teams Pokémon Leagues</h1>
         <Form.Select
-          style={{ height: 'fit-content' }}
-          className="w-25 form-control"
+          className="w-25 form-control h-fit-content"
           value={team?.id}
           onChange={(e) =>
             setOptions(
@@ -179,7 +189,13 @@ const PVPHome = () => {
           {team.cp.map((value, index) => (
             <Link key={index} to={`/pvp/teams/${team.id}/${value}`}>
               <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                <img alt="img-league" width={128} height={128} src={renderLeagueLogo(team.logo, value)} />
+                <img
+                  alt="Image League"
+                  title={renderLeagueName(team.name, value)}
+                  width={128}
+                  height={128}
+                  src={renderLeagueLogo(team.logo, value)}
+                />
                 <div>
                   <b>{renderLeagueName(team.name, value)}</b>
                 </div>
@@ -189,17 +205,7 @@ const PVPHome = () => {
           ))}
         </div>
       ) : (
-        <div style={{ overflowX: 'hidden' }}>
-          <div className="ph-item flex-nowrap" style={{ width: 'fit-content' }}>
-            {[...Array(Math.ceil(window.innerWidth / 160)).keys()].map((_, index) => (
-              <div key={index} className="ph-col-3" style={{ padding: 10, margin: 0 }}>
-                <div className="ph-row">
-                  <div className="ph-picture ph-col-3" style={{ height: 200, width: 154 }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        renderLoading()
       )}
       <h1>
         Battle League Simulator <span className="d-inline-block caption text-danger">(Beta Test)</span>
@@ -212,7 +218,13 @@ const PVPHome = () => {
               {value.cp.map((cp, index) => (
                 <Link key={index} to={`/pvp/battle/${cp}`}>
                   <Button key={index} className="btn btn-form" style={{ height: 200 }}>
-                    <img alt="img-league" width={128} height={128} src={value.logo ?? getPokemonBattleLeagueIcon(cp)} />
+                    <img
+                      alt="Image League"
+                      title={value.name}
+                      width={128}
+                      height={128}
+                      src={value.logo ?? getPokemonBattleLeagueIcon(cp)}
+                    />
                     <div>
                       <b>{value.name}</b>
                     </div>

@@ -258,12 +258,12 @@ const CalculatePoint = () => {
         <span className="position-relative" style={{ width: 96 }}>
           <img
             className="position-absolute"
-            alt="img-logo"
+            alt="Image Logo"
             height={36}
             src={action === TypeAction.Atk ? `${ATK_LOGO}` : `${DEF_LOGO}`}
           />
           <img
-            alt="img-pokemon"
+            alt="Pokémon Image"
             className="pokemon-sprite-large"
             src={APIService.getPokeIconSprite(form?.form?.name, false)}
             onError={(e) => {
@@ -335,25 +335,25 @@ const CalculatePoint = () => {
 
   return (
     <Fragment>
-      <div className="row" style={{ margin: 0, overflowX: 'hidden' }}>
-        <div className="col-lg" style={{ padding: 0 }}>
-          <Find isHide={true} title="Attacker Pokémon" clearStats={clearData} />
+      <div className="row m-0 overflow-x-hidden">
+        <div className="col-lg p-0">
+          <Find isHide title="Attacker Pokémon" clearStats={clearData} />
         </div>
-        <div className="col-lg d-flex justify-content-center" style={{ padding: 0 }}>
+        <div className="col-lg d-flex justify-content-center p-0">
           <Find
-            isSwap={true}
+            isSwap
             isRaid={isRaid}
             setRaid={setIsRaid}
             tier={tier}
             setTier={setTier}
             title="Defender Pokémon"
             clearStats={clearData}
-            isObjective={true}
+            isObjective
           />
         </div>
       </div>
       <hr />
-      <div className="container" style={{ marginBottom: 20 }}>
+      <div className="container mb-3">
         <Tabs defaultActiveKey="breakpointAtk" className="lg-2">
           <Tab eventKey="breakpointAtk" title="Breakpoint Attacker">
             <div className="tab-body">
@@ -363,7 +363,7 @@ const CalculatePoint = () => {
                   <Move
                     text="Select Moves"
                     id={searching?.current?.pokemon?.id}
-                    isSelectDefault={true}
+                    isSelectDefault
                     form={
                       searching?.current?.form
                         ? searching?.current?.form.form?.name
@@ -372,7 +372,7 @@ const CalculatePoint = () => {
                     setMove={setMove}
                     move={move}
                     clearData={clearDataAtk}
-                    isHighlight={true}
+                    isHighlight
                     pokemonType={searching?.current?.form?.form?.pokemonType}
                   />
                   <FormControlLabel
@@ -402,7 +402,7 @@ const CalculatePoint = () => {
                     disabled={isRaid}
                   />
                   {move && (
-                    <div style={{ width: 300, margin: 'auto' }}>
+                    <div className="m-auto" style={{ width: 300 }}>
                       <p>
                         - Move Ability Type: <b>{getKeyWithData(TypeMove, move.typeMove)}</b>
                       </p>
@@ -425,8 +425,7 @@ const CalculatePoint = () => {
                     </div>
                   )}
                   <button
-                    className="text-center btn btn-primary w-100"
-                    style={{ marginBottom: 20 }}
+                    className="text-center btn btn-primary w-100 mb-3"
                     onClick={() => calculateBreakpointAtk()}
                     disabled={!move}
                   >
@@ -436,8 +435,8 @@ const CalculatePoint = () => {
                 <div className="col-lg-8">
                   <h3>Attacker Breakpoint</h3>
                   {resultBreakPointAtk && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div style={{ overflowX: 'auto' }}>
-                    <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
+                  <div className="overflow-x-auto">
+                    <table className="table-info table-raid-cal sticky-left w-fit-content">
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
@@ -501,7 +500,7 @@ const CalculatePoint = () => {
                   <Move
                     text="Select Moves"
                     id={searching?.object?.pokemon?.id}
-                    isSelectDefault={true}
+                    isSelectDefault
                     form={
                       searching?.object?.form
                         ? searching?.object?.form.form?.name
@@ -510,7 +509,7 @@ const CalculatePoint = () => {
                     setMove={setMoveDef}
                     move={moveDef}
                     clearData={clearDataDef}
-                    isHighlight={true}
+                    isHighlight
                     pokemonType={searching?.object?.form?.form?.pokemonType}
                   />
                   <FormControlLabel
@@ -540,7 +539,7 @@ const CalculatePoint = () => {
                     disabled={isRaid}
                   />
                   {moveDef && (
-                    <div style={{ width: 300, margin: 'auto' }}>
+                    <div className="m-auto" style={{ width: 300 }}>
                       <p>
                         - Move Ability Type: <b>{getKeyWithData(TypeMove, moveDef.typeMove)}</b>
                       </p>
@@ -563,8 +562,7 @@ const CalculatePoint = () => {
                     </div>
                   )}
                   <button
-                    className="text-center btn btn-primary w-100"
-                    style={{ marginBottom: 20 }}
+                    className="text-center btn btn-primary w-100 mb-3"
                     onClick={() => calculateBreakpointDef()}
                     disabled={!moveDef}
                   >
@@ -574,8 +572,8 @@ const CalculatePoint = () => {
                 <div className="col-lg-8">
                   <h3>Defender Breakpoint</h3>
                   {resultBreakPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div style={{ overflowX: 'auto' }}>
-                    <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
+                  <div className="overflow-x-auto">
+                    <table className="table-info table-raid-cal sticky-left w-fit-content">
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
@@ -629,8 +627,8 @@ const CalculatePoint = () => {
                   </div>
                   <hr />
                   <h3>Stamina Breakpoint</h3>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table className="table-info table-raid-cal sticky-left" style={{ width: 'max-content' }}>
+                  <div className="overflow-x-auto">
+                    <table className="table-info table-raid-cal sticky-left w-max-content">
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
@@ -691,11 +689,11 @@ const CalculatePoint = () => {
               <div className="row">
                 <div className="col-lg-4">
                   <h2 className="text-center text-decoration-underline">Defender move</h2>
-                  <div style={{ marginBottom: 15 }}>
+                  <div className="mb-3">
                     <Move
                       text="Fast Moves"
                       id={searching?.object?.pokemon?.id}
-                      isSelectDefault={true}
+                      isSelectDefault
                       form={
                         searching?.object?.form
                           ? searching?.object?.form.form?.name
@@ -705,11 +703,11 @@ const CalculatePoint = () => {
                       move={fMove}
                       type={TypeMove.Fast}
                       clearData={clearDataBulk}
-                      isHighlight={true}
+                      isHighlight
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {fMove && (
-                      <div className="element-top" style={{ width: 300, margin: 'auto' }}>
+                      <div className="mt-2 m-auto" style={{ width: 300 }}>
                         <p>
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, fMove.typeMove)}</b>
                         </p>
@@ -736,7 +734,7 @@ const CalculatePoint = () => {
                     <Move
                       text="Charged Moves"
                       id={searching?.object?.pokemon?.id}
-                      isSelectDefault={true}
+                      isSelectDefault
                       form={
                         searching?.object?.form
                           ? searching?.object?.form.form?.name
@@ -746,11 +744,11 @@ const CalculatePoint = () => {
                       move={cMove}
                       type={TypeMove.Charge}
                       clearData={clearDataBulk}
-                      isHighlight={true}
+                      isHighlight
                       pokemonType={searching?.object?.form?.form?.pokemonType}
                     />
                     {cMove && (
-                      <div className="element-top" style={{ width: 300, margin: 'auto' }}>
+                      <div className="mt-2 m-auto" style={{ width: 300 }}>
                         <p>
                           - Move Ability Type: <b>{getKeyWithData(TypeMove, cMove.typeMove)}</b>
                         </p>
@@ -834,19 +832,18 @@ const CalculatePoint = () => {
                     />
                   </div>
                   <button
-                    className="text-center btn btn-primary w-100"
-                    style={{ marginBottom: 20 }}
+                    className="text-center btn btn-primary w-100 mb-3"
                     onClick={() => calculateBulkPointDef()}
                     disabled={!(fMove && cMove)}
                   >
                     Calculate
                   </button>
                 </div>
-                <div className="col-lg-8" style={{ overflowX: 'auto' }}>
+                <div className="col-lg-8 overflow-x-auto">
                   <h3>BulkPoint</h3>
                   {resultBulkPointDef && setIconBattle(TypeAction.Atk, TypeAction.Def)}
-                  <div style={{ overflowX: 'auto' }}>
-                    <table className="table-info table-raid-cal sticky-left" style={{ width: 'fit-content' }}>
+                  <div className="overflow-x-auto">
+                    <table className="table-info table-raid-cal sticky-left w-fit-content">
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />

@@ -23,12 +23,9 @@ const CardMove = (props: ICardMoveComponent) => {
   return (
     <Fragment>
       {move && (
-        <div
-          className="d-flex align-items-center w-100 h-100"
-          style={{ padding: 5, overflowX: 'hidden', whiteSpace: 'nowrap' }}
-        >
-          <IconType width={64} height={64} alt="type-logo" style={{ marginRight: 10 }} type={move.type} />
-          <span style={{ marginRight: 5 }}>
+        <div className="d-flex align-items-center w-100 h-100 p-1 overflow-x-hidden text-nowrap">
+          <IconType width={64} height={64} alt="Pokémon GO Type Logo" className="me-2" type={move.type} />
+          <span className="me-1">
             <b>{splitAndCapitalize(move.name, '_', ' ')}</b>
           </span>
           <span className="d-flex">

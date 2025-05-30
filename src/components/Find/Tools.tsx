@@ -120,7 +120,7 @@ const Tools = (props: IToolsComponent) => {
   return (
     <Fragment>
       {props.isRaid ? (
-        <div className="element-top" style={{ marginBottom: 15 }}>
+        <div className="mt-2 mb-3">
           <Form.Select
             className="w-100"
             onChange={(e) => {
@@ -168,21 +168,21 @@ const Tools = (props: IToolsComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center">{toNumber(statsPokemon?.atk?.attack)}</td>
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center">{toNumber(statsPokemon?.def?.defense)}</td>
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={STA_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} />
                   STA
                 </td>
                 <td className="text-center">
@@ -193,7 +193,7 @@ const Tools = (props: IToolsComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
                   HP
                 </td>
                 <td className="text-center">{RAID_BOSS_TIER[props.tier].sta}</td>

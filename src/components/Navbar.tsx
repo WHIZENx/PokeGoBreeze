@@ -19,6 +19,7 @@ import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/localStorage';
 import { loadTheme } from '../store/effects/theme.effects';
+import { combineClasses, toNumber } from '../util/extension';
 
 const NavbarComponent = (props: INavbarComponent) => {
   const dispatch = useDispatch();
@@ -53,20 +54,13 @@ const NavbarComponent = (props: INavbarComponent) => {
 
   return (
     <Fragment>
-      <Navbar collapseOnSelect={true} bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
+      <Navbar collapseOnSelect bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
         <Link className="navbar-brand" to="/">
-          <img
-            src={logo}
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-            alt="home"
-            style={{ marginLeft: 10, marginRight: 10 }}
-          />
+          <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
           PokéGoBreeze
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav" style={{ flexWrap: 'wrap' }}>
+        <Navbar.Collapse id="responsive-navbar-nav" className="flex-wrap">
           <Nav className="me-auto">
             <Link className="nav-link" to="/">
               Pokédex
@@ -144,12 +138,10 @@ const NavbarComponent = (props: INavbarComponent) => {
               Stickers
             </Link>
           </Nav>
-          {timestamp?.gamemaster && (
-            <Navbar.Text className="d-flex flex-column" style={{ height: 40, maxWidth: 'max-content' }}>
-              <span className="text-white" style={{ marginLeft: 10, marginRight: 10 }}>
-                Updated: {getTime(timestamp?.gamemaster, true)}
-              </span>
-              <span className="text-end text-warning" style={{ fontSize: 10, marginRight: 10 }}>
+          {toNumber(timestamp?.gamemaster) > 0 && (
+            <Navbar.Text className="d-flex flex-column mw-max-content h-6">
+              <span className="text-white mx-2">Updated: {getTime(timestamp.gamemaster, true)}</span>
+              <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
                 <b>
                   {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
                     `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
@@ -159,9 +151,8 @@ const NavbarComponent = (props: INavbarComponent) => {
             </Navbar.Text>
           )}
           <IconButton
-            className={`${stateTheme}-mode`}
+            className={combineClasses(`${stateTheme}-mode me-2 p-0`, isDelay ? 'cursor-default' : 'cursor-pointer')}
             onClick={onChangeTheme}
-            style={{ cursor: isDelay ? 'default' : 'pointer', padding: 0, marginRight: 10 }}
             color="inherit"
           >
             {props.mode === TypeTheme.Light ? (
@@ -173,7 +164,7 @@ const NavbarComponent = (props: INavbarComponent) => {
         </Navbar.Collapse>
       </Navbar>
       {spinner.bar.isShow && (
-        <Box sx={{ width: '100%', position: 'absolute', zIndex: 7 }}>
+        <Box className="w-100 position-absolute z-7">
           <LinearProgress variant={VariantType.Determinate} value={spinner.bar.percent} />
         </Box>
       )}

@@ -2,7 +2,7 @@ import React from 'react';
 import { IIconTypeComponent } from '../../../models/component.model';
 import APIService from '../../../../services/API.service';
 import { EqualMode } from '../../../../util/enums/string.enum';
-import { isEqual } from '../../../../util/extension';
+import { combineClasses, isEqual } from '../../../../util/extension';
 import { capitalize, getDataWithKey } from '../../../../util/utils';
 import { PokemonTypeBadge } from '../../../../core/models/type.model';
 
@@ -74,7 +74,7 @@ const IconType = (props: IIconTypeComponent) => {
     <img
       alt={props.alt}
       title={props.title}
-      className={props.className}
+      className={combineClasses(props.isBorder ? 'type-border-white' : '', props.className)}
       style={props.style}
       width={props.width}
       height={props.height}

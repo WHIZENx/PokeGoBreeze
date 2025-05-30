@@ -164,21 +164,19 @@ const Search = () => {
   };
 
   return (
-    <div className="container" style={{ marginTop: 20, marginBottom: 20 }}>
+    <div className="container my-4">
       <div className="table-head">Moveset list in Pokémon GO</div>
-      <div className="row w-100" style={{ margin: 0 }}>
-        <div className="col-xl table-movesets-col" style={{ padding: 0 }}>
+      <div className="row w-100 m-0">
+        <div className="col-xl table-movesets-col p-0">
           <table className="table-info table-movesets">
             <thead />
             <tbody>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={3}>
-                  <div className="row" style={{ margin: 0 }}>
-                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
-                      Fast Moves List
-                    </div>
-                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
-                      <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
+                  <div className="row m-0">
+                    <div className="col-4 d-flex justify-content-center align-items-center p-0">Fast Moves List</div>
+                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
+                      <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
                         <InputLabel>Type</InputLabel>
                         <Select
                           value={fMoveType}
@@ -187,7 +185,7 @@ const Search = () => {
                             setFilters(Filter.create({ ...filters, fMoveType: toNumber(e.target.value) }))
                           }
                         >
-                          <MenuItem value={SelectType.All} defaultChecked={true}>
+                          <MenuItem value={SelectType.All} defaultChecked>
                             {getKeyWithData(SelectType, SelectType.All)}
                           </MenuItem>
                           {Object.keys(types).map((value, index) => (
@@ -198,7 +196,7 @@ const Search = () => {
                         </Select>
                       </FormControl>
                     </div>
-                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
                       <TextField
                         type="text"
                         variant={VariantType.Outlined}
@@ -217,7 +215,7 @@ const Search = () => {
                     columns={convertColumnDataType(columns)}
                     data={resultFMove}
                     defaultSortFieldId={ColumnSearchMoveType.Name}
-                    fixedHeader={true}
+                    fixedHeader
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable()}
                     progressPending={!fMoveIsLoad}
@@ -228,18 +226,16 @@ const Search = () => {
             </tbody>
           </table>
         </div>
-        <div className="col-xl table-movesets-col" style={{ padding: 0 }}>
+        <div className="col-xl table-movesets-col p-0">
           <table className="table-info table-movesets">
             <thead />
             <tbody>
               <tr className="text-center">
                 <td className="table-sub-header" colSpan={3}>
-                  <div className="row" style={{ margin: 0 }}>
-                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
-                      Charged Moves List
-                    </div>
-                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
-                      <FormControl sx={{ m: 1, width: 150, margin: '8px 0' }} size="small">
+                  <div className="row m-0">
+                    <div className="col-4 d-flex justify-content-center align-items-center p-0">Charged Moves List</div>
+                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
+                      <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
                         <InputLabel>Type</InputLabel>
                         <Select
                           value={cMoveType}
@@ -257,7 +253,7 @@ const Search = () => {
                         </Select>
                       </FormControl>
                     </div>
-                    <div className="col-4 d-flex justify-content-center align-items-center" style={{ padding: 0 }}>
+                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
                       <TextField
                         type="text"
                         variant={VariantType.Outlined}
@@ -276,7 +272,7 @@ const Search = () => {
                     columns={convertColumnDataType(columns)}
                     data={resultCMove}
                     defaultSortFieldId={ColumnSearchMoveType.Name}
-                    fixedHeader={true}
+                    fixedHeader
                     fixedHeaderScrollHeight="70vh"
                     customStyles={getCustomThemeDataTable()}
                     progressPending={!cMoveIsLoad}

@@ -176,14 +176,6 @@ ul {
   cursor: pointer;
 }
 
-.element-top {
-  margin-top: 10px !important;
-}
-
-.element-bottom {
-  padding-bottom: 15px !important;
-}
-
 .img-search {
   margin: 0 5px;
 }
@@ -222,28 +214,8 @@ ul {
   filter: drop-shadow(2px 2px 2px #ffffffcc);
 }
 
-.text-shadow {
-  text-shadow: 1px 1px black;
-}
-
-.text-light-shadow {
-  text-shadow: 1px 1px #afafaf;
-}
-
-.text-shadow-white {
-  text-shadow: 1px 1px white;
-}
-
 .disable-card-move {
   color: gray;
-}
-
-.cursor-pointer {
-  cursor: pointer !important;
-}
-
-.cursor-not-allowed {
-  cursor: not-allowed !important;
 }
 
 .ic {
@@ -255,4 +227,22 @@ ul {
   text-align: center;
   color: black !important;
   width: fit-content !important;
+}
+
+.accordion-button {
+  gap: 1rem;
+}
+
+.filter-shadow {
+  filter: drop-shadow(1px 1px 1px black);
+}
+
+.type-border,
+.text-shadow-black {
+  text-shadow: 1px 1px black;
+}
+
+.type-border-white {
+  border: 1px solid white;
+  border-radius: 50%;
 }

@@ -360,7 +360,7 @@ const FindBattle = () => {
     return (
       <img
         className={className}
-        alt="pokemon-model"
+        alt="Pokémon Model"
         height={height}
         src={APIService.getPokemonModel(assets, value.id)}
         onError={(e) => {
@@ -373,13 +373,13 @@ const FindBattle = () => {
 
   return (
     <div className="container">
-      <Find isHide={true} clearStats={clearArrStats} />
+      <Find isHide clearStats={clearArrStats} />
       <h1 id="main" className="text-center">
         Search Battle Leagues Stats
       </h1>
-      <form className="element-top" onSubmit={onSearchStatsPoke.bind(this)} style={{ paddingBottom: 15 }}>
+      <form className="mt-2 pb-3" onSubmit={onSearchStatsPoke.bind(this)}>
         <div className="form-group d-flex justify-content-center text-center">
-          <Box sx={{ width: '50%', minWidth: 350 }}>
+          <Box className="w-50" sx={{ minWidth: 350 }}>
             <div className="justify-content-center input-group mb-3">
               <DynamicInputCP
                 statATK={pokemon?.pokemon?.statsGO?.atk}
@@ -398,7 +398,7 @@ const FindBattle = () => {
           </Box>
         </div>
         <div className="form-group d-flex justify-content-center text-center">
-          <Box sx={{ width: '50%', minWidth: 300 }}>
+          <Box className="w-50" sx={{ minWidth: 300 }}>
             <div className="d-flex justify-content-between">
               <b>ATK</b>
               <b>{ATKIv}</b>
@@ -455,7 +455,7 @@ const FindBattle = () => {
             />
           </Box>
         </div>
-        <div className="form-group d-flex justify-content-center text-center element-top">
+        <div className="form-group d-flex justify-content-center text-center mt-2">
           <button type="submit" className="btn btn-primary">
             Search
           </button>
@@ -486,7 +486,7 @@ const FindBattle = () => {
                     <div className={combineClasses('border-best-poke', getTextColorRatio(value.ratio))}>
                       <div className="best-poke-desc border-best-poke">
                         <img
-                          alt="pokemon-model"
+                          alt="Pokémon Model"
                           height={32}
                           src={
                             value.league === LeagueBattleType.Little
@@ -501,7 +501,7 @@ const FindBattle = () => {
                         <div>
                           <b>{toFloatWithPadding(value.ratio, 2)}</b>
                         </div>
-                        <span className="caption caption-constant theme-text-shadow">CP: {value.CP}</span>
+                        <span className="caption caption-constant text-shadow">CP: {value.CP}</span>
                       </div>
                       <span className="caption text-black border-best-poke">
                         <b>#{value.rank}</b>
@@ -512,7 +512,7 @@ const FindBattle = () => {
               ))}
             </div>
             {evoChain.map((value, index) => (
-              <Accordion key={index} style={{ marginTop: '3%', marginBottom: '5%', paddingBottom: 15 }}>
+              <Accordion className="pb-3" key={index} style={{ marginTop: '3%', marginBottom: '5%' }}>
                 <div className="form-header">
                   {!value.at(0)?.form ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0)?.form, '_', ' ')}
                   {' Form'}
@@ -521,15 +521,11 @@ const FindBattle = () => {
                   <Accordion.Header>
                     <b>More information</b>
                   </Accordion.Header>
-                  <Accordion.Body style={{ padding: 0 }}>
+                  <Accordion.Body className="p-0">
                     <div className="sub-body">
-                      <div className="row justify-content-center league-info-content" style={{ margin: 0 }}>
+                      <div className="row justify-content-center league-info-content m-0">
                         {value.map((item, index) => (
-                          <div
-                            className="col d-inline-block evo-item-desc justify-content-center"
-                            key={index}
-                            style={{ padding: 0 }}
-                          >
+                          <div className="col d-inline-block evo-item-desc justify-content-center p-0" key={index}>
                             <div className="pokemon-best-league">
                               <LinkToTop
                                 to={`/pokemon/${item.id}${generateParamForm(item.form)}`}
@@ -555,15 +551,12 @@ const FindBattle = () => {
                             ) : (
                               <Fragment>
                                 <hr />
-                                <div
-                                  className="element-top d-flex justify-content-center"
-                                  style={{ textAlign: 'start' }}
-                                >
+                                <div className="mt-2 d-flex justify-content-center text-start">
                                   {item.battleLeague.little.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
                                         />
@@ -577,16 +570,18 @@ const FindBattle = () => {
                                       <li>
                                         {'Stats Prod (%): '}
                                         <span
-                                          style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.little.ratio)}
+                                          className={combineClasses(
+                                            'bg-transparent',
+                                            getTextColorRatio(item.battleLeague.little.ratio)
+                                          )}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.little.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <Candy id={item.id} style={{ marginRight: 5 }} />
-                                          <span className="d-flex align-items-center" style={{ marginRight: 5 }}>
+                                          <Candy id={item.id} className="me-1" />
+                                          <span className="d-flex align-items-center me-1">
                                             {toNumber(item.battleLeague.little.resultBetweenCandy) +
                                               getCandyEvo(value, item.id)}
                                             <span className="d-inline-block caption text-success">
@@ -599,8 +594,8 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <img
-                                          style={{ marginRight: 5 }}
-                                          alt="img-stardust"
+                                          className="me-1"
+                                          alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />
@@ -611,27 +606,24 @@ const FindBattle = () => {
                                     <div>
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Little)}
                                         />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Little)}`}</b>
                                       </h6>
-                                      <b style={{ padding: '1rem' }} className="text-danger">
+                                      <b className="text-danger p-3">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                       </b>
                                     </div>
                                   )}
                                 </div>
-                                <div
-                                  className="element-top d-flex justify-content-center"
-                                  style={{ textAlign: 'start' }}
-                                >
+                                <div className="mt-2 d-flex justify-content-center text-start">
                                   {item.battleLeague.great.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
                                         />
@@ -645,15 +637,17 @@ const FindBattle = () => {
                                       <li>
                                         {'Stats Prod (%): '}
                                         <span
-                                          style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.great.ratio)}
+                                          className={combineClasses(
+                                            'bg-transparent',
+                                            getTextColorRatio(item.battleLeague.great.ratio)
+                                          )}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.great.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <Candy id={item.id} style={{ marginRight: 5 }} />
+                                          <Candy id={item.id} className="me-1" />
                                           <span className="d-flex align-items-center">
                                             {toNumber(item.battleLeague.great.resultBetweenCandy) +
                                               getCandyEvo(value, item.id)}
@@ -667,8 +661,8 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <img
-                                          style={{ marginRight: 5 }}
-                                          alt="img-stardust"
+                                          className="me-1"
+                                          alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />
@@ -679,27 +673,24 @@ const FindBattle = () => {
                                     <div>
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Great)}
                                         />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Great)}`}</b>
                                       </h6>
-                                      <b style={{ padding: '1rem' }} className="text-danger">
+                                      <b className="text-danger p-3">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                       </b>
                                     </div>
                                   )}
                                 </div>
-                                <div
-                                  className="element-top d-flex justify-content-center"
-                                  style={{ textAlign: 'start' }}
-                                >
+                                <div className="mt-2 d-flex justify-content-center text-start">
                                   {item.battleLeague.ultra.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
                                         />
@@ -713,15 +704,17 @@ const FindBattle = () => {
                                       <li>
                                         {'Stats Prod (%): '}
                                         <span
-                                          style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.ultra.ratio)}
+                                          className={combineClasses(
+                                            'bg-transparent',
+                                            getTextColorRatio(item.battleLeague.ultra.ratio)
+                                          )}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.ultra.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <Candy id={item.id} style={{ marginRight: 5 }} />
+                                          <Candy id={item.id} className="me-1" />
                                           <span className="d-flex align-items-center">
                                             {toNumber(item.battleLeague.ultra.resultBetweenCandy) +
                                               getCandyEvo(value, item.id)}
@@ -735,8 +728,8 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <img
-                                          style={{ marginRight: 5 }}
-                                          alt="img-stardust"
+                                          className="me-1"
+                                          alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />
@@ -747,26 +740,23 @@ const FindBattle = () => {
                                     <div>
                                       <h6>
                                         <img
-                                          alt="pokemon-model"
+                                          alt="Pokémon Model"
                                           height={32}
                                           src={getPokemonBattleLeagueIcon(BattleLeagueCPType.Ultra)}
                                         />
                                         <b>{` ${getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}`}</b>
                                       </h6>
-                                      <b style={{ padding: '1rem' }} className="text-danger">
+                                      <b className="text-danger p-3">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                       </b>
                                     </div>
                                   )}
                                 </div>
-                                <div
-                                  className="element-top d-flex justify-content-center"
-                                  style={{ textAlign: 'start' }}
-                                >
+                                <div className="mt-2 d-flex justify-content-center text-start">
                                   {item.battleLeague.master.rank ? (
                                     <ul className="list-best-league">
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />
+                                        <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
                                         <b>{` ${getPokemonBattleLeagueName()}`}</b>
                                       </h6>
                                       <li>
@@ -777,15 +767,17 @@ const FindBattle = () => {
                                       <li>
                                         {'Stats Prod (%): '}
                                         <span
-                                          style={{ backgroundColor: 'transparent' }}
-                                          className={getTextColorRatio(item.battleLeague.master.ratio)}
+                                          className={combineClasses(
+                                            'bg-transparent',
+                                            getTextColorRatio(item.battleLeague.master.ratio)
+                                          )}
                                         >
                                           <b>{toFloatWithPadding(item.battleLeague.master.ratio, 2)}</b>
                                         </span>
                                       </li>
                                       <li>
                                         <span className="d-flex align-items-center">
-                                          <Candy id={item.id} style={{ marginRight: 5 }} />
+                                          <Candy id={item.id} className="me-1" />
                                           <span className="d-flex align-items-center">
                                             {toNumber(item.battleLeague.master.resultBetweenCandy) +
                                               getCandyEvo(value, item.id)}
@@ -799,8 +791,8 @@ const FindBattle = () => {
                                       </li>
                                       <li>
                                         <img
-                                          style={{ marginRight: 5 }}
-                                          alt="img-stardust"
+                                          className="me-1"
+                                          alt="Image Stardust"
                                           height={20}
                                           src={APIService.getItemSprite('stardust_painted')}
                                         />
@@ -810,10 +802,10 @@ const FindBattle = () => {
                                   ) : (
                                     <div>
                                       <h6>
-                                        <img alt="pokemon-model" height={32} src={getPokemonBattleLeagueIcon()} />
+                                        <img alt="Pokémon Model" height={32} src={getPokemonBattleLeagueIcon()} />
                                         <b>{` ${getPokemonBattleLeagueName()}`}</b>
                                       </h6>
-                                      <b style={{ padding: '1rem' }} className="text-danger">
+                                      <b className="text-danger p-3">
                                         <CloseIcon sx={{ color: 'red' }} /> Not Elidge
                                       </b>
                                     </div>

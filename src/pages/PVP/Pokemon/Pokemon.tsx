@@ -63,7 +63,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   const [isFound, setIsFound] = useState(true);
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp);
+    loadPVP(dispatch, timestamp, pvp);
   }, []);
 
   const fetchPokemonInfo = useCallback(async () => {
@@ -201,12 +201,9 @@ const PokemonPVP = (props: IStyleSheetData) => {
     return (
       <Fragment>
         {league && (
-          <div
-            className="d-flex flex-wrap align-items-center filter-shadow text-shadow text-white"
-            style={{ columnGap: 10 }}
-          >
+          <div className="d-flex flex-wrap align-items-center filter-shadow text-shadow-black text-white column-gap-2">
             <img
-              alt="img-league"
+              alt="Image League"
               width={64}
               height={64}
               src={!league.logo ? getPokemonBattleLeagueIcon(cp) : APIService.getAssetPokeGo(league.logo)}
@@ -227,6 +224,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   return (
     <Error isError={!isFound}>
       <div
+        className="py-3"
         style={{
           backgroundImage: computeBgType(
             rankingPoke?.pokemon?.types,
@@ -235,14 +233,12 @@ const PokemonPVP = (props: IStyleSheetData) => {
             0.3,
             rankingPoke ? undefined : '#646464'
           ),
-          paddingTop: 15,
-          paddingBottom: 15,
         }}
       >
         <div className="pokemon-ranking-body container pvp-container">
           {renderLeague()}
           <hr />
-          <div className="ranking-link-group" style={{ paddingTop: 10 }}>
+          <div className="ranking-link-group pt-2">
             {getKeysObj(ScoreType).map((type, index) => (
               <Button
                 key={index}
@@ -269,12 +265,12 @@ const PokemonPVP = (props: IStyleSheetData) => {
               </Button>
             ))}
           </div>
-          <div className="w-100 ranking-info element-top">
-            <div className="d-flex flex-wrap align-items-center justify-content-center" style={{ gap: '2rem' }}>
+          <div className="w-100 ranking-info mt-2">
+            <div className="d-flex flex-wrap align-items-center justify-content-center gap-4">
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
                 <PokemonIconType pokemonType={rankingPoke?.pokemonType} size={64}>
                   <img
-                    alt="img-league"
+                    alt="Image League"
                     className="pokemon-sprite-raid"
                     src={APIService.getPokemonModel(rankingPoke?.form, rankingPoke?.id)}
                     onError={(e) => {

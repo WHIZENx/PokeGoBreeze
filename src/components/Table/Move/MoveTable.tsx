@@ -169,7 +169,7 @@ const TableMove = (props: ITableMoveComponent) => {
     );
     const max = table === TableType.Offensive ? move.maxOff : move.maxDef;
     return (
-      <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
+      <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
         <table className="table-info table-moves">
           <colgroup className="main-move" />
           <colgroup className="main-move" />
@@ -186,7 +186,7 @@ const TableMove = (props: ITableMoveComponent) => {
               >
                 Fast
                 {!disableSortFM && (
-                  <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Fast ? 1 : 0.3 }}>
+                  <span className={stateSorted[tableType].sortBy === TypeSorted.Fast ? 'opacity-100' : 'opacity-30'}>
                     {stateSorted[tableType].fast ? (
                       <ArrowDropDownIcon fontSize="small" />
                     ) : (
@@ -201,7 +201,7 @@ const TableMove = (props: ITableMoveComponent) => {
               >
                 Charged
                 {!disableSortCM && (
-                  <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Charge ? 1 : 0.3 }}>
+                  <span className={stateSorted[tableType].sortBy === TypeSorted.Charge ? 'opacity-100' : 'opacity-30'}>
                     {stateSorted[tableType].charged ? (
                       <ArrowDropDownIcon fontSize="small" />
                     ) : (
@@ -212,7 +212,7 @@ const TableMove = (props: ITableMoveComponent) => {
               </th>
               <th className="table-column-head cursor-pointer" onClick={() => arrowSort(table, TypeSorted.Effective)}>
                 %
-                <span style={{ opacity: stateSorted[tableType].sortBy === TypeSorted.Effective ? 1 : 0.3 }}>
+                <span className={stateSorted[tableType].sortBy === TypeSorted.Effective ? 'opacity-100' : 'opacity-30'}>
                   {stateSorted[tableType].effective ? (
                     <ArrowDropDownIcon fontSize="small" />
                   ) : (
@@ -247,11 +247,11 @@ const TableMove = (props: ITableMoveComponent) => {
       <tr>
         <td className="text-origin theme-table-primary">
           <LinkToTop to={`../move/${value.fMove.id}`} className="d-block">
-            <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <IconType width={20} height={20} alt="type-logo" type={value.fMove.type} />
+            <div className="d-inline-block me-1 v-align-text-bottom">
+              <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.fMove.type} />
             </div>
-            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
-            <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
+            <span className="me-1">{splitAndCapitalize(value.fMove.name.toLowerCase(), '_', ' ')}</span>
+            <span className="w-max-content v-align-text-bottom">
               {value.fMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -267,11 +267,11 @@ const TableMove = (props: ITableMoveComponent) => {
         </td>
         <td className="text-origin theme-table-primary">
           <LinkToTop to={`../move/${value.cMove.id}`} className="d-block">
-            <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-              <IconType width={20} height={20} alt="type-logo" type={value.cMove.type} />
+            <div className="d-inline-block me-1 v-align-text-bottom">
+              <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.cMove.type} />
             </div>
-            <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
-            <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
+            <span className="me-1">{splitAndCapitalize(value.cMove.name.toLowerCase(), '_', ' ')}</span>
+            <span className="w-max-content v-align-text-bottom">
               {value.cMove.moveType !== MoveType.None && (
                 <span
                   className={combineClasses(
@@ -296,11 +296,11 @@ const TableMove = (props: ITableMoveComponent) => {
         <tr key={index}>
           <td className="text-origin theme-table-primary">
             <LinkToTop to={`../move/${value.id}`} className="d-block">
-              <div className="d-inline-block" style={{ verticalAlign: 'text-bottom', marginRight: 5 }}>
-                <IconType width={20} height={20} alt="type-logo" type={value.type} />
+              <div className="d-inline-block me-1 v-align-text-bottom">
+                <IconType width={20} height={20} alt="Pokémon GO Type Logo" type={value.type} />
               </div>
-              <span style={{ marginRight: 5 }}>{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
-              <span style={{ width: 'max-content', verticalAlign: 'text-bottom' }}>
+              <span className="me-1">{splitAndCapitalize(value.name.toLowerCase(), '_', ' ')}</span>
+              <span className="w-max-content v-align-text-bottom">
                 {value.moveType !== MoveType.None && (
                   <span
                     className={combineClasses(
@@ -376,8 +376,8 @@ const TableMove = (props: ITableMoveComponent) => {
   return (
     <Tabs defaultActiveKey="movesList" className="lg-2">
       <Tab eventKey="movesList" title="Moves List">
-        <div className="row w-100 theme-table-info-bg theme-table-info-bg-border" style={{ margin: 0 }}>
-          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
+        <div className="row w-100 theme-table-info-bg theme-table-info-bg-border m-0">
+          <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
               <thead>
@@ -388,7 +388,7 @@ const TableMove = (props: ITableMoveComponent) => {
               <tbody>{moveOrigin && renderMoveSetTable(moveOrigin.fastMoves.concat(moveOrigin.eliteFastMoves))}</tbody>
             </table>
           </div>
-          <div className="col-xl table-moves-col" style={{ padding: 0, maxHeight: props.maxHeight }}>
+          <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
             <table className="table-info table-moves">
               <colgroup className="main-move" />
               <thead>
@@ -414,7 +414,7 @@ const TableMove = (props: ITableMoveComponent) => {
         </div>
       </Tab>
       <Tab eventKey="bestEffList" title="Best Moves List">
-        <div className="row w-100" style={{ margin: 0 }}>
+        <div className="row w-100 m-0">
           {renderTable(TableType.Offensive)}
           {renderTable(TableType.Defensive)}
         </div>

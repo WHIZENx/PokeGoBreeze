@@ -99,7 +99,7 @@ const MoveSet = (props: MoveSetComponent) => {
             </span>
             <span className="d-block caption">
               {'- '}
-              <span className="position-relative filter-shadow" style={{ marginRight: 5 }}>
+              <span className="position-relative filter-shadow me-1">
                 <PersonIcon sx={{ color: 'black' }} />
                 <KeyboardDoubleArrowDownIcon
                   fontSize="small"
@@ -127,14 +127,14 @@ const MoveSet = (props: MoveSetComponent) => {
         'filter-shadow-hover text-white type-rank-item d-flex align-items-center justify-content-between'
       )}
     >
-      <div className="d-flex" style={{ columnGap: 10 }}>
-        <IconType width={24} height={24} alt="type-logo" type={move?.type} />
+      <div className="d-flex column-gap-2">
+        <IconType width={24} height={24} alt="Pokémon GO Type Logo" type={move?.type} isBorder />
         <span className="filter-shadow">
           {splitAndCapitalize(move.name, '_', ' ')}{' '}
           {move.moveType !== MoveType.None && <b className="filter-shadow">*</b>}
         </span>
       </div>
-      <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
+      <div className="d-flex align-items-center column-gap-2">
         {move?.archetype && findArchetype(move.archetype)}
         <span className="ranking-score score-ic text-black filter-shadow">{move.uses}</span>
       </div>
@@ -175,8 +175,8 @@ const MoveSet = (props: MoveSetComponent) => {
   }, [fastMoves, chargedMoves, props.moves?.fastMoves, props.moves?.chargedMoves]);
 
   return (
-    <div className="row" style={{ margin: 0 }}>
-      <div className="col-xl-6 moves-title-container" style={{ padding: 0 }}>
+    <div className="row m-0">
+      <div className="col-xl-6 moves-title-container p-0">
         <div className="moves-title">Fast Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {fastMoves?.map((value, index) => (
@@ -184,7 +184,7 @@ const MoveSet = (props: MoveSetComponent) => {
           ))}
         </div>
       </div>
-      <div className="col-xl-6 moves-title-container" style={{ padding: 0 }}>
+      <div className="col-xl-6 moves-title-container p-0">
         <div className="moves-title">Charged Moves{moveOverlay()}</div>
         <div className="type-rank-list">
           {chargedMoves?.map((value, index) => (

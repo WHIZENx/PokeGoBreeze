@@ -45,29 +45,40 @@ const Attacker = (prop: ITypeEffComponent) => {
   };
 
   return (
-    <div className="element-top">
+    <div className="mt-2">
       <h5 className="text-center">
         <b>As Attacker</b>
       </h5>
-      <h6 className="text-center">
-        <b>Select Type</b>
-      </h6>
-      <div className=" d-flex justify-content-center">
-        <div className="card-input" tabIndex={0} onClick={() => setShowType(true)} onBlur={() => setShowType(false)}>
-          <div className="card-select">
-            <CardType value={capitalize(currentType)} />
-          </div>
-          {showType && (
-            <div className="result-type">
-              <ul>
-                {types.map((value, index) => (
-                  <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
-                    <CardType value={capitalize(value)} />
-                  </li>
-                ))}
-              </ul>
+      <div className="row">
+        <div className="col d-flex justify-content-center">
+          <div>
+            <h6 className="text-center">
+              <b>Select Type</b>
+            </h6>
+            <div className=" d-flex justify-content-center">
+              <div
+                className="card-input mb-3"
+                tabIndex={0}
+                onClick={() => setShowType(true)}
+                onBlur={() => setShowType(false)}
+              >
+                <div className="card-select">
+                  <CardType value={capitalize(currentType)} />
+                </div>
+                {showType && (
+                  <div className="result-type">
+                    <ul>
+                      {types.map((value, index) => (
+                        <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
+                          <CardType value={capitalize(value)} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
       <TypeEffective typeEffective={typeEffective} />

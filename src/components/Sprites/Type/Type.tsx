@@ -11,12 +11,12 @@ const TypeInfo = (props: ITypeComponent) => {
   return (
     <Fragment>
       {!isNotEmpty(props.arr) && props.isShow ? (
-        <div className="element-top d-flex" style={{ marginLeft: 15 }}>
+        <div className="mt-2 d-flex ms-3">
           <div className="text-center" key={0}>
             <img
               width={toNumber(props.height, 36)}
               height={toNumber(props.height, 36)}
-              alt="img-pokemon"
+              alt="Pokémon Image"
               src={APIService.getPokeSprite()}
             />
             <span className="caption theme-text-primary">None</span>
@@ -26,7 +26,11 @@ const TypeInfo = (props: ITypeComponent) => {
         <>
           {isNotEmpty(props.arr) && (
             <div
-              className={combineClasses(props.isBlock ? '' : 'element-top', props.isShowShadow ? 'filter-shadow' : '')}
+              className={combineClasses(
+                props.className,
+                props.isBlock ? '' : 'mt-2',
+                props.isShowShadow ? 'filter-shadow' : ''
+              )}
               style={props.style}
             >
               {props.text && <p>{props.text}</p>}
@@ -38,7 +42,7 @@ const TypeInfo = (props: ITypeComponent) => {
                         className={props.isShowShadow ? 'filter-shadow' : ''}
                         width={props.height}
                         height={props.height}
-                        alt="type-logo"
+                        alt="Pokémon GO Type Logo"
                         type={value}
                       />
                     ) : (
@@ -47,11 +51,14 @@ const TypeInfo = (props: ITypeComponent) => {
                           className={props.isShowShadow ? 'filter-shadow' : ''}
                           width={36}
                           height={36}
-                          alt="type-logo"
+                          alt="Pokémon GO Type Logo"
                           type={value}
                         />
                         <span
-                          className={combineClasses('caption', props.isShowShadow ? `text-white text-shadow` : '')}
+                          className={combineClasses(
+                            'caption',
+                            props.isShowShadow ? `text-white text-shadow-black` : ''
+                          )}
                           style={{ color: `${props.color} !important` }}
                         >
                           {capitalize(value)}

@@ -68,17 +68,13 @@ const SpecialForm = (props: IFormSpecialComponent) => {
             <b>{getKeyWithData(PokemonType, pokemonType)} Evolution</b>
           </h4>
           <div className="form-special-container scroll-evolution">
-            <ul className="ul-evo d-flex justify-content-center" style={{ gap: 15 }}>
+            <ul className="ul-evo d-flex justify-content-center gap-3">
               {arrEvoList?.map((value, evo) => (
-                <li
-                  key={evo}
-                  className="img-form-gender-group li-evo"
-                  style={{ width: 'fit-content', height: 'fit-content' }}
-                >
+                <li key={evo} className="img-form-gender-group li-evo w-fit-content h-fit-content">
                   <img
-                    id="img-pokemon"
+                    id="Pokémon Image"
                     height="96"
-                    alt="img-pokemon"
+                    alt="Pokémon Image"
                     src={APIService.getPokeGifSprite(value.name)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
@@ -112,7 +108,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                   <span className="caption">
                     {`${getKeyWithData(PokemonType, pokemonType)} evolution: `}
                     <img
-                      alt="img-primal"
+                      alt="Image Primal"
                       width={25}
                       height={25}
                       src={
@@ -133,8 +129,8 @@ const SpecialForm = (props: IFormSpecialComponent) => {
                       <IconType
                         width={25}
                         height={25}
-                        alt="type-logo"
-                        style={{ marginRight: 5 }}
+                        alt="Pokémon GO Type Logo"
+                        className="me-1"
                         type={getCombatMove(getQuestEvo(value.name).requireMove)?.type}
                       />
                       <LinkToTop to={`../move/${getCombatMove(getQuestEvo(value.name).requireMove)?.id}`}>

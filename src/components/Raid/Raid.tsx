@@ -69,8 +69,8 @@ const Raid = (props: IRaidComponent) => {
       return element;
     }
     return (
-      <div className="ph-item w-75" style={{ padding: 0, margin: 'auto', height: 24 }}>
-        <div className="ph-picture ph-col-3 w-100 h-100" style={{ padding: 0, margin: 0, background: color }} />
+      <div className="ph-item w-75 p-0 m-auto h-4">
+        <div className="ph-picture ph-col-3 w-100 h-100 m-0 p-0" style={{ background: color }} />
       </div>
     );
   };
@@ -128,7 +128,7 @@ const Raid = (props: IRaidComponent) => {
           )}
         </Form.Select>
       </div>
-      <div className="row w-100 element-top" style={{ margin: 0 }}>
+      <div className="row w-100 mt-2 m-0">
         <div className="col-4 text-center d-inline-block">
           <h1>CP</h1>
           <hr className="w-100" />
@@ -145,15 +145,15 @@ const Raid = (props: IRaidComponent) => {
           <h5>{RAID_BOSS_TIER[tier].level}</h5>
         </div>
       </div>
-      <div className="row element-top container" style={{ margin: 0 }}>
-        <div className="col d-flex justify-content-center align-items-center" style={{ marginBottom: 15 }}>
+      <div className="row mt-2 container m-0">
+        <div className="col d-flex justify-content-center align-items-center mb-3">
           <img
             className={tier === 2 ? 'img-type-icon' : ''}
-            alt="img-raid-egg"
+            alt="Image Raid Egg"
             src={raidEgg(tier, props.currForm?.form?.pokemonType, pokemonClass)}
           />
         </div>
-        <div className="col d-flex justify-content-center" style={{ marginBottom: 15 }}>
+        <div className="col d-flex justify-content-center mb-3">
           <table className="table-info table-raid">
             <thead />
             <tbody>
@@ -164,7 +164,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center theme-text-primary">
@@ -173,7 +173,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center theme-text-primary">
@@ -182,7 +182,7 @@ const Raid = (props: IRaidComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={STA_LOGO} />
+                  <img className="me-2" alt="Image Logo" width={20} height={20} src={STA_LOGO} />
                   STA
                 </td>
                 <td className="text-center theme-text-primary">

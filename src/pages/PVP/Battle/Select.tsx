@@ -178,20 +178,15 @@ const SelectPoke = (props: ISelectPokeComponent) => {
           <span className="pokemon-select-right">
             {isInclude(pokemon?.speciesId, `_${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}`) && (
               <span
-                style={{ marginRight: 5 }}
                 className={combineClasses(
-                  'type-icon-small ic',
+                  'type-icon-small ic me-1',
                   `${getKeyWithData(MoveType, MoveType.Shadow)?.toLowerCase()}-ic`
                 )}
               >
                 {getKeyWithData(MoveType, MoveType.Shadow)}
               </span>
             )}
-            {score > 0 && (
-              <span style={{ marginRight: 5 }} className="type-icon-small ic elite-ic">
-                {score}
-              </span>
-            )}
+            {score > 0 && <span className="type-icon-small ic elite-ic me-1">{score}</span>}
             {isNotEmpty(pokemonIcon) && (
               <span onClick={() => removePokemon()} className="remove-pokemon-select">
                 <CloseIcon sx={{ color: 'red' }} />
@@ -215,8 +210,8 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       </div>
       {isNotEmpty(props.data) && (
         <div
-          className="result-pokemon"
-          style={{ display: show ? 'block' : 'none', maxHeight: 274 }}
+          className={combineClasses('result-pokemon', show ? 'd-block' : 'd-none')}
+          style={{ maxHeight: 274 }}
           onScroll={listenScrollEvent.bind(this)}
         >
           {props.data
@@ -247,10 +242,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
       <h5>Fast Moves</h5>
       <div
         className={combineClasses(
-          'position-relative d-flex align-items-center form-control',
+          'position-relative d-flex align-items-center form-control p-0 rounded-0',
           pokemon ? 'card-select-enabled' : 'card-select-disabled'
         )}
-        style={{ padding: 0, borderRadius: 0 }}
       >
         <div
           className="card-move-input"
@@ -277,7 +271,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         </div>
       </div>
       <h5>Charged Moves Primary</h5>
-      <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
+      <div className="d-flex align-items-center column-gap-2">
         <Checkbox
           checked={!props.pokemonBattle.disableCMovePri}
           onChange={(_, check) => {
@@ -298,10 +292,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         />
         <div
           className={combineClasses(
-            'position-relative d-flex align-items-center form-control',
+            'position-relative d-flex align-items-center form-control p-0 rounded-0',
             pokemon ? 'card-select-enabled' : 'card-select-disabled'
           )}
-          style={{ padding: 0, borderRadius: 0 }}
         >
           <div
             className={combineClasses(
@@ -361,7 +354,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         </div>
       </div>
       <h5>Charged Moves Secondary</h5>
-      <div className="d-flex align-items-center" style={{ columnGap: 10 }}>
+      <div className="d-flex align-items-center column-gap-2">
         <Checkbox
           checked={!props.pokemonBattle.disableCMoveSec}
           onChange={(_, check) => {
@@ -382,10 +375,9 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         />
         <div
           className={combineClasses(
-            'position-relative d-flex align-items-center form-control',
+            'position-relative d-flex align-items-center form-control p-0 rounded-0',
             pokemon ? 'card-select-enabled' : 'card-select-disabled'
           )}
-          style={{ padding: 0, borderRadius: 0 }}
         >
           <div
             className={combineClasses(

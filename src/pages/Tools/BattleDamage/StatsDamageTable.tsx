@@ -100,7 +100,7 @@ const StatsTable = (props: IStatsTableComponent) => {
       <div>
         <div className="d-flex justify-content-center text-center">
           <TypeRadioGroup
-            row={true}
+            row
             aria-labelledby="row-types-group-label"
             name="row-types-group"
             value={currStatType}
@@ -116,7 +116,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={28} alt="img-buddy" src={APIService.getPokeBuddy()} />{' '}
+                  <img height={28} alt="Image Buddy" src={APIService.getPokeBuddy()} />{' '}
                   {getKeyWithData(PokemonType, PokemonType.Buddy)}
                 </span>
               }
@@ -127,7 +127,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               control={<Radio />}
               label={
                 <span>
-                  <img height={32} alt="img-shadow" src={APIService.getPokeShadow()} />{' '}
+                  <img height={32} alt="Image Shadow" src={APIService.getPokeShadow()} />{' '}
                   {getKeyWithData(PokemonType, PokemonType.Shadow)}
                 </span>
               }
@@ -135,7 +135,7 @@ const StatsTable = (props: IStatsTableComponent) => {
           </TypeRadioGroup>
         </div>
         <div className="d-flex justify-content-center text-center" style={{ height: 80 }}>
-          <Box sx={{ width: '60%', minWidth: 320 }}>
+          <Box className="w-pct-60" sx={{ minWidth: 320 }}>
             <div className="d-flex justify-content-between">
               <b>Level</b>
               <b>{currStatLevel}</b>
@@ -153,7 +153,7 @@ const StatsTable = (props: IStatsTableComponent) => {
           </Box>
         </div>
         <div className="d-flex justify-content-center text-center">
-          <table className="table-info" style={{ width: '40%', minWidth: 270 }}>
+          <table className="table-info w-pct-40" style={{ minWidth: 270 }}>
             <thead />
             <tbody>
               <tr className="text-center">
@@ -163,7 +163,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={ATK_LOGO} />
+                  <img className="me-2" alt="Image League" width={20} height={20} src={ATK_LOGO} />
                   ATK
                 </td>
                 <td className="text-center">
@@ -178,7 +178,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={DEF_LOGO} />
+                  <img className="me-2" alt="Image League" width={20} height={20} src={DEF_LOGO} />
                   DEF
                 </td>
                 <td className="text-center">
@@ -193,7 +193,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               </tr>
               <tr>
                 <td>
-                  <img style={{ marginRight: 10 }} alt="img-league" width={20} height={20} src={HP_LOGO} />
+                  <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
                   HP
                 </td>
                 <td className="text-center">{calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel, true)}</td>

@@ -80,10 +80,8 @@ const Sticker = () => {
   }, [id, shopType, pokeStickerList]);
 
   return (
-    <div className="container" style={{ padding: 15 }}>
-      <h2 className="title-leagues" style={{ marginBottom: 15 }}>
-        Sticker List
-      </h2>
+    <div className="container p-3">
+      <h2 className="title-leagues mb-3">Sticker List</h2>
       <hr />
       <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
         <span className="input-group-text">Find Sticker</span>
@@ -101,9 +99,9 @@ const Sticker = () => {
             ))}
         </Form.Select>
       </div>
-      <FormControl className="element-top">
+      <FormControl className="mt-2">
         <FormLabel>Filter sticker shopping</FormLabel>
-        <RadioGroup row={true} value={shopType} onChange={(e) => setShopType(toNumber(e.target.value))}>
+        <RadioGroup row value={shopType} onChange={(e) => setShopType(toNumber(e.target.value))}>
           <FormControlLabel value={ShopType.All} control={<Radio />} label="All" />
           <FormControlLabel value={ShopType.Available} control={<Radio />} label="Available" />
           <FormControlLabel value={ShopType.Unavailable} control={<Radio />} label="Unavailable" />
@@ -140,7 +138,7 @@ const Sticker = () => {
                     >
                       <img
                         height={64}
-                        alt="img-sticker"
+                        alt="Image Sticker"
                         src={value.stickerUrl ?? APIService.getSticker(value.id.toLowerCase())}
                         onError={(e) => {
                           e.currentTarget.onerror = null;

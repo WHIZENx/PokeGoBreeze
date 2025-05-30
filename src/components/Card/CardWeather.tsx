@@ -5,7 +5,7 @@ import { ICardWeatherComponent } from '../models/component.model';
 const CardWeather = (props: ICardWeatherComponent) => {
   return (
     <Fragment>
-      <img height={64} alt="type-logo" style={{ marginRight: 10 }} src={APIService.getWeatherSprite(props.value)} />
+      <img height={64} alt="Pokémon GO Type Logo" className="me-2" src={APIService.getWeatherSprite(props.value)} />
       <b>{props.value}</b>
     </Fragment>
   );

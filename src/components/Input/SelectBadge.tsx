@@ -13,16 +13,16 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
         className={combineClasses('position-relative frame-badge', props.priority === type ? 'frame-badge-select' : '')}
         onClick={() => props.setPriority(type)}
       >
-        <span style={{ width: 40 }}>
+        <span className="w-6">
           <img
-            alt="frame-type"
+            alt="Frame Type"
             className={combineClasses('frame-type-sprit', type === BadgeType.Platinum ? 'filter-platinum' : '')}
             src={priorityBadge(type)}
           />
         </span>
         {type !== BadgeType.None && (
-          <span className="position-badge" style={{ width: 20 }}>
-            <img alt="badge-type" className="badge-type-sprit" src={APIService.getTypeHqSprite(props.type)} />
+          <span className="position-badge w-3">
+            <img alt="Badge Type" className="badge-type-sprit" src={APIService.getTypeHqSprite(props.type)} />
           </span>
         )}
       </div>
@@ -31,13 +31,13 @@ const SelectBadge = (props: ISelectBadgeComponent) => {
   );
 
   return (
-    <div className="w-100 element-top">
+    <div className="w-100 mt-2">
       <div className="d-flex justify-content-center align-items-center">
-        <div className={combineClasses('type-icon-small', props.type.toLowerCase())} style={{ width: 'max-content' }}>
+        <div className={combineClasses('type-icon-small w-max-content', props.type.toLowerCase())}>
           {capitalize(props.type)} Badge
         </div>
       </div>
-      <div className="d-flex flex-wrap justify-content-center align-items-center element-top" style={{ gap: 10 }}>
+      <div className="d-flex flex-wrap justify-content-center align-items-center mt-2 gap-2">
         {getKeysObj(BadgeType).map((value, i) => (
           <Fragment key={i}>{Badge(props, getDataWithKey(BadgeType, value))}</Fragment>
         ))}

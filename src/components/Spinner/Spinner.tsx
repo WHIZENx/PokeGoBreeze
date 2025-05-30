@@ -19,10 +19,10 @@ const Spinner = () => {
                 className={spinner.error?.isError ? '' : 'loading'}
                 width={64}
                 height={64}
-                alt="img-pokemon"
+                alt="Pokémon Image"
                 src={loading}
               />
-              <span className="caption text-white text-shadow" style={{ fontSize: 18 }}>
+              <span className="caption text-white text-shadow-black" style={{ fontSize: 18 }}>
                 <b>
                   {spinner.error?.isError ? (
                     <Fragment>

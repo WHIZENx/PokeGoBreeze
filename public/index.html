@@ -4,14 +4,75 @@
     <base href="/">
     <meta charset="utf-8" />
     <link rel="icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" href="og-image.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Information about Pokémon GO - stats, best moves, counters, and more." />
+    <meta name="theme-color" content="#212529" />
+    <meta name="description" content="Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools. Find the best Pokémon for battles, raids, and more." />
+    <meta name="keywords" content="Pokémon GO, PokéGo, Pokémon database, PVP, raids, battle simulator, Pokémon stats, Pokémon moves, Pokémon counters" />
+    <meta name="author" content="PokéGoBreeze" />
+    <meta name="publisher" content="PokéGoBreeze" />
+    <meta name="robots" content="index, follow" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:url" id="og-url" content="/" />
+    <meta property="og:title" content="PokéGo Breeze - Comprehensive Pokémon GO Database & Tools" />
+    <meta property="og:description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
+    <meta id="og-image" property="og:image" />
+    
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" id="twitter-url" content="/" />
+    <meta property="twitter:title" content="PokéGo Breeze - Comprehensive Pokémon GO Database & Tools" />
+    <meta property="twitter:description" content="Complete Pokémon GO stats, moves, counters, PVP rankings, raid guides, and battle simulators. Optimize your Pokémon teams!" />
+    <meta id="twitter-image" property="twitter:image" />
+
+    <link rel="image_src" href="og-image.png" />
+    
+    <link rel="canonical" id="canonical-url" href="/" />
+    
     <link crossorigin="use-credentials" rel="manifest" href="manifest.json" />
-    <title>PokéGo Breeze</title>
+    
+    <script>
+      (function() {
+        const origin = window.location.origin;
+        document.getElementById('og-url').setAttribute('content', origin + '/');
+        document.getElementById('twitter-url').setAttribute('content', origin + '/');
+        document.getElementById('canonical-url').setAttribute('href', origin + '/');
+        document.getElementById('og-image').setAttribute('content', origin + '/og-image.png');
+        document.getElementById('twitter-image').setAttribute('content', origin + '/og-image.png');
+      })();
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PokéGo Breeze",
+        "url": "https://pokego-breeze.vercel.app/",
+        "description": "Comprehensive Pokémon GO database with stats, moves, counters, PVP rankings, raid guides, and simulation tools.",
+        "applicationCategory": "GameApplication",
+        "genre": "Pokémon, Gaming",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "PokéGoBreeze",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://pokego-breeze.vercel.app/og-image.png"
+          }
+        }
+      }
+    </script>
+    <title>PokéGo Breeze - Pokémon GO Database & Tools</title>
   </head>
   <body>
-    <noscript>PokéGoBreeze web application for searching Pokémon and Tools simulator in Pokémon GO.</noscript>
+    <noscript>
+      <h1>PokéGo Breeze</h1>
+      <p>PokéGoBreeze web application for searching Pokémon and Tools simulator in Pokémon GO. This application requires JavaScript to be enabled in your browser.</p>
+    </noscript>
     <div id="root"></div>
   </body>
 </html>

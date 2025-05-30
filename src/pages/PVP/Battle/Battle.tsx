@@ -1111,10 +1111,10 @@ const Battle = () => {
       return <></>;
     }
     return (
-      <div className="bufs-container d-flex flex-row" style={{ columnGap: 5 }}>
+      <div className="bufs-container d-flex flex-row column-gap-1">
         {move?.buffs.map((value, index) => (
-          <div key={index} className="d-flex position-relative" style={{ columnGap: 5 }}>
-            <img width={15} height={15} alt="img-atk" src={value.type === TypeAction.Atk ? ATK_LOGO : DEF_LOGO} />
+          <div key={index} className="d-flex position-relative column-gap-1">
+            <img width={15} height={15} alt="Image ATK" src={value.type === TypeAction.Atk ? ATK_LOGO : DEF_LOGO} />
             <div className="position-absolute icon-buff">
               {value.power >= 2 && <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
               {value.power === 1 && <KeyboardArrowUpIcon fontSize="small" sx={{ color: 'green' }} />}
@@ -1258,7 +1258,7 @@ const Battle = () => {
   ) => {
     const battleType = getKeyWithData(BattleType, type);
     return (
-      <Accordion defaultActiveKey={[]} alwaysOpen={true}>
+      <Accordion defaultActiveKey={[]} alwaysOpen>
         <Accordion.Item eventKey="0">
           <Accordion.Header>Information</Accordion.Header>
           <Accordion.Body>
@@ -1266,7 +1266,7 @@ const Battle = () => {
               <div className="position-relative filter-shadow" style={{ width: 128 }}>
                 <PokemonIconType pokemonType={pokemon.pokemonType} size={64}>
                   <img
-                    alt="img-league"
+                    alt="Image League"
                     className="pokemon-sprite-raid"
                     src={APIService.getPokemonModel(pokemon.pokemonData?.form, pokemon.pokemonData?.id)}
                     onError={(e) => {
@@ -1281,7 +1281,7 @@ const Battle = () => {
                 </PokemonIconType>
               </div>
             </div>
-            <div className="w-100 d-flex justify-content-center align-items-center" style={{ gap: 5 }}>
+            <div className="w-100 d-flex justify-content-center align-items-center gap-1">
               <LinkToTop
                 to={`/pvp/${params.cp}/${getKeyWithData(
                   ScoreType,
@@ -1305,7 +1305,7 @@ const Battle = () => {
               {toNumber(pokemon.pokemonData?.currentStats?.IV?.staIV)}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={ATK_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={ATK_LOGO} />
             {'Attack: '}
             <b>
               {Math.floor(
@@ -1314,7 +1314,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={DEF_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={DEF_LOGO} />
             {'Defense: '}
             <b>
               {Math.floor(
@@ -1323,7 +1323,7 @@ const Battle = () => {
               )}
             </b>
             <br />
-            <img style={{ marginRight: 10 }} alt="img-logo" width={20} height={20} src={HP_LOGO} />
+            <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
             HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
             <br />
             {'Stats Prod: '}
@@ -1341,7 +1341,7 @@ const Battle = () => {
                 calculateStatPokemon(e, type, pokemon, setPokemon);
               }}
             >
-              <div className="element-top input-group">
+              <div className="mt-2 input-group">
                 <span className="input-group-text">Level</span>
                 <input
                   className="form-control shadow-none"
@@ -1389,32 +1389,32 @@ const Battle = () => {
                   max={MAX_IV}
                 />
               </div>
-              <div className="w-100 element-top">
+              <div className="w-100 mt-2">
                 <Button type="submit" className="w-100" color="primary">
                   Calculate Stats
                 </Button>
               </div>
             </form>
-            <div className="w-100 element-top">
+            <div className="w-100 mt-2">
               <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon, true)}>
                 Set Random Stats
               </Button>
             </div>
-            <div className="w-100 element-top">
+            <div className="w-100 mt-2">
               <Button className="w-100" color="primary" onClick={() => onSetStats(type, pokemon, setPokemon)}>
                 Set Best Stats
               </Button>
             </div>
             <hr />
             <TypeBadge
-              isFind={true}
+              isFind
               title="Fast Move"
               move={pokemon.fMove}
               moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.fMove?.name)}
             />
-            <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
+            <div className="d-flex w-100 position-relative column-gap-2">
               <TypeBadge
-                isFind={true}
+                isFind
                 title="Primary Charged Move"
                 move={pokemon.cMovePri}
                 moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMovePri?.name)}
@@ -1422,9 +1422,9 @@ const Battle = () => {
               {findBuff(pokemon.cMovePri)}
             </div>
             {pokemon.cMoveSec && (
-              <div className="d-flex w-100 position-relative" style={{ columnGap: 10 }}>
+              <div className="d-flex w-100 position-relative column-gap-2">
                 <TypeBadge
-                  isFind={true}
+                  isFind
                   title="Secondary Charged Move"
                   move={pokemon.cMoveSec}
                   moveType={getMoveType(pokemon.pokemonData?.pokemon, pokemon.cMoveSec.name)}
@@ -1495,8 +1495,7 @@ const Battle = () => {
             <div className="input-group">
               <span className="input-group-text">Block</span>
               <Form.Select
-                style={{ borderRadius: 0 }}
-                className="form-control"
+                className="form-control rounded-0"
                 defaultValue={pokemon.block}
                 onChange={(e) => {
                   setPlayTimeline({
@@ -1526,8 +1525,7 @@ const Battle = () => {
               <div className="input-group">
                 <span className="input-group-text">Charge Slot</span>
                 <Form.Select
-                  style={{ borderRadius: 0 }}
-                  className="form-control"
+                  className="form-control rounded-0"
                   value={pokemon.chargeSlot}
                   onChange={(e) => {
                     setPlayTimeline({
@@ -1633,7 +1631,7 @@ const Battle = () => {
 
   return (
     <Error isError={!isFound}>
-      <div className="container element-top battle-body-container">
+      <div className="container mt-2 battle-body-container">
         <Form.Select
           onChange={(e) => {
             navigateToTop(`/pvp/battle/${toNumber(e.target.value)}`);
@@ -1646,7 +1644,7 @@ const Battle = () => {
           <option value={BattleLeagueCPType.Ultra}>{getPokemonBattleLeagueName(BattleLeagueCPType.Ultra)}</option>
           <option value={BattleLeagueCPType.InsMaster}>{getPokemonBattleLeagueName(BattleLeagueCPType.Master)}</option>
         </Form.Select>
-        <div className="row element-top" style={{ margin: 0 }}>
+        <div className="row mt-2 m-0">
           <div className="col-lg-3">
             {renderPokemonInfo(BattleType.Current, pokemonCurr, setPokemonCurr, clearDataPokemonCurr)}
           </div>
@@ -1658,17 +1656,14 @@ const Battle = () => {
                 <Fragment>
                   <Accordion defaultActiveKey={[]}>
                     <Card className="position-relative">
-                      <Card.Header style={{ padding: 0 }}>
+                      <Card.Header className="p-0">
                         <div className="d-flex timeline-vertical">
                           <div className="w-50">
-                            <div
-                              className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start"
-                              style={{ gap: 10 }}
-                            >
+                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-start gap-2">
                               <div className="position-relative filter-shadow" style={{ width: 35 }}>
                                 <PokemonIconType pokemonType={pokemonCurr.pokemonType} size={20}>
                                   <img
-                                    alt="img-league"
+                                    alt="Image League"
                                     className="sprite-type"
                                     src={APIService.getPokemonModel(
                                       pokemonCurr.pokemonData.form,
@@ -1689,14 +1684,11 @@ const Battle = () => {
                             </div>
                           </div>
                           <div className="w-50">
-                            <div
-                              className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end"
-                              style={{ gap: 10 }}
-                            >
+                            <div className="w-100 h-100 pokemon-battle-header d-flex align-items-center justify-content-end gap-2">
                               <div className="position-relative filter-shadow" style={{ width: 35 }}>
                                 <PokemonIconType pokemonType={pokemonObj.pokemonType} size={20}>
                                   <img
-                                    alt="img-league"
+                                    alt="Image League"
                                     className="sprite-type"
                                     src={APIService.getPokemonModel(
                                       pokemonObj.pokemonData.form,
@@ -1720,7 +1712,7 @@ const Battle = () => {
                         <CustomToggle eventKey="0" />
                       </Card.Header>
                       <Accordion.Collapse eventKey="0">
-                        <Card.Body style={{ padding: 0 }}>{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
+                        <Card.Body className="p-0">{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
                       </Accordion.Collapse>
                     </Card>
                   </Accordion>
@@ -1761,7 +1753,7 @@ const Battle = () => {
                         label="Show Tap Move"
                       />
                       <RadioGroup
-                        row={true}
+                        row
                         aria-labelledby="row-timeline-group-label"
                         name="row-timeline-group"
                         value={timelineType}
@@ -1800,7 +1792,7 @@ const Battle = () => {
                         </Select>
                       </FormControl>
                     </div>
-                    <div className="d-flex justify-content-center" style={{ columnGap: 10 }}>
+                    <div className="d-flex justify-content-center column-gap-2">
                       <button
                         className="btn btn-primary"
                         onMouseDown={() => (playState ? stopTimeLine() : playingTimeLine())}
@@ -1829,7 +1821,7 @@ const Battle = () => {
           </div>
         </div>
         {pokemonCurr.pokemonData && pokemonObj.pokemonData && (
-          <div className="text-center element-top">
+          <div className="text-center mt-2">
             <button className="btn btn-primary" style={{ height: 50 }} onClick={() => battleAnimation()}>
               {isNotEmpty(pokemonCurr.timeline) && isNotEmpty(pokemonObj.timeline) ? (
                 <Fragment>
@@ -1838,8 +1830,8 @@ const Battle = () => {
               ) : (
                 <Fragment>
                   <span className="position-relative">
-                    <img height={36} alt="atk-left" src={ATK_LOGO} />
-                    <img className="battle-logo" height={36} alt="atk-right" src={ATK_LOGO} />
+                    <img height={36} alt="ATK Left" src={ATK_LOGO} />
+                    <img className="battle-logo" height={36} alt="ATK Right" src={ATK_LOGO} />
                   </span>
                   {' Battle Simulator'}
                 </Fragment>

@@ -1,0 +1,80 @@
+// Mixins for common styles
+@mixin theme-transition($transition: 0.3s) {
+  transition: background-color $transition, color $transition, border-color $transition;
+}
+
+@mixin theme-background($color: var(--background-paper), $important: false) {
+  @if $important {
+    background-color: $color !important;
+  } @else {
+    background-color: $color;
+  }
+}
+
+@mixin theme-text($color: var(--text-primary), $important: false) {
+  @if $important {
+    color: $color !important;
+  } @else {
+    color: $color;
+  }
+}
+
+@mixin theme-border($width: 1px, $direction: all, $color: var(--custom-table-background-sub-head-border), $important: false) {
+  @if $direction == all {
+    @if $important {
+      border: $width solid $color !important;
+    } @else {
+      border: $width solid $color;
+    }
+  }
+
+  @if $direction == top {
+    @if $important {
+      border-top: $width solid $color !important;
+    } @else {
+      border-top: $width solid $color;
+    }
+  }
+
+  @if $direction == right {
+    @if $important {
+      border-right: $width solid $color !important;
+    } @else {
+      border-right: $width solid $color;
+    }
+  }
+
+  @if $direction == bottom {
+    @if $important {
+      border-bottom: $width solid $color !important;
+    } @else {
+      border-bottom: $width solid $color;
+    }
+  }
+
+  @if $direction == left {
+    @if $important {
+      border-left: $width solid $color !important;
+    } @else {
+      border-left: $width solid $color;
+    }
+  }
+}
+
+@mixin table-head-style {
+  @include theme-background(var(--custom-table-background-head));
+  @include theme-text(white);
+  @include theme-transition;
+}
+
+@mixin sub-head-style {
+  @include theme-background(var(--custom-table-background-sub-head), true);
+  @include theme-text(var(--custom-table-background-sub-head-text), true);
+  @include theme-border;
+}
+
+@mixin table-info-style {
+  @include theme-background(var(--custom-table-background-info));
+  @include theme-text(var(--custom-table-background-sub-head-text));
+  @include theme-border;
+}
