@@ -200,6 +200,23 @@ export interface IGenderComponent {
   sprit?: IPokemonSprit;
 }
 
+export interface IMenuItem {
+  label: string | React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  isClose?: boolean;
+}
+
+export interface ICustomInputComponent {
+  isAutoSearch?: boolean;
+  optionsIcon?: React.ReactNode;
+  inputPlaceholder?: string;
+  defaultValue?: string;
+  setSearchTerm?: (searchTerm: string) => void;
+  onOptionsClick?: React.MouseEventHandler<HTMLButtonElement>;
+  menuItems?: IMenuItem[];
+}
+
 export interface IDynamicInputCPComponent {
   statATK: number | undefined;
   statDEF: number | undefined;
@@ -428,14 +445,18 @@ export interface ICounterComponent {
 }
 
 export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
+  isAutoSearch?: boolean;
+  menuItems?: IMenuItem[];
   customColumns?: TableColumnModify<T>[];
   customDataStyles?: TableStyles;
   isShowSearch?: boolean;
   customStyles?: TableStyles;
-  inputName?: string;
   inputPlaceholder?: string;
   searchFunction?: (item: T, searchTerm: string) => boolean;
   debounceTime?: number;
+  isShowModalOptions?: boolean;
+  titleModalOptions?: string;
+  customOptionsModal?: () => React.ReactNode;
 }
 
 export interface ITableMoveComponent {
