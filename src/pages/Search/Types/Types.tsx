@@ -17,6 +17,7 @@ import {
   combineClasses,
   getValueOrDefault,
   isEqual,
+  isInclude,
   isIncludeList,
   isNotEmpty,
   toNumber,
@@ -27,6 +28,7 @@ import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -394,6 +396,16 @@ const SearchTypes = (props: IStyleSheetData) => {
                 striped
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
+                isShowSearch
+                isAutoSearch
+                inputPlaceholder="Search Pokémon Name or ID"
+                searchFunction={(pokemon, searchTerm) =>
+                  isInclude(
+                    splitAndCapitalize(pokemon.name, '-', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(pokemon.num, searchTerm)
+                }
               />
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
@@ -406,6 +418,16 @@ const SearchTypes = (props: IStyleSheetData) => {
                 striped
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
+                isShowSearch
+                isAutoSearch
+                inputPlaceholder="Search Pokémon Name or ID"
+                searchFunction={(pokemon, searchTerm) =>
+                  isInclude(
+                    splitAndCapitalize(pokemon.name, '-', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(pokemon.num, searchTerm)
+                }
               />
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
@@ -418,6 +440,16 @@ const SearchTypes = (props: IStyleSheetData) => {
                 striped
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
+                isShowSearch
+                isAutoSearch
+                inputPlaceholder="Search Move Name or ID"
+                searchFunction={(move, searchTerm) =>
+                  isInclude(
+                    splitAndCapitalize(move.name, '_', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(move.id, searchTerm)
+                }
               />
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
@@ -430,6 +462,16 @@ const SearchTypes = (props: IStyleSheetData) => {
                 striped
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
+                isShowSearch
+                isAutoSearch
+                inputPlaceholder="Search Move Name or ID"
+                searchFunction={(move, searchTerm) =>
+                  isInclude(
+                    splitAndCapitalize(move.name, '_', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(move.id, searchTerm)
+                }
               />
             </Tab>
           </Tabs>

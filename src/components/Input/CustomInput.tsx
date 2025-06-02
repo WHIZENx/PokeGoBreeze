@@ -62,7 +62,7 @@ const CustomInput = (props: ICustomInputComponent) => {
       )}
       <InputBase
         className="ms-2"
-        sx={{ flex: 1 }}
+        sx={{ flex: 1, minHeight: 40 }}
         placeholder={props.inputPlaceholder}
         defaultValue={props.defaultValue}
         onKeyUp={(e) => props.setSearchTerm?.(e.currentTarget.value)}
