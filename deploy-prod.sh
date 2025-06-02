@@ -21,11 +21,9 @@ EDGE_TOKEN=${VERCEL_TOKEN:-$REACT_APP_EDGE_TOKEN}
 
 YEAR_DIGIT=$(date +"%Y" | grep -o '.$')
 MONTH_DAY=$(date +"%m%d")
-HOUR=$(date +"%H" | sed 's/^0//')
-MINUTE=$(date +"%M" | sed 's/^0//')
+HOUR=$(date +"%H%M" | sed 's/^0//')
 
-TIME_SUM=$((HOUR + MINUTE))
-VERSION="$YEAR_DIGIT.$MONTH_DAY.$TIME_SUM"
+VERSION="$YEAR_DIGIT.$MONTH_DAY.$HOUR"
 
 echo "=== Environment Information ==="
 echo "Deploy Time: $(date)"
