@@ -21,7 +21,7 @@ const CustomInput = (props: ICustomInputComponent) => {
   };
 
   return (
-    <Paper className="d-flex align-items-center w-100 h-100 rounded-0" component="form">
+    <Paper className="d-flex align-items-center w-100 h-100 rounded-0">
       {isNotEmpty(props.menuItems) && (
         <>
           <IconButton
@@ -69,7 +69,7 @@ const CustomInput = (props: ICustomInputComponent) => {
         inputProps={{ 'aria-label': props.inputPlaceholder }}
       />
       {!props.isAutoSearch && (
-        <IconButton type="button" className="p-2" aria-label="search">
+        <IconButton type="button" className="p-2" aria-label="search" onClick={() => props.setSearchData?.()}>
           <SearchIcon />
         </IconButton>
       )}

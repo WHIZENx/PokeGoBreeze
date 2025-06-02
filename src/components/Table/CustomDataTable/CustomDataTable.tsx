@@ -16,16 +16,20 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
 
   const [showOption, setShowOption] = useState(false);
 
+  const setSearchData = (isAutoSearch = false) => {
+    const results = props.data?.filter((item) => {
+      if (!props.searchFunction || !isAutoSearch) {
+        return true;
+      }
+      return props.searchFunction(item, searchTerm);
+    });
+    setPokemonListFilter(results || []);
+  };
+
   useEffect(() => {
     if (isNotEmpty(props.data)) {
       const debouncedSearch = debounce(() => {
-        const results = props.data?.filter((item) => {
-          if (!props.searchFunction) {
-            return true;
-          }
-          return props.searchFunction(item, searchTerm);
-        });
-        setPokemonListFilter(results || []);
+        setSearchData(props.isAutoSearch);
       }, props.debounceTime || 0);
       debouncedSearch();
       return () => {
@@ -81,6 +85,7 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
             <CustomInput
               menuItems={props.menuItems}
               isAutoSearch={props.isAutoSearch}
+              setSearchData={() => setSearchData(true)}
               inputPlaceholder={props.inputPlaceholder}
               defaultValue={searchTerm}
               setSearchTerm={setSearchTerm}

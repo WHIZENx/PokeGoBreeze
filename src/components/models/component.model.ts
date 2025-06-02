@@ -210,6 +210,7 @@ export interface IMenuItem {
 
 export interface ICustomInputComponent {
   isAutoSearch?: boolean;
+  setSearchData?: () => void;
   optionsIcon?: React.ReactNode;
   inputPlaceholder?: string;
   defaultValue?: string;
