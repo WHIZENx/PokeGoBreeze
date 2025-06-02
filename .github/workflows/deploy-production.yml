@@ -12,6 +12,9 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
+      - name: Make deploy script executable
+        run: chmod +x ./deploy-prod.sh
+
       - name: Deploy with Edge Config updates
         run: ./deploy-prod.sh
         env:
