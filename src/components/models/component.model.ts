@@ -38,6 +38,7 @@ import { TableColumnModify } from '../../util/models/overrides/data-table.model'
 
 export interface INavbarComponent {
   mode: PaletteMode;
+  version?: string;
   toggleColorMode: () => void;
 }
 

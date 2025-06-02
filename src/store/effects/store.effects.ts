@@ -77,7 +77,12 @@ export const loadBaseCPM = (dispatch: Dispatch) =>
 export const loadCPM = (dispatch: Dispatch, cpmList: DynamicObj<number>) =>
   dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, MIN_LEVEL, Object.keys(cpmList).length)));
 
-export const loadTimestamp = async (dispatch: Dispatch, data: IDataModel, timestamp: TimestampModel) => {
+export const loadTimestamp = async (
+  dispatch: Dispatch,
+  data: IDataModel,
+  timestamp: TimestampModel,
+  isCurrentVersion: boolean
+) => {
   await Promise.all([
     APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
     APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, options),
@@ -107,7 +112,7 @@ export const loadTimestamp = async (dispatch: Dispatch, data: IDataModel, timest
         };
         dispatch(SpinnerActions.SetPercent.create(40));
 
-        if (!timestampLoaded.isCurrentGameMaster) {
+        if (!timestampLoaded.isCurrentGameMaster || !isCurrentVersion) {
           await loadGameMaster(dispatch, imageRoot.data, soundsRoot.data, timestampLoaded);
         } else if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
           await loadAssets(dispatch, imageRoot.data, soundsRoot.data, data.pokemons, timestampLoaded);

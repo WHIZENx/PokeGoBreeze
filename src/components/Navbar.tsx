@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -12,8 +12,6 @@ import { capitalize, getTime } from '../util/utils';
 import './Navbar.scss';
 import { Box, IconButton, LinearProgress } from '@mui/material';
 import { SpinnerState, TimestampState } from '../store/models/state.model';
-import { getEdgeItem } from '../services/edge.service';
-import { EdgeKey } from '../services/constants/edgeKey';
 import { TypeTheme, VariantType } from '../enums/type.enum';
 import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
@@ -26,7 +24,6 @@ const NavbarComponent = (props: INavbarComponent) => {
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
 
-  const [version, setVersion] = useState<string>();
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
 
   const [isDelay, setIsDelay] = useState(false);
@@ -41,16 +38,6 @@ const NavbarComponent = (props: INavbarComponent) => {
       }, 500);
     }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await getEdgeItem<string>(EdgeKey.VERSION);
-      setVersion(result);
-    };
-    if (!version) {
-      fetchData();
-    }
-  }, [version]);
 
   return (
     <Fragment>
@@ -145,7 +132,7 @@ const NavbarComponent = (props: INavbarComponent) => {
                 <b>
                   {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
                     `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
-                  {version}
+                  {props.version}
                 </b>
               </span>
             </Navbar.Text>

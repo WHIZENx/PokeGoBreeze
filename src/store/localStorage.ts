@@ -6,7 +6,7 @@ import { LocalStorageConfig } from './constants/localStorage';
  */
 export const clearLocalStorageExcept = () => {
   // Create a Set for faster lookups
-  const keepsSet = new Set([LocalStorageConfig.Theme, LocalStorageConfig.Timestamp]);
+  const keepsSet = new Set([LocalStorageConfig.Theme, LocalStorageConfig.Timestamp, LocalStorageConfig.Version]);
 
   // Get all keys
   const allKeys = Object.keys(localStorage);
