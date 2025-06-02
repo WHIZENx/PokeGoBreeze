@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { MoveSetComponent } from '../models/component.model';
 import { OverlayTrigger } from 'react-bootstrap';
-import PopoverConfig from '../../../components/Popover/PopoverConfig';
+import CustomPopover from '../../../components/Popover/CustomPopover';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
@@ -65,7 +65,7 @@ const MoveSet = (props: MoveSetComponent) => {
     <OverlayTrigger
       placement="auto"
       overlay={
-        <PopoverConfig id="popover-info">
+        <CustomPopover id="popover-info">
           <span className="info-evo">
             <span className="d-block caption">
               - <CircleIcon className="filter-shadow" sx={{ color: 'white' }} /> {ArcheType.General}
@@ -110,7 +110,7 @@ const MoveSet = (props: MoveSetComponent) => {
               {` ${ArcheType.SelfDebuff}`}
             </span>
           </span>
-        </PopoverConfig>
+        </CustomPopover>
       }
     >
       <span className="tooltips-info">

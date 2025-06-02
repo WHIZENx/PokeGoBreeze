@@ -1,6 +1,5 @@
 import { useSnackbar } from 'notistack';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import DataTable from 'react-data-table-component';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import {
@@ -8,7 +7,6 @@ import {
   checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
-  getCustomThemeDataTable,
   getItemSpritePath,
   getKeyWithData,
   splitAndCapitalize,
@@ -39,7 +37,6 @@ import { IMovePage } from '../models/page.model';
 import { TableColumnModify } from '../../util/models/overrides/data-table.model';
 import {
   combineClasses,
-  convertColumnDataType,
   getValueOrDefault,
   isEqual,
   isIncludeList,
@@ -54,6 +51,7 @@ import { LinkToTop } from '../../util/hooks/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
+import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTable';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -744,8 +742,8 @@ const Move = (props: IMovePage) => {
               </tr>
               <tr>
                 <td className="table-top-of-move p-0" colSpan={2}>
-                  <DataTable
-                    columns={convertColumnDataType(columns)}
+                  <CustomDataTable
+                    customColumns={columns}
                     data={topListFilter}
                     pagination
                     defaultSortFieldId={ColumnType.DPS}
@@ -755,7 +753,6 @@ const Move = (props: IMovePage) => {
                     fixedHeader
                     fixedHeaderScrollHeight="35vh"
                     progressPending={!progress}
-                    customStyles={getCustomThemeDataTable()}
                     progressComponent={<CircularProgressTable />}
                   />
                 </td>

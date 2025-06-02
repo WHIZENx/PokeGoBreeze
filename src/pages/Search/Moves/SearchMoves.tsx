@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import DataTable from 'react-data-table-component';
-import { capitalize, getCustomThemeDataTable, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -12,7 +11,6 @@ import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
-  convertColumnDataType,
   getValueOrDefault,
   isEqual,
   isInclude,
@@ -27,6 +25,7 @@ import { Params } from '../../../util/constants';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
+import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -211,13 +210,12 @@ const Search = () => {
               </tr>
               <tr>
                 <td className="data-table">
-                  <DataTable
-                    columns={convertColumnDataType(columns)}
+                  <CustomDataTable
+                    customColumns={columns}
                     data={resultFMove}
                     defaultSortFieldId={ColumnSearchMoveType.Name}
                     fixedHeader
                     fixedHeaderScrollHeight="70vh"
-                    customStyles={getCustomThemeDataTable()}
                     progressPending={!fMoveIsLoad}
                     progressComponent={<CircularProgressTable />}
                   />
@@ -268,13 +266,12 @@ const Search = () => {
               </tr>
               <tr>
                 <td className="data-table">
-                  <DataTable
-                    columns={convertColumnDataType(columns)}
+                  <CustomDataTable
+                    customColumns={columns}
                     data={resultCMove}
                     defaultSortFieldId={ColumnSearchMoveType.Name}
                     fixedHeader
                     fixedHeaderScrollHeight="70vh"
-                    customStyles={getCustomThemeDataTable()}
                     progressPending={!cMoveIsLoad}
                     progressComponent={<CircularProgressTable />}
                   />

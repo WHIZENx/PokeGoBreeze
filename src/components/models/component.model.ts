@@ -33,6 +33,8 @@ import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../util/models/util.model';
 import { PaletteMode } from '@mui/material';
+import { TableProps, TableStyles } from 'react-data-table-component';
+import { TableColumnModify } from '../../util/models/overrides/data-table.model';
 
 export interface INavbarComponent {
   mode: PaletteMode;
@@ -423,6 +425,17 @@ export interface IWeatherComponent {
 
 export interface ICounterComponent {
   pokemonData: Partial<IPokemonDetail> | undefined;
+}
+
+export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
+  customColumns?: TableColumnModify<T>[];
+  customDataStyles?: TableStyles;
+  isShowSearch?: boolean;
+  customStyles?: TableStyles;
+  inputName?: string;
+  inputPlaceholder?: string;
+  searchFunction?: (item: T, searchTerm: string) => boolean;
+  debounceTime?: number;
 }
 
 export interface ITableMoveComponent {

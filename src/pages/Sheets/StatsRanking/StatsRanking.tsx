@@ -13,7 +13,7 @@ import {
   getKeyWithData,
   getCustomThemeDataTable,
 } from '../../../util/utils';
-import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
+import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
@@ -42,7 +42,6 @@ import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
-  convertColumnDataType,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -62,6 +61,7 @@ import { Action } from 'history';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
+import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -612,8 +612,8 @@ const StatsRanking = () => {
           }
         />
       </div>
-      <DataTable
-        columns={convertColumnDataType(columnPokemon)}
+      <CustomDataTable
+        customColumns={columnPokemon}
         data={pokemonFilter}
         pagination
         defaultSortFieldId={getSortId()}
@@ -638,7 +638,7 @@ const StatsRanking = () => {
           }
         }}
         conditionalRowStyles={conditionalRowStyles}
-        customStyles={getCustomThemeDataTable(customStyles)}
+        customDataStyles={getCustomThemeDataTable(customStyles)}
         paginationDefaultPage={page}
         paginationPerPage={defaultPerPages}
         paginationRowsPerPageOptions={Array.from(

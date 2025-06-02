@@ -5,7 +5,6 @@ import {
   checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
-  getCustomThemeDataTable,
   getKeyWithData,
   getValidPokemonImgPath,
   isSpecialMegaFormType,
@@ -19,16 +18,16 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import './Counter.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { OptionsSheetState, StoreState } from '../../../store/models/state.model';
-import DataTable, { TableStyles } from 'react-data-table-component';
+import { TableStyles } from 'react-data-table-component';
 import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
 import { ColumnType, MoveType, PokemonType, VariantType } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
-  convertColumnDataType,
   DynamicObj,
   getValueOrDefault,
+  isInclude,
   isNotEmpty,
   isNullOrUndefined,
   toFloat,
@@ -43,6 +42,8 @@ import { FloatPaddingOption } from '../../../util/models/extension.model';
 import { COUNTER_DELAY } from '../../../util/constants';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
+import CustomDataTable from '../CustomDataTable/CustomDataTable';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const customStyles: TableStyles = {
   head: {
@@ -391,13 +392,19 @@ const Counter = (props: ICounterComponent) => {
           <SettingsIcon className="u-fs-5" />
         </div>
       </div>
-      <DataTable
+      <CustomDataTable
         className="table-counter-container"
-        columns={convertColumnDataType(columns)}
+        customColumns={columns}
         defaultSortFieldId={ColumnType.Percent}
         defaultSortAsc={false}
+        isShowSearch
+        searchFunction={(item, searchTerm) =>
+          isInclude(splitAndCapitalize(item.pokemonName, '-', ' '), searchTerm, IncludeMode.IncludeIgnoreCaseSensitive)
+        }
         pagination
-        customStyles={getCustomThemeDataTable(customStyles)}
+        customDataStyles={customStyles}
+        inputName="Search Pokémon"
+        inputPlaceholder="Search Pokémon Name"
         fixedHeader
         paginationComponentOptions={{
           noRowsPerPage: true,

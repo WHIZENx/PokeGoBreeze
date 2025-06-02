@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import DataTable, { TableColumn } from 'react-data-table-component';
+import { TableColumn } from 'react-data-table-component';
 
-import { getCustomThemeDataTable, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd, sortStatsProd } from '../../../util/calculate';
 
 import Find from '../../../components/Find/Find';
@@ -19,6 +19,7 @@ import { useSnackbar } from 'notistack';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
+import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -316,7 +317,7 @@ const StatsTable = () => {
           </button>
         </div>
       </form>
-      <DataTable
+      <CustomDataTable
         title={`Stat Battle for ${splitAndCapitalize(pokemon?.fullName, '_', ' ')}`}
         columns={columnsStats}
         data={filterStatsBattle}
@@ -325,7 +326,6 @@ const StatsTable = () => {
         striped
         highlightOnHover
         progressPending={isLoading}
-        customStyles={getCustomThemeDataTable()}
         progressComponent={<CircularProgressTable />}
       />
     </div>
