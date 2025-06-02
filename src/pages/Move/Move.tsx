@@ -25,7 +25,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { FormControlLabel, Switch } from '@mui/material';
+import { FormControlLabel, Checkbox } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Accordion, Form } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
@@ -39,6 +39,7 @@ import {
   combineClasses,
   getValueOrDefault,
   isEqual,
+  isInclude,
   isIncludeList,
   isNotEmpty,
   toFloat,
@@ -52,6 +53,7 @@ import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTable';
+import { IMenuItem } from '../../components/models/component.model';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -146,12 +148,43 @@ const Move = (props: IMovePage) => {
 
   const [move, setMove] = useState<ICombat>();
   const [releasedGO, setReleaseGO] = useState(true);
+  const [isMatch, setIsMatch] = useState(false);
   const [topList, setTopList] = useState<IPokemonTopMove[]>([]);
   const [topListFilter, setTopListFilter] = useState<IPokemonTopMove[]>([]);
   const [moveType, setMoveType] = useState<string>();
   const [progress, setProgress] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const menuItems: IMenuItem[] = [
+    {
+      label: (
+        <FormControlLabel
+          control={<Checkbox checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
+          label={
+            <span className="d-flex align-items-center">
+              Released in GO
+              <img
+                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
+                width={28}
+                height={28}
+                alt="Pokémon GO Icon"
+                src={APIService.getPokemonGoIcon(icon)}
+              />
+            </span>
+          }
+        />
+      ),
+    },
+    {
+      label: (
+        <FormControlLabel
+          control={<Checkbox checked={isMatch} onChange={(_, check) => setIsMatch(check)} />}
+          label="Match Pokémon"
+        />
+      ),
+    },
+  ];
 
   const getWeatherEffective = (type: string | undefined) => {
     const result = Object.entries(data.weatherBoost)?.find(([, value]: [string, string[]]) => {
@@ -722,21 +755,6 @@ const Move = (props: IMovePage) => {
                 <td className="table-sub-header" colSpan={2}>
                   <div className="input-group align-items-center justify-content-center">
                     <span>{`Top Pokémon in move ${splitAndCapitalize(move?.name.toLowerCase(), '_', ' ')}`}</span>
-                    <FormControlLabel
-                      control={<Switch checked={releasedGO} onChange={(_, check) => setReleaseGO(check)} />}
-                      label={
-                        <span className="d-flex align-items-center">
-                          Released in GO
-                          <img
-                            className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                            width={28}
-                            height={28}
-                            alt="Pokémon GO Icon"
-                            src={APIService.getPokemonGoIcon(icon)}
-                          />
-                        </span>
-                      }
-                    />
                   </div>
                 </td>
               </tr>
@@ -754,6 +772,17 @@ const Move = (props: IMovePage) => {
                     fixedHeaderScrollHeight="35vh"
                     progressPending={!progress}
                     progressComponent={<CircularProgressTable />}
+                    isShowSearch
+                    isAutoSearch
+                    inputPlaceholder="Search Pokémon Name or ID"
+                    menuItems={menuItems}
+                    searchFunction={(pokemon, search) =>
+                      isInclude(
+                        splitAndCapitalize(pokemon.name, '-', ' '),
+                        search,
+                        IncludeMode.IncludeIgnoreCaseSensitive
+                      ) || (isMatch ? isEqual(pokemon.num, search) : isInclude(pokemon.num, search))
+                    }
                   />
                 </td>
               </tr>
