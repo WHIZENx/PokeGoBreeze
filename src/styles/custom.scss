@@ -187,7 +187,7 @@ a.pokemon-link:hover {
 
 // Navigation block
 .prev-next-block {
-  @include theme-background(var(--background-btn-type));
+  @include theme-background(var(--background-selected));
   @include theme-text(var(--text-primary), true);
 
   a {

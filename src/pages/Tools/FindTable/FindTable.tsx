@@ -1,16 +1,9 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import {
-  getCustomThemeDataTable,
-  HundoRate,
-  isInvalidIV,
-  marks,
-  PokeGoSlider,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
 
-import DataTable, { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
+import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
 import dataCPM from '../../../data/cp_multiplier.json';
 
 import '../../../components/Find/FormSelect.scss';
@@ -31,6 +24,7 @@ import { SearchingState } from '../../../store/models/state.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
+import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 
 interface IFindCP {
   level: number;
@@ -304,7 +298,7 @@ const FindTable = () => {
             {renderStar(zeroStar, 0, 'zero')}
           </Fragment>
         )}
-        <DataTable
+        <CustomDataTable
           title={`Levels/IV for CP: ${preIvArr?.CP}`}
           columns={columnsIV}
           data={getValueOrDefault(Array, preIvArr?.result)}
@@ -313,7 +307,7 @@ const FindTable = () => {
           defaultSortAsc={false}
           conditionalRowStyles={conditionalRowStyles}
           highlightOnHover
-          customStyles={getCustomThemeDataTable(customStyles)}
+          customDataStyles={customStyles}
         />
       </Fragment>
     );
@@ -336,7 +330,7 @@ const FindTable = () => {
             <p className="mt-2">
               Average of HP: <b>{Math.round(avgHP)}</b>
             </p>
-            <DataTable
+            <CustomDataTable
               title={`Levels/CP for IV: ${preCpArr?.IV.atkIV}/${preCpArr?.IV.defIV}/${preCpArr?.IV.staIV}`}
               columns={columnsCP}
               data={getValueOrDefault(Array, preCpArr?.result)}
@@ -344,7 +338,6 @@ const FindTable = () => {
               defaultSortFieldId={ColumnType.Level}
               highlightOnHover
               striped
-              customStyles={getCustomThemeDataTable()}
             />
           </Fragment>
         )}
@@ -370,7 +363,7 @@ const FindTable = () => {
       });
 
     return (
-      <DataTable
+      <CustomDataTable
         title="Pokémon MIN/MAX CP"
         columns={columns}
         data={dataTable}
@@ -378,7 +371,6 @@ const FindTable = () => {
         defaultSortFieldId={ColumnType.Level}
         striped
         highlightOnHover
-        customStyles={getCustomThemeDataTable()}
       />
     );
   };

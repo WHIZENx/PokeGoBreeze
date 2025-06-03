@@ -43,6 +43,8 @@ const Search = () => {
   const [pokemonList, setPokemonList] = useState<IPokemonSearching[]>([]);
   const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
 
+  const resultsContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (isNotEmpty(pokemonName)) {
       const result = mappingPokemonName(pokemonName);
@@ -109,16 +111,59 @@ const Search = () => {
         const input = document.getElementById('input-search-pokemon');
         input?.blur();
         setShowResult(false);
-        setSearchOption({ id: pokemonListFilter[0].id });
-        setSelectId(pokemonListFilter[0].id);
+        setSearchOption({ id: selectId });
       } else if (prev && event.keyCode === KEY_UP) {
+        event.preventDefault();
         setSelectId(prev.id);
+        scrollToSelectedItem(prev.id);
       } else if (next && event.keyCode === KEY_DOWN) {
+        event.preventDefault();
         setSelectId(next.id);
+        scrollToSelectedItem(next.id);
       } else {
         setSearchTerm(search);
       }
     }
+  };
+
+  const scrollToSelectedItem = (id: number) => {
+    if (!resultsContainerRef.current) {
+      return;
+    }
+
+    setTimeout(() => {
+      const container = resultsContainerRef.current;
+      if (!container) {
+        return;
+      }
+
+      const selectedElement = container.querySelector(`#pokemon-card-${id}`) as HTMLElement;
+      if (!selectedElement) {
+        return;
+      }
+
+      const containerRect = container.getBoundingClientRect();
+      const containerTop = container.scrollTop;
+      const containerBottom = containerTop + containerRect.height;
+      const elementTop = selectedElement.offsetTop;
+      const elementBottom = elementTop + selectedElement.offsetHeight;
+
+      const isInView = elementTop >= containerTop && elementBottom <= containerBottom;
+
+      if (!isInView) {
+        if (elementTop < containerTop) {
+          container.scrollTo({
+            top: elementTop,
+            behavior: 'smooth',
+          });
+        } else if (elementBottom > containerBottom) {
+          container.scrollTo({
+            top: elementBottom - containerRect.height,
+            behavior: 'smooth',
+          });
+        }
+      }
+    });
   };
 
   return (
@@ -149,12 +194,14 @@ const Search = () => {
           />
         </div>
         <div
+          ref={resultsContainerRef}
           className={combineClasses('result', showResult ? 'd-block' : 'd-none')}
           onScroll={listenScrollEvent.bind(this)}
         >
           <Fragment>
             {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
               <div
+                id={`pokemon-card-${value.id}`}
                 className={combineClasses(
                   'container card-pokemon',
                   value.id === searchOption.id ? 'highlight-select-pokemon' : '',

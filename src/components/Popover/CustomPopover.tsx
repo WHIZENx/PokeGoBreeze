@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import { Popover, PopoverProps } from 'react-bootstrap';
 
-const PopoverConfig = forwardRef<HTMLDivElement, PopoverProps>(({ id, popper, children, ...props }, ref) => {
+const CustomPopover = forwardRef<HTMLDivElement, PopoverProps>(({ id, popper, children, ...props }, ref) => {
   useEffect(() => {
     if (popper?.scheduleUpdate) {
       popper.scheduleUpdate();
@@ -15,5 +15,5 @@ const PopoverConfig = forwardRef<HTMLDivElement, PopoverProps>(({ id, popper, ch
   );
 });
 
-PopoverConfig.displayName = 'PopoverConfig';
-export default PopoverConfig;
+CustomPopover.displayName = 'CustomPopover';
+export default CustomPopover;

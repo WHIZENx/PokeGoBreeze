@@ -52,6 +52,8 @@ import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './store/localStorage';
 import { getStyleList } from './util/utils';
+import { getEdgeItem } from './services/edge.service';
+import { EdgeKey } from './services/constants/edgeKey';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -68,8 +70,10 @@ function App() {
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [, setStateTimestamp] = useLocalStorage(LocalStorageConfig.Timestamp, 0);
+  const [version, setStateVersion] = useLocalStorage(LocalStorageConfig.Version, '');
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
 
   useEffect(() => {
@@ -106,24 +110,33 @@ function App() {
   }, [timestamp?.gamemaster]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      const result = await getEdgeItem<string>(EdgeKey.VERSION);
+      setCurrentVersion(result);
+
+      dispatch(SpinnerActions.SetBar.create(true));
+      dispatch(SpinnerActions.SetPercent.create(0));
+      setIsLoaded(true);
+      const isCurrentVersion = result === version;
+      setStateVersion(result || '');
+      loadData(controller.signal, isCurrentVersion);
+    };
+
+    const controller = new AbortController();
+    if (!isLoaded) {
+      fetchData();
+    }
+  }, [isLoaded]);
+
+  useEffect(() => {
     dispatch(DeviceActions.SetDevice.create());
     loadTheme(dispatch, stateTheme, setStateTheme);
   }, [dispatch]);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    if (!isLoaded) {
-      dispatch(SpinnerActions.SetBar.create(true));
-      dispatch(SpinnerActions.SetPercent.create(0));
-      setIsLoaded(true);
-      loadData(controller.signal);
-    }
-  }, [isLoaded]);
-
-  const loadData = (signal: AbortSignal, delay = LOAD_DATA_DELAY) => {
+  const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = LOAD_DATA_DELAY) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
-        resolve(await loadTimestamp(dispatch, data, timestamp));
+        resolve(await loadTimestamp(dispatch, data, timestamp, isCurrentVersion));
       };
 
       const debouncedResolve = debounce(resolveHandler, delay);
@@ -149,7 +162,7 @@ function App() {
 
   return (
     <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
-      <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} />
+      <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
       <Routes>
         <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
         <Route path="/news" element={<News />} />

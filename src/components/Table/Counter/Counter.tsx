@@ -5,7 +5,6 @@ import {
   checkPokemonGO,
   convertPokemonDataName,
   generateParamForm,
-  getCustomThemeDataTable,
   getKeyWithData,
   getValidPokemonImgPath,
   isSpecialMegaFormType,
@@ -14,21 +13,20 @@ import {
 import { findAssetForm } from '../../../util/compute';
 import { counterPokemon } from '../../../util/calculate';
 
-import SettingsIcon from '@mui/icons-material/Settings';
-
 import './Counter.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { OptionsSheetState, StoreState } from '../../../store/models/state.model';
-import DataTable, { TableStyles } from 'react-data-table-component';
+import { TableStyles } from 'react-data-table-component';
 import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
-import { ColumnType, MoveType, PokemonType, VariantType } from '../../../enums/type.enum';
+import { ColumnType, MoveType, PokemonType } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
-  convertColumnDataType,
   DynamicObj,
   getValueOrDefault,
+  isEqual,
+  isInclude,
   isNotEmpty,
   isNullOrUndefined,
   toFloat,
@@ -36,13 +34,15 @@ import {
   toNumber,
 } from '../../../util/extension';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
-import { Button, Modal } from 'react-bootstrap';
 import { OptionsActions } from '../../../store/actions';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 import { COUNTER_DELAY } from '../../../util/constants';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
+import CustomDataTable from '../CustomDataTable/CustomDataTable';
+import { IncludeMode } from '../../../util/enums/string.enum';
+import { IMenuItem } from '../../models/component.model';
 
 const customStyles: TableStyles = {
   head: {
@@ -124,10 +124,36 @@ const Counter = (props: ICounterComponent) => {
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [showFrame, setShowFrame] = useState(true);
 
-  const [showOption, setShowOption] = useState(false);
   const [options, setOptions] = useState(optionStore?.counter ?? new OptionFiltersCounter());
 
-  const { showMegaPrimal, releasedGO, enableBest } = options;
+  const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
+
+  const menuItems: IMenuItem[] = [
+    {
+      label: (
+        <FormControlLabel
+          control={
+            <Checkbox checked={isSearchId} onChange={(_, check) => setOptions({ ...options, isSearchId: check })} />
+          }
+          label="Search Pokémon Id"
+        />
+      ),
+    },
+    {
+      label: (
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isMatch}
+              onChange={(_, check) => setOptions({ ...options, isMatch: check })}
+              disabled={!isSearchId}
+            />
+          }
+          label="Match Pokémon"
+        />
+      ),
+    },
+  ];
 
   const columns: TableColumnModify<ICounterModel>[] = [
     {
@@ -328,14 +354,6 @@ const Counter = (props: ICounterComponent) => {
     return Object.values(group).map((pokemon) => pokemon.reduce((p, c) => (p.ratio > c.ratio ? p : c)));
   };
 
-  const handleShowOption = () => {
-    setShowOption(true);
-  };
-
-  const handleCloseOption = () => {
-    setShowOption(false);
-  };
-
   const modalOptions = () => (
     <form>
       <FormControlLabel
@@ -387,17 +405,26 @@ const Counter = (props: ICounterComponent) => {
     <div className="table-info">
       <div className="sub-header input-group align-items-center justify-content-center">
         <span className="sub-title">Best Pokémon Counter</span>
-        <div className="counter-setting" onClick={handleShowOption}>
-          <SettingsIcon className="u-fs-5" />
-        </div>
       </div>
-      <DataTable
+      <CustomDataTable
         className="table-counter-container"
-        columns={convertColumnDataType(columns)}
+        customColumns={columns}
         defaultSortFieldId={ColumnType.Percent}
         defaultSortAsc={false}
+        isShowSearch
+        isAutoSearch
+        menuItems={menuItems}
+        searchFunction={(item, searchTerm) =>
+          isInclude(
+            splitAndCapitalize(item.pokemonName, '-', ' '),
+            searchTerm,
+            IncludeMode.IncludeIgnoreCaseSensitive
+          ) ||
+          (isSearchId && (isMatch ? isEqual(item.pokemonId, searchTerm) : isInclude(item.pokemonId, searchTerm)))
+        }
         pagination
-        customStyles={getCustomThemeDataTable(customStyles)}
+        customDataStyles={customStyles}
+        inputPlaceholder="Search Pokémon"
         fixedHeader
         paginationComponentOptions={{
           noRowsPerPage: true,
@@ -407,23 +434,10 @@ const Counter = (props: ICounterComponent) => {
         progressPending={showFrame}
         progressComponent={<CounterLoader />}
         data={counterFilter}
+        isShowModalOptions
+        titleModalOptions="Pokémon counter options"
+        customOptionsModal={modalOptions}
       />
-
-      <Modal show={showOption} onHide={handleCloseOption} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Pokémon counter options</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="overflow-y-auto" style={{ maxHeight: '60vh', maxWidth: 400 }}>
-            {modalOptions()}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant={VariantType.Secondary} onClick={handleCloseOption}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };
