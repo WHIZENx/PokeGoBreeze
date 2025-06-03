@@ -8,7 +8,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Form, OverlayTrigger } from 'react-bootstrap';
-import PopoverConfig from '../../components/Popover/PopoverConfig';
+import CustomPopover from '../../components/Popover/CustomPopover';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
@@ -121,13 +121,13 @@ const Sticker = () => {
                   key={index}
                   placement="auto"
                   overlay={
-                    <PopoverConfig id={`popover-sticker-${index}`}>
+                    <CustomPopover id={`popover-sticker-${index}`}>
                       {value.isShop ? (
                         <span>Available in shop sell pack: {value.pack.join(', ')}</span>
                       ) : (
                         <span>Unavailable in shop</span>
                       )}
-                    </PopoverConfig>
+                    </CustomPopover>
                   }
                 >
                   <div className="sticker-detail position-relative">

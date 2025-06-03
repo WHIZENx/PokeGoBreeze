@@ -41,10 +41,14 @@ interface IOptionFiltersCounter {
   showMegaPrimal: boolean;
   releasedGO: boolean;
   enableBest: boolean;
+  isMatch: boolean;
+  isSearchId: boolean;
 }
 
 export class OptionFiltersCounter implements IOptionFiltersCounter {
   showMegaPrimal = false;
   releasedGO = true;
   enableBest = false;
+  isMatch = false;
+  isSearchId = true;
 }

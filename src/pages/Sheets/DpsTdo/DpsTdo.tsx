@@ -10,7 +10,6 @@ import {
   generateParamForm,
   getKeysObj,
   getAllMoves,
-  getCustomThemeDataTable,
   isSpecialMegaFormType,
 } from '../../../util/utils';
 import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
@@ -25,7 +24,6 @@ import {
   calculateStatsBattle,
 } from '../../../util/calculate';
 
-import DataTable from 'react-data-table-component';
 import APIService from '../../../services/API.service';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -52,7 +50,6 @@ import { OptionsActions } from '../../../store/actions';
 import { SortOrderType, TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
-  convertColumnDataType,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -73,6 +70,7 @@ import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
+import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -1286,8 +1284,8 @@ const DpsTdo = () => {
       </div>
       <div className="position-relative">
         <Loading isShow={isShowSpinner} />
-        <DataTable
-          columns={convertColumnDataType(columns)}
+        <CustomDataTable
+          customColumns={columns}
           data={dataFilter}
           noDataComponent={null}
           pagination
@@ -1297,7 +1295,6 @@ const DpsTdo = () => {
           striped
           paginationDefaultPage={defaultPage}
           paginationPerPage={defaultRowPerPage}
-          customStyles={getCustomThemeDataTable()}
           onChangePage={(page) => {
             setDefaultPage(page);
           }}

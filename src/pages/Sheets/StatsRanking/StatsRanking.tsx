@@ -13,7 +13,7 @@ import {
   getKeyWithData,
   getCustomThemeDataTable,
 } from '../../../util/utils';
-import DataTable, { ConditionalStyles, TableStyles } from 'react-data-table-component';
+import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
@@ -42,7 +42,6 @@ import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
-  convertColumnDataType,
   DynamicObj,
   getPropertyName,
   getValueOrDefault,
@@ -62,6 +61,8 @@ import { Action } from 'history';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
+import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { IMenuItem } from '../../../components/models/component.model';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -210,7 +211,6 @@ const StatsRanking = () => {
   const pokemons = useSelector((state: StoreState) => state.store.data.pokemons);
   const options = useSelector((state: StoreState) => state.store.data.options);
   const [pokemon, setPokemon] = useState<IPokemonDetail>();
-  const [search, setSearch] = useState('');
 
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
     const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Atk));
@@ -392,6 +392,46 @@ const StatsRanking = () => {
 
   const [progress, setProgress] = useState(new PokemonProgress());
 
+  const menuItems: IMenuItem[] = [
+    {
+      label: (
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isMatch}
+              onChange={(_, check) => setFilters(Filter.create({ ...filters, isMatch: check }))}
+            />
+          }
+          label="Match Pokémon"
+        />
+      ),
+    },
+    {
+      label: (
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={releasedGO}
+              onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
+            />
+          }
+          label={
+            <span className="d-flex align-items-center">
+              Released in GO
+              <img
+                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
+                width={28}
+                height={28}
+                alt="Pokémon GO Icon"
+                src={APIService.getPokemonGoIcon(icon)}
+              />
+            </span>
+          }
+        />
+      ),
+    },
+  ];
+
   useEffect(() => {
     if (
       isNotEmpty(pokemons) &&
@@ -471,30 +511,14 @@ const StatsRanking = () => {
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
       const debounced = debounce(() => {
-        setPokemonFilter(
-          pokemonList
-            .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
-            .filter(
-              (pokemon) =>
-                isEmpty(search) ||
-                (isMatch
-                  ? isEqual(pokemon.num, search) ||
-                    isEqual(splitAndCapitalize(pokemon.name, '-', ' '), search, EqualMode.IgnoreCaseSensitive)
-                  : isInclude(pokemon.num, search) ||
-                    isInclude(
-                      splitAndCapitalize(pokemon.name, '-', ' '),
-                      search,
-                      IncludeMode.IncludeIgnoreCaseSensitive
-                    ))
-            )
-        );
-      }, 100);
+        setPokemonFilter(pokemonList.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)));
+      });
       debounced();
       return () => {
         debounced.cancel();
       };
     }
-  }, [search, isMatch, releasedGO, pokemonList]);
+  }, [isMatch, releasedGO, pokemonList]);
 
   useEffect(() => {
     const paramId = toNumber(searchParams.get(Params.Id));
@@ -571,49 +595,8 @@ const StatsRanking = () => {
         form={select?.form}
         isDisabled
       />
-      <div className="d-flex flex-wrap gap-3">
-        <div className="w-25 input-group border-input" style={{ minWidth: 300 }}>
-          <span className="input-group-text">Find Pokémon</span>
-          <input
-            type="text"
-            className="form-control input-search"
-            placeholder="Enter Name or ID"
-            value={search}
-            onInput={(e) => setSearch(e.currentTarget.value)}
-          />
-        </div>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={isMatch}
-              onChange={(_, check) => setFilters(Filter.create({ ...filters, isMatch: check }))}
-            />
-          }
-          label="Match Pokémon"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={releasedGO}
-              onChange={(_, check) => setFilters(Filter.create({ ...filters, releasedGO: check }))}
-            />
-          }
-          label={
-            <span className="d-flex align-items-center">
-              Released in GO
-              <img
-                className={combineClasses('ms-1', releasedGO ? '' : 'filter-gray')}
-                width={28}
-                height={28}
-                alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(icon)}
-              />
-            </span>
-          }
-        />
-      </div>
-      <DataTable
-        columns={convertColumnDataType(columnPokemon)}
+      <CustomDataTable
+        customColumns={columnPokemon}
         data={pokemonFilter}
         pagination
         defaultSortFieldId={getSortId()}
@@ -638,7 +621,7 @@ const StatsRanking = () => {
           }
         }}
         conditionalRowStyles={conditionalRowStyles}
-        customStyles={getCustomThemeDataTable(customStyles)}
+        customDataStyles={getCustomThemeDataTable(customStyles)}
         paginationDefaultPage={page}
         paginationPerPage={defaultPerPages}
         paginationRowsPerPageOptions={Array.from(
@@ -647,6 +630,18 @@ const StatsRanking = () => {
         )}
         progressPending={!isNotEmpty(pokemonList)}
         progressComponent={<CircularProgressTable />}
+        isShowSearch
+        isAutoSearch
+        inputPlaceholder="Search Pokémon Name or ID"
+        menuItems={menuItems}
+        searchFunction={(pokemon, search) =>
+          isEmpty(search) ||
+          (isMatch
+            ? isEqual(pokemon.num, search) ||
+              isEqual(splitAndCapitalize(pokemon.name, '-', ' '), search, EqualMode.IgnoreCaseSensitive)
+            : isInclude(pokemon.num, search) ||
+              isInclude(splitAndCapitalize(pokemon.name, '-', ' '), search, IncludeMode.IncludeIgnoreCaseSensitive))
+        }
       />
     </div>
   );

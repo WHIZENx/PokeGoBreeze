@@ -33,9 +33,12 @@ import { EffectiveType } from '../Effective/enums/type-effective.enum';
 import { SearchOption } from '../../pages/Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../util/models/util.model';
 import { PaletteMode } from '@mui/material';
+import { TableProps, TableStyles } from 'react-data-table-component';
+import { TableColumnModify } from '../../util/models/overrides/data-table.model';
 
 export interface INavbarComponent {
   mode: PaletteMode;
+  version?: string;
   toggleColorMode: () => void;
 }
 
@@ -196,6 +199,24 @@ export interface IGenderComponent {
   sex: TypeSex;
   ratio?: IPokemonGenderRatio;
   sprit?: IPokemonSprit;
+}
+
+export interface IMenuItem {
+  label: string | React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  isClose?: boolean;
+}
+
+export interface ICustomInputComponent {
+  isAutoSearch?: boolean;
+  setSearchData?: () => void;
+  optionsIcon?: React.ReactNode;
+  inputPlaceholder?: string;
+  defaultValue?: string;
+  setSearchTerm?: (searchTerm: string) => void;
+  onOptionsClick?: React.MouseEventHandler<HTMLButtonElement>;
+  menuItems?: IMenuItem[];
 }
 
 export interface IDynamicInputCPComponent {
@@ -423,6 +444,21 @@ export interface IWeatherComponent {
 
 export interface ICounterComponent {
   pokemonData: Partial<IPokemonDetail> | undefined;
+}
+
+export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
+  isAutoSearch?: boolean;
+  menuItems?: IMenuItem[];
+  customColumns?: TableColumnModify<T>[];
+  customDataStyles?: TableStyles;
+  isShowSearch?: boolean;
+  customStyles?: TableStyles;
+  inputPlaceholder?: string;
+  searchFunction?: (item: T, searchTerm: string) => boolean;
+  debounceTime?: number;
+  isShowModalOptions?: boolean;
+  titleModalOptions?: string;
+  customOptionsModal?: () => React.ReactNode;
 }
 
 export interface ITableMoveComponent {
