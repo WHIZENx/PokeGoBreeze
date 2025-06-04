@@ -4,7 +4,7 @@
 .theme-card {
   @include theme-background(var(--background-paper));
   @include theme-text(var(--text-primary));
-  
+
   border-radius: var(--border-radius);
 
   @include theme-transition;
@@ -23,7 +23,7 @@
 .theme-btn {
   @include theme-background(var(--primary-main));
   @include theme-text(var(--primary-contrast-text));
-  
+
   border-radius: var(--border-radius);
 
   &:hover {
@@ -97,7 +97,7 @@
 .result-move-select,
 .result-move-select-default {
   @include theme-background(var(--custom-selected-bg));
-  
+
   box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
 
   @include theme-text(var(--text-primary));
@@ -108,7 +108,7 @@
 .card-move,
 .card-pokemon-select {
   @include theme-border(1px, top, var(--background-table-divided));
-  
+
   &:hover,
   .ranking-container .accordion-button.collapsed:hover {
     @include theme-background(var(--custom-selected-hover), true);
@@ -131,11 +131,11 @@
   @include theme-text(var(--text-primary));
   @include theme-border;
   @include theme-transition;
-  
+
   &:hover:not(.select-type) {
     @include theme-background(var(--background-table-hover));
   }
-  
+
   &.select-type {
     @include theme-background(var(--background-btn-type-select));
     @include theme-border(1px, all, white);
@@ -156,7 +156,7 @@
 // Table head classes
 .head-types {
   @include table-head-style;
-  
+
   padding: 10px;
   font-weight: bolder;
 }
@@ -202,15 +202,15 @@ a.pokemon-link:hover {
       td:nth-child(1) {
         @include theme-text(var(--text-primary), true);
       }
-      
+
       td:nth-child(2) {
         @include theme-text(var(--text-primary));
       }
-      
+
       &:nth-child(odd) td {
         @include theme-background(var(--custom-table-background-odd), true);
       }
-      
+
       &:nth-child(even) td {
         @include theme-background(var(--custom-table-background-even), true);
       }
@@ -486,14 +486,39 @@ td,
 }
 
 .btn-form:focus,
-.btn-form:hover:not(.form-selected) {
+.btn-form:hover:not(.form-selected),
+.list-item-ranking:hover {
   @include theme-border(1px, all, var(--custom-black), true);
 }
 
+.table-desc tbody tr td div.first-extra-col,
 .next-border {
   @include theme-border(0.5px, right, var(--custom-lightgray));
 }
 
 .prev-border {
   @include theme-border(0.5px, left, var(--custom-lightgray));
+}
+
+.info-container {
+  @include theme-border(1px, top, var(--bs-border-color));
+  @include theme-border(1px, left, var(--bs-border-color));
+  @include theme-border(1px, right, var(--bs-border-color));
+}
+
+.ranking-container {
+  @include theme-border(1px, bottom, var(--bs-border-color));
+}
+
+.accordion-footer,
+.turn-battle {
+  @include theme-border(1px, top, var(--bs-border-color));
+}
+
+.card-input {
+  @include theme-border(1px, all, var(--custom-selected-border), true);
+}
+
+.ranking-header {
+  @include theme-border;
 }

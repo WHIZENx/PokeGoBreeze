@@ -123,7 +123,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   );
 
   const inputPos = () => (
-    <div className="d-flex align-items-center border-box">
+    <div className="d-flex align-items-center">
       {pokemonIcon && (
         <span onClick={() => removePokemon()} className="remove-pokemon-select">
           <CloseIcon sx={{ color: 'red' }} />
