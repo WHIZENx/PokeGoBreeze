@@ -91,7 +91,7 @@ import {
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
-import PopoverConfig from '../../../components/Popover/PopoverConfig';
+import CustomPopover from '../../../components/Popover/CustomPopover';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IStatsIV, StatsIV } from '../../../core/models/stats.model';
@@ -1777,7 +1777,7 @@ const RaidBattle = () => {
                                 <td>
                                   <OverlayTrigger
                                     placement="auto"
-                                    overlay={<PopoverConfig>{modalDetailsPokemon(data)}</PopoverConfig>}
+                                    overlay={<CustomPopover>{modalDetailsPokemon(data)}</CustomPopover>}
                                   >
                                     <span className="tooltips-info">
                                       <div className="d-flex align-items-center table-pokemon">

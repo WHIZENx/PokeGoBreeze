@@ -37,6 +37,7 @@
   --background-default: #fafafa;
   --background-paper: white;
   --background-revert: black;
+  --background-selected: #eeeeee;
   --background-btn-type: white;
   --background-btn-type-select: #757575;
   --background-table-primary: white;
@@ -78,6 +79,7 @@
 
   // Custom selected
   --custom-selected: #aaaaaa;
+  --custom-selected-border: #dddddd;
   --custom-selected-bg: white;
   --custom-selected-hover: lightgray;
 
@@ -116,6 +118,10 @@
 
   // Validator
   --custom-validator-disable: lightgray;
+
+  // Background unavailable/disabled
+  --custom-background-unavailable: #fafafaba;
+  --custom-background-sub-unavailable: #e7e7e7;
 }
 
 :root[data-theme="dark"] {
@@ -142,6 +148,7 @@
   --background-default: #222222;
   --background-paper: #333333;
   --background-revert: white;
+  --background-selected: #555555;
   --background-btn-type: #555555;
   --background-btn-type-select: #111111;
   --background-table-primary: #222222;
@@ -183,6 +190,7 @@
 
   // Custom selected
   --custom-selected: #2b2b2b;
+  --custom-selected-border: #444444;
   --custom-selected-bg: black;
   --custom-selected-hover: #333333;
 
@@ -221,6 +229,10 @@
 
   // Validator
   --custom-validator-disable: #3d3d3d;
+
+  // Background unavailable/disabled
+  --custom-background-unavailable: #222222ba;
+  --custom-background-sub-unavailable: #181818;
 }
 
 // Theme mixins to make theme usage easier

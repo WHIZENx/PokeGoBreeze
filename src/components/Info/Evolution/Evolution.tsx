@@ -32,7 +32,7 @@ import {
 } from '../../../util/utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
-import PopoverConfig from '../../Popover/PopoverConfig';
+import CustomPopover from '../../Popover/CustomPopover';
 import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { RouterState, StoreState } from '../../../store/models/state.model';
@@ -697,7 +697,7 @@ const Evolution = (props: IEvolutionComponent) => {
         <OverlayTrigger
           placement="auto"
           overlay={
-            <PopoverConfig id="popover-info">
+            <CustomPopover id="popover-info">
               <span className="info-evo">
                 <span className="d-block caption">
                   - <img alt="Image Stardust" height={20} src={getItemSpritePath(ItemName.RareCandy)} /> : Candy of
@@ -750,7 +750,7 @@ const Evolution = (props: IEvolutionComponent) => {
                 </span>
                 <span className="d-block caption">- Pokémon Battle.</span>
               </span>
-            </PopoverConfig>
+            </CustomPopover>
           }
         >
           <span className="tooltips-info">

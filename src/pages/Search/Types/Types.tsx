@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import {
-  capitalize,
-  generateParamForm,
-  getCustomThemeDataTable,
-  getItemSpritePath,
-  splitAndCapitalize,
-} from '../../../util/utils';
+import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../util/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
 import { computeBgType } from '../../../util/compute';
 import { Tabs, Tab } from 'react-bootstrap';
-import DataTable from 'react-data-table-component';
 import { calculateStatsByTag } from '../../../util/calculate';
 import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
@@ -22,9 +15,9 @@ import { ICombat } from '../../../core/models/combat.model';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
-  convertColumnDataType,
   getValueOrDefault,
   isEqual,
+  isInclude,
   isIncludeList,
   isNotEmpty,
   toNumber,
@@ -34,6 +27,8 @@ import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
+import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -392,55 +387,91 @@ const SearchTypes = (props: IStyleSheetData) => {
         <div className="col-xl-8 mt-2">
           <Tabs defaultActiveKey="pokemonLegacyList" className="lg-2">
             <Tab eventKey="pokemonLegacyList" title="Pokémon Legacy Type List">
-              <DataTable
-                columns={convertColumnDataType(columnPokemon)}
+              <CustomDataTable
+                customColumns={columnPokemon}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length === 1)}
                 pagination
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover
                 striped
-                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
+                isShowSearch
+                isAutoSearch
+                inputPlaceholder="Search Pokémon Name or ID"
+                searchFunction={(pokemon, searchTerm) =>
+                  isInclude(
+                    splitAndCapitalize(pokemon.name, '-', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(pokemon.num, searchTerm)
+                }
               />
             </Tab>
             <Tab eventKey="pokemonIncludeList" title="Pokémon Include Types List">
-              <DataTable
-                columns={convertColumnDataType(columnPokemon)}
+              <CustomDataTable
+                customColumns={columnPokemon}
                 data={result.pokemonList.filter((pokemon) => pokemon.types.length > 1)}
                 pagination
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover
                 striped
-                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
+                isShowSearch
+                isAutoSearch
+                inputPlaceholder="Search Pokémon Name or ID"
+                searchFunction={(pokemon, searchTerm) =>
+                  isInclude(
+                    splitAndCapitalize(pokemon.name, '-', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(pokemon.num, searchTerm)
+                }
               />
             </Tab>
             <Tab eventKey="fastMovesList" title="Fast Move List">
-              <DataTable
-                columns={convertColumnDataType(columnMove)}
+              <CustomDataTable
+                customColumns={columnMove}
                 data={result.fastMove}
                 pagination
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover
                 striped
-                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
+                isShowSearch
+                isAutoSearch
+                inputPlaceholder="Search Move Name or ID"
+                searchFunction={(move, searchTerm) =>
+                  isInclude(
+                    splitAndCapitalize(move.name, '_', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(move.id, searchTerm)
+                }
               />
             </Tab>
             <Tab eventKey="chargesMovesList" title="Charged Move List">
-              <DataTable
-                columns={convertColumnDataType(columnMove)}
+              <CustomDataTable
+                customColumns={columnMove}
                 data={result.chargedMove}
                 pagination
                 defaultSortFieldId={ColumnType.Name}
                 highlightOnHover
                 striped
-                customStyles={getCustomThemeDataTable()}
                 progressPending={!isNotEmpty(result.pokemonList)}
                 progressComponent={<CircularProgressTable />}
+                isShowSearch
+                isAutoSearch
+                inputPlaceholder="Search Move Name or ID"
+                searchFunction={(move, searchTerm) =>
+                  isInclude(
+                    splitAndCapitalize(move.name, '_', ' '),
+                    searchTerm,
+                    IncludeMode.IncludeIgnoreCaseSensitive
+                  ) || isInclude(move.id, searchTerm)
+                }
               />
             </Tab>
           </Tabs>

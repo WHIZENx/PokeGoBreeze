@@ -615,6 +615,12 @@ export const getCustomThemeDataTable = (customStyles?: TableStyles) => {
         color: 'var(--text-primary)',
       },
     },
+    subHeader: {
+      style: {
+        backgroundColor: 'var(--background-default)',
+        color: 'var(--text-primary)',
+      },
+    },
     rows: {
       style: {
         color: 'var(--text-primary)',

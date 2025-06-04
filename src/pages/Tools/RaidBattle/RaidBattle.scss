@@ -45,10 +45,6 @@ img.pokemon-sprite-battle {
   filter: drop-shadow(2px 2px 2px #000000cc);
 }
 
-.border-box {
-  border-bottom: 2px solid lightgray;
-}
-
 .stats-boss {
   padding: 1rem;
 }
@@ -96,14 +92,6 @@ img.pokemon-sprite-battle {
 
 .click-none {
   cursor: not-allowed !important;
-}
-
-.flag-pokemon {
-  margin-top: 5px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: white !important;
-  width: fit-content;
 }
 
 .table-round-battle thead tr th {

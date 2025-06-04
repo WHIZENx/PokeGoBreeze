@@ -25,7 +25,9 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
     <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>
       <span
         className="caption text-type-border"
-        style={{ color: getValueOrDefault(String, props.color, 'var(--text-primary)') }}
+        style={{
+          color: getValueOrDefault(String, props.color, props.isGrow ? 'white' : 'var(--text-primary)'),
+        }}
       >
         {props.title}
       </span>

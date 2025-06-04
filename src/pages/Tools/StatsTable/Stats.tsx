@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import DataTable, { TableColumn } from 'react-data-table-component';
+import { TableColumn } from 'react-data-table-component';
 
-import { getCustomThemeDataTable, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
+import { marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
 import { calStatsProd, sortStatsProd } from '../../../util/calculate';
 
 import Find from '../../../components/Find/Find';
@@ -19,6 +19,7 @@ import { useSnackbar } from 'notistack';
 import { FloatPaddingOption } from '../../../util/models/extension.model';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
+import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -212,23 +213,25 @@ const StatsTable = () => {
       <h1 id="main" className="text-center">
         Stats Battle Table
       </h1>
-      <div className="w-100 overflow-x-auto w-fit-content">
-        <div style={{ margin: '0 auto' }}>
-          <div className="d-flex text-center my-3 gap-2">
-            {leaguesTeamBattle.map((value, index) => (
-              <button
-                key={index}
-                className={combineClasses('btn btn-form', battleLeague === value.cp[0] ? 'form-selected' : '')}
-                style={{ height: 200 }}
-                onClick={() => setBattleLeague(value.cp[0])}
-              >
-                <img alt="Image League" width={128} height={128} src={value.logo} />
-                <div>
-                  <b>{value.name}</b>
-                </div>
-                <span className="text-danger">CP below {value.cp[0]}</span>
-              </button>
-            ))}
+      <div className="d-flex justify-content-center w-100">
+        <div className="w-100 overflow-x-auto">
+          <div className="w-fit-content" style={{ margin: '0 auto' }}>
+            <div className="d-flex text-center my-3 gap-2">
+              {leaguesTeamBattle.map((value, index) => (
+                <button
+                  key={index}
+                  className={combineClasses('btn btn-form', battleLeague === value.cp[0] ? 'form-selected' : '')}
+                  style={{ height: 200 }}
+                  onClick={() => setBattleLeague(value.cp[0])}
+                >
+                  <img alt="Image League" width={128} height={128} src={value.logo} />
+                  <div>
+                    <b>{value.name}</b>
+                  </div>
+                  <span className="text-danger">CP below {value.cp[0]}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -316,7 +319,7 @@ const StatsTable = () => {
           </button>
         </div>
       </form>
-      <DataTable
+      <CustomDataTable
         title={`Stat Battle for ${splitAndCapitalize(pokemon?.fullName, '_', ' ')}`}
         columns={columnsStats}
         data={filterStatsBattle}
@@ -325,7 +328,6 @@ const StatsTable = () => {
         striped
         highlightOnHover
         progressPending={isLoading}
-        customStyles={getCustomThemeDataTable()}
         progressComponent={<CircularProgressTable />}
       />
     </div>
