@@ -392,7 +392,9 @@ td,
 .border-types,
 .btn-form,
 .border-window,
-.count-pokemon {
+.count-pokemon,
+.frame-badge-select,
+.frame-badge:hover {
   @include theme-border(1px, all, var(--custom-gray), true);
 }
 
@@ -502,6 +504,12 @@ td,
 
 .info-container {
   @include theme-border(1px, top, var(--bs-border-color));
+  @include theme-border(1px, left, var(--bs-border-color));
+  @include theme-border(1px, right, var(--bs-border-color));
+}
+
+.tab-body {
+  @include theme-border(1px, bottom, var(--bs-border-color));
   @include theme-border(1px, left, var(--bs-border-color));
   @include theme-border(1px, right, var(--bs-border-color));
 }
