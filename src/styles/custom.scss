@@ -530,3 +530,15 @@ td,
 .ranking-header {
   @include theme-border;
 }
+
+.iv-bg-bar {
+  @include theme-background(var(--custom-btn-form));
+}
+
+.impossible-encounter {
+  @include theme-background(var(--custom-background-unavailable));
+}
+
+.text-not-encounter {
+  @include theme-background(var(--custom-background-sub-unavailable));
+}
