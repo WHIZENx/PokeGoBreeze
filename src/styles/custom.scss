@@ -489,3 +489,11 @@ td,
 .btn-form:hover:not(.form-selected) {
   @include theme-border(1px, all, var(--custom-black), true);
 }
+
+.next-border {
+  @include theme-border(0.5px, right, var(--custom-lightgray));
+}
+
+.prev-border {
+  @include theme-border(0.5px, left, var(--custom-lightgray));
+}

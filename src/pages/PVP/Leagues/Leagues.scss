@@ -21,11 +21,6 @@
   display: inline-block;
 }
 
-.text-guarantee {
-  margin: auto;
-  width: 64px;
-}
-
 .rank-header {
   padding: 8px;
   font-weight: bold;
@@ -35,11 +30,6 @@
   position: sticky;
   left: 0;
   z-index: 2;
-}
-
-.reward-type {
-  display: inline-block;
-  line-height: 86px;
 }
 
 .badge-league {
@@ -80,14 +70,6 @@ li.unique-type ul {
   width: max-content;
   display: inline-block;
   margin: 5px;
-}
-
-.season-unavailable {
-  display: inline-block;
-  position: absolute;
-  top: 50%;
-  left: calc(50% - 41px);
-  font-weight: 500;
 }
 
 .league-body.accordion-body {

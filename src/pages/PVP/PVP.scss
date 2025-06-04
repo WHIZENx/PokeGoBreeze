@@ -128,24 +128,6 @@
   border-right: 2px solid black;
 }
 
-.weakness-bg-text {
-  padding: 8px 0;
-  background-color: orangered;
-  color: white;
-}
-
-.neutral-bg-text {
-  padding: 8px 0;
-  background-color: gray;
-  color: white;
-}
-
-.resistance-bg-text {
-  padding: 8px 0;
-  background-color: green;
-  color: white;
-}
-
 .moves-title {
   padding: 8px 0;
   font-weight: bolder;
@@ -393,10 +375,6 @@
   right: -15px;
   top: -15px;
   cursor: pointer;
-}
-
-.tl-dead {
-  text-shadow: 1px 1px 1px 1px yellow;
 }
 
 .battle-logo {

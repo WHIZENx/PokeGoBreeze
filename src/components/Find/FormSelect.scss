@@ -34,40 +34,10 @@
   margin-left: 10px;
 }
 
-.col-cal {
-  margin-bottom: 15px;
-}
-
 .vertical-center {
   margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-.four-star {
-  border: 1px solid red;
-  padding: 5px;
-  border-radius: 8px;
-  background-color: #ffd7d7;
-  margin: 10px;
-}
-
-.three-star,
-.two-star,
-.one-star {
-  border: 1px solid yellow;
-  padding: 5px;
-  border-radius: 8px;
-  background-color: #ffffd7;
-  margin: 10px;
-}
-
-.zero-star {
-  border: 1px solid yellow;
-  padding: 5px;
-  border-radius: 8px;
-  margin: 10px;
-  background-color: #888888;
 }

@@ -138,7 +138,11 @@ const NavbarComponent = (props: INavbarComponent) => {
             </Navbar.Text>
           )}
           <IconButton
-            className={combineClasses(`${stateTheme}-mode me-2 p-0`, isDelay ? 'cursor-default' : 'cursor-pointer')}
+            className={combineClasses(
+              'me-2 p-0',
+              stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
+              isDelay ? 'cursor-default' : 'cursor-pointer'
+            )}
             onClick={onChangeTheme}
             color="inherit"
           >
