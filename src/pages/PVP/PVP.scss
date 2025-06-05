@@ -9,8 +9,6 @@
 .ranking-container {
   max-height: 70vh;
   overflow-y: auto;
-  border-top: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
 }
 
 .card-container {
@@ -23,7 +21,6 @@
   position: sticky;
   top: 0;
   padding: 15px;
-  border: 2px solid #dee2e6;
   z-index: 4;
   cursor: pointer;
 }
@@ -93,7 +90,6 @@
 
 .list-item-ranking:hover {
   opacity: 0.9;
-  border: 1px solid black;
 }
 
 .status-ranking {
@@ -113,37 +109,27 @@
 .ranking-link-group button {
   border-radius: 0 !important;
   box-shadow: none !important;
-  border: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 .ranking-link-group button.active {
   font-weight: bolder;
 }
 
+.ranking-link-group button:not(:first-of-type, :last-of-type) {
+  border-left: 0.5px solid black;
+  border-right: 0.5px solid black;
+}
+
 .ranking-link-group button:first-of-type {
-  border-left: 2px solid black;
+  border-left: 1px solid black;
+  border-right: 0.5px solid black;
 }
 
 .ranking-link-group button:last-of-type {
-  border-right: 2px solid black;
-}
-
-.weakness-bg-text {
-  padding: 8px 0;
-  background-color: orangered;
-  color: white;
-}
-
-.neutral-bg-text {
-  padding: 8px 0;
-  background-color: gray;
-  color: white;
-}
-
-.resistance-bg-text {
-  padding: 8px 0;
-  background-color: green;
-  color: white;
+  border-left: 0.5px solid black;
+  border-right: 1px solid black;
 }
 
 .moves-title {
@@ -233,17 +219,6 @@
   height: 12px;
 }
 
-.pokemon-select {
-  cursor: pointer;
-  padding: 0 15px;
-  border-bottom: 1px solid lightgray;
-  background-color: white;
-}
-
-.pokemon-select:hover {
-  background-color: lightgray;
-}
-
 .pokemon-battle-header {
   padding: 10px;
 }
@@ -261,7 +236,6 @@
 }
 
 .turn-battle {
-  border-top: 1px solid lightgray;
   display: flex;
   width: 100% !important;
 }
@@ -393,10 +367,6 @@
   right: -15px;
   top: -15px;
   cursor: pointer;
-}
-
-.tl-dead {
-  text-shadow: 1px 1px 1px 1px yellow;
 }
 
 .battle-logo {

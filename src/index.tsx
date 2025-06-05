@@ -16,6 +16,7 @@ import { history } from './store/configure';
 import Main from './App';
 import { RouterState } from './store/models/state.model';
 import { PersistGate } from 'redux-persist/integration/react';
+import { BrowserRouter } from 'react-router-dom';
 
 const { store, persistor } = configureStore();
 const routerSelector: ReduxRouterSelector<RouterState> = (state) => state.router;
@@ -33,9 +34,11 @@ root.render(
         maxSnack={1}
       >
         <PersistGate loading={null} persistor={persistor}>
-          <ReduxRouter history={history} routerSelector={routerSelector}>
-            <Main />
-          </ReduxRouter>
+          <BrowserRouter>
+            <ReduxRouter history={history} routerSelector={routerSelector}>
+              <Main />
+            </ReduxRouter>
+          </BrowserRouter>
         </PersistGate>
       </SnackbarProvider>
     </Provider>

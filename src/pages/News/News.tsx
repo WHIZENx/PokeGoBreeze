@@ -237,7 +237,7 @@ const News = () => {
             {data
               .filter((info) => info.giftAble || isInclude(info.id, ItemTicketRewardType.BattlePass))
               .map((value, index) => (
-                <div key={index}>
+                <div className="info-news" key={index}>
                   <div className="position-relative info-container">
                     <img alt="Info Background" className="info-background" src={value.backgroundImgUrl} />
                     <img alt="Info Banner" className="info-banner-img" src={value.bannerUrl} />

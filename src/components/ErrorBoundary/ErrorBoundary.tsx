@@ -89,6 +89,7 @@ class ErrorBoundary extends Component<Props, IState> {
               {this.state.error && (
                 <pre className="theme-custom-selected-bg p-2 rounded-1 mw-100 overflow-x-auto">
                   {this.state.error.toString()}
+                  {this.state.errorInfo?.componentStack}
                 </pre>
               )}
             </div>
