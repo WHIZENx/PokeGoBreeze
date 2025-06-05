@@ -125,7 +125,7 @@ const NavbarComponent = (props: INavbarComponent) => {
               Stickers
             </Link>
           </Nav>
-          <Navbar.Text className="d-flex flex-column mw-max-content h-6">
+          <Navbar.Text className="d-flex flex-column justify-content-between mw-max-content h-6">
             {toNumber(timestamp?.gamemaster) > 0 && (
               <span className="text-white mx-2">Updated: {getTime(timestamp.gamemaster, true)}</span>
             )}
