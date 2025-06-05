@@ -27,7 +27,7 @@ if [ $? -eq 0 ] && [ -n "$FETCHED_VERSION_DATA" ]; then
   VERSION_DATA=$(echo "$FETCHED_VERSION_DATA" | sed -e 's/^"//' -e 's/"$//')
   export REACT_APP_VERSION="$VERSION_DATA"
   echo "Successfully fetched version: $REACT_APP_VERSION"
-# else
-  # echo "Error: Failed to fetch version from Vercel Edge Config or response was empty."
-  # exit 1
+else
+  echo "Error: Failed to fetch version from Vercel Edge Config or response was empty."
+  exit 1
 fi
