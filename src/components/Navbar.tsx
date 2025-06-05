@@ -132,7 +132,7 @@ const NavbarComponent = (props: INavbarComponent) => {
                 <b>
                   {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
                     `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
-                  {props.version}
+                  {process.env.REACT_APP_VERSION}
                 </b>
               </span>
             </Navbar.Text>

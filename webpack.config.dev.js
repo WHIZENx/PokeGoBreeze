@@ -40,6 +40,7 @@ module.exports = {
         REACT_APP_DEPLOYMENT_MODE: process.env.REACT_APP_DEPLOYMENT_MODE,
         REACT_APP_ENCRYPTION_KEY: process.env.REACT_APP_ENCRYPTION_KEY,
         REACT_APP_ENCRYPTION_SALT: process.env.REACT_APP_ENCRYPTION_SALT,
+        REACT_APP_VERSION: process.env.REACT_APP_VERSION,
         NODE_ENV: JSON.stringify('development'),
         DEBUG: true,
       }),
