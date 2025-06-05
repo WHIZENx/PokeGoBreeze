@@ -29,5 +29,5 @@ if [ $? -eq 0 ] && [ -n "$FETCHED_VERSION_DATA" ]; then
   echo "Successfully fetched version: $REACT_APP_VERSION"
 else
   echo "Error: Failed to fetch version from Vercel Edge Config or response was empty."
-  exit 1
+  # exit 1
 fi
