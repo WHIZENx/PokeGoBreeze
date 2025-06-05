@@ -9,7 +9,6 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
-const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -68,7 +67,6 @@ module.exports = {
       seed: manifest,
     }),
     new CleanWebpackPlugin(),
-    new ReactRefreshPlugin(),
   ],
   optimization: {
     runtimeChunk: 'single',
