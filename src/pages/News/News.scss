@@ -1,9 +1,3 @@
-.info-main-bg {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-}
-
 .info-main-container {
   display: flex;
   flex-direction: column;
@@ -15,6 +9,11 @@
   .accordion-header {
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
+  }
+
+  .info-news:not(:last-child) .accordion-item {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
   }
 
   .accordion-button {
@@ -32,9 +31,6 @@
   overflow: hidden;
   text-align: center;
   margin: 0 auto;
-  border-top: 1px solid #dee2e6;
-  border-left: 1px solid #dee2e6;
-  border-right: 1px solid #dee2e6;
 
   img.info-background {
     height: max-content;

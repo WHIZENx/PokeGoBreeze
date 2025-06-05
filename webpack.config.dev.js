@@ -9,7 +9,6 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackFavicons = require('webpack-favicons');
-const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -40,6 +39,7 @@ module.exports = {
         REACT_APP_DEPLOYMENT_MODE: process.env.REACT_APP_DEPLOYMENT_MODE,
         REACT_APP_ENCRYPTION_KEY: process.env.REACT_APP_ENCRYPTION_KEY,
         REACT_APP_ENCRYPTION_SALT: process.env.REACT_APP_ENCRYPTION_SALT,
+        REACT_APP_VERSION: process.env.REACT_APP_VERSION,
         NODE_ENV: JSON.stringify('development'),
         DEBUG: true,
       }),
@@ -67,7 +67,6 @@ module.exports = {
       seed: manifest,
     }),
     new CleanWebpackPlugin(),
-    new ReactRefreshPlugin(),
   ],
   optimization: {
     runtimeChunk: 'single',

@@ -49,7 +49,7 @@ const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
 
   return (
     <li
-      className="position-relative pokemon-container border-types h-100"
+      className="position-relative border-types h-100"
       style={{ backgroundImage: computeBgType(props.types, PokemonType.Normal, props.styleList, 0.3) }}
     >
       {!props.releasedGO && (

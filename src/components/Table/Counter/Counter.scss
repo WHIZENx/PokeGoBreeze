@@ -11,10 +11,6 @@
   height: 550px;
 }
 
-.link-pokemon-sprite {
-  width: 100%;
-}
-
 .group-pokemon-sprite {
   width: 64px;
 }
@@ -26,15 +22,5 @@
 
   span.sub-title {
     font-weight: bold;
-  }
-}
-
-.counter-setting {
-  position: absolute;
-  right: 10px;
-  cursor: pointer;
-
-  svg:hover {
-    opacity: 0.8;
   }
 }
