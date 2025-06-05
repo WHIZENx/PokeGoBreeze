@@ -125,18 +125,18 @@ const NavbarComponent = (props: INavbarComponent) => {
               Stickers
             </Link>
           </Nav>
-          {toNumber(timestamp?.gamemaster) > 0 && (
-            <Navbar.Text className="d-flex flex-column mw-max-content h-6">
+          <Navbar.Text className="d-flex flex-column mw-max-content h-6">
+            {toNumber(timestamp?.gamemaster) > 0 && (
               <span className="text-white mx-2">Updated: {getTime(timestamp.gamemaster, true)}</span>
-              <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
-                <b>
-                  {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
-                    `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
-                  {process.env.REACT_APP_VERSION}
-                </b>
-              </span>
-            </Navbar.Text>
-          )}
+            )}
+            <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
+              <b>
+                {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
+                  `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
+                {props.version}
+              </b>
+            </span>
+          </Navbar.Text>
           <IconButton
             className={combineClasses(
               'me-2 p-0',

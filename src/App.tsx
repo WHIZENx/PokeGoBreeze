@@ -52,6 +52,8 @@ import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './store/localStorage';
 import { getStyleList } from './util/utils';
+import { getEdgeItem } from './services/edge.service';
+import { EdgeKey } from './services/constants/edgeKey';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -108,16 +110,21 @@ function App() {
   }, [timestamp?.gamemaster]);
 
   useEffect(() => {
-    const controller = new AbortController();
-    if (!isLoaded) {
-      const currentVersion = process.env.REACT_APP_VERSION;
-      setCurrentVersion(currentVersion);
+    const fetchData = async () => {
+      const result = await getEdgeItem<string>(EdgeKey.VERSION);
+      setCurrentVersion(result);
+
       dispatch(SpinnerActions.SetBar.create(true));
       dispatch(SpinnerActions.SetPercent.create(0));
       setIsLoaded(true);
-      const isCurrentVersion = currentVersion === version;
-      setStateVersion(currentVersion || '');
+      const isCurrentVersion = result === version;
+      setStateVersion(result || '');
       loadData(controller.signal, isCurrentVersion);
+    };
+
+    const controller = new AbortController();
+    if (!isLoaded) {
+      fetchData();
     }
   }, [isLoaded]);
 
