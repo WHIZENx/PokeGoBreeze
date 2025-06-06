@@ -2,14 +2,12 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
 /dist
+
+# development
 .vs
 .github
-
-# testing
-/coverage
+.vscode
 
 # production
 /build
@@ -24,15 +22,9 @@
 .eslintcache
 
 # misc
-.DS_Store
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-settings.json
 
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
