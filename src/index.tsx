@@ -10,7 +10,7 @@ import { SnackbarProvider } from 'notistack';
 
 import reportWebVitals from './reportWebVitals';
 
-import configureStore from './store';
+import configureStore from './store/configure';
 import Main from './App';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';

@@ -1,5 +1,5 @@
 import { Middleware } from 'redux';
-import { RouterActionTypes } from '../actions/router.actions';
+import { RouterActionTypes } from '../actions/router.action';
 import { BrowserHistory } from 'history';
 
 export const createRouterMiddleware = (history: BrowserHistory): Middleware => {

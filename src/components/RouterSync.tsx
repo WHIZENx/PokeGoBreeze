@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { RouterActionTypes } from '../store/actions/router.actions';
+import { RouterActionTypes } from '../store/actions/router.action';
 
 const RouterSync = () => {
   const location = useLocation();
