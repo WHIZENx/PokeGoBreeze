@@ -1,4 +1,4 @@
-import { Location } from 'history';
+import { Action, Location } from 'history';
 
 export interface LocationState {
   id: number;
@@ -7,3 +7,13 @@ export interface LocationState {
 }
 
 export type RouterLocation = (Location & { state?: LocationState }) | null;
+
+export interface RouterChange {
+  location: RouterLocation;
+  action: Action | null;
+}
+
+export interface RouterModify {
+  path: string;
+  state?: LocationState;
+}

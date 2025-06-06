@@ -1,5 +1,4 @@
-import { LocationState, RouterLocation } from '../../core/models/router.model';
-import { Action } from 'history';
+import { RouterChange, RouterModify } from '../../core/models/router.model';
 
 export enum RouterActionTypes {
   LOCATION_CHANGE = '@@router/LOCATION_CHANGE',
@@ -13,9 +12,9 @@ export enum RouterActionTypes {
 export class LocationChangeAction {
   readonly type = RouterActionTypes.LOCATION_CHANGE;
 
-  constructor(public payload: { location: RouterLocation; action: Action }) {}
+  constructor(public payload: RouterChange) {}
 
-  static create(value: { location: RouterLocation; action: Action }) {
+  static create(value: RouterChange) {
     const { type, payload } = new LocationChangeAction(value);
     return {
       type,
@@ -27,14 +26,9 @@ export class LocationChangeAction {
 export class PushAction {
   readonly type = RouterActionTypes.PUSH;
 
-  constructor(
-    public payload: {
-      path: string;
-      state?: LocationState;
-    }
-  ) {}
+  constructor(public payload: RouterModify) {}
 
-  static create(value: { path: string; state?: LocationState }) {
+  static create(value: RouterModify) {
     const { type, payload } = new PushAction(value);
     return {
       type,
@@ -46,14 +40,9 @@ export class PushAction {
 export class ReplaceAction {
   readonly type = RouterActionTypes.REPLACE;
 
-  constructor(
-    public payload: {
-      path: string;
-      state?: LocationState;
-    }
-  ) {}
+  constructor(public payload: RouterModify) {}
 
-  static create(value: { path: string; state?: LocationState }) {
+  static create(value: RouterModify) {
     const { type, payload } = new ReplaceAction(value);
     return {
       type,
