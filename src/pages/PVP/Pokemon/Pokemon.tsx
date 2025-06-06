@@ -29,7 +29,6 @@ import { RouterState, StatsState, StoreState, TimestampState } from '../../../st
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
-import { AnyAction } from 'redux';
 import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
@@ -174,7 +173,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonInfo();
-      router.action = null as AnyAction[''];
+      router.action = null;
     };
     if (
       statsRanking &&

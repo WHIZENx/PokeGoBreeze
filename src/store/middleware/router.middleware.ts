@@ -1,9 +1,9 @@
 import { Middleware } from 'redux';
-import { RouterActionTypes } from '../actions/router.action';
+import { RouterActionsUnion, RouterActionTypes } from '../actions/router.action';
 import { BrowserHistory } from 'history';
 
 export const createRouterMiddleware = (history: BrowserHistory): Middleware => {
-  return () => (next) => (action) => {
+  return () => (next) => (action: RouterActionsUnion) => {
     const result = next(action);
 
     switch (action.type) {
