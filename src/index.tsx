@@ -10,16 +10,14 @@ import { SnackbarProvider } from 'notistack';
 
 import reportWebVitals from './reportWebVitals';
 
-import { ReduxRouterSelector, ReduxRouter } from '@lagunovsky/redux-react-router';
 import configureStore from './store';
-import { history } from './store/configure';
 import Main from './App';
-import { RouterState } from './store/models/state.model';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
 
+import RouterSync from './components/RouterSync';
+
 const { store, persistor } = configureStore();
-const routerSelector: ReduxRouterSelector<RouterState> = (state) => state.router;
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -34,10 +32,9 @@ root.render(
         maxSnack={1}
       >
         <PersistGate loading={null} persistor={persistor}>
-          <BrowserRouter>
-            <ReduxRouter history={history} routerSelector={routerSelector}>
-              <Main />
-            </ReduxRouter>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <RouterSync />
+            <Main />
           </BrowserRouter>
         </PersistGate>
       </SnackbarProvider>

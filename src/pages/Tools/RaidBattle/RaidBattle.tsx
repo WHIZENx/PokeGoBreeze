@@ -1000,7 +1000,9 @@ const RaidBattle = () => {
                 <span
                   style={{
                     color:
-                      showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow ? 'black' : 'lightgray',
+                      showSettingPokemon.pokemon?.stats?.pokemonType === PokemonType.Shadow
+                        ? 'var(--text-primary)'
+                        : 'lightgray',
                   }}
                 >
                   {getKeyWithData(PokemonType, PokemonType.Shadow)}

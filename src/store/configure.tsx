@@ -1,10 +1,10 @@
-import { createRouterMiddleware, createRouterReducer } from '@lagunovsky/redux-react-router';
 import { composeWithDevTools } from '@redux-devtools/extension';
 import { createBrowserHistory } from 'history';
 import { combineReducers, applyMiddleware, createStore, Action } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import { SearchingActions, StoreActions } from './actions';
+import { createRouterMiddleware } from './middleware/router.middleware';
 
 interface IAction extends Action {
   payload: object[];
@@ -14,7 +14,6 @@ export const history = createBrowserHistory();
 const routerMiddleware = createRouterMiddleware(history);
 
 export const combinedReducer = combineReducers({
-  router: createRouterReducer(history),
   ...rootReducer,
 });
 
