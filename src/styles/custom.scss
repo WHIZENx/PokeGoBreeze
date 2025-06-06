@@ -70,7 +70,7 @@
 
 .theme-table-info-bg,
 .theme-table-info-bg-border {
-  @include theme-border(2px);
+  @include theme-border(1px);
 }
 
 // Text shadow
@@ -338,7 +338,6 @@ a.pokemon-link:hover {
 th,
 td,
 .table-info,
-.table-moves-col,
 .table-counter-container,
 .table-info tbody tr:nth-child(even) td:nth-child(2) div:nth-child(1).td-costs,
 .list-item-ranking,
@@ -416,7 +415,8 @@ td,
 }
 
 // Table header styling
-.table-info thead tr {
+.table-info thead tr,
+.table-moves thead tr {
   @include table-head-style;
 
   font-weight: bold;
