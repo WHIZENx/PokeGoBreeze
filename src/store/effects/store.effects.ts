@@ -33,6 +33,7 @@ import { TimestampModel } from '../reducers/timestamp.reducer';
 import { IDataModel } from '../models/store.model';
 
 interface Timestamp {
+  isCurrentVersion: boolean;
   isCurrentGameMaster: boolean;
   isCurrentImage: boolean;
   isCurrentSound: boolean;
@@ -103,6 +104,7 @@ export const loadTimestamp = async (
         dispatch(SpinnerActions.SetPercent.create(15));
 
         const timestampLoaded: Timestamp = {
+          isCurrentVersion,
           isCurrentGameMaster: timestampGameMaster > 0 && timestamp.gamemaster === timestampGameMaster,
           isCurrentImage: timestamp.assets > 0 && timestamp.assets === imageTimestamp,
           isCurrentSound: timestamp.sounds > 0 && timestamp.sounds === soundTimestamp,
@@ -112,7 +114,7 @@ export const loadTimestamp = async (
         };
         dispatch(SpinnerActions.SetPercent.create(40));
 
-        if (!timestampLoaded.isCurrentGameMaster || !isCurrentVersion) {
+        if (!timestampLoaded.isCurrentGameMaster || !timestampLoaded.isCurrentVersion) {
           await loadGameMaster(dispatch, imageRoot.data, soundsRoot.data, timestampLoaded);
         } else if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
           await loadAssets(dispatch, imageRoot.data, soundsRoot.data, data.pokemons, timestampLoaded);
@@ -186,7 +188,7 @@ export const loadGameMaster = async (
 
       mappingMoveSetPokemonGO(pokemon, combat);
 
-      if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
+      if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound || !timestampLoaded.isCurrentVersion) {
         await loadAssets(dispatch, imageRoot, soundsRoot, pokemon, timestampLoaded);
       }
 
