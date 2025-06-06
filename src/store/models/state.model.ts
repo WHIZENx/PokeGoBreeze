@@ -7,7 +7,7 @@ import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { DeviceModel } from '../reducers/device.reducer';
 import { Dispatch, SetStateAction } from 'react';
 import { TimestampModel } from '../reducers/timestamp.reducer';
-import { storeType } from '../configure';
+import { RouterModel } from '../reducers/router.reducer';
 
 interface StoreStateModel {
   store: StoreModel;
@@ -33,8 +33,11 @@ interface DeviceStateModel {
 interface TimestampStateModel {
   timestamp: TimestampModel;
 }
+interface RouterStateModel {
+  router: RouterModel;
+}
 
-export type RouterState = ReturnType<typeof storeType.getState>;
+export type RouterState = AnyIfEmpty<RouterStateModel>;
 
 export type StatsState = AnyIfEmpty<StatsStateModel>;
 export type SpinnerState = AnyIfEmpty<SpinnerStateModel>;

@@ -36,7 +36,6 @@ import { RouterState, StatsState, StoreState, TimestampState } from '../../../st
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
-import { AnyAction } from 'redux';
 import {
   combineClasses,
   DynamicObj,
@@ -222,7 +221,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
-      router.action = null as AnyAction[''];
+      router.action = null;
     };
     if (
       statsRanking &&
