@@ -1,6 +1,5 @@
-import { Location } from 'react-router-dom';
-import { LocationState } from '../../core/models/router.model';
-import { Action } from 'redux';
+import { LocationState, RouterLocation } from '../../core/models/router.model';
+import { Action } from 'history';
 
 export enum RouterActionTypes {
   LOCATION_CHANGE = '@@router/LOCATION_CHANGE',
@@ -11,12 +10,12 @@ export enum RouterActionTypes {
   GO_FORWARD = '@@router/GO_FORWARD',
 }
 
-export class LocationChangeAction implements Action {
+export class LocationChangeAction {
   readonly type = RouterActionTypes.LOCATION_CHANGE;
 
-  constructor(public payload: Location & { state?: LocationState }) {}
+  constructor(public payload: { location: RouterLocation; action: Action }) {}
 
-  static create(value: Location & { state?: LocationState }) {
+  static create(value: { location: RouterLocation; action: Action }) {
     const { type, payload } = new LocationChangeAction(value);
     return {
       type,
@@ -25,7 +24,7 @@ export class LocationChangeAction implements Action {
   }
 }
 
-export class PushAction implements Action {
+export class PushAction {
   readonly type = RouterActionTypes.PUSH;
 
   constructor(
@@ -44,7 +43,7 @@ export class PushAction implements Action {
   }
 }
 
-export class ReplaceAction implements Action {
+export class ReplaceAction {
   readonly type = RouterActionTypes.REPLACE;
 
   constructor(
@@ -63,7 +62,7 @@ export class ReplaceAction implements Action {
   }
 }
 
-export class GoAction implements Action {
+export class GoAction {
   readonly type = RouterActionTypes.GO;
 
   constructor(public payload: number) {}
@@ -77,7 +76,7 @@ export class GoAction implements Action {
   }
 }
 
-export class GoBackAction implements Action {
+export class GoBackAction {
   readonly type = RouterActionTypes.GO_BACK;
 
   static create() {
@@ -88,7 +87,7 @@ export class GoBackAction implements Action {
   }
 }
 
-export class GoForwardAction implements Action {
+export class GoForwardAction {
   readonly type = RouterActionTypes.GO_FORWARD;
 
   static create() {
@@ -99,7 +98,7 @@ export class GoForwardAction implements Action {
   }
 }
 
-export type RouterAction =
+export type RouterActionsUnion =
   | LocationChangeAction
   | PushAction
   | ReplaceAction

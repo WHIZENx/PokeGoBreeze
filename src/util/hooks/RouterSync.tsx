@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { RouterActionTypes } from '../store/actions/router.action';
+import { RouterActions } from '../../store/actions';
 
 const RouterSync = () => {
   const location = useLocation();
@@ -9,13 +9,12 @@ const RouterSync = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch({
-      type: RouterActionTypes.LOCATION_CHANGE,
-      payload: {
+    dispatch(
+      RouterActions.LocationChangeAction.create({
         location,
         action: navType,
-      },
-    });
+      })
+    );
   }, [location, navType, dispatch]);
 
   return null;

@@ -15,7 +15,7 @@ import Main from './App';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
 
-import RouterSync from './components/RouterSync';
+import RouterSync from './util/hooks/RouterSync';
 
 const { store, persistor } = configureStore();
 

@@ -1,11 +1,10 @@
-import { RouterAction, RouterActionTypes } from '../actions/router.action';
-import { Location } from 'react-router-dom';
-import { LocationState } from '../../core/models/router.model';
+import { RouterActionsUnion, RouterActionTypes } from '../actions/router.action';
+import { RouterLocation } from '../../core/models/router.model';
 import { Action } from 'history';
 
 export interface RouterModel {
-  location: (Location & { state?: LocationState }) | null;
-  action: string | null;
+  location: RouterLocation;
+  action: Action | null;
 }
 
 const initialState: RouterModel = {
@@ -13,13 +12,13 @@ const initialState: RouterModel = {
   action: null,
 };
 
-const RouterReducer = (state: RouterModel = initialState, action: RouterAction) => {
+const RouterReducer = (state: RouterModel = initialState, action: RouterActionsUnion) => {
   switch (action.type) {
     case RouterActionTypes.LOCATION_CHANGE:
       return {
         ...state,
-        location: action.payload,
-        action: Action.Push,
+        location: action.payload.location,
+        action: action.payload.action,
       };
     default:
       return state;
