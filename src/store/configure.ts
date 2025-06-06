@@ -23,7 +23,7 @@ interface IAction extends Action {
   payload: object[];
 }
 
-export const history = createBrowserHistory();
+const history = createBrowserHistory();
 const routerMiddleware = createRouterMiddleware(history);
 
 const combinedReducer = combineReducers(rootReducer);
