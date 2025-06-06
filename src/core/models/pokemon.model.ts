@@ -11,7 +11,7 @@ import { DEFAULT_SPRITE_NAME, FORM_NORMAL, genList, MIN_LEVEL, regionList, versi
 import { IStatsIV, IStatsPokemon, IStatsPokemonGO, StatsIV, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
-import { getValueOrDefault, isUndefined, toNumber } from '../../util/extension';
+import { getValueOrDefault, isUndefined, toNumber, UniqValueInArray } from '../../util/extension';
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 import { GlobalType, MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
 import { Species, Variety } from './API/species.model';
@@ -638,14 +638,14 @@ export class PokemonData implements IPokemonData {
     obj.hasShadowForm = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;
 
-    obj.quickMoves = pokemon.quickMoves?.map((move) => replaceTempMoveName(move));
-    obj.cinematicMoves = pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move));
-    obj.eliteQuickMoves = pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move));
-    obj.eliteCinematicMoves = pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move));
-    obj.specialMoves = pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move));
-    obj.exclusiveMoves = pokemon.nonTmCinematicMoves?.map((move) => replaceTempMoveName(move));
-    obj.shadowMoves = options?.shadowMoves?.map((move) => replaceTempMoveName(move));
-    obj.purifiedMoves = options?.purifiedMoves?.map((move) => replaceTempMoveName(move));
+    obj.quickMoves = UniqValueInArray(pokemon.quickMoves?.map((move) => replaceTempMoveName(move)));
+    obj.cinematicMoves = UniqValueInArray(pokemon.cinematicMoves?.map((move) => replaceTempMoveName(move)));
+    obj.eliteQuickMoves = UniqValueInArray(pokemon.eliteQuickMove?.map((move) => replaceTempMoveName(move)));
+    obj.eliteCinematicMoves = UniqValueInArray(pokemon.eliteCinematicMove?.map((move) => replaceTempMoveName(move)));
+    obj.specialMoves = UniqValueInArray(pokemon.obSpecialAttackMoves?.map((move) => replaceTempMoveName(move)));
+    obj.exclusiveMoves = UniqValueInArray(pokemon.nonTmCinematicMoves?.map((move) => replaceTempMoveName(move)));
+    obj.shadowMoves = UniqValueInArray(options?.shadowMoves?.map((move) => replaceTempMoveName(move)));
+    obj.purifiedMoves = UniqValueInArray(options?.purifiedMoves?.map((move) => replaceTempMoveName(move)));
 
     obj.evoList = options?.evoList;
     obj.tempEvo = options?.tempEvo;

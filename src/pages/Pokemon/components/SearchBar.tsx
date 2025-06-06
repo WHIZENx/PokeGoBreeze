@@ -6,7 +6,6 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ISearchBarComponent } from '../../models/page.model';
 import { Action } from 'history';
-import { AnyAction } from 'redux';
 import { combineClasses } from '../../../util/extension';
 import { RouterState } from '../../../store/models/state.model';
 import { useSelector } from 'react-redux';
@@ -28,7 +27,7 @@ const SearchBar = (props: ISearchBarComponent) => {
             className="d-flex justify-content-start align-items-center h-100"
             onClick={() => {
               if (router.action === Action.Pop) {
-                router.action = null as AnyAction[''];
+                router.action = null;
               }
               props.onDecId?.();
             }}
@@ -73,7 +72,7 @@ const SearchBar = (props: ISearchBarComponent) => {
             className="d-flex justify-content-end align-items-center h-100"
             onClick={() => {
               if (router.action === Action.Pop) {
-                router.action = null as AnyAction[''];
+                router.action = null;
               }
               props.onIncId?.();
             }}
