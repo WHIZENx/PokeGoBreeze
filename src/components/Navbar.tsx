@@ -27,6 +27,7 @@ const NavbarComponent = (props: INavbarComponent) => {
   const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
+  const [expanded, setExpanded] = useState(false);
 
   const [isDelay, setIsDelay] = useState(false);
 
@@ -39,6 +40,10 @@ const NavbarComponent = (props: INavbarComponent) => {
         props.toggleColorMode();
       }, 500);
     }
+  };
+
+  const handleNavLinkClick = () => {
+    setExpanded(false);
   };
 
   const infoVersion = useMemo(() => {
@@ -93,94 +98,73 @@ const NavbarComponent = (props: INavbarComponent) => {
     );
   }, [infoVersion, stateTheme, isDelay, onChangeTheme]);
 
+  const navItemLink = (className: string, to: string, label: string | React.ReactNode) => {
+    return (
+      <Link className={className} to={to} onClick={handleNavLinkClick}>
+        {label}
+      </Link>
+    );
+  };
+
   return (
     <Fragment>
-      <Navbar collapseOnSelect bg={VariantType.Dark} expand="xl" variant={VariantType.Dark}>
-        <Link className="navbar-brand" to="/">
-          <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
-          PokéGoBreeze
-        </Link>
+      <Navbar
+        collapseOnSelect
+        bg={VariantType.Dark}
+        expand="xl"
+        variant={VariantType.Dark}
+        expanded={expanded}
+        onToggle={setExpanded}
+      >
+        {navItemLink(
+          'navbar-brand',
+          '/',
+          <>
+            <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
+            PokéGoBreeze
+          </>
+        )}
         <div className="d-flex align-items-center justify-content-center">
           <div className="nav-info column-gap-2">{navigateInfo}</div>
           <Navbar.Toggle id="navbar-toggle" aria-controls="responsive-navbar-nav" />
         </div>
         <Navbar.Collapse id="responsive-navbar-nav" className="flex-wrap">
           <Nav className="me-auto">
-            <Link className="nav-link" to="/">
-              Pokédex
-            </Link>
-            <Link className="nav-link" to="/news">
-              News
-            </Link>
+            {navItemLink('nav-link', '/', 'Pokédex')}
+            {navItemLink('nav-link', '/news', 'News')}
             <NavDropdown title="Search">
-              <Link className="dropdown-item" to="/search-pokemon">
-                Pokémon
-              </Link>
-              <Link className="dropdown-item" to="/search-moves">
-                Moves
-              </Link>
-              <Link className="dropdown-item" to="/search-types">
-                Types
-              </Link>
+              {navItemLink('dropdown-item', '/search-pokemon', 'Pokémon')}
+              {navItemLink('dropdown-item', '/search-moves', 'Moves')}
+              {navItemLink('dropdown-item', '/search-types', 'Types')}
             </NavDropdown>
             <NavDropdown title="Effective">
-              <Link className="dropdown-item" to="/type-effective">
-                Type Effective
-              </Link>
-              <Link className="dropdown-item" to="/weather-boosts">
-                Weather Boosts
-              </Link>
+              {navItemLink('dropdown-item', '/type-effective', 'Type Effective')}
+              {navItemLink('dropdown-item', '/weather-boosts', 'Weather Boosts')}
             </NavDropdown>
             <NavDropdown title="Tools">
               <NavDropdown.Header>Search&Find</NavDropdown.Header>
-              <Link className="dropdown-item" to="/find-cp-iv">
-                Find IV&CP
-              </Link>
-              <Link className="dropdown-item" to="/search-battle-stats">
-                Search Battle Leagues Stats
-              </Link>
-              <Link className="dropdown-item" to="/stats-table">
-                Stats Table
-              </Link>
+              {navItemLink('dropdown-item', '/find-cp-iv', 'Find IV&CP')}
+              {navItemLink('dropdown-item', '/search-battle-stats', 'Search Battle Leagues Stats')}
+              {navItemLink('dropdown-item', '/stats-table', 'Stats Table')}
               <NavDropdown.Divider />
               <NavDropdown.Header>Calculation</NavDropdown.Header>
-              <Link className="dropdown-item" to="/calculate-catch-chance">
-                Calculate Catch Chance
-              </Link>
-              <Link className="dropdown-item" to="/calculate-stats">
-                Calculate Stats
-              </Link>
-              <Link className="dropdown-item" to="/calculate-point">
-                Calculate Break&Bulk Point
-              </Link>
+              {navItemLink('dropdown-item', '/calculate-catch-chance', 'Calculate Catch Chance')}
+              {navItemLink('dropdown-item', '/calculate-stats', 'Calculate Stats')}
+              {navItemLink('dropdown-item', '/calculate-point', 'Calculate Break&Bulk Point')}
               <NavDropdown.Divider />
               <NavDropdown.Header>Battle Simulator</NavDropdown.Header>
-              <Link className="dropdown-item" to="/damage-calculate">
-                Damage Simulator
-              </Link>
-              <Link className="dropdown-item" to="/raid-battle">
-                Raid Battle
-              </Link>
+              {navItemLink('dropdown-item', '/damage-calculate', 'Damage Simulator')}
+              {navItemLink('dropdown-item', '/raid-battle', 'Raid Battle')}
             </NavDropdown>
             <NavDropdown title="Stats Sheets">
-              <Link className="dropdown-item" to="/dps-tdo-sheets">
-                DPS&TDO Sheets
-              </Link>
-              <Link className="dropdown-item" to="/stats-ranking">
-                Stats Ranking
-              </Link>
+              {navItemLink('dropdown-item', '/dps-tdo-sheets', 'DPS&TDO Sheets')}
+              {navItemLink('dropdown-item', '/stats-ranking', 'Stats Ranking')}
             </NavDropdown>
             <NavDropdown title="PVP">
-              <Link className="dropdown-item" to="/pvp">
-                Simulator
-              </Link>
-              <Link className="dropdown-item" to="/battle-leagues">
-                Battle Leagues
-              </Link>
+              {navItemLink('dropdown-item', '/pvp', 'Simulator')}
+              {navItemLink('dropdown-item', '/battle-leagues', 'Battle Leagues')}
             </NavDropdown>
-            <Link className="nav-link" to="/stickers">
-              Stickers
-            </Link>
+            {navItemLink('nav-link', '/stickers', 'Stickers')}
           </Nav>
         </Navbar.Collapse>
         <div className="nav-info-top column-gap-2">{navigateInfo}</div>
