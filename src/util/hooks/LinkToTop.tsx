@@ -22,6 +22,7 @@ export const LinkToTop = (props: LinkToTopProps) => {
   const navigateAndReset: MouseEventHandler<HTMLAnchorElement> = (event) => {
     event.preventDefault();
     navigateToTop(props.to, props.options);
+    props.funcOnClick?.(event);
   };
 
   return (

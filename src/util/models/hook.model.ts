@@ -11,4 +11,5 @@ export interface LinkToTopProps extends LinkProps {
   left?: number;
   behavior?: ScrollBehavior;
   options?: NavigateToTopProps;
+  funcOnClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
