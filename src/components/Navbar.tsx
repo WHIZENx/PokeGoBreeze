@@ -1,7 +1,6 @@
 import React, { Fragment, useMemo, useState } from 'react';
 import { Navbar, Nav, NavDropdown, OverlayTrigger } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -20,6 +19,7 @@ import { LocalStorageConfig } from '../store/constants/localStorage';
 import { loadTheme } from '../store/effects/theme.effects';
 import { combineClasses, toNumber } from '../util/extension';
 import CustomPopover from './Popover/CustomPopover';
+import { LinkToTop } from '../util/hooks/LinkToTop';
 
 type ToggleEvent = React.SyntheticEvent | KeyboardEvent | MouseEvent;
 interface ToggleMetadata {
@@ -108,9 +108,9 @@ const NavbarComponent = (props: INavbarComponent) => {
 
   const navItemLink = (className: string, to: string, label: string | React.ReactNode) => {
     return (
-      <Link className={className} to={to} onClick={handleNavLinkClick}>
+      <LinkToTop className={className} to={to} funcOnClick={handleNavLinkClick}>
         {label}
-      </Link>
+      </LinkToTop>
     );
   };
 
