@@ -23,12 +23,7 @@ interface IAction extends Action {
   payload: object[];
 }
 
-const history = createBrowserHistory();
-const routerMiddleware = createRouterMiddleware(history);
-
-const combinedReducer = combineReducers(rootReducer);
-
-const middleware = applyMiddleware(thunk, routerMiddleware);
+const middleware = applyMiddleware(thunk, createRouterMiddleware(createBrowserHistory()));
 const devTools =
   process.env.NODE_ENV === 'production'
     ? middleware
@@ -195,7 +190,7 @@ const persistConfig = {
   debounce: 1000,
 };
 
-const persistedReducer = persistReducer(persistConfig, combinedReducer);
+const persistedReducer = persistReducer(persistConfig, combineReducers(rootReducer));
 
 export default function configureStore() {
   const store = createStore(persistedReducer, devTools);

@@ -1,10 +1,11 @@
-import React, { Fragment, useState } from 'react';
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import React, { Fragment, useMemo, useState } from 'react';
+import { Navbar, Nav, NavDropdown, OverlayTrigger } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import logo from '../assets/pokedex.png';
 import { capitalize, getTime } from '../util/utils';
@@ -18,6 +19,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/localStorage';
 import { loadTheme } from '../store/effects/theme.effects';
 import { combineClasses, toNumber } from '../util/extension';
+import CustomPopover from './Popover/CustomPopover';
 
 const NavbarComponent = (props: INavbarComponent) => {
   const dispatch = useDispatch();
@@ -39,14 +41,69 @@ const NavbarComponent = (props: INavbarComponent) => {
     }
   };
 
+  const infoVersion = useMemo(() => {
+    return (
+      <>
+        {toNumber(timestamp?.gamemaster) > 0 && (
+          <span className="text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
+        )}
+        <span className="text-end text-warning" style={{ fontSize: 10 }}>
+          <b>
+            {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
+              `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
+            {props.version}
+          </b>
+        </span>
+      </>
+    );
+  }, [timestamp, props.version]);
+
+  const navigateInfo = useMemo(() => {
+    return (
+      <>
+        <Navbar.Text className="text-version flex-column justify-content-between mw-max-content h-6 p-0">
+          {infoVersion}
+        </Navbar.Text>
+        <OverlayTrigger
+          placement="bottom"
+          overlay={
+            <CustomPopover className="bg-dark">
+              <div className="d-flex flex-column justify-content-between mw-max-content h-6 p-0">{infoVersion}</div>
+            </CustomPopover>
+          }
+        >
+          <InfoOutlinedIcon className="nav-info-icon cursor-pointer p-0" color="info" />
+        </OverlayTrigger>
+        <IconButton
+          className={combineClasses(
+            'me-2 p-0',
+            stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
+            isDelay ? 'cursor-default' : 'cursor-pointer'
+          )}
+          onClick={onChangeTheme}
+          color="inherit"
+        >
+          {props.mode === TypeTheme.Light ? (
+            <LightModeIcon fontSize="large" style={{ color: 'white' }} />
+          ) : (
+            <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
+          )}
+        </IconButton>
+      </>
+    );
+  }, [infoVersion, stateTheme, isDelay, onChangeTheme]);
+
   return (
     <Fragment>
-      <Navbar collapseOnSelect bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
+      <Navbar collapseOnSelect bg={VariantType.Dark} expand="xl" variant={VariantType.Dark}>
         <Link className="navbar-brand" to="/">
           <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
           PokéGoBreeze
         </Link>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <div className="d-flex align-items-center justify-content-center">
+          <div className="nav-info column-gap-2">{navigateInfo}</div>
+          <Navbar.Toggle id="navbar-toggle" aria-controls="responsive-navbar-nav" />
+        </div>
         <Navbar.Collapse id="responsive-navbar-nav" className="flex-wrap">
           <Nav className="me-auto">
             <Link className="nav-link" to="/">
@@ -125,34 +182,8 @@ const NavbarComponent = (props: INavbarComponent) => {
               Stickers
             </Link>
           </Nav>
-          <Navbar.Text className="d-flex flex-column justify-content-between mw-max-content h-6">
-            {toNumber(timestamp?.gamemaster) > 0 && (
-              <span className="text-white mx-2">Updated: {getTime(timestamp.gamemaster, true)}</span>
-            )}
-            <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
-              <b>
-                {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
-                  `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
-                {props.version}
-              </b>
-            </span>
-          </Navbar.Text>
-          <IconButton
-            className={combineClasses(
-              'me-2 p-0',
-              stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
-              isDelay ? 'cursor-default' : 'cursor-pointer'
-            )}
-            onClick={onChangeTheme}
-            color="inherit"
-          >
-            {props.mode === TypeTheme.Light ? (
-              <LightModeIcon fontSize="large" style={{ color: 'white' }} />
-            ) : (
-              <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
-            )}
-          </IconButton>
         </Navbar.Collapse>
+        <div className="nav-info-top column-gap-2">{navigateInfo}</div>
       </Navbar>
       {spinner.bar.isShow && (
         <Box className="w-100 position-absolute z-7">
