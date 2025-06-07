@@ -21,6 +21,12 @@ import { loadTheme } from '../store/effects/theme.effects';
 import { combineClasses, toNumber } from '../util/extension';
 import CustomPopover from './Popover/CustomPopover';
 
+type ToggleEvent = React.SyntheticEvent | KeyboardEvent | MouseEvent;
+interface ToggleMetadata {
+  source: string | undefined;
+  originalEvent: ToggleEvent | undefined;
+}
+
 const NavbarComponent = (props: INavbarComponent) => {
   const dispatch = useDispatch();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
@@ -28,6 +34,7 @@ const NavbarComponent = (props: INavbarComponent) => {
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [expanded, setExpanded] = useState(false);
+  const [showDropdown, setShowDropdown] = useState('');
 
   const [isDelay, setIsDelay] = useState(false);
 
@@ -44,6 +51,7 @@ const NavbarComponent = (props: INavbarComponent) => {
 
   const handleNavLinkClick = () => {
     setExpanded(false);
+    setShowDropdown('');
   };
 
   const infoVersion = useMemo(() => {
@@ -106,6 +114,12 @@ const NavbarComponent = (props: INavbarComponent) => {
     );
   };
 
+  const handleDropdownToggle = (isOpen: boolean, metadata: ToggleMetadata) => {
+    if (metadata.source !== 'select') {
+      setShowDropdown(isOpen ? (metadata.originalEvent?.target as HTMLElement)?.id : '');
+    }
+  };
+
   return (
     <Fragment>
       <Navbar
@@ -132,16 +146,31 @@ const NavbarComponent = (props: INavbarComponent) => {
           <Nav className="me-auto">
             {navItemLink('nav-link', '/', 'Pokédex')}
             {navItemLink('nav-link', '/news', 'News')}
-            <NavDropdown title="Search">
+            <NavDropdown
+              title="Search"
+              id="search-dropdown"
+              show={showDropdown === 'search-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
               {navItemLink('dropdown-item', '/search-pokemon', 'Pokémon')}
               {navItemLink('dropdown-item', '/search-moves', 'Moves')}
               {navItemLink('dropdown-item', '/search-types', 'Types')}
             </NavDropdown>
-            <NavDropdown title="Effective">
+            <NavDropdown
+              title="Effective"
+              id="effective-dropdown"
+              show={showDropdown === 'effective-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
               {navItemLink('dropdown-item', '/type-effective', 'Type Effective')}
               {navItemLink('dropdown-item', '/weather-boosts', 'Weather Boosts')}
             </NavDropdown>
-            <NavDropdown title="Tools">
+            <NavDropdown
+              title="Tools"
+              id="tools-dropdown"
+              show={showDropdown === 'tools-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
               <NavDropdown.Header>Search&Find</NavDropdown.Header>
               {navItemLink('dropdown-item', '/find-cp-iv', 'Find IV&CP')}
               {navItemLink('dropdown-item', '/search-battle-stats', 'Search Battle Leagues Stats')}
@@ -156,11 +185,21 @@ const NavbarComponent = (props: INavbarComponent) => {
               {navItemLink('dropdown-item', '/damage-calculate', 'Damage Simulator')}
               {navItemLink('dropdown-item', '/raid-battle', 'Raid Battle')}
             </NavDropdown>
-            <NavDropdown title="Stats Sheets">
+            <NavDropdown
+              title="Stats Sheets"
+              id="stats-sheets-dropdown"
+              show={showDropdown === 'stats-sheets-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
               {navItemLink('dropdown-item', '/dps-tdo-sheets', 'DPS&TDO Sheets')}
               {navItemLink('dropdown-item', '/stats-ranking', 'Stats Ranking')}
             </NavDropdown>
-            <NavDropdown title="PVP">
+            <NavDropdown
+              title="PVP"
+              id="pvp-dropdown"
+              show={showDropdown === 'pvp-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
               {navItemLink('dropdown-item', '/pvp', 'Simulator')}
               {navItemLink('dropdown-item', '/battle-leagues', 'Battle Leagues')}
             </NavDropdown>
