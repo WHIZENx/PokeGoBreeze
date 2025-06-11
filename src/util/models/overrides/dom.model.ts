@@ -2,7 +2,12 @@ export interface ScrollModifyEvent extends Event {
   target: TargetModify | null;
 }
 
-type TargetModify = Omit<EventTarget, 'documentElement'> & { documentElement?: HTMLElement };
+type TargetModify = Omit<EventTargetModify, 'documentElement'> & {
+  documentElement?: HTMLElement;
+};
+type EventTargetModify = Omit<EventTarget, 'scrollingElement'> & {
+  scrollingElement?: HTMLElement;
+};
 
 interface TouchList {
   [index: number]: Touch;

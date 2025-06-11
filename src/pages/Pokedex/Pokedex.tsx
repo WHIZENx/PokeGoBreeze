@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
@@ -32,6 +32,7 @@ import { TypeEff } from '../../core/models/type-eff.model';
 import { ScrollModifyEvent } from '../../util/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
+import { SpinnerActions } from '../../store/actions';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -92,6 +93,9 @@ class BtnSelect implements IBtnSelect {
 
 const Pokedex = (props: IStyleSheetData) => {
   useChangeTitle('Pokédex');
+
+  const dispatch = useDispatch();
+
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
 
@@ -152,57 +156,68 @@ const Pokedex = (props: IStyleSheetData) => {
   useEffect(() => {
     setIsLoading(true);
     if (isNotEmpty(dataList)) {
-      const debounced = debounce(
-        () => {
-          const result = dataList.filter((item) => {
-            const boolFilterType =
-              !isNotEmpty(selectTypes) ||
-              (item.types.every((item) => isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)) &&
-                item.types.length === selectTypes.length);
-            const boolFilterPoke =
-              isEmpty(searchTerm) ||
-              (isMatch
-                ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
-                : isInclude(
-                    splitAndCapitalize(item.name, '-', ' '),
-                    searchTerm,
-                    IncludeMode.IncludeIgnoreCaseSensitive
-                  ) || isInclude(item.id, searchTerm));
-            const boolReleasedGO = releasedGO ? item.releasedGO : true;
-            const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
-            const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
-            const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
-            const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
-            const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
-            const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
+      try {
+        const debounced = debounce(() => {
+          try {
+            const result = dataList.filter((item) => {
+              const boolFilterType =
+                !isNotEmpty(selectTypes) ||
+                (item.types.every((item) => isIncludeList(selectTypes, item, IncludeMode.IncludeIgnoreCaseSensitive)) &&
+                  item.types.length === selectTypes.length);
+              const boolFilterPoke =
+                isEmpty(searchTerm) ||
+                (isMatch
+                  ? isEqual(splitAndCapitalize(item.name, '-', ' '), searchTerm) || isEqual(item.id, searchTerm)
+                  : isInclude(
+                      splitAndCapitalize(item.name, '-', ' '),
+                      searchTerm,
+                      IncludeMode.IncludeIgnoreCaseSensitive
+                    ) || isInclude(item.id, searchTerm));
+              const boolReleasedGO = releasedGO ? item.releasedGO : true;
+              const boolMega = isMega ? item.pokemonType === PokemonType.Mega : true;
+              const boolGMax = isGMax ? item.pokemonType === PokemonType.GMax : true;
+              const boolPrimal = isPrimal ? item.pokemonType === PokemonType.Primal : true;
+              const boolLegend = isLegendary ? item.pokemonClass === PokemonClass.Legendary : true;
+              const boolMythic = isMythic ? item.pokemonClass === PokemonClass.Mythic : true;
+              const boolUltra = isUltraBeast ? item.pokemonClass === PokemonClass.UltraBeast : true;
 
-            const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
-            const findVersion = item.version === -1 || isIncludeList(version, item.version);
-            return (
-              boolFilterType &&
-              boolFilterPoke &&
-              boolReleasedGO &&
-              findGen &&
-              findVersion &&
-              boolMega &&
-              boolGMax &&
-              boolPrimal &&
-              boolLegend &&
-              boolMythic &&
-              boolUltra
+              const findGen = item.gen === 0 || isIncludeList(gen, item.gen - 1);
+              const findVersion = item.version === -1 || isIncludeList(version, item.version);
+              return (
+                boolFilterType &&
+                boolFilterPoke &&
+                boolReleasedGO &&
+                findGen &&
+                findVersion &&
+                boolMega &&
+                boolGMax &&
+                boolPrimal &&
+                boolLegend &&
+                boolMythic &&
+                boolUltra
+              );
+            });
+            scrollID.current = 0;
+            setResult(result);
+            setListOfPokemon(result.slice(0, subItem.current));
+            setIsLoading(false);
+          } catch (error) {
+            dispatch(
+              SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true })
             );
-          });
-          scrollID.current = 0;
-          setResult(result);
-          setListOfPokemon(result.slice(0, subItem.current));
-          setIsLoading(false);
-        },
-        listOfPokemon > result ? listOfPokemon.length : result.length
-      );
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
+            setIsLoading(false);
+          }
+        }, Math.max(300, listOfPokemon.length > result.length ? listOfPokemon.length : result.length));
+        debounced();
+        return () => {
+          debounced.cancel();
+        };
+      } catch (error) {
+        dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: `Error during filtering: ${error}`, isError: true }));
+        setIsLoading(false);
+      }
+    } else {
+      setIsLoading(false);
     }
   }, [
     dataList,
@@ -223,20 +238,43 @@ const Pokedex = (props: IStyleSheetData) => {
   useEffect(() => {
     if (isNotEmpty(listOfPokemon)) {
       const onScroll = (e: ScrollModifyEvent) => {
-        const scrollTop = toNumber(e.target?.documentElement?.scrollTop);
-        const fullHeight = toNumber(e.target?.documentElement?.offsetHeight);
-        if (scrollTop * 1.5 >= fullHeight * (scrollID.current + 1)) {
-          scrollID.current += 1;
-          setListOfPokemon((oldArr) => [
-            ...oldArr,
-            ...result.slice(scrollID.current * subItem.current, (scrollID.current + 1) * subItem.current),
-          ]);
+        try {
+          const scrollingElement = (e.target?.documentElement ||
+            e.target?.scrollingElement ||
+            document.scrollingElement) as HTMLElement;
+
+          if (!scrollingElement) {
+            dispatch(SpinnerActions.ShowSpinnerMsg.create({ message: 'No scrolling found', isError: true }));
+            return;
+          }
+
+          const scrollTop = toNumber(scrollingElement.scrollTop);
+          const fullHeight = toNumber(scrollingElement.offsetHeight);
+          const scrollHeight = toNumber(scrollingElement.scrollHeight);
+
+          if (scrollTop + fullHeight >= scrollHeight - 300) {
+            scrollID.current += 1;
+            setListOfPokemon((oldArr) => [
+              ...oldArr,
+              ...result.slice(scrollID.current * subItem.current, (scrollID.current + 1) * subItem.current),
+            ]);
+          }
+        } catch (error) {
+          dispatch(
+            SpinnerActions.ShowSpinnerMsg.create({ message: `Error in scroll handler: ${error}`, isError: true })
+          );
         }
       };
+
       window.addEventListener('scroll', onScroll);
-      return () => window.removeEventListener('scroll', onScroll);
+      document.addEventListener('touchmove', onScroll);
+
+      return () => {
+        window.removeEventListener('scroll', onScroll);
+        document.removeEventListener('touchmove', onScroll);
+      };
     }
-  }, [listOfPokemon]);
+  }, [listOfPokemon, result]);
 
   const handleChangeGen = (event: SelectChangeEvent<number[]>) => {
     const isSelect = isIncludeList(event.target.value as number[], -1);
@@ -285,16 +323,16 @@ const Pokedex = (props: IStyleSheetData) => {
           <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}
-      <div className="border-types text-center w-100">
+      <div className="text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
-        <div className="row w-100 m-0">
+        <div className="row w-100 m-0 types-select-btn">
           {types.map((item, index) => (
             <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
-                  'btn-select-type w-100 border-types p-2',
+                  'btn-select-type w-100 p-2',
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
                 style={{ transition: TRANSITION_TIME }}

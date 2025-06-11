@@ -761,6 +761,7 @@ const Move = (props: IMovePage) => {
               <tr>
                 <td className="table-top-of-move p-0" colSpan={2}>
                   <CustomDataTable
+                    className="table-top-of-move-container"
                     customColumns={columns}
                     data={topListFilter}
                     pagination

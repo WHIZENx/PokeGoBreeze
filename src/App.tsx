@@ -212,6 +212,10 @@ export default function Main() {
     return newTheme;
   }, [mode]);
 
+  useEffect(() => {
+    document.body.removeAttribute('style');
+  }, []);
+
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
