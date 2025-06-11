@@ -31,7 +31,7 @@ root.render(
         }}
         maxSnack={1}
       >
-        <PersistGate loading={null} persistor={persistor}>
+        <PersistGate persistor={persistor}>
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <RouterSync />
             <Main />

@@ -11,6 +11,7 @@ import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import localForage from 'localforage';
 import { PersistKey } from '../util/constants';
 import CryptoJS from 'crypto-js';
+import { LocalForageConfig } from './constants/localForage';
 
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY;
 const ENCRYPTION_SALT = process.env.REACT_APP_ENCRYPTION_SALT;
@@ -123,9 +124,9 @@ const devTools =
       })(middleware);
 
 localForage.config({
-  name: 'PokeGoBreeze',
-  storeName: 'PokeGoBreezeStore',
-  description: 'Encrypted storage for PokeGoBreeze application',
+  name: LocalForageConfig.Name,
+  storeName: LocalForageConfig.StoreName,
+  description: LocalForageConfig.Description,
 });
 
 const createEncryptionTransform = () => {
@@ -145,7 +146,7 @@ const createEncryptionTransform = () => {
 
         return encryptedData;
       } catch (error) {
-        console.error('Error encrypting state:', error);
+        // console.error('Error encrypting state:', error);
         return JSON.stringify(inboundState);
       }
     },
@@ -164,13 +165,13 @@ const createEncryptionTransform = () => {
         const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
         if (!decryptedText) {
-          console.warn('Decryption produced empty result');
+          // console.warn('Decryption produced empty result');
           return {};
         }
 
         return JSON.parse(decryptedText);
       } catch (error) {
-        console.error('Error decrypting state:', error);
+        // console.error('Error decrypting state:', error);
         return {};
       }
     }
