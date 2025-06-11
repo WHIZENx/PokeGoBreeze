@@ -9,7 +9,7 @@ import { createRouterMiddleware } from './middleware/router.middleware';
 import { legacy_createStore as createStore } from 'redux';
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import localForage from 'localforage';
-import { PersistKey } from '../util/constants';
+import { PersistTimeout, PersistKey } from '../util/constants';
 import CryptoJS from 'crypto-js';
 import { LocalForageConfig } from './constants/localForage';
 
@@ -188,7 +188,7 @@ const persistConfig = {
   storage: localForage,
   transforms: [sensitiveDataTransform, createEncryptionTransform()],
   whitelist: ['store', 'stats', 'timestamp'],
-  debounce: 1000,
+  timeout: PersistTimeout,
 };
 
 const persistedReducer = persistReducer(persistConfig, combineReducers(rootReducer));

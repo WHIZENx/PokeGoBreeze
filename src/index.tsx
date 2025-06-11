@@ -16,10 +16,29 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
 
 import RouterSync from './util/hooks/RouterSync';
+import LoadingPersist from './components/Sprites/Loading/LoadingPersist';
+import { LIGHT_THEME_BG, DARK_THEME_BG } from './util/constants';
+import { TypeTheme } from './enums/type.enum';
+import { LocalStorageConfig } from './store/constants/localStorage';
 
 const { store, persistor } = configureStore();
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+
+// Set theme and apply it to HTML element before React renders
+let theme = TypeTheme.Light;
+try {
+  const savedTheme = localStorage.getItem(LocalStorageConfig.Theme);
+  if (savedTheme) {
+    theme = JSON.parse(savedTheme) === TypeTheme.Dark ? TypeTheme.Dark : TypeTheme.Light;
+  }
+} catch (e) {
+  theme = TypeTheme.Light;
+}
+
+document.documentElement.setAttribute('data-theme', theme);
+document.documentElement.setAttribute('data-bs-theme', theme);
+document.body.style.background = theme === TypeTheme.Dark ? DARK_THEME_BG : LIGHT_THEME_BG;
 
 root.render(
   <>
@@ -31,7 +50,7 @@ root.render(
         }}
         maxSnack={1}
       >
-        <PersistGate persistor={persistor}>
+        <PersistGate loading={<LoadingPersist />} persistor={persistor}>
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <RouterSync />
             <Main />
