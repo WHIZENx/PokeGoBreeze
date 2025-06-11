@@ -9,8 +9,9 @@ import { createRouterMiddleware } from './middleware/router.middleware';
 import { legacy_createStore as createStore } from 'redux';
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import localForage from 'localforage';
-import { PersistKey } from '../util/constants';
+import { PersistTimeout, PersistKey } from '../util/constants';
 import CryptoJS from 'crypto-js';
+import { LocalForageConfig } from './constants/localForage';
 
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY;
 const ENCRYPTION_SALT = process.env.REACT_APP_ENCRYPTION_SALT;
@@ -23,12 +24,7 @@ interface IAction extends Action {
   payload: object[];
 }
 
-const history = createBrowserHistory();
-const routerMiddleware = createRouterMiddleware(history);
-
-const combinedReducer = combineReducers(rootReducer);
-
-const middleware = applyMiddleware(thunk, routerMiddleware);
+const middleware = applyMiddleware(thunk, createRouterMiddleware(createBrowserHistory()));
 const devTools =
   process.env.NODE_ENV === 'production'
     ? middleware
@@ -128,9 +124,9 @@ const devTools =
       })(middleware);
 
 localForage.config({
-  name: 'PokeGoBreeze',
-  storeName: 'PokeGoBreezeStore',
-  description: 'Encrypted storage for PokeGoBreeze application',
+  name: LocalForageConfig.Name,
+  storeName: LocalForageConfig.StoreName,
+  description: LocalForageConfig.Description,
 });
 
 const createEncryptionTransform = () => {
@@ -150,7 +146,7 @@ const createEncryptionTransform = () => {
 
         return encryptedData;
       } catch (error) {
-        console.error('Error encrypting state:', error);
+        // console.error('Error encrypting state:', error);
         return JSON.stringify(inboundState);
       }
     },
@@ -169,13 +165,13 @@ const createEncryptionTransform = () => {
         const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
         if (!decryptedText) {
-          console.warn('Decryption produced empty result');
+          // console.warn('Decryption produced empty result');
           return {};
         }
 
         return JSON.parse(decryptedText);
       } catch (error) {
-        console.error('Error decrypting state:', error);
+        // console.error('Error decrypting state:', error);
         return {};
       }
     }
@@ -192,10 +188,10 @@ const persistConfig = {
   storage: localForage,
   transforms: [sensitiveDataTransform, createEncryptionTransform()],
   whitelist: ['store', 'stats', 'timestamp'],
-  debounce: 1000,
+  timeout: PersistTimeout,
 };
 
-const persistedReducer = persistReducer(persistConfig, combinedReducer);
+const persistedReducer = persistReducer(persistConfig, combineReducers(rootReducer));
 
 export default function configureStore() {
   const store = createStore(persistedReducer, devTools);

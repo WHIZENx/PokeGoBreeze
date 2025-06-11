@@ -19,6 +19,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-explicit-any': 0,
     curly: 1,
+    'no-console': 'warn',
     'prettier/prettier': [
       'warn',
       {

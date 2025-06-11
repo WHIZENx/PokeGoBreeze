@@ -78,3 +78,48 @@
   @include theme-text(var(--custom-table-background-sub-head-text));
   @include theme-border;
 }
+
+@mixin hover-effect {
+  &:hover,
+  .ranking-container .accordion-button.collapsed:hover {
+    @include theme-background(var(--custom-selected-hover), true);
+  }
+}
+
+@mixin standard-border {
+  @include theme-border(1px, all, var(--custom-table-border));
+}
+
+@mixin hover-border {
+  @include theme-border(1px, all, var(--custom-gray), true);
+}
+
+@mixin bs-border-sides {
+  @include theme-border(1px, left, var(--bs-border-color));
+  @include theme-border(1px, right, var(--bs-border-color));
+}
+
+@mixin thick-standard-border {
+  @include theme-border(2px, all, var(--custom-table-border));
+}
+
+@mixin info-table-style($important: false) {
+  @include theme-text(var(--text-primary));
+  @include theme-background(var(--custom-table-background-info), $important);
+}
+
+@mixin default-shadow {
+  filter: drop-shadow(1px 1px 1px var(--shadow-default));
+}
+
+@mixin thin-border($side: right, $color: var(--custom-lightgray)) {
+  @include theme-border(0.5px, $side, $color);
+}
+
+@mixin bs-border-with-side($side) {
+  @include theme-border(1px, $side, var(--bs-border-color));
+}
+
+@mixin black-hover-border {
+  @include theme-border(1px, all, var(--custom-black), true);
+}

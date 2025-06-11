@@ -1,36 +1,5 @@
 @use "./common.scss" as *;
 
-// Dynamic theme classes
-.theme-card {
-  @include theme-background(var(--background-paper));
-  @include theme-text(var(--text-primary));
-
-  border-radius: var(--border-radius);
-
-  @include theme-transition;
-}
-
-.theme-input {
-  @include theme-background(var(--background-input));
-  @include theme-text(var(--text-primary));
-  @include theme-border(var(--background-table-divided));
-
-  &::placeholder {
-    @include theme-text(var(--text-secondary));
-  }
-}
-
-.theme-btn {
-  @include theme-background(var(--primary-main));
-  @include theme-text(var(--primary-contrast-text));
-
-  border-radius: var(--border-radius);
-
-  &:hover {
-    @include theme-background(var(--primary-dark));
-  }
-}
-
 // Text color classes
 .theme-text-primary {
   @include theme-text(var(--text-primary), true);
@@ -108,11 +77,7 @@
 .card-move,
 .card-pokemon-select {
   @include theme-border(1px, top, var(--background-table-divided));
-
-  &:hover,
-  .ranking-container .accordion-button.collapsed:hover {
-    @include theme-background(var(--custom-selected-hover), true);
-  }
+  @include hover-effect;
 }
 
 // Error message classes
@@ -126,10 +91,31 @@
 }
 
 // Button styling using CSS variables
+.types-select-btn {
+
+  button.btn-select-type {
+    @include theme-border(1px, top, var(--custom-btn-type-border));
+    @include theme-border(1px, bottom, var(--custom-btn-type-border));
+  }
+
+  div.col:first-child button.btn-select-type {
+    @include theme-border(1px, left, var(--custom-btn-type-border));
+  }
+  div.col:not(:first-child) button.btn-select-type {
+    @include theme-border(0.5px, left, var(--custom-btn-type-border));
+  }
+
+  div.col:last-child button.btn-select-type {
+    @include theme-border(1px, right, var(--custom-btn-type-border));
+  }
+  div.col:not(:last-child) button.btn-select-type {
+    @include theme-border(0.5px, right, var(--custom-btn-type-border));
+  }
+}
+
 .btn-select-type {
   @include theme-background(var(--background-btn-type));
   @include theme-text(var(--text-primary));
-  @include theme-border;
   @include theme-transition;
 
   &:hover:not(.select-type) {
@@ -168,7 +154,6 @@
 
 .sticker-container h5 {
   @include theme-background(var(--custom-table-background-head));
-  @include theme-text(var(--custom-table-background-info));
   @include theme-border;
 }
 
@@ -274,13 +259,11 @@ a.pokemon-link:hover {
 // Special table styles
 .table-catch-chance thead th,
 .table-info tbody tr.info-costs td:nth-child(2) {
-  @include theme-text(var(--text-primary));
-  @include theme-background(var(--custom-table-background-info), true);
+  @include info-table-style(true);
 }
 
 .ranking-link-group button {
-  @include theme-text(var(--text-primary));
-  @include theme-background(var(--custom-table-background-info));
+  @include info-table-style;
 }
 
 // Table classes with sub-header styles
@@ -385,7 +368,7 @@ td,
 .border-type-stat,
 .border-best-poke,
 .stats-border {
-  @include theme-border(1px, all, var(--custom-table-border));
+  @include standard-border;
 }
 
 .border-types,
@@ -394,7 +377,7 @@ td,
 .count-pokemon,
 .frame-badge-select,
 .frame-badge:hover {
-  @include theme-border(1px, all, var(--custom-gray), true);
+  @include hover-border;
 }
 
 .timeline-vertical .w-50:first-child .pokemon-battle-header {
@@ -411,7 +394,7 @@ td,
 .img-desc,
 .border-box-battle,
 .stats-boss {
-  @include theme-border(2px, all, var(--custom-table-border));
+  @include thick-standard-border;
 }
 
 // Table header styling
@@ -425,7 +408,7 @@ td,
 // Icon shadow
 .img-type-icon,
 .pokemon-link .pokemon-sprite-large {
-  filter: drop-shadow(1px 1px 1px var(--shadow-default));
+  @include default-shadow;
 }
 
 // Header backgrounds
@@ -487,40 +470,49 @@ td,
   @include theme-text(var(--custom-validator-disable), true);
 }
 
-.btn-form:focus,
-.btn-form:hover:not(.form-selected),
-.list-item-ranking:hover {
-  @include theme-border(1px, all, var(--custom-black), true);
-}
-
+// Group elements with identical thin border styles
 .table-desc tbody tr td div.first-extra-col,
 .next-border {
-  @include theme-border(0.5px, right, var(--custom-lightgray));
+  @include thin-border(right);
 }
 
 .prev-border {
-  @include theme-border(0.5px, left, var(--custom-lightgray));
+  @include thin-border(left);
 }
 
-.info-container {
-  @include theme-border(1px, top, var(--bs-border-color));
-  @include theme-border(1px, left, var(--bs-border-color));
-  @include theme-border(1px, right, var(--bs-border-color));
-}
-
-.tab-body {
-  @include theme-border(1px, bottom, var(--bs-border-color));
-  @include theme-border(1px, left, var(--bs-border-color));
-  @include theme-border(1px, right, var(--bs-border-color));
-}
-
+// Group elements with bottom bs-border
 .ranking-container {
-  @include theme-border(1px, bottom, var(--bs-border-color));
+  @include bs-border-with-side(bottom);
 }
 
+// Group elements with top bs-border
 .accordion-footer,
 .turn-battle {
-  @include theme-border(1px, top, var(--bs-border-color));
+  @include bs-border-with-side(top);
+}
+
+// Group elements with identical hover border styling
+.btn-form:focus,
+.btn-form:hover:not(.form-selected),
+.list-item-ranking:hover {
+  @include black-hover-border;
+}
+
+// Info container with multi-side border
+.info-container {
+  @include bs-border-with-side(top);
+  @include bs-border-sides;
+}
+
+// Tab body with multi-side border
+.tab-body {
+  @include bs-border-with-side(bottom);
+  @include bs-border-sides;
+}
+
+// Table border - specialized case
+.table-top-of-move-container {
+  @include theme-border(1px, top, var(--custom-table-background-sub-head-border), true);
 }
 
 .card-input {

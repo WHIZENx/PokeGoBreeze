@@ -699,14 +699,14 @@ const DpsTdo = () => {
       )}
       <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
-        <div className="row w-100 m-0">
+        <div className="row w-100 m-0 types-select-btn">
           {types.map((item, index) => (
             <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
-                  'btn-select-type w-100 border-types p-2',
+                  'btn-select-type w-100 p-2',
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
               >
@@ -716,8 +716,8 @@ const DpsTdo = () => {
           ))}
         </div>
         <div className="row w-100 m-0">
-          <div className="col-xxl border-input p-0 w-fit-content">
-            <div className="border-input">
+          <div className="col-xxl p-0 w-fit-content">
+            <div>
               <div className="row w-100 m-0">
                 <div className="d-flex col-md-9 p-0">
                   <span className="input-group-text">Search name or ID</span>
@@ -862,7 +862,7 @@ const DpsTdo = () => {
                 label="Special Moves"
               />
             </div>
-            <div className="input-group border-input">
+            <div className="input-group">
               <span className="input-group-text">Filter only by</span>
               <FormControlLabel
                 control={
@@ -951,7 +951,7 @@ const DpsTdo = () => {
                   <div className="input-group">
                     <span className="input-group-text">Filter best move sets</span>
                     <FormControlLabel
-                      className="border-input me-0 pe-3"
+                      className="me-0 pe-3"
                       control={
                         <Switch
                           checked={enableBest}
@@ -1054,7 +1054,7 @@ const DpsTdo = () => {
               </div>
             </div>
           </div>
-          <div className="col-xxl border-input p-0 w-fit-content">
+          <div className="col-xxl p-0 w-fit-content">
             <div className="head-types">Options</div>
             <form className="w-100" onSubmit={onCalculateTable.bind(this)}>
               <div className="input-group">
