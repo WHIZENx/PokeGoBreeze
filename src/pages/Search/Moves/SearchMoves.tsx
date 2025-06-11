@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -26,6 +26,7 @@ import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { PokemonTypeBadge } from '../../../core/models/type.model';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -151,14 +152,15 @@ const Search = () => {
     }
   }, [combat, cMoveType, cMoveName]);
 
-  const searchMove = (category: TypeMove, type: SelectType, name: string) =>
+  const searchMove = (category: TypeMove, type: SelectType | PokemonTypeBadge, name: string) =>
     combat
       .filter((item) => item.typeMove === category)
       .filter(
         (move) =>
           (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
             isInclude(move.track, name)) &&
-          (type === SelectType.All || isEqual(type, move.type, EqualMode.IgnoreCaseSensitive))
+          (type === SelectType.All ||
+            isEqual(getKeyWithData(PokemonTypeBadge, type), move.type, EqualMode.IgnoreCaseSensitive))
       );
 
   const setMoveByType = (category: TypeMove, value: SelectType) => {
@@ -202,7 +204,14 @@ const Search = () => {
                           {getKeyWithData(SelectType, SelectType.All)}
                         </MenuItem>
                         {Object.keys(types).map((value, index) => (
-                          <MenuItem key={index} value={capitalize(value)}>
+                          <MenuItem
+                            key={index}
+                            value={getDataWithKey<PokemonTypeBadge>(
+                              PokemonTypeBadge,
+                              value,
+                              EqualMode.IgnoreCaseSensitive
+                            )}
+                          >
                             {capitalize(value)}
                           </MenuItem>
                         ))}

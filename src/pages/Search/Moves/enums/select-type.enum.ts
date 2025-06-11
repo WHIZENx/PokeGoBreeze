@@ -1,5 +1,5 @@
 export enum SelectType {
-  All,
+  All = -1,
 }
 
 export enum ColumnSearchMoveType {
