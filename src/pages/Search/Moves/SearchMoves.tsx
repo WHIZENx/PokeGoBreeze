@@ -151,8 +151,8 @@ const Search = () => {
     }
   }, [combat, cMoveType, cMoveName]);
 
-  const searchMove = (category: TypeMove, type: SelectType, name: string) => {
-    return combat
+  const searchMove = (category: TypeMove, type: SelectType, name: string) =>
+    combat
       .filter((item) => item.typeMove === category)
       .filter(
         (move) =>
@@ -160,126 +160,93 @@ const Search = () => {
             isInclude(move.track, name)) &&
           (type === SelectType.All || isEqual(type, move.type, EqualMode.IgnoreCaseSensitive))
       );
+
+  const setMoveByType = (category: TypeMove, value: SelectType) => {
+    if (category === TypeMove.Fast) {
+      setFilters(Filter.create({ ...filters, fMoveType: value }));
+    } else {
+      setFilters(Filter.create({ ...filters, cMoveType: value }));
+    }
+  };
+
+  const setMoveNameByType = (category: TypeMove, value: string) => {
+    if (category === TypeMove.Fast) {
+      setFilters(Filter.create({ ...filters, fMoveName: value }));
+    } else {
+      setFilters(Filter.create({ ...filters, cMoveName: value }));
+    }
+  };
+
+  const moveList = (data: ICombat[], type: SelectType, name: string, moveLoad: boolean, category: TypeMove) => {
+    return (
+      <div className="col-xl table-movesets-col p-0">
+        <table className="table-info table-movesets">
+          <thead />
+          <tbody>
+            <tr className="text-center">
+              <td className="table-sub-header" colSpan={3}>
+                <div className="row m-0">
+                  <div className="col-4 d-flex justify-content-center align-items-center p-0">{`${getKeyWithData(
+                    TypeMove,
+                    category
+                  )} Moves List`}</div>
+                  <div className="col-4 d-flex justify-content-center align-items-center p-0">
+                    <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
+                      <InputLabel>Type</InputLabel>
+                      <Select
+                        value={type}
+                        label="Type"
+                        onChange={(e) => setMoveByType(category, toNumber(e.target.value))}
+                      >
+                        <MenuItem value={SelectType.All} defaultChecked>
+                          {getKeyWithData(SelectType, SelectType.All)}
+                        </MenuItem>
+                        {Object.keys(types).map((value, index) => (
+                          <MenuItem key={index} value={capitalize(value)}>
+                            {capitalize(value)}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="col-4 d-flex justify-content-center align-items-center p-0">
+                    <TextField
+                      type="text"
+                      variant={VariantType.Outlined}
+                      placeholder="Enter Name or ID"
+                      defaultValue={name}
+                      onChange={(e) => setMoveNameByType(category, e.target.value)}
+                      size="small"
+                    />
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td className="data-table">
+                <CustomDataTable
+                  customColumns={columns}
+                  data={data}
+                  defaultSortFieldId={ColumnSearchMoveType.Name}
+                  fixedHeader
+                  fixedHeaderScrollHeight="70vh"
+                  progressPending={!moveLoad}
+                  progressComponent={<CircularProgressTable />}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   return (
     <div className="container my-4">
       <div className="table-head">Moveset list in Pokémon GO</div>
       <div className="row w-100 m-0">
-        <div className="col-xl table-movesets-col p-0">
-          <table className="table-info table-movesets">
-            <thead />
-            <tbody>
-              <tr className="text-center">
-                <td className="table-sub-header" colSpan={3}>
-                  <div className="row m-0">
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">Fast Moves List</div>
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                      <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
-                        <InputLabel>Type</InputLabel>
-                        <Select
-                          value={fMoveType}
-                          label="Type"
-                          onChange={(e) =>
-                            setFilters(Filter.create({ ...filters, fMoveType: toNumber(e.target.value) }))
-                          }
-                        >
-                          <MenuItem value={SelectType.All} defaultChecked>
-                            {getKeyWithData(SelectType, SelectType.All)}
-                          </MenuItem>
-                          {Object.keys(types).map((value, index) => (
-                            <MenuItem key={index} value={capitalize(value)}>
-                              {capitalize(value)}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                      <TextField
-                        type="text"
-                        variant={VariantType.Outlined}
-                        placeholder="Enter Name or ID"
-                        defaultValue={fMoveName}
-                        onChange={(e) => setFilters(Filter.create({ ...filters, fMoveName: e.target.value }))}
-                        size="small"
-                      />
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="data-table">
-                  <CustomDataTable
-                    customColumns={columns}
-                    data={resultFMove}
-                    defaultSortFieldId={ColumnSearchMoveType.Name}
-                    fixedHeader
-                    fixedHeaderScrollHeight="70vh"
-                    progressPending={!fMoveIsLoad}
-                    progressComponent={<CircularProgressTable />}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="col-xl table-movesets-col p-0">
-          <table className="table-info table-movesets">
-            <thead />
-            <tbody>
-              <tr className="text-center">
-                <td className="table-sub-header" colSpan={3}>
-                  <div className="row m-0">
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">Charged Moves List</div>
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                      <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
-                        <InputLabel>Type</InputLabel>
-                        <Select
-                          value={cMoveType}
-                          label="Type"
-                          onChange={(e) =>
-                            setFilters(Filter.create({ ...filters, cMoveType: toNumber(e.target.value) }))
-                          }
-                        >
-                          <MenuItem value={SelectType.All}>{getKeyWithData(SelectType, SelectType.All)}</MenuItem>
-                          {Object.keys(types).map((value, index) => (
-                            <MenuItem key={index} value={capitalize(value)}>
-                              {capitalize(value)}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                      <TextField
-                        type="text"
-                        variant={VariantType.Outlined}
-                        placeholder="Enter Name or ID"
-                        defaultValue={cMoveName}
-                        onChange={(e) => setFilters(Filter.create({ ...filters, cMoveName: e.target.value }))}
-                        size="small"
-                      />
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="data-table">
-                  <CustomDataTable
-                    customColumns={columns}
-                    data={resultCMove}
-                    defaultSortFieldId={ColumnSearchMoveType.Name}
-                    fixedHeader
-                    fixedHeaderScrollHeight="70vh"
-                    progressPending={!cMoveIsLoad}
-                    progressComponent={<CircularProgressTable />}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {moveList(resultFMove, fMoveType, fMoveName, fMoveIsLoad, TypeMove.Fast)}
+        {moveList(resultCMove, cMoveType, cMoveName, cMoveIsLoad, TypeMove.Charge)}
       </div>
     </div>
   );

@@ -323,16 +323,16 @@ const Pokedex = (props: IStyleSheetData) => {
           <div className="ph-picture ph-col-3 w-100 h-100 theme-spinner m-0 p-0" />
         </div>
       )}
-      <div className="border-types text-center w-100">
+      <div className="text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
-        <div className="row w-100 m-0">
+        <div className="row w-100 m-0 types-select-btn">
           {types.map((item, index) => (
             <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
                 onClick={() => addTypeArr(item)}
                 className={combineClasses(
-                  'btn-select-type w-100 border-types p-2',
+                  'btn-select-type w-100 p-2',
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
                 style={{ transition: TRANSITION_TIME }}

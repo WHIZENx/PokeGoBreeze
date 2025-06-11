@@ -91,10 +91,31 @@
 }
 
 // Button styling using CSS variables
+.types-select-btn {
+
+  button.btn-select-type {
+    @include theme-border(1px, top, var(--custom-btn-type-border));
+    @include theme-border(1px, bottom, var(--custom-btn-type-border));
+  }
+
+  div.col:first-child button.btn-select-type {
+    @include theme-border(1px, left, var(--custom-btn-type-border));
+  }
+  div.col:not(:first-child) button.btn-select-type {
+    @include theme-border(0.5px, left, var(--custom-btn-type-border));
+  }
+
+  div.col:last-child button.btn-select-type {
+    @include theme-border(1px, right, var(--custom-btn-type-border));
+  }
+  div.col:not(:last-child) button.btn-select-type {
+    @include theme-border(0.5px, right, var(--custom-btn-type-border));
+  }
+}
+
 .btn-select-type {
   @include theme-background(var(--background-btn-type));
   @include theme-text(var(--text-primary));
-  @include theme-border;
   @include theme-transition;
 
   &:hover:not(.select-type) {
@@ -133,7 +154,6 @@
 
 .sticker-container h5 {
   @include theme-background(var(--custom-table-background-head));
-  @include theme-text(var(--custom-table-background-info));
   @include theme-border;
 }
 
