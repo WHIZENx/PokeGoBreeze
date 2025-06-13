@@ -118,4 +118,5 @@ export enum ColumnType {
   PowerPVP,
   EnergyPVE,
   EnergyPVP,
+  Power,
 }
