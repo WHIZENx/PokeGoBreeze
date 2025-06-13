@@ -27,3 +27,40 @@
     transform: rotate(0deg);
   }
 }
+
+.nav-info,
+.nav-info-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-version {
+  display: flex;
+}
+
+.nav-info-icon {
+  display: none !important;
+}
+
+@media (width >= 1200px) {
+  .nav-info {
+    display: none;
+  }
+}
+
+@media (width <= 1200px) {
+  .nav-info-top {
+    display: none;
+  }
+}
+
+@media (width <= 474px) {
+  .text-version {
+    display: none;
+  }
+
+  .nav-info-icon {
+    display: block !important;
+  }
+}

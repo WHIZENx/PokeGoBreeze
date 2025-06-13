@@ -17,8 +17,8 @@ PokeGoBreeze is a comprehensive web application that provides a suite of tools a
   - React Data Table Component
   - React XArrows
 - **Styling**: SCSS/Sass with custom theming system
-- **Storage**: LocalForage (IndexedDB with fallback to localStorage)
-- **Security**: Crypto-js for data encryption
+- **Storage**: LocalForage (utilizing IndexedDB for improved performance and larger storage capacity, with localStorage as a fallback)
+- **Security**: Crypto-js for AES encryption of persisted Redux state
 - **Performance Optimization**:
   - Code splitting with React Imported Component
   - Redux DevTools optimization for large state

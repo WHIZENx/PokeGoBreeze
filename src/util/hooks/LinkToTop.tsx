@@ -17,15 +17,17 @@ export const useNavigateToTop = () => {
 };
 
 export const LinkToTop = (props: LinkToTopProps) => {
+  const { funcOnClick, ...restProps } = props;
   const navigateToTop = useNavigateToTop();
 
   const navigateAndReset: MouseEventHandler<HTMLAnchorElement> = (event) => {
     event.preventDefault();
     navigateToTop(props.to, props.options);
+    funcOnClick?.(event);
   };
 
   return (
-    <Link {...props} onClick={navigateAndReset}>
+    <Link {...restProps} onClick={navigateAndReset}>
       {props.children}
     </Link>
   );

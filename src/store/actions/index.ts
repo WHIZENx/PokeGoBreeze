@@ -6,8 +6,10 @@ import * as SpinnerActions from './spinner.action';
 import * as StatsActions from './stats.action';
 import * as ThemeActions from './theme.action';
 import * as TimestampActions from './timestamp.action';
+import * as RouterActions from './router.action';
 
 export {
+  RouterActions,
   StoreActions,
   DeviceActions,
   OptionsActions,

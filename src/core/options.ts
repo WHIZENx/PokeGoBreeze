@@ -696,7 +696,11 @@ const addPokemonFormChangeMove = (result: IPokemonData[]) =>
                   if (isNullOrUndefined(pokemonChange.exclusiveMoves)) {
                     pokemonChange.exclusiveMoves = [];
                   }
-                  pokemonChange.exclusiveMoves.push(...move.replacementMoves);
+                  move.replacementMoves.forEach((rMove) => {
+                    if (pokemonChange.exclusiveMoves && !isIncludeList(pokemonChange.exclusiveMoves, rMove)) {
+                      pokemonChange.exclusiveMoves.push(rMove);
+                    }
+                  });
                 }
               });
             }

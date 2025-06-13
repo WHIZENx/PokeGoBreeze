@@ -170,7 +170,7 @@ const TableMove = (props: ITableMoveComponent) => {
     const max = table === TableType.Offensive ? move.maxOff : move.maxDef;
     return (
       <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
-        <table className="table-info table-moves">
+        <table className="table-moves">
           <colgroup className="main-move" />
           <colgroup className="main-move" />
           <thead>
@@ -376,9 +376,9 @@ const TableMove = (props: ITableMoveComponent) => {
   return (
     <Tabs defaultActiveKey="movesList" className="lg-2">
       <Tab eventKey="movesList" title="Moves List">
-        <div className="row w-100 theme-table-info-bg theme-table-info-bg-border m-0">
+        <div className="row w-100 theme-table-info-bg m-0">
           <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
-            <table className="table-info table-moves">
+            <table className="table-moves">
               <colgroup className="main-move" />
               <thead>
                 <tr className="text-center">
@@ -389,7 +389,7 @@ const TableMove = (props: ITableMoveComponent) => {
             </table>
           </div>
           <div className="col-xl table-moves-col p-0" style={{ maxHeight: props.maxHeight }}>
-            <table className="table-info table-moves">
+            <table className="table-moves">
               <colgroup className="main-move" />
               <thead>
                 <tr className="text-center">

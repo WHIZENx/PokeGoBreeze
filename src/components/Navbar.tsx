@@ -1,10 +1,10 @@
-import React, { Fragment, useState } from 'react';
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import React, { Fragment, useMemo, useState } from 'react';
+import { Navbar, Nav, NavDropdown, OverlayTrigger } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import logo from '../assets/pokedex.png';
 import { capitalize, getTime } from '../util/utils';
@@ -18,6 +18,14 @@ import { useLocalStorage } from 'usehooks-ts';
 import { LocalStorageConfig } from '../store/constants/localStorage';
 import { loadTheme } from '../store/effects/theme.effects';
 import { combineClasses, toNumber } from '../util/extension';
+import CustomPopover from './Popover/CustomPopover';
+import { LinkToTop } from '../util/hooks/LinkToTop';
+
+type ToggleEvent = React.SyntheticEvent | KeyboardEvent | MouseEvent;
+interface ToggleMetadata {
+  source: string | undefined;
+  originalEvent: ToggleEvent | undefined;
+}
 
 const NavbarComponent = (props: INavbarComponent) => {
   const dispatch = useDispatch();
@@ -25,6 +33,8 @@ const NavbarComponent = (props: INavbarComponent) => {
   const spinner = useSelector((state: SpinnerState) => state.spinner);
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
+  const [expanded, setExpanded] = useState(false);
+  const [showDropdown, setShowDropdown] = useState('');
 
   const [isDelay, setIsDelay] = useState(false);
 
@@ -39,120 +49,164 @@ const NavbarComponent = (props: INavbarComponent) => {
     }
   };
 
+  const handleNavLinkClick = () => {
+    setExpanded(false);
+    setShowDropdown('');
+  };
+
+  const infoVersion = useMemo(() => {
+    return (
+      <>
+        {toNumber(timestamp?.gamemaster) > 0 && (
+          <span className="text-white">Updated: {getTime(timestamp.gamemaster, true)}</span>
+        )}
+        <span className="text-end text-warning" style={{ fontSize: 10 }}>
+          <b>
+            {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
+              `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
+            {props.version}
+          </b>
+        </span>
+      </>
+    );
+  }, [timestamp, props.version]);
+
+  const navigateInfo = useMemo(() => {
+    return (
+      <>
+        <Navbar.Text className="text-version flex-column justify-content-between mw-max-content h-6 p-0">
+          {infoVersion}
+        </Navbar.Text>
+        <OverlayTrigger
+          placement="bottom"
+          overlay={
+            <CustomPopover className="bg-dark">
+              <div className="d-flex flex-column justify-content-between mw-max-content h-6 p-0">{infoVersion}</div>
+            </CustomPopover>
+          }
+        >
+          <InfoOutlinedIcon className="nav-info-icon cursor-pointer p-0" color="info" />
+        </OverlayTrigger>
+        <IconButton
+          className={combineClasses(
+            'me-2 p-0',
+            stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
+            isDelay ? 'cursor-default' : 'cursor-pointer'
+          )}
+          onClick={onChangeTheme}
+          color="inherit"
+        >
+          {props.mode === TypeTheme.Light ? (
+            <LightModeIcon fontSize="large" style={{ color: 'white' }} />
+          ) : (
+            <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
+          )}
+        </IconButton>
+      </>
+    );
+  }, [infoVersion, stateTheme, isDelay, onChangeTheme]);
+
+  const navItemLink = (className: string, to: string, label: string | React.ReactNode) => {
+    return (
+      <LinkToTop className={className} to={to} funcOnClick={handleNavLinkClick}>
+        {label}
+      </LinkToTop>
+    );
+  };
+
+  const handleDropdownToggle = (isOpen: boolean, metadata: ToggleMetadata) => {
+    if (metadata.source !== 'select') {
+      setShowDropdown(isOpen ? (metadata.originalEvent?.target as HTMLElement)?.id : '');
+    }
+  };
+
   return (
     <Fragment>
-      <Navbar collapseOnSelect bg={VariantType.Dark} expand="lg" variant={VariantType.Dark}>
-        <Link className="navbar-brand" to="/">
-          <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
-          PokéGoBreeze
-        </Link>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar
+        collapseOnSelect
+        bg={VariantType.Dark}
+        expand="xl"
+        variant={VariantType.Dark}
+        expanded={expanded}
+        onToggle={setExpanded}
+      >
+        {navItemLink(
+          'navbar-brand',
+          '/',
+          <>
+            <img src={logo} width="30" height="30" className="d-inline-block align-top mx-2" alt="Home" />
+            PokéGoBreeze
+          </>
+        )}
+        <div className="d-flex align-items-center justify-content-center">
+          <div className="nav-info column-gap-2">{navigateInfo}</div>
+          <Navbar.Toggle id="navbar-toggle" className="me-2" aria-controls="responsive-navbar-nav" />
+        </div>
         <Navbar.Collapse id="responsive-navbar-nav" className="flex-wrap">
           <Nav className="me-auto">
-            <Link className="nav-link" to="/">
-              Pokédex
-            </Link>
-            <Link className="nav-link" to="/news">
-              News
-            </Link>
-            <NavDropdown title="Search">
-              <Link className="dropdown-item" to="/search-pokemon">
-                Pokémon
-              </Link>
-              <Link className="dropdown-item" to="/search-moves">
-                Moves
-              </Link>
-              <Link className="dropdown-item" to="/search-types">
-                Types
-              </Link>
+            {navItemLink('nav-link', '/', 'Pokédex')}
+            {navItemLink('nav-link', '/news', 'News')}
+            <NavDropdown
+              title="Search"
+              id="search-dropdown"
+              show={showDropdown === 'search-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
+              {navItemLink('dropdown-item', '/search-pokemon', 'Pokémon')}
+              {navItemLink('dropdown-item', '/search-moves', 'Moves')}
+              {navItemLink('dropdown-item', '/search-types', 'Types')}
             </NavDropdown>
-            <NavDropdown title="Effective">
-              <Link className="dropdown-item" to="/type-effective">
-                Type Effective
-              </Link>
-              <Link className="dropdown-item" to="/weather-boosts">
-                Weather Boosts
-              </Link>
+            <NavDropdown
+              title="Effective"
+              id="effective-dropdown"
+              show={showDropdown === 'effective-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
+              {navItemLink('dropdown-item', '/type-effective', 'Type Effective')}
+              {navItemLink('dropdown-item', '/weather-boosts', 'Weather Boosts')}
             </NavDropdown>
-            <NavDropdown title="Tools">
+            <NavDropdown
+              title="Tools"
+              id="tools-dropdown"
+              show={showDropdown === 'tools-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
               <NavDropdown.Header>Search&Find</NavDropdown.Header>
-              <Link className="dropdown-item" to="/find-cp-iv">
-                Find IV&CP
-              </Link>
-              <Link className="dropdown-item" to="/search-battle-stats">
-                Search Battle Leagues Stats
-              </Link>
-              <Link className="dropdown-item" to="/stats-table">
-                Stats Table
-              </Link>
+              {navItemLink('dropdown-item', '/find-cp-iv', 'Find IV&CP')}
+              {navItemLink('dropdown-item', '/search-battle-stats', 'Search Battle Leagues Stats')}
+              {navItemLink('dropdown-item', '/stats-table', 'Stats Table')}
               <NavDropdown.Divider />
               <NavDropdown.Header>Calculation</NavDropdown.Header>
-              <Link className="dropdown-item" to="/calculate-catch-chance">
-                Calculate Catch Chance
-              </Link>
-              <Link className="dropdown-item" to="/calculate-stats">
-                Calculate Stats
-              </Link>
-              <Link className="dropdown-item" to="/calculate-point">
-                Calculate Break&Bulk Point
-              </Link>
+              {navItemLink('dropdown-item', '/calculate-catch-chance', 'Calculate Catch Chance')}
+              {navItemLink('dropdown-item', '/calculate-stats', 'Calculate Stats')}
+              {navItemLink('dropdown-item', '/calculate-point', 'Calculate Break&Bulk Point')}
               <NavDropdown.Divider />
               <NavDropdown.Header>Battle Simulator</NavDropdown.Header>
-              <Link className="dropdown-item" to="/damage-calculate">
-                Damage Simulator
-              </Link>
-              <Link className="dropdown-item" to="/raid-battle">
-                Raid Battle
-              </Link>
+              {navItemLink('dropdown-item', '/damage-calculate', 'Damage Simulator')}
+              {navItemLink('dropdown-item', '/raid-battle', 'Raid Battle')}
             </NavDropdown>
-            <NavDropdown title="Stats Sheets">
-              <Link className="dropdown-item" to="/dps-tdo-sheets">
-                DPS&TDO Sheets
-              </Link>
-              <Link className="dropdown-item" to="/stats-ranking">
-                Stats Ranking
-              </Link>
+            <NavDropdown
+              title="Stats Sheets"
+              id="stats-sheets-dropdown"
+              show={showDropdown === 'stats-sheets-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
+              {navItemLink('dropdown-item', '/dps-tdo-sheets', 'DPS&TDO Sheets')}
+              {navItemLink('dropdown-item', '/stats-ranking', 'Stats Ranking')}
             </NavDropdown>
-            <NavDropdown title="PVP">
-              <Link className="dropdown-item" to="/pvp">
-                Simulator
-              </Link>
-              <Link className="dropdown-item" to="/battle-leagues">
-                Battle Leagues
-              </Link>
+            <NavDropdown
+              title="PVP"
+              id="pvp-dropdown"
+              show={showDropdown === 'pvp-dropdown'}
+              onToggle={(isOpen, metadata) => handleDropdownToggle(isOpen, metadata)}
+            >
+              {navItemLink('dropdown-item', '/pvp', 'Simulator')}
+              {navItemLink('dropdown-item', '/battle-leagues', 'Battle Leagues')}
             </NavDropdown>
-            <Link className="nav-link" to="/stickers">
-              Stickers
-            </Link>
+            {navItemLink('nav-link', '/stickers', 'Stickers')}
           </Nav>
-          {toNumber(timestamp?.gamemaster) > 0 && (
-            <Navbar.Text className="d-flex flex-column mw-max-content h-6">
-              <span className="text-white mx-2">Updated: {getTime(timestamp.gamemaster, true)}</span>
-              <span className="text-end text-warning me-2" style={{ fontSize: 10 }}>
-                <b>
-                  {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' &&
-                    `${capitalize(process.env.REACT_APP_DEPLOYMENT_MODE)}: `}
-                  {props.version}
-                </b>
-              </span>
-            </Navbar.Text>
-          )}
-          <IconButton
-            className={combineClasses(
-              'me-2 p-0',
-              stateTheme === TypeTheme.Light ? 'light-mode' : 'dark-mode',
-              isDelay ? 'cursor-default' : 'cursor-pointer'
-            )}
-            onClick={onChangeTheme}
-            color="inherit"
-          >
-            {props.mode === TypeTheme.Light ? (
-              <LightModeIcon fontSize="large" style={{ color: 'white' }} />
-            ) : (
-              <DarkModeIcon fontSize="large" style={{ color: 'white' }} />
-            )}
-          </IconButton>
         </Navbar.Collapse>
+        <div className="nav-info-top column-gap-2">{navigateInfo}</div>
       </Navbar>
       {spinner.bar.isShow && (
         <Box className="w-100 position-absolute z-7">

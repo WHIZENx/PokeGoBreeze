@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { TypeMove, VariantType } from '../../../enums/type.enum';
+import { ColumnType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
@@ -19,13 +19,14 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { ColumnSearchMoveType, SelectType } from './enums/select-type.enum';
+import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { Params } from '../../../util/constants';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { PokemonTypeBadge } from '../../../core/models/type.model';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -47,13 +48,13 @@ const numSortDps = (rowA: ICombat, rowB: ICombat) => {
 
 const columns: TableColumnModify<ICombat>[] = [
   {
-    id: ColumnSearchMoveType.Id,
+    id: ColumnType.Id,
     name: 'id',
     selector: (row) => row.track,
     sortable: true,
   },
   {
-    id: ColumnSearchMoveType.Type,
+    id: ColumnType.Type,
     name: 'Type',
     selector: (row) => (
       <div className={combineClasses('type-icon-small', row.type?.toLowerCase())}>{capitalize(row.type)}</div>
@@ -62,7 +63,7 @@ const columns: TableColumnModify<ICombat>[] = [
     sortFunction: moveSort,
   },
   {
-    id: ColumnSearchMoveType.Name,
+    id: ColumnType.Name,
     name: 'Name',
     selector: (row) => (
       <LinkToTop
@@ -76,14 +77,14 @@ const columns: TableColumnModify<ICombat>[] = [
     width: '180px',
   },
   {
-    id: ColumnSearchMoveType.Power,
+    id: ColumnType.Power,
     name: 'Power (PVE/PVP)',
     selector: (row) => `${row.pvePower}/${row.pvpPower}`,
     sortable: true,
     width: '150px',
   },
   {
-    id: ColumnSearchMoveType.DPS,
+    id: ColumnType.DPS,
     name: 'DPS',
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
     sortFunction: numSortDps,
@@ -120,166 +121,144 @@ const Search = () => {
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
+  const [combatFMoves, setCombatFMoves] = useState<ICombat[]>([]);
   const [resultFMove, setResultFMove] = useState<ICombat[]>([]);
   const [fMoveIsLoad, setFMoveIsLoad] = useState(false);
+  const [combatCMoves, setCombatCMoves] = useState<ICombat[]>([]);
   const [resultCMove, setResultCMove] = useState<ICombat[]>([]);
   const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
 
   useEffect(() => {
     if (isNotEmpty(combat)) {
-      const debounced = debounce(() => {
-        setResultFMove(searchMove(TypeMove.Fast, fMoveType, fMoveName));
-        setFMoveIsLoad(true);
-      });
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
+      setCombatFMoves(combat.filter((item) => item.typeMove === TypeMove.Fast));
+      setCombatCMoves(combat.filter((item) => item.typeMove === TypeMove.Charge));
     }
-  }, [combat, fMoveType, fMoveName]);
+  }, [combat]);
 
   useEffect(() => {
-    if (isNotEmpty(combat)) {
-      const debounced = debounce(() => {
-        setResultCMove(searchMove(TypeMove.Charge, cMoveType, cMoveName));
-        setCMoveIsLoad(true);
-      });
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
-    }
-  }, [combat, cMoveType, cMoveName]);
+    const debounced = debounce(() => {
+      setResultFMove(searchMove(combatFMoves, fMoveType, fMoveName));
+      setFMoveIsLoad(true);
+    });
+    debounced();
+    return () => {
+      debounced.cancel();
+    };
+  }, [combatFMoves, fMoveType, fMoveName]);
 
-  const searchMove = (category: TypeMove, type: SelectType, name: string) => {
-    return combat
-      .filter((item) => item.typeMove === category)
-      .filter(
-        (move) =>
-          (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
-            isInclude(move.track, name)) &&
-          (type === SelectType.All || isEqual(type, move.type, EqualMode.IgnoreCaseSensitive))
-      );
+  useEffect(() => {
+    const debounced = debounce(() => {
+      setResultCMove(searchMove(combatCMoves, cMoveType, cMoveName));
+      setCMoveIsLoad(true);
+    });
+    debounced();
+    return () => {
+      debounced.cancel();
+    };
+  }, [combatCMoves, cMoveType, cMoveName]);
+
+  const searchMove = (combat: ICombat[], type: SelectType | PokemonTypeBadge, name: string) =>
+    combat.filter(
+      (move) =>
+        (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
+          isInclude(move.track, name)) &&
+        (type === SelectType.All ||
+          isEqual(getKeyWithData(PokemonTypeBadge, type), move.type, EqualMode.IgnoreCaseSensitive))
+    );
+
+  const setMoveByType = (category: TypeMove, value: SelectType) => {
+    if (category === TypeMove.Fast) {
+      setFilters(Filter.create({ ...filters, fMoveType: value }));
+    } else {
+      setFilters(Filter.create({ ...filters, cMoveType: value }));
+    }
+  };
+
+  const setMoveNameByType = (category: TypeMove, value: string) => {
+    if (category === TypeMove.Fast) {
+      setFilters(Filter.create({ ...filters, fMoveName: value }));
+    } else {
+      setFilters(Filter.create({ ...filters, cMoveName: value }));
+    }
+  };
+
+  const moveList = (data: ICombat[], type: SelectType, name: string, moveLoad: boolean, category: TypeMove) => {
+    return (
+      <div className="col-xl table-movesets-col p-0">
+        <table className="table-info table-movesets">
+          <thead />
+          <tbody>
+            <tr className="text-center">
+              <td className="table-sub-header" colSpan={3}>
+                <div className="row m-0">
+                  <div className="col-4 d-flex justify-content-center align-items-center p-0">{`${getKeyWithData(
+                    TypeMove,
+                    category
+                  )} Moves List`}</div>
+                  <div className="col-4 d-flex justify-content-center align-items-center p-0">
+                    <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
+                      <InputLabel>Type</InputLabel>
+                      <Select
+                        value={type}
+                        label="Type"
+                        onChange={(e) => setMoveByType(category, toNumber(e.target.value))}
+                      >
+                        <MenuItem value={SelectType.All} defaultChecked>
+                          {getKeyWithData(SelectType, SelectType.All)}
+                        </MenuItem>
+                        {Object.keys(types).map((value, index) => (
+                          <MenuItem
+                            key={index}
+                            value={getDataWithKey<PokemonTypeBadge>(
+                              PokemonTypeBadge,
+                              value,
+                              EqualMode.IgnoreCaseSensitive
+                            )}
+                          >
+                            {capitalize(value)}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="col-4 d-flex justify-content-center align-items-center p-0">
+                    <TextField
+                      type="text"
+                      variant={VariantType.Outlined}
+                      placeholder="Enter Name or ID"
+                      defaultValue={name}
+                      onChange={(e) => setMoveNameByType(category, e.target.value)}
+                      size="small"
+                    />
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td className="data-table">
+                <CustomDataTable
+                  customColumns={columns}
+                  data={data}
+                  defaultSortFieldId={ColumnType.Name}
+                  fixedHeader
+                  fixedHeaderScrollHeight="70vh"
+                  progressPending={!moveLoad}
+                  progressComponent={<CircularProgressTable />}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   return (
     <div className="container my-4">
       <div className="table-head">Moveset list in Pokémon GO</div>
       <div className="row w-100 m-0">
-        <div className="col-xl table-movesets-col p-0">
-          <table className="table-info table-movesets">
-            <thead />
-            <tbody>
-              <tr className="text-center">
-                <td className="table-sub-header" colSpan={3}>
-                  <div className="row m-0">
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">Fast Moves List</div>
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                      <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
-                        <InputLabel>Type</InputLabel>
-                        <Select
-                          value={fMoveType}
-                          label="Type"
-                          onChange={(e) =>
-                            setFilters(Filter.create({ ...filters, fMoveType: toNumber(e.target.value) }))
-                          }
-                        >
-                          <MenuItem value={SelectType.All} defaultChecked>
-                            {getKeyWithData(SelectType, SelectType.All)}
-                          </MenuItem>
-                          {Object.keys(types).map((value, index) => (
-                            <MenuItem key={index} value={capitalize(value)}>
-                              {capitalize(value)}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                      <TextField
-                        type="text"
-                        variant={VariantType.Outlined}
-                        placeholder="Enter Name or ID"
-                        defaultValue={fMoveName}
-                        onChange={(e) => setFilters(Filter.create({ ...filters, fMoveName: e.target.value }))}
-                        size="small"
-                      />
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="data-table">
-                  <CustomDataTable
-                    customColumns={columns}
-                    data={resultFMove}
-                    defaultSortFieldId={ColumnSearchMoveType.Name}
-                    fixedHeader
-                    fixedHeaderScrollHeight="70vh"
-                    progressPending={!fMoveIsLoad}
-                    progressComponent={<CircularProgressTable />}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="col-xl table-movesets-col p-0">
-          <table className="table-info table-movesets">
-            <thead />
-            <tbody>
-              <tr className="text-center">
-                <td className="table-sub-header" colSpan={3}>
-                  <div className="row m-0">
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">Charged Moves List</div>
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                      <FormControl className="my-2" sx={{ m: 1, width: 150 }} size="small">
-                        <InputLabel>Type</InputLabel>
-                        <Select
-                          value={cMoveType}
-                          label="Type"
-                          onChange={(e) =>
-                            setFilters(Filter.create({ ...filters, cMoveType: toNumber(e.target.value) }))
-                          }
-                        >
-                          <MenuItem value={SelectType.All}>{getKeyWithData(SelectType, SelectType.All)}</MenuItem>
-                          {Object.keys(types).map((value, index) => (
-                            <MenuItem key={index} value={capitalize(value)}>
-                              {capitalize(value)}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-                    <div className="col-4 d-flex justify-content-center align-items-center p-0">
-                      <TextField
-                        type="text"
-                        variant={VariantType.Outlined}
-                        placeholder="Enter Name or ID"
-                        defaultValue={cMoveName}
-                        onChange={(e) => setFilters(Filter.create({ ...filters, cMoveName: e.target.value }))}
-                        size="small"
-                      />
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="data-table">
-                  <CustomDataTable
-                    customColumns={columns}
-                    data={resultCMove}
-                    defaultSortFieldId={ColumnSearchMoveType.Name}
-                    fixedHeader
-                    fixedHeaderScrollHeight="70vh"
-                    progressPending={!cMoveIsLoad}
-                    progressComponent={<CircularProgressTable />}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {moveList(resultFMove, fMoveType, fMoveName, fMoveIsLoad, TypeMove.Fast)}
+        {moveList(resultCMove, cMoveType, cMoveName, cMoveIsLoad, TypeMove.Charge)}
       </div>
     </div>
   );
