@@ -37,6 +37,8 @@ const Find = (props: IFindComponent) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
 
+  const resultRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (isNotEmpty(pokemonData)) {
       const result = mappingPokemonName(pokemonData);
@@ -120,9 +122,11 @@ const Find = (props: IFindComponent) => {
     }
 
     setTimeout(() => {
-      const selectedElement = document.querySelector('.card-pokemon.selected');
-      if (selectedElement) {
-        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (resultRef.current) {
+        const selectedElement = resultRef.current.querySelector('.card-pokemon.selected');
+        if (selectedElement) {
+          selectedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       }
     }, 50);
   };
@@ -148,7 +152,7 @@ const Find = (props: IFindComponent) => {
           onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
         />
       </div>
-      <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
+      <div className="result tools" ref={resultRef} onScroll={listenScrollEvent.bind(this)}>
         <Fragment>
           {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
             <div
