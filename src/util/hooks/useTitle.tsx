@@ -1,15 +1,5 @@
 import { useEffect } from 'react';
-
-// Type for the SEO props
-interface TitleSEOProps {
-  title: string;
-  description?: string;
-  image?: string;
-  keywords?: string | string[];
-  url?: string;
-  type?: 'website' | 'article';
-  showTitle?: boolean;
-}
+import { TitleSEOProps } from '../models/hook.model';
 
 /**
  * React hook to update document title and meta tags for SEO
@@ -25,7 +15,7 @@ interface TitleSEOProps {
  *   image: 'https://example.com/pokemon-search.jpg'
  * });
  */
-export const useTitle = (props: TitleSEOProps, showTitle = true) => {
+export const useTitle = (props: TitleSEOProps) => {
   useEffect(() => {
     const path = window.location.pathname;
     const origin = window.location.origin;
@@ -37,10 +27,9 @@ export const useTitle = (props: TitleSEOProps, showTitle = true) => {
     const keywords = props.keywords;
     const url = props.url || fullPath;
     const type = props.type || 'website';
-    const shouldShowTitle = props.showTitle !== false;
 
-    if (!shouldShowTitle) {
-      return;
+    if (props.isShowTitle !== false) {
+      document.title = title;
     }
 
     // Update page title
@@ -48,7 +37,6 @@ export const useTitle = (props: TitleSEOProps, showTitle = true) => {
     if (pageTitle) {
       pageTitle.textContent = title;
     }
-    document.title = title;
 
     // Update meta description if provided
     if (description) {
@@ -90,7 +78,7 @@ export const useTitle = (props: TitleSEOProps, showTitle = true) => {
 
     // Update canonical URL to include the current path
     updateCanonicalUrl(fullPath);
-  }, [props, showTitle]);
+  }, [props]);
 };
 
 /**
