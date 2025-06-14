@@ -42,7 +42,19 @@ import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 
 const Calculate = () => {
-  useTitle('Calculate CP&IV - Tool');
+  useTitle({
+    title: 'Calculate CP&IV - Tool',
+    description:
+      'Calculate Pokémon GO CP and IV values with our advanced calculator. Optimize your Pokémon stats for battles, raids, and gym defense.',
+    keywords: [
+      'CP calculator',
+      'IV calculator',
+      'Pokémon GO stats',
+      'CP optimization',
+      'IV optimization',
+      'Pokémon stats tool',
+    ],
+  });
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 

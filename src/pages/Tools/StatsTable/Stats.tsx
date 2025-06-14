@@ -87,7 +87,12 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
 ];
 
 const StatsTable = () => {
-  useTitle('Stats Battle League - Tool');
+  useTitle({
+    title: 'Stats Battle League - Tool',
+    description:
+      'Analyze Pokémon GO battle league stats with our comprehensive tool. Compare Pokémon performance, CP values, and optimal IVs for competitive play.',
+    keywords: ['battle league stats', 'PVP stats', 'Pokémon GO battle stats', 'CP optimization', 'PVP IV calculator'],
+  });
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');

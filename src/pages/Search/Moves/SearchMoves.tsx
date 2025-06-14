@@ -113,7 +113,12 @@ class Filter implements IFilter {
 }
 
 const Search = () => {
-  useTitle('Moves - Search');
+  useTitle({
+    title: 'Moves - Search',
+    description:
+      'Search and filter Pokémon GO moves by type, power, energy, and more. Find the best moves for your Pokémon in battles and raids.',
+    keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
+  });
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const types = useSelector((state: StoreState) => state.store.data.typeEff);
 

@@ -170,7 +170,12 @@ const columns: TableColumn<IFindCP>[] = [
 ];
 
 const FindTable = () => {
-  useTitle('Find CP&IV - Tool');
+  useTitle({
+    title: 'Find CP&IV - Tool',
+    description:
+      'Find specific CP and IV combinations for any Pokémon in Pokémon GO. Our advanced search tool helps you locate perfect IVs and optimal CP values.',
+    keywords: ['Find CP', 'Find IV', 'Pokémon GO CP search', 'IV finder', 'CP calculator', 'optimal Pokémon stats'],
+  });
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');

@@ -92,7 +92,12 @@ class BtnSelect implements IBtnSelect {
 }
 
 const Pokedex = (props: IStyleSheetData) => {
-  useTitle('Pokédex');
+  useTitle({
+    title: 'PokéGO Breeze - Pokédex',
+    description:
+      'Complete Pokémon GO Pokédex with detailed information on all available Pokémon, including stats, moves, evolution chains, and forms.',
+    keywords: ['Pokédex', 'Pokémon database', 'Pokémon GO Pokédex', 'Pokémon stats', 'Pokémon evolution'],
+  });
 
   const dispatch = useDispatch();
 

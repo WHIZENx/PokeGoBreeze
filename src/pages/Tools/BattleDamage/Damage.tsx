@@ -69,7 +69,19 @@ class Filter implements IFilter {
 }
 
 const Damage = () => {
-  useTitle('Damage Simulator - Battle Simulator');
+  useTitle({
+    title: 'Damage Simulator - Battle Simulator',
+    description:
+      'Simulate battle damage in Pokémon GO with our advanced damage calculator. Compare Pokémon attacks, optimize movesets, and plan your battle strategy.',
+    keywords: [
+      'damage simulator',
+      'battle simulator',
+      'Pokémon GO battles',
+      'damage calculator',
+      'move damage',
+      'battle strategy',
+    ],
+  });
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);

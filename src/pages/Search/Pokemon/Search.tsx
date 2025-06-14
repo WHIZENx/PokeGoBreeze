@@ -19,7 +19,12 @@ import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
 
 const Search = () => {
-  useTitle('Pokémon - Search');
+  useTitle({
+    title: 'PokéGO Breeze - Pokémon Search',
+    description:
+      'Search and filter Pokémon in Pokémon GO by type, stats, moves, and more. Find the best Pokémon for your battle teams.',
+    keywords: ['Pokémon search', 'find Pokémon', 'Pokémon filter', 'Pokémon GO search', 'Pokémon database'],
+  });
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const pokemonName = useSelector((state: StoreState) => state.store.data.pokemons);

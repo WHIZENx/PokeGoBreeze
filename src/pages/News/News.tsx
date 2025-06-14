@@ -34,7 +34,19 @@ import { LinkToTop } from '../../util/hooks/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
 
 const News = () => {
-  useTitle('News');
+  useTitle({
+    title: 'PokéGO Breeze - News',
+    description:
+      'Stay up-to-date with the latest Pokémon GO news, events, and updates. Find information about upcoming events, rewards, and special features.',
+    keywords: [
+      'Pokémon GO news',
+      'Pokémon GO events',
+      'game updates',
+      'event rewards',
+      'special events',
+      'upcoming features',
+    ],
+  });
   const information = useSelector((state: StoreState) => state.store.data.information);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
 

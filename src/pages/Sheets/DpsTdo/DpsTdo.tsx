@@ -266,7 +266,12 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
 ];
 
 const DpsTdo = () => {
-  useTitle('DPS&TDO Sheets');
+  useTitle({
+    title: 'PokéGO Breeze - DPS&TDO Sheets',
+    description:
+      'Analyze Pokémon GO DPS (Damage Per Second) and TDO (Total Damage Output) with our comprehensive sheets. Optimize your raid counters and battle teams.',
+    keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
+  });
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);

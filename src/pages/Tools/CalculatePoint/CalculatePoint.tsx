@@ -34,7 +34,19 @@ import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/
 import { Color } from '../../../core/models/candy.model';
 
 const CalculatePoint = () => {
-  useTitle('Calculate Point Stats - Tools');
+  useTitle({
+    title: 'Calculate Point Stats - Tools',
+    description:
+      "Calculate Pokémon GO point statistics and optimize your team's performance. Get precise stat calculations for better battle planning.",
+    keywords: [
+      'point stats calculator',
+      'Pokémon GO point system',
+      'battle points',
+      'stat optimization',
+      'Pokémon GO tools',
+      'team optimization',
+    ],
+  });
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);

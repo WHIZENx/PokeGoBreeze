@@ -55,7 +55,19 @@ import { VariantType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const FindBattle = () => {
-  useTitle('Search Battle Leagues Stats - Tool');
+  useTitle({
+    title: 'Search Battle Leagues Stats - Tool',
+    description:
+      'Search and compare Pokémon GO battle league statistics. Find the best Pokémon for different PVP leagues, optimize movesets, and improve your battle strategies.',
+    keywords: [
+      'battle league stats',
+      'Pokémon GO PVP',
+      'PVP stats search',
+      'competitive Pokémon',
+      'battle league rankings',
+      'PVP optimization',
+    ],
+  });
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);

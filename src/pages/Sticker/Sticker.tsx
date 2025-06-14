@@ -23,7 +23,12 @@ interface PokemonStickerModel {
 }
 
 const Sticker = () => {
-  useTitle('Stickers List');
+  useTitle({
+    title: 'PokéGO Breeze - Stickers List',
+    description:
+      'Complete collection of all stickers available in Pokémon GO. Find rare and event-exclusive stickers for your collection.',
+    keywords: ['Pokémon GO stickers', 'sticker collection', 'rare stickers', 'event stickers', 'Pokémon stickers'],
+  });
   const [id, setId] = useState(GlobalType.All);
   const [shopType, setShopType] = useState(ShopType.All);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);

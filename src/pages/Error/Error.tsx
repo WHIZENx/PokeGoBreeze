@@ -15,10 +15,16 @@ const Error = (props: IErrorPage) => {
   const dispatch = useDispatch();
   const location = useLocation() as unknown as Location<LocationState>;
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  useTitle(
-    location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found',
-    props.isShowTitle
-  );
+  useTitle({
+    title:
+      location.state?.url && location.state?.id
+        ? `PokéGO Breeze - #${location.state.id} Not Found`
+        : 'PokéGO Breeze - Page Not Found',
+    description: 'Error page - Something went wrong with your request. Please try again later.',
+    keywords: ['error page', 'Pokémon GO error', 'page not found', 'PokéGO Breeze error'],
+    type: 'website',
+    showTitle: props.isShowTitle,
+  });
 
   useEffect(() => {
     if (spinner.isLoading) {

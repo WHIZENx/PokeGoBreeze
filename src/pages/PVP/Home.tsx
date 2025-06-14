@@ -33,7 +33,12 @@ class OptionsHome implements IOptionsHome {
 }
 
 const PVPHome = () => {
-  useTitle('PVP - Simulator');
+  useTitle({
+    title: 'PVP - Simulator',
+    description:
+      'Simulate Pokémon GO PVP battles with our comprehensive battle simulator. Test different teams, moves, and strategies for Great, Ultra, and Master League.',
+    keywords: ['PVP simulator', 'Pokémon GO battles', 'battle simulator', 'PVP team builder', 'battle strategies'],
+  });
   const dispatch = useDispatch();
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const combat = useSelector((state: StoreState) => state.store.data.combats);

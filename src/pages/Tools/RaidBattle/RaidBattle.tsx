@@ -157,7 +157,19 @@ class Filter implements IFilter {
 }
 
 const RaidBattle = () => {
-  useTitle('Raid Battle - Tools');
+  useTitle({
+    title: 'Raid Battle - Tools',
+    description:
+      'Plan your Pokémon GO raid battles with our comprehensive raid battle simulator. Find the best counters and strategies for defeating raid bosses.',
+    keywords: [
+      'raid battle simulator',
+      'Pokémon GO raids',
+      'raid counters',
+      'raid strategy',
+      'raid boss guide',
+      'raid team builder',
+    ],
+  });
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);

@@ -10,7 +10,19 @@ import { StoreState } from '../../store/models/state.model';
 import { useTitle } from '../../util/hooks/useTitle';
 
 const TypeEffect = () => {
-  useTitle('Type Effectiveness');
+  useTitle({
+    title: 'PokéGO Breeze - Type Effectiveness',
+    description:
+      'Complete Pokémon GO type effectiveness chart. Learn which types are strong or weak against other types to maximize your battle strategy.',
+    keywords: [
+      'type effectiveness',
+      'Pokémon GO types',
+      'type chart',
+      'type matchups',
+      'super effective',
+      'battle strategy',
+    ],
+  });
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
 
   return (

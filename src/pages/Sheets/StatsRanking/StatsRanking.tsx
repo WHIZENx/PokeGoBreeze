@@ -192,7 +192,19 @@ const defaultPerPages = 25;
 const StatsRanking = () => {
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
-  useTitle('Stats Ranking');
+  useTitle({
+    title: 'PokéGO Breeze - Stats Ranking',
+    description:
+      'View comprehensive Pokémon GO stat rankings to identify the strongest Pokémon for battles and raids. Compare attack, defense, stamina, and overall performance.',
+    keywords: [
+      'Pokémon stats ranking',
+      'strongest Pokémon',
+      'best attackers',
+      'best defenders',
+      'Pokémon GO ranking',
+      'stat comparison',
+    ],
+  });
   const [searchParams, setSearchParams] = useSearchParams();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
