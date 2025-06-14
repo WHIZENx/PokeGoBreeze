@@ -123,8 +123,8 @@ export interface IFormSelectComponent {
   id?: number;
   onClearStats?: (reset?: boolean) => void;
   setTier?: React.Dispatch<React.SetStateAction<number>>;
-  onSetPrev?: () => void;
-  onSetNext?: () => void;
+  onSetPrev?: (modify: number) => void;
+  onSetNext?: (modify: number) => void;
   name: string | undefined;
   setName?: React.Dispatch<React.SetStateAction<string>>;
   isHide?: boolean;

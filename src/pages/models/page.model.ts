@@ -42,8 +42,8 @@ export interface ISearchBarMainComponent {
 export interface IPokemonPage {
   searching?: ISearchingModel | null;
   searchOption?: SearchOption;
-  onDecId?: () => void;
-  onIncId?: () => void;
+  onDecId?: (modify: number) => void;
+  onIncId?: (modify: number) => void;
   isSearch?: boolean;
   setSearchOption?: (searchOption: SearchOption) => void;
 }
