@@ -6,10 +6,10 @@ import Effect from './Effect';
 import './Weather.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../util/hooks/useTitle';
 
 const Weather = () => {
-  useChangeTitle('Weather Boosts');
+  useTitle('Weather Boosts');
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
   const weatherBoosts = useSelector((state: StoreState) => state.store.data.weatherBoost);
 

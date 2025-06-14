@@ -44,7 +44,7 @@ import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
 import { BattleCalculate } from '../../../util/models/calculate.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
 import { OptionsActions } from '../../../store/actions';
 import { SortOrderType, TableColumnModify } from '../../../util/models/overrides/data-table.model';
@@ -266,7 +266,7 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
 ];
 
 const DpsTdo = () => {
-  useChangeTitle('DPS&TDO Sheets');
+  useTitle('DPS&TDO Sheets');
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);

@@ -28,13 +28,13 @@ import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/in
 import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/information.enum';
 import { FORM_NORMAL } from '../../util/constants';
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../util/hooks/useTitle';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
 import { LinkToTop } from '../../util/hooks/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
 
 const News = () => {
-  useChangeTitle('News');
+  useTitle('News');
   const information = useSelector((state: StoreState) => state.store.data.information);
   const assets = useSelector((state: StoreState) => state.store.data.assets);
 

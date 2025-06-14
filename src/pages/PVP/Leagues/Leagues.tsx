@@ -29,7 +29,7 @@ import {
   PokemonRewardSetLeague,
   SettingLeague,
 } from '../../../core/models/league.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import {
   combineClasses,
@@ -56,7 +56,7 @@ interface LeagueData {
 }
 
 const Leagues = () => {
-  useChangeTitle('Battle Leagues List');
+  useTitle('Battle Leagues List');
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
   const [leagues, setLeagues] = useState<ILeague[]>([]);

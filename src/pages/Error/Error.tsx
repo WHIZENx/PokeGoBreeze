@@ -4,7 +4,7 @@ import { Location, useLocation } from 'react-router-dom';
 import './Error.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { SpinnerState } from '../../store/models/state.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../util/hooks/useTitle';
 import { SpinnerActions } from '../../store/actions';
 import { LocationState } from '../../core/models/router.model';
 import { LinkToTop } from '../../util/hooks/LinkToTop';
@@ -15,7 +15,7 @@ const Error = (props: IErrorPage) => {
   const dispatch = useDispatch();
   const location = useLocation() as unknown as Location<LocationState>;
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  useChangeTitle(
+  useTitle(
     location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found',
     props.isShowTitle
   );

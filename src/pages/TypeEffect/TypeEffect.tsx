@@ -7,10 +7,10 @@ import Defender from './Defender';
 
 import './TypeEffect.scss';
 import { StoreState } from '../../store/models/state.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../util/hooks/useTitle';
 
 const TypeEffect = () => {
-  useChangeTitle('Type Effectiveness');
+  useTitle('Type Effectiveness');
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
 
   return (

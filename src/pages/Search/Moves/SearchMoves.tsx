@@ -7,7 +7,7 @@ import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/mater
 import { ColumnType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -113,7 +113,7 @@ class Filter implements IFilter {
 }
 
 const Search = () => {
-  useChangeTitle('Moves - Search');
+  useTitle('Moves - Search');
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const types = useSelector((state: StoreState) => state.store.data.typeEff);
 

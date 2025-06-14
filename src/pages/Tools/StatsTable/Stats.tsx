@@ -11,7 +11,7 @@ import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { combineClasses, isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
@@ -87,7 +87,7 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
 ];
 
 const StatsTable = () => {
-  useChangeTitle('Stats Battle League - Tool');
+  useTitle('Stats Battle League - Tool');
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');

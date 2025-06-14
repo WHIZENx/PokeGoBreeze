@@ -34,7 +34,7 @@ import {
 } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
@@ -55,7 +55,7 @@ import { VariantType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
 
 const FindBattle = () => {
-  useChangeTitle('Search Battle Leagues Stats - Tool');
+  useTitle('Search Battle Leagues Stats - Tool');
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);

@@ -11,7 +11,7 @@ import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
 import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
 import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
 import { IncludeMode } from '../../../util/enums/string.enum';
@@ -19,7 +19,7 @@ import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
 
 const Search = () => {
-  useChangeTitle('Pokémon - Search');
+  useTitle('Pokémon - Search');
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const pokemonName = useSelector((state: StoreState) => state.store.data.pokemons);

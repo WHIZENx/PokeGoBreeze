@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/compute';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../util/hooks/useTitle';
 import { SpinnerActions } from '../../store/actions';
 import { getTime } from '../../util/utils';
 import { isEqual, isInclude, isNotEmpty } from '../../util/extension';
@@ -33,7 +33,7 @@ class OptionsHome implements IOptionsHome {
 }
 
 const PVPHome = () => {
-  useChangeTitle('PVP - Simulator');
+  useTitle('PVP - Simulator');
   const dispatch = useDispatch();
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const combat = useSelector((state: StoreState) => state.store.data.combats);

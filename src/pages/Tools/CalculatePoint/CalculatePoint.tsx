@@ -20,7 +20,7 @@ import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { BattleState } from '../../../core/models/damage.model';
 import {
   combineClasses,
@@ -34,7 +34,7 @@ import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/
 import { Color } from '../../../core/models/candy.model';
 
 const CalculatePoint = () => {
-  useChangeTitle('Calculate Point Stats - Tools');
+  useTitle('Calculate Point Stats - Tools');
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);

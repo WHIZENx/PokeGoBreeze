@@ -21,7 +21,7 @@ import {
 } from '../../../util/models/calculate.model';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
@@ -170,7 +170,7 @@ const columns: TableColumn<IFindCP>[] = [
 ];
 
 const FindTable = () => {
-  useChangeTitle('Find CP&IV - Tool');
+  useTitle('Find CP&IV - Tool');
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');

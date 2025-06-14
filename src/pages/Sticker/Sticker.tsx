@@ -12,7 +12,7 @@ import CustomPopover from '../../components/Popover/CustomPopover';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../util/hooks/useTitle';
 import { isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
 import { GlobalType } from '../../enums/type.enum';
 import { ShopType } from './enums/sticker-type.enum';
@@ -23,7 +23,7 @@ interface PokemonStickerModel {
 }
 
 const Sticker = () => {
-  useChangeTitle('Stickers List');
+  useTitle('Stickers List');
   const [id, setId] = useState(GlobalType.All);
   const [shopType, setShopType] = useState(ShopType.All);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);

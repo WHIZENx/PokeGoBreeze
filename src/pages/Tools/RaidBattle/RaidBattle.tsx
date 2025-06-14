@@ -64,7 +64,7 @@ import {
   SelectMovePokemonModel,
 } from '../../../components/Input/models/select-move.model';
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
 import {
@@ -157,7 +157,7 @@ class Filter implements IFilter {
 }
 
 const RaidBattle = () => {
-  useChangeTitle('Raid Battle - Tools');
+  useTitle('Raid Battle - Tools');
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
