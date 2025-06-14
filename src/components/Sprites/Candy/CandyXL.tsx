@@ -30,6 +30,10 @@ const Fill = styled.div<Element>`
   width: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
   height: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
   mask: url(${bgCandyXL}) center/contain;
+  -webkit-mask: url(${bgCandyXL}) center/contain;
+  -moz-mask: url(${bgCandyXL}) center/contain;
+  -o-mask: url(${bgCandyXL}) center/contain;
+  -ms-mask: url(${bgCandyXL}) center/contain;
 `;
 
 const CandyXL = (props: ICandyComponent) => {

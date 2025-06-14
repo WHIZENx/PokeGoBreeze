@@ -162,10 +162,6 @@
   text-shadow: 1px 1px var(--shadow-custom);
 }
 
-.filter-shadow-hover:hover {
-  filter: drop-shadow(2px 2px 2px var(--shadow-hover));
-}
-
 a.pokemon-link:hover {
   box-shadow: inset 0 0 8px 1px var(--shadow-hover);
 }

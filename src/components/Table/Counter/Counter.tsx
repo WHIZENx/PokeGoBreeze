@@ -45,9 +45,14 @@ import { IncludeMode } from '../../../util/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
 
 const customStyles: TableStyles = {
+  tableWrapper: {
+    style: {
+      display: 'block',
+    },
+  },
   head: {
     style: {
-      height: 35,
+      height: '2.25rem',
     },
   },
   header: {
@@ -61,15 +66,15 @@ const customStyles: TableStyles = {
     style: {
       backgroundColor: 'var(--custom-table-background-info) !important',
       color: 'var(--text-primary) !important',
-      fontSize: 16,
+      fontSize: '1rem',
       fontWeight: 'bolder',
       justifyContent: 'center',
-      minHeight: 35,
+      minHeight: '2.25rem',
     },
   },
   headCells: {
     style: {
-      height: 35,
+      height: '2.25rem',
       justifyContent: 'center',
       padding: '5px 10px',
       borderBottomWidth: 1,
@@ -94,10 +99,10 @@ const customStyles: TableStyles = {
       borderBottomColor: 'var(--custom-table-background-sub-head-border)',
       justifyContent: 'center',
       textAlign: 'center',
-      padding: '5px 10px',
+      padding: '0.25rem 0.5rem',
       fontWeight: 'lighter',
       '&:first-of-type': {
-        fontSize: 12,
+        fontSize: '0.75rem',
       },
       '&:last-of-type': {
         fontWeight: 'bold',

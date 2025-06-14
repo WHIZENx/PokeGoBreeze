@@ -86,18 +86,10 @@ const Search = () => {
     setSelectId(value.id);
   };
 
-  const decId = () => {
-    const currentPokemon = getPokemonById(pokemonName, selectId - 1);
+  const modifyId = (modify: number) => {
+    const currentPokemon = getPokemonById(pokemonName, selectId + modify);
     if (currentPokemon) {
-      setSelectId(selectId - 1);
-      setSearchOption({ id: toNumber(currentPokemon.id) });
-    }
-  };
-
-  const incId = () => {
-    const currentPokemon = getPokemonById(pokemonName, selectId + 1);
-    if (currentPokemon) {
-      setSelectId(selectId + 1);
+      setSelectId(selectId + modify);
       setSearchOption({ id: toNumber(currentPokemon.id) });
     }
   };
@@ -231,8 +223,8 @@ const Search = () => {
         <Pokemon
           searchOption={searchOption}
           setSearchOption={setSearchOption}
-          onIncId={incId}
-          onDecId={decId}
+          onIncId={() => modifyId(1)}
+          onDecId={() => modifyId(-1)}
           isSearch
           searching={searching}
         />

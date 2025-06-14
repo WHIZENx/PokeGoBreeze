@@ -1,0 +1,42 @@
+@use "./common.scss" as *;
+
+.filter-shadow {
+  @include default-shadow(none, 1px, black);
+}
+
+.img-gender {
+  @include default-shadow(none, 3px, #222222);
+}
+
+.progress-hover:hover {
+  @include default-shadow(none, 2px, #0a0a0a80);
+}
+
+.sprite-raid:hover {
+  @include default-shadow(none, 2px, #000000cc);
+}
+
+.filter-shadow-hover:hover {
+  @include default-shadow(none, 2px, var(--shadow-hover));
+}
+
+.filter-gray {
+  @include filter-gray(100%);
+}
+
+.filter-shiny,
+.shiny-pokemon.active {
+  @include filter(1px 1px 1px #00000099);
+}
+
+.remove-close {
+  @include filter-base(19%, 82%, 7008%, 357deg, 102%, 114%);
+}
+
+.info-container img.info-background {
+  @include filter-blue(5px);
+}
+
+.no-released-pokemon {
+  @include default-shadow(100%, 1px, #00000099);
+}

@@ -108,8 +108,66 @@
   @include theme-background(var(--custom-table-background-info), $important);
 }
 
-@mixin default-shadow {
-  filter: drop-shadow(1px 1px 1px var(--shadow-default));
+@mixin default-shadow($gray-scale: none, $width: 1px, $color: var(--shadow-default)) {
+  $drop-shadow: drop-shadow($width $width $width $color);
+
+  @if $gray-scale == none {
+    filter: $drop-shadow;
+    -webkit-filter: $drop-shadow;
+    -moz-filter: $drop-shadow;
+    -o-filter: $drop-shadow;
+    -ms-filter: $drop-shadow;
+  } @else {
+    filter: $drop-shadow grayscale($gray-scale);
+    -webkit-filter: $drop-shadow grayscale($gray-scale);
+    -moz-filter: $drop-shadow grayscale($gray-scale);
+    -o-filter: $drop-shadow grayscale($gray-scale);
+    -ms-filter: $drop-shadow grayscale($gray-scale);
+  }
+}
+
+@mixin filter-gray($gray-scale: 100%) {
+  filter: grayscale($gray-scale);
+  -webkit-filter: grayscale($gray-scale);
+  -moz-filter: grayscale($gray-scale);
+  -o-filter: grayscale($gray-scale);
+  -ms-filter: grayscale($gray-scale);
+}
+
+@mixin filter-base($invert: 88%, $sepia: 36%, $saturate: 644%, $hue: 6deg, $brightness: 108%, $contrast: 105%) {
+  $base-filter: invert($invert) sepia($sepia) saturate($saturate) hue-rotate($hue) brightness($brightness) contrast($contrast);
+  
+  filter: $base-filter;
+  -webkit-filter: $base-filter;
+  -moz-filter: $base-filter;
+  -o-filter: $base-filter;
+  -ms-filter: $base-filter;
+}
+
+@mixin filter($drop-shadow: none, $invert: 88%, $sepia: 36%, $saturate: 644%, $hue: 6deg, $brightness: 108%, $contrast: 105%) {
+  $base-filter: brightness(0) saturate(100%) invert($invert) sepia($sepia) saturate($saturate) hue-rotate($hue) brightness($brightness) contrast($contrast);
+  
+  @if $drop-shadow == none {
+    filter: $base-filter;
+    -webkit-filter: $base-filter;
+    -moz-filter: $base-filter;
+    -o-filter: $base-filter;
+    -ms-filter: $base-filter;
+  } @else {
+    filter: $base-filter drop-shadow($drop-shadow);
+    -webkit-filter: $base-filter drop-shadow($drop-shadow);
+    -moz-filter: $base-filter drop-shadow($drop-shadow);
+    -o-filter: $base-filter drop-shadow($drop-shadow);
+    -ms-filter: $base-filter drop-shadow($drop-shadow);
+  }
+}
+
+@mixin filter-blue($width: 1px) {
+  filter: blur($width);
+  -webkit-filter: blur($width);
+  -moz-filter: blur($width);
+  -o-filter: blur($width);
+  -ms-filter: blur($width);
 }
 
 @mixin thin-border($side: right, $color: var(--custom-lightgray)) {

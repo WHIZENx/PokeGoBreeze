@@ -33,6 +33,10 @@ const Fill = styled.div<Element>`
     0px
   );
   filter: brightness(${(props) => props.brightness});
+  -webkit-filter: brightness(${(props) => props.brightness});
+  -moz-filter: brightness(${(props) => props.brightness});
+  -o-filter: brightness(${(props) => props.brightness});
+  -ms-filter: brightness(${(props) => props.brightness});
   transition: 0.1s;
 `;
 
@@ -43,8 +47,12 @@ const Icon = styled.div<Element>`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  mask: url(${(props) => props.url}) center/contain;
   background: #ffffff75;
+  mask: url(${(props) => props.url}) center/contain;
+  -webkit-mask: url(${(props) => props.url}) center/contain;
+  -moz-mask: url(${(props) => props.url}) center/contain;
+  -o-mask: url(${(props) => props.url}) center/contain;
+  -ms-mask: url(${(props) => props.url}) center/contain;
 `;
 
 const IconFill = styled.div<Element>`
@@ -63,8 +71,12 @@ const IconFill = styled.div<Element>`
     ${(props) => props.size / 2}px,
     0px
   );
-  mask: url(${(props) => props.url}) center/contain;
   background: white;
+  mask: url(${(props) => props.url}) center/contain;
+  -webkit-mask: url(${(props) => props.url}) center/contain;
+  -moz-mask: url(${(props) => props.url}) center/contain;
+  -o-mask: url(${(props) => props.url}) center/contain;
+  -ms-mask: url(${(props) => props.url}) center/contain;
   transition: 0.1s;
 `;
 
