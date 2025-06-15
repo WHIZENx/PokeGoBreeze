@@ -64,6 +64,8 @@ import { HexagonStats } from '../../../core/models/stats.model';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
+import { useTitle } from '../../../util/hooks/useTitle';
+import { TitleSEOProps } from '../../../util/models/hook.model';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
@@ -112,6 +114,15 @@ const RankingPVP = (props: IStyleSheetData) => {
     loadPVP(dispatch, timestamp, pvp);
   }, []);
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'PVP Ranking',
+    description:
+      'View detailed rankings of the best Pokémon for PVP battles in Pokémon GO. Compare stats, movesets, and performance across all leagues.',
+    keywords: ['Pokémon GO', 'PVP ranking', 'best PVP Pokémon', 'meta rankings', 'battle league', 'PokéGO Breeze'],
+  });
+
+  useTitle(titleProps);
+
   const fetchPokemonRanking = useCallback(async () => {
     if (
       statsRanking?.attack?.ranking &&
@@ -134,11 +145,43 @@ const RankingPVP = (props: IStyleSheetData) => {
           return;
         }
         if (params.serie === LeagueBattleType.All) {
-          document.title = `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`;
+          setTitleProps({
+            title: `PVP Ranking - ${getPokemonBattleLeagueName(cp)}`,
+            description: `Top ranked Pokémon for ${getPokemonBattleLeagueName(
+              cp
+            )} PVP battles in Pokémon GO. Find the best Pokémon with optimal stats and movesets.`,
+            keywords: [
+              'Pokémon GO',
+              `${getPokemonBattleLeagueName(cp)}`,
+              'PVP ranking',
+              'best PVP Pokémon',
+              'meta rankings',
+              'PokéGO Breeze',
+            ],
+            image: getPokemonBattleLeagueIcon(cp),
+          });
         } else {
-          document.title = `PVP Ranking - ${
-            params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
-          } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(pvpType)})`;
+          setTitleProps({
+            title: `PVP Ranking - ${
+              params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
+            } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(pvpType)})`,
+            description: `Top ranked Pokémon for ${
+              params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
+            } ${splitAndCapitalize(params.serie, '-', ' ')} (${capitalize(
+              pvpType
+            )}) battles in Pokémon GO. Find the best Pokémon with optimal stats and movesets.`,
+            keywords: [
+              'Pokémon GO',
+              `${splitAndCapitalize(params.serie, '-', ' ')}`,
+              `${params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''}`,
+              'PVP ranking',
+              `${capitalize(pvpType)} ranking`,
+              'best PVP Pokémon',
+              'meta rankings',
+              'PokéGO Breeze',
+            ],
+            image: getPokemonBattleLeagueIcon(cp),
+          });
         }
         const filePVP = file.map((data) => {
           const name = convertNameRankingToOri(data.speciesId, data.speciesName);

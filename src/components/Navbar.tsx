@@ -140,7 +140,7 @@ const NavbarComponent = (props: INavbarComponent) => {
         )}
         <div className="d-flex align-items-center justify-content-center">
           <div className="nav-info column-gap-2">{navigateInfo}</div>
-          <Navbar.Toggle id="navbar-toggle" aria-controls="responsive-navbar-nav" />
+          <Navbar.Toggle id="navbar-toggle" className="me-2" aria-controls="responsive-navbar-nav" />
         </div>
         <Navbar.Collapse id="responsive-navbar-nav" className="flex-wrap">
           <Nav className="me-auto">

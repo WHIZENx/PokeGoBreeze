@@ -64,7 +64,7 @@ import {
   SelectMovePokemonModel,
 } from '../../../components/Input/models/select-move.model';
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { BattleCalculate } from '../../../util/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
 import {
@@ -157,7 +157,19 @@ class Filter implements IFilter {
 }
 
 const RaidBattle = () => {
-  useChangeTitle('Raid Battle - Tools');
+  useTitle({
+    title: 'Raid Battle - Tools',
+    description:
+      'Plan your Pokémon GO raid battles with our comprehensive raid battle simulator. Find the best counters and strategies for defeating raid bosses.',
+    keywords: [
+      'raid battle simulator',
+      'Pokémon GO raids',
+      'raid counters',
+      'raid strategy',
+      'raid boss guide',
+      'raid team builder',
+    ],
+  });
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);

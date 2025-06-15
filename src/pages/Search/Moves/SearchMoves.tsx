@@ -4,10 +4,10 @@ import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { TypeMove, VariantType } from '../../../enums/type.enum';
+import { ColumnType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -19,7 +19,7 @@ import {
   toFloatWithPadding,
   toNumber,
 } from '../../../util/extension';
-import { ColumnSearchMoveType, SelectType } from './enums/select-type.enum';
+import { SelectType } from './enums/select-type.enum';
 import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
 import { Params } from '../../../util/constants';
 import { LinkToTop } from '../../../util/hooks/LinkToTop';
@@ -48,13 +48,13 @@ const numSortDps = (rowA: ICombat, rowB: ICombat) => {
 
 const columns: TableColumnModify<ICombat>[] = [
   {
-    id: ColumnSearchMoveType.Id,
+    id: ColumnType.Id,
     name: 'id',
     selector: (row) => row.track,
     sortable: true,
   },
   {
-    id: ColumnSearchMoveType.Type,
+    id: ColumnType.Type,
     name: 'Type',
     selector: (row) => (
       <div className={combineClasses('type-icon-small', row.type?.toLowerCase())}>{capitalize(row.type)}</div>
@@ -63,7 +63,7 @@ const columns: TableColumnModify<ICombat>[] = [
     sortFunction: moveSort,
   },
   {
-    id: ColumnSearchMoveType.Name,
+    id: ColumnType.Name,
     name: 'Name',
     selector: (row) => (
       <LinkToTop
@@ -77,14 +77,14 @@ const columns: TableColumnModify<ICombat>[] = [
     width: '180px',
   },
   {
-    id: ColumnSearchMoveType.Power,
+    id: ColumnType.Power,
     name: 'Power (PVE/PVP)',
     selector: (row) => `${row.pvePower}/${row.pvpPower}`,
     sortable: true,
     width: '150px',
   },
   {
-    id: ColumnSearchMoveType.DPS,
+    id: ColumnType.DPS,
     name: 'DPS',
     selector: (row) => toFloatWithPadding(row.pvePower / (row.durationMs / 1000), 2),
     sortFunction: numSortDps,
@@ -113,7 +113,12 @@ class Filter implements IFilter {
 }
 
 const Search = () => {
-  useChangeTitle('Moves - Search');
+  useTitle({
+    title: 'Moves - Search',
+    description:
+      'Search and filter Pokémon GO moves by type, power, energy, and more. Find the best moves for your Pokémon in battles and raids.',
+    keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
+  });
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const types = useSelector((state: StoreState) => state.store.data.typeEff);
 
@@ -121,47 +126,50 @@ const Search = () => {
 
   const { fMoveType, fMoveName, cMoveType, cMoveName } = filters;
 
+  const [combatFMoves, setCombatFMoves] = useState<ICombat[]>([]);
   const [resultFMove, setResultFMove] = useState<ICombat[]>([]);
   const [fMoveIsLoad, setFMoveIsLoad] = useState(false);
+  const [combatCMoves, setCombatCMoves] = useState<ICombat[]>([]);
   const [resultCMove, setResultCMove] = useState<ICombat[]>([]);
   const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
 
   useEffect(() => {
     if (isNotEmpty(combat)) {
-      const debounced = debounce(() => {
-        setResultFMove(searchMove(TypeMove.Fast, fMoveType, fMoveName));
-        setFMoveIsLoad(true);
-      });
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
+      setCombatFMoves(combat.filter((item) => item.typeMove === TypeMove.Fast));
+      setCombatCMoves(combat.filter((item) => item.typeMove === TypeMove.Charge));
     }
-  }, [combat, fMoveType, fMoveName]);
+  }, [combat]);
 
   useEffect(() => {
-    if (isNotEmpty(combat)) {
-      const debounced = debounce(() => {
-        setResultCMove(searchMove(TypeMove.Charge, cMoveType, cMoveName));
-        setCMoveIsLoad(true);
-      });
-      debounced();
-      return () => {
-        debounced.cancel();
-      };
-    }
-  }, [combat, cMoveType, cMoveName]);
+    const debounced = debounce(() => {
+      setResultFMove(searchMove(combatFMoves, fMoveType, fMoveName));
+      setFMoveIsLoad(true);
+    });
+    debounced();
+    return () => {
+      debounced.cancel();
+    };
+  }, [combatFMoves, fMoveType, fMoveName]);
 
-  const searchMove = (category: TypeMove, type: SelectType | PokemonTypeBadge, name: string) =>
-    combat
-      .filter((item) => item.typeMove === category)
-      .filter(
-        (move) =>
-          (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
-            isInclude(move.track, name)) &&
-          (type === SelectType.All ||
-            isEqual(getKeyWithData(PokemonTypeBadge, type), move.type, EqualMode.IgnoreCaseSensitive))
-      );
+  useEffect(() => {
+    const debounced = debounce(() => {
+      setResultCMove(searchMove(combatCMoves, cMoveType, cMoveName));
+      setCMoveIsLoad(true);
+    });
+    debounced();
+    return () => {
+      debounced.cancel();
+    };
+  }, [combatCMoves, cMoveType, cMoveName]);
+
+  const searchMove = (combat: ICombat[], type: SelectType | PokemonTypeBadge, name: string) =>
+    combat.filter(
+      (move) =>
+        (isInclude(splitAndCapitalize(move.name, '_', ' '), name, IncludeMode.IncludeIgnoreCaseSensitive) ||
+          isInclude(move.track, name)) &&
+        (type === SelectType.All ||
+          isEqual(getKeyWithData(PokemonTypeBadge, type), move.type, EqualMode.IgnoreCaseSensitive))
+    );
 
   const setMoveByType = (category: TypeMove, value: SelectType) => {
     if (category === TypeMove.Fast) {
@@ -236,7 +244,7 @@ const Search = () => {
                 <CustomDataTable
                   customColumns={columns}
                   data={data}
-                  defaultSortFieldId={ColumnSearchMoveType.Name}
+                  defaultSortFieldId={ColumnType.Name}
                   fixedHeader
                   fixedHeaderScrollHeight="70vh"
                   progressPending={!moveLoad}

@@ -70,6 +70,8 @@ import { PokemonType, TypeAction, VariantType } from '../../enums/type.enum';
 import { useNavigateToTop } from '../../util/hooks/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
+import { useTitle } from '../../util/hooks/useTitle';
+import { TitleSEOProps } from '../../util/models/hook.model';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -336,7 +338,6 @@ const Pokemon = (props: IPokemonPage) => {
           }
           enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
           if (params.id) {
-            document.title = `#${params.id} - Not Found`;
             setIsFound(false);
           } else {
             navigateToTop('/error', {
@@ -365,6 +366,28 @@ const Pokemon = (props: IPokemonPage) => {
     }
   };
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'PokéGO Breeze - Pokémon',
+    description:
+      'Comprehensive Pokémon database with detailed stats, forms, evolution chains, move costs, and shadow/purified information for Pokémon GO players',
+    keywords: [
+      'pokemon',
+      'Pokémon',
+      'PokéGO Breeze',
+      'pokemon stats',
+      'pokemon forms',
+      'shadow pokemon',
+      'purified pokemon',
+      'third move cost',
+      'evolution chain',
+      'pokemon go database',
+      'pokemon details',
+      'pokemon types',
+    ],
+  });
+
+  useTitle(titleProps);
+
   useEffect(() => {
     if (isNotEmpty(pokemonData)) {
       let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
@@ -372,7 +395,6 @@ const Pokemon = (props: IPokemonPage) => {
         id = getPokemonIdByParam();
         if (id <= 0) {
           enqueueSnackbar(`Pokémon ID or name: ${params.id} Not found!`, { variant: VariantType.Error });
-          document.title = `#${id} - Not Found`;
           setIsFound(false);
           return;
         }
@@ -480,7 +502,28 @@ const Pokemon = (props: IPokemonPage) => {
       );
       setOriginForm(originForm);
       if (params.id) {
-        document.title = `#${data.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
+        setTitleProps({
+          title: `#${data.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`,
+          description: `Pokémon - #${data.id} ${splitAndCapitalize(nameInfo, '-', ' ')}`,
+          keywords: [
+            'pokemon',
+            'Pokémon',
+            'PokéGO Breeze',
+            'Pokémon ID',
+            'Pokémon name',
+            'Pokémon form',
+            `#${data.id}`,
+            splitAndCapitalize(nameInfo, '-', ' '),
+          ],
+          image: APIService.getPokeFullSprite(
+            dataStorePokemon?.current?.id,
+            convertPokemonImageName(
+              currentSearchingForm && originForm && currentSearchingForm.defaultId === currentSearchingForm.form?.id
+                ? ''
+                : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
+            )
+          ),
+        });
       }
       checkReleased(id, currentSearchingForm);
     } else {
@@ -557,7 +600,7 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   return (
-    <Error isError={!isFound} isShowTitle={false}>
+    <Error isError={!isFound}>
       <div className="w-100 row prev-next-block sticky-top">
         {params.id ? (
           <SearchBarMain data={dataStorePokemon} />

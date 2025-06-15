@@ -44,6 +44,8 @@ import { HexagonStats } from '../../../core/models/stats.model';
 import { getValueOrDefault } from '../../../util/extension';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
+import { useTitle } from '../../../util/hooks/useTitle';
+import { TitleSEOProps } from '../../../util/models/hook.model';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
@@ -65,6 +67,32 @@ const PokemonPVP = (props: IStyleSheetData) => {
     loadPVP(dispatch, timestamp, pvp);
   }, []);
 
+  const setPokemonPVPTitle = (isNotFound = false) => {
+    if (isNotFound) {
+      setIsFound(false);
+    }
+    return {
+      title: isNotFound ? 'Pokémon PVP - Information Not Found' : 'Pokémon PVP - Information',
+      description: isNotFound
+        ? 'The requested Pokémon PVP information could not be found. Please check your search parameters and try again.'
+        : 'Detailed PVP information for individual Pokémon in Pokémon GO. Find stats, movesets, and battle performance across different leagues.',
+      keywords: [
+        'Pokémon GO',
+        'PVP information',
+        'PVP stats',
+        'Pokémon battle data',
+        'combat power',
+        'movesets',
+        'battle league',
+        'PokéGO Breeze',
+      ],
+    };
+  };
+
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>(setPokemonPVPTitle());
+
+  useTitle(titleProps);
+
   const fetchPokemonInfo = useCallback(async () => {
     if (
       statsRanking?.attack?.ranking &&
@@ -82,13 +110,13 @@ const PokemonPVP = (props: IStyleSheetData) => {
           .data;
 
         if (!data) {
-          setIsFound(false);
+          setTitleProps(setPokemonPVPTitle(true));
           return;
         }
 
         const pokemonData = data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
         if (!pokemonData) {
-          setIsFound(false);
+          setTitleProps(setPokemonPVPTitle(true));
           return;
         }
 
@@ -96,9 +124,29 @@ const PokemonPVP = (props: IStyleSheetData) => {
         const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
         const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
-        document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
-          cp
-        )} (${capitalize(params.serie)})`;
+        setTitleProps({
+          title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
+            cp
+          )} (${capitalize(params.serie)})`,
+          description: `PVP analysis and battle stats for ${splitAndCapitalize(
+            name,
+            '-',
+            ' '
+          )} in ${getPokemonBattleLeagueName(cp)} ${capitalize(
+            params.serie
+          )}. Find optimal movesets, counters, and performance metrics.`,
+          keywords: [
+            'Pokémon GO',
+            `${splitAndCapitalize(name, '-', ' ')}`,
+            `${getPokemonBattleLeagueName(cp)}`,
+            `${capitalize(params.serie)}`,
+            'PVP stats',
+            'best movesets',
+            'battle performance',
+            'PokéGO Breeze',
+          ],
+          image: APIService.getPokemonModel(form, id),
+        });
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -147,7 +195,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
         dispatch(SpinnerActions.HideSpinner.create());
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
-          setIsFound(false);
+          setTitleProps(setPokemonPVPTitle(true));
         } else {
           dispatch(
             SpinnerActions.ShowSpinnerMsg.create({

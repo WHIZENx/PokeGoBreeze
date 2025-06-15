@@ -37,6 +37,8 @@ const Find = (props: IFindComponent) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [pokemonListFilter, setPokemonListFilter] = useState<IPokemonSearching[]>([]);
 
+  const resultRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (isNotEmpty(pokemonData)) {
       const result = mappingPokemonName(pokemonData);
@@ -92,18 +94,19 @@ const Find = (props: IFindComponent) => {
     }
   };
 
-  const decId = () => {
+  const modifyId = (modify: number) => {
     const currentPokemon = getPokemonById(pokemonData, id);
     if (currentPokemon) {
-      const prev = getPokemonById(pokemonData, currentPokemon.id - 1);
-      if (prev) {
-        setId(prev.id);
+      const current = getPokemonById(pokemonData, currentPokemon.id + modify);
+      if (current) {
+        setId(current.id);
         if (props.setId) {
-          props.setId(prev.id);
+          props.setId(current.id);
         }
         if (props.setName) {
-          props.setName(prev.name);
+          props.setName(current.name);
         }
+        ensurePokemonVisibility(current.id);
       }
     }
     if (props.clearStats) {
@@ -111,23 +114,21 @@ const Find = (props: IFindComponent) => {
     }
   };
 
-  const incId = () => {
-    const currentPokemon = getPokemonById(pokemonData, id);
-    if (currentPokemon) {
-      const next = getPokemonById(pokemonData, currentPokemon.id + 1);
-      if (next) {
-        setId(next.id);
-        if (props.setId) {
-          props.setId(next.id);
-        }
-        if (props.setName) {
-          props.setName(next.name);
+  const ensurePokemonVisibility = (pokemonId: number) => {
+    const pokemonIndex = pokemonListFilter.findIndex((item) => item.id === pokemonId);
+    if (pokemonIndex >= 0 && pokemonIndex >= firstInit.current + eachCounter.current * startIndex) {
+      const newStartIndex = Math.floor(pokemonIndex / eachCounter.current);
+      setStartIndex(newStartIndex);
+    }
+
+    setTimeout(() => {
+      if (resultRef.current) {
+        const selectedElement = resultRef.current.querySelector('.card-pokemon.selected');
+        if (selectedElement) {
+          selectedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       }
-    }
-    if (props.clearStats) {
-      props.clearStats();
-    }
+    }, 50);
   };
 
   const searchPokemon = () => (
@@ -151,7 +152,7 @@ const Find = (props: IFindComponent) => {
           onKeyUp={(e) => setSearchTerm(e.currentTarget.value)}
         />
       </div>
-      <div className="result tools" onScroll={listenScrollEvent.bind(this)}>
+      <div className="result tools" ref={resultRef} onScroll={listenScrollEvent.bind(this)}>
         <Fragment>
           {pokemonListFilter.slice(0, firstInit.current + eachCounter.current * startIndex).map((value, index) => (
             <div
@@ -198,8 +199,8 @@ const Find = (props: IFindComponent) => {
             stats={stats}
             onHandleSetStats={handleSetStats}
             onClearStats={props.clearStats}
-            onSetPrev={decId}
-            onSetNext={incId}
+            onSetPrev={() => modifyId(-1)}
+            onSetNext={() => modifyId(1)}
             isObjective={props.isObjective}
           />
         )}
