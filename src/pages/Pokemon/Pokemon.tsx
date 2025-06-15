@@ -366,7 +366,6 @@ const Pokemon = (props: IPokemonPage) => {
     }
   };
 
-  // State to control the page title and metadata
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PokéGO Breeze - Pokémon',
     description:
@@ -387,7 +386,6 @@ const Pokemon = (props: IPokemonPage) => {
     ],
   });
 
-  // Use the useTitle hook at the top level with state-controlled values
   useTitle(titleProps);
 
   useEffect(() => {

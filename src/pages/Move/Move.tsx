@@ -54,6 +54,8 @@ import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../components/models/component.model';
+import { useTitle } from '../../util/hooks/useTitle';
+import { TitleSEOProps } from '../../util/models/hook.model';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -198,6 +200,24 @@ const Move = (props: IMovePage) => {
     return;
   };
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'Move - Information',
+    description:
+      'Comprehensive database of Pokémon GO moves. Find detailed information about Fast and Charged moves, power, energy, DPS, and more.',
+    keywords: [
+      'Pokémon GO',
+      'moves',
+      'fast moves',
+      'charged moves',
+      'PVP moves',
+      'move stats',
+      'move database',
+      'PokéGO Breeze',
+    ],
+  });
+
+  useTitle(titleProps);
+
   const queryMoveData = useCallback(
     (id: number) => {
       if (isNotEmpty(data.combats)) {
@@ -219,11 +239,35 @@ const Move = (props: IMovePage) => {
         }
         if (move) {
           setMove(move);
-          document.title = `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`;
+          setTitleProps({
+            title: `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`,
+            description: `Detailed information about ${splitAndCapitalize(
+              move.name.toLowerCase(),
+              '_',
+              ' '
+            )}, a ${capitalize(move.type)} type ${
+              move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged'
+            } move in Pokémon GO. See power, energy, and DPS stats.`,
+            keywords: [
+              'Pokémon GO',
+              `${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`,
+              `${capitalize(move.type)} type`,
+              `${move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged'} move`,
+              'move stats',
+              'battle moves',
+              'combat power',
+              'PokéGO Breeze',
+            ],
+            image: APIService.getTypeHqSprite(move.type),
+          });
         } else {
           enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: VariantType.Error });
           if (id) {
-            document.title = `#${id} - Not Found`;
+            setTitleProps({
+              title: `#${id} - Not Found`,
+              description: 'The requested move could not be found. Please check the move ID and try again.',
+              keywords: ['Pokémon GO', 'move not found', 'error', 'PokéGO Breeze'],
+            });
           }
         }
       }
