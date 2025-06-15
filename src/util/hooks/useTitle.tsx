@@ -23,7 +23,7 @@ export const useTitle = (props: TitleSEOProps) => {
 
     const title = props.title;
     const description = props.description;
-    const image = props.image;
+    const image = props.image || `${origin}/og-image.png`;
     const keywords = props.keywords;
     const url = props.url || fullPath;
     const type = props.type || 'website';
