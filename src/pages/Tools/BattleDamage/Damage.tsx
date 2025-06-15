@@ -23,7 +23,7 @@ import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../util/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 
@@ -69,7 +69,19 @@ class Filter implements IFilter {
 }
 
 const Damage = () => {
-  useChangeTitle('Damage Simulator - Battle Simulator');
+  useTitle({
+    title: 'Damage Simulator - Battle Simulator',
+    description:
+      'Simulate battle damage in Pokémon GO with our advanced damage calculator. Compare Pokémon attacks, optimize movesets, and plan your battle strategy.',
+    keywords: [
+      'damage simulator',
+      'battle simulator',
+      'Pokémon GO battles',
+      'damage calculator',
+      'move damage',
+      'battle strategy',
+    ],
+  });
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);

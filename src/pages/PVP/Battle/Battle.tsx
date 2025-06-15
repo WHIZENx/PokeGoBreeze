@@ -11,7 +11,12 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../util/utils';
-import { findAssetForm, findStabType, getPokemonBattleLeagueName } from '../../../util/compute';
+import {
+  findAssetForm,
+  findStabType,
+  getPokemonBattleLeagueIcon,
+  getPokemonBattleLeagueName,
+} from '../../../util/compute';
 import {
   calculateCP,
   calculateStatsBattle,
@@ -106,6 +111,8 @@ import { HexagonStats, StatsPokemonGO } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../util/enums/string.enum';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
+import { useTitle } from '../../../util/hooks/useTitle';
+import { TitleSEOProps } from '../../../util/models/hook.model';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -751,6 +758,23 @@ const Battle = () => {
     setPokemonCurr(new PokemonBattle());
   };
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'PVP Battle Simulator',
+    description:
+      'Simulate Pokémon GO PVP battles between any Pokémon across different leagues. Test movesets, strategies, and optimize your team.',
+    keywords: [
+      'Pokémon GO',
+      'PVP battles',
+      'battle simulator',
+      'Great League',
+      'Ultra League',
+      'Master League',
+      'PokéGO Breeze',
+    ],
+  });
+
+  useTitle(titleProps);
+
   const fetchPokemonBattle = useCallback(
     async (league: number) => {
       dispatch(SpinnerActions.ShowSpinner.create());
@@ -765,7 +789,21 @@ const Battle = () => {
           setIsFound(false);
           return;
         }
-        document.title = `PVP Battle Simulator - ${getPokemonBattleLeagueName(league)}`;
+        setTitleProps({
+          title: `PVP Battle Simulator - ${getPokemonBattleLeagueName(league)}`,
+          description: `Simulate Pokémon GO PVP battles in the ${getPokemonBattleLeagueName(
+            league
+          )}. Test different Pokémon, movesets, and battle strategies.`,
+          keywords: [
+            'Pokémon GO',
+            `${getPokemonBattleLeagueName(league)}`,
+            'PVP battles',
+            'battle simulator',
+            'PVP strategies',
+            'PokéGO Breeze',
+          ],
+          image: getPokemonBattleLeagueIcon(league),
+        });
 
         const result = file
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))

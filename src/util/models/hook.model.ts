@@ -13,3 +13,13 @@ export interface LinkToTopProps extends LinkProps {
   options?: NavigateToTopProps;
   funcOnClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
+
+export interface TitleSEOProps {
+  title: string;
+  description?: string;
+  image?: string;
+  keywords?: string | string[];
+  url?: string;
+  type?: 'website' | 'article';
+  isShowTitle?: boolean;
+}

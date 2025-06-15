@@ -36,7 +36,7 @@ import {
   StatsSta,
 } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { FORM_NORMAL, Params } from '../../../util/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
@@ -192,7 +192,19 @@ const defaultPerPages = 25;
 const StatsRanking = () => {
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
-  useChangeTitle('Stats Ranking');
+  useTitle({
+    title: 'PokéGO Breeze - Stats Ranking',
+    description:
+      'View comprehensive Pokémon GO stat rankings to identify the strongest Pokémon for battles and raids. Compare attack, defense, stamina, and overall performance.',
+    keywords: [
+      'Pokémon stats ranking',
+      'strongest Pokémon',
+      'best attackers',
+      'best defenders',
+      'Pokémon GO ranking',
+      'stat comparison',
+    ],
+  });
   const [searchParams, setSearchParams] = useSearchParams();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [

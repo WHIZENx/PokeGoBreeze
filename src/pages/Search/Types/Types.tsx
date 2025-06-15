@@ -29,6 +29,8 @@ import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../util/enums/string.enum';
+import { useTitle } from '../../../util/hooks/useTitle';
+import { TitleSEOProps } from '../../../util/models/hook.model';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -212,9 +214,30 @@ const SearchTypes = (props: IStyleSheetData) => {
 
   const [showType, setShowType] = useState(false);
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'PokéGO Breeze - Type',
+    description: 'Explore Pokémon type information, effectiveness, and related Pokémon and moves in Pokémon GO.',
+    keywords: ['Pokémon GO', 'type effectiveness', 'type chart', 'Pokemon types', 'PokéGO Breeze'],
+  });
+
+  useTitle(titleProps);
+
   useEffect(() => {
     if (currentType) {
-      document.title = `Type - ${capitalize(currentType)}`;
+      setTitleProps({
+        title: `Type - ${capitalize(currentType)}`,
+        description: `Detailed information about ${capitalize(
+          currentType
+        )} type Pokémon, moves, strengths, and weaknesses in Pokémon GO.`,
+        keywords: [
+          'Pokémon GO',
+          `${currentType} type`,
+          `${currentType} Pokémon`,
+          `${currentType} moves`,
+          'PokéGO Breeze',
+        ],
+        image: APIService.getTypeSprite(currentType),
+      });
     }
   }, [currentType]);
 

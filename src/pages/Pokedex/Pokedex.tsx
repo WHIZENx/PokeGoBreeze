@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../util/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
 import { IncludeMode } from '../../util/enums/string.enum';
@@ -92,7 +92,12 @@ class BtnSelect implements IBtnSelect {
 }
 
 const Pokedex = (props: IStyleSheetData) => {
-  useChangeTitle('Pokédex');
+  useTitle({
+    title: 'PokéGO Breeze - Pokédex',
+    description:
+      'Complete Pokémon GO Pokédex with detailed information on all available Pokémon, including stats, moves, evolution chains, and forms.',
+    keywords: ['Pokédex', 'Pokémon database', 'Pokémon GO Pokédex', 'Pokémon stats', 'Pokémon evolution'],
+  });
 
   const dispatch = useDispatch();
 

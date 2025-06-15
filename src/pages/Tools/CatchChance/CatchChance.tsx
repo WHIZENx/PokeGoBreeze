@@ -67,6 +67,7 @@ import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
+import { useTitle } from '../../../util/hooks/useTitle';
 
 const balls: PokeBallThreshold[] = [
   {
@@ -121,9 +122,21 @@ const CatchChance = () => {
   const [options, setOptions] = useState(new PokeBallOption());
   const { isAdvance, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, isShadow } = options;
 
-  useEffect(() => {
-    document.title = 'Calculate Catch Chance - Tool';
-  }, []);
+  useTitle({
+    title: 'Calculate Catch Chance - Tool',
+    description:
+      'Calculate the probability of catching any Pokémon in Pokémon GO based on ball type, berries, throw accuracy, and medals.',
+    keywords: [
+      'Pokémon GO',
+      'catch rate',
+      'catch calculator',
+      'catch chance',
+      'Poké Ball',
+      'Great Ball',
+      'Ultra Ball',
+      'PokéGO Breeze',
+    ],
+  });
 
   useEffect(() => {
     if (pokemon) {

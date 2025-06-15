@@ -29,7 +29,7 @@ import {
   PokemonRewardSetLeague,
   SettingLeague,
 } from '../../../core/models/league.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import {
   combineClasses,
@@ -56,7 +56,12 @@ interface LeagueData {
 }
 
 const Leagues = () => {
-  useChangeTitle('Battle Leagues List');
+  useTitle({
+    title: 'PokéGO Breeze - Battle Leagues List',
+    description:
+      'Complete list of all battle leagues in Pokémon GO. Find information about CP limits, rules, and available Pokémon for each league.',
+    keywords: ['battle leagues', 'PVP leagues', 'Pokémon GO battles', 'Great League', 'Ultra League', 'Master League'],
+  });
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
   const [leagues, setLeagues] = useState<ILeague[]>([]);

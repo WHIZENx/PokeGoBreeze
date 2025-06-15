@@ -11,7 +11,7 @@ import { IBattleBaseStats } from '../../../util/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../util/hooks/useTitle';
 import { combineClasses, isNotEmpty, isNumber, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
 import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
@@ -87,7 +87,12 @@ export const columnsStats: TableColumn<IBattleBaseStats>[] = [
 ];
 
 const StatsTable = () => {
-  useChangeTitle('Stats Battle League - Tool');
+  useTitle({
+    title: 'Stats Battle League - Tool',
+    description:
+      'Analyze Pokémon GO battle league stats with our comprehensive tool. Compare Pokémon performance, CP values, and optimal IVs for competitive play.',
+    keywords: ['battle league stats', 'PVP stats', 'Pokémon GO battle stats', 'CP optimization', 'PVP IV calculator'],
+  });
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');
