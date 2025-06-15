@@ -52,7 +52,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run generate:sitemap",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format:code": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
@@ -63,7 +63,8 @@
     "format": "npm run format:code && npm run format:style",
     "develop": "sh -c '. ./version.sh && webpack-dev-server --mode development --config webpack.config.dev.js'",
     "prebuild": "rimraf dist",
-    "deploy": "sh -c '. ./version.sh && webpack --mode production --config webpack.config.prod.js'"
+    "deploy": "sh -c '. ./version.sh && webpack --mode production --config webpack.config.prod.js' && npm run generate:sitemap",
+    "generate:sitemap": "node src/util/sitemap/buildSitemap.js"
   },
   "browserslist": {
     "production": [
@@ -114,6 +115,7 @@
     "react-refresh": "^0.14.0",
     "sass": "1.83.0",
     "sass-loader": "16.0.4",
+    "sitemap": "^8.0.0",
     "style-loader": "^3.3.1",
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
