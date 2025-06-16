@@ -45,11 +45,6 @@ import { IncludeMode } from '../../../util/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
 
 const customStyles: TableStyles = {
-  tableWrapper: {
-    style: {
-      display: 'block',
-    },
-  },
   head: {
     style: {
       height: '2.25rem',
@@ -439,6 +434,7 @@ const Counter = (props: ICounterComponent) => {
         progressPending={showFrame}
         progressComponent={<CounterLoader />}
         data={counterFilter}
+        isXFixed
         isShowModalOptions
         titleModalOptions="Pokémon counter options"
         customOptionsModal={modalOptions}

@@ -53,6 +53,11 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
     const data = props.customDataStyles;
     if (!data) {
       return {
+        tableWrapper: {
+          style: {
+            display: props.isXFixed ? 'block' : 'table',
+          },
+        },
         subHeader: {
           style: {
             padding: 0,
@@ -65,6 +70,13 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
     }
     return {
       ...data,
+      tableWrapper: {
+        ...data.tableWrapper,
+        style: {
+          ...data.tableWrapper?.style,
+          display: props.isXFixed ? 'block' : 'table',
+        },
+      },
       subHeader: {
         ...data.subHeader,
         style: {
