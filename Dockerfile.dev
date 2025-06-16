@@ -2,10 +2,13 @@ FROM node:18.17.0-alpine
 
 WORKDIR /app
 
+# Install Python and build dependencies
+RUN apk add --no-cache python3 make g++ gcc curl
+
 COPY . .
 RUN npm install --location=global npm@10.8.2
 RUN npm install
 
-EXPOSE 3030
+EXPOSE 9000
 
 CMD ["npm", "run", "develop"]
