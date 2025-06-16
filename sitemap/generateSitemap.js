@@ -80,7 +80,7 @@ async function generateDynamicRoutes() {
   try {
     // Example: Pokemon routes from a JSON file or API
     // You would adapt this to use your actual data sources
-    const pokemonDataPath = path.resolve(__dirname, '../../../public/data/pokemon.min.json');
+    const pokemonDataPath = path.resolve(__dirname, '../public/data/pokemon.min.json');
 
     if (fs.existsSync(pokemonDataPath)) {
       const pokemonData = JSON.parse(fs.readFileSync(pokemonDataPath, 'utf8'));
@@ -109,7 +109,7 @@ async function generateDynamicRoutes() {
       series.forEach((serie) => {
         const cp = cpValues[league];
 
-        // Use correct paths from App.tsx - rankingS not ranking
+        // Use correct paths from App.tsx - rankings not ranking
         routes.push({
           url: `/pvp/rankings/${serie}/${cp}`,
           changefreq: 'weekly',
@@ -141,7 +141,7 @@ async function generateDynamicRoutes() {
     });
 
     // Example: Move routes
-    const moveDataPath = path.resolve(__dirname, '../../../public/data/moves.min.json');
+    const moveDataPath = path.resolve(__dirname, '../public/data/moves.min.json');
 
     if (fs.existsSync(moveDataPath)) {
       const moveData = JSON.parse(fs.readFileSync(moveDataPath, 'utf8'));

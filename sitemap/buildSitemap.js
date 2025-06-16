@@ -10,7 +10,7 @@ async function buildSitemap() {
     // Generate the sitemap XML
     const sitemap = await generateSitemap();
 
-    const publicPath = path.resolve(__dirname, '../../../public');
+    const publicPath = path.resolve(__dirname, '../public');
 
     // Ensure the public directory exists
     if (!fs.existsSync(publicPath)) {
