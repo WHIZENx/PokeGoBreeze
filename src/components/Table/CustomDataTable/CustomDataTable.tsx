@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
+import { Button, Modal } from 'react-bootstrap';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { StyleSheetManager } from 'styled-components';
 import { ICustomDataTableProps } from '../../models/component.model';
-import { convertColumnDataType } from '../../../util/extension';
+import { convertColumnDataType, isIncludeList } from '../../../util/extension';
 import { getCustomThemeDataTable } from '../../../util/utils';
 import { isNotEmpty } from '../../../util/extension';
 import { debounce } from 'lodash';
-import SettingsIcon from '@mui/icons-material/Settings';
-import { Button, Modal } from 'react-bootstrap';
 import { VariantType } from '../../../enums/type.enum';
 import CustomInput from '../../Input/CustomInput';
+import { StyleSheetConfig } from '../../../util/style-sheet-config';
+import { IncludeMode } from '../../../util/enums/string.enum';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,27 +80,33 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
 
   return (
     <>
-      <DataTable
-        {...props}
-        subHeader={props.isShowSearch}
-        subHeaderComponent={
-          props.isShowSearch && (
-            <CustomInput
-              menuItems={props.menuItems}
-              isAutoSearch={props.isAutoSearch}
-              setSearchData={() => setSearchData(true)}
-              inputPlaceholder={props.inputPlaceholder}
-              defaultValue={searchTerm}
-              setSearchTerm={setSearchTerm}
-              onOptionsClick={handleShowOption}
-              optionsIcon={props.isShowModalOptions ? <SettingsIcon className="u-fs-5" /> : undefined}
-            />
-          )
+      <StyleSheetManager
+        shouldForwardProp={(prop: string) =>
+          !isIncludeList(StyleSheetConfig.NotAllowProps, prop, IncludeMode.IncludeIgnoreCaseSensitive)
         }
-        columns={(props.customColumns ? convertColumnDataType(props.customColumns) : props.columns) || []}
-        customStyles={getCustomThemeDataTable(setCustomStyle())}
-        data={pokemonListFilter}
-      />
+      >
+        <DataTable
+          {...props}
+          subHeader={props.isShowSearch}
+          subHeaderComponent={
+            props.isShowSearch && (
+              <CustomInput
+                menuItems={props.menuItems}
+                isAutoSearch={props.isAutoSearch}
+                setSearchData={() => setSearchData(true)}
+                inputPlaceholder={props.inputPlaceholder}
+                defaultValue={searchTerm}
+                setSearchTerm={setSearchTerm}
+                onOptionsClick={handleShowOption}
+                optionsIcon={props.isShowModalOptions ? <SettingsIcon className="u-fs-5" /> : undefined}
+              />
+            )
+          }
+          columns={(props.customColumns ? convertColumnDataType(props.customColumns) : props.columns) || []}
+          customStyles={getCustomThemeDataTable(setCustomStyle())}
+          data={pokemonListFilter}
+        />
+      </StyleSheetManager>
 
       {props.isShowModalOptions && (
         <Modal show={showOption} onHide={handleCloseOption} centered>
