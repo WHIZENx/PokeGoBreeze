@@ -11,7 +11,7 @@ import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import localForage from 'localforage';
 import { PersistTimeout, PersistKey } from '../util/constants';
 import CryptoJS from 'crypto-js';
-import { LocalForageConfig } from './constants/localForage';
+import { LocalForageConfig } from './constants/local-forage';
 
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY;
 const ENCRYPTION_SALT = process.env.REACT_APP_ENCRYPTION_SALT;

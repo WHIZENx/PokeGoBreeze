@@ -1,3 +1,15 @@
 # https://www.robotstxt.org/robotstxt.html
+# PokeGo Breeze robots.txt
+
+# Allow all crawlers
 User-agent: *
 Allow: /
+
+# Sitemap location
+Sitemap: https://poke-go-breeze.vercel.app/sitemap.xml
+
+# Alternative sitemap location (in case of base path issues)
+# Sitemap: /sitemap.xml
+
+# Optional: Add crawl delay to prevent server overload (if needed)
+# Crawl-delay: 1

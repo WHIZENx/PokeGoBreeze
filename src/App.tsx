@@ -45,12 +45,12 @@ import { getDesignThemes } from './util/models/overrides/themes.model';
 import { LOAD_DATA_DELAY, TRANSITION_TIME } from './util/constants';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
-import { LocalStorageConfig } from './store/constants/localStorage';
+import { LocalStorageConfig } from './store/constants/local-storage';
 import { RouterState, StoreState, TimestampState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import { clearLocalStorageExcept } from './store/localStorage';
+import { clearLocalStorageExcept } from './store/local-storage-config';
 import { getStyleList } from './util/utils';
 
 const ColorModeContext = createContext({

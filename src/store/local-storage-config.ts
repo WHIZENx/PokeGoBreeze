@@ -1,4 +1,4 @@
-import { LocalStorageConfig } from './constants/localStorage';
+import { LocalStorageConfig } from './constants/local-storage';
 
 /**
  * Clears all localStorage items except for the specified keys to preserve
