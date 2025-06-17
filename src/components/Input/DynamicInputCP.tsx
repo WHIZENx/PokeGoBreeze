@@ -65,7 +65,7 @@ const DynamicInputCP = (props: IDynamicInputCPComponent) => {
         <TextField
           {...params}
           label={props.label}
-          inputProps={{ ...params.inputProps, pattern: '[0-9]*', inputMode: 'numeric', type: 'number', min: 0 }}
+          inputProps={{ ...params.inputProps, pattern: '[0-9]*', inputMode: 'numeric' }}
         />
       )}
     />

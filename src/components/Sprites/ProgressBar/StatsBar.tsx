@@ -7,8 +7,8 @@ import { Params } from '../../../util/constants';
 import { useNavigateToTop } from '../../../util/hooks/LinkToTop';
 
 interface Element {
-  isRank?: boolean;
-  statsPercent?: number;
+  $isRank?: boolean;
+  $statsPercent?: number;
 }
 
 const ComponentBar = styled.div<Element>`
@@ -17,7 +17,7 @@ const ComponentBar = styled.div<Element>`
 
 const BoxText = styled.div<Element>`
   position: absolute !important;
-  justify-content: ${(props) => (props.isRank ? 'flex-end' : 'flex-start')} !important;
+  justify-content: ${(props) => (props.$isRank ? 'flex-end' : 'flex-start')} !important;
   display: flex !important;
   width: 100% !important;
 `;
@@ -27,7 +27,7 @@ const Bar = styled.div.attrs({
   'aria-valuemin': 0,
   'aria-valuemax': 100,
 })<Element>`
-  width: ${(props) => props.statsPercent}%;
+  width: ${(props) => props.$statsPercent}%;
 `;
 
 const StatsBar = (props: IStatsBarComponent) => {
@@ -53,10 +53,10 @@ const StatsBar = (props: IStatsBarComponent) => {
       <Bar
         className={combineClasses('progress-bar', props.class)}
         aria-valuenow={props.statsPercent}
-        statsPercent={props.statsPercent}
+        $statsPercent={props.statsPercent}
       />
       {props.pokemonStatsRank && !isUndefined(props.rank) && (
-        <BoxText className="box-text rank-text" isRank>
+        <BoxText className="box-text rank-text" $isRank={true}>
           <span>
             Rank: {props.rank} / {props.pokemonStatsRank.maxRank}
           </span>

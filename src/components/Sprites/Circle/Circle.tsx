@@ -3,21 +3,21 @@ import styled from 'styled-components';
 import { ICircleComponent } from '../../models/component.model';
 
 interface Element {
-  line: number;
-  size: number;
-  color: string;
+  $line: number;
+  $size: number;
+  $color: string;
 }
 
 const Fill = styled.div<Element>`
-  border: ${(props) => props.line}px solid ${(props) => props.color};
+  border: ${(props) => props.$line}px solid ${(props) => props.$color};
   border-radius: 50%;
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
+  width: ${(props) => props.$size}px;
+  height: ${(props) => props.$size}px;
   transition: 0.1s;
 `;
 
 const Circle = (props: ICircleComponent) => {
-  return <Fill {...props} />;
+  return <Fill $line={props.line} $size={props.size} $color={props.color} />;
 };
 
 export default Circle;

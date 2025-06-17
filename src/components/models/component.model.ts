@@ -459,6 +459,7 @@ export interface ICustomDataTableProps<T> extends Partial<TableProps<T>> {
   isShowModalOptions?: boolean;
   titleModalOptions?: string;
   customOptionsModal?: () => React.ReactNode;
+  isXFixed?: boolean;
 }
 
 export interface ITableMoveComponent {
