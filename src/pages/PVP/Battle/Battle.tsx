@@ -26,6 +26,10 @@ import {
 } from '../../../util/calculate';
 import {
   BATTLE_DELAY,
+  DEFAULT_AMOUNT,
+  DEFAULT_BLOCK,
+  DEFAULT_PLUS_SIZE,
+  DEFAULT_SIZE,
   FORM_SHADOW,
   MAX_ENERGY,
   MAX_IV,
@@ -85,7 +89,6 @@ import {
 } from '../models/battle.model';
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../util/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
-import { DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from './Constants';
 import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
