@@ -41,7 +41,10 @@ import {
 } from '../../../utils/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
-import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
+import Timeline from './Timeline/Timeline';
+import TimelineFit from './Timeline/TimelineFit';
+import TimelineVertical from './Timeline/TimelineVertical';
+
 import {
   Checkbox,
   FormControl,
@@ -1762,14 +1765,14 @@ const Battle = () => {
                         <CustomToggle eventKey="0" />
                       </Card.Header>
                       <Accordion.Collapse eventKey="0">
-                        <Card.Body className="p-0">{TimeLineVertical(pokemonCurr, pokemonObj)}</Card.Body>
+                        <Card.Body className="p-0">{TimelineVertical(pokemonCurr, pokemonObj)}</Card.Body>
                       </Accordion.Collapse>
                     </Card>
                   </Accordion>
                   <div>
                     {timelineType === TimelineType.Normal ? (
                       <Fragment>
-                        {TimeLine(
+                        {Timeline(
                           pokemonCurr,
                           pokemonObj,
                           timelineNormalContainer as React.LegacyRef<HTMLDivElement>,
@@ -1782,7 +1785,7 @@ const Battle = () => {
                       </Fragment>
                     ) : (
                       <Fragment>
-                        {TimeLineFit(
+                        {TimelineFit(
                           pokemonCurr,
                           pokemonObj,
                           timelineFit as React.LegacyRef<HTMLDivElement>,
