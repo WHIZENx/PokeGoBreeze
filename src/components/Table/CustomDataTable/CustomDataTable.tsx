@@ -10,7 +10,7 @@ import { isNotEmpty } from '../../../utils/extension';
 import { debounce } from 'lodash';
 import { VariantType } from '../../../enums/type.enum';
 import CustomInput from '../../Input/CustomInput';
-import { StyleSheetConfig } from '../../../utils/configs/style-sheet-config';
+import { StyleSheetConfig } from '../../../utils/configs/style-sheet.config';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {

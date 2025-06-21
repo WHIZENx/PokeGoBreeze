@@ -49,7 +49,7 @@ import {
 } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
-import { SortType } from '../enums/pvp-ranking-enum';
+import { SortType } from '../enums/pvp-ranking.enum';
 import { PokemonType } from '../../../enums/type.enum';
 import HeaderPVP from '../components/HeaderPVP';
 import BodyPVP from '../components/BodyPVP';
