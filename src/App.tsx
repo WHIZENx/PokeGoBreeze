@@ -50,7 +50,7 @@ import { RouterState, StoreState, TimestampState } from './store/models/state.mo
 import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import { clearLocalStorageExcept } from './store/local-storage-config';
+import { clearLocalStorageExcept } from './utils/configs/local-storage-config';
 import { getStyleList } from './utils/utils';
 
 const ColorModeContext = createContext({
