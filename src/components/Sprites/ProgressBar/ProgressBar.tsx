@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { IProgressBarComponent } from '../../models/component.model';
-import { toNumber } from '../../../util/extension';
+import { toNumber } from '../../../utils/extension';
 
 interface Element {
   $height: number;

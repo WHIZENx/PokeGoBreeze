@@ -2,7 +2,7 @@ import React from 'react';
 import { HeaderComponent } from '../models/component.model';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
-import { splitAndCapitalize, getMoveType } from '../../../util/utils';
+import { splitAndCapitalize, getMoveType } from '../../../utils/utils';
 
 const HeaderPVP = (props: HeaderComponent) => {
   return (

@@ -2,8 +2,8 @@ import React from 'react';
 import APIService from '../../services/API.service';
 import { IGenderComponent } from '../models/component.model';
 import { TypeSex } from '../../enums/type.enum';
-import { getKeyWithData } from '../../util/utils';
-import { getValueOrDefault } from '../../util/extension';
+import { getKeyWithData } from '../../utils/utils';
+import { getValueOrDefault } from '../../utils/extension';
 
 const Gender = (props: IGenderComponent) => {
   return (

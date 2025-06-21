@@ -7,8 +7,11 @@ const { Readable } = require('stream');
  * Generate a sitemap for PokeGoBreeze including both static and dynamic routes
  */
 async function generateSitemap() {
-  // Base URL of your production site
-  const baseUrl = process.env.REACT_APP_BASE_URL || 'https://poke-go-breeze.vercel.app';
+  // Base URL of your production site - prioritize Vercel's environment variables
+  // VERCEL_URL is automatically set by Vercel during deployment
+  const baseUrl =
+    process.env.REACT_APP_BASE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://poke-go-breeze.vercel.app');
 
   // Get current date for lastmod
   const lastmod = new Date().toISOString().split('T')[0];

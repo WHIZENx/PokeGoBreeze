@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
-import { capitalize } from '../../../util/utils';
+import { capitalize } from '../../../utils/utils';
 
 import './Type.scss';
 import { ITypeComponent } from '../../models/component.model';
-import { isNotEmpty, combineClasses, toNumber } from '../../../util/extension';
+import { isNotEmpty, combineClasses, toNumber } from '../../../utils/extension';
 import IconType from '../Icon/Type/Type';
 
 const TypeInfo = (props: ITypeComponent) => {

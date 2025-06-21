@@ -1,4 +1,4 @@
-import { BattleBaseStats, IBattleBaseStats } from '../../../util/models/calculate.model';
+import { BattleBaseStats, IBattleBaseStats } from '../../../utils/models/calculate.model';
 
 export interface IPokemonAllStats {
   id: number;

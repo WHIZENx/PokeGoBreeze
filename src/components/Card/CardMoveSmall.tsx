@@ -2,11 +2,11 @@ import React, { Fragment, useEffect, useState } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ICardSmallComponent } from '../models/component.model';
-import { combineClasses, isEqual, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEqual, isNotEmpty } from '../../utils/extension';
 import { MoveType } from '../../enums/type.enum';
 import { ICombat } from '../../core/models/combat.model';
 import IconType from '../Sprites/Icon/Type/Type';

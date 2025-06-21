@@ -1,5 +1,5 @@
 import { Color, IColor } from '../../../../core/models/candy.model';
-import { DynamicObj } from '../../../../util/extension';
+import { DynamicObj } from '../../../../utils/extension';
 
 export interface IColorTone {
   number: number;

@@ -12,7 +12,7 @@ import {
   isSpecialFormType,
   getKeyWithData,
   getCustomThemeDataTable,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -36,10 +36,10 @@ import {
   StatsSta,
 } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
-import { useTitle } from '../../../util/hooks/useTitle';
-import { FORM_NORMAL, Params } from '../../../util/constants';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { FORM_NORMAL, Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
-import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   DynamicObj,
@@ -52,9 +52,9 @@ import {
   isNullOrUndefined,
   isNumber,
   toNumber,
-} from '../../../util/extension';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+} from '../../../utils/extension';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 import { Action } from 'history';

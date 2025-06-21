@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import APIService from '../../../services/API.service';
-import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './TypeBadge.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { ITypeBadgeComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../utils/extension';
 import { MoveType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
   const combat = useSelector((state: StoreState) => state.store.data.combats);

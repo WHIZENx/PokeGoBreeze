@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { predictCPList } from '../../util/calculate';
-import { IPredictCPCalculate } from '../../util/models/calculate.model';
+import { predictCPList } from '../../utils/calculate';
+import { IPredictCPCalculate } from '../../utils/models/calculate.model';
 import { IDynamicInputCPComponent } from '../models/component.model';
-import { getValueOrDefault, isNullOrUndefined } from '../../util/extension';
-import { isInvalidIV } from '../../util/utils';
+import { getValueOrDefault, isNullOrUndefined } from '../../utils/extension';
+import { isInvalidIV } from '../../utils/utils';
 
 const DynamicInputCP = (props: IDynamicInputCPComponent) => {
   const [preCpArr, setPreCpArr] = useState<IPredictCPCalculate>();

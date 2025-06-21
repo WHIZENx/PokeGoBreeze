@@ -1,7 +1,7 @@
 import { BadgeType } from '../../../../components/Input/enums/badge-type.enum';
 import { IEncounter } from '../../../../core/models/pokemon.model';
 import { ThrowType } from '../../../../enums/type.enum';
-import { DynamicObj } from '../../../../util/extension';
+import { DynamicObj } from '../../../../utils/extension';
 import { ItemName } from '../../../News/enums/item-type.enum';
 import { PokeBallType } from '../enums/poke-ball.enum';
 

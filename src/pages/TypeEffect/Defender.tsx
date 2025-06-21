@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../util/utils';
+import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../utils/utils';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
-import { DynamicObj, getValueOrDefault, isEmpty, isEqual } from '../../util/extension';
+import { DynamicObj, getValueOrDefault, isEmpty, isEqual } from '../../utils/extension';
 import { PokemonTypeBadge } from '../../core/models/type.model';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 

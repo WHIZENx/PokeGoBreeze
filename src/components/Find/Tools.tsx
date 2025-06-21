@@ -1,16 +1,16 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import Stats from '../Info/Stats/Stats';
-import { calculateRaidStat } from '../../util/calculate';
+import { calculateRaidStat } from '../../utils/calculate';
 
 import { Form } from 'react-bootstrap';
-import { RAID_BOSS_TIER } from '../../util/constants';
+import { RAID_BOSS_TIER } from '../../utils/constants';
 
 import ATK_LOGO from '../../assets/attack.png';
 import DEF_LOGO from '../../assets/defense.png';
 import HP_LOGO from '../../assets/hp.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { getFormFromForms } from '../../util/utils';
+import { getFormFromForms } from '../../utils/utils';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../store/models/state.model';
 import {
@@ -25,7 +25,7 @@ import {
 } from '../../core/models/stats.model';
 import { IToolsComponent } from '../models/component.model';
 import { PokemonClass, PokemonType, TypeAction } from '../../enums/type.enum';
-import { isNotEmpty, isUndefined, toNumber } from '../../util/extension';
+import { isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
 
 const Tools = (props: IToolsComponent) => {
   const pokemonData = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);

@@ -2,14 +2,14 @@ import { Badge } from '@mui/material';
 import React, { Fragment } from 'react';
 import APIService from '../../../services/API.service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 import CloseIcon from '@mui/icons-material/Close';
 import { IPokemonBattle } from '../models/battle.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { AttackType } from './enums/attack-type.enum';
-import { combineClasses, isNotEmpty } from '../../../util/extension';
+import { combineClasses, isNotEmpty } from '../../../utils/extension';
 import { TypeAction } from '../../../enums/type.enum';
-import { TimelineElement, TimelineEvent } from '../../../util/models/overrides/dom.model';
+import { TimelineElement, TimelineEvent } from '../../../utils/models/overrides/dom.model';
 
 export const TimeLineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattle, isHide = false) => {
   const renderMoveBadgeBorder = (move: ICombat | undefined, isBorder: boolean, isShowShadow = false) => {

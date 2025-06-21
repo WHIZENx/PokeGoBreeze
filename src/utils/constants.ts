@@ -383,3 +383,11 @@ export const genRoman = (gen: number | string) => {
 
 export const leaguesDefault = [BattleLeagueIconType.Great, BattleLeagueIconType.Ultra, BattleLeagueIconType.Master];
 export const levelList = Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5);
+
+// PVP Battle
+export const DEFAULT_SIZE = 12;
+export const DEFAULT_PLUS_SIZE = 2;
+
+export const DEFAULT_AMOUNT = 16;
+
+export const DEFAULT_BLOCK = 2;

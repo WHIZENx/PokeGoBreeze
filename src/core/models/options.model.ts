@@ -1,6 +1,6 @@
 import { PokemonType } from '../../enums/type.enum';
-import { DynamicObj } from '../../util/extension';
-import { getPokemonType } from '../../util/utils';
+import { DynamicObj } from '../../utils/extension';
+import { getPokemonType } from '../../utils/utils';
 import { ConditionType, LeagueConditionType, QuestType } from '../enums/option.enum';
 import { Cost, IBonusEffect } from './combat.model';
 import { LeagueReward, SettingLeague } from './league.model';

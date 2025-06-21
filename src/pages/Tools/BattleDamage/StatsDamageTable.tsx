@@ -7,8 +7,8 @@ import {
   getDmgMultiplyBonus,
   getKeyWithData,
   isSpecialMegaFormType,
-} from '../../../util/utils';
-import { calculateStatsBattle } from '../../../util/calculate';
+} from '../../../utils/utils';
+import { calculateStatsBattle } from '../../../utils/calculate';
 
 import APIService from '../../../services/API.service';
 
@@ -16,11 +16,11 @@ import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import { useSelector } from 'react-redux';
-import { MAX_IV, MAX_LEVEL, MIN_LEVEL } from '../../../util/constants';
+import { MAX_IV, MAX_LEVEL, MIN_LEVEL } from '../../../utils/constants';
 import { StoreState } from '../../../store/models/state.model';
 import { IStatsTableComponent } from '../../models/page.model';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
-import { toNumber } from '../../../util/extension';
+import { toNumber } from '../../../utils/extension';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const globalOptions = useSelector((state: StoreState) => state.store.data.options);

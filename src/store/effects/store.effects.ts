@@ -26,9 +26,9 @@ import APIService from '../../services/API.service';
 import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { APITreeRoot, APITree } from '../../services/models/api.model';
-import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../util/constants';
+import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../utils/constants';
 import { SpinnerActions, StatsActions, StoreActions, TimestampActions } from '../actions';
-import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import { TimestampModel } from '../reducers/timestamp.reducer';
 import { IDataModel } from '../models/store.model';
 

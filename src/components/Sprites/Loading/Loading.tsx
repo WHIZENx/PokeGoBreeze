@@ -4,7 +4,7 @@ import { ILoadingComponent } from '../../models/component.model';
 
 import '../../../App.scss';
 import LoadGroup from './LoadingGroup';
-import { getValueOrDefault } from '../../../util/extension';
+import { getValueOrDefault } from '../../../utils/extension';
 
 interface Element {
   $isShow: boolean;

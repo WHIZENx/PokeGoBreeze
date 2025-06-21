@@ -29,7 +29,7 @@ import {
   getItemSpritePath,
   isSpecialMegaFormType,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 
 import { OverlayTrigger } from 'react-bootstrap';
 import CustomPopover from '../../Popover/CustomPopover';
@@ -37,12 +37,12 @@ import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { RouterState, StoreState } from '../../../store/models/state.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
-import { FORM_NORMAL, FORM_STANDARD } from '../../../util/constants';
+import { FORM_NORMAL, FORM_STANDARD } from '../../../utils/constants';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
 import {
   IInfoEvoChain,

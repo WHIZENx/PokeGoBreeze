@@ -1,5 +1,5 @@
 import APIService from '../../services/API.service';
-import { splitAndCapitalize } from '../../util/utils';
+import { splitAndCapitalize } from '../../utils/utils';
 import { IPokemonData } from './pokemon.model';
 
 export interface IPokemonSearching {

@@ -4,15 +4,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useRef, useState } from 'react';
 
 import './Select.scss';
-import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../util/utils';
+import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/API.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUndefined } from '../../util/extension';
-import { IncludeMode } from '../../util/enums/string.enum';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUndefined } from '../../utils/extension';
+import { IncludeMode } from '../../utils/enums/string.enum';
 import { SelectPosition } from './enums/input-type.enum';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {

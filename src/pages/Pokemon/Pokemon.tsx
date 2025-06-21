@@ -41,14 +41,14 @@ import {
   getValidPokemonImgPath,
   isSpecialFormType,
   splitAndCapitalize,
-} from '../../util/utils';
+} from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
 import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_STANDARD } from '../../util/constants';
+import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_STANDARD } from '../../utils/constants';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
@@ -63,15 +63,15 @@ import {
   isNullOrUndefined,
   isUndefined,
   toNumber,
-} from '../../util/extension';
+} from '../../utils/extension';
 import { LocationState } from '../../core/models/router.model';
-import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonType, TypeAction, VariantType } from '../../enums/type.enum';
-import { useNavigateToTop } from '../../util/hooks/LinkToTop';
+import { useNavigateToTop } from '../../utils/hooks/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
-import { useTitle } from '../../util/hooks/useTitle';
-import { TitleSEOProps } from '../../util/models/hook.model';
+import { useTitle } from '../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../utils/models/hook.model';
 
 interface ITypeCost {
   purified: PokemonTypeCost;

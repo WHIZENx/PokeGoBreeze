@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import './Hexagon.scss';
 import { HexagonStats, IHexagonStats } from '../../../core/models/stats.model';
 import { IHexagonComponent } from '../../models/component.model';
-import { DynamicObj, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { DynamicObj, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { AnimationType } from './enums/hexagon.enum';
 
 interface IPointer {

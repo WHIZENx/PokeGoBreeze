@@ -9,28 +9,28 @@ import {
   getValidPokemonImgPath,
   replaceTempMovePvpName,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { calculateStatsByTag } from '../../../util/calculate';
+import { calculateStatsByTag } from '../../../utils/calculate';
 import {
   computeBgType,
   findAssetForm,
   getPokemonBattleLeagueIcon,
   getPokemonBattleLeagueName,
-} from '../../../util/compute';
+} from '../../../utils/compute';
 
 import Error from '../../Error/Error';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { Button } from 'react-bootstrap';
-import { FORM_SHADOW, Params } from '../../../util/constants';
+import { FORM_SHADOW, Params } from '../../../utils/constants';
 import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
-import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../utils/extension';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { PokemonType } from '../../../enums/type.enum';
 import HeaderPVP from '../components/HeaderPVP';
@@ -38,14 +38,14 @@ import BodyPVP from '../components/BodyPVP';
 import MoveSet from '../components/MoveSet';
 import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
-import { ScoreType } from '../../../util/enums/constants.enum';
+import { ScoreType } from '../../../utils/enums/constants.enum';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
-import { getValueOrDefault } from '../../../util/extension';
+import { getValueOrDefault } from '../../../utils/extension';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
-import { useTitle } from '../../../util/hooks/useTitle';
-import { TitleSEOProps } from '../../../util/models/hook.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../../utils/models/hook.model';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();

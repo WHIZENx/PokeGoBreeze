@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 
-import { raidEgg } from '../../util/compute';
-import { RAID_BOSS_TIER } from '../../util/constants';
-import { calculateRaidCP, calculateRaidStat } from '../../util/calculate';
+import { raidEgg } from '../../utils/compute';
+import { RAID_BOSS_TIER } from '../../utils/constants';
+import { calculateRaidCP, calculateRaidStat } from '../../utils/calculate';
 
 import ATK_LOGO from '../../assets/attack.png';
 import DEF_LOGO from '../../assets/defense.png';
@@ -11,9 +11,9 @@ import STA_LOGO from '../../assets/stamina.png';
 
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { getKeyWithData, isSpecialMegaFormType } from '../../util/utils';
+import { getKeyWithData, isSpecialMegaFormType } from '../../utils/utils';
 import { IRaidComponent } from '../models/component.model';
-import { toNumber } from '../../util/extension';
+import { toNumber } from '../../utils/extension';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 
 const Raid = (props: IRaidComponent) => {

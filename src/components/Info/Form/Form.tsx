@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FORM_NORMAL, Params } from '../../../util/constants';
+import { FORM_NORMAL, Params } from '../../../utils/constants';
 import {
   capitalize,
   formIconAssets,
@@ -11,7 +11,7 @@ import {
   getPokemonFormWithNoneSpecialForm,
   isSpecialFormType,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import APIService from '../../../services/API.service';
 
 import './Form.scss';
@@ -27,8 +27,8 @@ import { RouterState, SearchingState, StatsState } from '../../../store/models/s
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { SearchingActions } from '../../../store/actions';

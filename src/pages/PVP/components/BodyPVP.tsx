@@ -5,8 +5,8 @@ import TypeInfo from '../../../components/Sprites/Type/Type';
 import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/API.service';
-import { findAssetForm, computeBgType } from '../../../util/compute';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { findAssetForm, computeBgType } from '../../../utils/compute';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
 import {
   convertNameRankingToOri,
   convertNameRankingToForm,
@@ -14,13 +14,13 @@ import {
   getValidPokemonImgPath,
   getPokemonType,
   getKeyWithData,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import { BodyModel, IBody } from '../models/body.model';
-import { FORM_SHADOW, Params } from '../../../util/constants';
-import { IncludeMode } from '../../../util/enums/string.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { FORM_SHADOW, Params } from '../../../utils/constants';
+import { IncludeMode } from '../../../utils/enums/string.enum';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { ScoreType } from '../../../util/enums/constants.enum';
+import { ScoreType } from '../../../utils/enums/constants.enum';
 
 const BodyPVP = (props: BodyComponent) => {
   const [matchups, setMatchups] = useState<IBody[]>();

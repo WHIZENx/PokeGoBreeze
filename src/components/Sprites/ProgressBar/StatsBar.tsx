@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { IStatsBarComponent } from '../../models/component.model';
-import { combineClasses, getValueOrDefault, isUndefined } from '../../../util/extension';
-import { generateParamForm } from '../../../util/utils';
-import { Params } from '../../../util/constants';
-import { useNavigateToTop } from '../../../util/hooks/LinkToTop';
+import { combineClasses, getValueOrDefault, isUndefined } from '../../../utils/extension';
+import { generateParamForm } from '../../../utils/utils';
+import { Params } from '../../../utils/constants';
+import { useNavigateToTop } from '../../../utils/hooks/LinkToTop';
 
 interface Element {
   $isRank?: boolean;

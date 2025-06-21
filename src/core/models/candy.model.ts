@@ -1,4 +1,4 @@
-import { toNumber } from '../../util/extension';
+import { toNumber } from '../../utils/extension';
 
 const convertHexByRgba = (color: string) =>
   `#${color

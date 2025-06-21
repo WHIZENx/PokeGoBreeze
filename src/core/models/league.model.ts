@@ -1,6 +1,6 @@
 import { PokemonType } from '../../enums/type.enum';
-import { DynamicObj } from '../../util/extension';
-import { getPokemonType } from '../../util/utils';
+import { DynamicObj } from '../../utils/extension';
+import { getPokemonType } from '../../utils/utils';
 import { LeagueBattleType, LeagueType, RewardType } from '../enums/league.enum';
 import { IPokemonPermission } from './options.model';
 

@@ -1,5 +1,5 @@
 import { PokemonType } from '../../enums/type.enum';
-import { getPokemonType } from '../../util/utils';
+import { getPokemonType } from '../../utils/utils';
 import { GenderType } from '../enums/asset.enum';
 
 export interface IImage {

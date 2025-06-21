@@ -2,19 +2,19 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { leaguesTeamBattle } from '../../util/constants';
+import { leaguesTeamBattle } from '../../utils/constants';
 import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { Link } from 'react-router-dom';
 import { SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
-import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../util/compute';
-import { useTitle } from '../../util/hooks/useTitle';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../utils/compute';
+import { useTitle } from '../../utils/hooks/useTitle';
 import { SpinnerActions } from '../../store/actions';
-import { getTime } from '../../util/utils';
-import { isEqual, isInclude, isNotEmpty } from '../../util/extension';
-import { EqualMode } from '../../util/enums/string.enum';
+import { getTime } from '../../utils/utils';
+import { isEqual, isInclude, isNotEmpty } from '../../utils/extension';
+import { EqualMode } from '../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../core/enums/league.enum';
-import { BattleLeagueIconType } from '../../util/enums/compute.enum';
+import { BattleLeagueIconType } from '../../utils/enums/compute.enum';
 
 interface IOptionsHome {
   rank?: PVPInfo;

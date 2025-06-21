@@ -11,8 +11,8 @@ import {
   getKeysObj,
   getAllMoves,
   isSpecialMegaFormType,
-} from '../../../util/utils';
-import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+} from '../../../utils/utils';
+import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../utils/constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -22,7 +22,7 @@ import {
   TimeToKill,
   calculateBattleDPSDefender,
   calculateStatsBattle,
-} from '../../../util/calculate';
+} from '../../../utils/calculate';
 
 import APIService from '../../../services/API.service';
 
@@ -43,11 +43,11 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
-import { BattleCalculate } from '../../../util/models/calculate.model';
-import { useTitle } from '../../../util/hooks/useTitle';
+import { BattleCalculate } from '../../../utils/models/calculate.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
 import { OptionsActions } from '../../../store/actions';
-import { SortOrderType, TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { SortOrderType, TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   DynamicObj,
@@ -61,12 +61,12 @@ import {
   toFloat,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { InputType } from '../../../components/Input/enums/input-type.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 import { TypeEff } from '../../../core/models/type-eff.model';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';

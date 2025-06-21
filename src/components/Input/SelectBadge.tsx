@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
-import { priorityBadge } from '../../util/compute';
-import { capitalize, getDataWithKey, getKeysObj, getKeyWithData } from '../../util/utils';
+import { priorityBadge } from '../../utils/compute';
+import { capitalize, getDataWithKey, getKeysObj, getKeyWithData } from '../../utils/utils';
 import { ISelectBadgeComponent } from '../models/component.model';
-import { combineClasses } from '../../util/extension';
+import { combineClasses } from '../../utils/extension';
 import { BadgeType } from './enums/badge-type.enum';
 
 const SelectBadge = (props: ISelectBadgeComponent) => {

@@ -1,5 +1,5 @@
 import { IImage } from '../../../../core/models/asset.model';
-import { getValueOrDefault, isEqual } from '../../../../util/extension';
+import { getValueOrDefault, isEqual } from '../../../../utils/extension';
 
 export interface IPokemonModelComponent {
   name: string;

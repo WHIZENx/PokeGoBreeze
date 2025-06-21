@@ -6,15 +6,15 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, mappingPokemonName } from '../../../util/utils';
+import { getPokemonById, mappingPokemonName } from '../../../utils/utils';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
-import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/constants';
+import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../utils/constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
-import { useTitle } from '../../../util/hooks/useTitle';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
-import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
 

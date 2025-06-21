@@ -1,9 +1,9 @@
 import React from 'react';
 import { IIconTypeComponent } from '../../../models/component.model';
 import APIService from '../../../../services/API.service';
-import { EqualMode } from '../../../../util/enums/string.enum';
-import { combineClasses, isEqual } from '../../../../util/extension';
-import { capitalize, getDataWithKey } from '../../../../util/utils';
+import { EqualMode } from '../../../../utils/enums/string.enum';
+import { combineClasses, isEqual } from '../../../../utils/extension';
+import { capitalize, getDataWithKey } from '../../../../utils/utils';
 import { PokemonTypeBadge } from '../../../../core/models/type.model';
 
 import Bug from '../../../../assets/types/POKEMON_TYPE_BUG.png';

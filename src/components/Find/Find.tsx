@@ -3,14 +3,14 @@ import APIService from '../../services/API.service';
 import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, mappingPokemonName } from '../../util/utils';
+import { getPokemonById, mappingPokemonName } from '../../utils/utils';
 import { SearchingState, StatsState, StoreState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
 import { TypeAction } from '../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../util/extension';
-import { IncludeMode } from '../../util/enums/string.enum';
+import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
+import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
 

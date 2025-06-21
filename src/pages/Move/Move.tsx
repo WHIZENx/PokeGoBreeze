@@ -10,9 +10,9 @@ import {
   getItemSpritePath,
   getKeyWithData,
   splitAndCapitalize,
-} from '../../util/utils';
-import { Params, STAB_MULTIPLY } from '../../util/constants';
-import { getBarCharge, queryTopMove } from '../../util/calculate';
+} from '../../utils/utils';
+import { Params, STAB_MULTIPLY } from '../../utils/constants';
+import { getBarCharge, queryTopMove } from '../../utils/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
@@ -32,9 +32,9 @@ import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } fro
 import { StoreState } from '../../store/models/state.model';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
-import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
+import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
 import { IMovePage } from '../models/page.model';
-import { TableColumnModify } from '../../util/models/overrides/data-table.model';
+import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   getValueOrDefault,
@@ -45,17 +45,17 @@ import {
   toFloat,
   toFloatWithPadding,
   toNumber,
-} from '../../util/extension';
-import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
+} from '../../utils/extension';
+import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonTypeBadge } from '../../core/models/type.model';
-import { LinkToTop } from '../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../components/models/component.model';
-import { useTitle } from '../../util/hooks/useTitle';
-import { TitleSEOProps } from '../../util/models/hook.model';
+import { useTitle } from '../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../utils/models/hook.model';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();

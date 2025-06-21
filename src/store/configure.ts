@@ -9,7 +9,7 @@ import { createRouterMiddleware } from './middleware/router.middleware';
 import { legacy_createStore as createStore } from 'redux';
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import localForage from 'localforage';
-import { PersistTimeout, PersistKey } from '../util/constants';
+import { PersistTimeout, PersistKey } from '../utils/constants';
 import CryptoJS from 'crypto-js';
 import { LocalForageConfig } from './constants/local-forage';
 

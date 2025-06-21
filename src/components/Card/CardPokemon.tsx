@@ -1,8 +1,8 @@
 import React from 'react';
 import APIService from '../../services/API.service';
-import { splitAndCapitalize } from '../../util/utils';
+import { splitAndCapitalize } from '../../utils/utils';
 import { ICardPokemonComponent } from '../models/component.model';
-import { isNullOrUndefined } from '../../util/extension';
+import { isNullOrUndefined } from '../../utils/extension';
 import PokemonIconType from '../Sprites/PokemonIconType/PokemonIconType';
 
 const CardPokemon = (props: ICardPokemonComponent) => {

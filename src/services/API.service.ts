@@ -12,14 +12,14 @@ import {
   FORM_PRIMAL,
   FORM_STANDARD,
   PATH_ASSET_POKEGO,
-} from '../util/constants';
+} from '../utils/constants';
 import { Species } from '../core/models/API/species.model';
-import { getValueOrDefault, isEqual, isInclude } from '../util/extension';
-import { EqualMode, IncludeMode } from '../util/enums/string.enum';
+import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
+import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
-import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../util/utils';
+import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../utils/utils';
 import { PokemonTypeBadge } from '../core/models/type.model';
-import { ScoreType } from '../util/enums/constants.enum';
+import { ScoreType } from '../utils/enums/constants.enum';
 
 class APIService {
   date: Date;

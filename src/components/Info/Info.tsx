@@ -6,9 +6,9 @@ import TypeInfo from '../Sprites/Type/Type';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
-import { isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
-import { IncludeMode } from '../../util/enums/string.enum';
-import { getMultiplyTypeEffect } from '../../util/utils';
+import { isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
+import { IncludeMode } from '../../utils/enums/string.enum';
+import { getMultiplyTypeEffect } from '../../utils/utils';
 
 const Info = () => {
   const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);

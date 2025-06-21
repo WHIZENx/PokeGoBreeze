@@ -1,5 +1,5 @@
 import { PokemonType, ThrowType } from '../../enums/type.enum';
-import { MIN_LEVEL } from '../../util/constants';
+import { MIN_LEVEL } from '../../utils/constants';
 import { IPokemonFormModify } from './API/form.model';
 import { ICombat } from './combat.model';
 

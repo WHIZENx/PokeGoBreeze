@@ -7,9 +7,9 @@ import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from './models/select-move.model';
-import { addSelectMovesByType, retrieveMoves } from '../../util/utils';
+import { addSelectMovesByType, retrieveMoves } from '../../utils/utils';
 import { ISelectMoveComponent } from '../models/component.model';
-import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../util/extension';
+import { combineClasses, isEqual, isNotEmpty, isUndefined, toNumber } from '../../utils/extension';
 import { InputType, SelectPosition } from './enums/input-type.enum';
 
 const SelectMove = (props: ISelectMoveComponent) => {

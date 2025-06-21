@@ -6,7 +6,7 @@ import Effect from './Effect';
 import './Weather.scss';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
-import { useTitle } from '../../util/hooks/useTitle';
+import { useTitle } from '../../utils/hooks/useTitle';
 
 const Weather = () => {
   useTitle({
