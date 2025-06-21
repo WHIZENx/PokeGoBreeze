@@ -1,5 +1,5 @@
 import { MoveType, PokemonType } from '../../../enums/type.enum';
-import { getValueOrDefault } from '../../../util/extension';
+import { getValueOrDefault } from '../../../utils/extension';
 
 export interface ISelectMoveModel {
   name: string;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { IHpBarComponent } from '../../models/component.model';
-import { toNumber } from '../../../util/extension';
+import { toNumber } from '../../../utils/extension';
 
 interface Element {
   $hp?: number;

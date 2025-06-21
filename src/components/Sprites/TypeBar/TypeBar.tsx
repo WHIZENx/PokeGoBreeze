@@ -1,9 +1,9 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize } from '../../../util/utils';
+import { splitAndCapitalize } from '../../../utils/utils';
 import './TypeBar.scss';
 import { ITypeBarComponent } from '../../models/component.model';
-import { combineClasses } from '../../../util/extension';
+import { combineClasses } from '../../../utils/extension';
 
 const TypeBar = (props: ITypeBarComponent) => {
   return (

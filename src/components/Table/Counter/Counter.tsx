@@ -9,9 +9,9 @@ import {
   getValidPokemonImgPath,
   isSpecialMegaFormType,
   splitAndCapitalize,
-} from '../../../util/utils';
-import { findAssetForm } from '../../../util/compute';
-import { counterPokemon } from '../../../util/calculate';
+} from '../../../utils/utils';
+import { findAssetForm } from '../../../utils/compute';
+import { counterPokemon } from '../../../utils/calculate';
 
 import './Counter.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ import { TableStyles } from 'react-data-table-component';
 import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
 import { ColumnType, MoveType, PokemonType } from '../../../enums/type.enum';
-import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   DynamicObj,
@@ -32,16 +32,16 @@ import {
   toFloat,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+} from '../../../utils/extension';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { OptionsActions } from '../../../store/actions';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
-import { FloatPaddingOption } from '../../../util/models/extension.model';
-import { COUNTER_DELAY } from '../../../util/constants';
+import { FloatPaddingOption } from '../../../utils/models/extension.model';
+import { COUNTER_DELAY } from '../../../utils/constants';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
 
 const customStyles: TableStyles = {

@@ -1,12 +1,12 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
+import { getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ISearchBarComponent } from '../../models/page.model';
 import { Action } from 'history';
-import { combineClasses } from '../../../util/extension';
+import { combineClasses } from '../../../utils/extension';
 import { RouterState } from '../../../store/models/state.model';
 import { useSelector } from 'react-redux';
 

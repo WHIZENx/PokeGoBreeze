@@ -11,7 +11,7 @@ import update from 'immutability-helper';
 import { PokemonType, TypeMove } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
 import { IPokemonRaidComponent } from '../models/component.model';
-import { combineClasses } from '../../util/extension';
+import { combineClasses } from '../../utils/extension';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
 import { SelectMovePokemonModel } from '../Input/models/select-move.model';
 

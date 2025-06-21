@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import { ICustomInputComponent } from '../models/component.model';
 import { Menu, MenuItem } from '@mui/material';
-import { isNotEmpty } from '../../util/extension';
+import { isNotEmpty } from '../../utils/extension';
 
 const CustomInput = (props: ICustomInputComponent) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement>();

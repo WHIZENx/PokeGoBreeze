@@ -3,9 +3,9 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
-import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../util/utils';
-import { MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../util/constants';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
+import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
+import { MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../utils/constants';
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 
 import './Damage.scss';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -18,13 +18,13 @@ import Find from '../../../components/Find/Find';
 import StatsTable from './StatsDamageTable';
 
 import Move from '../../../components/Table/Move';
-import { findStabType } from '../../../util/compute';
+import { findStabType } from '../../../utils/compute';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
-import { useTitle } from '../../../util/hooks/useTitle';
-import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../util/extension';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 
 const labels: DynamicObj<ILabelDamage> = {

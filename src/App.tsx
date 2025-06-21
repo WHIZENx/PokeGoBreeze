@@ -41,8 +41,8 @@ import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { getDesignThemes } from './util/models/overrides/themes.model';
-import { LOAD_DATA_DELAY, TRANSITION_TIME } from './util/constants';
+import { getDesignThemes } from './utils/models/overrides/themes.model';
+import { LOAD_DATA_DELAY, TRANSITION_TIME } from './utils/constants';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/local-storage';
@@ -51,7 +51,7 @@ import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './store/local-storage-config';
-import { getStyleList } from './util/utils';
+import { getStyleList } from './utils/utils';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,

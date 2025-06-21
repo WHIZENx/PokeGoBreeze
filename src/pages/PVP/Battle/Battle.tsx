@@ -10,20 +10,20 @@ import {
   getMoveType,
   getValidPokemonImgPath,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import {
   findAssetForm,
   findStabType,
   getPokemonBattleLeagueIcon,
   getPokemonBattleLeagueName,
-} from '../../../util/compute';
+} from '../../../utils/compute';
 import {
   calculateCP,
   calculateStatsBattle,
   calculateStatsByTag,
   getBaseStatsByIVandLevel,
   getTypeEffective,
-} from '../../../util/calculate';
+} from '../../../utils/calculate';
 import {
   BATTLE_DELAY,
   DEFAULT_AMOUNT,
@@ -38,7 +38,7 @@ import {
   MIN_IV,
   MIN_LEVEL,
   STAB_MULTIPLY,
-} from '../../../util/constants';
+} from '../../../utils/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import { TimeLine, TimeLineFit, TimeLineVertical } from './Timeline';
@@ -87,7 +87,7 @@ import {
   IPokemonBattle,
   ChargeType,
 } from '../models/battle.model';
-import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../util/models/calculate.model';
+import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
@@ -102,20 +102,20 @@ import {
   isUndefined,
   toFloat,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { BattleType, TimelineType } from './enums/battle.enum';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
-import { ScoreType } from '../../../util/enums/constants.enum';
-import { TimelineEvent } from '../../../util/models/overrides/dom.model';
-import { LinkToTop, useNavigateToTop } from '../../../util/hooks/LinkToTop';
+import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
+import { ScoreType } from '../../../utils/enums/constants.enum';
+import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
+import { LinkToTop, useNavigateToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats, StatsPokemonGO } from '../../../core/models/stats.model';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
-import { useTitle } from '../../../util/hooks/useTitle';
-import { TitleSEOProps } from '../../../util/models/hook.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../../utils/models/hook.model';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -219,10 +219,15 @@ const Battle = () => {
       disableCMovePri: poke.disableCMovePri,
     });
 
-  const getRandomInt = (min: number, max: number) => {
+  const getRandomNumber = (min: number, max: number, step = 1) => {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    if (step === 1) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    } else {
+      const steps = Math.floor((max - min) / step) + 1;
+      return min + Math.floor(Math.random() * steps) * step;
+    }
   };
 
   const battleAnimation = () => {
@@ -314,7 +319,7 @@ const Battle = () => {
         if ((!player1.disableCMovePri || !player1.disableCMoveSec) && !preChargeSec) {
           if (preRandomPlayer1 && !postRandomPlayer1) {
             postRandomPlayer1 = true;
-            chargeSlotPlayer1 = getRandomInt(ChargeType.Primary, ChargeType.Secondary);
+            chargeSlotPlayer1 = getRandomNumber(ChargeType.Primary, ChargeType.Secondary);
           }
           if (
             player1.energy >= Math.abs(player1.cMove.pvpEnergy) &&
@@ -361,7 +366,7 @@ const Battle = () => {
         if ((!player2.disableCMovePri || !player2.disableCMoveSec) && !preChargePri) {
           if (preRandomPlayer2 && !postRandomPlayer2) {
             postRandomPlayer2 = true;
-            chargeSlotPlayer2 = getRandomInt(ChargeType.Primary, ChargeType.Secondary);
+            chargeSlotPlayer2 = getRandomNumber(ChargeType.Primary, ChargeType.Secondary);
           }
           if (
             player2.energy >= Math.abs(player2.cMove.pvpEnergy) &&
@@ -689,18 +694,22 @@ const Battle = () => {
           tapSec = false;
           if (immunePri) {
             player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
-            const lastTapPos = timelinePri
-              .map((timeline) => timeline.isTap && !isUndefined(timeline.type))
-              .lastIndexOf(true);
-            const lastFastAtkPos = timelinePri.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
-            timelinePri[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
+            if (player2.hp > 0) {
+              const lastTapPos = timelinePri
+                .map((timeline) => timeline.isTap && !isUndefined(timeline.type))
+                .lastIndexOf(true);
+              const lastFastAtkPos = timelinePri.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
+              timelinePri[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
+            }
           } else if (immuneSec) {
             player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
-            const lastTapPos = timelineSec
-              .map((timeline) => timeline.isTap && !isUndefined(timeline.type))
-              .lastIndexOf(true);
-            const lastFastAtkPos = timelineSec.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
-            timelineSec[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
+            if (player1.hp > 0) {
+              const lastTapPos = timelineSec
+                .map((timeline) => timeline.isTap && !isUndefined(timeline.type))
+                .lastIndexOf(true);
+              const lastFastAtkPos = timelineSec.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
+              timelineSec[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
+            }
           }
           immunePri = false;
           immuneSec = false;
@@ -1218,10 +1227,10 @@ const Battle = () => {
   };
 
   const randomCP = (atk: number, def: number, sta: number) => {
-    const atkIV = getRandomInt(MIN_IV, MAX_IV);
-    const defIV = getRandomInt(MIN_IV, MAX_IV);
-    const staIV = getRandomInt(MIN_IV, MAX_IV);
-    const level = getRandomInt(MIN_LEVEL, MAX_LEVEL);
+    const atkIV = getRandomNumber(MIN_IV, MAX_IV);
+    const defIV = getRandomNumber(MIN_IV, MAX_IV);
+    const staIV = getRandomNumber(MIN_IV, MAX_IV);
+    const level = getRandomNumber(MIN_LEVEL, MAX_LEVEL, 0.5);
     const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
     return new StatsCalculate(atkIV, defIV, staIV, cp, level);
   };

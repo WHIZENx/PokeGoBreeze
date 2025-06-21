@@ -8,13 +8,13 @@ import {
   PokeGoSlider,
   splitAndCapitalize,
   TypeRadioGroup,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import {
   calculateBattleLeague,
   calculateBetweenLevel,
   calculateStats,
   calculateStatsBattle,
-} from '../../../util/calculate';
+} from '../../../utils/calculate';
 
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -31,13 +31,13 @@ import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../util/constants';
-import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../util/models/calculate.model';
+import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../utils/constants';
+import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
-import { useTitle } from '../../../util/hooks/useTitle';
-import { isUndefined, toNumber } from '../../../util/extension';
-import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { isUndefined, toNumber } from '../../../utils/extension';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 

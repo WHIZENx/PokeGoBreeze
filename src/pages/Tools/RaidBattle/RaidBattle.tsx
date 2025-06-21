@@ -15,16 +15,16 @@ import {
   isSpecialMegaFormType,
   retrieveMoves,
   splitAndCapitalize,
-} from '../../../util/utils';
-import { findAssetForm } from '../../../util/compute';
-import { DEFAULT_POKEMON_LEVEL, levelList, MAX_IV, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER } from '../../../util/constants';
+} from '../../../utils/utils';
+import { findAssetForm } from '../../../utils/compute';
+import { DEFAULT_POKEMON_LEVEL, levelList, MAX_IV, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER } from '../../../utils/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
   calculateStatsBattle,
   calculateStatsByTag,
   TimeToKill,
-} from '../../../util/calculate';
+} from '../../../utils/calculate';
 
 import { Badge, Checkbox, FormControlLabel, Switch } from '@mui/material';
 
@@ -64,8 +64,8 @@ import {
   SelectMovePokemonModel,
 } from '../../../components/Input/models/select-move.model';
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
-import { useTitle } from '../../../util/hooks/useTitle';
-import { BattleCalculate } from '../../../util/models/calculate.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { BattleCalculate } from '../../../utils/models/calculate.model';
 import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
@@ -77,7 +77,7 @@ import {
   toFloat,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import {
   BattleResult,
   MovePokemon,
@@ -92,7 +92,7 @@ import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { ICombat } from '../../../core/models/combat.model';
 import CustomPopover from '../../../components/Popover/CustomPopover';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IStatsIV, StatsIV } from '../../../core/models/stats.model';
 

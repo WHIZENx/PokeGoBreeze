@@ -1,8 +1,8 @@
 import { PokemonType } from '../../enums/type.enum';
 import { ArcheType } from '../../pages/PVP/enums/arche-type.enum';
 import { IPokemonTeamData } from '../../pages/PVP/models/battle.model';
-import { BattleLeagueCPType } from '../../util/enums/compute.enum';
-import { getPokemonType } from '../../util/utils';
+import { BattleLeagueCPType } from '../../utils/enums/compute.enum';
+import { getPokemonType } from '../../utils/utils';
 import { ICombat } from './combat.model';
 import { IPokemonData, PokemonData } from './pokemon.model';
 import { IHexagonStats, IStatsAtk, IStatsDef, IStatsPokemonGO, IStatsSta, StatsPokemonGO } from './stats.model';

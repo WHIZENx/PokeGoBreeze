@@ -10,10 +10,10 @@ import {
   StatsPokemonGO,
 } from '../../../core/models/stats.model';
 import { PokemonType } from '../../../enums/type.enum';
-import { DEFAULT_BLOCK } from '../../../util/constants';
-import { toNumber } from '../../../util/extension';
-import { IBattleBaseStats } from '../../../util/models/calculate.model';
-import { getPokemonType } from '../../../util/utils';
+import { DEFAULT_BLOCK } from '../../../utils/constants';
+import { toNumber } from '../../../utils/extension';
+import { IBattleBaseStats } from '../../../utils/models/calculate.model';
+import { getPokemonType } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
 
 export enum ChargeType {
