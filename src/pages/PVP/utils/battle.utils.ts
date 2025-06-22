@@ -4,7 +4,7 @@ import { IDataModel } from '../../../store/models/store.model';
 import { calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { findStabType } from '../../../utils/compute';
 import { DEFAULT_SIZE, MIN_LEVEL, STAB_MULTIPLY } from '../../../utils/constants';
-import { toNumber } from '../../../utils/extension';
+import { isNotEmpty, toNumber } from '../../../utils/extension';
 import { getDmgMultiplyBonus } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
 import { IPokemonBattleData, ITimeline, TimelineConfig, TimelineModel } from '../models/battle.model';
@@ -78,4 +78,43 @@ export const calculateMoveDmgActual = (
     );
   }
   return 1;
+};
+
+/**
+ * Efficiently finds the number of elements in an array of DOM rectangles that have
+ * their left positions less than or equal to the specified position.
+ * Uses binary search algorithm for O(log n) performance.
+ *
+ * @param arr - Array of DOM rectangles (or undefined values) to check against
+ * @param pos - The horizontal position (in pixels) to compare against. Defaults to 0
+ * @returns The number of elements with left position ≤ specified position, or -1 if array is invalid
+ */
+export const overlappingPos = (arr: (DOMRect | undefined)[], pos = 0) => {
+  if (!isNotEmpty(arr)) {
+    return -1;
+  }
+
+  let left = 0;
+  let right = arr.length - 1;
+  let index = 0;
+
+  if (pos < toNumber(arr[0]?.left)) {
+    index = 0;
+  } else if (pos >= toNumber(arr[arr.length - 1]?.left)) {
+    index = arr.length;
+  } else {
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      const midPos = toNumber(arr[mid]?.left);
+
+      if (midPos <= pos) {
+        index = mid + 1;
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+  }
+
+  return index;
 };

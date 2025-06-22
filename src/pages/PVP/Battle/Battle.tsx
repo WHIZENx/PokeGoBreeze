@@ -102,7 +102,7 @@ import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { getRandomNumber } from '../utils/battle.utils';
+import { getRandomNumber, overlappingPos } from '../utils/battle.utils';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -411,7 +411,7 @@ const Battle = () => {
         xNormal.current = rect.left;
       }
     }
-    overlappingPos(arrBound.current, x + xPos);
+    checkOverlap(arrBound.current, x + xPos);
   };
 
   const onPlayLineFitMove = (e: TimelineEvent<HTMLDivElement>) => {
@@ -432,7 +432,7 @@ const Battle = () => {
         arrStore.current.push(document.getElementById(i.toString())?.getBoundingClientRect());
       }
     }
-    overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
+    checkOverlap(arrStore.current, elem?.getBoundingClientRect().left);
   };
 
   const playingTimeline = () => {
@@ -490,7 +490,7 @@ const Battle = () => {
         }
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          overlappingPos(arrBound.current, width + toNumber(xNormal.current));
+          checkOverlap(arrBound.current, width + toNumber(xNormal.current));
         }
         if (Math.min(width, clientWidthContainer / 2) === clientWidthContainer / 2) {
           timelineNormalContainer.current?.scrollTo({
@@ -507,7 +507,7 @@ const Battle = () => {
         const width = Math.min(clientWidth, xCurrent + durationFactor * clientWidth);
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
-          overlappingPos(arrStore.current, elem.getBoundingClientRect().left);
+          checkOverlap(arrStore.current, elem.getBoundingClientRect().left);
         }
         if (width < clientWidth) {
           timelinePlay.current = requestAnimationFrame(animate);
@@ -552,8 +552,8 @@ const Battle = () => {
     });
   };
 
-  const overlappingPos = (arr: (DOMRect | undefined)[], pos = 0, sound = false) => {
-    const index = arr.filter((dom) => toNumber(dom?.left) <= pos).length;
+  const checkOverlap = (arr: (DOMRect | undefined)[], pos = 0, sound = false) => {
+    const index = overlappingPos(arr, pos);
     if (index >= 0 && index < arr.length) {
       updateTimeline(index, sound);
     }

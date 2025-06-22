@@ -321,14 +321,14 @@ export class BattlePVP implements IBattlePVP {
     obj.config.chargeSlot = initPokemon.chargeSlot;
     obj.configOpponent.chargeSlot = initPokemonOpponent.chargeSlot;
 
-    if (obj.pokemon.cMoveSec && (obj.pokemon.disableCMovePri || initPokemon.chargeSlot === ChargeType.Secondary)) {
+    if (obj.pokemon.cMoveSec && (obj.pokemon.disableCMovePri || obj.config.chargeSlot === ChargeType.Secondary)) {
       obj.pokemon.cMove = obj.pokemon.cMoveSec;
       obj.config.chargeSlot = ChargeType.Primary;
     }
 
     if (
       obj.pokemonOpponent.cMoveSec &&
-      (obj.pokemonOpponent.disableCMovePri || initPokemonOpponent.chargeSlot === ChargeType.Secondary)
+      (obj.pokemonOpponent.disableCMovePri || obj.configOpponent.chargeSlot === ChargeType.Secondary)
     ) {
       obj.pokemonOpponent.cMove = obj.pokemonOpponent.cMoveSec;
       obj.configOpponent.chargeSlot = ChargeType.Primary;
