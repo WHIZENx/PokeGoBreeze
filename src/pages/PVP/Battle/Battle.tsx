@@ -11,25 +11,11 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import {
-  findAssetForm,
-  findStabType,
-  getPokemonBattleLeagueIcon,
-  getPokemonBattleLeagueName,
-} from '../../../utils/compute';
-import {
-  calculateCP,
-  calculateStatsBattle,
-  calculateStatsByTag,
-  getBaseStatsByIVandLevel,
-  getTypeEffective,
-} from '../../../utils/calculate';
+import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
 import {
   BATTLE_DELAY,
-  DEFAULT_AMOUNT,
   DEFAULT_BLOCK,
-  DEFAULT_PLUS_SIZE,
-  DEFAULT_SIZE,
   FORM_SHADOW,
   MAX_ENERGY,
   MAX_IV,
@@ -37,7 +23,6 @@ import {
   MIN_CP,
   MIN_IV,
   MIN_LEVEL,
-  STAB_MULTIPLY,
 } from '../../../utils/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -80,19 +65,18 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
 import { StoreState } from '../../../store/models/state.model';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
-import { IBuff, ICombat } from '../../../core/models/combat.model';
+import { ICombat } from '../../../core/models/combat.model';
 import {
   IPokemonBattleData,
   PokemonBattle,
   PokemonBattleData,
-  ITimeline,
-  TimelineModel,
   IPokemonBattle,
   ChargeType,
+  BattlePVP,
 } from '../models/battle.model';
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
-import { BuffType, PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
+import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
 import { loadPVPMoves } from '../../../store/effects/store.effects';
 import {
@@ -102,7 +86,6 @@ import {
   isEqual,
   isInclude,
   isNotEmpty,
-  isUndefined,
   toFloat,
   toNumber,
 } from '../../../utils/extension';
@@ -113,12 +96,13 @@ import { ScoreType } from '../../../utils/enums/constants.enum';
 import { TimelineEvent } from '../../../utils/models/overrides/dom.model';
 import { LinkToTop, useNavigateToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { HexagonStats, StatsPokemonGO } from '../../../core/models/stats.model';
+import { HexagonStats } from '../../../core/models/stats.model';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
+import { getRandomNumber } from '../utils/battle.utils';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -168,71 +152,6 @@ const Battle = () => {
 
   const [isFound, setIsFound] = useState(true);
 
-  const State = (timer: number, block: number, energy: number, hp: number, type?: AttackType) =>
-    new TimelineModel({
-      timer,
-      type,
-      size: DEFAULT_SIZE,
-      block,
-      energy,
-      hp: Math.max(0, hp),
-    });
-
-  const calculateMoveDmgActual = (poke: IPokemonBattleData, pokeObj: IPokemonBattleData, move: ICombat | undefined) => {
-    if (poke && pokeObj && move) {
-      const atkPoke = calculateStatsBattle(
-        poke.stats?.atk,
-        poke.currentStats?.IV?.atkIV,
-        toNumber(poke.currentStats?.level, MIN_LEVEL),
-        true
-      );
-      const defPokeObj = calculateStatsBattle(
-        pokeObj.stats?.def,
-        pokeObj.currentStats?.IV?.defIV,
-        toNumber(pokeObj.currentStats?.level, MIN_LEVEL),
-        true
-      );
-      return (
-        (atkPoke *
-          move.pvpPower *
-          (findStabType(poke.pokemon?.types, move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
-          getDmgMultiplyBonus(poke.pokemonType, dataStore.options, TypeAction.Atk) *
-          getTypeEffective(dataStore.typeEff, move.type, pokeObj.pokemon?.types)) /
-        (defPokeObj * getDmgMultiplyBonus(pokeObj.pokemonType, dataStore.options, TypeAction.Def))
-      );
-    }
-    return 1;
-  };
-
-  const Pokemon = (poke: IPokemonBattle) =>
-    PokemonBattleData.create({
-      ...poke,
-      hp: toNumber(poke.pokemonData?.currentStats?.stats?.statSTA),
-      stats: poke.pokemonData?.stats,
-      currentStats: poke.pokemonData?.currentStats,
-      bestStats: poke.pokemonData?.bestStats,
-      pokemon: poke.pokemonData?.pokemon,
-      fMove: poke.fMove,
-      cMove: poke.cMovePri,
-      cMoveSec: poke.cMoveSec,
-      energy: poke.energy,
-      block: toNumber(poke.block, DEFAULT_BLOCK),
-      turn: Math.ceil(toNumber(poke.fMove?.durationMs) / 500),
-      pokemonType: poke.pokemonType,
-      disableCMovePri: poke.disableCMovePri,
-    });
-
-  const getRandomNumber = (min: number, max: number, step = 1) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    if (step === 1) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    } else {
-      const steps = Math.floor((max - min) / step) + 1;
-      return min + Math.floor(Math.random() * steps) * step;
-    }
-  };
-
   const battleAnimation = () => {
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
       enqueueSnackbar('Something went wrong! Please try again.', {
@@ -254,513 +173,69 @@ const Battle = () => {
     }
     arrBound.current = [];
     arrStore.current = [];
-    resetTimeLine();
+    resetTimeline();
     clearInterval(timelineInterval);
     clearInterval(turnInterval);
 
-    let player1 = Pokemon(pokemonCurr);
-    let player2 = Pokemon(pokemonObj);
-
-    let chargeSlotPlayer1 = pokemonCurr.chargeSlot;
-    let chargeSlotPlayer2 = pokemonObj.chargeSlot;
-
-    if (player1.cMoveSec && (player1.disableCMovePri || chargeSlotPlayer1 === ChargeType.Secondary)) {
-      player1.cMove = player1.cMoveSec;
-      chargeSlotPlayer1 = ChargeType.Primary;
-    }
-
-    if (player2.cMoveSec && (player2.disableCMovePri || chargeSlotPlayer2 === ChargeType.Secondary)) {
-      player2.cMove = player2.cMoveSec;
-      chargeSlotPlayer2 = ChargeType.Primary;
-    }
-
-    if (player1.disableCMovePri && player1.disableCMoveSec) {
-      chargeSlotPlayer1 = ChargeType.None;
-    }
-
-    if (player2.disableCMovePri && player2.disableCMoveSec) {
-      chargeSlotPlayer2 = ChargeType.None;
-    }
-
-    const preRandomPlayer1 = chargeSlotPlayer1 === ChargeType.Random,
-      preRandomPlayer2 = chargeSlotPlayer2 === ChargeType.Random;
-    let postRandomPlayer1 = false,
-      postRandomPlayer2 = false;
-
-    const timelinePri: ITimeline[] = [];
-    const timelineSec: ITimeline[] = [];
-
-    let timer = 1;
-    let tapPri: boolean,
-      fastPriDelay = 0,
-      preChargePri: boolean,
-      immunePri: boolean,
-      chargedPri: boolean,
-      chargedPriCount = 0;
-    let tapSec: boolean,
-      fastSecDelay = 0,
-      preChargeSec: boolean,
-      immuneSec: boolean,
-      chargedSec: boolean,
-      chargedSecCount = 0;
-    let chargeType = ChargeType.None;
-
-    timelinePri.push(State(timer - 1, player1.block, player1.energy, player1.hp, AttackType.Wait));
-    timelinePri.push(State(timer, player1.block, player1.energy, player1.hp, AttackType.Wait));
-
-    timelineSec.push(State(timer - 1, player2.block, player2.energy, player2.hp, AttackType.Wait));
-    timelineSec.push(State(timer, player2.block, player2.energy, player2.hp, AttackType.Wait));
-
-    const player1EnergyMoveSec = toNumber(player1.cMoveSec?.pvpEnergy);
-    const player2EnergyMoveSec = toNumber(player2.cMoveSec?.pvpEnergy);
+    const battle = BattlePVP.create(pokemonCurr, pokemonObj, dataStore);
 
     timelineInterval = setInterval(() => {
-      timer += 1;
-      timelinePri.push(State(timer, player1.block, player1.energy, player1.hp));
-      timelineSec.push(State(timer, player2.block, player2.energy, player2.hp));
-      if (!chargedPri && !chargedSec) {
-        if ((!player1.disableCMovePri || !player1.disableCMoveSec) && !preChargeSec) {
-          if (preRandomPlayer1 && !postRandomPlayer1) {
-            postRandomPlayer1 = true;
-            chargeSlotPlayer1 = getRandomNumber(ChargeType.Primary, ChargeType.Secondary);
-          }
-          if (
-            player1.energy >= Math.abs(player1.cMove.pvpEnergy) &&
-            ((!preRandomPlayer1 && chargeSlotPlayer1 !== ChargeType.Secondary) ||
-              (postRandomPlayer1 && chargeSlotPlayer1 === ChargeType.Primary))
-          ) {
-            chargeType = ChargeType.Primary;
-            player1.energy += player1.cMove.pvpEnergy;
-            timelinePri[timer] = new TimelineModel({
-              ...timelinePri[timer],
-              type: AttackType.Prepare,
-              color: player1.cMove.type?.toLowerCase(),
-              size: DEFAULT_SIZE,
-              move: player1.cMove,
-            });
-            preChargePri = true;
-            if (tapSec) {
-              immuneSec = true;
-            }
-            chargedPriCount = DEFAULT_AMOUNT;
-          }
-          if (
-            player1.energy >= Math.abs(player1EnergyMoveSec) &&
-            ((!preRandomPlayer1 && chargeSlotPlayer1 !== ChargeType.Primary) ||
-              (postRandomPlayer1 && chargeSlotPlayer1 === ChargeType.Secondary))
-          ) {
-            chargeType = ChargeType.Secondary;
-            player1.energy += player1EnergyMoveSec;
-            timelinePri[timer] = new TimelineModel({
-              ...timelinePri[timer],
-              type: AttackType.Prepare,
-              color: player1.cMoveSec?.type?.toLowerCase(),
-              size: DEFAULT_SIZE,
-              move: player1.cMoveSec,
-            });
-            preChargePri = true;
-            if (tapSec) {
-              immuneSec = true;
-            }
-            chargedPriCount = DEFAULT_AMOUNT;
-          }
-        }
+      battle.updateBattle();
+      if (!battle.config.charged && !battle.configOpponent.charged) {
+        battle.chargeAttack();
+        battle.chargeAttack(true);
 
-        if ((!player2.disableCMovePri || !player2.disableCMoveSec) && !preChargePri) {
-          if (preRandomPlayer2 && !postRandomPlayer2) {
-            postRandomPlayer2 = true;
-            chargeSlotPlayer2 = getRandomNumber(ChargeType.Primary, ChargeType.Secondary);
-          }
-          if (
-            player2.energy >= Math.abs(player2.cMove.pvpEnergy) &&
-            ((!preRandomPlayer2 && !postRandomPlayer2 && chargeSlotPlayer2 !== ChargeType.Secondary) ||
-              (postRandomPlayer2 && chargeSlotPlayer2 === ChargeType.Primary))
-          ) {
-            chargeType = ChargeType.Primary;
-            player2.energy += player2.cMove.pvpEnergy;
-            timelineSec[timer] = new TimelineModel({
-              ...timelineSec[timer],
-              type: AttackType.Prepare,
-              color: player2.cMove.type?.toLowerCase(),
-              size: DEFAULT_SIZE,
-              move: player2.cMove,
-            });
-            preChargeSec = true;
-            if (tapPri) {
-              immunePri = true;
-            }
-            chargedSecCount = DEFAULT_AMOUNT;
-          }
-          if (
-            player2.energy >= Math.abs(player2EnergyMoveSec) &&
-            ((!preRandomPlayer2 && !postRandomPlayer2 && chargeSlotPlayer2 !== ChargeType.Primary) ||
-              (postRandomPlayer2 && chargeSlotPlayer2 === ChargeType.Secondary))
-          ) {
-            chargeType = ChargeType.Secondary;
-            player2.energy += player2EnergyMoveSec;
-            timelineSec[timer] = new TimelineModel({
-              ...timelineSec[timer],
-              type: AttackType.Prepare,
-              color: player2.cMoveSec?.type?.toLowerCase(),
-              size: DEFAULT_SIZE,
-              move: player2.cMoveSec,
-            });
-            preChargeSec = true;
-            if (tapPri) {
-              immunePri = true;
-            }
-            chargedSecCount = DEFAULT_AMOUNT;
-          }
-        }
-
-        if (!preChargePri) {
-          if (!tapPri) {
-            tapPri = true;
-            if (!preChargeSec) {
-              timelinePri[timer] = new TimelineModel({ ...timelinePri[timer], isTap: true, move: player1.fMove });
-            } else {
-              timelinePri[timer].isTap = false;
-            }
-            fastPriDelay = player1.turn - 1;
-          } else {
-            if (timelinePri[timer]) {
-              timelinePri[timer].isTap = false;
-            }
-          }
-
-          if (tapPri && fastPriDelay === 0) {
-            tapPri = false;
-            if (!preChargeSec) {
-              player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
-            }
-            player1.energy += player1.fMove.pvpEnergy;
-            timelinePri[timer] = new TimelineModel({
-              ...timelinePri[timer],
-              type: AttackType.Fast,
-              color: player1.fMove.type?.toLowerCase(),
-              move: player1.fMove,
-              isDmgImmune: preChargeSec,
-              isTap: preChargeSec && player1.turn === 1 ? true : timelinePri[timer].isTap,
-            });
-          } else {
-            fastPriDelay -= 1;
-            timelinePri[timer].type = AttackType.Wait;
-          }
-        }
-
-        if (!preChargeSec) {
-          if (!tapSec) {
-            tapSec = true;
-            if (!preChargePri) {
-              timelineSec[timer] = new TimelineModel({ ...timelineSec[timer], isTap: true, move: player2.fMove });
-            } else {
-              timelineSec[timer].isTap = false;
-            }
-            fastSecDelay = player2.turn - 1;
-          } else {
-            if (timelineSec[timer]) {
-              timelineSec[timer].isTap = false;
-            }
-          }
-
-          if (tapSec && fastSecDelay === 0) {
-            tapSec = false;
-            if (!preChargePri) {
-              player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
-            } else {
-              immuneSec = true;
-            }
-            player2.energy += player2.fMove.pvpEnergy;
-            timelineSec[timer] = new TimelineModel({
-              ...timelineSec[timer],
-              type: AttackType.Fast,
-              color: player2.fMove.type?.toLowerCase(),
-              move: player2.fMove,
-              isDmgImmune: preChargePri,
-              isTap: preChargePri && player2.turn === 1 ? true : timelineSec[timer].isTap,
-            });
-          } else {
-            fastSecDelay -= 1;
-            timelineSec[timer].type = AttackType.Wait;
-          }
-        }
+        battle.preCharge();
+        battle.preCharge(true);
       } else {
-        if (chargedPri) {
-          if (isDelay || chargedPriCount % 2 === 0) {
-            timelinePri[timer].type = AttackType.New;
-          } else {
-            if (chargeType === ChargeType.Primary) {
-              timelinePri[timer] = new TimelineModel({
-                ...timelinePri[timer],
-                type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player1.cMove.type?.toLowerCase(),
-                size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
-                move: player1.cMove,
-              });
-            }
-            if (chargeType === ChargeType.Secondary) {
-              timelinePri[timer] = new TimelineModel({
-                ...timelinePri[timer],
-                type: chargedPriCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player1.cMoveSec?.type?.toLowerCase(),
-                size: timelinePri[timer - 2].size + DEFAULT_PLUS_SIZE,
-                move: player1.cMoveSec,
-              });
-            }
-          }
-          if (timelinePri[timer - 2]) {
-            timelineSec[timer - 2].size = timelinePri[timer - 2].size;
-          }
-        } else {
-          if (!isDelay && player1.block > 0 && chargedSecCount === -1) {
-            timelinePri[timer].type = AttackType.Block;
-          }
-        }
-        if (chargedSec) {
-          if (isDelay || chargedSecCount % 2 === 0) {
-            timelineSec[timer].type = AttackType.New;
-          } else {
-            if (chargeType === ChargeType.Primary) {
-              timelineSec[timer] = new TimelineModel({
-                ...timelineSec[timer],
-                type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player2.cMove.type?.toLowerCase(),
-                size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
-                move: player2.cMove,
-              });
-            }
-            if (chargeType === ChargeType.Secondary) {
-              timelineSec[timer] = new TimelineModel({
-                ...timelineSec[timer],
-                type: chargedSecCount === -1 ? AttackType.Charge : AttackType.Spin,
-                color: player2.cMoveSec?.type?.toLowerCase(),
-                size: timelineSec[timer - 2].size + DEFAULT_PLUS_SIZE,
-                move: player2.cMoveSec,
-              });
-            }
-          }
-          if (timelineSec[timer - 2]) {
-            timelinePri[timer - 2].size = timelineSec[timer - 2].size;
-          }
-        } else {
-          if (!isDelay && player2.block > 0 && chargedPriCount === -1) {
-            timelineSec[timer].type = AttackType.Block;
-          }
-        }
-        timelinePri[timer].isTap = false;
-        timelineSec[timer].isTap = false;
+        battle.charging();
+        battle.charging(true);
+
+        battle.timeline[battle.timer].isTap = false;
+        battle.timelineOpponent[battle.timer].isTap = false;
       }
     }, 1);
-    let isDelay = false,
-      delay = BATTLE_DELAY;
     turnInterval = setInterval(() => {
-      if (!isDelay) {
-        if (chargedPri) {
-          if (chargedPriCount >= 0) {
-            chargedPriCount--;
-          } else {
-            if (player2.block === 0) {
-              if (chargeType === ChargeType.Primary) {
-                player2.hp -= calculateMoveDmgActual(player1, player2, player1.cMove);
-              }
-              if (chargeType === ChargeType.Secondary) {
-                player2.hp -= calculateMoveDmgActual(player1, player2, player1.cMoveSec);
-              }
-            } else {
-              player2.block -= 1;
-            }
-            const moveType = chargeType === ChargeType.Primary ? player1.cMove : player1.cMoveSec;
-            const arrBufAtk: IBuff[] = [],
-              arrBufTarget: IBuff[] = [];
-            const randInt = toFloat(Math.random(), 3);
-            if (isNotEmpty(moveType?.buffs) && randInt > 0 && randInt <= toNumber(moveType?.buffs[0].buffChance)) {
-              moveType?.buffs.forEach((value) => {
-                if (value.target === BuffType.Target) {
-                  player2 = PokemonBattleData.create({
-                    ...player2,
-                    stats: StatsPokemonGO.create(
-                      value.type === TypeAction.Atk
-                        ? toNumber(player2.stats?.atk) + value.power
-                        : toNumber(player2.stats?.atk),
-                      value.type === TypeAction.Def
-                        ? toNumber(player2.stats?.def) + value.power
-                        : toNumber(player2.stats?.def),
-                      toNumber(player2.stats?.sta)
-                    ),
-                  });
-                  arrBufTarget.push(value);
-                } else {
-                  player1 = PokemonBattleData.create({
-                    ...player1,
-                    stats: StatsPokemonGO.create(
-                      value.type === TypeAction.Atk
-                        ? toNumber(player1.stats?.atk) + value.power
-                        : toNumber(player1.stats?.atk),
-                      value.type === TypeAction.Def
-                        ? toNumber(player1.stats?.def) + value.power
-                        : toNumber(player1.stats?.def),
-                      toNumber(player2.stats?.sta)
-                    ),
-                  });
-                  arrBufAtk.push(value);
-                }
-                timelinePri[timer].buff = arrBufAtk;
-                timelineSec[timer].buff = arrBufTarget;
-              });
-            }
-            isDelay = true;
-            delay = BATTLE_DELAY;
-          }
-        } else if (preChargePri) {
-          if (chargedPriCount === DEFAULT_AMOUNT) {
-            chargedPri = true;
-          } else {
-            chargedPriCount--;
-          }
-        } else if (chargedSec) {
-          if (chargedSecCount >= 0) {
-            chargedSecCount--;
-          } else {
-            if (player1.block === 0) {
-              if (chargeType === ChargeType.Primary) {
-                player1.hp -= calculateMoveDmgActual(player2, player1, player2.cMove);
-              }
-              if (chargeType === ChargeType.Secondary) {
-                player1.hp -= calculateMoveDmgActual(player2, player1, player2.cMoveSec);
-              }
-            } else {
-              player1.block -= 1;
-            }
-            const moveType = chargeType === ChargeType.Primary ? player2.cMove : player2.cMoveSec;
-            const arrBufAtk: IBuff[] = [],
-              arrBufTarget: IBuff[] = [];
-            const randInt = toFloat(Math.random(), 3);
-            if (isNotEmpty(moveType?.buffs) && randInt > 0 && randInt <= toNumber(moveType?.buffs[0].buffChance)) {
-              moveType?.buffs.forEach((value) => {
-                if (value.target === BuffType.Target) {
-                  player1 = PokemonBattleData.create({
-                    ...player1,
-                    stats: StatsPokemonGO.create(
-                      value.type === TypeAction.Atk
-                        ? toNumber(player1.stats?.atk) + value.power
-                        : toNumber(player1.stats?.atk),
-                      value.type === TypeAction.Def
-                        ? toNumber(player1.stats?.def) + value.power
-                        : toNumber(player1.stats?.def),
-                      toNumber(player2.stats?.sta)
-                    ),
-                  });
-                  arrBufTarget.push(value);
-                } else {
-                  player2 = PokemonBattleData.create({
-                    ...player2,
-                    stats: StatsPokemonGO.create(
-                      value.type === TypeAction.Atk
-                        ? toNumber(player2.stats?.atk) + value.power
-                        : toNumber(player2.stats?.atk),
-                      value.type === TypeAction.Def
-                        ? toNumber(player2.stats?.def) + value.power
-                        : toNumber(player2.stats?.def),
-                      toNumber(player2.stats?.sta)
-                    ),
-                  });
-                  arrBufAtk.push(value);
-                }
-                timelinePri[timer].buff = arrBufTarget;
-                timelineSec[timer].buff = arrBufAtk;
-              });
-            }
-            isDelay = true;
-            delay = BATTLE_DELAY;
-          }
-        } else if (preChargeSec) {
-          if (chargedSecCount === DEFAULT_AMOUNT) {
-            chargedSec = true;
-          } else {
-            chargedSecCount--;
-          }
+      if (!battle.isDelay) {
+        if (battle.config.charged) {
+          battle.turnChargeAttack();
+        } else if (battle.config.preCharge) {
+          battle.turnPreCharge();
+        } else if (battle.configOpponent.charged) {
+          battle.turnChargeAttack(true);
+        } else if (battle.configOpponent.preCharge) {
+          battle.turnPreCharge(true);
         }
       } else {
-        if (delay <= 0) {
-          isDelay = false;
-          if (chargedPri) {
-            chargedPri = false;
-            preChargePri = false;
-            postRandomPlayer1 = false;
+        if (battle.delay <= 0) {
+          battle.isDelay = false;
+          battle.clearCharge();
+          battle.clearCharge(true);
+          battle.config.tap = false;
+          battle.configOpponent.tap = false;
+          if (battle.config.immune) {
+            battle.immuneChargeAttack();
+          } else if (battle.configOpponent.immune) {
+            battle.immuneChargeAttack(true);
           }
-          if (chargedSec) {
-            chargedSec = false;
-            preChargeSec = false;
-            postRandomPlayer2 = false;
-          }
-          tapPri = false;
-          tapSec = false;
-          if (immunePri) {
-            player2.hp -= calculateMoveDmgActual(player1, player2, player1.fMove);
-            if (player2.hp > 0) {
-              const lastTapPos = timelinePri
-                .map((timeline) => timeline.isTap && !isUndefined(timeline.type))
-                .lastIndexOf(true);
-              const lastFastAtkPos = timelinePri.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
-              timelinePri[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
-            }
-          } else if (immuneSec) {
-            player1.hp -= calculateMoveDmgActual(player2, player1, player2.fMove);
-            if (player1.hp > 0) {
-              const lastTapPos = timelineSec
-                .map((timeline) => timeline.isTap && !isUndefined(timeline.type))
-                .lastIndexOf(true);
-              const lastFastAtkPos = timelineSec.map((timeline) => timeline.type).lastIndexOf(AttackType.Fast);
-              timelineSec[lastFastAtkPos > lastTapPos ? timer : lastTapPos].isDmgImmune = true;
-            }
-          }
-          immunePri = false;
-          immuneSec = false;
+          battle.config.immune = false;
+          battle.configOpponent.immune = false;
         } else {
-          delay -= BATTLE_DELAY;
+          battle.delay -= BATTLE_DELAY;
         }
       }
-      if (player1.hp <= 0 || player2.hp <= 0) {
+
+      if (battle.pokemon.hp <= 0 || battle.pokemonOpponent.hp <= 0) {
         clearInterval(timelineInterval);
         clearInterval(turnInterval);
-        if (player1.hp <= 0) {
-          timelinePri.push(State(timer, player1.block, player1.energy, player1.hp, AttackType.Dead));
-          if (player2.hp <= 0) {
-            timelineSec.push(State(timer, player2.block, player2.energy, player2.hp, AttackType.Dead));
-          } else {
-            if (timelinePri.length === timelineSec.length) {
-              timelineSec[timelineSec.length - 1] = State(
-                timer,
-                player2.block,
-                player2.energy,
-                player2.hp,
-                AttackType.Win
-              );
-            } else {
-              timelineSec.push(State(timer, player2.block, player2.energy, player2.hp, AttackType.Win));
-            }
-          }
-        } else if (player2.hp <= 0) {
-          timelineSec.push(State(timer, player2.block, player2.energy, player2.hp, AttackType.Dead));
-          if (player1.hp <= 0) {
-            timelinePri.push(State(timer, player1.block, player1.energy, player1.hp, AttackType.Dead));
-          } else {
-            if (timelinePri.length === timelineSec.length) {
-              timelinePri[timelinePri.length - 1] = State(
-                timer,
-                player1.block,
-                player1.energy,
-                player1.hp,
-                AttackType.Win
-              );
-            } else {
-              timelinePri.push(State(timer, player1.block, player1.energy, player1.hp, AttackType.Win));
-            }
-          }
+        if (battle.pokemon.hp <= 0) {
+          battle.result();
+        } else if (battle.pokemonOpponent.hp <= 0) {
+          battle.result(true);
         }
-        if (timelinePri.length === timelineSec.length) {
-          setPokemonCurr({ ...pokemonCurr, timeline: timelinePri });
-          setPokemonObj({ ...pokemonObj, timeline: timelineSec });
+        if (battle.timeline.length === battle.timelineOpponent.length) {
+          setPokemonCurr({ ...pokemonCurr, timeline: battle.timeline });
+          setPokemonObj({ ...pokemonObj, timeline: battle.timelineOpponent });
         } else {
           battleAnimation();
         }
@@ -919,7 +394,7 @@ const Battle = () => {
     elem ? toNumber(elem.style.transform.replace('translate(', '').replace('px, -50%)', '')) : 0;
 
   const onPlayLineMove = (e: TimelineEvent<HTMLDivElement>) => {
-    stopTimeLine();
+    stopTimeline();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
@@ -946,7 +421,7 @@ const Battle = () => {
   };
 
   const onPlayLineFitMove = (e: TimelineEvent<HTMLDivElement>) => {
-    stopTimeLine();
+    stopTimeline();
     const elem = document.getElementById('play-line');
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, (e.clientX ?? e.changedTouches?.[0].clientX ?? 0) - rect.left);
@@ -966,7 +441,7 @@ const Battle = () => {
     overlappingPos(arrStore.current, elem?.getBoundingClientRect().left);
   };
 
-  const playingTimeLine = () => {
+  const playingTimeline = () => {
     setPlayState(true);
     const range = pokemonCurr.timeline.length;
     const elem = document.getElementById('play-line');
@@ -1017,7 +492,7 @@ const Battle = () => {
           if (elem) {
             elem.style.transform = `translate(${clientWidth - 2}px, -50%)`;
           }
-          return stopTimeLine();
+          return stopTimeline();
         }
         if (elem) {
           elem.style.transform = `translate(${width}px, -50%)`;
@@ -1046,13 +521,13 @@ const Battle = () => {
           if (elem) {
             elem.style.transform = `translate(${timelineFit.current?.clientWidth}px, -50%)`;
           }
-          return stopTimeLine();
+          return stopTimeline();
         }
       }
     });
   };
 
-  const stopTimeLine = () => {
+  const stopTimeline = () => {
     setPlayState(false);
     cancelAnimationFrame(toNumber(timelinePlay.current));
     timelinePlay.current = null;
@@ -1060,8 +535,8 @@ const Battle = () => {
     return;
   };
 
-  const resetTimeLine = () => {
-    stopTimeLine();
+  const resetTimeline = () => {
+    stopTimeline();
     const elem = document.getElementById('play-line');
     if (timelineType === TimelineType.Normal && timelineNormalContainer.current) {
       timelineNormalContainer.current.scrollTo({
@@ -1121,7 +596,7 @@ const Battle = () => {
   };
 
   const onChangeTimeline = (type: TimelineType, prevWidth: number | undefined) => {
-    stopTimeLine();
+    stopTimeline();
     let elem = document.getElementById('play-line');
     let xCurrent = 0,
       transform;
@@ -1848,8 +1323,8 @@ const Battle = () => {
                     <div className="d-flex justify-content-center column-gap-2">
                       <button
                         className="btn btn-primary"
-                        onMouseDown={() => (playState ? stopTimeLine() : playingTimeLine())}
-                        onTouchEnd={() => (playState ? stopTimeLine() : playingTimeLine())}
+                        onMouseDown={() => (playState ? stopTimeline() : playingTimeline())}
+                        onTouchEnd={() => (playState ? stopTimeline() : playingTimeline())}
                       >
                         {playState ? (
                           <Fragment>
@@ -1861,7 +1336,7 @@ const Battle = () => {
                           </Fragment>
                         )}
                       </button>
-                      <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeLine()}>
+                      <button disabled={playState} className="btn btn-danger" onClick={() => resetTimeline()}>
                         <RestartAltIcon /> Reset
                       </button>
                     </div>
