@@ -17,13 +17,13 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import PersonIcon from '@mui/icons-material/Person';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
-import { getMoveType, replaceTempMovePvpName, splitAndCapitalize } from '../../../util/utils';
+import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { getMoveType, replaceTempMovePvpName, splitAndCapitalize } from '../../../utils/utils';
 import { ArcheType } from '../enums/arche-type.enum';
 import { MoveType } from '../../../enums/type.enum';
 import { PokemonRankingMove } from '../../../core/models/pvp.model';
 import { IMoveSet, MoveSetModel } from '../models/move-set.model';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 
 const MoveSet = (props: MoveSetComponent) => {

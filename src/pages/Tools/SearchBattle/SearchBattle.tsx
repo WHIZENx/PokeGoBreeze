@@ -13,28 +13,28 @@ import {
   generateParamForm,
   getValidPokemonImgPath,
   splitAndCapitalize,
-} from '../../../util/utils';
-import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
+} from '../../../utils/utils';
+import { calculateStats, queryStatesEvoChain } from '../../../utils/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 
-import { marks, PokeGoSlider } from '../../../util/utils';
+import { marks, PokeGoSlider } from '../../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV, FORM_NORMAL, MIN_CP } from '../../../util/constants';
+import { MIN_IV, MAX_IV, FORM_NORMAL, MIN_CP } from '../../../utils/constants';
 import { IEvolution } from '../../../core/models/evolution.model';
 import {
   BattleBaseStats,
   IBattleBaseStats,
   IQueryStatesEvoChain,
   StatsCalculate,
-} from '../../../util/models/calculate.model';
+} from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { useTitle } from '../../../util/hooks/useTitle';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
@@ -46,13 +46,13 @@ import {
   isNotEmpty,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
-import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 
 const FindBattle = () => {
   useTitle({

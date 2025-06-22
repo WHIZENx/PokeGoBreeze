@@ -2,11 +2,11 @@ import { IOptions } from '../../core/models/options.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { IStatsRank, StatsPokemonGO } from '../../core/models/stats.model';
 import { PokemonType, TypeAction } from '../../enums/type.enum';
-import { sortStatsPokemon } from '../../util/calculate';
-import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../util/constants';
-import { getValueOrDefault } from '../../util/extension';
-import { ArrayStats, IArrayStats } from '../../util/models/util.model';
-import { getDmgMultiplyBonus } from '../../util/utils';
+import { sortStatsPokemon } from '../../utils/calculate';
+import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../utils/constants';
+import { getValueOrDefault } from '../../utils/extension';
+import { ArrayStats, IArrayStats } from '../../utils/models/util.model';
+import { getDmgMultiplyBonus } from '../../utils/utils';
 import { StatsActions } from '../actions';
 import { StatsActionsUnion } from '../actions/stats.action';
 

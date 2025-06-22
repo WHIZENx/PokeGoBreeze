@@ -1,10 +1,10 @@
 import { convertPVPRankings, convertPVPTrain } from '../../core/pvp';
-import { replaceTempMovePvpName } from '../../util/utils';
+import { replaceTempMovePvpName } from '../../utils/utils';
 import { Store } from '../models/store.model';
 import { StoreActions } from '../actions';
 import { StoreActionsUnion } from '../actions/store.action';
 import { IWeatherBoost } from '../../core/models/weatherBoost.model';
-import { isEqual } from '../../util/extension';
+import { isEqual } from '../../utils/extension';
 
 const initialize = new Store();
 

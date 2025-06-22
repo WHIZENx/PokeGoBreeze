@@ -1,14 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { computeBgType } from '../../util/compute';
-import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../util/utils';
+import { computeBgType } from '../../utils/compute';
+import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../utils/utils';
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
 
 import APIService from '../../services/API.service';
 import { ICardPokemonInfoComponent } from '../models/component.model';
-import { combineClasses } from '../../util/extension';
+import { combineClasses } from '../../utils/extension';
 import { PokemonType } from '../../enums/type.enum';
-import { LinkToTop } from '../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../utils/hooks/LinkToTop';
 
 const CardPokemonInfo = (props: ICardPokemonInfoComponent) => {
   const [isShiny, setIsShiny] = useState(false);

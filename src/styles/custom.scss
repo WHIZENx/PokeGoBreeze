@@ -299,6 +299,7 @@ a.pokemon-link:hover {
   @include theme-text(var(--bs-body-color), true);
 }
 
+.pokemon-select-right,
 .select-down {
   @include theme-background(var(--bs-body-bg));
 }

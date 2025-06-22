@@ -1,6 +1,6 @@
 import { PokemonClass, PokemonType } from '../../../enums/type.enum';
-import { DynamicObj } from '../../../util/extension';
-import { getGenerationPokemon, splitAndCapitalize } from '../../../util/utils';
+import { DynamicObj } from '../../../utils/extension';
+import { getGenerationPokemon, splitAndCapitalize } from '../../../utils/utils';
 import { IEvoList, ITempEvo } from '../evolution.model';
 import { Encounter, IPokemonData, IPokemonFormChange, IPokemonGenderRatio, PokemonGenderRatio } from '../pokemon.model';
 import { StatsPokemonGO } from '../stats.model';

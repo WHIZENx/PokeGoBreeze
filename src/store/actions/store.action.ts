@@ -8,7 +8,7 @@ import { ICombat } from '../../core/models/combat.model';
 import { IAsset } from '../../core/models/asset.model';
 import { LeagueData } from '../../core/models/league.model';
 import { PokemonPVPMove } from '../../core/models/pvp.model';
-import { DynamicObj } from '../../util/extension';
+import { DynamicObj } from '../../utils/extension';
 import { IEvolutionChain } from '../../core/models/evolution-chain.model';
 import { IInformation } from '../../core/models/information';
 import { ITrainerLevelUp } from '../../core/models/trainer.model';

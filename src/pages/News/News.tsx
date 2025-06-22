@@ -11,7 +11,7 @@ import {
   getTime,
   getValidPokemonImgPath,
   splitAndCapitalize,
-} from '../../util/utils';
+} from '../../utils/utils';
 import {
   combineClasses,
   getValueOrDefault,
@@ -21,16 +21,16 @@ import {
   isNumber,
   toNumber,
   UniqValueInArray,
-} from '../../util/extension';
+} from '../../utils/extension';
 import APIService from '../../services/API.service';
 import { DateEvent, TitleName } from './enums/item-type.enum';
 import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
 import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/information.enum';
-import { FORM_NORMAL } from '../../util/constants';
+import { FORM_NORMAL } from '../../utils/constants';
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
-import { useTitle } from '../../util/hooks/useTitle';
+import { useTitle } from '../../utils/hooks/useTitle';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
-import { LinkToTop } from '../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
 
 const News = () => {

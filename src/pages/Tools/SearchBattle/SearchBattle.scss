@@ -28,6 +28,26 @@
   font-weight: bolder;
 }
 
+.rank-max {
+  color: red;
+  background-color: #ecc8c8;
+}
+
+.rank-excellent {
+  color: blueviolet;
+  background-color: #ecc8ec;
+}
+
+.rank-great {
+  color: green;
+  background-color: #c8ecc8;
+}
+
+.rank-nice {
+  color: orange;
+  background-color: #ececc8;
+}
+
 .pokemon-best-league {
   display: flex;
   justify-content: center;

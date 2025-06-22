@@ -38,7 +38,7 @@ import {
   replacePokemonGoForm,
   replaceTempMoveName,
   splitAndCapitalize,
-} from '../util/utils';
+} from '../utils/utils';
 import { ITypeSet, PokemonTypeBadge, TypeSet } from './models/type.model';
 import { BuffType, MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import {
@@ -65,7 +65,7 @@ import {
   MIN_LEVEL,
   PATH_ASSET_POKEGO,
   versionList,
-} from '../util/constants';
+} from '../utils/constants';
 import { APIUrl } from '../services/constants';
 import {
   BuddyFriendship,
@@ -80,7 +80,7 @@ import {
   ItemSettings,
   MoveBuff,
 } from './models/options.model';
-import { calculateStatsByTag } from '../util/calculate';
+import { calculateStatsByTag } from '../utils/calculate';
 import { APITree } from '../services/models/api.model';
 import {
   DynamicObj,
@@ -95,9 +95,9 @@ import {
   UniqValueInArray,
   isNull,
   isUndefined,
-} from '../util/extension';
+} from '../utils/extension';
 import { GenderType } from './enums/asset.enum';
-import { EqualMode, IncludeMode } from '../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { LeagueRewardType, LeagueType, RewardType } from './enums/league.enum';
 import { LeagueConditionType } from './enums/option.enum';
 import { EvolutionChain, EvolutionInfo, IEvolutionInfo } from './models/evolution-chain.model';
