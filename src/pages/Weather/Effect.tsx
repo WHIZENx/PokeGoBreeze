@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
-import { capitalize, getKeyWithData } from '../../util/utils';
+import { capitalize, getKeyWithData } from '../../utils/utils';
 import { IWeatherEffComponent } from '../models/page.model';
 import { TypeEff } from '../../core/models/type-eff.model';
 import { WeatherBoost } from '../../core/models/weatherBoost.model';
-import { isEmpty, isEqual, isIncludeList, isNotEmpty } from '../../util/extension';
+import { isEmpty, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
 import { PokemonTypeBadge } from '../../core/models/type.model';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 

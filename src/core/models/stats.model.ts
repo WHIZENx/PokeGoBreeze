@@ -1,6 +1,6 @@
 import { PokemonType } from '../../enums/type.enum';
-import { MAX_IV, MIN_IV } from '../../util/constants';
-import { toNumber } from '../../util/extension';
+import { MAX_IV, MIN_IV } from '../../utils/constants';
+import { toNumber } from '../../utils/extension';
 
 export interface OptionsRank {
   minRank: number;

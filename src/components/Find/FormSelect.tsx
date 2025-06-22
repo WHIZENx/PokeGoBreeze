@@ -16,7 +16,7 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
   TypeRadioGroup,
-} from '../../util/utils';
+} from '../../utils/utils';
 import TypeInfo from '../Sprites/Type/Type';
 import { FormControlLabel, Radio } from '@mui/material';
 import { useDispatch } from 'react-redux';
@@ -30,12 +30,12 @@ import {
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
-import { FORM_NORMAL } from '../../util/constants';
+import { FORM_NORMAL } from '../../utils/constants';
 import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
 import { PokemonType, TypeRaid, VariantType } from '../../enums/type.enum';
 import { SearchingActions } from '../../store/actions';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../util/extension';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
 

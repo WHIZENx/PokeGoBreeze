@@ -9,8 +9,8 @@ import {
   getKeysObj,
   getValidPokemonImgPath,
   getKeyWithData,
-} from '../../../util/utils';
-import { calculateStatsByTag } from '../../../util/calculate';
+} from '../../../utils/utils';
+import { calculateStatsByTag } from '../../../utils/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../../services/API.service';
@@ -19,7 +19,7 @@ import {
   findAssetForm,
   getPokemonBattleLeagueIcon,
   getPokemonBattleLeagueName,
-} from '../../../util/compute';
+} from '../../../utils/compute';
 
 import update from 'immutability-helper';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -31,7 +31,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { FORM_SHADOW, Params } from '../../../util/constants';
+import { FORM_SHADOW, Params } from '../../../utils/constants';
 import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -46,26 +46,26 @@ import {
   isIncludeList,
   isNotEmpty,
   toNumber,
-} from '../../../util/extension';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+} from '../../../utils/extension';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
-import { SortType } from '../enums/pvp-ranking-enum';
+import { SortType } from '../enums/pvp-ranking.enum';
 import { PokemonType } from '../../../enums/type.enum';
 import HeaderPVP from '../components/HeaderPVP';
 import BodyPVP from '../components/BodyPVP';
 import MoveSet from '../components/MoveSet';
 import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
-import { ScoreType } from '../../../util/enums/constants.enum';
+import { ScoreType } from '../../../utils/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
-import { useTitle } from '../../../util/hooks/useTitle';
-import { TitleSEOProps } from '../../../util/models/hook.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../../utils/models/hook.model';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();

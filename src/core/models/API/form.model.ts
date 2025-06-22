@@ -1,7 +1,7 @@
 import { PokemonType } from '../../../enums/type.enum';
-import { FORM_NORMAL } from '../../../util/constants';
-import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../util/extension';
-import { convertPokemonAPIDataFormName, getPokemonType } from '../../../util/utils';
+import { FORM_NORMAL } from '../../../utils/constants';
+import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../utils/extension';
+import { convertPokemonAPIDataFormName, getPokemonType } from '../../../utils/utils';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
 import { Path } from './species.model';

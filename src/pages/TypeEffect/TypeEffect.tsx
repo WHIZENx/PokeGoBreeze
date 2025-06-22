@@ -7,7 +7,7 @@ import Defender from './Defender';
 
 import './TypeEffect.scss';
 import { StoreState } from '../../store/models/state.model';
-import { useTitle } from '../../util/hooks/useTitle';
+import { useTitle } from '../../utils/hooks/useTitle';
 
 const TypeEffect = () => {
   useTitle({

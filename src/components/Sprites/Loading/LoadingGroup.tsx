@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ILoadGroupComponent } from '../../models/component.model';
 
 import '../../../App.scss';
-import { combineClasses, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, getValueOrDefault } from '../../../utils/extension';
 
 interface Element {
   $isShow: boolean;

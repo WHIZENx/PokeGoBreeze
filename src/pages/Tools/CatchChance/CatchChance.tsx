@@ -13,7 +13,7 @@ import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/API.service';
-import { calculateCatchChance, calculateCP } from '../../../util/calculate';
+import { calculateCatchChance, calculateCP } from '../../../utils/calculate';
 import {
   BRONZE_INC_CHANCE,
   CURVE_INC_CHANCE,
@@ -32,14 +32,14 @@ import {
   SILVER_INC_CHANCE,
   SILVER_PINAPS_INC_CHANCE,
   ULTRA_BALL_INC_CHANCE,
-} from '../../../util/constants';
+} from '../../../utils/constants';
 import {
   getItemSpritePath,
   getKeyWithData,
   getPokemonFormWithNoneSpecialForm,
   LevelSlider,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 
 import './CatchChance.scss';
 import { StoreState, SearchingState } from '../../../store/models/state.model';
@@ -50,7 +50,7 @@ import {
   isUndefined,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import {
   Medal,
   MedalType,
@@ -67,7 +67,7 @@ import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
-import { useTitle } from '../../../util/hooks/useTitle';
+import { useTitle } from '../../../utils/hooks/useTitle';
 
 const balls: PokeBallThreshold[] = [
   {

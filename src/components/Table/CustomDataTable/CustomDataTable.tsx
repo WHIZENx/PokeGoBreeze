@@ -4,14 +4,14 @@ import { Button, Modal } from 'react-bootstrap';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { StyleSheetManager } from 'styled-components';
 import { ICustomDataTableProps } from '../../models/component.model';
-import { convertColumnDataType, isIncludeList } from '../../../util/extension';
-import { getCustomThemeDataTable } from '../../../util/utils';
-import { isNotEmpty } from '../../../util/extension';
+import { convertColumnDataType, isIncludeList } from '../../../utils/extension';
+import { getCustomThemeDataTable } from '../../../utils/utils';
+import { isNotEmpty } from '../../../utils/extension';
 import { debounce } from 'lodash';
 import { VariantType } from '../../../enums/type.enum';
 import CustomInput from '../../Input/CustomInput';
-import { StyleSheetConfig } from '../../../util/style-sheet-config';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { StyleSheetConfig } from '../../../utils/configs/style-sheet.config';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');

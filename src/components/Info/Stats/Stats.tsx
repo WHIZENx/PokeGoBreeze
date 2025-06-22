@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/calculate';
-import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../util/utils';
+import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../utils/calculate';
+import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../utils/utils';
 
 import './Stats.scss';
 import { IStatsPokemonGO, StatsPokemonGO, StatsRankPokemonGO } from '../../../core/models/stats.model';
@@ -9,7 +9,7 @@ import { StoreState } from '../../../store/models/state.model';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
-import { toFloatWithPadding, toNumber } from '../../../util/extension';
+import { toFloatWithPadding, toNumber } from '../../../utils/extension';
 
 interface ICurrentStats {
   stats: IStatsPokemonGO;

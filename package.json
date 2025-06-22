@@ -54,7 +54,7 @@
     "format": "npm run format:code && npm run format:style",
     "develop": "sh -c '. ./version.sh && webpack-dev-server --mode development --config webpack.config.dev.js'",
     "prebuild": "rimraf dist",
-    "deploy": "sh -c '. ./version.sh && webpack --mode production --config webpack.config.prod.js' && npm run generate:sitemap",
+    "deploy": "sh -c '. ./version.sh && webpack --mode production --config webpack.config.prod.js' && node sitemap/buildSitemap.js",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {

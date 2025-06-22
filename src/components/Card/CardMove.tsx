@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import { StoreState } from '../../store/models/state.model';
 import { ICombat } from '../../core/models/combat.model';
 import { ICardMoveComponent } from '../models/component.model';
-import { combineClasses, isEqual, isNotEmpty } from '../../util/extension';
+import { combineClasses, isEqual, isNotEmpty } from '../../utils/extension';
 import { MoveType } from '../../enums/type.enum';
 import IconType from '../Sprites/Icon/Type/Type';
 

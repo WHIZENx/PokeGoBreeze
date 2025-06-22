@@ -1,4 +1,4 @@
-import { DynamicObj, toFloat, toNumber } from '../util/extension';
+import { DynamicObj, toFloat, toNumber } from '../utils/extension';
 import { CPM, ICPM } from './models/cpm.model';
 
 export const calculateBaseCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {

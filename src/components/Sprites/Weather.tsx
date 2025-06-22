@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
 import APIService from '../../services/API.service';
-import { splitAndCapitalize } from '../../util/utils';
+import { splitAndCapitalize } from '../../utils/utils';
 import { IWeatherComponent } from '../models/component.model';
-import { isNotEmpty } from '../../util/extension';
-import { combineClasses } from '../../util/extension';
+import { isNotEmpty } from '../../utils/extension';
+import { combineClasses } from '../../utils/extension';
 
 const Weather = (props: IWeatherComponent) => {
   return (

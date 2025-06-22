@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { Form } from 'react-bootstrap';
-import { getValueOrDefault, isNotEmpty, toNumber } from '../../util/extension';
-import { getItemSpritePath, splitAndCapitalize } from '../../util/utils';
+import { getValueOrDefault, isNotEmpty, toNumber } from '../../utils/extension';
+import { getItemSpritePath, splitAndCapitalize } from '../../utils/utils';
 
 import './Trainer.scss';
 import { AwardItem } from '../../core/models/trainer.model';

@@ -1,7 +1,7 @@
 import React from 'react';
 import TypeEffectiveSelect from '../../../components/Effective/TypeEffectiveSelect';
 import { TypeEffectiveComponent } from '../models/component.model';
-import { getKeyWithData } from '../../../util/utils';
+import { getKeyWithData } from '../../../utils/utils';
 import { EffectiveType } from '../../../components/Effective/enums/type-effective.enum';
 
 const TypeEffectivePVP = (props: TypeEffectiveComponent) => {

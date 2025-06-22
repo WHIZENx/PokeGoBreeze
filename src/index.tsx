@@ -15,9 +15,9 @@ import Main from './App';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
 
-import RouterSync from './util/hooks/RouterSync';
+import RouterSync from './utils/hooks/RouterSync';
 import LoadingPersist from './components/Sprites/Loading/LoadingPersist';
-import { LIGHT_THEME_BG, DARK_THEME_BG } from './util/constants';
+import { LIGHT_THEME_BG, DARK_THEME_BG } from './utils/constants';
 import { TypeTheme } from './enums/type.enum';
 import { LocalStorageConfig } from './store/constants/local-storage';
 

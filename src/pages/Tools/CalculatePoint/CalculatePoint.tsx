@@ -6,10 +6,10 @@ import { Tabs, Tab } from 'react-bootstrap';
 import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
-import { findStabType } from '../../../util/compute';
-import { levelList, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
+import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { findStabType } from '../../../utils/compute';
+import { levelList, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../utils/constants';
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { useSnackbar } from 'notistack';
 
 import ATK_LOGO from '../../../assets/attack.png';
@@ -20,7 +20,7 @@ import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { useTitle } from '../../../util/hooks/useTitle';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { BattleState } from '../../../core/models/damage.model';
 import {
   combineClasses,
@@ -29,7 +29,7 @@ import {
   isNotEmpty,
   toNumber,
   UniqValueInArray,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
 

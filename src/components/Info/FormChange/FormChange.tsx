@@ -1,16 +1,23 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
+import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber, UniqValueInArray } from '../../../util/extension';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
-import { IncludeMode } from '../../../util/enums/string.enum';
-import { FORM_NORMAL } from '../../../util/constants';
+import {
+  getValueOrDefault,
+  isEqual,
+  isInclude,
+  isNotEmpty,
+  toNumber,
+  UniqValueInArray,
+} from '../../../utils/extension';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { IncludeMode } from '../../../utils/enums/string.enum';
+import { FORM_NORMAL } from '../../../utils/constants';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 
 const FromChange = (props: IFromChangeComponent) => {

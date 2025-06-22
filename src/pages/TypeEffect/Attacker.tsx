@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffective from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../util/utils';
+import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../utils/utils';
 import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffComponent } from '../models/page.model';
 import { PokemonTypeBadge, TypeModel, TypeMultiply } from '../../core/models/type.model';
-import { DynamicObj, getValueOrDefault, isEqual } from '../../util/extension';
+import { DynamicObj, getValueOrDefault, isEqual } from '../../utils/extension';
 
 const Attacker = (prop: ITypeEffComponent) => {
   const [types, setTypes] = useState<string[]>([]);

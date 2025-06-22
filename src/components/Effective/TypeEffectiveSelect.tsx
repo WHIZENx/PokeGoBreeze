@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../services/API.service';
-import { capitalize } from '../../util/utils';
+import { capitalize } from '../../utils/utils';
 
 import './TypeEffectiveSelect.scss';
 import { StoreState } from '../../store/models/state.model';
 import { TypeEffChart } from '../../core/models/type-eff.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
-import { combineClasses, isNotEmpty, toFloat } from '../../util/extension';
+import { combineClasses, isNotEmpty, toFloat } from '../../utils/extension';
 import { EffectiveType } from './enums/type-effective.enum';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {

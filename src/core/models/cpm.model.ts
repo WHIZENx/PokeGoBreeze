@@ -1,4 +1,4 @@
-import { toNumber } from '../../util/extension';
+import { toNumber } from '../../utils/extension';
 
 export interface ICPM {
   level: number;
