@@ -521,20 +521,20 @@ export class BattlePVP implements IBattlePVP {
       } else {
         playerOpponent.block -= 1;
       }
-      const arrBufAtk: IBuff[] = [],
-        arrBufTarget: IBuff[] = [];
+      const buffsAtk: IBuff[] = [];
+      const buffsTarget: IBuff[] = [];
       const randInt = toFloat(Math.random(), 3);
       if (isNotEmpty(move?.buffs) && randInt > 0 && randInt <= toNumber(move?.buffs[0].buffChance)) {
         move?.buffs.forEach((value) => {
           this.updatePokemonStat(value, value.target === BuffType.Target);
           if (value.target === BuffType.Target) {
-            arrBufTarget.push(value);
+            buffsTarget.push(value);
           } else {
-            arrBufAtk.push(value);
+            buffsAtk.push(value);
           }
-          this.timeline[this.timer].buff = arrBufAtk;
-          this.timelineOpponent[this.timer].buff = arrBufTarget;
         });
+        this.timeline[this.timer].buff = buffsAtk;
+        this.timelineOpponent[this.timer].buff = buffsTarget;
       }
       this.isDelay = true;
       this.delay = BATTLE_DELAY;

@@ -176,6 +176,7 @@ const Battle = () => {
     clearInterval(timelineInterval);
 
     const battle = BattlePVP.create(pokemonCurr, pokemonObj, dataStore);
+    console.error(battle, pokemonCurr.pokemonData);
 
     timelineInterval = setInterval(() => {
       battle.updateBattle();
@@ -543,11 +544,11 @@ const Battle = () => {
     setPlayTimeline({
       pokemonCurr: PokemonBattleData.setValue(
         pokemonCurr.energy,
-        Math.floor(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA))
+        Math.round(toNumber(pokemonCurr.pokemonData?.currentStats?.stats?.statSTA))
       ),
       pokemonObj: PokemonBattleData.setValue(
         pokemonObj.energy,
-        Math.floor(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statSTA))
+        Math.round(toNumber(pokemonObj.pokemonData?.currentStats?.stats?.statSTA))
       ),
     });
   };
@@ -846,7 +847,7 @@ const Battle = () => {
             </b>
             <br />
             <img className="me-2" alt="Image Logo" width={20} height={20} src={HP_LOGO} />
-            HP: <b>{toNumber(Math.floor(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
+            HP: <b>{toNumber(Math.round(toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA)))}</b>
             <br />
             {'Stats Prod: '}
             <b>
