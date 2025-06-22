@@ -144,7 +144,6 @@ const Battle = () => {
   const playLine = useRef<HTMLDivElement>();
 
   let timelineInterval: NodeJS.Timeout;
-  let turnInterval: NodeJS.Timeout;
 
   const [pokemonCurr, setPokemonCurr] = useState(new PokemonBattle());
   const [pokemonObj, setPokemonObj] = useState(new PokemonBattle());
@@ -175,7 +174,6 @@ const Battle = () => {
     arrStore.current = [];
     resetTimeline();
     clearInterval(timelineInterval);
-    clearInterval(turnInterval);
 
     const battle = BattlePVP.create(pokemonCurr, pokemonObj, dataStore);
 
@@ -194,8 +192,7 @@ const Battle = () => {
         battle.timeline[battle.timer].isTap = false;
         battle.timelineOpponent[battle.timer].isTap = false;
       }
-    }, 1);
-    turnInterval = setInterval(() => {
+
       if (!battle.isDelay) {
         if (battle.config.charged) {
           battle.turnChargeAttack();
@@ -211,8 +208,6 @@ const Battle = () => {
           battle.isDelay = false;
           battle.clearCharge();
           battle.clearCharge(true);
-          battle.config.tap = false;
-          battle.configOpponent.tap = false;
           if (battle.config.immune) {
             battle.immuneChargeAttack();
           } else if (battle.configOpponent.immune) {
@@ -227,7 +222,6 @@ const Battle = () => {
 
       if (battle.pokemon.hp <= 0 || battle.pokemonOpponent.hp <= 0) {
         clearInterval(timelineInterval);
-        clearInterval(turnInterval);
         if (battle.pokemon.hp <= 0) {
           battle.result();
         } else if (battle.pokemonOpponent.hp <= 0) {

@@ -51,30 +51,30 @@ export const updateState = (timeline: ITimeline[], value: TimelineConfig) => {
 
 export const calculateMoveDmgActual = (
   dataStore: IDataModel,
-  poke: IPokemonBattleData,
-  pokeObj: IPokemonBattleData,
+  pokemon: IPokemonBattleData,
+  pokemonOpponent: IPokemonBattleData,
   move: ICombat | undefined
 ) => {
-  if (poke && pokeObj && move) {
-    const atkPoke = calculateStatsBattle(
-      poke.stats?.atk,
-      poke.currentStats?.IV?.atkIV,
-      toNumber(poke.currentStats?.level, MIN_LEVEL),
+  if (pokemon && pokemonOpponent && move) {
+    const atkPokemon = calculateStatsBattle(
+      pokemon.stats?.atk,
+      pokemon.currentStats?.IV?.atkIV,
+      toNumber(pokemon.currentStats?.level, MIN_LEVEL),
       true
     );
-    const defPokeObj = calculateStatsBattle(
-      pokeObj.stats?.def,
-      pokeObj.currentStats?.IV?.defIV,
-      toNumber(pokeObj.currentStats?.level, MIN_LEVEL),
+    const defPokemonOpponent = calculateStatsBattle(
+      pokemonOpponent.stats?.def,
+      pokemonOpponent.currentStats?.IV?.defIV,
+      toNumber(pokemonOpponent.currentStats?.level, MIN_LEVEL),
       true
     );
     return (
-      (atkPoke *
+      (atkPokemon *
         move.pvpPower *
-        (findStabType(poke.pokemon?.types, move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
-        getDmgMultiplyBonus(poke.pokemonType, dataStore.options, TypeAction.Atk) *
-        getTypeEffective(dataStore.typeEff, move.type, pokeObj.pokemon?.types)) /
-      (defPokeObj * getDmgMultiplyBonus(pokeObj.pokemonType, dataStore.options, TypeAction.Def))
+        (findStabType(pokemon.pokemon?.types, move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
+        getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Atk) *
+        getTypeEffective(dataStore.typeEff, move.type, pokemonOpponent.pokemon?.types)) /
+      (defPokemonOpponent * getDmgMultiplyBonus(pokemonOpponent.pokemonType, dataStore.options, TypeAction.Def))
     );
   }
   return 1;

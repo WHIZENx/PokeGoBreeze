@@ -119,7 +119,7 @@ export interface IPokemonBattle {
   timeline: ITimeline[];
   energy: number;
   block: number;
-  chargeSlot: number;
+  chargeSlot: ChargeType;
   audio?: MoveAudio;
 }
 
@@ -268,6 +268,7 @@ export interface IPokemonBattleConfig {
   preCharge: boolean;
   immune: boolean;
   charged: boolean;
+  chargeSlot: ChargeType;
   chargedCount: number;
   preRandomPlayer: boolean;
   postRandomPlayer: boolean;
@@ -279,6 +280,7 @@ export class PokemonBattleConfig implements IPokemonBattleConfig {
   preCharge = false;
   immune = false;
   charged = false;
+  chargeSlot = ChargeType.None;
   chargedCount = 0;
   preRandomPlayer = false;
   postRandomPlayer = false;
@@ -293,8 +295,6 @@ export interface IBattlePVP {
   configOpponent: IPokemonBattleConfig;
   timer: number;
   chargeType: ChargeType;
-  chargeSlot: ChargeType;
-  chargeSlotOpponent: ChargeType;
   isDelay: boolean;
   delay: number;
   dataStore: IDataModel;
@@ -309,8 +309,6 @@ export class BattlePVP implements IBattlePVP {
   configOpponent = new PokemonBattleConfig();
   timer = 0;
   chargeType = ChargeType.None;
-  chargeSlot = ChargeType.None;
-  chargeSlotOpponent = ChargeType.None;
   isDelay = false;
   delay = BATTLE_DELAY;
   dataStore!: IDataModel;
@@ -320,10 +318,12 @@ export class BattlePVP implements IBattlePVP {
     obj.pokemon = PokemonBattleData.battle(initPokemon);
     obj.pokemonOpponent = PokemonBattleData.battle(initPokemonOpponent);
     obj.dataStore = store;
+    obj.config.chargeSlot = initPokemon.chargeSlot;
+    obj.configOpponent.chargeSlot = initPokemonOpponent.chargeSlot;
 
     if (obj.pokemon.cMoveSec && (obj.pokemon.disableCMovePri || initPokemon.chargeSlot === ChargeType.Secondary)) {
       obj.pokemon.cMove = obj.pokemon.cMoveSec;
-      obj.chargeSlot = ChargeType.Primary;
+      obj.config.chargeSlot = ChargeType.Primary;
     }
 
     if (
@@ -331,19 +331,19 @@ export class BattlePVP implements IBattlePVP {
       (obj.pokemonOpponent.disableCMovePri || initPokemonOpponent.chargeSlot === ChargeType.Secondary)
     ) {
       obj.pokemonOpponent.cMove = obj.pokemonOpponent.cMoveSec;
-      obj.chargeSlotOpponent = ChargeType.Primary;
+      obj.configOpponent.chargeSlot = ChargeType.Primary;
     }
 
     if (obj.pokemon.disableCMovePri && obj.pokemon.disableCMoveSec) {
-      obj.chargeSlot = ChargeType.None;
+      obj.config.chargeSlot = ChargeType.None;
     }
 
     if (obj.pokemonOpponent.disableCMovePri && obj.pokemonOpponent.disableCMoveSec) {
-      obj.chargeSlotOpponent = ChargeType.None;
+      obj.configOpponent.chargeSlot = ChargeType.None;
     }
 
-    obj.config.preRandomPlayer = obj.chargeSlot === ChargeType.Random;
-    obj.configOpponent.preRandomPlayer = obj.chargeSlotOpponent === ChargeType.Random;
+    obj.config.preRandomPlayer = obj.config.chargeSlot === ChargeType.Random;
+    obj.configOpponent.preRandomPlayer = obj.configOpponent.chargeSlot === ChargeType.Random;
 
     if (isWaiting) {
       addState(obj.timeline, obj.timer, obj.pokemon.block, obj.pokemon.energy, obj.pokemon.hp, AttackType.Wait);
@@ -381,15 +381,18 @@ export class BattlePVP implements IBattlePVP {
     );
   }
 
-  gainEnergy(move: ICombat | undefined, chargeType: ChargeType, chargedSlot: ChargeType, isOpponent = false) {
+  gainEnergy(chargeType: ChargeType, isOpponent = false) {
     const pokemon = isOpponent ? this.pokemonOpponent : this.pokemon;
     const config = isOpponent ? this.configOpponent : this.config;
     const configOpponent = isOpponent ? this.config : this.configOpponent;
     const timeline = isOpponent ? this.timelineOpponent : this.timeline;
+    const move = chargeType === ChargeType.Primary ? pokemon.cMove : pokemon.cMoveSec;
     if (
       pokemon.energy >= Math.abs(toNumber(move?.pvpEnergy)) &&
-      ((!config.preRandomPlayer && chargedSlot !== ChargeType.Secondary) ||
-        (config.postRandomPlayer && chargedSlot === ChargeType.Primary))
+      ((!config.preRandomPlayer &&
+        (!isOpponent || !configOpponent.postRandomPlayer) &&
+        this.config.chargeSlot !== (chargeType === ChargeType.Primary ? ChargeType.Secondary : ChargeType.Primary)) ||
+        (config.postRandomPlayer && this.config.chargeSlot === chargeType))
     ) {
       this.chargeType = chargeType;
       pokemon.energy += toNumber(move?.pvpEnergy);
@@ -411,20 +414,14 @@ export class BattlePVP implements IBattlePVP {
     const pokemon = isOpponent ? this.pokemonOpponent : this.pokemon;
     const config = isOpponent ? this.configOpponent : this.config;
     const configOpponent = isOpponent ? this.config : this.configOpponent;
-    let chargedSlot = isOpponent ? this.chargeSlotOpponent : this.chargeSlot;
 
     if ((!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && !configOpponent.preCharge) {
       if (config.preRandomPlayer && !config.postRandomPlayer) {
-        chargedSlot = getRandomNumber(ChargeType.Primary, ChargeType.Secondary);
+        this.config.chargeSlot = getRandomNumber(ChargeType.Primary, ChargeType.Secondary);
         config.postRandomPlayer = true;
-        if (!isOpponent) {
-          this.chargeSlot = chargedSlot;
-        } else {
-          this.chargeSlotOpponent = chargedSlot;
-        }
       }
-      this.gainEnergy(pokemon.cMove, ChargeType.Primary, chargedSlot, isOpponent);
-      this.gainEnergy(pokemon.cMoveSec, ChargeType.Secondary, chargedSlot, isOpponent);
+      this.gainEnergy(ChargeType.Primary, isOpponent);
+      this.gainEnergy(ChargeType.Secondary, isOpponent);
     }
   }
 
@@ -448,10 +445,8 @@ export class BattlePVP implements IBattlePVP {
           timeline[this.timer].isTap = false;
         }
         config.fastDelay = player.turn - 1;
-      } else {
-        if (timeline[this.timer]) {
-          timeline[this.timer].isTap = false;
-        }
+      } else if (timeline[this.timer]) {
+        timeline[this.timer].isTap = false;
       }
 
       if (config.tap && config.fastDelay === 0) {
@@ -523,12 +518,12 @@ export class BattlePVP implements IBattlePVP {
       config.chargedCount--;
     } else {
       if (playerOpponent.block === 0) {
-        if (this.chargeType === ChargeType.Primary) {
-          playerOpponent.hp -= calculateMoveDmgActual(this.dataStore, player, playerOpponent, player.cMove);
-        }
-        if (this.chargeType === ChargeType.Secondary) {
-          playerOpponent.hp -= calculateMoveDmgActual(this.dataStore, player, playerOpponent, player.cMoveSec);
-        }
+        playerOpponent.hp -= calculateMoveDmgActual(
+          this.dataStore,
+          player,
+          playerOpponent,
+          this.chargeType === ChargeType.Primary ? player.cMove : player.cMoveSec
+        );
       } else {
         playerOpponent.block -= 1;
       }
@@ -583,6 +578,7 @@ export class BattlePVP implements IBattlePVP {
       config.preCharge = false;
       config.postRandomPlayer = false;
     }
+    config.tap = false;
   }
 
   result(isOpponent = false) {
