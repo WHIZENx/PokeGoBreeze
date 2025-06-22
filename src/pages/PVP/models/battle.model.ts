@@ -269,6 +269,7 @@ export interface IPokemonBattleConfig {
   immune: boolean;
   charged: boolean;
   chargeSlot: ChargeType;
+  chargeType: ChargeType;
   chargedCount: number;
   preRandomPlayer: boolean;
   postRandomPlayer: boolean;
@@ -281,6 +282,7 @@ export class PokemonBattleConfig implements IPokemonBattleConfig {
   immune = false;
   charged = false;
   chargeSlot = ChargeType.None;
+  chargeType = ChargeType.None;
   chargedCount = 0;
   preRandomPlayer = false;
   postRandomPlayer = false;
@@ -294,7 +296,6 @@ export interface IBattlePVP {
   config: IPokemonBattleConfig;
   configOpponent: IPokemonBattleConfig;
   timer: number;
-  chargeType: ChargeType;
   isDelay: boolean;
   delay: number;
   dataStore: IDataModel;
@@ -308,7 +309,6 @@ export class BattlePVP implements IBattlePVP {
   config = new PokemonBattleConfig();
   configOpponent = new PokemonBattleConfig();
   timer = 0;
-  chargeType = ChargeType.None;
   isDelay = false;
   delay = BATTLE_DELAY;
   dataStore!: IDataModel;
@@ -390,11 +390,11 @@ export class BattlePVP implements IBattlePVP {
     if (
       pokemon.energy >= Math.abs(toNumber(move?.pvpEnergy)) &&
       ((!config.preRandomPlayer &&
-        (!isOpponent || !configOpponent.postRandomPlayer) &&
-        this.config.chargeSlot !== (chargeType === ChargeType.Primary ? ChargeType.Secondary : ChargeType.Primary)) ||
-        (config.postRandomPlayer && this.config.chargeSlot === chargeType))
+        (!isOpponent || !config.postRandomPlayer) &&
+        config.chargeSlot !== (chargeType === ChargeType.Primary ? ChargeType.Secondary : ChargeType.Primary)) ||
+        (config.postRandomPlayer && config.chargeSlot === chargeType))
     ) {
-      this.chargeType = chargeType;
+      config.chargeType = chargeType;
       pokemon.energy += toNumber(move?.pvpEnergy);
       updateState(timeline, {
         type: AttackType.Prepare,
@@ -417,7 +417,7 @@ export class BattlePVP implements IBattlePVP {
 
     if ((!pokemon.disableCMovePri || !pokemon.disableCMoveSec) && !configOpponent.preCharge) {
       if (config.preRandomPlayer && !config.postRandomPlayer) {
-        this.config.chargeSlot = getRandomNumber(ChargeType.Primary, ChargeType.Secondary);
+        config.chargeSlot = getRandomNumber(ChargeType.Primary, ChargeType.Secondary);
         config.postRandomPlayer = true;
       }
       this.gainEnergy(ChargeType.Primary, isOpponent);
@@ -482,7 +482,7 @@ export class BattlePVP implements IBattlePVP {
       } else {
         updateState(timeline, {
           timer: this.timer,
-          move: this.chargeType === ChargeType.Primary ? player.cMove : player.cMoveSec,
+          move: config.chargeType === ChargeType.Primary ? player.cMove : player.cMoveSec,
           size: (timeline[this.timer - 2].size || 0) + DEFAULT_PLUS_SIZE,
           type: config.chargedCount === -1 ? AttackType.Charge : AttackType.Spin,
         });
@@ -517,22 +517,17 @@ export class BattlePVP implements IBattlePVP {
     if (config.chargedCount >= 0) {
       config.chargedCount--;
     } else {
+      const move = config.chargeType === ChargeType.Primary ? player.cMove : player.cMoveSec;
       if (playerOpponent.block === 0) {
-        playerOpponent.hp -= calculateMoveDmgActual(
-          this.dataStore,
-          player,
-          playerOpponent,
-          this.chargeType === ChargeType.Primary ? player.cMove : player.cMoveSec
-        );
+        playerOpponent.hp -= calculateMoveDmgActual(this.dataStore, player, playerOpponent, move);
       } else {
         playerOpponent.block -= 1;
       }
-      const moveType = this.chargeType === ChargeType.Primary ? player.cMove : player.cMoveSec;
       const arrBufAtk: IBuff[] = [],
         arrBufTarget: IBuff[] = [];
       const randInt = toFloat(Math.random(), 3);
-      if (isNotEmpty(moveType?.buffs) && randInt > 0 && randInt <= toNumber(moveType?.buffs[0].buffChance)) {
-        moveType?.buffs.forEach((value) => {
+      if (isNotEmpty(move?.buffs) && randInt > 0 && randInt <= toNumber(move?.buffs[0].buffChance)) {
+        move?.buffs.forEach((value) => {
           this.updatePokemonStat(value, value.target === BuffType.Target);
           if (value.target === BuffType.Target) {
             arrBufTarget.push(value);
