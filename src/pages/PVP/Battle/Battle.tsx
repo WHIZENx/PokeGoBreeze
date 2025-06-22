@@ -1123,8 +1123,8 @@ const Battle = () => {
                     <HpBar
                       text="HP"
                       height={15}
-                      hp={Math.floor((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType].hp)}
-                      maxHp={Math.floor(toNumber(pokemon.pokemonData.currentStats?.stats?.statSTA))}
+                      hp={Math.round((playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType].hp)}
+                      maxHp={Math.round(toNumber(pokemon.pokemonData.currentStats?.stats?.statSTA))}
                     />
                   </Fragment>
                 )}
