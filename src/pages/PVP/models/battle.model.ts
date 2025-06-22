@@ -490,10 +490,8 @@ export class BattlePVP implements IBattlePVP {
       if (timeline[this.timer - 2]) {
         timelineOpponent[this.timer - 2].size = timeline[this.timer - 2].size;
       }
-    } else {
-      if (!this.isDelay && player.block > 0 && configOpponent.chargedCount === -1) {
-        timelineOpponent[this.timer].type = AttackType.Block;
-      }
+    } else if (!this.isDelay && player.block > 0 && configOpponent.chargedCount === -1) {
+      timeline[this.timer].type = AttackType.Block;
     }
   }
 
