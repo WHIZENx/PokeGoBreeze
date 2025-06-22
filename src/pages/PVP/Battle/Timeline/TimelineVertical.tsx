@@ -133,7 +133,7 @@ const TimelineVertical = (pokemonCurr: IPokemonBattle, pokemonObj: IPokemonBattl
           {value.type === AttackType.Charge && (
             <div className={combineClasses('charged-attack-container turn-battle', end ? 'justify-content-end' : '')}>
               <div className={combineClasses('charged-attack-content text-center', value.color)}>
-                <span className="text-warning text-shadow-black u-fs-1">
+                <span className="text-warning text-shadow-black">
                   <b>Charged Attack!</b>
                 </span>
               </div>
