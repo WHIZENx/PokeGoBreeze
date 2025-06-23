@@ -349,36 +349,63 @@ export const calculateCatchChance = (baseCaptureRate: number | undefined, level:
 export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
   const maxCP = toNumber(cp);
   let minLevel = MIN_LEVEL;
-  let maxLevel = MIN_LEVEL + 1;
-  for (let level = minLevel; level <= MAX_LEVEL; level += 0.5) {
+  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
     if (maxCP <= calculateCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level)) {
       minLevel = level;
       break;
     }
   }
+  let maxLevel = minLevel + 1;
   for (let level = minLevel; level <= MAX_LEVEL; level += 0.5) {
     if (calculateCP(atk, def, sta, level) >= maxCP) {
       maxLevel = level;
       break;
     }
   }
+  const cpCache = new Map<string, number>();
+  const getCachedCP = (baseAtk: number, baseDef: number, baseSta: number, level: number) => {
+    const key = `${baseAtk}-${baseDef}-${baseSta}-${level}`;
+    if (!cpCache.has(key)) {
+      cpCache.set(key, calculateCP(baseAtk, baseDef, baseSta, level));
+    }
+    return cpCache.get(key);
+  };
 
   const predictArr: IPredictStatsModel[] = [];
   for (let level = minLevel; level <= maxLevel; level += 0.5) {
+    const ivCombinations = new Set<string>();
     for (let atkIV = MIN_IV; atkIV <= MAX_IV; atkIV++) {
       for (let defIV = MIN_IV; defIV <= MAX_IV; defIV++) {
+        const minPossibleCP = getCachedCP(atk + atkIV, def + defIV, sta + MIN_IV, level);
+        const maxPossibleCP = getCachedCP(atk + atkIV, def + defIV, sta + MAX_IV, level);
+
+        if (!minPossibleCP || !maxPossibleCP || minPossibleCP > maxCP || maxPossibleCP < maxCP) {
+          continue;
+        }
+
         for (let staIV = MIN_IV; staIV <= MAX_IV; staIV++) {
-          if (calculateCP(atk + atkIV, def + defIV, sta + staIV, level) === maxCP) {
-            predictArr.push(
-              PredictStatsModel.create({
-                atk: atkIV,
-                def: defIV,
-                sta: staIV,
-                level,
-                percent: toFloat(((atkIV + defIV + staIV) * 100) / (MAX_IV * 3), 2),
-                hp: Math.max(1, calculateStatsBattle(sta, staIV, level, true)),
-              })
-            );
+          const currentCP = getCachedCP(atk + atkIV, def + defIV, sta + staIV, level);
+
+          if (currentCP === maxCP) {
+            const ivKey = `${atkIV}-${defIV}-${staIV}-${level}`;
+
+            if (!ivCombinations.has(ivKey)) {
+              ivCombinations.add(ivKey);
+
+              const hp = Math.max(1, calculateStatsBattle(sta, staIV, level, true));
+              const percent = toFloat(((atkIV + defIV + staIV) * 100) / (MAX_IV * 3), 2);
+
+              predictArr.push(
+                PredictStatsModel.create({
+                  atk: atkIV,
+                  def: defIV,
+                  sta: staIV,
+                  level,
+                  percent,
+                  hp,
+                })
+              );
+            }
           }
         }
       }
@@ -657,26 +684,77 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCP: numbe
   if (atk === 0 || def === 0 || sta === 0) {
     return dataList;
   }
+  const cpCache = new Map<string, number>();
+  const getCachedCP = (baseAtk: number, baseDef: number, baseSta: number, level: number) => {
+    const key = `${baseAtk}-${baseDef}-${baseSta}-${level}`;
+    if (!cpCache.has(key)) {
+      cpCache.set(key, calculateCP(baseAtk, baseDef, baseSta, level));
+    }
+    return cpCache.get(key);
+  };
+
   let seqId = 0;
-  for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
+  let minLevel = MIN_LEVEL;
+  let maxLevel = MAX_LEVEL;
+
+  if (maxCP > 0) {
+    for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
+      const maxPossibleCP = getCachedCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level);
+      if (!isUndefined(maxPossibleCP) && maxPossibleCP > maxCP) {
+        maxLevel = level - 0.5;
+        break;
+      }
+    }
+  }
+
+  if (minCP > 0) {
+    for (let level = MIN_LEVEL; level <= MAX_LEVEL; level += 0.5) {
+      const minPossibleCP = getCachedCP(atk + MIN_IV, def + MIN_IV, sta + MIN_IV, level);
+      if (!isUndefined(minPossibleCP) && minPossibleCP >= minCP) {
+        minLevel = level;
+        break;
+      }
+    }
+  }
+
+  for (let level = minLevel; level <= maxLevel; level += 0.5) {
+    const minLevelCP = getCachedCP(atk + MIN_IV, def + MIN_IV, sta + MIN_IV, level);
+    const maxLevelCP = getCachedCP(atk + MAX_IV, def + MAX_IV, sta + MAX_IV, level);
+
+    if (
+      (maxCP > 0 && !isUndefined(minLevelCP) && minLevelCP > maxCP) ||
+      (minCP > 0 && !isUndefined(maxLevelCP) && maxLevelCP < minCP)
+    ) {
+      continue;
+    }
+
     for (let atkIV = MIN_IV; atkIV <= MAX_IV; ++atkIV) {
       for (let defIV = MIN_IV; defIV <= MAX_IV; ++defIV) {
+        const minAtkDefCP = getCachedCP(atk + atkIV, def + defIV, sta + MIN_IV, level);
+        const maxAtkDefCP = getCachedCP(atk + atkIV, def + defIV, sta + MAX_IV, level);
+
+        if (
+          (maxCP > 0 && !isUndefined(minAtkDefCP) && minAtkDefCP > maxCP) ||
+          (minCP > 0 && !isUndefined(maxAtkDefCP) && maxAtkDefCP < minCP)
+        ) {
+          continue;
+        }
+
         for (let staIV = MIN_IV; staIV <= MAX_IV; ++staIV) {
-          const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
-          if ((minCP === 0 || minCP <= cp) && (maxCP === 0 || cp <= maxCP)) {
+          const cp = getCachedCP(atk + atkIV, def + defIV, sta + staIV, level);
+
+          if (!isUndefined(cp) && (minCP === 0 || minCP <= cp) && (maxCP === 0 || cp <= maxCP)) {
             dataList.push(getBaseStatsByIVandLevel(atk, def, sta, cp, seqId, level, atkIV, defIV, staIV));
             seqId++;
+          } else if (maxCP > 0 && !isUndefined(cp) && cp > maxCP) {
+            break;
           }
         }
       }
     }
   }
 
-  if (!isPure) {
-    return sortStatsProd(dataList);
-  } else {
-    return dataList;
-  }
+  return isPure ? dataList : sortStatsProd(dataList);
 };
 
 export const calculateStatsByTag = (
@@ -900,7 +978,7 @@ export const calculateTDO = (
 };
 
 export const calculateBattleDPSDefender = (
-  globalOptions: IOptions | undefined | undefined,
+  globalOptions: IOptions | undefined,
   typeEff: ITypeEff | undefined,
   weatherBoost: IWeatherBoost | undefined,
   attacker: IBattleCalculate,
