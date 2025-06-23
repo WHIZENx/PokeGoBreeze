@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
-import { MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../utils/constants';
+import { MAX_IV } from '../../../utils/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 
 import './Damage.scss';
@@ -26,6 +26,7 @@ import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { getMultiplyFriendship } from '../../../utils/helpers/context.helpers';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -173,7 +174,7 @@ const Damage = () => {
             ...r,
             battleState: eff,
             move,
-            damage: calculateDamagePVE(globalOptions, statLvATK, statLvDEFObj, move.pvePower, eff),
+            damage: calculateDamagePVE(statLvATK, statLvDEFObj, move.pvePower, eff),
             hp: statLvSTAObj,
             currPoke: searching?.current?.form,
             objPoke: searching?.object?.form,
@@ -189,7 +190,6 @@ const Damage = () => {
     },
     [
       enqueueSnackbar,
-      globalOptions,
       enableFriend,
       battleState,
       move,
@@ -349,7 +349,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{padding(MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.friendshipLevel), 2)}
+                      x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>

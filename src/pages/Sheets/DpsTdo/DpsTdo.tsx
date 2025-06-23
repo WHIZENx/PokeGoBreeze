@@ -393,14 +393,7 @@ const DpsTdo = () => {
             });
 
             const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-            dps = calculateBattleDPS(
-              data.options,
-              data.typeEff,
-              data.weatherBoost,
-              statsAttacker,
-              statsDefender,
-              dpsDef
-            );
+            dps = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
             tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
           } else {
             dps = calculateAvgDPS(

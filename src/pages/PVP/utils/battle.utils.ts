@@ -3,8 +3,9 @@ import { TypeAction } from '../../../enums/type.enum';
 import { IDataModel } from '../../../store/models/store.model';
 import { calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { findStabType } from '../../../utils/compute';
-import { DEFAULT_SIZE, MIN_LEVEL, STAB_MULTIPLY } from '../../../utils/constants';
+import { DEFAULT_SIZE, MIN_LEVEL } from '../../../utils/constants';
 import { isNotEmpty, toNumber } from '../../../utils/extension';
+import { battleStab } from '../../../utils/helpers/context.helpers';
 import { getDmgMultiplyBonus } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
 import { IPokemonBattleData, ITimeline, TimelineConfig, TimelineModel } from '../models/battle.model';
@@ -71,7 +72,7 @@ export const calculateMoveDmgActual = (
     return (
       (atkPokemon *
         move.pvpPower *
-        (findStabType(pokemon.pokemon?.types, move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
+        (findStabType(pokemon.pokemon?.types, move.type) ? battleStab() : 1) *
         getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk) *
         getTypeEffective(dataStore.typeEff, move.type, pokemonOpponent.pokemon?.types)) /
       (defPokemonOpponent * getDmgMultiplyBonus(pokemonOpponent.pokemonType, TypeAction.Def))

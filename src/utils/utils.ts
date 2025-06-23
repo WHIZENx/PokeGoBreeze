@@ -75,7 +75,12 @@ import { BonusType } from '../core/enums/bonus-type.enum';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { BattleLeagueCPType } from './enums/compute.enum';
 import { IStyleData } from './models/util.model';
-import { getOptions } from './helpers/context.helpers';
+import {
+  combatPurifiedBonusAtk,
+  combatPurifiedBonusDef,
+  combatShadowBonusAtk,
+  combatShadowBonusDef,
+} from './helpers/context.helpers';
 
 class Mask {
   value: number;
@@ -1115,27 +1120,26 @@ export const moveTypeToFormType = (moveType?: MoveType) => {
 };
 
 export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction) => {
-  const options = getOptions();
   switch (type) {
     case TypeAction.Atk: {
       return form === PokemonType.Shadow
-        ? options.combatOptions.shadowBonus.atk
+        ? combatShadowBonusAtk()
         : form === PokemonType.Purified
-        ? options.combatOptions.purifiedBonus.atk
+        ? combatPurifiedBonusAtk()
         : 1;
     }
     case TypeAction.Def: {
       return form === PokemonType.Shadow
-        ? options.combatOptions.shadowBonus.def
+        ? combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? options.combatOptions.purifiedBonus.def
+        ? combatPurifiedBonusDef()
         : 1;
     }
     case TypeAction.Prod: {
       return form === PokemonType.Shadow
-        ? options.combatOptions.shadowBonus.atk * options.combatOptions.shadowBonus.def
+        ? combatShadowBonusAtk() * combatShadowBonusDef()
         : form === PokemonType.Purified
-        ? options.combatOptions.purifiedBonus.atk * options.combatOptions.purifiedBonus.def
+        ? combatPurifiedBonusAtk() * combatPurifiedBonusDef()
         : 1;
     }
     default:

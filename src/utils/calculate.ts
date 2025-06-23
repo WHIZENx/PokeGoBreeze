@@ -3,7 +3,6 @@ import { IPokemonDetail, Stats } from '../core/models/API/info.model';
 import { Combat, ICombat } from '../core/models/combat.model';
 import { CPMData, CPMDetail, ICPM } from '../core/models/cpm.model';
 import { IEvolution } from '../core/models/evolution.model';
-import { IOptions } from '../core/models/options.model';
 import { IPokemonData, PokemonData } from '../core/models/pokemon.model';
 import {
   IStatsPokemon,
@@ -46,8 +45,6 @@ import {
   MIN_CP,
   MIN_IV,
   MIN_LEVEL,
-  MULTIPLY_LEVEL_FRIENDSHIP,
-  MULTIPLY_THROW_CHARGE,
   RAID_BOSS_TIER,
   typeCostPowerUp,
 } from './constants';
@@ -107,7 +104,13 @@ import { IBattleState } from '../core/models/damage.model';
 import { IArrayStats } from './models/util.model';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { BattleLeagueCPType } from './enums/compute.enum';
-import { getOptions } from './helpers/context.helpers';
+import {
+  battleStab,
+  combatMaxEnergy,
+  dodgeDamageReductionPercent,
+  getMultiplyThrownByType,
+  getMultiplyFriendship,
+} from './helpers/context.helpers';
 
 const weatherMultiple = (
   weatherBoost: IWeatherBoost | undefined,
@@ -117,7 +120,7 @@ const weatherMultiple = (
   (weatherBoost as unknown as DynamicObj<string[]>)[
     getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))
   ]?.find((item) => isEqual(item, type?.replaceAll(' ', '_'), EqualMode.IgnoreCaseSensitive))
-    ? getOptions().battleOptions.stab
+    ? battleStab()
     : 1;
 
 export const getTypeEffective = (
@@ -750,7 +753,6 @@ export const calculateStatsByTag = (
 };
 
 export const calculateDamagePVE = (
-  globalOptions: IOptions | undefined,
   atk: number,
   defObj: number,
   power: number,
@@ -758,17 +760,16 @@ export const calculateDamagePVE = (
   notPure?: boolean,
   isStab?: boolean
 ) => {
-  const options = getOptions();
-  const stabMultiply = options.battleOptions.stab;
+  const stabMultiply = battleStab();
   let modifier = 0;
   if (battleState) {
     const isStab = battleState.isStab ? stabMultiply : 1;
     const isWb = battleState.isWb ? stabMultiply : 1;
-    const isDodge = battleState.isDodge ? 1 - options.battleOptions.dodgeDamageReductionPercent : 1;
+    const isDodge = battleState.isDodge ? 1 - dodgeDamageReductionPercent() : 1;
     const isMega = battleState.isMega ? (battleState.isStab ? stabMultiply : DEFAULT_MEGA_MULTIPLY) : 1;
     const isTrainer = battleState.isTrainer ? DEFAULT_TRAINER_MULTIPLY : 1;
-    const multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.friendshipLevel);
-    const multiplyThrowCharge = MULTIPLY_THROW_CHARGE(globalOptions, battleState.throwLevel);
+    const multiplyLevelFriendship = getMultiplyFriendship(battleState.friendshipLevel);
+    const multiplyThrowCharge = getMultiplyThrownByType(battleState.throwLevel);
     modifier =
       isStab *
       isWb *
@@ -799,14 +800,11 @@ export const getBarCharge = (energy: number, isRaid = false) => {
 };
 
 const calculateDPS = (data: ICalculateDPS, specific?: Specific) => {
-  const options = getOptions();
   const fastDPS = data.fastDamage / toNumber(data.fastDuration + toNumber(data.fastDelay), 1);
   const chargeDPS = data.chargeDamage / toNumber(data.chargeDuration + toNumber(data.chargeDelay), 1);
 
   const chargeEnergy =
-    data.chargeEnergy === options.battleOptions.maxEnergy
-      ? 0.5 * data.fastEnergy + 0.5 * data.y * data.chargeDamageWindowStart
-      : 0;
+    data.chargeEnergy === combatMaxEnergy() ? 0.5 * data.fastEnergy + 0.5 * data.y * data.chargeDamageWindowStart : 0;
   const fastEnergyPerSec = data.fastEnergy / toNumber(data.fastDuration + toNumber(data.fastDelay), 1);
   const chargeEnergyPerSec =
     (data.chargeEnergy + chargeEnergy) / toNumber(data.chargeDuration + toNumber(data.chargeDelay), 1);
@@ -849,14 +847,11 @@ export const calculateAvgDPS = (
   options?: IOptionOtherDPS
 ) => {
   pokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : pokemonType;
-  const globalOptions = getOptions();
-  const stabMultiply = globalOptions.combatOptions.stab;
+  const stabMultiply = battleStab();
   const atkBonus = getDmgMultiplyBonus(pokemonType, TypeAction.Atk);
   const defBonus = getDmgMultiplyBonus(pokemonType, TypeAction.Def);
   const multiplyLevelFriendship =
-    DEFAULT_TRAINER_FRIEND || options?.isTrainerFriend
-      ? MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, options?.pokemonFriendLevel)
-      : 1;
+    DEFAULT_TRAINER_FRIEND || options?.isTrainerFriend ? getMultiplyFriendship(options?.pokemonFriendLevel) : 1;
 
   const FPow = toNumber(fMove?.pvePower);
   const CPow = toNumber(cMove?.pvePower);
@@ -952,10 +947,9 @@ export const calculateBattleDPSDefender = (
   attacker: IBattleCalculate,
   defender: IBattleCalculate
 ) => {
-  const options = getOptions();
   const defPokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : defender.pokemonType;
   const atkPokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : attacker.pokemonType;
-  const stabMultiply = options.combatOptions.stab;
+  const stabMultiply = battleStab();
   const atkBonus = getDmgMultiplyBonus(defPokemonType, TypeAction.Atk);
   const defBonus = getDmgMultiplyBonus(atkPokemonType, TypeAction.Def);
 
@@ -1001,20 +995,18 @@ export const calculateBattleDPSDefender = (
 };
 
 export const calculateBattleDPS = (
-  globalOptions: IOptions | undefined,
   typeEff: ITypeEff | undefined,
   weatherBoost: IWeatherBoost | undefined,
   attacker: IBattleCalculate,
   defender: IBattleCalculate,
   DPSDef: number
 ) => {
-  const options = getOptions();
   const atkPokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : attacker.pokemonType;
   const defPokemonType = DEFAULT_POKEMON_SHADOW ? PokemonType.Shadow : defender.pokemonType;
-  const stabMultiply = options.combatOptions.stab;
+  const stabMultiply = battleStab();
   const atkBonus = getDmgMultiplyBonus(atkPokemonType, TypeAction.Atk);
   const defBonus = getDmgMultiplyBonus(defPokemonType, TypeAction.Def);
-  const multiplyLevelFriendship = MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, attacker.pokemonFriendLevel);
+  const multiplyLevelFriendship = getMultiplyFriendship(attacker.pokemonFriendLevel);
 
   const FPow = toNumber(attacker.fMove?.pvePower);
   const CPow = toNumber(attacker.cMove?.pvePower);
@@ -1258,7 +1250,6 @@ const setQueryMove = (data: QueryMovesPokemon, fastMoveSet: string[], chargedMov
 };
 
 export const queryStatesEvoChain = (
-  globalOptions: IOptions | undefined,
   pokemonData: IPokemonData[],
   item: IEvolution,
   level: number,

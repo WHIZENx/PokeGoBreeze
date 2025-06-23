@@ -17,7 +17,6 @@ import {
   BATTLE_DELAY,
   DEFAULT_BLOCK,
   FORM_SHADOW,
-  MAX_ENERGY,
   MAX_IV,
   MAX_LEVEL,
   MIN_CP,
@@ -103,6 +102,7 @@ import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getRandomNumber, overlappingPos } from '../utils/battle.utils';
+import { battleMaxEnergy } from '../../../utils/helpers/context.helpers';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -1050,7 +1050,7 @@ const Battle = () => {
                 defaultValue={pokemon.energy}
                 type="number"
                 min={0}
-                max={MAX_ENERGY(dataStore.options)}
+                max={battleMaxEnergy()}
                 onInput={(e) => {
                   const value = toNumber(e.currentTarget.value);
                   if (isNaN(value)) {
@@ -1158,7 +1158,7 @@ const Battle = () => {
                     text={splitAndCapitalize(pokemon.cMovePri?.name, '_', ' ')}
                     type={pokemon.cMovePri?.type}
                     size={80}
-                    maxEnergy={MAX_ENERGY(dataStore.options)}
+                    maxEnergy={battleMaxEnergy()}
                     moveEnergy={Math.abs(toNumber(pokemon.cMovePri?.pvpEnergy))}
                     energy={toNumber(
                       (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy,
@@ -1171,7 +1171,7 @@ const Battle = () => {
                       text={splitAndCapitalize(pokemon.cMoveSec.name, '_', ' ')}
                       type={pokemon.cMoveSec.type}
                       size={80}
-                      maxEnergy={MAX_ENERGY(dataStore.options)}
+                      maxEnergy={battleMaxEnergy()}
                       moveEnergy={Math.abs(pokemon.cMoveSec.pvpEnergy)}
                       energy={toNumber(
                         (playTimeline as unknown as DynamicObj<IPokemonBattleData>)[pokemonType]?.energy,

@@ -1,12 +1,10 @@
-import { IOptions } from '../core/models/options.model';
 import { PVPInfo } from '../core/models/pvp.model';
-import { getOption } from '../core/options';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
-import { DynamicObj, getPropertyName, toNumber } from './extension';
+import { DynamicObj, toNumber } from './extension';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
-import { PokemonType, ThrowType } from '../enums/type.enum';
+import { PokemonType } from '../enums/type.enum';
 
 // Theme
 export const LIGHT_THEME_BG = '#fafafa';
@@ -165,92 +163,6 @@ export const MAX_LEVEL = 51;
 
 export const MIN_IV = 0;
 export const MAX_IV = 15;
-
-export const STAB_MULTIPLY = (
-  options: IOptions | undefined,
-  settings = [getPropertyName(options, (o) => o.battleOptions), getPropertyName(options?.battleOptions, (o) => o.stab)]
-) => getOption<number>(options, settings, 1);
-
-export const MULTIPLY_LEVEL_FRIENDSHIP = (
-  options: IOptions | undefined,
-  level = DEFAULT_POKEMON_FRIEND_LEVEL,
-  settings = [
-    getPropertyName(options, (o) => o.trainerFriendship),
-    getPropertyName(options?.trainerFriendship, (o) => o[level.toString()]),
-    getPropertyName(options?.trainerFriendship[level.toString()], (o) => o.atkBonus),
-  ]
-) => getOption<number>(options, settings, 1);
-
-export const MULTIPLY_THROW_CHARGE = (
-  options: IOptions | undefined,
-  type = ThrowType.Normal,
-  settings = [
-    getPropertyName(options, (o) => o.throwCharge),
-    getPropertyName(options?.throwCharge, (o) =>
-      type === ThrowType.Normal
-        ? o.normal
-        : type === ThrowType.Nice
-        ? o.nice
-        : type === ThrowType.Great
-        ? o.great
-        : o.excellent
-    ),
-  ]
-) => getOption<number>(options, settings, 1);
-
-export const DODGE_REDUCE = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.battleOptions),
-    getPropertyName(options?.battleOptions, (o) => o.dodgeDamageReductionPercent),
-  ]
-) => getOption<number>(options, settings, 0);
-
-export const MAX_ENERGY = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.battleOptions),
-    getPropertyName(options?.battleOptions, (o) => o.maxEnergy),
-  ]
-) => getOption<number>(options, settings, 0);
-
-/* Shadow exclusive bonus for Pokémon in battle */
-export const SHADOW_ATK_BONUS = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.combatOptions),
-    getPropertyName(options?.combatOptions, (o) => o.shadowBonus),
-    getPropertyName(options?.combatOptions.shadowBonus, (o) => o.atk),
-  ]
-) => getOption<number>(options, settings, 1);
-
-export const SHADOW_DEF_BONUS = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.combatOptions),
-    getPropertyName(options?.combatOptions, (o) => o.shadowBonus),
-    getPropertyName(options?.combatOptions.shadowBonus, (o) => o.def),
-  ]
-) => getOption<number>(options, settings, 1);
-
-/* Purified exclusive bonus for Pokémon in battle */
-export const PURIFIED_ATK_BONUS = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.combatOptions),
-    getPropertyName(options?.combatOptions, (o) => o.purifiedBonus),
-    getPropertyName(options?.combatOptions.purifiedBonus, (o) => o.atk),
-  ]
-) => getOption<number>(options, settings, 1);
-
-export const PURIFIED_DEF_BONUS = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.combatOptions),
-    getPropertyName(options?.combatOptions, (o) => o.purifiedBonus),
-    getPropertyName(options?.combatOptions.purifiedBonus, (o) => o.def),
-  ]
-) => getOption<number>(options, settings, 1);
 
 export const genList: DynamicObj<number[]> = {
   1: [1, 151],
