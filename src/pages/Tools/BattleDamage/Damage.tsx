@@ -26,7 +26,7 @@ import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
-import { getMultiplyFriendship } from '../../../utils/helpers/context.helpers';
+import { getMultiplyFriendship, getThrowCharge } from '../../../utils/helpers/context.helpers';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -83,7 +83,6 @@ const Damage = () => {
       'battle strategy',
     ],
   });
-  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
@@ -368,7 +367,7 @@ const Damage = () => {
                           );
                         }}
                       >
-                        {Object.entries(globalOptions.throwCharge).map(([type, value], index) => (
+                        {Object.entries(getThrowCharge()).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>

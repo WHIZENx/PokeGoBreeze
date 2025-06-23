@@ -47,7 +47,6 @@ const CalculatePoint = () => {
       'team optimization',
     ],
   });
-  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
@@ -201,7 +200,6 @@ const CalculatePoint = () => {
     move: ICombat | undefined
   ) => {
     return calculateDamagePVE(
-      globalOptions,
       atk,
       def,
       toNumber(!isRaid && pvpDmg ? move?.pvpPower : move?.pvePower),

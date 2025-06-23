@@ -42,7 +42,7 @@ import {
 } from '../../../utils/utils';
 
 import './CatchChance.scss';
-import { StoreState, SearchingState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import {
   DynamicObj,
   getValueOrDefault,
@@ -68,6 +68,7 @@ import { ItemName } from '../../News/enums/item-type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
+import { maxEncounterPlayerLevel, maxQuestEncounterPlayerLevel } from '../../../utils/helpers/context.helpers';
 
 const balls: PokeBallThreshold[] = [
   {
@@ -97,7 +98,6 @@ const throws: ThrowThreshold[] = [
 ];
 
 const CatchChance = () => {
-  const playerSetting = useSelector((state: StoreState) => state.store.data.options.playerSetting);
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const circleDistance = useRef(200);
@@ -514,11 +514,11 @@ const CatchChance = () => {
                   valueLabelDisplay="off"
                   marks={[
                     {
-                      value: playerSetting.maxQuestEncounterPlayerLevel,
+                      value: maxQuestEncounterPlayerLevel(),
                       label: <span className="position-absolute -top-1">Max LV encounter in quest</span>,
                     },
                     {
-                      value: playerSetting.maxEncounterPlayerLevel,
+                      value: maxEncounterPlayerLevel(),
                       label: <span className="position-absolute bottom-4">Max LV encounter in wild</span>,
                     },
                   ]}

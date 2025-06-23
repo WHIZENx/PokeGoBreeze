@@ -188,7 +188,7 @@ const FindBattle = () => {
       getEvoChain(toNumber(pokemon?.form?.defaultId)).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(dataStore.options, dataStore.pokemons, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(dataStore.pokemons, value, level, ATKIv, DEFIv, STAIv);
           if (data.id === pokemon?.form?.defaultId) {
             setMaxCP(data.maxCP);
           }
@@ -277,7 +277,7 @@ const FindBattle = () => {
       }
       dispatch(SpinnerActions.HideSpinner.create());
     },
-    [dispatch, dataStore.options, ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
+    [dispatch, ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
   );
 
   const onSearchStatsPoke = useCallback(

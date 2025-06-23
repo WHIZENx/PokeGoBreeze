@@ -399,7 +399,7 @@ const Battle = () => {
         }
       }
     },
-    [dataStore.options, dataStore.pokemons, dataStore.assets, dispatch]
+    [dataStore.pokemons, dataStore.assets, dispatch]
   );
 
   useEffect(() => {
