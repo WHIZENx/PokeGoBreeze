@@ -1,4 +1,3 @@
-import { IOptions } from '../../core/models/options.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { IStatsRank, StatsPokemonGO } from '../../core/models/stats.model';
 import { PokemonType, TypeAction } from '../../enums/type.enum';
@@ -10,9 +9,9 @@ import { getDmgMultiplyBonus } from '../../utils/utils';
 import { StatsActions } from '../actions';
 import { StatsActionsUnion } from '../actions/stats.action';
 
-const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData, options?: IOptions) => {
-  const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Atk));
-  const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Def));
+const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData) => {
+  const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Atk));
+  const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Def));
   result.push(
     new ArrayStats({
       id: value.num,
@@ -22,12 +21,8 @@ const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData, 
       statsGO: StatsPokemonGO.create(atkShadow, defShadow, value.statsGO.sta),
     })
   );
-  const atkPurification = Math.round(
-    value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk)
-  );
-  const defPurification = Math.round(
-    value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def)
-  );
+  const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Atk));
+  const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Def));
   result.push(
     new ArrayStats({
       id: value.num,
@@ -57,7 +52,7 @@ const StatsReducer = (state: IStatsRank | null = null, action: StatsActionsUnion
           );
 
           if (value.hasShadowForm) {
-            addShadowPurificationForms(result, value, action.payload.options);
+            addShadowPurificationForms(result, value);
           }
         });
       return sortStatsPokemon(result);

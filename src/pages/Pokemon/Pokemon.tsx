@@ -93,7 +93,6 @@ const Pokemon = (props: IPokemonPage) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons || []);
-  const options = useSelector((state: StoreState) => state.store.data.options);
 
   const currentSearchingForm = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
   const pokemonDetails = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
@@ -456,8 +455,8 @@ const Pokemon = (props: IPokemonPage) => {
     const details = getPokemonDetails(pokemonData, id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType || PokemonType.Normal;
     if (isSpecialFormType(details.pokemonType)) {
-      const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
-      const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
+      const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, TypeAction.Atk);
+      const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, TypeAction.Def);
       const sta = details.statsGO.sta;
       details.statsGO = StatsPokemonGO.create(atk, def, sta);
     }

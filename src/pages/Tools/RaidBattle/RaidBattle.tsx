@@ -438,13 +438,7 @@ const RaidBattle = () => {
             return;
           }
 
-          const dpsDef = calculateBattleDPSDefender(
-            data.options,
-            data.typeEff,
-            data.weatherBoost,
-            statsAttacker,
-            statsDefender
-          );
+          const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
           const dpsAtk = calculateBattleDPS(
             data.options,
             data.typeEff,
@@ -589,13 +583,7 @@ const RaidBattle = () => {
         isStab: isWeatherBoss,
       });
 
-      const dpsDef = calculateBattleDPSDefender(
-        data.options,
-        data.typeEff,
-        data.weatherBoost,
-        statsAttacker,
-        statsDefender
-      );
+      const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
       const dpsAtk = calculateBattleDPS(
         data.options,
         data.typeEff,

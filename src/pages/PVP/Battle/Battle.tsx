@@ -895,7 +895,7 @@ const Battle = () => {
             <b>
               {Math.floor(
                 toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Atk)
+                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk)
               )}
             </b>
             <br />
@@ -904,7 +904,7 @@ const Battle = () => {
             <b>
               {Math.floor(
                 toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Def)
+                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Def)
               )}
             </b>
             <br />
@@ -917,7 +917,7 @@ const Battle = () => {
                 toNumber(pokemon.pokemonData?.currentStats?.stats?.statATK) *
                   toNumber(pokemon.pokemonData?.currentStats?.stats?.statDEF) *
                   toNumber(pokemon.pokemonData?.currentStats?.stats?.statSTA) *
-                  getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Prod)
+                  getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Prod)
               )}
             </b>
             <br />

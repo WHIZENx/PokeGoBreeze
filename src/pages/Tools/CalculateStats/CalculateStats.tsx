@@ -30,7 +30,7 @@ import Find from '../../../components/Find/Find';
 import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
-import { StoreState, SearchingState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../utils/constants';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
@@ -55,7 +55,6 @@ const Calculate = () => {
       'Pokémon stats tool',
     ],
   });
-  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');
@@ -119,22 +118,10 @@ const Calculate = () => {
     setPokeStats(result);
     setStatLevel(result.level);
     setStatData(
-      calculateBetweenLevel(
-        globalOptions,
-        statATK,
-        statDEF,
-        statSTA,
-        ATKIv,
-        DEFIv,
-        STAIv,
-        result.level,
-        result.level,
-        typePoke
-      )
+      calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke)
     );
     setDataLittleLeague(
       calculateBattleLeague(
-        globalOptions,
         statATK,
         statDEF,
         statSTA,
@@ -149,7 +136,6 @@ const Calculate = () => {
     );
     setDataGreatLeague(
       calculateBattleLeague(
-        globalOptions,
         statATK,
         statDEF,
         statSTA,
@@ -164,7 +150,6 @@ const Calculate = () => {
     );
     setDataUltraLeague(
       calculateBattleLeague(
-        globalOptions,
         statATK,
         statDEF,
         statSTA,
@@ -178,22 +163,10 @@ const Calculate = () => {
       )
     );
     setDataMasterLeague(
-      calculateBattleLeague(
-        globalOptions,
-        statATK,
-        statDEF,
-        statSTA,
-        ATKIv,
-        DEFIv,
-        STAIv,
-        result.level,
-        result.CP,
-        typePoke
-      )
+      calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke)
     );
   }, [
     enqueueSnackbar,
-    globalOptions,
     pokemon?.statsGO?.atk,
     pokemon?.statsGO?.def,
     pokemon?.statsGO?.sta,
@@ -220,18 +193,7 @@ const Calculate = () => {
       const statDEF = toNumber(pokemon?.statsGO?.def);
       const statSTA = toNumber(pokemon?.statsGO?.sta);
       setStatData(
-        calculateBetweenLevel(
-          globalOptions,
-          statATK,
-          statDEF,
-          statSTA,
-          ATKIv,
-          DEFIv,
-          STAIv,
-          pokeStats.level,
-          level,
-          typePoke
-        )
+        calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, level, typePoke)
       );
     }
   };

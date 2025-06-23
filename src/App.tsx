@@ -52,6 +52,8 @@ import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
+import { defaultOptions, OptionsContext } from './contexts/options.context';
+import optionsObserver from './utils/hooks/optionsObserver';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -73,6 +75,8 @@ function App() {
 
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
+
+  optionsObserver();
 
   useEffect(() => {
     setTimeout(() => {
@@ -220,7 +224,9 @@ export default function Main() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <ErrorBoundary>
-          <App />
+          <OptionsContext.Provider value={defaultOptions}>
+            <App />
+          </OptionsContext.Provider>
         </ErrorBoundary>
       </ThemeProvider>
     </ColorModeContext.Provider>

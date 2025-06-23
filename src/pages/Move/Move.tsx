@@ -299,11 +299,11 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     if (move && isNotEmpty(data.pokemons)) {
-      const result = queryTopMove(data.options, data.pokemons, data.typeEff, data.weatherBoost, move);
+      const result = queryTopMove(data.pokemons, data.typeEff, data.weatherBoost, move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, data.options, data.pokemons, data.typeEff, data.weatherBoost]);
+  }, [move, data.pokemons, data.typeEff, data.weatherBoost]);
 
   useEffect(() => {
     setTopListFilter(

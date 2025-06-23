@@ -72,9 +72,9 @@ export const calculateMoveDmgActual = (
       (atkPokemon *
         move.pvpPower *
         (findStabType(pokemon.pokemon?.types, move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
-        getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Atk) *
+        getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk) *
         getTypeEffective(dataStore.typeEff, move.type, pokemonOpponent.pokemon?.types)) /
-      (defPokemonOpponent * getDmgMultiplyBonus(pokemonOpponent.pokemonType, dataStore.options, TypeAction.Def))
+      (defPokemonOpponent * getDmgMultiplyBonus(pokemonOpponent.pokemonType, TypeAction.Def))
     );
   }
   return 1;

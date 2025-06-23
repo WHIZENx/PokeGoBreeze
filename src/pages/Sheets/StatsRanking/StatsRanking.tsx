@@ -221,12 +221,11 @@ const StatsRanking = () => {
 
   const stats = useSelector((state: StatsState) => state.stats);
   const pokemons = useSelector((state: StoreState) => state.store.data.pokemons);
-  const options = useSelector((state: StoreState) => state.store.data.options);
   const [pokemon, setPokemon] = useState<IPokemonDetail>();
 
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
-    const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Atk));
-    const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Def));
+    const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Atk));
+    const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Def));
     const sta = Math.round(value.statsGO.sta);
     const prodShadow = atkShadow * defShadow * sta;
     result.push(
@@ -253,12 +252,8 @@ const StatsRanking = () => {
         }),
       })
     );
-    const atkPurification = Math.round(
-      value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk)
-    );
-    const defPurification = Math.round(
-      value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def)
-    );
+    const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Atk));
+    const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Def));
     const prodPurification = atkPurification * defPurification * sta;
     result.push(
       PokemonStatsRanking.create({

@@ -34,10 +34,6 @@ import {
   MAX_IV,
   MIN_IV,
   Params,
-  PURIFIED_ATK_BONUS,
-  PURIFIED_DEF_BONUS,
-  SHADOW_ATK_BONUS,
-  SHADOW_DEF_BONUS,
   versionList,
 } from './constants';
 import {
@@ -63,7 +59,6 @@ import {
 } from './extension';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
-import { Options } from '../core/models/options.model';
 import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
 import { TypeEffChart } from '../core/models/type-eff.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
@@ -80,6 +75,7 @@ import { BonusType } from '../core/enums/bonus-type.enum';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { BattleLeagueCPType } from './enums/compute.enum';
 import { IStyleData } from './models/util.model';
+import { getOptions } from './helpers/context.helpers';
 
 class Mask {
   value: number;
@@ -1118,27 +1114,28 @@ export const moveTypeToFormType = (moveType?: MoveType) => {
   }
 };
 
-export const getDmgMultiplyBonus = (form = PokemonType.Normal, options?: Options, type?: TypeAction) => {
+export const getDmgMultiplyBonus = (form = PokemonType.Normal, type?: TypeAction) => {
+  const options = getOptions();
   switch (type) {
     case TypeAction.Atk: {
       return form === PokemonType.Shadow
-        ? SHADOW_ATK_BONUS(options)
+        ? options.combatOptions.shadowBonus.atk
         : form === PokemonType.Purified
-        ? PURIFIED_ATK_BONUS(options)
+        ? options.combatOptions.purifiedBonus.atk
         : 1;
     }
     case TypeAction.Def: {
       return form === PokemonType.Shadow
-        ? SHADOW_DEF_BONUS(options)
+        ? options.combatOptions.shadowBonus.def
         : form === PokemonType.Purified
-        ? PURIFIED_DEF_BONUS(options)
+        ? options.combatOptions.purifiedBonus.def
         : 1;
     }
     case TypeAction.Prod: {
       return form === PokemonType.Shadow
-        ? SHADOW_ATK_BONUS(options) * SHADOW_DEF_BONUS(options)
+        ? options.combatOptions.shadowBonus.atk * options.combatOptions.shadowBonus.def
         : form === PokemonType.Purified
-        ? PURIFIED_ATK_BONUS(options) * PURIFIED_DEF_BONUS(options)
+        ? options.combatOptions.purifiedBonus.atk * options.combatOptions.purifiedBonus.def
         : 1;
     }
     default:

@@ -392,13 +392,7 @@ const DpsTdo = () => {
               weatherBoosts: options.weatherBoosts,
             });
 
-            const dpsDef = calculateBattleDPSDefender(
-              data.options,
-              data.typeEff,
-              data.weatherBoost,
-              statsAttacker,
-              statsDefender
-            );
+            const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
             dps = calculateBattleDPS(
               data.options,
               data.typeEff,
@@ -410,7 +404,6 @@ const DpsTdo = () => {
             tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
           } else {
             dps = calculateAvgDPS(
-              data.options,
               data.typeEff,
               data.weatherBoost,
               statsAttacker.fMove,
@@ -422,13 +415,7 @@ const DpsTdo = () => {
               statsAttacker.pokemonType,
               options
             );
-            tdo = calculateTDO(
-              data.options,
-              statsAttacker.def,
-              toNumber(statsAttacker.hp),
-              dps,
-              statsAttacker.pokemonType
-            );
+            tdo = calculateTDO(statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
           }
           dataList.push({
             pokemon,
@@ -597,7 +584,6 @@ const DpsTdo = () => {
     cMoveTargetPokemon,
     data.pokemons,
     data.combats,
-    data.options,
     data.typeEff,
     data.weatherBoost,
   ]);

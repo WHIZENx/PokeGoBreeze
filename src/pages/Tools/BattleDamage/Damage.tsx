@@ -114,7 +114,7 @@ const Damage = () => {
           MAX_IV,
           statLevel,
           false,
-          getDmgMultiplyBonus(statType, globalOptions, TypeAction.Atk)
+          getDmgMultiplyBonus(statType, TypeAction.Atk)
         )
       );
     }
@@ -125,7 +125,7 @@ const Damage = () => {
           MAX_IV,
           statLevelObj,
           false,
-          getDmgMultiplyBonus(statType, globalOptions, TypeAction.Def)
+          getDmgMultiplyBonus(statType, TypeAction.Def)
         )
       );
     }
@@ -133,7 +133,6 @@ const Damage = () => {
       setStatLvSTAObj(calculateStatsBattle(searching?.object?.pokemon?.statsGO?.sta, MAX_IV, statLevelObj));
     }
   }, [
-    globalOptions,
     searching?.current?.pokemon?.statsGO?.atk,
     statLevel,
     statType,

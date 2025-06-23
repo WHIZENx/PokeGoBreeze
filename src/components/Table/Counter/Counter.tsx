@@ -291,7 +291,6 @@ const Counter = (props: ICounterComponent) => {
       const resolveHandler = () => {
         if (props.pokemonData) {
           result = counterPokemon(
-            data.options,
             data.pokemons,
             data.typeEff,
             data.weatherBoost,

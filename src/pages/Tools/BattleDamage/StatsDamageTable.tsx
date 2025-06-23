@@ -15,16 +15,12 @@ import APIService from '../../../services/API.service';
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
-import { useSelector } from 'react-redux';
 import { MAX_IV, MAX_LEVEL, MIN_LEVEL } from '../../../utils/constants';
-import { StoreState } from '../../../store/models/state.model';
 import { IStatsTableComponent } from '../../models/page.model';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
 
 const StatsTable = (props: IStatsTableComponent) => {
-  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
-
   const [currStatLevel, setCurrStatLevel] = useState(1);
   const [currStatType, setCurrStatType] = useState(PokemonType.Normal);
 
@@ -47,7 +43,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             MAX_IV,
             currStatLevel,
             false,
-            getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Atk)
+            getDmgMultiplyBonus(currStatType, TypeAction.Atk)
           )
         );
       }
@@ -58,7 +54,7 @@ const StatsTable = (props: IStatsTableComponent) => {
             MAX_IV,
             currStatLevel,
             false,
-            getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Def)
+            getDmgMultiplyBonus(currStatType, TypeAction.Def)
           )
         );
       }
@@ -68,7 +64,6 @@ const StatsTable = (props: IStatsTableComponent) => {
       setCurrStatLevel(v);
     },
     [
-      globalOptions,
       props.setStatLevel,
       props.setStatLvATK,
       props.setStatLvDEF,
@@ -172,7 +167,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                     MAX_IV,
                     currStatLevel,
                     true,
-                    getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Atk)
+                    getDmgMultiplyBonus(currStatType, TypeAction.Atk)
                   )}
                 </td>
               </tr>
@@ -187,7 +182,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                     MAX_IV,
                     currStatLevel,
                     true,
-                    getDmgMultiplyBonus(currStatType, globalOptions, TypeAction.Def)
+                    getDmgMultiplyBonus(currStatType, TypeAction.Def)
                   )}
                 </td>
               </tr>
