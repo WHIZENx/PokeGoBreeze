@@ -9,6 +9,10 @@ const optionsObserver = () => {
   const options = useSelector((state: StoreState) => state.store.data.options);
 
   useEffect(() => {
+    const config = process.env.REACT_APP_CONFIG;
+    if (config) {
+      options.config = JSON.parse(config);
+    }
     updateCurrentOptions(options || defaultOptions);
   }, [options]);
 

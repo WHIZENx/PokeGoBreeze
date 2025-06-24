@@ -180,6 +180,7 @@ module.exports = merge(common, {
         REACT_APP_ENCRYPTION_KEY: process.env.REACT_APP_ENCRYPTION_KEY,
         REACT_APP_ENCRYPTION_SALT: process.env.REACT_APP_ENCRYPTION_SALT,
         REACT_APP_VERSION: process.env.REACT_APP_VERSION,
+        REACT_APP_CONFIG: process.env.REACT_APP_CONFIG,
         REACT_APP_BASE_URL: process.env.REACT_APP_BASE_URL,
         NODE_ENV: JSON.stringify('production'),
         DEBUG: false,
