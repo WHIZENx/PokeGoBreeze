@@ -42,7 +42,6 @@ import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './utils/models/overrides/themes.model';
-import { LOAD_DATA_DELAY, TRANSITION_TIME } from './utils/constants';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/local-storage';
@@ -54,6 +53,7 @@ import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
 import optionsObserver from './utils/hooks/optionsObserver';
+import { loadDataDelay, transitionTime } from './utils/helpers/context.helpers';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -130,7 +130,7 @@ function App() {
     loadTheme(dispatch, stateTheme, setStateTheme);
   }, [dispatch]);
 
-  const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = LOAD_DATA_DELAY) => {
+  const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = loadDataDelay()) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
         resolve(await loadTimestamp(dispatch, data, timestamp, isCurrentVersion));
@@ -158,7 +158,7 @@ function App() {
   };
 
   return (
-    <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
+    <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
       <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
       <Routes>
         <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />

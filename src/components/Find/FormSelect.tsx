@@ -30,7 +30,6 @@ import {
   IPokemonFormDetail,
 } from '../../core/models/API/form.model';
 import { IPokemonDetailInfo, PokemonDetail, PokemonDetailInfo, PokemonInfo } from '../../core/models/API/info.model';
-import { FORM_NORMAL } from '../../utils/constants';
 import { AxiosError } from 'axios';
 import { IFormSelectComponent } from '../models/component.model';
 import { PokemonType, TypeRaid, VariantType } from '../../enums/type.enum';
@@ -38,6 +37,7 @@ import { SearchingActions } from '../../store/actions';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
+import { formNormal } from '../../utils/helpers/context.helpers';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -387,7 +387,7 @@ const FormSelect = (props: IFormSelectComponent) => {
                     />
                     <p>
                       {!value.form.formName
-                        ? capitalize(FORM_NORMAL)
+                        ? capitalize(formNormal())
                         : splitAndCapitalize(value.form.formName, '-', ' ')}
                     </p>
                     {toNumber(value.form.id) > 0 && value.form.id === currentForm.defaultId && (

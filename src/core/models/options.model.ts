@@ -553,11 +553,11 @@ export class TrainerFriendship implements ITrainerFriendship {
   atkBonus = 0;
 }
 
-interface IConfig {
+export interface IConfig {
   lightThemeBg: string;
   darkThemeBg: string;
-  persistkey: string;
-  persisttimeout: number;
+  persistKey: string;
+  persistTimeout: number;
   battleDelay: number;
   loadDataDelay: number;
   counterDelay: number;
@@ -568,7 +568,7 @@ interface IConfig {
   keyRight: number;
   keyDown: number;
   syncMsg: string;
-  pathAssetPokego: string;
+  pathAssetPokeGo: string;
   defaultSpriteName: string;
   transitionTime: string;
   formNormal: string;
@@ -637,8 +637,8 @@ interface IConfig {
 export class Config implements IConfig {
   lightThemeBg = '';
   darkThemeBg = '';
-  persistkey = '';
-  persisttimeout = 0;
+  persistKey = '';
+  persistTimeout = 0;
   battleDelay = 0;
   loadDataDelay = 0;
   counterDelay = 0;
@@ -649,7 +649,7 @@ export class Config implements IConfig {
   keyRight = 0;
   keyDown = 0;
   syncMsg = '';
-  pathAssetPokego = '';
+  pathAssetPokeGo = '';
   defaultSpriteName = '';
   transitionTime = '';
   formNormal = '';
@@ -699,10 +699,10 @@ export class Config implements IConfig {
   razzBerryIncChance = 0;
   silverPinapsIncChance = 0;
   goldRazzBerryIncChance = 0;
-  normalThrowIncChance = [];
-  niceThrowIncChance = [];
-  greatThrowIncChance = [];
-  excellentThrowIncChance = [];
+  normalThrowIncChance: number[] = [];
+  niceThrowIncChance: number[] = [];
+  greatThrowIncChance: number[] = [];
+  excellentThrowIncChance: number[] = [];
   minCp = 0;
   cpDiffRatio = 0;
   minLevel = 0;

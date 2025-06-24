@@ -2,10 +2,10 @@ import { IAsset } from '../core/models/asset.model';
 import { Color, ICandy } from '../core/models/candy.model';
 import { PokemonClass, PokemonType } from '../enums/type.enum';
 import APIService from '../services/API.service';
-import { FORM_GMAX, FORM_MEGA, FORM_NORMAL } from './constants';
 import { BattleLeagueCPType, BattleLeagueIconType, FormType } from './enums/compute.enum';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from './extension';
+import { formGmax, formMega, formNormal } from './helpers/context.helpers';
 import { IStyleData } from './models/util.model';
 
 export const priorityBadge = (priority: number) => {
@@ -153,7 +153,7 @@ export const computeBgType = (
   }
 };
 
-export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName = FORM_NORMAL) => {
+export const queryAssetForm = (assets: IAsset[], id: number | undefined, formName = formNormal()) => {
   const pokemonAssets = assets.find((asset) => asset.id === id);
   if (!pokemonAssets) {
     return;
@@ -163,13 +163,13 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
     return asset;
   } else if (
     isNotEmpty(pokemonAssets.image) &&
-    !isInclude(formName, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive)
+    !isInclude(formName, formMega(), IncludeMode.IncludeIgnoreCaseSensitive)
   ) {
-    const formNormal = pokemonAssets.image.find((img) => img.form === FORM_NORMAL);
-    if (!formNormal) {
+    const formOrigin = pokemonAssets.image.find((img) => img.form === formNormal());
+    if (!formOrigin) {
       return pokemonAssets.image[0];
     }
-    return formNormal;
+    return formOrigin;
   }
   return;
 };
@@ -177,10 +177,10 @@ export const queryAssetForm = (assets: IAsset[], id: number | undefined, formNam
 export const findAssetForm = (
   pokemonAssets: IAsset[],
   id: number | undefined,
-  formName = FORM_NORMAL,
+  formName = formNormal(),
   formType = FormType.Default
 ) => {
-  if (isEqual(formName, FORM_GMAX, EqualMode.IgnoreCaseSensitive)) {
+  if (isEqual(formName, formGmax(), EqualMode.IgnoreCaseSensitive)) {
     return;
   }
   const form = queryAssetForm(pokemonAssets, id, formName);

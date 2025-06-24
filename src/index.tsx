@@ -17,9 +17,9 @@ import { BrowserRouter } from 'react-router-dom';
 
 import RouterSync from './utils/hooks/RouterSync';
 import LoadingPersist from './components/Sprites/Loading/LoadingPersist';
-import { LIGHT_THEME_BG, DARK_THEME_BG } from './utils/constants';
 import { TypeTheme } from './enums/type.enum';
 import { LocalStorageConfig } from './store/constants/local-storage';
+import { lightThemeBg, darkThemeBg } from './utils/helpers/context.helpers';
 
 const { store, persistor } = configureStore();
 
@@ -38,7 +38,7 @@ try {
 
 document.documentElement.setAttribute('data-theme', theme);
 document.documentElement.setAttribute('data-bs-theme', theme);
-document.body.style.background = theme === TypeTheme.Dark ? DARK_THEME_BG : LIGHT_THEME_BG;
+document.body.style.background = theme === TypeTheme.Dark ? darkThemeBg() : lightThemeBg();
 
 root.render(
   <>

@@ -17,7 +17,7 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { findAssetForm } from '../../../utils/compute';
-import { DEFAULT_POKEMON_LEVEL, levelList, MAX_IV, MIN_IV, RAID_BOSS_TIER } from '../../../utils/constants';
+import { levelList, RAID_BOSS_TIER } from '../../../utils/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -98,6 +98,7 @@ import CustomPopover from '../../../components/Popover/CustomPopover';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
+import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/context.helpers';
 
 const RaidBattle = () => {
   useTitle({
@@ -140,9 +141,9 @@ const RaidBattle = () => {
   );
 
   const initFilter = FilterGroup.create({
-    level: DEFAULT_POKEMON_LEVEL,
+    level: defaultPokemonLevel(),
     pokemonType: PokemonType.Normal,
-    iv: StatsIV.setValue(MAX_IV, MAX_IV, MAX_IV),
+    iv: StatsIV.setValue(maxIv(), maxIv(), maxIv()),
     onlyShadow: false,
     onlyMega: false,
     onlyReleasedGO: true,
@@ -741,8 +742,8 @@ const RaidBattle = () => {
         <input
           value={filters.selected.iv.atkIV}
           type="number"
-          min={MIN_IV}
-          max={MAX_IV}
+          min={minIv()}
+          max={maxIv()}
           required
           className="form-control"
           placeholder="IV ATK"
@@ -757,8 +758,8 @@ const RaidBattle = () => {
         <input
           value={filters.selected.iv.defIV}
           type="number"
-          min={MIN_IV}
-          max={MAX_IV}
+          min={minIv()}
+          max={maxIv()}
           required
           className="form-control"
           placeholder="IV DEF"
@@ -773,8 +774,8 @@ const RaidBattle = () => {
         <input
           value={filters.selected.iv.staIV}
           type="number"
-          min={MIN_IV}
-          max={MAX_IV}
+          min={minIv()}
+          max={maxIv()}
           required
           className="form-control"
           placeholder="IV STA"
@@ -974,8 +975,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.atkIV}
               type="number"
-              min={MIN_IV}
-              max={MAX_IV}
+              min={minIv()}
+              max={maxIv()}
               required
               className="form-control"
               placeholder="IV ATK"
@@ -1000,8 +1001,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.defIV}
               type="number"
-              min={MIN_IV}
-              max={MAX_IV}
+              min={minIv()}
+              max={maxIv()}
               required
               className="form-control"
               placeholder="IV DEF"
@@ -1026,8 +1027,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.staIV}
               type="number"
-              min={MIN_IV}
-              max={MAX_IV}
+              min={minIv()}
+              max={maxIv()}
               required
               className="form-control"
               placeholder="IV STA"

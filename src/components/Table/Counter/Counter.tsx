@@ -37,12 +37,12 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { OptionsActions } from '../../../store/actions';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
-import { COUNTER_DELAY } from '../../../utils/constants';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
+import { counterDelay } from '../../../utils/helpers/context.helpers';
 
 const customStyles: TableStyles = {
   head: {
@@ -284,7 +284,7 @@ const Counter = (props: ICounterComponent) => {
     return () => controller.abort();
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
-  const calculateCounter = (signal: AbortSignal, delay = COUNTER_DELAY) => {
+  const calculateCounter = (signal: AbortSignal, delay = counterDelay()) => {
     return new Promise<ICounterModel[]>((resolve, reject) => {
       let result: ICounterModel[] = [];
 

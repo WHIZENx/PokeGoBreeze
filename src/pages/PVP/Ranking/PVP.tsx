@@ -31,7 +31,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { FORM_SHADOW, Params } from '../../../utils/constants';
+import { Params } from '../../../utils/constants';
 import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
@@ -66,6 +66,7 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
+import { formShadow } from '../../../utils/helpers/context.helpers';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
@@ -205,7 +206,7 @@ const RankingPVP = (props: IStyleSheetData) => {
 
           data.scorePVP = HexagonStats.create(data.scores);
           let pokemonType = PokemonType.Normal;
-          if (isInclude(data.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+          if (isInclude(data.speciesName, `(${formShadow()})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
             pokemonType = PokemonType.Shadow;
           } else if (
             isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||

@@ -26,12 +26,12 @@ import APIService from '../../services/API.service';
 import { DateEvent, TitleName } from './enums/item-type.enum';
 import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
 import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/information.enum';
-import { FORM_NORMAL } from '../../utils/constants';
 import { PokemonModelComponent } from '../../components/Info/Assets/models/pokemon-model.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
 import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
+import { formNormal } from '../../utils/helpers/context.helpers';
 
 const News = () => {
   useTitle({
@@ -83,7 +83,7 @@ const News = () => {
       result = reward?.item?.item.replace('ITEM_', '').replace('FREE_', '');
     } else if (reward?.type === TicketRewardType.Pokemon) {
       result = `#${reward.pokemon?.id}_${reward.pokemon?.pokemonId}${
-        reward.pokemon?.form && !isEqual(reward.pokemon?.form, FORM_NORMAL) ? `_${reward.pokemon?.form}` : ''
+        reward.pokemon?.form && !isEqual(reward.pokemon?.form, formNormal()) ? `_${reward.pokemon?.form}` : ''
       }`.replace(/_MR_/i, '_MR._');
     } else if (reward?.type === TicketRewardType.PokeCoin) {
       result = getKeyWithData(TicketRewardType, TicketRewardType.PokeCoin)
@@ -126,10 +126,10 @@ const News = () => {
       }
     }
     const imageList = result.find((poke) =>
-      pokemon?.form ? isEqual(poke.form, pokemon.form) : isEqual(poke.form, FORM_NORMAL)
+      pokemon?.form ? isEqual(poke.form, pokemon.form) : isEqual(poke.form, formNormal())
     );
     const image = imageList?.image.find((img) =>
-      pokemon?.form ? isEqual(img.form, pokemon.form) : isEqual(img.form, FORM_NORMAL)
+      pokemon?.form ? isEqual(img.form, pokemon.form) : isEqual(img.form, formNormal())
     )?.default;
     if (image) {
       return image;

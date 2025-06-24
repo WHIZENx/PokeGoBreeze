@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
-import { MAX_IV } from '../../../utils/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 
 import './Damage.scss';
@@ -26,7 +25,7 @@ import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
-import { getMultiplyFriendship, getThrowCharge } from '../../../utils/helpers/context.helpers';
+import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/context.helpers';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -111,7 +110,7 @@ const Damage = () => {
       setStatLvATK(
         calculateStatsBattle(
           searching?.current?.pokemon?.statsGO?.atk,
-          MAX_IV,
+          maxIv(),
           statLevel,
           false,
           getDmgMultiplyBonus(statType, TypeAction.Atk)
@@ -122,7 +121,7 @@ const Damage = () => {
       setStatLvDEFObj(
         calculateStatsBattle(
           searching?.object?.pokemon?.statsGO?.def,
-          MAX_IV,
+          maxIv(),
           statLevelObj,
           false,
           getDmgMultiplyBonus(statType, TypeAction.Def)
@@ -130,7 +129,7 @@ const Damage = () => {
       );
     }
     if (searching?.object?.pokemon?.statsGO?.sta !== 0) {
-      setStatLvSTAObj(calculateStatsBattle(searching?.object?.pokemon?.statsGO?.sta, MAX_IV, statLevelObj));
+      setStatLvSTAObj(calculateStatsBattle(searching?.object?.pokemon?.statsGO?.sta, maxIv(), statLevelObj));
     }
   }, [
     searching?.current?.pokemon?.statsGO?.atk,

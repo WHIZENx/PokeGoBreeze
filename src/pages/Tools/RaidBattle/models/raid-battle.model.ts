@@ -6,7 +6,7 @@ import {
 } from '../../../../core/models/pokemon.model';
 import { IStatsIV, StatsIV } from '../../../../core/models/stats.model';
 import { PokemonType } from '../../../../enums/type.enum';
-import { MIN_LEVEL } from '../../../../utils/constants';
+import { minLevel } from '../../../../utils/helpers/context.helpers';
 import { SortDirectionType } from '../../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { SortType } from '../enums/raid-state.enum';
 
@@ -139,7 +139,7 @@ interface IFilterGroup {
 }
 
 export class FilterGroup implements IFilterGroup {
-  level = MIN_LEVEL;
+  level = minLevel();
   pokemonType = PokemonType.Normal;
   iv = new StatsIV();
   onlyShadow = false;

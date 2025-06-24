@@ -2,8 +2,8 @@ import { IPokemonData } from '../../core/models/pokemon.model';
 import { IStatsRank, StatsPokemonGO } from '../../core/models/stats.model';
 import { PokemonType, TypeAction } from '../../enums/type.enum';
 import { sortStatsPokemon } from '../../utils/calculate';
-import { FORM_NORMAL, FORM_PURIFIED, FORM_SHADOW } from '../../utils/constants';
 import { getValueOrDefault } from '../../utils/extension';
+import { formPurified, formShadow, formNormal } from '../../utils/helpers/context.helpers';
 import { ArrayStats, IArrayStats } from '../../utils/models/util.model';
 import { getDmgMultiplyBonus } from '../../utils/utils';
 import { StatsActions } from '../actions';
@@ -16,7 +16,7 @@ const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData) 
     new ArrayStats({
       id: value.num,
       name: value.slug,
-      form: FORM_SHADOW,
+      form: formShadow(),
       baseStats: value.baseStats,
       statsGO: StatsPokemonGO.create(atkShadow, defShadow, value.statsGO.sta),
     })
@@ -27,7 +27,7 @@ const addShadowPurificationForms = (result: IArrayStats[], value: IPokemonData) 
     new ArrayStats({
       id: value.num,
       name: value.slug,
-      form: FORM_PURIFIED,
+      form: formPurified(),
       baseStats: value.baseStats,
       statsGO: StatsPokemonGO.create(atkPurification, defPurification, value.statsGO.sta),
     })
@@ -45,7 +45,7 @@ const StatsReducer = (state: IStatsRank | null = null, action: StatsActionsUnion
             new ArrayStats({
               id: value.num,
               name: value.slug,
-              form: getValueOrDefault(String, value.form, FORM_NORMAL),
+              form: getValueOrDefault(String, value.form, formNormal()),
               baseStats: value.baseStats,
               statsGO: value.statsGO,
             })

@@ -15,10 +15,10 @@ import APIService from '../../../services/API.service';
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
-import { MAX_IV, MAX_LEVEL, MIN_LEVEL } from '../../../utils/constants';
 import { IStatsTableComponent } from '../../models/page.model';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
+import { maxIv, minLevel, maxLevel } from '../../../utils/helpers/context.helpers';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const [currStatLevel, setCurrStatLevel] = useState(1);
@@ -40,7 +40,7 @@ const StatsTable = (props: IStatsTableComponent) => {
         props.setStatLvATK(
           calculateStatsBattle(
             props.statATK,
-            MAX_IV,
+            maxIv(),
             currStatLevel,
             false,
             getDmgMultiplyBonus(currStatType, TypeAction.Atk)
@@ -51,7 +51,7 @@ const StatsTable = (props: IStatsTableComponent) => {
         props.setStatLvDEF(
           calculateStatsBattle(
             props.statDEF,
-            MAX_IV,
+            maxIv(),
             currStatLevel,
             false,
             getDmgMultiplyBonus(currStatType, TypeAction.Def)
@@ -59,7 +59,7 @@ const StatsTable = (props: IStatsTableComponent) => {
         );
       }
       if (props.setStatLvSTA) {
-        props.setStatLvSTA(calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel));
+        props.setStatLvSTA(calculateStatsBattle(props.statSTA, maxIv(), currStatLevel));
       }
       setCurrStatLevel(v);
     },
@@ -138,11 +138,11 @@ const StatsTable = (props: IStatsTableComponent) => {
             <LevelSlider
               aria-label="Level"
               value={currStatLevel}
-              defaultValue={MIN_LEVEL}
+              defaultValue={minLevel()}
               valueLabelDisplay="off"
               step={0.5}
-              min={MIN_LEVEL}
-              max={currStatType === PokemonType.Buddy ? MAX_LEVEL : MAX_LEVEL - 1}
+              min={minLevel()}
+              max={currStatType === PokemonType.Buddy ? maxLevel() : maxLevel() - 1}
               onChange={(_, v) => onHandleLevel(v as number)}
             />
           </Box>
@@ -164,7 +164,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                 <td className="text-center">
                   {calculateStatsBattle(
                     props.statATK,
-                    MAX_IV,
+                    maxIv(),
                     currStatLevel,
                     true,
                     getDmgMultiplyBonus(currStatType, TypeAction.Atk)
@@ -179,7 +179,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                 <td className="text-center">
                   {calculateStatsBattle(
                     props.statDEF,
-                    MAX_IV,
+                    maxIv(),
                     currStatLevel,
                     true,
                     getDmgMultiplyBonus(currStatType, TypeAction.Def)
@@ -191,7 +191,7 @@ const StatsTable = (props: IStatsTableComponent) => {
                   <img className="me-2" alt="Image League" width={20} height={20} src={HP_LOGO} />
                   HP
                 </td>
-                <td className="text-center">{calculateStatsBattle(props.statSTA, MAX_IV, currStatLevel, true)}</td>
+                <td className="text-center">{calculateStatsBattle(props.statSTA, maxIv(), currStatLevel, true)}</td>
               </tr>
             </tbody>
           </table>

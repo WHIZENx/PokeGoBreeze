@@ -6,7 +6,7 @@ import { marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
 import { calStatsProd, sortStatsProd } from '../../../utils/calculate';
 
 import Find from '../../../components/Find/Find';
-import { MIN_IV, MAX_IV, MIN_CP, leaguesTeamBattle, STATS_DELAY } from '../../../utils/constants';
+import { leaguesTeamBattle } from '../../../utils/constants';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useSelector } from 'react-redux';
@@ -20,6 +20,7 @@ import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/context.helpers';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);
@@ -130,7 +131,7 @@ const StatsTable = () => {
     return () => controller.abort();
   }, [pokemon?.statsGO?.atk, pokemon?.statsGO?.def, pokemon?.statsGO?.sta]);
 
-  const calculateStats = (signal: AbortSignal, delay = STATS_DELAY) => {
+  const calculateStats = (signal: AbortSignal, delay = statsDelay()) => {
     return new Promise<IBattleBaseStats[]>((resolve, reject) => {
       let result: IBattleBaseStats[] = [];
 
@@ -147,7 +148,7 @@ const StatsTable = () => {
           toNumber(pokemon?.statsGO?.atk),
           toNumber(pokemon?.statsGO?.def),
           toNumber(pokemon?.statsGO?.sta),
-          MIN_CP,
+          minCp(),
           BattleLeagueCPType.InsMaster,
           true
         );
@@ -193,8 +194,8 @@ const StatsTable = () => {
         setFilterStatsBattle(result);
         return;
       }
-      if (toNumber(searchCP) < MIN_CP) {
-        enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
+      if (toNumber(searchCP) < minCp()) {
+        enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
         return;
       }
       if (isNotEmpty(statsBattle)) {
@@ -269,9 +270,9 @@ const StatsTable = () => {
             <PokeGoSlider
               value={ATKIv}
               aria-label="ATK marks"
-              defaultValue={MIN_IV}
-              min={MIN_IV}
-              max={MAX_IV}
+              defaultValue={minIv()}
+              min={minIv()}
+              max={maxIv()}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -287,9 +288,9 @@ const StatsTable = () => {
             <PokeGoSlider
               value={DEFIv}
               aria-label="DEF marks"
-              defaultValue={MIN_IV}
-              min={MIN_IV}
-              max={MAX_IV}
+              defaultValue={minIv()}
+              min={minIv()}
+              max={maxIv()}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -305,9 +306,9 @@ const StatsTable = () => {
             <PokeGoSlider
               value={STAIv}
               aria-label="STA marks"
-              defaultValue={MIN_IV}
-              min={MIN_IV}
-              max={MAX_IV}
+              defaultValue={minIv()}
+              min={minIv()}
+              max={maxIv()}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}

@@ -31,7 +31,6 @@ import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState } from '../../../store/models/state.model';
-import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../utils/constants';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -40,6 +39,7 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../..
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
+import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/context.helpers';
 
 const Calculate = () => {
   useTitle({
@@ -91,8 +91,8 @@ const Calculate = () => {
   };
 
   const calculateStatsPoke = useCallback(() => {
-    if (toNumber(searchCP) < MIN_CP) {
-      enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
+    if (toNumber(searchCP) < minCp()) {
+      enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
       return;
     }
     const statATK = toNumber(pokemon?.statsGO?.atk);
@@ -234,9 +234,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={ATKIv}
                 aria-label="ATK marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -252,9 +252,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={DEFIv}
                 aria-label="DEF marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -270,9 +270,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={STAIv}
                 aria-label="STA marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -363,11 +363,11 @@ const Calculate = () => {
               <LevelSlider
                 aria-label="Level"
                 value={statLevel}
-                defaultValue={MIN_LEVEL}
+                defaultValue={minLevel()}
                 valueLabelDisplay="off"
                 step={0.5}
-                min={MIN_LEVEL}
-                max={typePoke === PokemonType.Buddy ? MAX_LEVEL : MAX_LEVEL - 1}
+                min={minLevel()}
+                max={typePoke === PokemonType.Buddy ? maxLevel() : maxLevel() - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={!pokeStats}
                 onChange={(_, value) => onHandleLevel(value as number)}

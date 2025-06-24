@@ -13,16 +13,6 @@ import {
 } from '../../../utils/utils';
 import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
-import {
-  BATTLE_DELAY,
-  DEFAULT_BLOCK,
-  FORM_SHADOW,
-  MAX_IV,
-  MAX_LEVEL,
-  MIN_CP,
-  MIN_IV,
-  MIN_LEVEL,
-} from '../../../utils/constants';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import Timeline from './Timeline/Timeline';
@@ -102,7 +92,17 @@ import { AxiosError } from 'axios';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getRandomNumber, overlappingPos } from '../utils/battle.utils';
-import { battleMaxEnergy } from '../../../utils/helpers/context.helpers';
+import {
+  battleDelay,
+  battleMaxEnergy,
+  defaultBlock,
+  formShadow,
+  maxIv,
+  maxLevel,
+  minCp,
+  minIv,
+  minLevel,
+} from '../../../utils/helpers/context.helpers';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -216,7 +216,7 @@ const Battle = () => {
           battle.config.immune = false;
           battle.configOpponent.immune = false;
         } else {
-          battle.delay -= BATTLE_DELAY;
+          battle.delay -= battleDelay();
         }
       }
 
@@ -306,7 +306,7 @@ const Battle = () => {
             item.scorePVP = HexagonStats.create(item.scores);
 
             let pokemonType = PokemonType.Normal;
-            if (isInclude(item.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+            if (isInclude(item.speciesName, `(${formShadow()})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
               pokemonType = PokemonType.Shadow;
             }
 
@@ -699,10 +699,10 @@ const Battle = () => {
   };
 
   const randomCP = (atk: number, def: number, sta: number) => {
-    const atkIV = getRandomNumber(MIN_IV, MAX_IV);
-    const defIV = getRandomNumber(MIN_IV, MAX_IV);
-    const staIV = getRandomNumber(MIN_IV, MAX_IV);
-    const level = getRandomNumber(MIN_LEVEL, MAX_LEVEL, 0.5);
+    const atkIV = getRandomNumber(minIv(), maxIv());
+    const defIV = getRandomNumber(minIv(), maxIv());
+    const staIV = getRandomNumber(minIv(), maxIv());
+    const level = getRandomNumber(minLevel(), maxLevel(), 0.5);
     const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
     return new StatsCalculate(atkIV, defIV, staIV, cp, level);
   };
@@ -725,7 +725,7 @@ const Battle = () => {
       const def = toNumber(pokemon.pokemonData.stats?.def);
       const sta = toNumber(pokemon.pokemonData.stats?.sta);
       let statsCalculate = randomCP(atk, def, sta);
-      while (statsCalculate.CP < MIN_CP || statsCalculate.CP > maxCP) {
+      while (statsCalculate.CP < minCp() || statsCalculate.CP > maxCP) {
         statsCalculate = randomCP(atk, def, sta);
       }
       stats = getBaseStatsByIVandLevel(
@@ -818,7 +818,7 @@ const Battle = () => {
               <b>Stats</b>
             </h6>
             CP: <b>{Math.floor(toNumber(pokemon.pokemonData?.currentStats?.CP))}</b> | {'Level: '}
-            <b>{pokemon.pokemonData?.currentStats?.level ?? MIN_LEVEL}</b>
+            <b>{pokemon.pokemonData?.currentStats?.level ?? minLevel()}</b>
             <br />
             {'IV: '}
             <b>
@@ -871,8 +871,8 @@ const Battle = () => {
                   id={`level${battleType}`}
                   type="number"
                   step={0.5}
-                  min={MIN_LEVEL}
-                  max={MAX_LEVEL}
+                  min={minLevel()}
+                  max={maxLevel()}
                 />
               </div>
               <div className="input-group">
@@ -883,8 +883,8 @@ const Battle = () => {
                   id={`atkIV${battleType}`}
                   type="number"
                   step={1}
-                  min={MIN_IV}
-                  max={MAX_IV}
+                  min={minIv()}
+                  max={maxIv()}
                 />
               </div>
               <div className="input-group">
@@ -895,8 +895,8 @@ const Battle = () => {
                   id={`defIV${battleType}`}
                   type="number"
                   step={1}
-                  min={MIN_IV}
-                  max={MAX_IV}
+                  min={minIv()}
+                  max={maxIv()}
                 />
               </div>
               <div className="input-group">
@@ -907,8 +907,8 @@ const Battle = () => {
                   id={`hpIV${battleType}`}
                   type="number"
                   step={1}
-                  min={MIN_IV}
-                  max={MAX_IV}
+                  min={minIv()}
+                  max={maxIv()}
                 />
               </div>
               <div className="w-100 mt-2">
@@ -1036,7 +1036,7 @@ const Battle = () => {
                   );
                 }}
               >
-                {getArrayBySeq(DEFAULT_BLOCK + 1).map((value, index) => (
+                {getArrayBySeq(defaultBlock() + 1).map((value, index) => (
                   <option key={index} value={value}>
                     {value}
                   </option>

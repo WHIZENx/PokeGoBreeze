@@ -37,7 +37,7 @@ import {
 } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { FORM_NORMAL, Params } from '../../../utils/constants';
+import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
@@ -63,6 +63,7 @@ import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/models/component.model';
+import { formNormal } from '../../../utils/helpers/context.helpers';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -474,7 +475,7 @@ const StatsRanking = () => {
     const paramId = searchParams.get(Params.Id);
     if (!select && isNumber(paramId) && isNotEmpty(pokemonFilter)) {
       const id = toNumber(paramId);
-      const form = getValueOrDefault(String, searchParams.get(Params.Form), FORM_NORMAL).replaceAll('-', '_');
+      const form = getValueOrDefault(String, searchParams.get(Params.Form), formNormal()).replaceAll('-', '_');
       const formType = searchParams.get(Params.FormType);
       const pokemonType = getPokemonType(formType);
       const index = pokemonFilter.findIndex(
@@ -506,7 +507,7 @@ const StatsRanking = () => {
   const setFilterParams = (select: IPokemonStatsRanking) => {
     setSelect(select);
     searchParams.set(Params.Id, select.num.toString());
-    const form = select.form?.replace(FORM_NORMAL, '').toLowerCase().replaceAll('_', '-');
+    const form = select.form?.replace(formNormal(), '').toLowerCase().replaceAll('_', '-');
     if (form) {
       searchParams.set(Params.Form, form);
     } else {
@@ -530,7 +531,7 @@ const StatsRanking = () => {
   useEffect(() => {
     const paramId = toNumber(searchParams.get(Params.Id));
     if (paramId > 0 && router.action === Action.Pop && isNotEmpty(pokemonList)) {
-      const form = getValueOrDefault(String, searchParams.get(Params.Form), FORM_NORMAL).replaceAll('-', '_');
+      const form = getValueOrDefault(String, searchParams.get(Params.Form), formNormal()).replaceAll('-', '_');
       const formType = searchParams.get(Params.FormType);
       const pokemonType = getPokemonType(formType);
       const result = pokemonFilter.find(

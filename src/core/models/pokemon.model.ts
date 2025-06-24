@@ -7,7 +7,7 @@ import {
   replaceTempMoveName,
 } from '../../utils/utils';
 import { ICombat } from './combat.model';
-import { DEFAULT_SPRITE_NAME, FORM_NORMAL, genList, MIN_LEVEL, regionList, versionList } from '../../utils/constants';
+import { genList, regionList, versionList } from '../../utils/constants';
 import { IStatsIV, IStatsPokemon, IStatsPokemonGO, StatsIV, StatsPokemon, StatsPokemonGO } from './stats.model';
 import { ISelectMoveModel } from '../../components/Input/models/select-move.model';
 import { IEvoList, IPokemonTypeCost, ITempEvo } from './evolution.model';
@@ -15,6 +15,7 @@ import { getValueOrDefault, isUndefined, toNumber, UniqValueInArray } from '../.
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 import { GlobalType, MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
 import { Species, Variety } from './API/species.model';
+import { minLevel, formNormal, defaultSpriteName } from '../../utils/helpers/context.helpers';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;
@@ -35,7 +36,7 @@ export interface IPokemonDataStats {
 }
 
 export class PokemonDataStats implements IPokemonDataStats {
-  level = MIN_LEVEL;
+  level = minLevel();
   pokemonType = PokemonType.None;
   iv = new StatsIV();
 
@@ -597,7 +598,7 @@ export class PokemonData implements IPokemonData {
       obj.fullName = getValueOrDefault(String, pokemon.form?.toString());
     }
     obj.slug = (options?.slug ?? name).toLowerCase();
-    obj.sprite = getValueOrDefault(String, options?.sprite, DEFAULT_SPRITE_NAME);
+    obj.sprite = getValueOrDefault(String, options?.sprite, defaultSpriteName());
     obj.types = getValueOrDefault(Array, pokemon.types);
     obj.genderRatio = PokemonGenderRatio.create(
       toNumber(options?.genderRatio?.M, 0.5),
@@ -633,7 +634,7 @@ export class PokemonData implements IPokemonData {
       versionList[versionList.length - 1].toLowerCase().replaceAll(' ', '-')
     );
     obj.baseSpecies = capitalize(pokemon.pokemonId);
-    obj.form = pokemon.form ? pokemon.form.toString() : FORM_NORMAL;
+    obj.form = pokemon.form ? pokemon.form.toString() : formNormal();
     obj.encounter = pokemon.encounter;
     obj.hasShadowForm = Boolean(pokemon.shadow);
     obj.formChange = pokemon.formChange;

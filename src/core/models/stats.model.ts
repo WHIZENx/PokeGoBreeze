@@ -1,6 +1,6 @@
 import { PokemonType } from '../../enums/type.enum';
-import { MAX_IV, MIN_IV } from '../../utils/constants';
 import { toNumber } from '../../utils/extension';
+import { minIv, maxIv } from '../../utils/helpers/context.helpers';
 
 export interface OptionsRank {
   minRank: number;
@@ -94,11 +94,11 @@ export class StatsIV implements IStatsIV {
   defIV = 0;
   staIV = 0;
 
-  static setValue(atkIV = MIN_IV, defIV = MIN_IV, staIV = MIN_IV) {
+  static setValue(atkIV = minIv(), defIV = minIv(), staIV = minIv()) {
     const obj = new StatsIV();
-    obj.atkIV = Math.max(MIN_IV, Math.min(atkIV, MAX_IV));
-    obj.defIV = Math.max(MIN_IV, Math.min(defIV, MAX_IV));
-    obj.staIV = Math.max(MIN_IV, Math.min(staIV, MAX_IV));
+    obj.atkIV = Math.max(minIv(), Math.min(atkIV, maxIv()));
+    obj.defIV = Math.max(minIv(), Math.min(defIV, maxIv()));
+    obj.staIV = Math.max(minIv(), Math.min(staIV, maxIv()));
     return obj;
   }
 }
