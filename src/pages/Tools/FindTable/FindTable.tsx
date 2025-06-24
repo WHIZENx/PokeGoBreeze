@@ -10,6 +10,7 @@ import '../../../components/Find/FormSelect.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
+import './FindTable.scss';
 import {
   IPredictStatsModel,
   IPredictStatsCalculate,
