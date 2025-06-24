@@ -68,6 +68,7 @@ import {
   razzBerryIncChance,
   silverIncChance,
   silverPinapsIncChance,
+  stepLevel,
   ultraBallIncChance,
 } from '../../../utils/helpers/context.helpers';
 
@@ -523,7 +524,7 @@ const CatchChance = () => {
                       label: <span className="position-absolute bottom-4">Max LV encounter in wild</span>,
                     },
                   ]}
-                  step={0.5}
+                  step={stepLevel()}
                   min={minLevel()}
                   max={maxLevel() - 1}
                   disabled={!data}

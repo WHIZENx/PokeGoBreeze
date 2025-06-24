@@ -153,6 +153,7 @@ export const minCp = () => currentOptions.config.minCp;
 export const cpDiffRatio = () => currentOptions.config.cpDiffRatio;
 export const minLevel = () => currentOptions.config.minLevel;
 export const maxLevel = () => currentOptions.config.maxLevel;
+export const stepLevel = () => currentOptions.config.stepLevel;
 export const minIv = () => currentOptions.config.minIv;
 export const maxIv = () => currentOptions.config.maxIv;
 export const defaultSize = () => currentOptions.config.defaultSize;

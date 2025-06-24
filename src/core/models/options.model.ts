@@ -626,6 +626,7 @@ export interface IConfig {
   cpDiffRatio: number;
   minLevel: number;
   maxLevel: number;
+  stepLevel: number;
   minIv: number;
   maxIv: number;
   defaultSize: number;
@@ -707,6 +708,7 @@ export class Config implements IConfig {
   cpDiffRatio = 0;
   minLevel = 0;
   maxLevel = 0;
+  stepLevel = 0;
   minIv = 0;
   maxIv = 0;
   defaultSize = 0;

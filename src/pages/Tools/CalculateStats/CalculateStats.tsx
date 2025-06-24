@@ -39,7 +39,7 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../..
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/context.helpers';
+import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/context.helpers';
 
 const Calculate = () => {
   useTitle({
@@ -365,7 +365,7 @@ const Calculate = () => {
                 value={statLevel}
                 defaultValue={minLevel()}
                 valueLabelDisplay="off"
-                step={0.5}
+                step={stepLevel()}
                 min={minLevel()}
                 max={typePoke === PokemonType.Buddy ? maxLevel() : maxLevel() - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}

@@ -107,6 +107,7 @@ import {
   defaultPokemonLevel,
   cpDiffRatio,
   minCp,
+  stepLevel,
 } from './helpers/context.helpers';
 
 const weatherMultiple = (
@@ -352,14 +353,14 @@ export const calculateCatchChance = (baseCaptureRate: number | undefined, level:
 export const predictStat = (atk: number, def: number, sta: number, cp: string) => {
   const maxCP = toNumber(cp);
   let minLV = minLevel();
-  for (let level = minLevel(); level <= maxLevel(); level += 0.5) {
+  for (let level = minLevel(); level <= maxLevel(); level += stepLevel()) {
     if (maxCP <= calculateCP(atk + maxIv(), def + maxIv(), sta + maxIv(), level)) {
       minLV = level;
       break;
     }
   }
   let maxLV = minLV + 1;
-  for (let level = minLV; level <= maxLevel(); level += 0.5) {
+  for (let level = minLV; level <= maxLevel(); level += stepLevel()) {
     if (calculateCP(atk, def, sta, level) >= maxCP) {
       maxLV = level;
       break;
@@ -375,7 +376,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: string) =
   };
 
   const predictArr: IPredictStatsModel[] = [];
-  for (let level = minLV; level <= maxLV; level += 0.5) {
+  for (let level = minLV; level <= maxLV; level += stepLevel()) {
     const ivCombinations = new Set<string>();
     for (let atkIV = minIv(); atkIV <= maxIv(); atkIV++) {
       for (let defIV = minIv(); defIV <= maxIv(); defIV++) {
@@ -419,7 +420,7 @@ export const predictStat = (atk: number, def: number, sta: number, cp: string) =
 
 export const predictCPList = (atk: number, def: number, sta: number, IVatk: number, IVdef: number, IVsta: number) => {
   const predictArr: IPredictCPModel[] = [];
-  for (let level = minLevel(); level <= maxLevel(); level += 0.5) {
+  for (let level = minLevel(); level <= maxLevel(); level += stepLevel()) {
     predictArr.push(
       PredictCPModel.create({
         level,
@@ -443,7 +444,7 @@ export const calculateStats = (
   const maxCP = toNumber(cp);
   const dataStat = new StatsCalculate(IVatk, IVdef, IVsta, maxCP, 0);
 
-  for (let level = minLevel(); level <= maxLevel(); level += 0.5) {
+  for (let level = minLevel(); level <= maxLevel(); level += stepLevel()) {
     if (maxCP === calculateCP(atk + IVatk, def + IVdef, sta + IVsta, level)) {
       dataStat.level = level;
       break;
@@ -474,10 +475,10 @@ export const calculateBetweenLevel = (
   toLV: number | undefined,
   pokemonType?: PokemonType
 ) => {
-  toLV = toNumber(toLV) - 0.5;
+  toLV = toNumber(toLV) - stepLevel();
   if (fromLV > toLV) {
     return new BetweenLevelCalculate({
-      CP: calculateCP(atk + IVAtk, def + IVDef, sta + IVSta, toLV + 0.5),
+      CP: calculateCP(atk + IVAtk, def + IVDef, sta + IVSta, toLV + stepLevel()),
       resultBetweenStardust: 0,
       resultBetweenCandy: 0,
       resultBetweenXLCandy: 0,
@@ -507,7 +508,7 @@ export const calculateBetweenLevel = (
     });
 
     const dataList = new BetweenLevelCalculate({
-      CP: calculateCP(atk + IVAtk, def + IVDef, sta + IVSta, toLV + 0.5),
+      CP: calculateCP(atk + IVAtk, def + IVDef, sta + IVSta, toLV + stepLevel()),
       resultBetweenStardust: betweenStardust,
       resultBetweenStardustDiff: betweenStardustDiff,
       resultBetweenCandy: betweenCandy,
@@ -522,20 +523,20 @@ export const calculateBetweenLevel = (
       const atkStat = calculateStatsBattle(
         atk,
         IVAtk,
-        toLV + 0.5,
+        toLV + stepLevel(),
         true,
         getDmgMultiplyBonus(pokemonType, TypeAction.Atk)
       );
       const defStat = calculateStatsBattle(
         def,
         IVDef,
-        toLV + 0.5,
+        toLV + stepLevel(),
         true,
         getDmgMultiplyBonus(pokemonType, TypeAction.Def)
       );
 
-      const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVAtk, toLV + 0.5, true) - atkStat);
-      const defStatDiff = Math.abs(calculateStatsBattle(def, IVDef, toLV + 0.5, true) - defStat);
+      const atkStatDiff = Math.abs(calculateStatsBattle(atk, IVAtk, toLV + stepLevel(), true) - atkStat);
+      const defStatDiff = Math.abs(calculateStatsBattle(def, IVDef, toLV + stepLevel(), true) - defStat);
 
       dataList.atkStat = atkStat;
       dataList.defStat = defStat;
@@ -573,7 +574,7 @@ export const calculateBattleLeague = (
       dataBattle.CP = calculateCP(atk + IVatk, def + IVdef, sta + IVsta, level);
       dataBattle.isLimit = false;
     } else {
-      for (let l = minLevel(); l <= level; l += 0.5) {
+      for (let l = minLevel(); l <= level; l += stepLevel()) {
         if (
           dataBattle.CP < calculateCP(atk + IVatk, def + IVdef, sta + IVsta, l) &&
           calculateCP(atk + IVatk, def + IVdef, sta + IVsta, l) <= maxCp
@@ -610,7 +611,7 @@ export const findCPforLeague = (
 ) => {
   let CP = minCp();
   let currentLevel = level;
-  for (let l = level; l <= maxLevel(); l += 0.5) {
+  for (let l = level; l <= maxLevel(); l += stepLevel()) {
     if (!isUndefined(maxCPLeague) && calculateCP(atk + IVatk, def + IVdef, sta + IVsta, l) > maxCPLeague) {
       break;
     }
@@ -676,17 +677,17 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCp: numbe
   let maxLV = maxLevel();
 
   if (maxCP > 0) {
-    for (let level = minLV; level <= maxLV; level += 0.5) {
+    for (let level = minLV; level <= maxLV; level += stepLevel()) {
       const maxPossibleCP = getCachedCP(atk + maxIv(), def + maxIv(), sta + maxIv(), level);
       if (!isUndefined(maxPossibleCP) && maxPossibleCP > maxCP) {
-        maxLV = level - 0.5;
+        maxLV = level - stepLevel();
         break;
       }
     }
   }
 
   if (minCp > 0) {
-    for (let level = minLV; level <= maxLV; level += 0.5) {
+    for (let level = minLV; level <= maxLV; level += stepLevel()) {
       const minPossibleCP = getCachedCP(atk + minIv(), def + minIv(), sta + minIv(), level);
       if (!isUndefined(minPossibleCP) && minPossibleCP >= minCp) {
         minLV = level;
@@ -695,7 +696,7 @@ export const calStatsProd = (atk: number, def: number, sta: number, minCp: numbe
     }
   }
 
-  for (let level = minLV; level <= maxLV; level += 0.5) {
+  for (let level = minLV; level <= maxLV; level += stepLevel()) {
     const minLevelCP = getCachedCP(atk + minIv(), def + minIv(), sta + minIv(), level);
     const maxLevelCP = getCachedCP(atk + maxIv(), def + maxIv(), sta + maxIv(), level);
 

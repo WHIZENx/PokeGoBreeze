@@ -5,6 +5,7 @@ import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
 import { PokemonType } from '../enums/type.enum';
+import { maxLevel, minLevel, stepLevel } from './helpers/context.helpers';
 
 // Parameters
 export class Params {
@@ -195,4 +196,7 @@ export const genRoman = (gen: number | string) => {
 };
 
 export const leaguesDefault = [BattleLeagueIconType.Great, BattleLeagueIconType.Ultra, BattleLeagueIconType.Master];
-export const levelList = Array.from({ length: (1 - 2) / 0.5 + 1 }, (_, i) => 1 + i * 0.5);
+export const levelList = Array.from(
+  { length: (maxLevel() - minLevel()) / stepLevel() + 1 },
+  (_, i) => 1 + i * stepLevel()
+);

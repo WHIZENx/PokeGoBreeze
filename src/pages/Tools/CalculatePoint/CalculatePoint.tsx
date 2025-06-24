@@ -32,7 +32,7 @@ import {
 } from '../../../utils/extension';
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
-import { minLevel, maxLevel, minIv, maxIv } from '../../../utils/helpers/context.helpers';
+import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/helpers/context.helpers';
 
 const CalculatePoint = () => {
   useTitle({
@@ -107,7 +107,7 @@ const CalculatePoint = () => {
     const dataList: number[][] = [];
     const group: number[] = [];
     let level = 0;
-    for (let i = minLevel(); i <= maxLevel(); i += 0.5) {
+    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
       dataList[level] = getValueOrDefault(Array, dataList[level]);
       for (let j = minIv(); j <= maxIv(); j += 1) {
         const atk = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.atk, j, i, true);
@@ -135,7 +135,7 @@ const CalculatePoint = () => {
     const dataListSta: number[][] = [];
     const groupSta: number[] = [];
     let level = 0;
-    for (let i = minLevel(); i <= maxLevel(); i += 0.5) {
+    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
       dataListDef[level] ??= [];
       dataListSta[level] ??= [];
       for (let j = minIv(); j <= maxIv(); j += 1) {
@@ -242,7 +242,7 @@ const CalculatePoint = () => {
     setResultBulkPointDef(undefined);
     let dataList: number[][] = [];
     let level = 0;
-    for (let i = minLevel(); i <= maxLevel(); i += 0.5) {
+    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
       let count = 0;
       dataList[level] ??= [];
       let result = computeBulk(count, i);

@@ -104,6 +104,7 @@ import {
   formSpecial,
   minLevel,
   pathAssetPokeGo,
+  stepLevel,
 } from '../utils/helpers/context.helpers';
 
 export const optionSettings = (data: PokemonDataGM[], settings = new Options()): Options => {
@@ -150,7 +151,7 @@ export const optionSettings = (data: PokemonDataGM[], settings = new Options()):
 
       if (cpmHigh > 0) {
         const multiplier = Math.sqrt(Math.pow(cpmLow, 2) - Math.pow(cpmLow, 2) / 2 + Math.pow(cpmHigh, 2) / 2);
-        settings.playerSetting.cpMultipliers[level + 0.5] = multiplier;
+        settings.playerSetting.cpMultipliers[level + stepLevel()] = multiplier;
       }
     }
   }

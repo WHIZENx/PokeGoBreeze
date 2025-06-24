@@ -102,6 +102,7 @@ import {
   minCp,
   minIv,
   minLevel,
+  stepLevel,
 } from '../../../utils/helpers/context.helpers';
 
 interface OptionsBattle {
@@ -702,7 +703,7 @@ const Battle = () => {
     const atkIV = getRandomNumber(minIv(), maxIv());
     const defIV = getRandomNumber(minIv(), maxIv());
     const staIV = getRandomNumber(minIv(), maxIv());
-    const level = getRandomNumber(minLevel(), maxLevel(), 0.5);
+    const level = getRandomNumber(minLevel(), maxLevel(), stepLevel());
     const cp = calculateCP(atk + atkIV, def + defIV, sta + staIV, level);
     return new StatsCalculate(atkIV, defIV, staIV, cp, level);
   };
@@ -870,7 +871,7 @@ const Battle = () => {
                   defaultValue={pokemon.pokemonData?.currentStats?.level}
                   id={`level${battleType}`}
                   type="number"
-                  step={0.5}
+                  step={stepLevel()}
                   min={minLevel()}
                   max={maxLevel()}
                 />

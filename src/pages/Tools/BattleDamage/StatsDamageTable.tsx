@@ -18,7 +18,7 @@ import HP_LOGO from '../../../assets/hp.png';
 import { IStatsTableComponent } from '../../models/page.model';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
-import { maxIv, minLevel, maxLevel } from '../../../utils/helpers/context.helpers';
+import { maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/context.helpers';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const [currStatLevel, setCurrStatLevel] = useState(1);
@@ -140,7 +140,7 @@ const StatsTable = (props: IStatsTableComponent) => {
               value={currStatLevel}
               defaultValue={minLevel()}
               valueLabelDisplay="off"
-              step={0.5}
+              step={stepLevel()}
               min={minLevel()}
               max={currStatType === PokemonType.Buddy ? maxLevel() : maxLevel() - 1}
               onChange={(_, v) => onHandleLevel(v as number)}
