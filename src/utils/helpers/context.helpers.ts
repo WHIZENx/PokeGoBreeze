@@ -14,6 +14,7 @@ let currentOptions = defaultOptions;
 
 // Function to update the current options (called from a React component)
 export const updateCurrentOptions = (newOptions: IOptions) => {
+  newOptions.config = config;
   currentOptions = newOptions;
 };
 
