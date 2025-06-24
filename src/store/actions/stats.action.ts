@@ -1,6 +1,5 @@
 import { Action } from 'redux';
 import { IPokemonData } from '../../core/models/pokemon.model';
-import { IOptions } from '../../core/models/options.model';
 
 export enum StatsActionTypes {
   setStats = '[Stats] SetStats',
@@ -10,9 +9,9 @@ export enum StatsActionTypes {
 export class SetStats implements Action {
   readonly type = StatsActionTypes.setStats;
 
-  constructor(public payload: { pokemon: IPokemonData[]; options?: IOptions }) {}
+  constructor(public payload: IPokemonData[]) {}
 
-  static create(value: { pokemon: IPokemonData[]; options?: IOptions }) {
+  static create(value: IPokemonData[]) {
     const { type, payload } = new SetStats(value);
     return {
       type,

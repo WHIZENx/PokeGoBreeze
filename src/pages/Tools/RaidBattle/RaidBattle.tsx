@@ -17,7 +17,7 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { findAssetForm } from '../../../utils/compute';
-import { DEFAULT_POKEMON_LEVEL, levelList, MAX_IV, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER } from '../../../utils/constants';
+import { DEFAULT_POKEMON_LEVEL, levelList, MAX_IV, MIN_IV, RAID_BOSS_TIER } from '../../../utils/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -87,6 +87,9 @@ import {
   RaidSetting,
   RaidSummary,
   TrainerBattle,
+  Filter,
+  FilterGroup,
+  RaidOption,
 } from './models/raid-battle.model';
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
@@ -94,67 +97,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import CustomPopover from '../../../components/Popover/CustomPopover';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { IStatsIV, StatsIV } from '../../../core/models/stats.model';
-
-interface IOption {
-  isWeatherBoss: boolean;
-  isWeatherCounter: boolean;
-  isReleased: boolean;
-  enableTimeAllow: boolean;
-}
-
-class Option implements IOption {
-  isWeatherBoss = false;
-  isWeatherCounter = false;
-  isReleased = false;
-  enableTimeAllow = false;
-
-  constructor({ ...props }: IOption) {
-    Object.assign(this, props);
-  }
-}
-
-interface IFilterGroup {
-  level: number;
-  pokemonType: PokemonType;
-  iv: IStatsIV;
-  onlyShadow: boolean;
-  onlyMega: boolean;
-  onlyReleasedGO: boolean;
-  sortBy: SortType;
-  sorted: SortDirectionType;
-}
-
-class FilterGroup implements IFilterGroup {
-  level = MIN_LEVEL;
-  pokemonType = PokemonType.Normal;
-  iv = new StatsIV();
-  onlyShadow = false;
-  onlyMega = false;
-  onlyReleasedGO = false;
-  sortBy = SortType.DPS;
-  sorted = SortDirectionType.ASC;
-
-  static create(value: IFilterGroup) {
-    const obj = new FilterGroup();
-    Object.assign(obj, value);
-    return obj;
-  }
-}
-
-interface IFilter {
-  used: IFilterGroup;
-  selected: IFilterGroup;
-}
-
-class Filter implements IFilter {
-  used = new FilterGroup();
-  selected = new FilterGroup();
-
-  constructor({ ...props }: IFilter) {
-    Object.assign(this, props);
-  }
-}
+import { StatsIV } from '../../../core/models/stats.model';
 
 const RaidBattle = () => {
   useTitle({
@@ -188,7 +131,7 @@ const RaidBattle = () => {
   const [resultCMove, setResultCMove] = useState<ISelectMoveModel[]>();
 
   const [options, setOptions] = useState(
-    new Option({
+    new RaidOption({
       isWeatherBoss: false,
       isWeatherCounter: false,
       isReleased: true,

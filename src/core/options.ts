@@ -94,7 +94,6 @@ import {
   toNumber,
   UniqValueInArray,
   isNull,
-  isUndefined,
 } from '../utils/extension';
 import { GenderType } from './enums/asset.enum';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
@@ -106,25 +105,6 @@ import { TrainerLevelUp } from './models/trainer.model';
 import { TemplateId } from './constants/template-id';
 import { PokemonConfig } from './constants/type';
 import { StatsPokemonGO } from './models/stats.model';
-
-export const getOption = <T>(options: any, args: string[], defaultValue?: T): T => {
-  if (!options) {
-    return defaultValue as T;
-  }
-
-  let result = options;
-  try {
-    for (const arg of args) {
-      result = result[arg];
-      if (isNullOrUndefined(result)) {
-        return defaultValue as T;
-      }
-    }
-    return (isUndefined(result) ? defaultValue : result) as T;
-  } catch {
-    return defaultValue as T;
-  }
-};
 
 export const optionSettings = (data: PokemonDataGM[], settings = new Options()): Options => {
   data.forEach((item) => {

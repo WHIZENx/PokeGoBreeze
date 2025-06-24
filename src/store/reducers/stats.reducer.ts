@@ -38,7 +38,7 @@ const StatsReducer = (state: IStatsRank | null = null, action: StatsActionsUnion
   switch (action.type) {
     case StatsActions.StatsActionTypes.setStats: {
       const result: IArrayStats[] = [];
-      action.payload.pokemon
+      action.payload
         .filter((pokemon) => pokemon.num > 0)
         .forEach((value) => {
           result.push(

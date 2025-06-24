@@ -151,69 +151,6 @@ const Battle = () => {
 
   const [isFound, setIsFound] = useState(true);
 
-  useEffect(() => {
-    const container = playLine.current;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!container) {
-        return;
-      }
-
-      const scrollAmount = 1; // Amount to scroll (px) on each key press
-      const xCurrent = container.style.transform
-        ? getTranslation(container) >= toNumber(timelineNormal.current?.clientWidth) - 2
-          ? 0
-          : getTranslation(container)
-        : 0;
-
-      if (e.key === 'ArrowLeft') {
-        // Scroll left
-        container.style.transform = `translateX(${xCurrent - scrollAmount}px, -50%)`;
-        e.preventDefault();
-      } else if (e.key === 'ArrowRight') {
-        // Scroll right
-        container.style.transform = `translateX(${xCurrent + scrollAmount}px, -50%)`;
-        e.preventDefault();
-      }
-    };
-
-    // Function to center the play-line element in the viewport
-    // const centerPlayLine = () => {
-    //   if (!container) {
-    //     return;
-    //   }
-
-    //   const playLineRect = container.getBoundingClientRect();
-    //   const containerRect = container.getBoundingClientRect();
-
-    //   // Calculate the position to center the play line
-    //   const scrollLeft =
-    //     container.scrollLeft +
-    //     playLineRect.left -
-    //     containerRect.left -
-    //     containerRect.width / 2 +
-    //     playLineRect.width / 2;
-
-    //   // Smooth scroll to center the play line
-    //   container.scrollTo({
-    //     left: scrollLeft,
-    //     behavior: 'smooth',
-    //   });
-    // };
-
-    // Add the keyboard event listener
-    window.addEventListener('keydown', handleKeyDown);
-
-    // Add a method to the play-line element for centering
-    // if (container) {
-    //   (container as any).centerInView = centerPlayLine;
-    // }
-
-    // Clean up event listeners when component unmounts
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [playLine.current]);
-
   const battleAnimation = () => {
     if (!pokemonCurr.pokemonData || !pokemonObj.pokemonData) {
       enqueueSnackbar('Something went wrong! Please try again.', {

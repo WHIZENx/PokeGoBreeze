@@ -70,4 +70,4 @@ export const getBuddyFriendship = () => currentOptions.buddyFriendship;
 // Trainer settings
 export const getTrainerFriendship = () => currentOptions.trainerFriendship;
 export const getMultiplyFriendship = (level = DEFAULT_POKEMON_FRIEND_LEVEL) =>
-  currentOptions.trainerFriendship[level.toString()].atkBonus || 1;
+  currentOptions.trainerFriendship[level.toString()]?.atkBonus || 1;

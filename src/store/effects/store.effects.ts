@@ -193,7 +193,7 @@ export const loadGameMaster = async (
       }
 
       dispatch(SpinnerActions.SetPercent.create(90));
-      dispatch(StatsActions.SetStats.create({ pokemon, options }));
+      dispatch(StatsActions.SetStats.create(pokemon));
 
       dispatch(TimestampActions.SetTimestampGameMaster.create(timestampLoaded.gamemasterTimestamp));
       dispatch(SpinnerActions.SetPercent.create(100));
