@@ -1404,7 +1404,7 @@ export const getBonusType = (bonusType: string | number) => {
   return BonusType.None;
 };
 
-const isPokemonNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) =>
+export const isPokemonNoneSpecialForm = (form: string | undefined, pokemonType = PokemonType.None) =>
   !isSpecialFormType(pokemonType) &&
   (isInclude(form, formShadow(), IncludeMode.IncludeIgnoreCaseSensitive) ||
     isInclude(form, formPurified(), IncludeMode.IncludeIgnoreCaseSensitive));
