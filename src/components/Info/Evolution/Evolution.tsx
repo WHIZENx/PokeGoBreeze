@@ -27,6 +27,7 @@ import {
   getDataWithKey,
   getGenerationPokemon,
   getItemSpritePath,
+  isPokemonNoneSpecialForm,
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
@@ -370,12 +371,18 @@ const Evolution = (props: IEvolutionComponent) => {
   const getQuestEvo = (prevId: number, form: string) => {
     const pokemon = pokemonData.find((item) =>
       item.evoList?.find(
-        (value) => isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) && value.evoToId === prevId
+        (value) =>
+          (isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            (isPokemonNoneSpecialForm(form) && value.evoToForm === formNormal())) &&
+          value.evoToId === prevId
       )
     );
     if (pokemon) {
       return pokemon.evoList?.find(
-        (item) => isInclude(item.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) && item.evoToId === prevId
+        (item) =>
+          (isInclude(item.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            (isPokemonNoneSpecialForm(form) && item.evoToForm === formNormal())) &&
+          item.evoToId === prevId
       );
     } else {
       const pokemonChain = evolutionChains.find((chain) => chain.id === prevId);
@@ -443,27 +450,23 @@ const Evolution = (props: IEvolutionComponent) => {
               labels={{
                 end: (
                   <div className="position-absolute -left-6">
-                    {value.pokemonType !== PokemonType.GMax && (
+                    {data && value.pokemonType !== PokemonType.GMax && (
                       <div>
-                        {toNumber(data?.evoToId) > 0 &&
-                          !data?.itemCost &&
-                          (data?.candyCost || data?.purificationEvoCandyCost) && (
-                            <span className="d-flex align-items-center caption w-max-content">
-                              <Candy id={value.id} />
-                              <span className="ms-1">{`x${
-                                props.pokemonData?.pokemonType === PokemonType.Purified
-                                  ? data.purificationEvoCandyCost
-                                  : data.candyCost
-                              }`}</span>
-                            </span>
-                          )}
-                        {props.pokemonData?.pokemonType === PokemonType.Purified &&
-                          data?.candyCost &&
-                          data?.purificationEvoCandyCost && (
-                            <span className="d-block text-end caption text-danger">{`-${
-                              data.candyCost - data.purificationEvoCandyCost
+                        {toNumber(data.evoToId) > 0 && !data.itemCost && (
+                          <span className="d-flex align-items-center caption w-max-content">
+                            <Candy id={value.id} />
+                            <span className="ms-1">{`x${
+                              props.pokemonData?.pokemonType === PokemonType.Purified
+                                ? data.purificationEvoCandyCost
+                                : data.candyCost
                             }`}</span>
-                          )}
+                          </span>
+                        )}
+                        {props.pokemonData?.pokemonType === PokemonType.Purified && (
+                          <span className="d-block text-end caption text-danger">{`-${
+                            data.candyCost - data.purificationEvoCandyCost
+                          }`}</span>
+                        )}
                       </div>
                     )}
                     {isNotEmpty(Object.keys(data?.quest ?? new EvolutionQuest())) && (
