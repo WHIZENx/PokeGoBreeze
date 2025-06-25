@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert } from 'react-bootstrap';
 import APIService from '../../../services/API.service';
-import { splitAndCapitalize, getPokemonFormWithNoneSpecialForm } from '../../../util/utils';
+import { splitAndCapitalize, getPokemonFormWithNoneSpecialForm } from '../../../utils/utils';
 import { IAlertReleasedComponent } from '../../models/page.model';
 import { VariantType } from '../../../enums/type.enum';
 import { useSelector } from 'react-redux';

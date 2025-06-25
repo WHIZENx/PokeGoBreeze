@@ -9,9 +9,9 @@ import {
   getValidPokemonImgPath,
   isSpecialMegaFormType,
   splitAndCapitalize,
-} from '../../../util/utils';
-import { findAssetForm } from '../../../util/compute';
-import { counterPokemon } from '../../../util/calculate';
+} from '../../../utils/utils';
+import { findAssetForm } from '../../../utils/compute';
+import { counterPokemon } from '../../../utils/calculate';
 
 import './Counter.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ import { TableStyles } from 'react-data-table-component';
 import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
 import { ColumnType, MoveType, PokemonType } from '../../../enums/type.enum';
-import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   DynamicObj,
@@ -32,22 +32,22 @@ import {
   toFloat,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+} from '../../../utils/extension';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { OptionsActions } from '../../../store/actions';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
-import { FloatPaddingOption } from '../../../util/models/extension.model';
-import { COUNTER_DELAY } from '../../../util/constants';
+import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
+import { counterDelay } from '../../../utils/helpers/context.helpers';
 
 const customStyles: TableStyles = {
   head: {
     style: {
-      height: 35,
+      height: '2.25rem',
     },
   },
   header: {
@@ -61,15 +61,15 @@ const customStyles: TableStyles = {
     style: {
       backgroundColor: 'var(--custom-table-background-info) !important',
       color: 'var(--text-primary) !important',
-      fontSize: 16,
+      fontSize: '1rem',
       fontWeight: 'bolder',
       justifyContent: 'center',
-      minHeight: 35,
+      minHeight: '2.25rem',
     },
   },
   headCells: {
     style: {
-      height: 35,
+      height: '2.25rem',
       justifyContent: 'center',
       padding: '5px 10px',
       borderBottomWidth: 1,
@@ -94,10 +94,10 @@ const customStyles: TableStyles = {
       borderBottomColor: 'var(--custom-table-background-sub-head-border)',
       justifyContent: 'center',
       textAlign: 'center',
-      padding: '5px 10px',
+      padding: '0.25rem 0.5rem',
       fontWeight: 'lighter',
       '&:first-of-type': {
-        fontSize: 12,
+        fontSize: '0.75rem',
       },
       '&:last-of-type': {
         fontWeight: 'bold',
@@ -284,14 +284,13 @@ const Counter = (props: ICounterComponent) => {
     return () => controller.abort();
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
-  const calculateCounter = (signal: AbortSignal, delay = COUNTER_DELAY) => {
+  const calculateCounter = (signal: AbortSignal, delay = counterDelay()) => {
     return new Promise<ICounterModel[]>((resolve, reject) => {
       let result: ICounterModel[] = [];
 
       const resolveHandler = () => {
         if (props.pokemonData) {
           result = counterPokemon(
-            data.options,
             data.pokemons,
             data.typeEff,
             data.weatherBoost,
@@ -434,6 +433,7 @@ const Counter = (props: ICounterComponent) => {
         progressPending={showFrame}
         progressComponent={<CounterLoader />}
         data={counterFilter}
+        isXFixed
         isShowModalOptions
         titleModalOptions="Pokémon counter options"
         customOptionsModal={modalOptions}

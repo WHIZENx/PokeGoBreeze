@@ -1,7 +1,7 @@
 import { createPool } from '@vercel/postgres';
 import { CPMData } from '../core/models/cpm.model';
 import { IPokemonName, PokemonEncounter } from '../core/models/pokemon.model';
-import { toFloat } from '../util/extension';
+import { toFloat } from '../utils/extension';
 
 const db = createPool({
   connectionString: process.env.REACT_APP_POKEGO_BREEZE_DB_URL,

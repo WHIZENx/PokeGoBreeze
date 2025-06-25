@@ -1,16 +1,16 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SpecialForm.scss';
 import { StoreState } from '../../../store/models/state.model';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
-import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../util/extension';
+import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../utils/extension';
 import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
 
 const SpecialForm = (props: IFormSpecialComponent) => {

@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import { ICardTypeComponent } from '../models/component.model';
 import { MoveType } from '../../enums/type.enum';
-import { combineClasses, getValueOrDefault } from '../../util/extension';
-import { getKeyWithData } from '../../util/utils';
+import { combineClasses, getValueOrDefault } from '../../utils/extension';
+import { getKeyWithData } from '../../utils/utils';
 import IconType from '../Sprites/Icon/Type/Type';
 
 const CardType = (props: ICardTypeComponent) => {

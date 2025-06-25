@@ -1,7 +1,6 @@
 import { IPokemonDetail } from '../../core/models/API/info.model';
 import { ICombat } from '../../core/models/combat.model';
 import { IEvoList, PokemonTypeCost, ITempEvo } from '../../core/models/evolution.model';
-import { IOptions } from '../../core/models/options.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { IStatsIV, IStatsPokemonGO, StatsIV } from '../../core/models/stats.model';
 import { ITypeEff } from '../../core/models/type-eff.model';
@@ -305,7 +304,6 @@ export class BattleLeague implements IBattleLeague {
 }
 
 export class QueryMovesCounterPokemon {
-  globalOptions: IOptions | undefined;
   typeEff: ITypeEff | undefined;
   weatherBoost: IWeatherBoost | undefined;
   combats: ICombat[] = [];
@@ -315,7 +313,6 @@ export class QueryMovesCounterPokemon {
   dataList: IPokemonQueryCounter[];
 
   constructor(
-    globalOptions: IOptions | undefined,
     typeEff: ITypeEff | undefined,
     weatherBoost: IWeatherBoost | undefined,
     combats: ICombat[],
@@ -324,7 +321,6 @@ export class QueryMovesCounterPokemon {
     types: string[] | undefined,
     dataList: IPokemonQueryCounter[] = []
   ) {
-    this.globalOptions = globalOptions;
     this.typeEff = typeEff;
     this.weatherBoost = weatherBoost;
     this.combats = combats;
@@ -336,7 +332,6 @@ export class QueryMovesCounterPokemon {
 }
 
 export class QueryMovesPokemon {
-  globalOptions: IOptions | undefined;
   typeEff: ITypeEff | undefined;
   weatherBoost: IWeatherBoost | undefined;
   combats: ICombat[] = [];
@@ -348,7 +343,6 @@ export class QueryMovesPokemon {
   dataList: IPokemonQueryMove[];
 
   constructor(
-    globalOptions: IOptions | undefined,
     typeEff: ITypeEff | undefined,
     weatherBoost: IWeatherBoost | undefined,
     combats: ICombat[],
@@ -359,7 +353,6 @@ export class QueryMovesPokemon {
     types: string[] | undefined,
     dataList: IPokemonQueryMove[] = []
   ) {
-    this.globalOptions = globalOptions;
     this.typeEff = typeEff;
     this.weatherBoost = weatherBoost;
     this.combats = combats;

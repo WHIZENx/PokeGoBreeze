@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { OverAllStatsComponent } from '../models/component.model';
-import { toNumber, combineClasses, isEqual, getValueOrDefault } from '../../../util/extension';
+import { toNumber, combineClasses, isEqual, getValueOrDefault } from '../../../utils/extension';
 import Stats from '../../../components/Info/Stats/Stats';
 import Hexagon from '../../../components/Sprites/Hexagon/Hexagon';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import IVBar from '../../../components/Sprites/IVBar/IVBar';
-import { MAX_LEVEL, MAX_IV } from '../../../util/constants';
 import { IPokemonAllStats, PokemonAllStats } from '../models/over-all-stats.model';
-import { calculateStatsTopRank } from '../../../util/calculate';
-import { BattleBaseStats } from '../../../util/models/calculate.model';
-import { getKeyWithData } from '../../../util/utils';
-import { ScoreType } from '../../../util/enums/constants.enum';
-import { EqualMode } from '../../../util/enums/string.enum';
+import { calculateStatsTopRank } from '../../../utils/calculate';
+import { BattleBaseStats } from '../../../utils/models/calculate.model';
+import { getKeyWithData } from '../../../utils/utils';
+import { ScoreType } from '../../../utils/enums/constants.enum';
+import { EqualMode } from '../../../utils/enums/string.enum';
 import { AnimationType } from '../../../components/Sprites/Hexagon/enums/hexagon.enum';
 import { IStatsPokemonGO } from '../../../core/models/stats.model';
+import { maxLevel, maxIv } from '../../../utils/helpers/context.helpers';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();
@@ -24,7 +24,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
     id = toNumber(id);
     let prevCurrentStats = new BattleBaseStats();
     if (maxCP > BattleLeagueCPType.Ultra) {
-      prevCurrentStats = calculateStatsTopRank(stats, id, maxCP, MAX_LEVEL - 1);
+      prevCurrentStats = calculateStatsTopRank(stats, id, maxCP, maxLevel() - 1);
     }
     const currentStats = calculateStatsTopRank(stats, id, maxCP);
     const level = toNumber(currentStats?.level);
@@ -60,7 +60,7 @@ const OverAllStats = (props: OverAllStatsComponent) => {
         Level:{' '}
         <b>
           {toNumber(data?.maxCP) > BattleLeagueCPType.Ultra
-            ? `${MAX_LEVEL - 1}-${MAX_LEVEL}`
+            ? `${maxLevel() - 1}-${maxLevel()}`
             : `${toNumber(data?.level)}`}{' '}
         </b>
         {(toNumber(data?.level) > 40 || toNumber(data?.maxCP) > BattleLeagueCPType.Ultra) && (
@@ -74,17 +74,17 @@ const OverAllStats = (props: OverAllStatsComponent) => {
       <li className="mt-2">
         <IVBar
           title="Attack"
-          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.atkIV)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? maxIv() : toNumber(data?.currentStats.IV?.atkIV)}
           style={{ maxWidth: 500 }}
         />
         <IVBar
           title="Defense"
-          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.defIV)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? maxIv() : toNumber(data?.currentStats.IV?.defIV)}
           style={{ maxWidth: 500 }}
         />
         <IVBar
           title="HP"
-          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? MAX_IV : toNumber(data?.currentStats.IV?.staIV)}
+          iv={toNumber(data?.maxCP) > BattleLeagueCPType.Ultra ? maxIv() : toNumber(data?.currentStats.IV?.staIV)}
           style={{ maxWidth: 500 }}
         />
       </li>

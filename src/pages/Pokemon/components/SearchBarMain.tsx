@@ -1,12 +1,12 @@
 import React from 'react';
 import APIService from '../../../services/API.service';
-import { getValidPokemonImgPath, splitAndCapitalize } from '../../../util/utils';
+import { getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Link } from 'react-router-dom';
 import { ISearchBarMainComponent } from '../../models/page.model';
-import { combineClasses } from '../../../util/extension';
+import { combineClasses } from '../../../utils/extension';
 
 const SearchBarMain = (props: ISearchBarMainComponent) => {
   return (

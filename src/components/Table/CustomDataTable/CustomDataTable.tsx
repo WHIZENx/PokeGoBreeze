@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { ICustomDataTableProps } from '../../models/component.model';
-import { convertColumnDataType } from '../../../util/extension';
-import { getCustomThemeDataTable } from '../../../util/utils';
-import { isNotEmpty } from '../../../util/extension';
-import { debounce } from 'lodash';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { Button, Modal } from 'react-bootstrap';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { StyleSheetManager } from 'styled-components';
+import { ICustomDataTableProps } from '../../models/component.model';
+import { convertColumnDataType, isIncludeList } from '../../../utils/extension';
+import { getCustomThemeDataTable } from '../../../utils/utils';
+import { isNotEmpty } from '../../../utils/extension';
+import { debounce } from 'lodash';
 import { VariantType } from '../../../enums/type.enum';
 import CustomInput from '../../Input/CustomInput';
+import { StyleSheetConfig } from '../../../utils/configs/style-sheet.config';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 
 const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,6 +53,11 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
     const data = props.customDataStyles;
     if (!data) {
       return {
+        tableWrapper: {
+          style: {
+            display: props.isXFixed ? 'block' : 'table',
+          },
+        },
         subHeader: {
           style: {
             padding: 0,
@@ -62,6 +70,13 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
     }
     return {
       ...data,
+      tableWrapper: {
+        ...data.tableWrapper,
+        style: {
+          ...data.tableWrapper?.style,
+          display: props.isXFixed ? 'block' : 'table',
+        },
+      },
       subHeader: {
         ...data.subHeader,
         style: {
@@ -77,27 +92,33 @@ const CustomDataTable = <T,>(props: ICustomDataTableProps<T>) => {
 
   return (
     <>
-      <DataTable
-        {...props}
-        subHeader={props.isShowSearch}
-        subHeaderComponent={
-          props.isShowSearch && (
-            <CustomInput
-              menuItems={props.menuItems}
-              isAutoSearch={props.isAutoSearch}
-              setSearchData={() => setSearchData(true)}
-              inputPlaceholder={props.inputPlaceholder}
-              defaultValue={searchTerm}
-              setSearchTerm={setSearchTerm}
-              onOptionsClick={handleShowOption}
-              optionsIcon={props.isShowModalOptions ? <SettingsIcon className="u-fs-5" /> : undefined}
-            />
-          )
+      <StyleSheetManager
+        shouldForwardProp={(prop: string) =>
+          !isIncludeList(StyleSheetConfig.NotAllowProps, prop, IncludeMode.IncludeIgnoreCaseSensitive)
         }
-        columns={(props.customColumns ? convertColumnDataType(props.customColumns) : props.columns) || []}
-        customStyles={getCustomThemeDataTable(setCustomStyle())}
-        data={pokemonListFilter}
-      />
+      >
+        <DataTable
+          {...props}
+          subHeader={props.isShowSearch}
+          subHeaderComponent={
+            props.isShowSearch && (
+              <CustomInput
+                menuItems={props.menuItems}
+                isAutoSearch={props.isAutoSearch}
+                setSearchData={() => setSearchData(true)}
+                inputPlaceholder={props.inputPlaceholder}
+                defaultValue={searchTerm}
+                setSearchTerm={setSearchTerm}
+                onOptionsClick={handleShowOption}
+                optionsIcon={props.isShowModalOptions ? <SettingsIcon className="u-fs-5" /> : undefined}
+              />
+            )
+          }
+          columns={(props.customColumns ? convertColumnDataType(props.customColumns) : props.columns) || []}
+          customStyles={getCustomThemeDataTable(setCustomStyle())}
+          data={pokemonListFilter}
+        />
+      </StyleSheetManager>
 
       {props.isShowModalOptions && (
         <Modal show={showOption} onHide={handleCloseOption} centered>

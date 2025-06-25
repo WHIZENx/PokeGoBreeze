@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../util/utils';
+import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/API.service';
-import { queryAssetForm } from '../../util/compute';
-import { genList, regionList, TRANSITION_TIME, versionList } from '../../util/constants';
+import { queryAssetForm } from '../../utils/compute';
+import { genList, regionList, versionList } from '../../utils/constants';
 import {
   Checkbox,
   FormControl,
@@ -23,16 +23,25 @@ import {
 } from '@mui/material';
 import { StoreState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
-import { combineClasses, isEmpty, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
-import { IncludeMode } from '../../util/enums/string.enum';
+import {
+  combineClasses,
+  isEmpty,
+  isEqual,
+  isInclude,
+  isIncludeList,
+  isNotEmpty,
+  toNumber,
+} from '../../utils/extension';
+import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
 import { TypeEff } from '../../core/models/type-eff.model';
-import { ScrollModifyEvent } from '../../util/models/overrides/dom.model';
+import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
+import { transitionTime } from '../../utils/helpers/context.helpers';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -92,7 +101,12 @@ class BtnSelect implements IBtnSelect {
 }
 
 const Pokedex = (props: IStyleSheetData) => {
-  useChangeTitle('Pokédex');
+  useTitle({
+    title: 'PokéGO Breeze - Pokédex',
+    description:
+      'Complete Pokémon GO Pokédex with detailed information on all available Pokémon, including stats, moves, evolution chains, and forms.',
+    keywords: ['Pokédex', 'Pokémon database', 'Pokémon GO Pokédex', 'Pokémon stats', 'Pokémon evolution'],
+  });
 
   const dispatch = useDispatch();
 
@@ -335,7 +349,7 @@ const Pokedex = (props: IStyleSheetData) => {
                   'btn-select-type w-100 p-2',
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
-                style={{ transition: TRANSITION_TIME }}
+                style={{ transition: transitionTime() }}
               >
                 <TypeInfo isBlock arr={[item]} />
               </button>

@@ -9,28 +9,28 @@ import {
   getValidPokemonImgPath,
   replaceTempMovePvpName,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import APIService from '../../../services/API.service';
-import { calculateStatsByTag } from '../../../util/calculate';
+import { calculateStatsByTag } from '../../../utils/calculate';
 import {
   computeBgType,
   findAssetForm,
   getPokemonBattleLeagueIcon,
   getPokemonBattleLeagueName,
-} from '../../../util/compute';
+} from '../../../utils/compute';
 
 import Error from '../../Error/Error';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { Button } from 'react-bootstrap';
-import { FORM_SHADOW, Params } from '../../../util/constants';
+import { Params } from '../../../utils/constants';
 import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
-import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../util/extension';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../utils/extension';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { PokemonType } from '../../../enums/type.enum';
 import HeaderPVP from '../components/HeaderPVP';
@@ -38,12 +38,15 @@ import BodyPVP from '../components/BodyPVP';
 import MoveSet from '../components/MoveSet';
 import TypeEffectivePVP from '../components/TypeEffectivePVP';
 import OverAllStats from '../components/OverAllStats';
-import { ScoreType } from '../../../util/enums/constants.enum';
+import { ScoreType } from '../../../utils/enums/constants.enum';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { HexagonStats } from '../../../core/models/stats.model';
-import { getValueOrDefault } from '../../../util/extension';
+import { getValueOrDefault } from '../../../utils/extension';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../../utils/models/hook.model';
+import { formShadow } from '../../../utils/helpers/context.helpers';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
@@ -65,6 +68,32 @@ const PokemonPVP = (props: IStyleSheetData) => {
     loadPVP(dispatch, timestamp, pvp);
   }, []);
 
+  const setPokemonPVPTitle = (isNotFound = false) => {
+    if (isNotFound) {
+      setIsFound(false);
+    }
+    return {
+      title: isNotFound ? 'Pokémon PVP - Information Not Found' : 'Pokémon PVP - Information',
+      description: isNotFound
+        ? 'The requested Pokémon PVP information could not be found. Please check your search parameters and try again.'
+        : 'Detailed PVP information for individual Pokémon in Pokémon GO. Find stats, movesets, and battle performance across different leagues.',
+      keywords: [
+        'Pokémon GO',
+        'PVP information',
+        'PVP stats',
+        'Pokémon battle data',
+        'combat power',
+        'movesets',
+        'battle league',
+        'PokéGO Breeze',
+      ],
+    };
+  };
+
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>(setPokemonPVPTitle());
+
+  useTitle(titleProps);
+
   const fetchPokemonInfo = useCallback(async () => {
     if (
       statsRanking?.attack?.ranking &&
@@ -82,13 +111,13 @@ const PokemonPVP = (props: IStyleSheetData) => {
           .data;
 
         if (!data) {
-          setIsFound(false);
+          setTitleProps(setPokemonPVPTitle(true));
           return;
         }
 
         const pokemonData = data.find((pokemon) => isEqual(pokemon.speciesId, paramName));
         if (!pokemonData) {
-          setIsFound(false);
+          setTitleProps(setPokemonPVPTitle(true));
           return;
         }
 
@@ -96,9 +125,29 @@ const PokemonPVP = (props: IStyleSheetData) => {
         const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
         const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
-        document.title = `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
-          cp
-        )} (${capitalize(params.serie)})`;
+        setTitleProps({
+          title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
+            cp
+          )} (${capitalize(params.serie)})`,
+          description: `PVP analysis and battle stats for ${splitAndCapitalize(
+            name,
+            '-',
+            ' '
+          )} in ${getPokemonBattleLeagueName(cp)} ${capitalize(
+            params.serie
+          )}. Find optimal movesets, counters, and performance metrics.`,
+          keywords: [
+            'Pokémon GO',
+            `${splitAndCapitalize(name, '-', ' ')}`,
+            `${getPokemonBattleLeagueName(cp)}`,
+            `${capitalize(params.serie)}`,
+            'PVP stats',
+            'best movesets',
+            'battle performance',
+            'PokéGO Breeze',
+          ],
+          image: APIService.getPokemonModel(form, id),
+        });
 
         const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -115,7 +164,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
         }
 
         let pokemonType = PokemonType.Normal;
-        if (isInclude(pokemonData.speciesName, `(${FORM_SHADOW})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+        if (isInclude(pokemonData.speciesName, `(${formShadow()})`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;
         } else if (
           isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
@@ -147,7 +196,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
         dispatch(SpinnerActions.HideSpinner.create());
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
-          setIsFound(false);
+          setTitleProps(setPokemonPVPTitle(true));
         } else {
           dispatch(
             SpinnerActions.ShowSpinnerMsg.create({

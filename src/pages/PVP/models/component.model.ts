@@ -3,7 +3,7 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { IMovePokemonRanking, RankingsPVP } from '../../../core/models/pvp.model';
 import { IStatsRank } from '../../../core/models/stats.model';
-import { IStyleData } from '../../../util/models/util.model';
+import { IStyleData } from '../../../utils/models/util.model';
 import { IPokemonBattleRanking } from './battle.model';
 
 export interface HeaderComponent {

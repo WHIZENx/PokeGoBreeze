@@ -4,18 +4,18 @@ import styled from 'styled-components';
 import { ILoadGroupComponent } from '../../models/component.model';
 
 import '../../../App.scss';
-import { combineClasses, getValueOrDefault } from '../../../util/extension';
+import { combineClasses, getValueOrDefault } from '../../../utils/extension';
 
 interface Element {
-  isShow: boolean;
-  opacity?: number;
-  bgColor?: string;
-  isVertical?: boolean;
-  isHideAttr?: boolean;
+  $isShow: boolean;
+  $opacity?: number;
+  $bgColor?: string;
+  $isVertical?: boolean;
+  $isHideAttr?: boolean;
 }
 
 const LoadHideAttr = styled.div<Element>`
-  display: ${(props) => (props.isShow ? (props.isVertical ? 'inline-block' : 'block') : 'none')};
+  display: ${(props) => (props.$isShow ? (props.$isVertical ? 'inline-block' : 'block') : 'none')};
 `;
 
 const Load = styled.div<Element>`
@@ -24,11 +24,11 @@ const Load = styled.div<Element>`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
-  background-color: ${(props) => getValueOrDefault(String, props.bgColor, 'var(--background-default)')};
+  background-color: ${(props) => getValueOrDefault(String, props.$bgColor, 'var(--background-default)')};
   padding: 15px;
   border-radius: 5px;
   box-shadow: 0 8px 8px 0 #00000033;
-  display: ${(props) => (props.isShow ? (props.isVertical ? 'inline-block' : 'block') : 'none')};
+  display: ${(props) => (props.$isShow ? (props.$isVertical ? 'inline-block' : 'block') : 'none')};
 `;
 
 const LoadGroup = (props: ILoadGroupComponent) => {
@@ -56,11 +56,25 @@ const LoadGroup = (props: ILoadGroupComponent) => {
   return (
     <Fragment>
       {props.isHideAttr ? (
-        <LoadHideAttr className={className} {...props}>
+        <LoadHideAttr
+          className={className}
+          $isShow={props.isShow}
+          $isVertical={props.isVertical}
+          $isHideAttr={props.isHideAttr}
+          $opacity={props.opacity}
+          $bgColor={props.bgColor}
+        >
           {ref}
         </LoadHideAttr>
       ) : (
-        <Load className={className} {...props}>
+        <Load
+          className={className}
+          $isShow={props.isShow}
+          $isVertical={props.isVertical}
+          $isHideAttr={props.isHideAttr}
+          $opacity={props.opacity}
+          $bgColor={props.bgColor}
+        >
           {ref}
         </Load>
       )}

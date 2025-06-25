@@ -15,8 +15,8 @@ import {
   getItemSpritePath,
   getKeyWithData,
   getValidPokemonImgPath,
-} from '../../../util/utils';
-import { findAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../util/compute';
+} from '../../../utils/utils';
+import { findAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
 import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -29,7 +29,7 @@ import {
   PokemonRewardSetLeague,
   SettingLeague,
 } from '../../../core/models/league.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { Toggle } from '../../../core/models/pvp.model';
 import {
   combineClasses,
@@ -39,13 +39,13 @@ import {
   isIncludeList,
   isNotEmpty,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { LeagueRewardType, LeagueBattleType, RewardType, LeagueType } from '../../../core/enums/league.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
+import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { debounce } from 'lodash';
 
 interface LeagueData {
@@ -56,7 +56,12 @@ interface LeagueData {
 }
 
 const Leagues = () => {
-  useChangeTitle('Battle Leagues List');
+  useTitle({
+    title: 'PokéGO Breeze - Battle Leagues List',
+    description:
+      'Complete list of all battle leagues in Pokémon GO. Find information about CP limits, rules, and available Pokémon for each league.',
+    keywords: ['battle leagues', 'PVP leagues', 'Pokémon GO battles', 'Great League', 'Ultra League', 'Master League'],
+  });
   const dataStore = useSelector((state: StoreState) => state.store.data);
 
   const [leagues, setLeagues] = useState<ILeague[]>([]);

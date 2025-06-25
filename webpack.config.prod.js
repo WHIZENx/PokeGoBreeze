@@ -87,10 +87,29 @@ const common = {
           priority: 10,
         },
         {
+          from: 'public/sitemap.xml',
+          to: 'sitemap.xml',
+          toType: 'file',
+          priority: 20,
+        },
+        {
+          from: 'public/robots.txt',
+          to: 'robots.txt',
+          toType: 'file',
+          priority: 20,
+        },
+        {
           from: 'public',
           to: '',
           globOptions: {
-            ignore: ['**/index.html', '**/favicon.ico', '**/manifest.json', '**/og-image.png'],
+            ignore: [
+              '**/index.html',
+              '**/favicon.ico',
+              '**/manifest.json',
+              '**/og-image.png',
+              '**/sitemap.xml',
+              '**/robots.txt',
+            ],
           },
           transform: {
             transformer: (content) => {
@@ -161,6 +180,8 @@ module.exports = merge(common, {
         REACT_APP_ENCRYPTION_KEY: process.env.REACT_APP_ENCRYPTION_KEY,
         REACT_APP_ENCRYPTION_SALT: process.env.REACT_APP_ENCRYPTION_SALT,
         REACT_APP_VERSION: process.env.REACT_APP_VERSION,
+        REACT_APP_CONFIG: process.env.REACT_APP_CONFIG,
+        REACT_APP_BASE_URL: process.env.REACT_APP_BASE_URL,
         NODE_ENV: JSON.stringify('production'),
         DEBUG: false,
       }),

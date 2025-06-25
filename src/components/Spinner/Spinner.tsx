@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import loading from '../../assets/loading.png';
 import './Spinner.scss';
 import { SpinnerState } from '../../store/models/state.model';
-import { clearLocalStorageExcept } from '../../store/localStorage';
+import { clearLocalStorageExcept } from '../../utils/configs/local-storage.config';
 
 const Spinner = () => {
   const spinner = useSelector((state: SpinnerState) => state.spinner);

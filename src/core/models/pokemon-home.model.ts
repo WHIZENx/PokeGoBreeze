@@ -1,8 +1,9 @@
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import APIService from '../../services/API.service';
-import { FORM_NORMAL, versionList } from '../../util/constants';
-import { getValueOrDefault, toNumber } from '../../util/extension';
-import { convertPokemonImageName, splitAndCapitalize } from '../../util/utils';
+import { versionList } from '../../utils/constants';
+import { getValueOrDefault, toNumber } from '../../utils/extension';
+import { formNormal } from '../../utils/helpers/context.helpers';
+import { convertPokemonImageName, splitAndCapitalize } from '../../utils/utils';
 import { IImage, ImageModel } from './asset.model';
 import { IPokemonData } from './pokemon.model';
 import { IStatsPokemon, IStatsPokemonGO, StatsPokemon, StatsPokemonGO } from './stats.model';
@@ -48,7 +49,7 @@ export class PokemonHomeModel implements IPokemonHomeModel {
     this.id = toNumber(item.num);
     this.name = item.name;
     this.form = assetForm?.default
-      ? getValueOrDefault(String, item.form, FORM_NORMAL)
+      ? getValueOrDefault(String, item.form, formNormal())
       : getValueOrDefault(String, item.form?.toLowerCase().replaceAll('_', '-'));
     this.types = item.types;
     this.color = item.color.toLowerCase();

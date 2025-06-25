@@ -6,10 +6,10 @@ import { Tabs, Tab } from 'react-bootstrap';
 import './CalculatePoint.scss';
 import Move from '../../../components/Table/Move';
 import { Badge, Checkbox, FormControlLabel } from '@mui/material';
-import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
-import { findStabType } from '../../../util/compute';
-import { levelList, MAX_IV, MAX_LEVEL, MIN_IV, MIN_LEVEL } from '../../../util/constants';
-import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../util/calculate';
+import { capitalize, getKeyWithData, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { findStabType } from '../../../utils/compute';
+import { levelList } from '../../../utils/constants';
+import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { useSnackbar } from 'notistack';
 
 import ATK_LOGO from '../../../assets/attack.png';
@@ -20,7 +20,7 @@ import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { BattleState } from '../../../core/models/damage.model';
 import {
   combineClasses,
@@ -29,13 +29,25 @@ import {
   isNotEmpty,
   toNumber,
   UniqValueInArray,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
+import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/helpers/context.helpers';
 
 const CalculatePoint = () => {
-  useChangeTitle('Calculate Point Stats - Tools');
-  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
+  useTitle({
+    title: 'Calculate Point Stats - Tools',
+    description:
+      "Calculate Pokémon GO point statistics and optimize your team's performance. Get precise stat calculations for better battle planning.",
+    keywords: [
+      'point stats calculator',
+      'Pokémon GO point system',
+      'battle points',
+      'stat optimization',
+      'Pokémon GO tools',
+      'team optimization',
+    ],
+  });
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
@@ -95,9 +107,9 @@ const CalculatePoint = () => {
     const dataList: number[][] = [];
     const group: number[] = [];
     let level = 0;
-    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
+    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
       dataList[level] = getValueOrDefault(Array, dataList[level]);
-      for (let j = MIN_IV; j <= MAX_IV; j += 1) {
+      for (let j = minIv(); j <= maxIv(); j += 1) {
         const atk = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.atk, j, i, true);
         const result = getMoveDamagePVE(
           atk,
@@ -123,10 +135,10 @@ const CalculatePoint = () => {
     const dataListSta: number[][] = [];
     const groupSta: number[] = [];
     let level = 0;
-    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
+    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
       dataListDef[level] ??= [];
       dataListSta[level] ??= [];
-      for (let j = MIN_IV; j <= MAX_IV; j += 1) {
+      for (let j = minIv(); j <= maxIv(); j += 1) {
         const def = calculateStatsBattle(searching?.current?.pokemon?.statsGO?.def, j, i, true);
         const resultDef = getMoveDamagePVE(
           toNumber(searching?.object?.pokemon?.statsGO?.atk, 1),
@@ -189,7 +201,6 @@ const CalculatePoint = () => {
     move: ICombat | undefined
   ) => {
     return calculateDamagePVE(
-      globalOptions,
       atk,
       def,
       toNumber(!isRaid && pvpDmg ? move?.pvpPower : move?.pvePower),
@@ -231,7 +242,7 @@ const CalculatePoint = () => {
     setResultBulkPointDef(undefined);
     let dataList: number[][] = [];
     let level = 0;
-    for (let i = MIN_LEVEL; i <= MAX_LEVEL; i += 0.5) {
+    for (let i = minLevel(); i <= maxLevel(); i += stepLevel()) {
       let count = 0;
       dataList[level] ??= [];
       let result = computeBulk(count, i);
@@ -454,7 +465,7 @@ const CalculatePoint = () => {
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
-                          {[...Array(MAX_IV + 1).keys()].map((value, index) => (
+                          {[...Array(maxIv() + 1).keys()].map((value, index) => (
                             <th key={index}>{value}</th>
                           ))}
                         </tr>
@@ -463,7 +474,7 @@ const CalculatePoint = () => {
                         {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
-                            {[...Array(MAX_IV + 1).keys()].map((_, index) => (
+                            {[...Array(maxIv() + 1).keys()].map((_, index) => (
                               <td
                                 className={combineClasses(
                                   'text-iv',
@@ -591,7 +602,7 @@ const CalculatePoint = () => {
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
-                          {[...Array(MAX_IV + 1).keys()].map((value, index) => (
+                          {[...Array(maxIv() + 1).keys()].map((value, index) => (
                             <th key={index}>{value}</th>
                           ))}
                         </tr>
@@ -600,7 +611,7 @@ const CalculatePoint = () => {
                         {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
-                            {[...Array(MAX_IV + 1).keys()].map((_, index) => (
+                            {[...Array(maxIv() + 1).keys()].map((_, index) => (
                               <td
                                 className={combineClasses(
                                   'text-iv',
@@ -646,7 +657,7 @@ const CalculatePoint = () => {
                       <thead className="text-center">
                         <tr className="table-header">
                           <th />
-                          {[...Array(MAX_IV + 1).keys()].map((value, index) => (
+                          {[...Array(maxIv() + 1).keys()].map((value, index) => (
                             <th key={index}>{value}</th>
                           ))}
                         </tr>
@@ -655,7 +666,7 @@ const CalculatePoint = () => {
                         {levelList.map((level, i) => (
                           <tr key={i}>
                             <td>{level}</td>
-                            {[...Array(MAX_IV + 1).keys()].map((_, index) => (
+                            {[...Array(maxIv() + 1).keys()].map((_, index) => (
                               <td
                                 className={combineClasses(
                                   'text-iv',
@@ -807,9 +818,9 @@ const CalculatePoint = () => {
                     <PokeGoSlider
                       value={DEFIv}
                       aria-label="DEF marks"
-                      defaultValue={MIN_IV}
-                      min={MIN_IV}
-                      max={MAX_IV}
+                      defaultValue={minIv()}
+                      min={minIv()}
+                      max={maxIv()}
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}
@@ -822,9 +833,9 @@ const CalculatePoint = () => {
                     <PokeGoSlider
                       value={STAIv}
                       aria-label="STA marks"
-                      defaultValue={MIN_IV}
-                      min={MIN_IV}
-                      max={MAX_IV}
+                      defaultValue={minIv()}
+                      min={minIv()}
+                      max={maxIv()}
                       step={1}
                       valueLabelDisplay="auto"
                       marks={marks}

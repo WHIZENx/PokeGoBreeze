@@ -1,6 +1,6 @@
 import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 
-import { getKeyWithData, splitAndCapitalize } from '../../util/utils';
+import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 
 import './Sticker.scss';
 import APIService from '../../services/API.service';
@@ -12,8 +12,8 @@ import CustomPopover from '../../components/Popover/CustomPopover';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
-import { isIncludeList, isNotEmpty, toNumber } from '../../util/extension';
+import { useTitle } from '../../utils/hooks/useTitle';
+import { isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
 import { GlobalType } from '../../enums/type.enum';
 import { ShopType } from './enums/sticker-type.enum';
 
@@ -23,7 +23,12 @@ interface PokemonStickerModel {
 }
 
 const Sticker = () => {
-  useChangeTitle('Stickers List');
+  useTitle({
+    title: 'PokéGO Breeze - Stickers List',
+    description:
+      'Complete collection of all stickers available in Pokémon GO. Find rare and event-exclusive stickers for your collection.',
+    keywords: ['Pokémon GO stickers', 'sticker collection', 'rare stickers', 'event stickers', 'Pokémon stickers'],
+  });
   const [id, setId] = useState(GlobalType.All);
   const [shopType, setShopType] = useState(ShopType.All);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);

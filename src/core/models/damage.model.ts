@@ -1,5 +1,5 @@
 import { PokemonType, ThrowType } from '../../enums/type.enum';
-import { MIN_LEVEL } from '../../util/constants';
+import { minLevel } from '../../utils/helpers/context.helpers';
 import { IPokemonFormModify } from './API/form.model';
 import { ICombat } from './combat.model';
 
@@ -65,9 +65,9 @@ export class PokemonDmgOption implements IPokemonDmgOption {
   objPoke?: Partial<IPokemonFormModify>;
   type?: PokemonType;
   currPoke?: Partial<IPokemonFormModify>;
-  currLevel = MIN_LEVEL;
+  currLevel = minLevel();
   typeObj?: PokemonType;
-  objLevel = MIN_LEVEL;
+  objLevel = minLevel();
   move?: ICombat;
   battleState?: IBattleState;
   damage?: number;

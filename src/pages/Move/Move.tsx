@@ -10,9 +10,9 @@ import {
   getItemSpritePath,
   getKeyWithData,
   splitAndCapitalize,
-} from '../../util/utils';
-import { Params, STAB_MULTIPLY } from '../../util/constants';
-import { getBarCharge, queryTopMove } from '../../util/calculate';
+} from '../../utils/utils';
+import { Params } from '../../utils/constants';
+import { getBarCharge, queryTopMove } from '../../utils/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
@@ -32,9 +32,9 @@ import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } fro
 import { StoreState } from '../../store/models/state.model';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
-import { IPokemonTopMove } from '../../util/models/pokemon-top-move.model';
+import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
 import { IMovePage } from '../models/page.model';
-import { TableColumnModify } from '../../util/models/overrides/data-table.model';
+import { TableColumnModify } from '../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   getValueOrDefault,
@@ -45,15 +45,18 @@ import {
   toFloat,
   toFloatWithPadding,
   toNumber,
-} from '../../util/extension';
-import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
+} from '../../utils/extension';
+import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonTypeBadge } from '../../core/models/type.model';
-import { LinkToTop } from '../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
 import CircularProgressTable from '../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../components/models/component.model';
+import { useTitle } from '../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../utils/models/hook.model';
+import { battleStab } from '../../utils/helpers/context.helpers';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -198,6 +201,24 @@ const Move = (props: IMovePage) => {
     return;
   };
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'Move - Information',
+    description:
+      'Comprehensive database of Pokémon GO moves. Find detailed information about Fast and Charged moves, power, energy, DPS, and more.',
+    keywords: [
+      'Pokémon GO',
+      'moves',
+      'fast moves',
+      'charged moves',
+      'PVP moves',
+      'move stats',
+      'move database',
+      'PokéGO Breeze',
+    ],
+  });
+
+  useTitle(titleProps);
+
   const queryMoveData = useCallback(
     (id: number) => {
       if (isNotEmpty(data.combats)) {
@@ -219,11 +240,35 @@ const Move = (props: IMovePage) => {
         }
         if (move) {
           setMove(move);
-          document.title = `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`;
+          setTitleProps({
+            title: `#${move.track} - ${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`,
+            description: `Detailed information about ${splitAndCapitalize(
+              move.name.toLowerCase(),
+              '_',
+              ' '
+            )}, a ${capitalize(move.type)} type ${
+              move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged'
+            } move in Pokémon GO. See power, energy, and DPS stats.`,
+            keywords: [
+              'Pokémon GO',
+              `${splitAndCapitalize(move.name.toLowerCase(), '_', ' ')}`,
+              `${capitalize(move.type)} type`,
+              `${move.typeMove === TypeMove.Fast ? 'Fast' : 'Charged'} move`,
+              'move stats',
+              'battle moves',
+              'combat power',
+              'PokéGO Breeze',
+            ],
+            image: APIService.getTypeHqSprite(move.type),
+          });
         } else {
           enqueueSnackbar(`Move ID: ${id} Not found!`, { variant: VariantType.Error });
           if (id) {
-            document.title = `#${id} - Not Found`;
+            setTitleProps({
+              title: `#${id} - Not Found`,
+              description: 'The requested move could not be found. Please check the move ID and try again.',
+              keywords: ['Pokémon GO', 'move not found', 'error', 'PokéGO Breeze'],
+            });
           }
         }
       }
@@ -255,11 +300,11 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     if (move && isNotEmpty(data.pokemons)) {
-      const result = queryTopMove(data.options, data.pokemons, data.typeEff, data.weatherBoost, move);
+      const result = queryTopMove(data.pokemons, data.typeEff, data.weatherBoost, move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, data.options, data.pokemons, data.typeEff, data.weatherBoost]);
+  }, [move, data.pokemons, data.typeEff, data.weatherBoost]);
 
   useEffect(() => {
     setTopListFilter(
@@ -419,7 +464,7 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
                       <span className="text-success d-inline-block caption">
                         {' +'}
                         {toFloatWithPadding(move.pvePower * 0.2, 2)}
@@ -460,7 +505,7 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
                       <span className="text-success d-inline-block caption">
                         {' +'}
                         {toFloatWithPadding(move.pvpPower * 0.2, 2)}
@@ -584,13 +629,7 @@ const Move = (props: IMovePage) => {
                   DPS
                   <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                 </td>
-                <td>
-                  {move &&
-                    `${toFloatWithPadding(
-                      (move.pvePower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000),
-                      2
-                    )}`}
-                </td>
+                <td>{move && `${toFloatWithPadding((move.pvePower * battleStab()) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               <tr>
                 <td>
@@ -599,10 +638,7 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>
                   {move &&
-                    `${toFloatWithPadding(
-                      (move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 2)) / (move.durationMs / 1000),
-                      2
-                    )}`}
+                    `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 2)) / (move.durationMs / 1000), 2)}`}
                 </td>
               </tr>
               <tr>
@@ -612,10 +648,7 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>
                   {move &&
-                    `${toFloatWithPadding(
-                      (move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 3)) / (move.durationMs / 1000),
-                      2
-                    )}`}
+                    `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 3)) / (move.durationMs / 1000), 2)}`}
                 </td>
               </tr>
               {move?.typeMove === TypeMove.Fast && (
@@ -638,13 +671,7 @@ const Move = (props: IMovePage) => {
                   DPS
                   <span className="caption">(STAB / Shadow Bonus)</span>
                 </td>
-                <td>
-                  {move &&
-                    `${toFloatWithPadding(
-                      (move.pvpPower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000),
-                      2
-                    )}`}
-                </td>
+                <td>{move && `${toFloatWithPadding((move.pvpPower * battleStab()) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               {move?.bonus && (
                 <tr>

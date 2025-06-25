@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './IVBar.scss';
 import { IIVBarComponent } from '../../models/component.model';
-import { combineClasses } from '../../../util/extension';
+import { combineClasses } from '../../../utils/extension';
 
 const IVBar = (props: IIVBarComponent) => {
   const [ivWidthFirst, setIvWidthFirst] = useState(0);

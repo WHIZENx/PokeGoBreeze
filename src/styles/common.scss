@@ -108,6 +108,14 @@
   @include theme-background(var(--custom-table-background-info), $important);
 }
 
+@mixin default-text-shadow($width: 1px, $color: var(--shadow-default)) {
+  text-shadow: $color $width $width;
+  -webkit-text-shadow: $color $width $width;
+  -moz-text-shadow: $color $width $width;
+  -o-text-shadow: $color $width $width;
+  -ms-text-shadow: $color $width $width;
+}
+
 @mixin default-shadow($gray-scale: none, $width: 1px, $color: var(--shadow-default)) {
   $drop-shadow: drop-shadow($width $width $width $color);
 

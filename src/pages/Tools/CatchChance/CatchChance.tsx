@@ -13,36 +13,17 @@ import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
 import APIService from '../../../services/API.service';
-import { calculateCatchChance, calculateCP } from '../../../util/calculate';
-import {
-  BRONZE_INC_CHANCE,
-  CURVE_INC_CHANCE,
-  EXCELLENT_THROW_INC_CHANCE,
-  GOLD_INC_CHANCE,
-  GOLD_RAZZ_BERRY_INC_CHANCE,
-  GREAT_BALL_INC_CHANCE,
-  GREAT_THROW_INC_CHANCE,
-  MAX_LEVEL,
-  MIN_LEVEL,
-  NICE_THROW_INC_CHANCE,
-  NORMAL_THROW_INC_CHANCE,
-  PLATINUM_INC_CHANCE,
-  POKE_BALL_INC_CHANCE,
-  RAZZ_BERRY_INC_CHANCE,
-  SILVER_INC_CHANCE,
-  SILVER_PINAPS_INC_CHANCE,
-  ULTRA_BALL_INC_CHANCE,
-} from '../../../util/constants';
+import { calculateCatchChance, calculateCP } from '../../../utils/calculate';
 import {
   getItemSpritePath,
   getKeyWithData,
   getPokemonFormWithNoneSpecialForm,
   LevelSlider,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 
 import './CatchChance.scss';
-import { StoreState, SearchingState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import {
   DynamicObj,
   getValueOrDefault,
@@ -50,7 +31,7 @@ import {
   isUndefined,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import {
   Medal,
   MedalType,
@@ -67,36 +48,58 @@ import { BadgeType } from '../../../components/Input/enums/badge-type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import {
+  bronzeIncChance,
+  curveIncChance,
+  excellentThrowIncChance,
+  goldIncChance,
+  goldRazzBerryIncChance,
+  greatBallIncChance,
+  greatThrowIncChance,
+  maxEncounterPlayerLevel,
+  maxLevel,
+  maxQuestEncounterPlayerLevel,
+  minLevel,
+  niceThrowIncChance,
+  normalThrowIncChance,
+  platinumIncChance,
+  pokeBallIncChance,
+  razzBerryIncChance,
+  silverIncChance,
+  silverPinapsIncChance,
+  stepLevel,
+  ultraBallIncChance,
+} from '../../../utils/helpers/context.helpers';
 
 const balls: PokeBallThreshold[] = [
   {
     name: 'Poké Ball',
     itemName: ItemName.PokeBall,
-    threshold: POKE_BALL_INC_CHANCE,
+    threshold: pokeBallIncChance(),
     pokeBallType: PokeBallType.PokeBall,
   },
   {
     name: 'Great Ball',
     itemName: ItemName.GreatBall,
-    threshold: GREAT_BALL_INC_CHANCE,
+    threshold: greatBallIncChance(),
     pokeBallType: PokeBallType.GreatBall,
   },
   {
     name: 'Ultra Ball',
     itemName: ItemName.UltraBall,
-    threshold: ULTRA_BALL_INC_CHANCE,
+    threshold: ultraBallIncChance(),
     pokeBallType: PokeBallType.UltraBall,
   },
 ];
 const throws: ThrowThreshold[] = [
-  { name: 'Normal Throw', threshold: NORMAL_THROW_INC_CHANCE, throwType: ThrowType.Normal },
-  { name: 'Nice Throw', threshold: NICE_THROW_INC_CHANCE, throwType: ThrowType.Nice },
-  { name: 'Great Throw', threshold: GREAT_THROW_INC_CHANCE, throwType: ThrowType.Great },
-  { name: 'Excellent Throw', threshold: EXCELLENT_THROW_INC_CHANCE, throwType: ThrowType.Excellent },
+  { name: 'Normal Throw', threshold: normalThrowIncChance(), throwType: ThrowType.Normal },
+  { name: 'Nice Throw', threshold: niceThrowIncChance(), throwType: ThrowType.Nice },
+  { name: 'Great Throw', threshold: greatThrowIncChance(), throwType: ThrowType.Great },
+  { name: 'Excellent Throw', threshold: excellentThrowIncChance(), throwType: ThrowType.Excellent },
 ];
 
 const CatchChance = () => {
-  const playerSetting = useSelector((state: StoreState) => state.store.data.options.playerSetting);
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const circleDistance = useRef(200);
@@ -110,7 +113,7 @@ const CatchChance = () => {
   const [data, setData] = useState<PokemonCatchChance>();
   const [dataAdv, setDataAdv] = useState(new DataAdvance());
   const [medal, setMedal] = useState(new Medal());
-  const [level, setLevel] = useState(MIN_LEVEL);
+  const [level, setLevel] = useState(minLevel());
   const [radius, setRadius] = useState(circleDistance.current / 2);
   const [advThrow, setAdvThrow] = useState<ThrowThreshold>();
   const [advanceOption, setAdvanceOption] = useState(new AdvanceOption());
@@ -121,9 +124,21 @@ const CatchChance = () => {
   const [options, setOptions] = useState(new PokeBallOption());
   const { isAdvance, isCurveBall, isRazzBerry, isGoldenRazzBerry, isSilverPinaps, isShadow } = options;
 
-  useEffect(() => {
-    document.title = 'Calculate Catch Chance - Tool';
-  }, []);
+  useTitle({
+    title: 'Calculate Catch Chance - Tool',
+    description:
+      'Calculate the probability of catching any Pokémon in Pokémon GO based on ball type, berries, throw accuracy, and medals.',
+    keywords: [
+      'Pokémon GO',
+      'catch rate',
+      'catch calculator',
+      'catch chance',
+      'Poké Ball',
+      'Great Ball',
+      'Ultra Ball',
+      'PokéGO Breeze',
+    ],
+  });
 
   useEffect(() => {
     if (pokemon) {
@@ -174,15 +189,15 @@ const CatchChance = () => {
   const medalCatchChance = (priority: BadgeType) => {
     switch (priority) {
       case BadgeType.Bronze:
-        return BRONZE_INC_CHANCE;
+        return bronzeIncChance();
       case BadgeType.Silver:
-        return SILVER_INC_CHANCE;
+        return silverIncChance();
       case BadgeType.Gold:
-        return GOLD_INC_CHANCE;
+        return goldIncChance();
       case BadgeType.Platinum:
-        return PLATINUM_INC_CHANCE;
+        return platinumIncChance();
       default:
-        return POKE_BALL_INC_CHANCE;
+        return pokeBallIncChance();
     }
   };
 
@@ -202,10 +217,10 @@ const CatchChance = () => {
             ball.threshold *
             ((minThreshold + maxThreshold) / 2) *
             medalChance *
-            (isCurveBall ? CURVE_INC_CHANCE : 1) *
-            (isRazzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-            (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
-            (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
+            (isCurveBall ? curveIncChance() : 1) *
+            (isRazzBerry ? razzBerryIncChance() : 1) *
+            (isGoldenRazzBerry ? goldRazzBerryIncChance() : 1) *
+            (isSilverPinaps ? silverPinapsIncChance() : 1);
           const prob = calculateCatchChance(
             data.shadowBaseCaptureRate && options.isShadow ? data.shadowBaseCaptureRate : data.baseCaptureRate,
             level,
@@ -328,10 +343,10 @@ const CatchChance = () => {
         pokeBall[1].threshold *
         threshold *
         medalChance *
-        (isCurveBall && !disable ? CURVE_INC_CHANCE : 1) *
-        (isRazzBerry ? RAZZ_BERRY_INC_CHANCE : 1) *
-        (isGoldenRazzBerry ? GOLD_RAZZ_BERRY_INC_CHANCE : 1) *
-        (isSilverPinaps ? SILVER_PINAPS_INC_CHANCE : 1);
+        (isCurveBall && !disable ? curveIncChance() : 1) *
+        (isRazzBerry ? razzBerryIncChance() : 1) *
+        (isGoldenRazzBerry ? goldRazzBerryIncChance() : 1) *
+        (isSilverPinaps ? silverPinapsIncChance() : 1);
       const prob = calculateCatchChance(data?.baseCaptureRate, level, multiplier);
       result = Math.min(prob * 100, 100);
     }
@@ -497,21 +512,21 @@ const CatchChance = () => {
                   className="w-75"
                   style={{ maxWidth: 400 }}
                   value={level}
-                  defaultValue={MIN_LEVEL}
+                  defaultValue={minLevel()}
                   valueLabelDisplay="off"
                   marks={[
                     {
-                      value: playerSetting.maxQuestEncounterPlayerLevel,
+                      value: maxQuestEncounterPlayerLevel(),
                       label: <span className="position-absolute -top-1">Max LV encounter in quest</span>,
                     },
                     {
-                      value: playerSetting.maxEncounterPlayerLevel,
+                      value: maxEncounterPlayerLevel(),
                       label: <span className="position-absolute bottom-4">Max LV encounter in wild</span>,
                     },
                   ]}
-                  step={0.5}
-                  min={MIN_LEVEL}
-                  max={MAX_LEVEL - 1}
+                  step={stepLevel()}
+                  min={minLevel()}
+                  max={maxLevel() - 1}
                   disabled={!data}
                   onChange={(_, v) => onHandleLevel(v as number)}
                 />

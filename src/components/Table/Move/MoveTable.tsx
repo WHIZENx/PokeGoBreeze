@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
-import { rankMove } from '../../../util/calculate';
+import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
+import { rankMove } from '../../../utils/calculate';
 
 import './MoveTable.scss';
 import { useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ import {
   IPokemonQueryMove,
   IPokemonQueryRankMove,
   PokemonQueryRankMove,
-} from '../../../util/models/pokemon-top-move.model';
+} from '../../../utils/models/pokemon-top-move.model';
 import { ITableMoveComponent } from '../../models/component.model';
 import {
   combineClasses,
@@ -26,11 +26,11 @@ import {
   isUndefined,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { TableType, TypeSorted } from './enums/table-type.enum';
 import { MoveType, PokemonType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
-import { FloatPaddingOption } from '../../../util/models/extension.model';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import IconType from '../../Sprites/Icon/Type/Type';
 
@@ -141,7 +141,6 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const setRankMove = (result: Partial<IPokemonDetail>) => {
     return rankMove(
-      data.options,
       data.typeEff,
       data.weatherBoost,
       data.combats,

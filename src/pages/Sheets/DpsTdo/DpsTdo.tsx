@@ -11,8 +11,8 @@ import {
   getKeysObj,
   getAllMoves,
   isSpecialMegaFormType,
-} from '../../../util/utils';
-import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+} from '../../../utils/utils';
+import { levelList } from '../../../utils/constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -22,7 +22,7 @@ import {
   TimeToKill,
   calculateBattleDPSDefender,
   calculateStatsBattle,
-} from '../../../util/calculate';
+} from '../../../utils/calculate';
 
 import APIService from '../../../services/API.service';
 
@@ -43,11 +43,11 @@ import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
 import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../../store/models/options.model';
-import { BattleCalculate } from '../../../util/models/calculate.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { BattleCalculate } from '../../../utils/models/calculate.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
 import { OptionsActions } from '../../../store/actions';
-import { SortOrderType, TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { SortOrderType, TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   DynamicObj,
@@ -61,16 +61,17 @@ import {
   toFloat,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { InputType } from '../../../components/Input/enums/input-type.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
 import { TypeEff } from '../../../core/models/type-eff.model';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { defaultSheetPage, defaultSheetRow, maxIv, minIv, minLevel } from '../../../utils/helpers/context.helpers';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -266,7 +267,12 @@ const columns: TableColumnModify<PokemonSheetData>[] = [
 ];
 
 const DpsTdo = () => {
-  useChangeTitle('DPS&TDO Sheets');
+  useTitle({
+    title: 'PokéGO Breeze - DPS&TDO Sheets',
+    description:
+      'Analyze Pokémon GO DPS (Damage Per Second) and TDO (Total Damage Output) with our comprehensive sheets. Optimize your raid counters and battle teams.',
+    keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
+  });
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
@@ -292,12 +298,12 @@ const DpsTdo = () => {
   const [defaultPage, setDefaultPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage
       ? optionStore.dpsSheet.defaultPage
-      : DEFAULT_SHEET_PAGE
+      : defaultSheetPage()
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage
       ? optionStore.dpsSheet.defaultRowPerPage
-      : DEFAULT_SHEET_ROW
+      : defaultSheetRow()
   );
   const [defaultSorted, setDefaultSorted] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
@@ -387,25 +393,11 @@ const DpsTdo = () => {
               weatherBoosts: options.weatherBoosts,
             });
 
-            const dpsDef = calculateBattleDPSDefender(
-              data.options,
-              data.typeEff,
-              data.weatherBoost,
-              statsAttacker,
-              statsDefender
-            );
-            dps = calculateBattleDPS(
-              data.options,
-              data.typeEff,
-              data.weatherBoost,
-              statsAttacker,
-              statsDefender,
-              dpsDef
-            );
+            const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+            dps = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
             tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
           } else {
             dps = calculateAvgDPS(
-              data.options,
               data.typeEff,
               data.weatherBoost,
               statsAttacker.fMove,
@@ -417,13 +409,7 @@ const DpsTdo = () => {
               statsAttacker.pokemonType,
               options
             );
-            tdo = calculateTDO(
-              data.options,
-              statsAttacker.def,
-              toNumber(statsAttacker.hp),
-              dps,
-              statsAttacker.pokemonType
-            );
+            tdo = calculateTDO(statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
           }
           dataList.push({
             pokemon,
@@ -592,7 +578,6 @@ const DpsTdo = () => {
     cMoveTargetPokemon,
     data.pokemons,
     data.combats,
-    data.options,
     data.typeEff,
     data.weatherBoost,
   ]);
@@ -1125,9 +1110,9 @@ const DpsTdo = () => {
                     defaultValue={ivAtk}
                     type="number"
                     className="form-control w-6"
-                    placeholder={`${MIN_IV}-${MAX_IV}`}
-                    min={MIN_IV}
-                    max={MAX_IV}
+                    placeholder={`${minIv()}-${maxIv()}`}
+                    min={minIv()}
+                    max={maxIv()}
                     required
                     onChange={(e) =>
                       setFilters({
@@ -1142,9 +1127,9 @@ const DpsTdo = () => {
                     defaultValue={ivDef}
                     type="number"
                     className="form-control w-6"
-                    placeholder={`${MIN_IV}-${MAX_IV}`}
-                    min={MIN_IV}
-                    max={MAX_IV}
+                    placeholder={`${minIv()}-${maxIv()}`}
+                    min={minIv()}
+                    max={maxIv()}
                     required
                     onChange={(e) =>
                       setFilters({
@@ -1159,9 +1144,9 @@ const DpsTdo = () => {
                     defaultValue={ivHp}
                     type="number"
                     className="form-control w-6"
-                    placeholder={`${MIN_IV}-${MAX_IV}`}
-                    min={MIN_IV}
-                    max={MAX_IV}
+                    placeholder={`${minIv()}-${maxIv()}`}
+                    min={minIv()}
+                    max={maxIv()}
                     required
                     onChange={(e) =>
                       setFilters({
@@ -1180,7 +1165,7 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        pokemonLevel: toFloat(e.target.value, -1, MIN_LEVEL),
+                        pokemonLevel: toFloat(e.target.value, -1, minLevel()),
                       })
                     }
                   >

@@ -12,14 +12,14 @@ import {
   getValidPokemonImgPath,
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import {
   computeBgType,
   findAssetForm,
   getPokemonBattleLeagueIcon,
   getPokemonBattleLeagueName,
-} from '../../../util/compute';
-import { calculateStatsByTag } from '../../../util/calculate';
+} from '../../../utils/compute';
+import { calculateStatsByTag } from '../../../utils/calculate';
 import { Accordion } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 import TypeInfo from '../../../components/Sprites/Type/Type';
@@ -34,7 +34,7 @@ import { StatsState, StoreState, TimestampState } from '../../../store/models/st
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
-import { FORM_SHADOW, Params } from '../../../util/constants';
+import { Params } from '../../../utils/constants';
 import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
@@ -47,18 +47,21 @@ import {
   isNullOrUndefined,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { SortType } from '../enums/pvp-team.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
 import { PokemonType, TypeMove } from '../../../enums/type.enum';
-import { ScoreType } from '../../../util/enums/constants.enum';
+import { ScoreType } from '../../../utils/enums/constants.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import Error from '../../Error/Error';
 import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../../utils/models/hook.model';
+import { formShadow } from '../../../utils/helpers/context.helpers';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
@@ -112,7 +115,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     }
 
     let pokemonType = PokemonType.Normal;
-    if (isInclude(speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    if (isInclude(speciesId, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
       pokemonType = PokemonType.Shadow;
     } else if (
       isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||
@@ -149,6 +152,15 @@ const TeamPVP = (props: IStyleSheetData) => {
     }
   }, [dispatch, dataStore.combats]);
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'PVP Teams',
+    description:
+      'Explore top-performing Pokémon GO PVP teams across different leagues and formats. Find meta team compositions and counters.',
+    keywords: ['Pokémon GO', 'PVP teams', 'meta teams', 'team compositions', 'battle teams', 'PokéGO Breeze'],
+  });
+
+  useTitle(titleProps);
+
   useEffect(() => {
     const fetchPokemon = async () => {
       dispatch(SpinnerActions.ShowSpinner.create());
@@ -161,11 +173,44 @@ const TeamPVP = (props: IStyleSheetData) => {
           return;
         }
         if (params.serie === LeagueBattleType.All) {
-          document.title = `PVP Teams - ${getPokemonBattleLeagueName(cp)}`;
+          setTitleProps({
+            title: `PVP Teams - ${getPokemonBattleLeagueName(cp)}`,
+            description: `Explore top-performing ${getPokemonBattleLeagueName(
+              cp
+            )} teams in Pokémon GO PVP. Find optimal team compositions and counter strategies.`,
+            keywords: [
+              'Pokémon GO',
+              `${getPokemonBattleLeagueName(cp)}`,
+              'PVP teams',
+              'meta teams',
+              'team compositions',
+              'PokéGO Breeze',
+            ],
+            image: getPokemonBattleLeagueIcon(cp),
+          });
         } else {
-          document.title = `PVP Teams - ${
-            params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
-          } ${splitAndCapitalize(params.serie, '-', ' ')}`;
+          setTitleProps({
+            title: `PVP Teams - ${
+              params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
+            } ${splitAndCapitalize(params.serie, '-', ' ')}`,
+            description: `Explore top-performing ${
+              params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''
+            } ${splitAndCapitalize(
+              params.serie,
+              '-',
+              ' '
+            )} teams in Pokémon GO PVP. Find optimal team compositions and counter strategies.`,
+            keywords: [
+              'Pokémon GO',
+              `${splitAndCapitalize(params.serie, '-', ' ')}`,
+              `${params.serie === LeagueBattleType.Remix ? getPokemonBattleLeagueName(cp) : ''}`,
+              'PVP teams',
+              'meta teams',
+              'team compositions',
+              'PokéGO Breeze',
+            ],
+            image: getPokemonBattleLeagueIcon(cp),
+          });
         }
 
         const performersTotalGames = file.performers.reduce((p, c) => p + c.games, 0);

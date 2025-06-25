@@ -2,7 +2,7 @@ import { ISelectMoveModel } from '../../components/Input/models/select-move.mode
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ColumnType } from '../../enums/type.enum';
 import { BestOptionType, SortDirectionType } from '../../pages/Sheets/DpsTdo/enums/column-select-type.enum';
-import { DEFAULT_POKEMON_DEF_OBJ, DEFAULT_POKEMON_LEVEL, MAX_IV } from '../../util/constants';
+import { defaultPokemonDefObj, defaultPokemonLevel, maxIv } from '../../utils/helpers/context.helpers';
 
 interface IOptionDPSSort {
   selectedColumn: number;
@@ -83,10 +83,10 @@ export class OptionFiltersDPS implements IOptionFiltersDPS {
   enableDelay = false;
   releasedGO = true;
   bestOf = BestOptionType.multiDpsTdo;
-  ivAtk = MAX_IV;
-  ivDef = MAX_IV;
-  ivHp = MAX_IV;
-  pokemonLevel = DEFAULT_POKEMON_LEVEL;
+  ivAtk = maxIv();
+  ivDef = maxIv();
+  ivHp = maxIv();
+  pokemonLevel = defaultPokemonLevel();
 }
 
 interface IDelay {
@@ -130,11 +130,11 @@ export class OptionOtherDPS implements IOptionOtherDPS {
   weatherBoosts?: string;
   isTrainerFriend?: boolean;
   pokemonFriendLevel?: number;
-  pokemonDefObj = DEFAULT_POKEMON_DEF_OBJ;
-  ivAtk = MAX_IV;
-  ivDef = MAX_IV;
-  ivHp = MAX_IV;
-  pokemonLevel = DEFAULT_POKEMON_LEVEL;
+  pokemonDefObj = defaultPokemonDefObj();
+  ivAtk = maxIv();
+  ivDef = maxIv();
+  ivHp = maxIv();
+  pokemonLevel = defaultPokemonLevel();
   objTypes?: string[];
 
   static create(value: IOptionOtherDPS) {

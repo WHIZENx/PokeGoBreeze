@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SearchMoves.scss';
 import { useSelector } from 'react-redux';
@@ -7,8 +7,8 @@ import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/mater
 import { ColumnType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   getValueOrDefault,
@@ -18,11 +18,11 @@ import {
   toFloat,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { SelectType } from './enums/select-type.enum';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { Params } from '../../../util/constants';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
+import { Params } from '../../../utils/constants';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
@@ -113,7 +113,12 @@ class Filter implements IFilter {
 }
 
 const Search = () => {
-  useChangeTitle('Moves - Search');
+  useTitle({
+    title: 'Moves - Search',
+    description:
+      'Search and filter Pokémon GO moves by type, power, energy, and more. Find the best moves for your Pokémon in battles and raids.',
+    keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
+  });
   const combat = useSelector((state: StoreState) => state.store.data.combats);
   const types = useSelector((state: StoreState) => state.store.data.typeEff);
 

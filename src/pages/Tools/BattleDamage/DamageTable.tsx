@@ -7,18 +7,15 @@ import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
 import APIService from '../../../services/API.service';
 
-import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../util/utils';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../../store/models/state.model';
+import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 import { IDamageTableComponent } from '../../models/page.model';
 import { LabelDamage } from '../../../core/models/damage.model';
-import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { PokemonType } from '../../../enums/type.enum';
 import { EffectiveType } from '../../../components/Effective/enums/type-effective.enum';
+import { getThrowCharge } from '../../../utils/helpers/context.helpers';
 
 const DamageTable = (props: IDamageTableComponent) => {
-  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
-
   const setLabelDamage = (amount: EffectiveType) =>
     LabelDamage.create({
       label: toFloat(amount, 3),
@@ -169,7 +166,7 @@ const DamageTable = (props: IDamageTableComponent) => {
               <td>Charge ability</td>
               <td>
                 {props.result.battleState
-                  ? capitalize(Object.keys(globalOptions.throwCharge).at(toNumber(props.result.battleState.throwLevel)))
+                  ? capitalize(Object.keys(getThrowCharge()).at(toNumber(props.result.battleState.throwLevel)))
                   : '-'}
               </td>
             </tr>

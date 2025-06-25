@@ -4,21 +4,29 @@ import { Location, useLocation } from 'react-router-dom';
 import './Error.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { SpinnerState } from '../../store/models/state.model';
-import { useChangeTitle } from '../../util/hooks/useChangeTitle';
+import { useTitle } from '../../utils/hooks/useTitle';
 import { SpinnerActions } from '../../store/actions';
 import { LocationState } from '../../core/models/router.model';
-import { LinkToTop } from '../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import { IErrorPage } from '../models/page.model';
-import { isUndefined } from '../../util/extension';
+import { isUndefined } from '../../utils/extension';
 
 const Error = (props: IErrorPage) => {
   const dispatch = useDispatch();
   const location = useLocation() as unknown as Location<LocationState>;
   const spinner = useSelector((state: SpinnerState) => state.spinner);
-  useChangeTitle(
-    location.state?.url && location.state?.id ? `#${location.state.id} - Not Found` : 'Page Not Found',
-    props.isShowTitle
-  );
+  if (props.isError && props.isShowTitle) {
+    useTitle({
+      title:
+        location.state?.url && location.state?.id
+          ? `PokéGO Breeze - #${location.state.id} Not Found`
+          : 'PokéGO Breeze - Page Not Found',
+      description: 'Error page - Something went wrong with your request. Please try again later.',
+      keywords: ['error page', 'Pokémon GO error', 'page not found', 'PokéGO Breeze error'],
+      type: 'website',
+      isShowTitle: props.isShowTitle,
+    });
+  }
 
   useEffect(() => {
     if (spinner.isLoading) {

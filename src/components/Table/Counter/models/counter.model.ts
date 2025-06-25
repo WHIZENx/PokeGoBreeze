@@ -1,6 +1,6 @@
 import { Combat, ICombat } from '../../../../core/models/combat.model';
 import { MoveType, PokemonType } from '../../../../enums/type.enum';
-import { getPokemonType } from '../../../../util/utils';
+import { getPokemonType } from '../../../../utils/utils';
 
 export interface ICounterModel {
   cMove: ICombat;

@@ -41,14 +41,14 @@ import {
   getValidPokemonImgPath,
   isSpecialFormType,
   splitAndCapitalize,
-} from '../../util/utils';
+} from '../../utils/utils';
 import PokemonAssetComponent from '../../components/Info/Assets/PokemonModel';
 import Candy from '../../components/Sprites/Candy/Candy';
 import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_STANDARD } from '../../util/constants';
+import { regionList, Params } from '../../utils/constants';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
@@ -63,13 +63,16 @@ import {
   isNullOrUndefined,
   isUndefined,
   toNumber,
-} from '../../util/extension';
+} from '../../utils/extension';
 import { LocationState } from '../../core/models/router.model';
-import { EqualMode, IncludeMode } from '../../util/enums/string.enum';
+import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
 import { PokemonType, TypeAction, VariantType } from '../../enums/type.enum';
-import { useNavigateToTop } from '../../util/hooks/LinkToTop';
+import { useNavigateToTop } from '../../utils/hooks/LinkToTop';
 import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
+import { useTitle } from '../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../utils/models/hook.model';
+import { formStandard, keyLeft, keyRight } from '../../utils/helpers/context.helpers';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -91,7 +94,6 @@ const Pokemon = (props: IPokemonPage) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons || []);
-  const options = useSelector((state: StoreState) => state.store.data.options);
 
   const currentSearchingForm = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
   const pokemonDetails = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
@@ -151,8 +153,8 @@ const Pokemon = (props: IPokemonPage) => {
       );
     }
     const result = getPokemonFormWithNoneSpecialForm(form, pokemonType)
-      ?.replace(`_${FORM_STANDARD}`, '')
-      .replace(FORM_STANDARD, '')
+      ?.replace(`_${formStandard()}`, '')
+      .replace(formStandard(), '')
       .replaceAll('_', '-');
     return formType ? `${result}${result ? '-' : ''}${formType.toUpperCase()}` : result;
   };
@@ -291,7 +293,7 @@ const Pokemon = (props: IPokemonPage) => {
                 item.form.formName
                   ?.toUpperCase()
                   .replace(/^STANDARD$/, '')
-                  .replace(`-${FORM_STANDARD}`, ''),
+                  .replace(`-${formStandard()}`, ''),
                 props.searchOption?.form,
                 EqualMode.IgnoreCaseSensitive
               ) ||
@@ -336,7 +338,6 @@ const Pokemon = (props: IPokemonPage) => {
           }
           enqueueSnackbar(`Pokémon ID or name: ${id} Not found!`, { variant: VariantType.Error });
           if (params.id) {
-            document.title = `#${params.id} - Not Found`;
             setIsFound(false);
           } else {
             navigateToTop('/error', {
@@ -365,6 +366,28 @@ const Pokemon = (props: IPokemonPage) => {
     }
   };
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'PokéGO Breeze - Pokémon',
+    description:
+      'Comprehensive Pokémon database with detailed stats, forms, evolution chains, move costs, and shadow/purified information for Pokémon GO players',
+    keywords: [
+      'pokemon',
+      'Pokémon',
+      'PokéGO Breeze',
+      'pokemon stats',
+      'pokemon forms',
+      'shadow pokemon',
+      'purified pokemon',
+      'third move cost',
+      'evolution chain',
+      'pokemon go database',
+      'pokemon details',
+      'pokemon types',
+    ],
+  });
+
+  useTitle(titleProps);
+
   useEffect(() => {
     if (isNotEmpty(pokemonData)) {
       let id = toNumber(params.id ? params.id.toLowerCase() : props.searchOption?.id);
@@ -372,7 +395,6 @@ const Pokemon = (props: IPokemonPage) => {
         id = getPokemonIdByParam();
         if (id <= 0) {
           enqueueSnackbar(`Pokémon ID or name: ${params.id} Not found!`, { variant: VariantType.Error });
-          document.title = `#${id} - Not Found`;
           setIsFound(false);
           return;
         }
@@ -409,10 +431,10 @@ const Pokemon = (props: IPokemonPage) => {
           if (currentPokemon) {
             const prev = getPokemonById(pokemonData, currentPokemon.id - 1);
             const next = getPokemonById(pokemonData, currentPokemon.id + 1);
-            if (prev && event.keyCode === KEY_LEFT) {
+            if (prev && event.keyCode === keyLeft()) {
               event.preventDefault();
               params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
-            } else if (next && event.keyCode === KEY_RIGHT) {
+            } else if (next && event.keyCode === keyRight()) {
               event.preventDefault();
               params.id ? navigate(`/pokemon/${next.id}`, { replace: true }) : props.onIncId?.();
             }
@@ -434,8 +456,8 @@ const Pokemon = (props: IPokemonPage) => {
     const details = getPokemonDetails(pokemonData, id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType || PokemonType.Normal;
     if (isSpecialFormType(details.pokemonType)) {
-      const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
-      const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
+      const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, TypeAction.Atk);
+      const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, TypeAction.Def);
       const sta = details.statsGO.sta;
       details.statsGO = StatsPokemonGO.create(atk, def, sta);
     }
@@ -480,7 +502,28 @@ const Pokemon = (props: IPokemonPage) => {
       );
       setOriginForm(originForm);
       if (params.id) {
-        document.title = `#${data.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`;
+        setTitleProps({
+          title: `#${data.id} - ${splitAndCapitalize(nameInfo, '-', ' ')}`,
+          description: `Pokémon - #${data.id} ${splitAndCapitalize(nameInfo, '-', ' ')}`,
+          keywords: [
+            'pokemon',
+            'Pokémon',
+            'PokéGO Breeze',
+            'Pokémon ID',
+            'Pokémon name',
+            'Pokémon form',
+            `#${data.id}`,
+            splitAndCapitalize(nameInfo, '-', ' '),
+          ],
+          image: APIService.getPokeFullSprite(
+            dataStorePokemon?.current?.id,
+            convertPokemonImageName(
+              currentSearchingForm && originForm && currentSearchingForm.defaultId === currentSearchingForm.form?.id
+                ? ''
+                : originForm || searchParams.get(Params.Form)?.replaceAll('_', '-')
+            )
+          ),
+        });
       }
       checkReleased(id, currentSearchingForm);
     } else {
@@ -557,7 +600,7 @@ const Pokemon = (props: IPokemonPage) => {
   };
 
   return (
-    <Error isError={!isFound} isShowTitle={false}>
+    <Error isError={!isFound}>
       <div className="w-100 row prev-next-block sticky-top">
         {params.id ? (
           <SearchBarMain data={dataStorePokemon} />

@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useState } from 'react';
 
-import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../util/utils';
-import { calculateCP, predictCPList, predictStat } from '../../../util/calculate';
+import { HundoRate, isInvalidIV, marks, PokeGoSlider, splitAndCapitalize } from '../../../utils/utils';
+import { calculateCP, predictCPList, predictStat } from '../../../utils/calculate';
 
 import { ConditionalStyles, TableColumn, TableStyles } from 'react-data-table-component';
 import dataCPM from '../../../data/cp_multiplier.json';
@@ -10,7 +10,7 @@ import '../../../components/Find/FormSelect.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
-import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../util/constants';
+import './FindTable.scss';
 import {
   IPredictStatsModel,
   IPredictStatsCalculate,
@@ -18,13 +18,14 @@ import {
   IPredictCPCalculate,
   PredictStatsModel,
   PredictCPModel,
-} from '../../../util/models/calculate.model';
+} from '../../../utils/models/calculate.model';
 import { useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../util/extension';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/context.helpers';
 
 interface IFindCP {
   level: number;
@@ -170,7 +171,12 @@ const columns: TableColumn<IFindCP>[] = [
 ];
 
 const FindTable = () => {
-  useChangeTitle('Find CP&IV - Tool');
+  useTitle({
+    title: 'Find CP&IV - Tool',
+    description:
+      'Find specific CP and IV combinations for any Pokémon in Pokémon GO. Our advanced search tool helps you locate perfect IVs and optimal CP values.',
+    keywords: ['Find CP', 'Find IV', 'Pokémon GO CP search', 'IV finder', 'CP calculator', 'optimal Pokémon stats'],
+  });
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');
@@ -188,8 +194,8 @@ const FindTable = () => {
     if (!pokemon) {
       return;
     }
-    if (toNumber(searchCP) < MIN_CP) {
-      return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
+    if (toNumber(searchCP) < minCp()) {
+      return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
     }
     const result = predictStat(
       toNumber(pokemon.statsGO?.atk),
@@ -227,7 +233,7 @@ const FindTable = () => {
       return;
     }
     if (isInvalidIV(searchATKIv) || isInvalidIV(searchDEFIv) || isInvalidIV(searchSTAIv)) {
-      enqueueSnackbar(`Please input IV between ${MIN_IV} - ${MAX_IV}.`, { variant: VariantType.Error });
+      enqueueSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, { variant: VariantType.Error });
       return;
     }
     const result = predictCPList(
@@ -353,12 +359,12 @@ const FindTable = () => {
     const statDEF = toNumber(pokemon.statsGO?.def);
     const statSTA = toNumber(pokemon.statsGO?.sta);
     const dataTable = dataCPM
-      .filter((item) => item.level >= MIN_LEVEL && item.level <= MAX_LEVEL)
+      .filter((item) => item.level >= minLevel() && item.level <= maxLevel())
       .map((item) => {
         return new FindCP({
           level: item.level,
           minCP: calculateCP(statATK, statDEF, statSTA, item.level),
-          maxCP: calculateCP(statATK + MAX_IV, statDEF + MAX_IV, statSTA + MAX_IV, item.level),
+          maxCP: calculateCP(statATK + maxIv(), statDEF + maxIv(), statSTA + maxIv(), item.level),
         });
       });
 
@@ -392,7 +398,7 @@ const FindTable = () => {
                 required
                 value={searchCP}
                 type="number"
-                min={MIN_CP}
+                min={minCp()}
                 className="form-control"
                 aria-label="cp"
                 aria-describedby="input-cp"
@@ -422,9 +428,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchATKIv}
                 aria-label="ATK marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -437,9 +443,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchDEFIv}
                 aria-label="DEF marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -452,9 +458,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchSTAIv}
                 aria-label="STA marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}

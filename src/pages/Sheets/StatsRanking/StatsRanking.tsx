@@ -12,7 +12,7 @@ import {
   isSpecialFormType,
   getKeyWithData,
   getCustomThemeDataTable,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import Stats from '../../../components/Info/Stats/Stats';
@@ -36,10 +36,10 @@ import {
   StatsSta,
 } from '../../../core/models/stats.model';
 import PokemonTable from '../../../components/Table/Pokemon/PokemonTable';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
-import { FORM_NORMAL, Params } from '../../../util/constants';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { Params } from '../../../utils/constants';
 import { ColumnType, PokemonType, TypeAction } from '../../../enums/type.enum';
-import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   DynamicObj,
@@ -52,9 +52,9 @@ import {
   isNullOrUndefined,
   isNumber,
   toNumber,
-} from '../../../util/extension';
-import { EqualMode, IncludeMode } from '../../../util/enums/string.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+} from '../../../utils/extension';
+import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { IPokemonDetail, PokemonDetail } from '../../../core/models/API/info.model';
 import { Action } from 'history';
@@ -63,6 +63,7 @@ import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/models/component.model';
+import { formNormal } from '../../../utils/helpers/context.helpers';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -192,7 +193,19 @@ const defaultPerPages = 25;
 const StatsRanking = () => {
   const router = useSelector((state: RouterState) => state.router);
   const icon = useSelector((state: StoreState) => state.store.icon);
-  useChangeTitle('Stats Ranking');
+  useTitle({
+    title: 'PokéGO Breeze - Stats Ranking',
+    description:
+      'View comprehensive Pokémon GO stat rankings to identify the strongest Pokémon for battles and raids. Compare attack, defense, stamina, and overall performance.',
+    keywords: [
+      'Pokémon stats ranking',
+      'strongest Pokémon',
+      'best attackers',
+      'best defenders',
+      'Pokémon GO ranking',
+      'stat comparison',
+    ],
+  });
   const [searchParams, setSearchParams] = useSearchParams();
   const [select, setSelect] = useState<IPokemonStatsRanking>();
   const conditionalRowStyles: ConditionalStyles<IPokemonStatsRanking>[] = [
@@ -209,12 +222,11 @@ const StatsRanking = () => {
 
   const stats = useSelector((state: StatsState) => state.stats);
   const pokemons = useSelector((state: StoreState) => state.store.data.pokemons);
-  const options = useSelector((state: StoreState) => state.store.data.options);
   const [pokemon, setPokemon] = useState<IPokemonDetail>();
 
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
-    const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Atk));
-    const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, options, TypeAction.Def));
+    const atkShadow = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Atk));
+    const defShadow = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Shadow, TypeAction.Def));
     const sta = Math.round(value.statsGO.sta);
     const prodShadow = atkShadow * defShadow * sta;
     result.push(
@@ -241,12 +253,8 @@ const StatsRanking = () => {
         }),
       })
     );
-    const atkPurification = Math.round(
-      value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Atk)
-    );
-    const defPurification = Math.round(
-      value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, options, TypeAction.Def)
-    );
+    const atkPurification = Math.round(value.statsGO.atk * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Atk));
+    const defPurification = Math.round(value.statsGO.def * getDmgMultiplyBonus(PokemonType.Purified, TypeAction.Def));
     const prodPurification = atkPurification * defPurification * sta;
     result.push(
       PokemonStatsRanking.create({
@@ -467,7 +475,7 @@ const StatsRanking = () => {
     const paramId = searchParams.get(Params.Id);
     if (!select && isNumber(paramId) && isNotEmpty(pokemonFilter)) {
       const id = toNumber(paramId);
-      const form = getValueOrDefault(String, searchParams.get(Params.Form), FORM_NORMAL).replaceAll('-', '_');
+      const form = getValueOrDefault(String, searchParams.get(Params.Form), formNormal()).replaceAll('-', '_');
       const formType = searchParams.get(Params.FormType);
       const pokemonType = getPokemonType(formType);
       const index = pokemonFilter.findIndex(
@@ -499,7 +507,7 @@ const StatsRanking = () => {
   const setFilterParams = (select: IPokemonStatsRanking) => {
     setSelect(select);
     searchParams.set(Params.Id, select.num.toString());
-    const form = select.form?.replace(FORM_NORMAL, '').toLowerCase().replaceAll('_', '-');
+    const form = select.form?.replace(formNormal(), '').toLowerCase().replaceAll('_', '-');
     if (form) {
       searchParams.set(Params.Form, form);
     } else {
@@ -523,7 +531,7 @@ const StatsRanking = () => {
   useEffect(() => {
     const paramId = toNumber(searchParams.get(Params.Id));
     if (paramId > 0 && router.action === Action.Pop && isNotEmpty(pokemonList)) {
-      const form = getValueOrDefault(String, searchParams.get(Params.Form), FORM_NORMAL).replaceAll('-', '_');
+      const form = getValueOrDefault(String, searchParams.get(Params.Form), formNormal()).replaceAll('-', '_');
       const formType = searchParams.get(Params.FormType);
       const pokemonType = getPokemonType(formType);
       const result = pokemonFilter.find(

@@ -4,6 +4,15 @@
   @include default-shadow(none, 1px, black);
 }
 
+.rank-max,
+.rank-excellent,
+.rank-great,
+.rank-nice {
+  div b {
+    @include default-text-shadow(1px, white);
+  }
+}
+
 .img-gender {
   @include default-shadow(none, 3px, #222222);
 }

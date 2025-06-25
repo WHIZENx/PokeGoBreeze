@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../util/calculate';
-import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../util/utils';
+import { calBaseATK, calBaseDEF, calBaseSTA } from '../../../utils/calculate';
+import { checkRankAllAvailable, getDmgMultiplyBonus } from '../../../utils/utils';
 
 import './Stats.scss';
 import { IStatsPokemonGO, StatsPokemonGO, StatsRankPokemonGO } from '../../../core/models/stats.model';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../../store/models/state.model';
 import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
-import { toFloatWithPadding, toNumber } from '../../../util/extension';
+import { toFloatWithPadding, toNumber } from '../../../utils/extension';
 
 interface ICurrentStats {
   stats: IStatsPokemonGO;
@@ -34,7 +32,6 @@ class CurrentStats implements ICurrentStats {
 }
 
 const Stats = (props: IStatsComponent) => {
-  const data = useSelector((state: StoreState) => state.store.data);
   const [availableRankGO, setAvailableRankGO] = useState(new StatsRankPokemonGO());
 
   const [currentStats, setCurrentStats] = useState(new CurrentStats());
@@ -86,7 +83,7 @@ const Stats = (props: IStatsComponent) => {
   }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType, props.pokemonStats]);
 
   const setStats = (stats: number, type: TypeAction) =>
-    Math.round(stats * getDmgMultiplyBonus(props.pokemonType, data.options, type));
+    Math.round(stats * getDmgMultiplyBonus(props.pokemonType, type));
 
   return (
     <div className="mt-2 text-black">

@@ -6,20 +6,25 @@ import APIService from '../../../services/API.service';
 import Pokemon from '../../Pokemon/Pokemon';
 
 import { useSelector } from 'react-redux';
-import { getPokemonById, mappingPokemonName } from '../../../util/utils';
+import { getPokemonById, mappingPokemonName } from '../../../utils/utils';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
-import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../util/constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
-import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
+import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/context.helpers';
 
 const Search = () => {
-  useChangeTitle('Pokémon - Search');
+  useTitle({
+    title: 'PokéGO Breeze - Pokémon Search',
+    description:
+      'Search and filter Pokémon in Pokémon GO by type, stats, moves, and more. Find the best Pokémon for your battle teams.',
+    keywords: ['Pokémon search', 'find Pokémon', 'Pokémon filter', 'Pokémon GO search', 'Pokémon database'],
+  });
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const pokemonName = useSelector((state: StoreState) => state.store.data.pokemons);
@@ -86,18 +91,10 @@ const Search = () => {
     setSelectId(value.id);
   };
 
-  const decId = () => {
-    const currentPokemon = getPokemonById(pokemonName, selectId - 1);
+  const modifyId = (modify: number) => {
+    const currentPokemon = getPokemonById(pokemonName, selectId + modify);
     if (currentPokemon) {
-      setSelectId(selectId - 1);
-      setSearchOption({ id: toNumber(currentPokemon.id) });
-    }
-  };
-
-  const incId = () => {
-    const currentPokemon = getPokemonById(pokemonName, selectId + 1);
-    if (currentPokemon) {
-      setSelectId(selectId + 1);
+      setSelectId(selectId + modify);
       setSearchOption({ id: toNumber(currentPokemon.id) });
     }
   };
@@ -107,16 +104,16 @@ const Search = () => {
     if (currentPokemon) {
       const prev = getPokemonById(pokemonName, currentPokemon.id - 1);
       const next = getPokemonById(pokemonName, currentPokemon.id + 1);
-      if (isNotEmpty(pokemonListFilter) && event.keyCode === KEY_ENTER) {
+      if (isNotEmpty(pokemonListFilter) && event.keyCode === keyEnter()) {
         const input = document.getElementById('input-search-pokemon');
         input?.blur();
         setShowResult(false);
         setSearchOption({ id: selectId });
-      } else if (prev && event.keyCode === KEY_UP) {
+      } else if (prev && event.keyCode === keyUp()) {
         event.preventDefault();
         setSelectId(prev.id);
         scrollToSelectedItem(prev.id);
-      } else if (next && event.keyCode === KEY_DOWN) {
+      } else if (next && event.keyCode === keyDown()) {
         event.preventDefault();
         setSelectId(next.id);
         scrollToSelectedItem(next.id);
@@ -231,8 +228,8 @@ const Search = () => {
         <Pokemon
           searchOption={searchOption}
           setSearchOption={setSearchOption}
-          onIncId={incId}
-          onDecId={decId}
+          onIncId={() => modifyId(1)}
+          onDecId={() => modifyId(-1)}
           isSearch
           searching={searching}
         />

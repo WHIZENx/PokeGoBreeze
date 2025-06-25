@@ -7,7 +7,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import logo from '../assets/pokedex.png';
-import { capitalize, getTime } from '../util/utils';
+import { capitalize, getTime } from '../utils/utils';
 
 import './Navbar.scss';
 import { Box, IconButton, LinearProgress } from '@mui/material';
@@ -15,11 +15,11 @@ import { SpinnerState, TimestampState } from '../store/models/state.model';
 import { TypeTheme, VariantType } from '../enums/type.enum';
 import { INavbarComponent } from './models/component.model';
 import { useLocalStorage } from 'usehooks-ts';
-import { LocalStorageConfig } from '../store/constants/localStorage';
+import { LocalStorageConfig } from '../store/constants/local-storage';
 import { loadTheme } from '../store/effects/theme.effects';
-import { combineClasses, toNumber } from '../util/extension';
+import { combineClasses, toNumber } from '../utils/extension';
 import CustomPopover from './Popover/CustomPopover';
-import { LinkToTop } from '../util/hooks/LinkToTop';
+import { LinkToTop } from '../utils/hooks/LinkToTop';
 
 type ToggleEvent = React.SyntheticEvent | KeyboardEvent | MouseEvent;
 interface ToggleMetadata {

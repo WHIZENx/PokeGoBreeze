@@ -5,8 +5,8 @@ import TypeInfo from '../../../components/Sprites/Type/Type';
 import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
 import APIService from '../../../services/API.service';
-import { findAssetForm, computeBgType } from '../../../util/compute';
-import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../util/extension';
+import { findAssetForm, computeBgType } from '../../../utils/compute';
+import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
 import {
   convertNameRankingToOri,
   convertNameRankingToForm,
@@ -14,13 +14,14 @@ import {
   getValidPokemonImgPath,
   getPokemonType,
   getKeyWithData,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import { BodyModel, IBody } from '../models/body.model';
-import { FORM_SHADOW, Params } from '../../../util/constants';
-import { IncludeMode } from '../../../util/enums/string.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { Params } from '../../../utils/constants';
+import { IncludeMode } from '../../../utils/enums/string.enum';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { ScoreType } from '../../../util/enums/constants.enum';
+import { ScoreType } from '../../../utils/enums/constants.enum';
+import { formShadow } from '../../../utils/helpers/context.helpers';
 
 const BodyPVP = (props: BodyComponent) => {
   const [matchups, setMatchups] = useState<IBody[]>();
@@ -35,7 +36,7 @@ const BodyPVP = (props: BodyComponent) => {
         const id = pokemon?.num;
         const form = findAssetForm(props.assets, pokemon?.num, pokemon?.form);
         let pokemonType;
-        if (isInclude(versus.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+        if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;
         } else {
           pokemonType = getPokemonType(versus.opponent);
@@ -80,7 +81,7 @@ const BodyPVP = (props: BodyComponent) => {
       style={{
         backgroundImage: computeBgType(
           data.pokemon?.types,
-          isInclude(data.opponent, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)
+          isInclude(data.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)
             ? PokemonType.Shadow
             : PokemonType.Normal,
           props.styleList,

@@ -41,17 +41,19 @@ import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
 import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { getDesignThemes } from './util/models/overrides/themes.model';
-import { LOAD_DATA_DELAY, TRANSITION_TIME } from './util/constants';
+import { getDesignThemes } from './utils/models/overrides/themes.model';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
-import { LocalStorageConfig } from './store/constants/localStorage';
+import { LocalStorageConfig } from './store/constants/local-storage';
 import { RouterState, StoreState, TimestampState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import { clearLocalStorageExcept } from './store/localStorage';
-import { getStyleList } from './util/utils';
+import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
+import { getStyleList } from './utils/utils';
+import { defaultOptions, OptionsContext } from './contexts/options.context';
+import optionsObserver from './utils/hooks/optionsObserver';
+import { loadDataDelay, transitionTime } from './utils/helpers/context.helpers';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -73,6 +75,8 @@ function App() {
 
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
+
+  optionsObserver();
 
   useEffect(() => {
     setTimeout(() => {
@@ -126,7 +130,7 @@ function App() {
     loadTheme(dispatch, stateTheme, setStateTheme);
   }, [dispatch]);
 
-  const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = LOAD_DATA_DELAY) => {
+  const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = loadDataDelay()) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
         resolve(await loadTimestamp(dispatch, data, timestamp, isCurrentVersion));
@@ -154,7 +158,7 @@ function App() {
   };
 
   return (
-    <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: TRANSITION_TIME }}>
+    <Box className="min-h-100" sx={{ backgroundColor: 'background.default', transition: transitionTime() }}>
       <NavbarComponent mode={theme.palette.mode} toggleColorMode={colorMode.toggleColorMode} version={currentVersion} />
       <Routes>
         <Route path="/" element={<Pokedex styleSheet={styleSheet.current} />} />
@@ -220,7 +224,9 @@ export default function Main() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <ErrorBoundary>
-          <App />
+          <OptionsContext.Provider value={defaultOptions}>
+            <App />
+          </OptionsContext.Provider>
         </ErrorBoundary>
       </ThemeProvider>
     </ColorModeContext.Provider>

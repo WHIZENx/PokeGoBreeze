@@ -1,34 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { computeCandyBgColor, computeCandyColor } from '../../../util/compute';
+import { computeCandyBgColor, computeCandyColor } from '../../../utils/compute';
 
 import bgCandyXL from '../../../assets/bg_CandyXL.png';
 
 import candy from '../../../data/pokemon_candy_color_data.json';
 import { ICandy } from '../../../core/models/candy.model';
 import { ICandyComponent } from '../../models/component.model';
-import { combineClasses, toNumber } from '../../../util/extension';
+import { combineClasses, toNumber } from '../../../utils/extension';
 
 const DEFAULT_SIZE = 30;
 
 interface Element {
-  candyColor?: string;
-  candyBgColor?: string;
-  size?: number;
+  $candyColor?: string;
+  $candyBgColor?: string;
+  $size?: number;
 }
 
 const Background = styled.div<Element>`
   position: absolute;
-  background: ${(props) => props.candyBgColor};
+  background: ${(props) => props.$candyBgColor};
   clip-path: polygon(67% 17%, 75% 21%, 74% 66%, 19% 36%);
-  width: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
-  height: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
+  width: ${(props) => toNumber(props.$size, DEFAULT_SIZE)}px;
+  height: ${(props) => toNumber(props.$size, DEFAULT_SIZE)}px;
 `;
 
 const Fill = styled.div<Element>`
-  background: ${(props) => props.candyColor};
-  width: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
-  height: ${(props) => toNumber(props.size, DEFAULT_SIZE)}px;
+  background: ${(props) => props.$candyColor};
+  width: ${(props) => toNumber(props.$size, DEFAULT_SIZE)}px;
+  height: ${(props) => toNumber(props.$size, DEFAULT_SIZE)}px;
   mask: url(${bgCandyXL}) center/contain;
   -webkit-mask: url(${bgCandyXL}) center/contain;
   -moz-mask: url(${bgCandyXL}) center/contain;
@@ -49,8 +49,8 @@ const CandyXL = (props: ICandyComponent) => {
 
   return (
     <div className={combineClasses('position-relative d-inline-block', props.className)} style={props.style}>
-      <Background candyBgColor={bgColor} size={props.size} />
-      <Fill candyColor={color} size={props.size} />
+      <Background $candyBgColor={bgColor} $size={props.size} />
+      <Fill $candyColor={color} $size={props.size} />
     </div>
   );
 };

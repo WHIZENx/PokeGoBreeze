@@ -1,8 +1,8 @@
 import { APIPath, APITree } from '../services/models/api.model';
-import { ScoreType } from '../util/enums/constants.enum';
-import { EqualMode, IncludeMode } from '../util/enums/string.enum';
-import { getValueOrDefault, isEqual, isInclude, toNumber, UniqValueInArray } from '../util/extension';
-import { getKeyWithData, splitAndCapitalize } from '../util/utils';
+import { ScoreType } from '../utils/enums/constants.enum';
+import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
+import { getValueOrDefault, isEqual, isInclude, toNumber, UniqValueInArray } from '../utils/extension';
+import { getKeyWithData, splitAndCapitalize } from '../utils/utils';
 import { LeagueBattleType } from './enums/league.enum';
 import { ILeague } from './models/league.model';
 import { PVPInfo } from './models/pvp.model';

@@ -10,4 +10,5 @@ export enum ArcheType {
   FastCharge = 'Fast Charge',
   HeavyDamage = 'Heavy Damage',
   Multipurpose = 'Multipurpose',
+  DebuffSpamBait = 'Debuff Spam/Bait',
 }

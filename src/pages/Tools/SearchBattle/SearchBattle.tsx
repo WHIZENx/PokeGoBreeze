@@ -13,28 +13,27 @@ import {
   generateParamForm,
   getValidPokemonImgPath,
   splitAndCapitalize,
-} from '../../../util/utils';
-import { calculateStats, queryStatesEvoChain } from '../../../util/calculate';
+} from '../../../utils/utils';
+import { calculateStats, queryStatesEvoChain } from '../../../utils/calculate';
 
 import { Accordion, useAccordionButton } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 
-import { marks, PokeGoSlider } from '../../../util/utils';
+import { marks, PokeGoSlider } from '../../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState, StoreState } from '../../../store/models/state.model';
-import { MIN_IV, MAX_IV, FORM_NORMAL, MIN_CP } from '../../../util/constants';
 import { IEvolution } from '../../../core/models/evolution.model';
 import {
   BattleBaseStats,
   IBattleBaseStats,
   IQueryStatesEvoChain,
   StatsCalculate,
-} from '../../../util/models/calculate.model';
+} from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
-import { useChangeTitle } from '../../../util/hooks/useChangeTitle';
+import { useTitle } from '../../../utils/hooks/useTitle';
 import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
@@ -46,16 +45,29 @@ import {
   isNotEmpty,
   toFloatWithPadding,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
-import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../util/compute';
-import { BattleLeagueCPType } from '../../../util/enums/compute.enum';
+import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/context.helpers';
 
 const FindBattle = () => {
-  useChangeTitle('Search Battle Leagues Stats - Tool');
+  useTitle({
+    title: 'Search Battle Leagues Stats - Tool',
+    description:
+      'Search and compare Pokémon GO battle league statistics. Find the best Pokémon for different PVP leagues, optimize movesets, and improve your battle strategies.',
+    keywords: [
+      'battle league stats',
+      'Pokémon GO PVP',
+      'PVP stats search',
+      'competitive Pokémon',
+      'battle league rankings',
+      'PVP optimization',
+    ],
+  });
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
@@ -149,19 +161,19 @@ const FindBattle = () => {
 
   const getEvoChain = useCallback(
     (id: number) => {
-      const currentForm = convertPokemonAPIDataName(pokemon?.form?.form?.formName, FORM_NORMAL);
+      const currentForm = convertPokemonAPIDataName(pokemon?.form?.form?.formName, formNormal());
       let curr = dataStore.pokemons.filter((item) =>
         item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm))
       );
       if (!isNotEmpty(curr)) {
-        if (currentForm === FORM_NORMAL) {
+        if (currentForm === formNormal()) {
           curr = dataStore.pokemons.filter((item) => id === item.num && isEqual(currentForm, item.form));
         } else {
           curr = dataStore.pokemons.filter((item) => id === item.num && isInclude(item.form, currentForm));
         }
       }
       if (!isNotEmpty(curr)) {
-        curr = dataStore.pokemons.filter((item) => id === item.num && item.form === FORM_NORMAL);
+        curr = dataStore.pokemons.filter((item) => id === item.num && item.form === formNormal());
       }
       const result: IEvolution[][] = [];
       curr?.forEach((item) => prevEvoChain(item, currentForm, [], result));
@@ -176,7 +188,7 @@ const FindBattle = () => {
       getEvoChain(toNumber(pokemon?.form?.defaultId)).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(dataStore.options, dataStore.pokemons, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(dataStore.pokemons, value, level, ATKIv, DEFIv, STAIv);
           if (data.id === pokemon?.form?.defaultId) {
             setMaxCP(data.maxCP);
           }
@@ -265,14 +277,14 @@ const FindBattle = () => {
       }
       dispatch(SpinnerActions.HideSpinner.create());
     },
-    [dispatch, dataStore.options, ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
+    [dispatch, ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
   );
 
   const onSearchStatsPoke = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (toNumber(searchCP) < MIN_CP) {
-        return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
+      if (toNumber(searchCP) < minCp()) {
+        return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
       }
       dispatch(SpinnerActions.ShowSpinner.create());
       const statATK = toNumber(pokemon?.pokemon?.statsGO?.atk);
@@ -406,9 +418,9 @@ const FindBattle = () => {
             <PokeGoSlider
               value={ATKIv}
               aria-label="ATK marks"
-              defaultValue={MIN_IV}
-              min={MIN_IV}
-              max={MAX_IV}
+              defaultValue={minIv()}
+              min={minIv()}
+              max={maxIv()}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -424,9 +436,9 @@ const FindBattle = () => {
             <PokeGoSlider
               value={DEFIv}
               aria-label="DEF marks"
-              defaultValue={MIN_IV}
-              min={MIN_IV}
-              max={MAX_IV}
+              defaultValue={minIv()}
+              min={minIv()}
+              max={maxIv()}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -442,9 +454,9 @@ const FindBattle = () => {
             <PokeGoSlider
               value={STAIv}
               aria-label="STA marks"
-              defaultValue={MIN_IV}
-              min={MIN_IV}
-              max={MAX_IV}
+              defaultValue={minIv()}
+              min={minIv()}
+              max={maxIv()}
               step={1}
               valueLabelDisplay="auto"
               marks={marks}
@@ -514,7 +526,7 @@ const FindBattle = () => {
             {evoChain.map((value, index) => (
               <Accordion className="pb-3" key={index} style={{ marginTop: '3%', marginBottom: '5%' }}>
                 <div className="form-header">
-                  {!value.at(0)?.form ? capitalize(FORM_NORMAL) : splitAndCapitalize(value.at(0)?.form, '_', ' ')}
+                  {!value.at(0)?.form ? capitalize(formNormal()) : splitAndCapitalize(value.at(0)?.form, '_', ' ')}
                   {' Form'}
                 </div>
                 <Accordion.Item eventKey="0">

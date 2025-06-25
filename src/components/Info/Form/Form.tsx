@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FORM_NORMAL, Params } from '../../../util/constants';
+import { Params } from '../../../utils/constants';
 import {
   capitalize,
   formIconAssets,
@@ -11,7 +11,7 @@ import {
   getPokemonFormWithNoneSpecialForm,
   isSpecialFormType,
   splitAndCapitalize,
-} from '../../../util/utils';
+} from '../../../utils/utils';
 import APIService from '../../../services/API.service';
 
 import './Form.scss';
@@ -27,13 +27,14 @@ import { RouterState, SearchingState, StatsState } from '../../../store/models/s
 import { IFormInfoComponent } from '../../models/component.model';
 import { Action } from 'history';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../util/extension';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
+import { IncludeMode } from '../../../utils/enums/string.enum';
 import SpecialForm from '../SpecialForm/SpecialForm';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { SearchingActions } from '../../../store/actions';
 import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
 import { PokemonDetail } from '../../../core/models/API/info.model';
+import { formNormal } from '../../../utils/helpers/context.helpers';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -89,11 +90,12 @@ const FormComponent = (props: IFormInfoComponent) => {
       const form = getValueOrDefault(
         String,
         searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'),
-        FORM_NORMAL
+        formNormal()
       );
       const currentData = props.pokeData.find(
         (i) =>
-          isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) || (isEqual(form, FORM_NORMAL) && i.isDefault)
+          isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
+          (isEqual(form, formNormal()) && i.isDefault)
       );
 
       if (currentData) {
@@ -180,7 +182,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                       </div>
                       <p>
                         {!value.form.formName
-                          ? capitalize(FORM_NORMAL)
+                          ? capitalize(formNormal())
                           : splitAndCapitalize(value.form.formName, '-', ' ')}
                       </p>
                       <div className="d-flex flex-column">

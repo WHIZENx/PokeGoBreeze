@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import APIService from '../../../services/API.service';
-import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../util/utils';
+import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';
-import { computeBgType } from '../../../util/compute';
+import { computeBgType } from '../../../utils/compute';
 import { Tabs, Tab } from 'react-bootstrap';
-import { calculateStatsByTag } from '../../../util/calculate';
+import { calculateStatsByTag } from '../../../utils/calculate';
 import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
-import { TableColumnModify } from '../../../util/models/overrides/data-table.model';
+import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
   getValueOrDefault,
@@ -21,14 +21,16 @@ import {
   isIncludeList,
   isNotEmpty,
   toNumber,
-} from '../../../util/extension';
+} from '../../../utils/extension';
 import { ItemName } from '../../News/enums/item-type.enum';
-import { LinkToTop } from '../../../util/hooks/LinkToTop';
+import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { IStyleSheetData } from '../../models/page.model';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { IncludeMode } from '../../../util/enums/string.enum';
+import { IncludeMode } from '../../../utils/enums/string.enum';
+import { useTitle } from '../../../utils/hooks/useTitle';
+import { TitleSEOProps } from '../../../utils/models/hook.model';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -212,9 +214,30 @@ const SearchTypes = (props: IStyleSheetData) => {
 
   const [showType, setShowType] = useState(false);
 
+  const [titleProps, setTitleProps] = useState<TitleSEOProps>({
+    title: 'PokéGO Breeze - Type',
+    description: 'Explore Pokémon type information, effectiveness, and related Pokémon and moves in Pokémon GO.',
+    keywords: ['Pokémon GO', 'type effectiveness', 'type chart', 'Pokemon types', 'PokéGO Breeze'],
+  });
+
+  useTitle(titleProps);
+
   useEffect(() => {
     if (currentType) {
-      document.title = `Type - ${capitalize(currentType)}`;
+      setTitleProps({
+        title: `Type - ${capitalize(currentType)}`,
+        description: `Detailed information about ${capitalize(
+          currentType
+        )} type Pokémon, moves, strengths, and weaknesses in Pokémon GO.`,
+        keywords: [
+          'Pokémon GO',
+          `${currentType} type`,
+          `${currentType} Pokémon`,
+          `${currentType} moves`,
+          'PokéGO Breeze',
+        ],
+        image: APIService.getTypeSprite(currentType),
+      });
     }
   }, [currentType]);
 
