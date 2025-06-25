@@ -12,7 +12,7 @@ import {
   getAllMoves,
   isSpecialMegaFormType,
 } from '../../../utils/utils';
-import { DEFAULT_SHEET_PAGE, DEFAULT_SHEET_ROW, levelList, MAX_IV, MIN_IV, MIN_LEVEL } from '../../../utils/constants';
+import { levelList } from '../../../utils/constants';
 import {
   calculateAvgDPS,
   calculateCP,
@@ -71,6 +71,7 @@ import PokemonIconType from '../../../components/Sprites/PokemonIconType/Pokemon
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { defaultSheetPage, defaultSheetRow, maxIv, minIv, minLevel } from '../../../utils/helpers/context.helpers';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -297,12 +298,12 @@ const DpsTdo = () => {
   const [defaultPage, setDefaultPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage
       ? optionStore.dpsSheet.defaultPage
-      : DEFAULT_SHEET_PAGE
+      : defaultSheetPage()
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage
       ? optionStore.dpsSheet.defaultRowPerPage
-      : DEFAULT_SHEET_ROW
+      : defaultSheetRow()
   );
   const [defaultSorted, setDefaultSorted] = useState(
     router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
@@ -392,25 +393,11 @@ const DpsTdo = () => {
               weatherBoosts: options.weatherBoosts,
             });
 
-            const dpsDef = calculateBattleDPSDefender(
-              data.options,
-              data.typeEff,
-              data.weatherBoost,
-              statsAttacker,
-              statsDefender
-            );
-            dps = calculateBattleDPS(
-              data.options,
-              data.typeEff,
-              data.weatherBoost,
-              statsAttacker,
-              statsDefender,
-              dpsDef
-            );
+            const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+            dps = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
             tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
           } else {
             dps = calculateAvgDPS(
-              data.options,
               data.typeEff,
               data.weatherBoost,
               statsAttacker.fMove,
@@ -422,13 +409,7 @@ const DpsTdo = () => {
               statsAttacker.pokemonType,
               options
             );
-            tdo = calculateTDO(
-              data.options,
-              statsAttacker.def,
-              toNumber(statsAttacker.hp),
-              dps,
-              statsAttacker.pokemonType
-            );
+            tdo = calculateTDO(statsAttacker.def, toNumber(statsAttacker.hp), dps, statsAttacker.pokemonType);
           }
           dataList.push({
             pokemon,
@@ -597,7 +578,6 @@ const DpsTdo = () => {
     cMoveTargetPokemon,
     data.pokemons,
     data.combats,
-    data.options,
     data.typeEff,
     data.weatherBoost,
   ]);
@@ -1130,9 +1110,9 @@ const DpsTdo = () => {
                     defaultValue={ivAtk}
                     type="number"
                     className="form-control w-6"
-                    placeholder={`${MIN_IV}-${MAX_IV}`}
-                    min={MIN_IV}
-                    max={MAX_IV}
+                    placeholder={`${minIv()}-${maxIv()}`}
+                    min={minIv()}
+                    max={maxIv()}
                     required
                     onChange={(e) =>
                       setFilters({
@@ -1147,9 +1127,9 @@ const DpsTdo = () => {
                     defaultValue={ivDef}
                     type="number"
                     className="form-control w-6"
-                    placeholder={`${MIN_IV}-${MAX_IV}`}
-                    min={MIN_IV}
-                    max={MAX_IV}
+                    placeholder={`${minIv()}-${maxIv()}`}
+                    min={minIv()}
+                    max={maxIv()}
                     required
                     onChange={(e) =>
                       setFilters({
@@ -1164,9 +1144,9 @@ const DpsTdo = () => {
                     defaultValue={ivHp}
                     type="number"
                     className="form-control w-6"
-                    placeholder={`${MIN_IV}-${MAX_IV}`}
-                    min={MIN_IV}
-                    max={MAX_IV}
+                    placeholder={`${minIv()}-${maxIv()}`}
+                    min={minIv()}
+                    max={maxIv()}
                     required
                     onChange={(e) =>
                       setFilters({
@@ -1185,7 +1165,7 @@ const DpsTdo = () => {
                     onChange={(e) =>
                       setFilters({
                         ...filters,
-                        pokemonLevel: toFloat(e.target.value, -1, MIN_LEVEL),
+                        pokemonLevel: toFloat(e.target.value, -1, minLevel()),
                       })
                     }
                   >

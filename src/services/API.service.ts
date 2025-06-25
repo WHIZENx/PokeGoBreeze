@@ -1,18 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
 import { APIUrl } from './constants';
-import {
-  DEFAULT_SPRITE_NAME,
-  FORM_GALAR,
-  FORM_GALARIAN,
-  FORM_GMAX,
-  FORM_HISUI,
-  FORM_HISUIAN,
-  FORM_MEGA,
-  FORM_NORMAL,
-  FORM_PRIMAL,
-  FORM_STANDARD,
-  PATH_ASSET_POKEGO,
-} from '../utils/constants';
 import { Species } from '../core/models/API/species.model';
 import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
@@ -20,6 +7,19 @@ import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/opt
 import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../utils/utils';
 import { PokemonTypeBadge } from '../core/models/type.model';
 import { ScoreType } from '../utils/enums/constants.enum';
+import {
+  defaultSpriteName,
+  formGalar,
+  formGalarian,
+  formGmax,
+  formHisui,
+  formHisuian,
+  formMega,
+  formNormal,
+  formPrimal,
+  formStandard,
+  pathAssetPokeGo,
+} from '../utils/helpers/context.helpers';
 
 class APIService {
   date: Date;
@@ -79,7 +79,7 @@ class APIService {
       item += '-mane';
     }
     if (isEqual(item[0], '/')) {
-      item = `${PATH_ASSET_POKEGO}${item}`;
+      item = `${pathAssetPokeGo()}${item}`;
     }
     return item;
   }
@@ -250,7 +250,7 @@ class APIService {
     if (id) {
       if (form) {
         form = splitAndCapitalize(
-          form.toUpperCase().replace(FORM_GALARIAN, FORM_GALAR).replace(FORM_HISUIAN, FORM_HISUI),
+          form.toUpperCase().replace(formGalarian(), formGalar()).replace(formHisuian(), formHisui()),
           '-',
           '-'
         );
@@ -268,25 +268,25 @@ class APIService {
         name += '-wings';
       } else if (isInclude(name, 'necrozma-dusk')) {
         name += '-mane';
-      } else if (isInclude(name, 'alcremie') && !isInclude(name, FORM_GMAX, IncludeMode.IncludeIgnoreCaseSensitive)) {
+      } else if (isInclude(name, 'alcremie') && !isInclude(name, formGmax(), IncludeMode.IncludeIgnoreCaseSensitive)) {
         if (isInclude(name, '-vanilla-cream')) {
           name = 'alcremie';
         } else {
-          name = DEFAULT_SPRITE_NAME;
+          name = defaultSpriteName();
         }
       } else if (isInclude(name, '-antique')) {
-        name = DEFAULT_SPRITE_NAME;
+        name = defaultSpriteName();
       }
       name = getValueOrDefault(String, name)
         .replace('-incarnate', '')
-        .replace(`-${FORM_NORMAL.toLowerCase()}`, '')
+        .replace(`-${formNormal().toLowerCase()}`, '')
         .replace('-plant', '')
         .replace('-overcast', '')
         .replace('-west', '')
         .replace('-altered', '')
         .replace('-land', '')
         .replace('-red-striped', '')
-        .replace(`-${FORM_STANDARD.toLowerCase()}`, '')
+        .replace(`-${formStandard().toLowerCase()}`, '')
         .replace('-ordinary', '')
         .replace('-aria', '')
         .replace('-spring', '')
@@ -313,22 +313,22 @@ class APIService {
         .replace('-neutral', '');
     }
     if (!name) {
-      name = DEFAULT_SPRITE_NAME;
+      name = defaultSpriteName();
     }
     return `${APIUrl.POKE_ASSETS_URL}/icon/${name}.png`;
   }
 
   getPokeGifSprite(name: string) {
     name = name
-      .replace(`${FORM_MEGA}-X`.toLowerCase(), `${FORM_MEGA}X`.toLowerCase())
-      .replace(`${FORM_MEGA}-Y`.toLowerCase(), `${FORM_MEGA}Y`.toLowerCase());
-    if (!isInclude(name, FORM_MEGA, IncludeMode.IncludeIgnoreCaseSensitive) && isInclude(name, '-m')) {
+      .replace(`${formMega()}-X`.toLowerCase(), `${formMega()}X`.toLowerCase())
+      .replace(`${formMega()}-Y`.toLowerCase(), `${formMega()}Y`.toLowerCase());
+    if (!isInclude(name, formMega(), IncludeMode.IncludeIgnoreCaseSensitive) && isInclude(name, '-m')) {
       name = name.replace('-m', '');
     }
     if (isInclude(name, 'gengar')) {
       name += '_2';
     }
-    if (!isInclude(name, `-${FORM_MEGA}`.toLowerCase()) && !isInclude(name, `-${FORM_PRIMAL}`.toLowerCase())) {
+    if (!isInclude(name, `-${formMega()}`.toLowerCase()) && !isInclude(name, `-${formPrimal()}`.toLowerCase())) {
       name = name.replaceAll('-', '');
     }
     return `${APIUrl.POKE_GIF_SPRITES_API_URL}${name}.gif`;
@@ -377,7 +377,7 @@ class APIService {
 
   getSoundPokemonGO(path: string) {
     if (isEqual(path[0], '/')) {
-      path = `${PATH_ASSET_POKEGO}${path}`;
+      path = `${pathAssetPokeGo()}${path}`;
     }
     return `${APIUrl.POGO_SOUND_API_URL}Pokemon Cries/${path}.wav`;
   }

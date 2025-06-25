@@ -141,7 +141,6 @@ const TableMove = (props: ITableMoveComponent) => {
 
   const setRankMove = (result: Partial<IPokemonDetail>) => {
     return rankMove(
-      data.options,
       data.typeEff,
       data.weatherBoost,
       data.combats,

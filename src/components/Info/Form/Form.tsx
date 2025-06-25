@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { IStatsAtk, IStatsDef, IStatsProd, StatsRankingPokemonGO, IStatsSta } from '../../../core/models/stats.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FORM_NORMAL, Params } from '../../../utils/constants';
+import { Params } from '../../../utils/constants';
 import {
   capitalize,
   formIconAssets,
@@ -34,6 +34,7 @@ import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { SearchingActions } from '../../../store/actions';
 import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
 import { PokemonDetail } from '../../../core/models/API/info.model';
+import { formNormal } from '../../../utils/helpers/context.helpers';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();
@@ -89,11 +90,12 @@ const FormComponent = (props: IFormInfoComponent) => {
       const form = getValueOrDefault(
         String,
         searchParams.get(Params.Form)?.toUpperCase().replaceAll('_', '-'),
-        FORM_NORMAL
+        formNormal()
       );
       const currentData = props.pokeData.find(
         (i) =>
-          isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) || (isEqual(form, FORM_NORMAL) && i.isDefault)
+          isInclude(i.name, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
+          (isEqual(form, formNormal()) && i.isDefault)
       );
 
       if (currentData) {
@@ -180,7 +182,7 @@ const FormComponent = (props: IFormInfoComponent) => {
                       </div>
                       <p>
                         {!value.form.formName
-                          ? capitalize(FORM_NORMAL)
+                          ? capitalize(formNormal())
                           : splitAndCapitalize(value.form.formName, '-', ' ')}
                       </p>
                       <div className="d-flex flex-column">

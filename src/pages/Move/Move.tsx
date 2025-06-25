@@ -11,7 +11,7 @@ import {
   getKeyWithData,
   splitAndCapitalize,
 } from '../../utils/utils';
-import { Params, STAB_MULTIPLY } from '../../utils/constants';
+import { Params } from '../../utils/constants';
 import { getBarCharge, queryTopMove } from '../../utils/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
@@ -56,6 +56,7 @@ import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTa
 import { IMenuItem } from '../../components/models/component.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
+import { battleStab } from '../../utils/helpers/context.helpers';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -299,11 +300,11 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     if (move && isNotEmpty(data.pokemons)) {
-      const result = queryTopMove(data.options, data.pokemons, data.typeEff, data.weatherBoost, move);
+      const result = queryTopMove(data.pokemons, data.typeEff, data.weatherBoost, move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, data.options, data.pokemons, data.typeEff, data.weatherBoost]);
+  }, [move, data.pokemons, data.typeEff, data.weatherBoost]);
 
   useEffect(() => {
     setTopListFilter(
@@ -463,7 +464,7 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvePower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span>{toFloatWithPadding(move.pvePower * battleStab(), 2)}</span>
                       <span className="text-success d-inline-block caption">
                         {' +'}
                         {toFloatWithPadding(move.pvePower * 0.2, 2)}
@@ -504,7 +505,7 @@ const Move = (props: IMovePage) => {
                 <td colSpan={2}>
                   {move && (
                     <>
-                      <span>{toFloatWithPadding(move.pvpPower * STAB_MULTIPLY(data.options), 2)}</span>
+                      <span>{toFloatWithPadding(move.pvpPower * battleStab(), 2)}</span>
                       <span className="text-success d-inline-block caption">
                         {' +'}
                         {toFloatWithPadding(move.pvpPower * 0.2, 2)}
@@ -628,13 +629,7 @@ const Move = (props: IMovePage) => {
                   DPS
                   <span className="caption">(Weather / STAB / Shadow Bonus)</span>
                 </td>
-                <td>
-                  {move &&
-                    `${toFloatWithPadding(
-                      (move.pvePower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000),
-                      2
-                    )}`}
-                </td>
+                <td>{move && `${toFloatWithPadding((move.pvePower * battleStab()) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               <tr>
                 <td>
@@ -643,10 +638,7 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>
                   {move &&
-                    `${toFloatWithPadding(
-                      (move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 2)) / (move.durationMs / 1000),
-                      2
-                    )}`}
+                    `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 2)) / (move.durationMs / 1000), 2)}`}
                 </td>
               </tr>
               <tr>
@@ -656,10 +648,7 @@ const Move = (props: IMovePage) => {
                 </td>
                 <td>
                   {move &&
-                    `${toFloatWithPadding(
-                      (move.pvePower * Math.pow(STAB_MULTIPLY(data.options), 3)) / (move.durationMs / 1000),
-                      2
-                    )}`}
+                    `${toFloatWithPadding((move.pvePower * Math.pow(battleStab(), 3)) / (move.durationMs / 1000), 2)}`}
                 </td>
               </tr>
               {move?.typeMove === TypeMove.Fast && (
@@ -682,13 +671,7 @@ const Move = (props: IMovePage) => {
                   DPS
                   <span className="caption">(STAB / Shadow Bonus)</span>
                 </td>
-                <td>
-                  {move &&
-                    `${toFloatWithPadding(
-                      (move.pvpPower * STAB_MULTIPLY(data.options)) / (move.durationMs / 1000),
-                      2
-                    )}`}
-                </td>
+                <td>{move && `${toFloatWithPadding((move.pvpPower * battleStab()) / (move.durationMs / 1000), 2)}`}</td>
               </tr>
               {move?.bonus && (
                 <tr>

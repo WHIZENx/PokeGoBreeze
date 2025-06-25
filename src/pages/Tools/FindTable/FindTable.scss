@@ -1,0 +1,18 @@
+.four-star {
+  background-color: #ffd7d7;
+  border: 1px solid red;
+  border-radius: 8px;
+  margin: 10px;
+  padding: 5px
+}
+
+.one-star,.three-star,.two-star {
+  background-color: #ffffd7
+}
+
+.one-star,.three-star,.two-star,.zero-star {
+  border: 1px solid yellow;
+  border-radius: 8px;
+  margin: 10px;
+  padding: 5px
+}

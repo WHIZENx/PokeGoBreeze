@@ -1,6 +1,6 @@
 import { PokemonType } from '../../../enums/type.enum';
-import { FORM_NORMAL } from '../../../utils/constants';
 import { DynamicObj, getValueOrDefault, isEqual, isNotEmpty } from '../../../utils/extension';
+import { formNormal } from '../../../utils/helpers/context.helpers';
 import { convertPokemonAPIDataFormName, getPokemonType } from '../../../utils/utils';
 import { IStatsPokemon } from '../stats.model';
 import { IPokemonDetail, SpriteInfo } from './info.model';
@@ -227,7 +227,7 @@ export class FormSoundCry implements IFormSoundCry {
     const fullName = isNotEmpty(pokemon.forms) ? pokemon.forms[0].name : '';
     const speciesName = pokemon.speciesName;
     this.form = isEqual(fullName, speciesName)
-      ? FORM_NORMAL
+      ? formNormal()
       : fullName.replace(`${speciesName}-`, '').replaceAll('-', '_').toUpperCase();
     this.cries = pokemon.cries;
   }

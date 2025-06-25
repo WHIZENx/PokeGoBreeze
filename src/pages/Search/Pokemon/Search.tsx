@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../../utils/utils';
 import { Action } from 'history';
 import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
-import { KEY_DOWN, KEY_ENTER, KEY_UP } from '../../../utils/constants';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
@@ -17,6 +16,7 @@ import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
+import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/context.helpers';
 
 const Search = () => {
   useTitle({
@@ -104,16 +104,16 @@ const Search = () => {
     if (currentPokemon) {
       const prev = getPokemonById(pokemonName, currentPokemon.id - 1);
       const next = getPokemonById(pokemonName, currentPokemon.id + 1);
-      if (isNotEmpty(pokemonListFilter) && event.keyCode === KEY_ENTER) {
+      if (isNotEmpty(pokemonListFilter) && event.keyCode === keyEnter()) {
         const input = document.getElementById('input-search-pokemon');
         input?.blur();
         setShowResult(false);
         setSearchOption({ id: selectId });
-      } else if (prev && event.keyCode === KEY_UP) {
+      } else if (prev && event.keyCode === keyUp()) {
         event.preventDefault();
         setSelectId(prev.id);
         scrollToSelectedItem(prev.id);
-      } else if (next && event.keyCode === KEY_DOWN) {
+      } else if (next && event.keyCode === keyDown()) {
         event.preventDefault();
         setSelectId(next.id);
         scrollToSelectedItem(next.id);

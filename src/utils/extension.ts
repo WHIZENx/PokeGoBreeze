@@ -5,14 +5,22 @@ import { EqualMode, IncludeMode, PaddingMode } from './enums/string.enum';
 import { FloatPaddingOption } from './models/extension.model';
 
 export type DynamicObj<S, T extends string | number = string | number> = { [x in T]: S };
-type Constructor =
-  | NumberConstructor
-  | StringConstructor
-  | BooleanConstructor
-  | ArrayConstructor
-  | ObjectConstructor
-  | DateConstructor;
+type Constructor = typeof Number | typeof String | typeof Boolean | typeof Array | typeof Object | typeof Date;
 
+/**
+ * Returns the default value for the given type.
+ * Works even when the value is null or undefined.
+ *
+ * @param type - The constructor reference (e.g., Number, String, etc.)
+ * @param value - The value to get the type for (can be null/undefined)
+ * @param defaultValues - Optional default values to use if the value is null/undefined
+ * @returns The default value for the given type
+ *
+ * @example
+ * // Returns 0 even though value is undefined
+ * const myNumber: number | undefined = undefined;
+ * getValueOrDefault(Number, myNumber); // returns 0
+ */
 export const getValueOrDefault = <T>(
   type: Constructor,
   value: T | undefined | null,
@@ -20,18 +28,18 @@ export const getValueOrDefault = <T>(
 ) => {
   if (isNullOrUndefined(value) || isEmpty(value?.toString())) {
     const defaultValue = defaultValues.find((v) => !isNullOrUndefined(v));
-    switch (type.name) {
-      case Number.name:
+    switch (type) {
+      case Number:
         return (defaultValue || 0) as T;
-      case String.name:
+      case String:
         return (defaultValue || '') as T;
-      case Boolean.name:
+      case Boolean:
         return (defaultValue || false) as T;
-      case Array.name:
+      case Array:
         return (defaultValue || []) as T;
-      case Date.name:
+      case Date:
         return (defaultValue || new Date()) as T;
-      case Object.name:
+      case Object:
         return (defaultValue || new Object()) as T;
       default:
         return (defaultValue || value) as T;
