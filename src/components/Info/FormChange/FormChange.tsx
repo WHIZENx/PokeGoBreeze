@@ -17,8 +17,8 @@ import {
 } from '../../../utils/extension';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { IncludeMode } from '../../../utils/enums/string.enum';
-import { FORM_NORMAL } from '../../../utils/constants';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
+import { formNormal } from '../../../utils/helpers/context.helpers';
 
 const FromChange = (props: IFromChangeComponent) => {
   const assets = useSelector((state: StoreState) => state.store.data.assets);
@@ -50,7 +50,7 @@ const FromChange = (props: IFromChangeComponent) => {
 
   useEffect(() => {
     if (isNotEmpty(pokeAssets) && props.pokemonData?.fullName) {
-      const defaultForm = getValueOrDefault(String, props.pokemonData.form?.replaceAll('-', '_'), FORM_NORMAL);
+      const defaultForm = getValueOrDefault(String, props.pokemonData.form?.replaceAll('-', '_'), formNormal());
       setDataSrc(
         pokeAssets
           .find((pokemon) => isInclude(pokemon.form, defaultForm, IncludeMode.IncludeIgnoreCaseSensitive))
@@ -130,7 +130,7 @@ const FromChange = (props: IFromChangeComponent) => {
                             />
                           </div>
                           <span className="caption">
-                            {splitAndCapitalize(name.replace(`_${FORM_NORMAL}`, ''), '_', ' ')}
+                            {splitAndCapitalize(name.replace(`_${formNormal()}`, ''), '_', ' ')}
                           </span>
                         </div>
                       ))}

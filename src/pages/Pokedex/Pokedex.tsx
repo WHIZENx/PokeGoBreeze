@@ -7,7 +7,7 @@ import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/API.service';
 import { queryAssetForm } from '../../utils/compute';
-import { genList, regionList, TRANSITION_TIME, versionList } from '../../utils/constants';
+import { genList, regionList, versionList } from '../../utils/constants';
 import {
   Checkbox,
   FormControl,
@@ -41,6 +41,7 @@ import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
+import { transitionTime } from '../../utils/helpers/context.helpers';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -348,7 +349,7 @@ const Pokedex = (props: IStyleSheetData) => {
                   'btn-select-type w-100 p-2',
                   isIncludeList(selectTypes, item) ? 'select-type' : ''
                 )}
-                style={{ transition: TRANSITION_TIME }}
+                style={{ transition: transitionTime() }}
               >
                 <TypeInfo isBlock arr={[item]} />
               </button>

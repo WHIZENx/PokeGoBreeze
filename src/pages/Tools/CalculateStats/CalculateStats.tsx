@@ -30,8 +30,7 @@ import Find from '../../../components/Find/Find';
 import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
-import { StoreState, SearchingState } from '../../../store/models/state.model';
-import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../utils/constants';
+import { SearchingState } from '../../../store/models/state.model';
 import { IBattleLeagueCalculate, IBetweenLevelCalculate, IStatsCalculate } from '../../../utils/models/calculate.model';
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -40,6 +39,7 @@ import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../..
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
+import { minCp, minIv, maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/context.helpers';
 
 const Calculate = () => {
   useTitle({
@@ -55,7 +55,6 @@ const Calculate = () => {
       'Pokémon stats tool',
     ],
   });
-  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current?.pokemon);
 
   const [searchCP, setSearchCP] = useState('');
@@ -92,8 +91,8 @@ const Calculate = () => {
   };
 
   const calculateStatsPoke = useCallback(() => {
-    if (toNumber(searchCP) < MIN_CP) {
-      enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
+    if (toNumber(searchCP) < minCp()) {
+      enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
       return;
     }
     const statATK = toNumber(pokemon?.statsGO?.atk);
@@ -119,22 +118,10 @@ const Calculate = () => {
     setPokeStats(result);
     setStatLevel(result.level);
     setStatData(
-      calculateBetweenLevel(
-        globalOptions,
-        statATK,
-        statDEF,
-        statSTA,
-        ATKIv,
-        DEFIv,
-        STAIv,
-        result.level,
-        result.level,
-        typePoke
-      )
+      calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.level, typePoke)
     );
     setDataLittleLeague(
       calculateBattleLeague(
-        globalOptions,
         statATK,
         statDEF,
         statSTA,
@@ -149,7 +136,6 @@ const Calculate = () => {
     );
     setDataGreatLeague(
       calculateBattleLeague(
-        globalOptions,
         statATK,
         statDEF,
         statSTA,
@@ -164,7 +150,6 @@ const Calculate = () => {
     );
     setDataUltraLeague(
       calculateBattleLeague(
-        globalOptions,
         statATK,
         statDEF,
         statSTA,
@@ -178,22 +163,10 @@ const Calculate = () => {
       )
     );
     setDataMasterLeague(
-      calculateBattleLeague(
-        globalOptions,
-        statATK,
-        statDEF,
-        statSTA,
-        ATKIv,
-        DEFIv,
-        STAIv,
-        result.level,
-        result.CP,
-        typePoke
-      )
+      calculateBattleLeague(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, result.level, result.CP, typePoke)
     );
   }, [
     enqueueSnackbar,
-    globalOptions,
     pokemon?.statsGO?.atk,
     pokemon?.statsGO?.def,
     pokemon?.statsGO?.sta,
@@ -220,18 +193,7 @@ const Calculate = () => {
       const statDEF = toNumber(pokemon?.statsGO?.def);
       const statSTA = toNumber(pokemon?.statsGO?.sta);
       setStatData(
-        calculateBetweenLevel(
-          globalOptions,
-          statATK,
-          statDEF,
-          statSTA,
-          ATKIv,
-          DEFIv,
-          STAIv,
-          pokeStats.level,
-          level,
-          typePoke
-        )
+        calculateBetweenLevel(statATK, statDEF, statSTA, ATKIv, DEFIv, STAIv, pokeStats.level, level, typePoke)
       );
     }
   };
@@ -272,9 +234,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={ATKIv}
                 aria-label="ATK marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -290,9 +252,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={DEFIv}
                 aria-label="DEF marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -308,9 +270,9 @@ const Calculate = () => {
               <PokeGoSlider
                 value={STAIv}
                 aria-label="STA marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -401,11 +363,11 @@ const Calculate = () => {
               <LevelSlider
                 aria-label="Level"
                 value={statLevel}
-                defaultValue={MIN_LEVEL}
+                defaultValue={minLevel()}
                 valueLabelDisplay="off"
-                step={0.5}
-                min={MIN_LEVEL}
-                max={typePoke === PokemonType.Buddy ? MAX_LEVEL : MAX_LEVEL - 1}
+                step={stepLevel()}
+                min={minLevel()}
+                max={typePoke === PokemonType.Buddy ? maxLevel() : maxLevel() - 1}
                 marks={pokeStats ? [{ value: pokeStats.level, label: 'Result LV' }] : false}
                 disabled={!pokeStats}
                 onChange={(_, value) => onHandleLevel(value as number)}

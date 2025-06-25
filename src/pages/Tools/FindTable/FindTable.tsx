@@ -10,7 +10,7 @@ import '../../../components/Find/FormSelect.scss';
 import { useSnackbar } from 'notistack';
 import { Box, Rating } from '@mui/material';
 import Find from '../../../components/Find/Find';
-import { MAX_IV, MAX_LEVEL, MIN_CP, MIN_IV, MIN_LEVEL } from '../../../utils/constants';
+import './FindTable.scss';
 import {
   IPredictStatsModel,
   IPredictStatsCalculate,
@@ -25,6 +25,7 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { getValueOrDefault, isEqual, isNotEmpty, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { ColumnType, VariantType } from '../../../enums/type.enum';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
+import { minCp, minIv, maxIv, minLevel, maxLevel } from '../../../utils/helpers/context.helpers';
 
 interface IFindCP {
   level: number;
@@ -193,8 +194,8 @@ const FindTable = () => {
     if (!pokemon) {
       return;
     }
-    if (toNumber(searchCP) < MIN_CP) {
-      return enqueueSnackbar(`Please input CP greater than or equal to ${MIN_CP}`, { variant: VariantType.Error });
+    if (toNumber(searchCP) < minCp()) {
+      return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
     }
     const result = predictStat(
       toNumber(pokemon.statsGO?.atk),
@@ -232,7 +233,7 @@ const FindTable = () => {
       return;
     }
     if (isInvalidIV(searchATKIv) || isInvalidIV(searchDEFIv) || isInvalidIV(searchSTAIv)) {
-      enqueueSnackbar(`Please input IV between ${MIN_IV} - ${MAX_IV}.`, { variant: VariantType.Error });
+      enqueueSnackbar(`Please input IV between ${minIv()} - ${maxIv()}.`, { variant: VariantType.Error });
       return;
     }
     const result = predictCPList(
@@ -358,12 +359,12 @@ const FindTable = () => {
     const statDEF = toNumber(pokemon.statsGO?.def);
     const statSTA = toNumber(pokemon.statsGO?.sta);
     const dataTable = dataCPM
-      .filter((item) => item.level >= MIN_LEVEL && item.level <= MAX_LEVEL)
+      .filter((item) => item.level >= minLevel() && item.level <= maxLevel())
       .map((item) => {
         return new FindCP({
           level: item.level,
           minCP: calculateCP(statATK, statDEF, statSTA, item.level),
-          maxCP: calculateCP(statATK + MAX_IV, statDEF + MAX_IV, statSTA + MAX_IV, item.level),
+          maxCP: calculateCP(statATK + maxIv(), statDEF + maxIv(), statSTA + maxIv(), item.level),
         });
       });
 
@@ -397,7 +398,7 @@ const FindTable = () => {
                 required
                 value={searchCP}
                 type="number"
-                min={MIN_CP}
+                min={minCp()}
                 className="form-control"
                 aria-label="cp"
                 aria-describedby="input-cp"
@@ -427,9 +428,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchATKIv}
                 aria-label="ATK marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -442,9 +443,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchDEFIv}
                 aria-label="DEF marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -457,9 +458,9 @@ const FindTable = () => {
               <PokeGoSlider
                 value={searchSTAIv}
                 aria-label="STA marks"
-                defaultValue={MIN_IV}
-                min={MIN_IV}
-                max={MAX_IV}
+                defaultValue={minIv()}
+                min={minIv()}
+                max={maxIv()}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}

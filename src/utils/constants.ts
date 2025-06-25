@@ -1,26 +1,11 @@
-import { IOptions } from '../core/models/options.model';
 import { PVPInfo } from '../core/models/pvp.model';
-import { getOption } from '../core/options';
 import { CostPowerUp, ITier, Tier } from './models/constants.model';
-import { DynamicObj, getPropertyName, toNumber } from './extension';
+import { DynamicObj, toNumber } from './extension';
 import { LeagueBattleType } from '../core/enums/league.enum';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from './compute';
 import { BattleLeagueCPType, BattleLeagueIconType } from './enums/compute.enum';
-import { PokemonType, ThrowType } from '../enums/type.enum';
-
-// Theme
-export const LIGHT_THEME_BG = '#fafafa';
-export const DARK_THEME_BG = '#222222';
-
-// Persist Key
-export const PersistKey = 'pokego-breeze';
-export const PersistTimeout = 1000;
-
-// Delay
-export const BATTLE_DELAY = 1;
-export const LOAD_DATA_DELAY = 100;
-export const COUNTER_DELAY = 3000;
-export const STATS_DELAY = 3000;
+import { PokemonType } from '../enums/type.enum';
+import { maxLevel, minLevel, stepLevel } from './helpers/context.helpers';
 
 // Parameters
 export class Params {
@@ -31,19 +16,6 @@ export class Params {
   public static MoveType = 'moveType';
   public static LeagueType = 'leagueType';
 }
-
-// KeyCode
-export const KEY_ENTER = 13;
-export const KEY_LEFT = 37;
-export const KEY_UP = 38;
-export const KEY_RIGHT = 39;
-export const KEY_DOWN = 40;
-
-export const SYNC_MSG = 'Waiting to sync current data';
-export const PATH_ASSET_POKEGO = 'Addressable Assets';
-export const DEFAULT_SPRITE_NAME = 'unknown-pokemon';
-
-export const TRANSITION_TIME = '0.3s';
 
 export const BASE_CPM: DynamicObj<number> = {
   1: 0.094,
@@ -93,164 +65,6 @@ export const RAID_BOSS_TIER: DynamicObj<ITier> = {
     timer: 300,
   }),
 };
-
-export const FORM_NORMAL = 'NORMAL';
-export const FORM_SPECIAL = 'SPECIAL';
-export const FORM_SHADOW = 'SHADOW';
-export const FORM_PURIFIED = 'PURIFIED';
-export const FORM_MEGA = 'MEGA';
-export const FORM_GMAX = 'GMAX';
-export const FORM_PRIMAL = 'PRIMAL';
-export const FORM_ALOLA = 'ALOLA';
-export const FORM_HISUI = 'HISUI';
-export const FORM_GALAR = 'GALAR';
-
-export const FORM_GALARIAN = `${FORM_GALAR}IAN`;
-export const FORM_HISUIAN = `${FORM_HISUI}AN`;
-export const FORM_ALOLAN = `${FORM_ALOLA}N`;
-
-// Forms special
-export const FORM_HERO = 'HERO';
-export const FORM_STANDARD = 'STANDARD';
-export const FORM_INCARNATE = 'INCARNATE';
-export const FORM_ARMOR = 'ARMOR';
-export const FORM_MEGA_X = `${FORM_MEGA}_X`;
-export const FORM_MEGA_Y = `${FORM_MEGA}_Y`;
-
-// Pokémon Class
-export const CLASS_LEGENDARY = 'LEGENDARY';
-export const CLASS_MYTHIC = 'MYTHIC';
-export const CLASS_ULTRA_BEAST = 'ULTRA_BEAST';
-
-export const DEFAULT_SHEET_PAGE = 1;
-export const DEFAULT_SHEET_ROW = 10;
-
-export const DEFAULT_POKEMON_DEF_OBJ = 160;
-export const DEFAULT_POKEMON_SHADOW = false;
-export const DEFAULT_TRAINER_FRIEND = false;
-export const DEFAULT_WEATHER_BOOSTS = false;
-export const DEFAULT_POKEMON_FRIEND_LEVEL = 0;
-export const DEFAULT_POKEMON_LEVEL = 40;
-
-export const DEFAULT_ENERGY_PER_HP_LOST = 0.5;
-export const DEFAULT_DAMAGE_MULTIPLY = 0.5;
-export const DEFAULT_DAMAGE_CONST = 1;
-export const DEFAULT_ENEMY_ATK_DELAY = 2;
-
-export const DEFAULT_TRAINER_MULTIPLY = 1.3;
-export const DEFAULT_MEGA_MULTIPLY = 1.1;
-
-export const CURVE_INC_CHANCE = 1.7;
-export const PLATINUM_INC_CHANCE = 1.4;
-export const GOLD_INC_CHANCE = 1.3;
-export const SILVER_INC_CHANCE = 1.2;
-export const BRONZE_INC_CHANCE = 1.1;
-export const POKE_BALL_INC_CHANCE = 1.0;
-export const GREAT_BALL_INC_CHANCE = 1.5;
-export const ULTRA_BALL_INC_CHANCE = 2.0;
-export const RAZZ_BERRY_INC_CHANCE = 1.5;
-export const SILVER_PINAPS_INC_CHANCE = 1.8;
-export const GOLD_RAZZ_BERRY_INC_CHANCE = 2.5;
-
-export const NORMAL_THROW_INC_CHANCE = [1.0, 1.0];
-export const NICE_THROW_INC_CHANCE = [1.0, 1.3];
-export const GREAT_THROW_INC_CHANCE = [1.3, 1.7];
-export const EXCELLENT_THROW_INC_CHANCE = [1.7, 2.0];
-
-export const MIN_CP = 10;
-export const CP_DIFF_RATIO = 10; // Find difference between CP and Max CP
-
-export const MIN_LEVEL = 1;
-export const MAX_LEVEL = 51;
-
-export const MIN_IV = 0;
-export const MAX_IV = 15;
-
-export const STAB_MULTIPLY = (
-  options: IOptions | undefined,
-  settings = [getPropertyName(options, (o) => o.battleOptions), getPropertyName(options?.battleOptions, (o) => o.stab)]
-) => getOption<number>(options, settings, 1);
-
-export const MULTIPLY_LEVEL_FRIENDSHIP = (
-  options: IOptions | undefined,
-  level = DEFAULT_POKEMON_FRIEND_LEVEL,
-  settings = [
-    getPropertyName(options, (o) => o.trainerFriendship),
-    getPropertyName(options?.trainerFriendship, (o) => o[level.toString()]),
-    getPropertyName(options?.trainerFriendship[level.toString()], (o) => o.atkBonus),
-  ]
-) => getOption<number>(options, settings, 1);
-
-export const MULTIPLY_THROW_CHARGE = (
-  options: IOptions | undefined,
-  type = ThrowType.Normal,
-  settings = [
-    getPropertyName(options, (o) => o.throwCharge),
-    getPropertyName(options?.throwCharge, (o) =>
-      type === ThrowType.Normal
-        ? o.normal
-        : type === ThrowType.Nice
-        ? o.nice
-        : type === ThrowType.Great
-        ? o.great
-        : o.excellent
-    ),
-  ]
-) => getOption<number>(options, settings, 1);
-
-export const DODGE_REDUCE = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.battleOptions),
-    getPropertyName(options?.battleOptions, (o) => o.dodgeDamageReductionPercent),
-  ]
-) => getOption<number>(options, settings, 0);
-
-export const MAX_ENERGY = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.battleOptions),
-    getPropertyName(options?.battleOptions, (o) => o.maxEnergy),
-  ]
-) => getOption<number>(options, settings, 0);
-
-/* Shadow exclusive bonus for Pokémon in battle */
-export const SHADOW_ATK_BONUS = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.combatOptions),
-    getPropertyName(options?.combatOptions, (o) => o.shadowBonus),
-    getPropertyName(options?.combatOptions.shadowBonus, (o) => o.atk),
-  ]
-) => getOption<number>(options, settings, 1);
-
-export const SHADOW_DEF_BONUS = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.combatOptions),
-    getPropertyName(options?.combatOptions, (o) => o.shadowBonus),
-    getPropertyName(options?.combatOptions.shadowBonus, (o) => o.def),
-  ]
-) => getOption<number>(options, settings, 1);
-
-/* Purified exclusive bonus for Pokémon in battle */
-export const PURIFIED_ATK_BONUS = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.combatOptions),
-    getPropertyName(options?.combatOptions, (o) => o.purifiedBonus),
-    getPropertyName(options?.combatOptions.purifiedBonus, (o) => o.atk),
-  ]
-) => getOption<number>(options, settings, 1);
-
-export const PURIFIED_DEF_BONUS = (
-  options: IOptions | undefined,
-  settings = [
-    getPropertyName(options, (o) => o.combatOptions),
-    getPropertyName(options?.combatOptions, (o) => o.purifiedBonus),
-    getPropertyName(options?.combatOptions.purifiedBonus, (o) => o.def),
-  ]
-) => getOption<number>(options, settings, 1);
 
 export const genList: DynamicObj<number[]> = {
   1: [1, 151],
@@ -382,12 +196,7 @@ export const genRoman = (gen: number | string) => {
 };
 
 export const leaguesDefault = [BattleLeagueIconType.Great, BattleLeagueIconType.Ultra, BattleLeagueIconType.Master];
-export const levelList = Array.from({ length: (MAX_LEVEL - MIN_LEVEL) / 0.5 + 1 }, (_, i) => 1 + i * 0.5);
-
-// PVP Battle
-export const DEFAULT_SIZE = 12;
-export const DEFAULT_PLUS_SIZE = 2;
-
-export const DEFAULT_AMOUNT = 16;
-
-export const DEFAULT_BLOCK = 2;
+export const levelList = Array.from(
+  { length: (maxLevel() - minLevel()) / stepLevel() + 1 },
+  (_, i) => 1 + i * stepLevel()
+);

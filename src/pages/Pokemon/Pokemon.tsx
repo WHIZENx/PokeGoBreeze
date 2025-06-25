@@ -48,7 +48,7 @@ import PokemonTable from '../../components/Table/Pokemon/PokemonTable';
 import AlertReleased from './components/AlertReleased';
 import SearchBar from './components/SearchBar';
 import SearchBarMain from './components/SearchBarMain';
-import { KEY_LEFT, KEY_RIGHT, regionList, Params, FORM_STANDARD } from '../../utils/constants';
+import { regionList, Params } from '../../utils/constants';
 import Error from '../Error/Error';
 import { Action } from 'history';
 import FormComponent from '../../components/Info/Form/Form';
@@ -72,6 +72,7 @@ import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
+import { formStandard, keyLeft, keyRight } from '../../utils/helpers/context.helpers';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -93,7 +94,6 @@ const Pokemon = (props: IPokemonPage) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons || []);
-  const options = useSelector((state: StoreState) => state.store.data.options);
 
   const currentSearchingForm = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
   const pokemonDetails = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
@@ -153,8 +153,8 @@ const Pokemon = (props: IPokemonPage) => {
       );
     }
     const result = getPokemonFormWithNoneSpecialForm(form, pokemonType)
-      ?.replace(`_${FORM_STANDARD}`, '')
-      .replace(FORM_STANDARD, '')
+      ?.replace(`_${formStandard()}`, '')
+      .replace(formStandard(), '')
       .replaceAll('_', '-');
     return formType ? `${result}${result ? '-' : ''}${formType.toUpperCase()}` : result;
   };
@@ -293,7 +293,7 @@ const Pokemon = (props: IPokemonPage) => {
                 item.form.formName
                   ?.toUpperCase()
                   .replace(/^STANDARD$/, '')
-                  .replace(`-${FORM_STANDARD}`, ''),
+                  .replace(`-${formStandard()}`, ''),
                 props.searchOption?.form,
                 EqualMode.IgnoreCaseSensitive
               ) ||
@@ -431,10 +431,10 @@ const Pokemon = (props: IPokemonPage) => {
           if (currentPokemon) {
             const prev = getPokemonById(pokemonData, currentPokemon.id - 1);
             const next = getPokemonById(pokemonData, currentPokemon.id + 1);
-            if (prev && event.keyCode === KEY_LEFT) {
+            if (prev && event.keyCode === keyLeft()) {
               event.preventDefault();
               params.id ? navigate(`/pokemon/${prev.id}`, { replace: true }) : props.onDecId?.();
-            } else if (next && event.keyCode === KEY_RIGHT) {
+            } else if (next && event.keyCode === keyRight()) {
               event.preventDefault();
               params.id ? navigate(`/pokemon/${next.id}`, { replace: true }) : props.onIncId?.();
             }
@@ -456,8 +456,8 @@ const Pokemon = (props: IPokemonPage) => {
     const details = getPokemonDetails(pokemonData, id, formName, form.form?.pokemonType, form.form?.isDefault);
     details.pokemonType = form.form?.pokemonType || PokemonType.Normal;
     if (isSpecialFormType(details.pokemonType)) {
-      const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Atk);
-      const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, options, TypeAction.Def);
+      const atk = details.statsGO.atk * getDmgMultiplyBonus(details.pokemonType, TypeAction.Atk);
+      const def = details.statsGO.def * getDmgMultiplyBonus(details.pokemonType, TypeAction.Def);
       const sta = details.statsGO.sta;
       details.statsGO = StatsPokemonGO.create(atk, def, sta);
     }

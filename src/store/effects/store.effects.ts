@@ -26,11 +26,12 @@ import APIService from '../../services/API.service';
 import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { APITreeRoot, APITree } from '../../services/models/api.model';
-import { BASE_CPM, MIN_LEVEL, MAX_LEVEL } from '../../utils/constants';
+import { BASE_CPM } from '../../utils/constants';
 import { SpinnerActions, StatsActions, StoreActions, TimestampActions } from '../actions';
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import { TimestampModel } from '../reducers/timestamp.reducer';
 import { IDataModel } from '../models/store.model';
+import { minIv, maxIv } from '../../utils/helpers/context.helpers';
 
 interface Timestamp {
   isCurrentVersion: boolean;
@@ -73,10 +74,10 @@ export const loadPokeGOLogo = (dispatch: Dispatch, url: string, iconTimestamp: n
     .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
 
 export const loadBaseCPM = (dispatch: Dispatch) =>
-  dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, MIN_LEVEL, MAX_LEVEL)));
+  dispatch(StoreActions.SetCPM.create(calculateBaseCPM(BASE_CPM, minIv(), maxIv())));
 
 export const loadCPM = (dispatch: Dispatch, cpmList: DynamicObj<number>) =>
-  dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, MIN_LEVEL, Object.keys(cpmList).length)));
+  dispatch(StoreActions.SetCPM.create(calculateCPM(cpmList, minIv(), Object.keys(cpmList).length)));
 
 export const loadTimestamp = async (
   dispatch: Dispatch,
@@ -193,7 +194,7 @@ export const loadGameMaster = async (
       }
 
       dispatch(SpinnerActions.SetPercent.create(90));
-      dispatch(StatsActions.SetStats.create({ pokemon, options }));
+      dispatch(StatsActions.SetStats.create(pokemon));
 
       dispatch(TimestampActions.SetTimestampGameMaster.create(timestampLoaded.gamemasterTimestamp));
       dispatch(SpinnerActions.SetPercent.create(100));

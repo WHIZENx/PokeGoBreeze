@@ -34,7 +34,7 @@ import { StatsState, StoreState, TimestampState } from '../../../store/models/st
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
-import { FORM_SHADOW, Params } from '../../../utils/constants';
+import { Params } from '../../../utils/constants';
 import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
@@ -61,6 +61,7 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
+import { formShadow } from '../../../utils/helpers/context.helpers';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
@@ -114,7 +115,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     }
 
     let pokemonType = PokemonType.Normal;
-    if (isInclude(speciesId, `_${FORM_SHADOW}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
+    if (isInclude(speciesId, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
       pokemonType = PokemonType.Shadow;
     } else if (
       isIncludeList(pokemon?.purifiedMoves, cMovePri?.name) ||

@@ -17,7 +17,7 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { findAssetForm } from '../../../utils/compute';
-import { DEFAULT_POKEMON_LEVEL, levelList, MAX_IV, MIN_IV, MIN_LEVEL, RAID_BOSS_TIER } from '../../../utils/constants';
+import { levelList, RAID_BOSS_TIER } from '../../../utils/constants';
 import {
   calculateBattleDPS,
   calculateBattleDPSDefender,
@@ -87,6 +87,9 @@ import {
   RaidSetting,
   RaidSummary,
   TrainerBattle,
+  Filter,
+  FilterGroup,
+  RaidOption,
 } from './models/raid-battle.model';
 import { RaidState, SortType } from './enums/raid-state.enum';
 import { SortDirectionType } from '../../Sheets/DpsTdo/enums/column-select-type.enum';
@@ -94,67 +97,8 @@ import { ICombat } from '../../../core/models/combat.model';
 import CustomPopover from '../../../components/Popover/CustomPopover';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
-import { IStatsIV, StatsIV } from '../../../core/models/stats.model';
-
-interface IOption {
-  isWeatherBoss: boolean;
-  isWeatherCounter: boolean;
-  isReleased: boolean;
-  enableTimeAllow: boolean;
-}
-
-class Option implements IOption {
-  isWeatherBoss = false;
-  isWeatherCounter = false;
-  isReleased = false;
-  enableTimeAllow = false;
-
-  constructor({ ...props }: IOption) {
-    Object.assign(this, props);
-  }
-}
-
-interface IFilterGroup {
-  level: number;
-  pokemonType: PokemonType;
-  iv: IStatsIV;
-  onlyShadow: boolean;
-  onlyMega: boolean;
-  onlyReleasedGO: boolean;
-  sortBy: SortType;
-  sorted: SortDirectionType;
-}
-
-class FilterGroup implements IFilterGroup {
-  level = MIN_LEVEL;
-  pokemonType = PokemonType.Normal;
-  iv = new StatsIV();
-  onlyShadow = false;
-  onlyMega = false;
-  onlyReleasedGO = false;
-  sortBy = SortType.DPS;
-  sorted = SortDirectionType.ASC;
-
-  static create(value: IFilterGroup) {
-    const obj = new FilterGroup();
-    Object.assign(obj, value);
-    return obj;
-  }
-}
-
-interface IFilter {
-  used: IFilterGroup;
-  selected: IFilterGroup;
-}
-
-class Filter implements IFilter {
-  used = new FilterGroup();
-  selected = new FilterGroup();
-
-  constructor({ ...props }: IFilter) {
-    Object.assign(this, props);
-  }
-}
+import { StatsIV } from '../../../core/models/stats.model';
+import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/context.helpers';
 
 const RaidBattle = () => {
   useTitle({
@@ -188,7 +132,7 @@ const RaidBattle = () => {
   const [resultCMove, setResultCMove] = useState<ISelectMoveModel[]>();
 
   const [options, setOptions] = useState(
-    new Option({
+    new RaidOption({
       isWeatherBoss: false,
       isWeatherCounter: false,
       isReleased: true,
@@ -197,9 +141,9 @@ const RaidBattle = () => {
   );
 
   const initFilter = FilterGroup.create({
-    level: DEFAULT_POKEMON_LEVEL,
+    level: defaultPokemonLevel(),
     pokemonType: PokemonType.Normal,
-    iv: StatsIV.setValue(MAX_IV, MAX_IV, MAX_IV),
+    iv: StatsIV.setValue(maxIv(), maxIv(), maxIv()),
     onlyShadow: false,
     onlyMega: false,
     onlyReleasedGO: true,
@@ -438,21 +382,8 @@ const RaidBattle = () => {
             return;
           }
 
-          const dpsDef = calculateBattleDPSDefender(
-            data.options,
-            data.typeEff,
-            data.weatherBoost,
-            statsAttacker,
-            statsDefender
-          );
-          const dpsAtk = calculateBattleDPS(
-            data.options,
-            data.typeEff,
-            data.weatherBoost,
-            statsAttacker,
-            statsDefender,
-            dpsDef
-          );
+          const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+          const dpsAtk = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
           const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
           const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
@@ -589,21 +520,8 @@ const RaidBattle = () => {
         isStab: isWeatherBoss,
       });
 
-      const dpsDef = calculateBattleDPSDefender(
-        data.options,
-        data.typeEff,
-        data.weatherBoost,
-        statsAttacker,
-        statsDefender
-      );
-      const dpsAtk = calculateBattleDPS(
-        data.options,
-        data.typeEff,
-        data.weatherBoost,
-        statsAttacker,
-        statsDefender,
-        dpsDef
-      );
+      const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
+      const dpsAtk = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
 
       const ttkAtk = enableTimeAllow
         ? Math.min(timeAllow - timer, TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk))
@@ -824,8 +742,8 @@ const RaidBattle = () => {
         <input
           value={filters.selected.iv.atkIV}
           type="number"
-          min={MIN_IV}
-          max={MAX_IV}
+          min={minIv()}
+          max={maxIv()}
           required
           className="form-control"
           placeholder="IV ATK"
@@ -840,8 +758,8 @@ const RaidBattle = () => {
         <input
           value={filters.selected.iv.defIV}
           type="number"
-          min={MIN_IV}
-          max={MAX_IV}
+          min={minIv()}
+          max={maxIv()}
           required
           className="form-control"
           placeholder="IV DEF"
@@ -856,8 +774,8 @@ const RaidBattle = () => {
         <input
           value={filters.selected.iv.staIV}
           type="number"
-          min={MIN_IV}
-          max={MAX_IV}
+          min={minIv()}
+          max={maxIv()}
           required
           className="form-control"
           placeholder="IV STA"
@@ -1057,8 +975,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.atkIV}
               type="number"
-              min={MIN_IV}
-              max={MAX_IV}
+              min={minIv()}
+              max={maxIv()}
               required
               className="form-control"
               placeholder="IV ATK"
@@ -1083,8 +1001,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.defIV}
               type="number"
-              min={MIN_IV}
-              max={MAX_IV}
+              min={minIv()}
+              max={maxIv()}
               required
               className="form-control"
               placeholder="IV DEF"
@@ -1109,8 +1027,8 @@ const RaidBattle = () => {
             <input
               value={pokemon.stats?.iv.staIV}
               type="number"
-              min={MIN_IV}
-              max={MAX_IV}
+              min={minIv()}
+              max={maxIv()}
               required
               className="form-control"
               placeholder="IV STA"

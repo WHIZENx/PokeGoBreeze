@@ -52,9 +52,9 @@
     "lint:style": "stylelint \"src/**/*.{css,scss}\"",
     "lint": "npm run lint:code && npm run lint:style",
     "format": "npm run format:code && npm run format:style",
-    "develop": "sh -c '. ./version.sh && webpack-dev-server --mode development --config webpack.config.dev.js'",
+    "develop": "sh -c '. ./config.sh && webpack-dev-server --mode development --config webpack.config.dev.js'",
     "prebuild": "rimraf dist",
-    "deploy": "sh -c '. ./version.sh && webpack --mode production --config webpack.config.prod.js' && node sitemap/buildSitemap.js",
+    "deploy": "sh -c '. ./config.sh && webpack --mode production --config webpack.config.prod.js' && node sitemap/buildSitemap.js",
     "generate:sitemap": "node sitemap/buildSitemap.js"
   },
   "browserslist": {

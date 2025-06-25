@@ -11,8 +11,14 @@ import {
 } from '../../../core/models/stats.model';
 import { BuffType, PokemonType, TypeAction } from '../../../enums/type.enum';
 import { IDataModel } from '../../../store/models/store.model';
-import { BATTLE_DELAY, DEFAULT_AMOUNT, DEFAULT_BLOCK, DEFAULT_PLUS_SIZE, DEFAULT_SIZE } from '../../../utils/constants';
 import { isNotEmpty, isUndefined, toFloat, toNumber } from '../../../utils/extension';
+import {
+  battleDelay,
+  defaultAmount,
+  defaultBlock,
+  defaultPlusSize,
+  defaultSize,
+} from '../../../utils/helpers/context.helpers';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
 import { getPokemonType } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
@@ -92,7 +98,7 @@ export class PokemonBattleData implements IPokemonBattleData {
       cMove: value.cMovePri,
       cMoveSec: value.cMoveSec,
       energy: value.energy,
-      block: toNumber(value.block, DEFAULT_BLOCK),
+      block: toNumber(value.block, defaultBlock()),
       turn: Math.ceil(toNumber(value.fMove?.durationMs) / 500),
       pokemonType: value.pokemonType,
       disableCMovePri: value.disableCMovePri,
@@ -133,7 +139,7 @@ export class PokemonBattle implements IPokemonBattle {
   cMoveSec?: ICombat;
   timeline: ITimeline[] = [];
   energy = 0;
-  block = DEFAULT_BLOCK;
+  block = defaultBlock();
   chargeSlot = ChargeType.Primary;
   audio?: MoveAudio;
 
@@ -310,7 +316,7 @@ export class BattlePVP implements IBattlePVP {
   configOpponent = new PokemonBattleConfig();
   timer = 0;
   isDelay = false;
-  delay = BATTLE_DELAY;
+  delay = battleDelay();
   dataStore!: IDataModel;
 
   static create(initPokemon: PokemonBattle, initPokemonOpponent: PokemonBattle, store: IDataModel, isWaiting = true) {
@@ -399,14 +405,14 @@ export class BattlePVP implements IBattlePVP {
       updateState(timeline, {
         type: AttackType.Prepare,
         move,
-        size: DEFAULT_SIZE,
+        size: defaultSize(),
         timer: this.timer,
       });
       config.preCharge = true;
       if (configOpponent.tap) {
         configOpponent.immune = true;
       }
-      config.chargedCount = DEFAULT_AMOUNT;
+      config.chargedCount = defaultAmount();
     }
   }
 
@@ -483,7 +489,7 @@ export class BattlePVP implements IBattlePVP {
         updateState(timeline, {
           timer: this.timer,
           move: config.chargeType === ChargeType.Primary ? player.cMove : player.cMoveSec,
-          size: (timeline[this.timer - 2].size || 0) + DEFAULT_PLUS_SIZE,
+          size: (timeline[this.timer - 2].size || 0) + defaultPlusSize(),
           type: config.chargedCount === -1 ? AttackType.Charge : AttackType.Spin,
         });
       }
@@ -537,14 +543,14 @@ export class BattlePVP implements IBattlePVP {
         this.timelineOpponent[this.timer].buff = buffsTarget;
       }
       this.isDelay = true;
-      this.delay = BATTLE_DELAY;
+      this.delay = battleDelay();
     }
   }
 
   turnPreCharge(isOpponent = false) {
     const config = isOpponent ? this.configOpponent : this.config;
 
-    if (config.chargedCount === DEFAULT_AMOUNT) {
+    if (config.chargedCount === defaultAmount()) {
       config.charged = true;
     } else {
       config.chargedCount--;

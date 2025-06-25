@@ -3,8 +3,8 @@ import { TypeAction } from '../../../enums/type.enum';
 import { IDataModel } from '../../../store/models/store.model';
 import { calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { findStabType } from '../../../utils/compute';
-import { DEFAULT_SIZE, MIN_LEVEL, STAB_MULTIPLY } from '../../../utils/constants';
 import { isNotEmpty, toNumber } from '../../../utils/extension';
+import { battleStab, defaultSize, minLevel } from '../../../utils/helpers/context.helpers';
 import { getDmgMultiplyBonus } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
 import { IPokemonBattleData, ITimeline, TimelineConfig, TimelineModel } from '../models/battle.model';
@@ -24,7 +24,7 @@ export const state = (timer: number, block: number, energy: number, hp: number, 
   new TimelineModel({
     timer,
     type,
-    size: DEFAULT_SIZE,
+    size: defaultSize(),
     block,
     energy,
     hp: Math.max(0, hp),
@@ -59,22 +59,22 @@ export const calculateMoveDmgActual = (
     const atkPokemon = calculateStatsBattle(
       pokemon.stats?.atk,
       pokemon.currentStats?.IV?.atkIV,
-      toNumber(pokemon.currentStats?.level, MIN_LEVEL),
+      toNumber(pokemon.currentStats?.level, minLevel()),
       true
     );
     const defPokemonOpponent = calculateStatsBattle(
       pokemonOpponent.stats?.def,
       pokemonOpponent.currentStats?.IV?.defIV,
-      toNumber(pokemonOpponent.currentStats?.level, MIN_LEVEL),
+      toNumber(pokemonOpponent.currentStats?.level, minLevel()),
       true
     );
     return (
       (atkPokemon *
         move.pvpPower *
-        (findStabType(pokemon.pokemon?.types, move.type) ? STAB_MULTIPLY(dataStore.options) : 1) *
-        getDmgMultiplyBonus(pokemon.pokemonType, dataStore.options, TypeAction.Atk) *
+        (findStabType(pokemon.pokemon?.types, move.type) ? battleStab() : 1) *
+        getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk) *
         getTypeEffective(dataStore.typeEff, move.type, pokemonOpponent.pokemon?.types)) /
-      (defPokemonOpponent * getDmgMultiplyBonus(pokemonOpponent.pokemonType, dataStore.options, TypeAction.Def))
+      (defPokemonOpponent * getDmgMultiplyBonus(pokemonOpponent.pokemonType, TypeAction.Def))
     );
   }
   return 1;

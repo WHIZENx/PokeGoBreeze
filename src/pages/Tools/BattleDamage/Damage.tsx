@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack';
 import { FormGroup } from 'react-bootstrap';
 
 import { capitalize, getDmgMultiplyBonus, getKeyWithData, LevelRating } from '../../../utils/utils';
-import { MAX_IV, MULTIPLY_LEVEL_FRIENDSHIP } from '../../../utils/constants';
 import { calculateDamagePVE, calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 
 import './Damage.scss';
@@ -26,6 +25,7 @@ import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
+import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/context.helpers';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({
@@ -82,7 +82,6 @@ const Damage = () => {
       'battle strategy',
     ],
   });
-  const globalOptions = useSelector((state: StoreState) => state.store.data.options);
   const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
@@ -111,10 +110,10 @@ const Damage = () => {
       setStatLvATK(
         calculateStatsBattle(
           searching?.current?.pokemon?.statsGO?.atk,
-          MAX_IV,
+          maxIv(),
           statLevel,
           false,
-          getDmgMultiplyBonus(statType, globalOptions, TypeAction.Atk)
+          getDmgMultiplyBonus(statType, TypeAction.Atk)
         )
       );
     }
@@ -122,18 +121,17 @@ const Damage = () => {
       setStatLvDEFObj(
         calculateStatsBattle(
           searching?.object?.pokemon?.statsGO?.def,
-          MAX_IV,
+          maxIv(),
           statLevelObj,
           false,
-          getDmgMultiplyBonus(statType, globalOptions, TypeAction.Def)
+          getDmgMultiplyBonus(statType, TypeAction.Def)
         )
       );
     }
     if (searching?.object?.pokemon?.statsGO?.sta !== 0) {
-      setStatLvSTAObj(calculateStatsBattle(searching?.object?.pokemon?.statsGO?.sta, MAX_IV, statLevelObj));
+      setStatLvSTAObj(calculateStatsBattle(searching?.object?.pokemon?.statsGO?.sta, maxIv(), statLevelObj));
     }
   }, [
-    globalOptions,
     searching?.current?.pokemon?.statsGO?.atk,
     statLevel,
     statType,
@@ -174,7 +172,7 @@ const Damage = () => {
             ...r,
             battleState: eff,
             move,
-            damage: calculateDamagePVE(globalOptions, statLvATK, statLvDEFObj, move.pvePower, eff),
+            damage: calculateDamagePVE(statLvATK, statLvDEFObj, move.pvePower, eff),
             hp: statLvSTAObj,
             currPoke: searching?.current?.form,
             objPoke: searching?.object?.form,
@@ -190,7 +188,6 @@ const Damage = () => {
     },
     [
       enqueueSnackbar,
-      globalOptions,
       enableFriend,
       battleState,
       move,
@@ -350,7 +347,7 @@ const Damage = () => {
                       icon={<Favorite fontSize="inherit" />}
                     />
                     <Box sx={{ ml: 2, color: 'green', fontSize: 13 }}>
-                      x{padding(MULTIPLY_LEVEL_FRIENDSHIP(globalOptions, battleState.friendshipLevel), 2)}
+                      x{padding(getMultiplyFriendship(battleState.friendshipLevel), 2)}
                     </Box>
                   </Box>
                   <Box sx={{ marginTop: 2 }}>
@@ -369,7 +366,7 @@ const Damage = () => {
                           );
                         }}
                       >
-                        {Object.entries(globalOptions.throwCharge).map(([type, value], index) => (
+                        {Object.entries(getThrowCharge()).map(([type, value], index) => (
                           <MenuItem value={index} key={index} sx={{ color: labels[index].color }}>
                             {capitalize(type)}
                             <span className={combineClasses('caption-small dropdown-caption', labels[index].style)}>

@@ -27,6 +27,7 @@ import {
   getDataWithKey,
   getGenerationPokemon,
   getItemSpritePath,
+  isPokemonNoneSpecialForm,
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
@@ -37,7 +38,6 @@ import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
 import { RouterState, StoreState } from '../../../store/models/state.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
-import { FORM_NORMAL, FORM_STANDARD } from '../../../utils/constants';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
 import { Action } from 'history';
@@ -55,6 +55,7 @@ import { ItemName } from '../../../pages/News/enums/item-type.enum';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { APIUrl } from '../../../services/constants';
+import { formNormal, formStandard } from '../../../utils/helpers/context.helpers';
 
 interface IPokemonEvo {
   prev?: string;
@@ -113,7 +114,7 @@ const Evolution = (props: IEvolutionComponent) => {
           const pokemon = PokemonEvo.create(
             name,
             evo.id,
-            FORM_NORMAL,
+            formNormal(),
             convertModelSpritName(name),
             PokemonType.Normal,
             undefined,
@@ -129,7 +130,7 @@ const Evolution = (props: IEvolutionComponent) => {
       const pokemon = PokemonEvo.create(
         name,
         currentId,
-        FORM_NORMAL,
+        formNormal(),
         convertModelSpritName(name),
         PokemonType.Normal,
         undefined,
@@ -155,18 +156,18 @@ const Evolution = (props: IEvolutionComponent) => {
       })
       .catch();
 
-  const pokeSetName = (name: string) => name.replace(`_${FORM_NORMAL}`, '').replaceAll('_', '-').replace('MR', 'MR.');
+  const pokeSetName = (name: string) => name.replace(`_${formNormal()}`, '').replaceAll('_', '-').replace('MR', 'MR.');
 
   const modelEvoChain = (pokemon: IEvolution) => {
     const name = pokeSetName(
-      !isEqual(pokemon.form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive)
+      !isEqual(pokemon.form, formNormal(), EqualMode.IgnoreCaseSensitive)
         ? pokemon.name.replace(`_${pokemon.form}`, '')
         : pokemon.name
     );
     const form =
       pokemon.id === 718 && !pokemon.form
         ? 'TEN_PERCENT'
-        : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${FORM_STANDARD}`, '');
+        : pokemon.form?.replace(/^STANDARD$/, '').replace(`_${formStandard()}`, '');
     const sprite =
       pokemon.id === 664 || pokemon.id === 665
         ? getValueOrDefault(String, pokemon.pokemonId?.toLowerCase(), pokemon.name)
@@ -198,7 +199,7 @@ const Evolution = (props: IEvolutionComponent) => {
             ...evo,
             name: evo.name.replaceAll('-', '_').toUpperCase(),
             id: evo.num,
-            form: getValueOrDefault(String, evo.form, FORM_NORMAL),
+            form: getValueOrDefault(String, evo.form, formNormal()),
             evoList: getValueOrDefault(Array, evo.evoList),
             tempEvo: getValueOrDefault(Array, evo.tempEvo),
           })
@@ -213,7 +214,7 @@ const Evolution = (props: IEvolutionComponent) => {
     let evoList: IPokemonEvo[] = [];
     const pokemon = pokemonData.find((pokemon) =>
       pokemon.evoList?.find(
-        (evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace(`_${FORM_STANDARD}`, ''))
+        (evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace(`_${formStandard()}`, ''))
       )
     );
     if (!pokemon) {
@@ -223,7 +224,7 @@ const Evolution = (props: IEvolutionComponent) => {
             ...poke,
             name: getValueOrDefault(String, poke.fullName),
             id: toNumber(poke.id),
-            form: getValueOrDefault(String, poke.form, FORM_NORMAL),
+            form: getValueOrDefault(String, poke.form, formNormal()),
             evoList: [],
             tempEvo: getValueOrDefault(Array, poke.tempEvo),
           })
@@ -314,7 +315,7 @@ const Evolution = (props: IEvolutionComponent) => {
     getPrevEvoChainStore(pokemon.id, pokemon.form, result);
     getCurrEvoChainStore(pokemon, result);
     getNextEvoChainStore(pokemon.name, pokemon.evoList, result);
-    const form = getValueOrDefault(String, pokemon.form, FORM_NORMAL);
+    const form = getValueOrDefault(String, pokemon.form, formNormal());
     if (pokemon.prevEvo && result.length === 1 && result[0].length === 1) {
       getCombineEvoChainFromPokeGo(result, pokemon.id, form);
     }
@@ -322,7 +323,7 @@ const Evolution = (props: IEvolutionComponent) => {
       props.urlEvolutionChain &&
       result.length === 1 &&
       result[0].length === 1 &&
-      isEqual(pokemon.form, FORM_NORMAL)
+      isEqual(pokemon.form, formNormal())
     ) {
       const idUrlChain = getGenerationPokemon(props.urlEvolutionChain);
       if (idUrlChain !== idEvoChain) {
@@ -341,7 +342,7 @@ const Evolution = (props: IEvolutionComponent) => {
         PokemonEvo.create(
           pokemon.pokemonId,
           pokemon.id,
-          FORM_NORMAL,
+          formNormal(),
           convertModelSpritName(pokemon.pokemonId),
           PokemonType.Normal
         ),
@@ -370,12 +371,18 @@ const Evolution = (props: IEvolutionComponent) => {
   const getQuestEvo = (prevId: number, form: string) => {
     const pokemon = pokemonData.find((item) =>
       item.evoList?.find(
-        (value) => isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) && value.evoToId === prevId
+        (value) =>
+          (isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            (isPokemonNoneSpecialForm(form) && value.evoToForm === formNormal())) &&
+          value.evoToId === prevId
       )
     );
     if (pokemon) {
       return pokemon.evoList?.find(
-        (item) => isInclude(item.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) && item.evoToId === prevId
+        (item) =>
+          (isInclude(item.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
+            (isPokemonNoneSpecialForm(form) && item.evoToForm === formNormal())) &&
+          item.evoToId === prevId
       );
     } else {
       const pokemonChain = evolutionChains.find((chain) => chain.id === prevId);
@@ -443,27 +450,23 @@ const Evolution = (props: IEvolutionComponent) => {
               labels={{
                 end: (
                   <div className="position-absolute -left-6">
-                    {value.pokemonType !== PokemonType.GMax && (
+                    {data && value.pokemonType !== PokemonType.GMax && (
                       <div>
-                        {toNumber(data?.evoToId) > 0 &&
-                          !data?.itemCost &&
-                          (data?.candyCost || data?.purificationEvoCandyCost) && (
-                            <span className="d-flex align-items-center caption w-max-content">
-                              <Candy id={value.id} />
-                              <span className="ms-1">{`x${
-                                props.pokemonData?.pokemonType === PokemonType.Purified
-                                  ? data.purificationEvoCandyCost
-                                  : data.candyCost
-                              }`}</span>
-                            </span>
-                          )}
-                        {props.pokemonData?.pokemonType === PokemonType.Purified &&
-                          data?.candyCost &&
-                          data?.purificationEvoCandyCost && (
-                            <span className="d-block text-end caption text-danger">{`-${
-                              data.candyCost - data.purificationEvoCandyCost
+                        {toNumber(data.evoToId) > 0 && !data.itemCost && (
+                          <span className="d-flex align-items-center caption w-max-content">
+                            <Candy id={value.id} />
+                            <span className="ms-1">{`x${
+                              props.pokemonData?.pokemonType === PokemonType.Purified
+                                ? data.purificationEvoCandyCost
+                                : data.candyCost
                             }`}</span>
-                          )}
+                          </span>
+                        )}
+                        {props.pokemonData?.pokemonType === PokemonType.Purified && (
+                          <span className="d-block text-end caption text-danger">{`-${
+                            data.candyCost - data.purificationEvoCandyCost
+                          }`}</span>
+                        )}
                       </div>
                     )}
                     {isNotEmpty(Object.keys(data?.quest ?? new EvolutionQuest())) && (
@@ -632,9 +635,9 @@ const Evolution = (props: IEvolutionComponent) => {
           )}
           {evoCount > 1 ? (
             <Fragment>
-              {chain.length > 1 || (chain.length === 1 && !isEqual(form, FORM_NORMAL) && isNotEmpty(form)) ? (
+              {chain.length > 1 || (chain.length === 1 && !isEqual(form, formNormal()) && isNotEmpty(form)) ? (
                 <Fragment>
-                  {!isEqual(form, FORM_NORMAL, EqualMode.IgnoreCaseSensitive) && isNotEmpty(form) ? (
+                  {!isEqual(form, formNormal(), EqualMode.IgnoreCaseSensitive) && isNotEmpty(form) ? (
                     <Badge
                       color="secondary"
                       overlap="circular"

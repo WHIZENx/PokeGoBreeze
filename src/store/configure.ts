@@ -9,9 +9,10 @@ import { createRouterMiddleware } from './middleware/router.middleware';
 import { legacy_createStore as createStore } from 'redux';
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import localForage from 'localforage';
-import { PersistTimeout, PersistKey } from '../utils/constants';
 import CryptoJS from 'crypto-js';
 import { LocalForageConfig } from './constants/local-forage';
+import { StoreState } from './models/state.model';
+import { persistKey, persistTimeout } from '../utils/helpers/context.helpers';
 
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY;
 const ENCRYPTION_SALT = process.env.REACT_APP_ENCRYPTION_SALT;
@@ -95,29 +96,38 @@ const devTools =
               return action;
           }
         },
-        stateSanitizer: (state: any) => {
+        stateSanitizer: <S>(state: S): S => {
           if (!state) {
             return state;
           }
-          const sanitized = { ...state };
 
-          if (sanitized.store?.data) {
+          const isStoreState = (state: S | StoreState): state is StoreState => {
+            return state && typeof state === 'object' && 'store' in state;
+          };
+
+          if (!isStoreState(state)) {
+            return state;
+          }
+
+          const sanitized = { ...state } as any;
+
+          if (state.store?.data) {
             sanitized.store = {
-              ...sanitized.store,
+              ...state.store,
               data: {
-                ...sanitized.store.data,
-                pokemons: `<<POKEMON_DATA: ${sanitized.store.data.pokemons?.length || 0} items>>`,
-                combats: `<<COMBAT_DATA: ${sanitized.store.data.combats?.length || 0} items>>`,
-                evolutionChains: `<<EVOLUTION_CHAINS: ${sanitized.store.data.evolutionChains?.length || 0} items>>`,
-                assets: `<<ASSETS: ${sanitized.store.data.assets?.length || 0} items>>`,
-                stickers: `<<STICKERS: ${sanitized.store.data.stickers?.length || 0} items>>`,
-                leagues: `<<LEAGUES: ${sanitized.store.data.leagues?.length || 0} items>>`,
+                ...state.store.data,
+                pokemons: `<<POKEMON_DATA: ${state.store.data.pokemons?.length || 0} items>>`,
+                combats: `<<COMBAT_DATA: ${state.store.data.combats?.length || 0} items>>`,
+                evolutionChains: `<<EVOLUTION_CHAINS: ${state.store.data.evolutionChains?.length || 0} items>>`,
+                assets: `<<ASSETS: ${state.store.data.assets?.length || 0} items>>`,
+                stickers: `<<STICKERS: ${state.store.data.stickers?.length || 0} items>>`,
+                leagues: `<<LEAGUES: ${state.store.data.leagues.data?.length || 0} items>>`,
                 pvp: '<<PVP_DATA>>',
               },
             };
           }
 
-          return sanitized;
+          return sanitized as S;
         },
         trace: false,
         traceLimit: 10,
@@ -184,11 +194,11 @@ const sensitiveDataTransform = createTransform(
 );
 
 const persistConfig = {
-  key: PersistKey,
+  key: persistKey(),
   storage: localForage,
   transforms: [sensitiveDataTransform, createEncryptionTransform()],
   whitelist: ['store', 'stats', 'timestamp'],
-  timeout: PersistTimeout,
+  timeout: persistTimeout(),
 };
 
 const persistedReducer = persistReducer(persistConfig, combineReducers(rootReducer));

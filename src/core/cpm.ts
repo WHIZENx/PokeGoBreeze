@@ -1,4 +1,5 @@
 import { DynamicObj, toFloat, toNumber } from '../utils/extension';
+import { stepLevel } from '../utils/helpers/context.helpers';
 import { CPM, ICPM } from './models/cpm.model';
 
 export const calculateBaseCPM = (baseCPM: DynamicObj<number>, min: number, max: number) => {
@@ -19,7 +20,7 @@ export const calculateBaseCPM = (baseCPM: DynamicObj<number>, min: number, max: 
     cpmList.push(result);
   }
 
-  for (let i = min + 0.5; i <= max; i += 1) {
+  for (let i = min + stepLevel(); i <= max; i += 1) {
     const result = new CPM();
     result.level = i;
     const cpmLow = toNumber(cpmList.find((cp) => cp.level === Math.floor(i))?.multiplier);
@@ -33,10 +34,10 @@ export const calculateBaseCPM = (baseCPM: DynamicObj<number>, min: number, max: 
     cpmList.push(result);
   }
 
-  for (let i = min; i <= max; i += 0.5) {
+  for (let i = min; i <= max; i += stepLevel()) {
     const currLevel = cpmList.find((j) => j.level === i);
     if (currLevel && i > 1) {
-      currLevel.step = currLevel.multiplier - toNumber(cpmList.find((j) => j.level === i - 0.5)?.multiplier);
+      currLevel.step = currLevel.multiplier - toNumber(cpmList.find((j) => j.level === i - stepLevel())?.multiplier);
     }
   }
   return cpmList.sort((a, b) => a.level - b.level);
@@ -50,7 +51,7 @@ export const calculateCPM = (cpmList: DynamicObj<number>, min: number, max: numb
     cpm.multiplier = v;
 
     if (level > 1) {
-      const cpmLow = toNumber(cpmList[level - 0.5]);
+      const cpmLow = toNumber(cpmList[level - stepLevel()]);
       const cpmHeight = toNumber(cpmList[level]);
       cpm.step = Math.max(0, cpmHeight - cpmLow);
     }

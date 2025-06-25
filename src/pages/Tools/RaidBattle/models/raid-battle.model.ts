@@ -4,6 +4,11 @@ import {
   IPokemonData,
   IPokemonMoveData,
 } from '../../../../core/models/pokemon.model';
+import { IStatsIV, StatsIV } from '../../../../core/models/stats.model';
+import { PokemonType } from '../../../../enums/type.enum';
+import { minLevel } from '../../../../utils/helpers/context.helpers';
+import { SortDirectionType } from '../../../Sheets/DpsTdo/enums/column-select-type.enum';
+import { SortType } from '../enums/raid-state.enum';
 
 export interface ITrainerBattle {
   pokemons: PokemonRaidModel[];
@@ -101,5 +106,65 @@ export class MovePokemon implements IMovePokemon {
     const obj = new MovePokemon();
     Object.assign(obj, value);
     return obj;
+  }
+}
+
+interface IRaidOption {
+  isWeatherBoss: boolean;
+  isWeatherCounter: boolean;
+  isReleased: boolean;
+  enableTimeAllow: boolean;
+}
+
+export class RaidOption implements IRaidOption {
+  isWeatherBoss = false;
+  isWeatherCounter = false;
+  isReleased = false;
+  enableTimeAllow = false;
+
+  constructor({ ...props }: IRaidOption) {
+    Object.assign(this, props);
+  }
+}
+
+interface IFilterGroup {
+  level: number;
+  pokemonType: PokemonType;
+  iv: IStatsIV;
+  onlyShadow: boolean;
+  onlyMega: boolean;
+  onlyReleasedGO: boolean;
+  sortBy: SortType;
+  sorted: SortDirectionType;
+}
+
+export class FilterGroup implements IFilterGroup {
+  level = minLevel();
+  pokemonType = PokemonType.Normal;
+  iv = new StatsIV();
+  onlyShadow = false;
+  onlyMega = false;
+  onlyReleasedGO = false;
+  sortBy = SortType.DPS;
+  sorted = SortDirectionType.ASC;
+
+  static create(value: IFilterGroup) {
+    const obj = new FilterGroup();
+    Object.assign(obj, value);
+    return obj;
+  }
+}
+
+interface IFilter {
+  used: IFilterGroup;
+  selected: IFilterGroup;
+}
+
+export class Filter implements IFilter {
+  used = new FilterGroup();
+  selected = new FilterGroup();
+
+  constructor({ ...props }: IFilter) {
+    Object.assign(this, props);
   }
 }
