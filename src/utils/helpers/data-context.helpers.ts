@@ -19,7 +19,7 @@ export const updateCurrentDataCombats = (newData: ICombat[]) => {
 export const getData = () => currentData;
 
 // Pokemons
-export const getDataPokemons = () => currentData.pokemons || [];
+export const getDataPokemons = () => currentData.pokemons?.filter((pokemon) => pokemon.num > 0) || [];
 
 // Combats
 export const getDataCombats = () => currentData.combats || [];

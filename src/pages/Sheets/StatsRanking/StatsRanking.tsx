@@ -282,9 +282,9 @@ const StatsRanking = () => {
     );
   };
 
-  const mappingData = (pokemon: IPokemonData[]) => {
+  const mappingData = () => {
     const result: IPokemonStatsRanking[] = [];
-    pokemon.forEach((data) => {
+    pokemons.forEach((data) => {
       const details = getPokemonDetails(data.num, data.fullName, data.pokemonType, true);
       if (isSpecialFormType(data.pokemonType)) {
         details.pokemonType = PokemonType.Normal;
@@ -450,8 +450,7 @@ const StatsRanking = () => {
       stats?.stamina?.ranking &&
       stats?.statProd?.ranking
     ) {
-      const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
-      const mapping = mappingData(pokemon);
+      const mapping = mappingData();
       const pokemonList = sortRanking(mapping, sortId);
       setPokemonList(pokemonList);
       setPokemonFilter(pokemonList);

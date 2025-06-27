@@ -965,7 +965,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
   });
 };
 
-export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel): ICombat[] => {
+export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel) => {
   const moves = extractBasicMoves(data);
   const sequence = extractMoveSequences(data);
   const moveSet = processCombatMoves(data, moves, sequence);
@@ -1138,7 +1138,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel):
     result.staminaLossScalar = move.staminaLossScalar;
   }
 
-  function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEffectiveModel) {
+  function processSpecialMoves(data: PokemonDataGM[], moveSet: ICombat[], types: ITypeEffectiveModel) {
     const result = [...moveSet];
 
     moveSet
