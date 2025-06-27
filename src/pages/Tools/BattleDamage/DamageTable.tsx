@@ -13,7 +13,7 @@ import { LabelDamage } from '../../../core/models/damage.model';
 import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { PokemonType } from '../../../enums/type.enum';
 import { EffectiveType } from '../../../components/Effective/enums/type-effective.enum';
-import { getThrowCharge } from '../../../utils/helpers/context.helpers';
+import { getThrowCharge } from '../../../utils/helpers/options-context.helpers';
 
 const DamageTable = (props: IDamageTableComponent) => {
   const setLabelDamage = (amount: EffectiveType) =>

@@ -42,7 +42,7 @@ import { debounce } from 'lodash';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
-import { counterDelay } from '../../../utils/helpers/context.helpers';
+import { counterDelay } from '../../../utils/helpers/options-context.helpers';
 
 const customStyles: TableStyles = {
   head: {

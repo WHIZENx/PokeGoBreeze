@@ -5,7 +5,7 @@ import APIService from '../services/api.service';
 import { BattleLeagueCPType, BattleLeagueIconType, FormType } from './enums/compute.enum';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from './extension';
-import { formGmax, formMega, formNormal } from './helpers/context.helpers';
+import { formGmax, formMega, formNormal } from './helpers/options-context.helpers';
 import { IStyleData } from './models/util.model';
 
 export const priorityBadge = (priority: number) => {

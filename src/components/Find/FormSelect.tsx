@@ -37,7 +37,7 @@ import { SearchingActions } from '../../store/actions';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
-import { formNormal } from '../../utils/helpers/context.helpers';
+import { formNormal } from '../../utils/helpers/options-context.helpers';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;

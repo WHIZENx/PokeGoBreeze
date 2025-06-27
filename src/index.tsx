@@ -19,7 +19,7 @@ import RouterSync from './utils/hooks/RouterSync';
 import LoadingPersist from './components/Sprites/Loading/LoadingPersist';
 import { TypeTheme } from './enums/type.enum';
 import { LocalStorageConfig } from './store/constants/local-storage';
-import { lightThemeBg, darkThemeBg } from './utils/helpers/context.helpers';
+import { lightThemeBg, darkThemeBg } from './utils/helpers/options-context.helpers';
 
 const { store, persistor } = configureStore();
 

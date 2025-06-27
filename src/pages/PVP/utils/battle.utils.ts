@@ -3,7 +3,7 @@ import { TypeAction } from '../../../enums/type.enum';
 import { calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { findStabType } from '../../../utils/compute';
 import { isNotEmpty, toNumber } from '../../../utils/extension';
-import { battleStab, defaultSize, minLevel } from '../../../utils/helpers/context.helpers';
+import { battleStab, defaultSize, minLevel } from '../../../utils/helpers/options-context.helpers';
 import { getDmgMultiplyBonus } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';
 import { IPokemonBattleData, ITimeline, TimelineConfig, TimelineModel } from '../models/battle.model';

@@ -55,7 +55,7 @@ import { ItemName } from '../../../pages/News/enums/item-type.enum';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { APIUrl } from '../../../services/constants';
-import { formNormal, formStandard } from '../../../utils/helpers/context.helpers';
+import { formNormal, formStandard } from '../../../utils/helpers/options-context.helpers';
 
 interface IPokemonEvo {
   prev?: string;

@@ -52,7 +52,7 @@ import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName }
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
-import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/context.helpers';
+import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
 
 const FindBattle = () => {
   useTitle({

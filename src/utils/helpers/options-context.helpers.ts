@@ -85,11 +85,13 @@ export const getMultiplyFriendship = (level = 1) => currentOptions.trainerFriend
 
 // Type settings
 export const getTypes = () =>
-  isNotEmpty(currentOptions.types) ? currentOptions.types : getValuesObj(new TypeModel(), 1);
+  isNotEmpty(currentOptions.types) ? currentOptions.types : (getValuesObj(new TypeModel(), 1) as unknown as string[]);
 
 // Weather types
 export const getWeatherTypes = () =>
-  isNotEmpty(currentOptions.weatherTypes) ? currentOptions.weatherTypes : getValuesObj(new WeatherBoost(), 1);
+  isNotEmpty(currentOptions.weatherTypes)
+    ? currentOptions.weatherTypes
+    : (getValuesObj(new WeatherBoost(), 1) as unknown as string[]);
 
 // Type effective
 export const getTypeEffective = () => currentOptions.typeEffective;

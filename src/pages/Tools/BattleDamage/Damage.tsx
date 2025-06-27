@@ -25,7 +25,7 @@ import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { combineClasses, DynamicObj, getValueOrDefault, padding, toNumber } from '../../../utils/extension';
 import { PokemonType, ThrowType, TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
-import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/context.helpers';
+import { getMultiplyFriendship, getThrowCharge, maxIv } from '../../../utils/helpers/options-context.helpers';
 
 const labels: DynamicObj<ILabelDamage> = {
   0: LabelDamage.create({

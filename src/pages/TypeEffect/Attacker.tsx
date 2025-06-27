@@ -7,7 +7,7 @@ import { ITypeEffComponent } from '../models/page.model';
 import { ITypeModel, TypeModel } from '../../core/models/type.model';
 import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
 import { DynamicObj, getValueOrDefault } from '../../utils/extension';
-import { getTypes } from '../../utils/helpers/context.helpers';
+import { getTypes } from '../../utils/helpers/options-context.helpers';
 
 const Attacker = (prop: ITypeEffComponent) => {
   const [currentType, setCurrentType] = useState(

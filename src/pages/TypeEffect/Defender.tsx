@@ -7,7 +7,7 @@ import { ITypeEffComponent } from '../models/page.model';
 import { DynamicObj, getValueOrDefault, isEmpty } from '../../utils/extension';
 import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
-import { getTypes } from '../../utils/helpers/context.helpers';
+import { getTypes } from '../../utils/helpers/options-context.helpers';
 
 const Defender = (prop: ITypeEffComponent) => {
   const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();

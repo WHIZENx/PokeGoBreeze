@@ -16,7 +16,7 @@ import { combineClasses, isEqual, isInclude, isNotEmpty, toNumber } from '../../
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
-import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/context.helpers';
+import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
 
 const Search = () => {
   useTitle({

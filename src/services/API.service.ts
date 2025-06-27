@@ -19,7 +19,7 @@ import {
   formPrimal,
   formStandard,
   pathAssetPokeGo,
-} from '../utils/helpers/context.helpers';
+} from '../utils/helpers/options-context.helpers';
 
 class APIService {
   date: Date;

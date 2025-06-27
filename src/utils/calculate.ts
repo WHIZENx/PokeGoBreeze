@@ -108,7 +108,7 @@ import {
   stepLevel,
   getTypeEffective as getTypeEffectiveScalar,
   getWeatherBoost,
-} from './helpers/context.helpers';
+} from './helpers/options-context.helpers';
 
 const weatherMultiple = (weather: string | undefined, type: string | undefined) =>
   (getWeatherBoost() as unknown as DynamicObj<string[]>)[camelCase(weather)]?.find((item) =>

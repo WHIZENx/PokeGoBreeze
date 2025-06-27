@@ -77,7 +77,7 @@ import {
   formStandard,
   maxIv,
   minIv,
-} from './helpers/context.helpers';
+} from './helpers/options-context.helpers';
 
 class Mask {
   value: number;

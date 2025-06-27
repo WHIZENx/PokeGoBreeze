@@ -18,7 +18,7 @@ import {
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
-import { formNormal } from '../../../utils/helpers/context.helpers';
+import { formNormal } from '../../../utils/helpers/options-context.helpers';
 
 const FromChange = (props: IFromChangeComponent) => {
   const assets = useSelector((state: StoreState) => state.store.data.assets);

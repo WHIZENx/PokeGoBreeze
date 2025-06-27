@@ -1,6 +1,6 @@
 // Some React component
 import { useEffect } from 'react';
-import { updateCurrentOptions } from '../helpers/context.helpers';
+import { updateCurrentOptions } from '../helpers/options-context.helpers';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../../store/models/state.model';
 import { defaultOptions } from '../../contexts/options.context';

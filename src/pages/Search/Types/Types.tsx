@@ -31,7 +31,7 @@ import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDat
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { getTypes } from '../../../utils/helpers/context.helpers';
+import { getTypes } from '../../../utils/helpers/options-context.helpers';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());

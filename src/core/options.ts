@@ -105,7 +105,7 @@ import {
   minLevel,
   pathAssetPokeGo,
   stepLevel,
-} from '../utils/helpers/context.helpers';
+} from '../utils/helpers/options-context.helpers';
 import { IWeatherBoost } from './models/weather-boost.model';
 import { PokemonTypeBadge } from './enums/pokemon-type.enum';
 

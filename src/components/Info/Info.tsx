@@ -9,7 +9,7 @@ import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { DynamicObj, isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { getMultiplyTypeEffect } from '../../utils/utils';
-import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/context.helpers';
+import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
 const Info = () => {
   const formTypes = useSelector((state: SearchingState) => state.searching.mainSearching?.form?.form?.types);

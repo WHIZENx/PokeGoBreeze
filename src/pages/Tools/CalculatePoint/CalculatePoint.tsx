@@ -32,7 +32,7 @@ import {
 } from '../../../utils/extension';
 import { BreakPointAtk, BreakPointDef, BulkPointDef, ColorTone } from './models/calculate-point.model';
 import { Color } from '../../../core/models/candy.model';
-import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/helpers/context.helpers';
+import { minLevel, maxLevel, minIv, maxIv, stepLevel } from '../../../utils/helpers/options-context.helpers';
 
 const CalculatePoint = () => {
   useTitle({

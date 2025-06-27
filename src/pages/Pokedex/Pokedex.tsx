@@ -40,7 +40,7 @@ import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
-import { getTypes, transitionTime } from '../../utils/helpers/context.helpers';
+import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {

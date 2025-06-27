@@ -103,7 +103,7 @@ import {
   minIv,
   minLevel,
   stepLevel,
-} from '../../../utils/helpers/context.helpers';
+} from '../../../utils/helpers/options-context.helpers';
 
 interface OptionsBattle {
   showTap: boolean;

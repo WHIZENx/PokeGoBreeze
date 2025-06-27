@@ -31,7 +31,7 @@ import { SpinnerActions, StatsActions, StoreActions, TimestampActions } from '..
 import { DynamicObj, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../utils/extension';
 import { TimestampModel } from '../reducers/timestamp.reducer';
 import { IDataModel } from '../models/store.model';
-import { minIv, maxIv } from '../../utils/helpers/context.helpers';
+import { minIv, maxIv } from '../../utils/helpers/options-context.helpers';
 
 interface Timestamp {
   isCurrentVersion: boolean;

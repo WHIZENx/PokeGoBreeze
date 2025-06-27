@@ -53,7 +53,8 @@ import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
 import optionsObserver from './utils/hooks/optionsObserver';
-import { loadDataDelay, transitionTime } from './utils/helpers/context.helpers';
+import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
+import { DataContext, defaultData } from './contexts/data.context';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -224,9 +225,11 @@ export default function Main() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <ErrorBoundary>
-          <OptionsContext.Provider value={defaultOptions}>
-            <App />
-          </OptionsContext.Provider>
+          <DataContext.Provider value={defaultData}>
+            <OptionsContext.Provider value={defaultOptions}>
+              <App />
+            </OptionsContext.Provider>
+          </DataContext.Provider>
         </ErrorBoundary>
       </ThemeProvider>
     </ColorModeContext.Provider>

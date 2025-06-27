@@ -6,7 +6,7 @@ import Defender from './Defender';
 
 import './TypeEffect.scss';
 import { useTitle } from '../../utils/hooks/useTitle';
-import { getTypeEffective } from '../../utils/helpers/context.helpers';
+import { getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
 const TypeEffect = () => {
   useTitle({

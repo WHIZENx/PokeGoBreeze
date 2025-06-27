@@ -5,7 +5,7 @@ import Effect from './Effect';
 
 import './Weather.scss';
 import { useTitle } from '../../utils/hooks/useTitle';
-import { getTypeEffective, getWeatherBoost } from '../../utils/helpers/context.helpers';
+import { getTypeEffective, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
 
 const Weather = () => {
   useTitle({
