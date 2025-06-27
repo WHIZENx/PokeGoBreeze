@@ -292,8 +292,6 @@ const Counter = (props: ICounterComponent) => {
         if (props.pokemonData) {
           result = counterPokemon(
             data.pokemons,
-            data.typeEff,
-            data.weatherBoost,
             toNumber(props.pokemonData.statsGO?.def),
             props.pokemonData.types,
             data.combats

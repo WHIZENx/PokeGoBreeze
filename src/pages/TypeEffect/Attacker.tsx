@@ -1,24 +1,24 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import TypeEffective from '../../components/Effective/TypeEffective';
+import TypeEffectiveComponent from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../utils/utils';
-import { ITypeEffChart, TypeEff, TypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEffectiveChart, TypeEffectiveModel, TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeEffComponent } from '../models/page.model';
-import { PokemonTypeBadge, TypeModel, TypeMultiply } from '../../core/models/type.model';
-import { DynamicObj, getValueOrDefault, isEqual } from '../../utils/extension';
+import { ITypeModel, TypeModel } from '../../core/models/type.model';
+import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
+import { DynamicObj, getValueOrDefault } from '../../utils/extension';
+import { getTypes } from '../../utils/helpers/context.helpers';
 
 const Attacker = (prop: ITypeEffComponent) => {
-  const [types, setTypes] = useState<string[]>([]);
-
   const [currentType, setCurrentType] = useState(
     getValueOrDefault(String, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase())
   );
   const [showType, setShowType] = useState(false);
 
-  const [typeEffective, setTypeEffective] = useState<ITypeEffChart>();
+  const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();
 
   const getTypeEffective = useCallback(() => {
-    const data = TypeEffChart.create({
+    const data = TypeEffectiveChart.create({
       veryWeak: [],
       weak: [],
       superResist: [],
@@ -27,16 +27,14 @@ const Attacker = (prop: ITypeEffComponent) => {
       neutral: [],
     });
     Object.entries(
-      ((prop.types ?? new TypeEff()) as unknown as DynamicObj<TypeMultiply>)[currentType] ?? new TypeModel()
+      ((prop.types ?? new TypeEffectiveModel()) as unknown as DynamicObj<ITypeModel>)[currentType] ?? new TypeModel()
     ).forEach(([key, value]: [string, number]) => getMultiplyTypeEffect(data, value, key));
     setTypeEffective(data);
   }, [currentType, prop.types]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? new TypeEff()).filter((item) => !isEqual(item, currentType));
-    setTypes(results);
     getTypeEffective();
-  }, [currentType, getTypeEffective, prop.types]);
+  }, [currentType, getTypeEffective]);
 
   const changeType = (value: string) => {
     setShowType(false);
@@ -68,7 +66,7 @@ const Attacker = (prop: ITypeEffComponent) => {
                 {showType && (
                   <div className="result-type">
                     <ul>
-                      {types.map((value, index) => (
+                      {getTypes().map((value, index) => (
                         <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>
                           <CardType value={capitalize(value)} />
                         </li>
@@ -81,7 +79,7 @@ const Attacker = (prop: ITypeEffComponent) => {
           </div>
         </div>
       </div>
-      <TypeEffective typeEffective={typeEffective} />
+      <TypeEffectiveComponent typeEffective={typeEffective} />
     </div>
   );
 };

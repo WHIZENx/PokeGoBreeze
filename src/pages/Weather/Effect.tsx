@@ -3,10 +3,10 @@ import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
 import { capitalize, getKeyWithData } from '../../utils/utils';
 import { IWeatherEffComponent } from '../models/page.model';
-import { TypeEff } from '../../core/models/type-eff.model';
-import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { TypeEffectiveModel } from '../../core/models/type-effective.model';
+import { WeatherBoost } from '../../core/models/weather-boost.model';
 import { isEmpty, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
-import { PokemonTypeBadge } from '../../core/models/type.model';
+import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
 
 const Effect = (prop: IWeatherEffComponent) => {
@@ -36,7 +36,7 @@ const Effect = (prop: IWeatherEffComponent) => {
   }, [currentTypePri, currentTypeSec, prop.weathers]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? new TypeEff()).filter(
+    const results = Object.keys(prop.types ?? new TypeEffectiveModel()).filter(
       (item) => !isEqual(item, currentTypePri) && !isEqual(item, currentTypeSec)
     );
     setTypes(results);

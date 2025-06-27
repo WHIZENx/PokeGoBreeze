@@ -3,7 +3,7 @@ import CardWeather from '../../components/Card/CardWeather';
 import WeatherEffective from '../../components/Effective/WeatherEffective';
 import { splitAndCapitalize } from '../../utils/utils';
 import { IWeatherAffComponent } from '../models/page.model';
-import { WeatherBoost } from '../../core/models/weatherBoost.model';
+import { WeatherBoost } from '../../core/models/weather-boost.model';
 import { DynamicObj, getPropertyName, isEqual } from '../../utils/extension';
 
 const Affect = (prop: IWeatherAffComponent) => {

@@ -19,7 +19,7 @@ import StatsTable from './StatsDamageTable';
 import Move from '../../../components/Table/Move';
 import { findStabType } from '../../../utils/compute';
 import { useSelector } from 'react-redux';
-import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { BattleState, ILabelDamage, LabelDamage, PokemonDmgOption } from '../../../core/models/damage.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -82,7 +82,6 @@ const Damage = () => {
       'battle strategy',
     ],
   });
-  const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [move, setMove] = useState<ICombat>();
@@ -165,7 +164,7 @@ const Damage = () => {
           isTrainer: battleState.isTrainer,
           friendshipLevel: enableFriend ? battleState.friendshipLevel : 0,
           throwLevel: battleState.throwLevel,
-          effective: getTypeEffective(typeEff, move.type, searching?.object?.form?.form?.types),
+          effective: getTypeEffective(move.type, searching?.object?.form?.form?.types),
         });
         setResult((r) =>
           PokemonDmgOption.create({

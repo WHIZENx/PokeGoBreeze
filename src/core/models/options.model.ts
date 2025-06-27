@@ -6,6 +6,8 @@ import { Cost, IBonusEffect } from './combat.model';
 import { LeagueReward, SettingLeague } from './league.model';
 import { PokemonDataModel } from './pokemon.model';
 import { IStatsPokemonGO, StatsPokemonGO } from './stats.model';
+import { ITypeEffectiveModel, TypeEffectiveModel } from './type-effective.model';
+import { IWeatherBoost, WeatherBoost } from './weather-boost.model';
 
 interface CombatSetting {
   sameTypeAttackBonusMultiplier: number;
@@ -724,6 +726,10 @@ export interface IOptions {
   throwCharge: IThrowOption;
   buddyFriendship: DynamicObj<IBuddyFriendship>;
   trainerFriendship: DynamicObj<ITrainerFriendship>;
+  types: string[];
+  weatherTypes: string[];
+  typeEffective: ITypeEffectiveModel;
+  weatherBoost: IWeatherBoost;
   config: IConfig;
 }
 
@@ -734,5 +740,9 @@ export class Options implements IOptions {
   throwCharge = new ThrowOption();
   buddyFriendship: DynamicObj<IBuddyFriendship> = {};
   trainerFriendship: DynamicObj<ITrainerFriendship> = {};
+  types: string[] = [];
+  weatherTypes: string[] = [];
+  typeEffective = new TypeEffectiveModel();
+  weatherBoost = new WeatherBoost();
   config = new Config();
 }

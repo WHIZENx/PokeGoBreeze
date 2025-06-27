@@ -24,6 +24,7 @@ import { ISticker, Sticker } from './models/sticker.model';
 import pokemonStoreData from '../data/pokemon.json';
 import textEng from '../data/text_english.json';
 import {
+  camelCase,
   capitalize,
   checkMoveSetAvailable,
   convertPokemonDataName,
@@ -39,7 +40,6 @@ import {
   replaceTempMoveName,
   splitAndCapitalize,
 } from '../utils/utils';
-import { ITypeSet, PokemonTypeBadge, TypeSet } from './models/type.model';
 import { BuffType, MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import {
   Encounter,
@@ -51,7 +51,7 @@ import {
   PokemonGenderRatio,
   StatsGO,
 } from './models/pokemon.model';
-import { ITypeEff } from './models/type-eff.model';
+import { ITypeEffectiveModel, TypeEffectiveModel } from './models/type-effective.model';
 import { versionList } from '../utils/constants';
 import { APIUrl } from '../services/constants';
 import {
@@ -106,8 +106,15 @@ import {
   pathAssetPokeGo,
   stepLevel,
 } from '../utils/helpers/context.helpers';
+import { IWeatherBoost } from './models/weather-boost.model';
+import { PokemonTypeBadge } from './enums/pokemon-type.enum';
 
-export const optionSettings = (data: PokemonDataGM[], settings = new Options()): Options => {
+export const optionSettings = (
+  data: PokemonDataGM[],
+  typeEffective: ITypeEffectiveModel,
+  weatherBoost: IWeatherBoost,
+  settings = new Options()
+): Options => {
   data.forEach((item) => {
     const templateHandlers: Record<string, (item: PokemonDataGM) => void> = {
       [TemplateId.PlayerSetting]: handlePlayerSettings,
@@ -127,6 +134,10 @@ export const optionSettings = (data: PokemonDataGM[], settings = new Options()):
     }
   });
 
+  settings.typeEffective = typeEffective;
+  settings.weatherBoost = weatherBoost;
+  settings.weatherTypes = Object.keys(weatherBoost);
+  settings.types = Object.keys(typeEffective);
   return settings;
 
   function handlePlayerSettings(item: PokemonDataGM) {
@@ -212,17 +223,30 @@ export const optionPokeImg = (data: APITree) => processAssetData(data, '.png');
 export const optionPokeSound = (data: APITree) => processAssetData(data, '.wav');
 
 export const optionPokemonTypes = (data: PokemonDataGM[]) => {
-  const types = new TypeSet() as unknown as DynamicObj<DynamicObj<number>>;
+  const types = new TypeEffectiveModel() as unknown as DynamicObj<DynamicObj<number>>;
   const typeSet = Object.keys(types);
   data
     .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId))
     .forEach((item) => {
       const rootType = item.templateId.replace(`${PokemonConfig.Type}_`, '');
       typeSet.forEach((type, index) => {
-        types[rootType][type] = item.data.typeEffective.attackScalar[index];
+        types[camelCase(rootType)][camelCase(type)] = item.data.typeEffective.attackScalar[index];
       });
     });
-  return types as unknown as ITypeSet;
+  return types as unknown as ITypeEffectiveModel;
+};
+
+export const optionPokemonWeather = (data: PokemonDataGM[]) => {
+  const weather = new Object() as DynamicObj<string[]>;
+  data
+    .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
+    .forEach((item) => {
+      const rootType = item.data.weatherAffinities.weatherCondition;
+      weather[camelCase(rootType)] = item.data.weatherAffinities.pokemonType.map((type) =>
+        type.replace(`${PokemonConfig.Type}_`, '').toLowerCase()
+      );
+    });
+  return weather as unknown as IWeatherBoost;
 };
 
 const optionFormNoneSpecial = (data: PokemonDataGM[], result: string[] = []) => {
@@ -712,19 +736,6 @@ const addPokemonGMaxMove = (data: PokemonDataGM[], result: IPokemonData[]) => {
     });
 };
 
-export const optionPokemonWeather = (data: PokemonDataGM[]) => {
-  const weather = new Object() as DynamicObj<string[]>;
-  data
-    .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
-    .forEach((item) => {
-      const rootType = item.data.weatherAffinities.weatherCondition;
-      weather[rootType] = item.data.weatherAffinities.pokemonType.map((type) =>
-        type.replace(`${PokemonConfig.Type}_`, '')
-      );
-    });
-  return weather;
-};
-
 const checkDefaultStats = (data: PokemonDataGM[], pokemon: PokemonDataGM) => {
   const id = toNumber(getValueOrDefault(Array, pokemon.templateId.match(/\d{4}/g))[0]);
   const defaultPokemon = data.find(
@@ -954,7 +965,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
   });
 };
 
-export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] => {
+export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel): ICombat[] => {
   const moves = extractBasicMoves(data);
   const sequence = extractMoveSequences(data);
   const moveSet = processCombatMoves(data, moves, sequence);
@@ -1127,7 +1138,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEff): ICombat[] 
     result.staminaLossScalar = move.staminaLossScalar;
   }
 
-  function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEff) {
+  function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEffectiveModel) {
     const result = [...moveSet];
 
     moveSet

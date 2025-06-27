@@ -39,7 +39,7 @@ import {
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { MoveType, PokemonClass, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import { ISelectMoveModel, SelectMoveModel } from '../components/Input/models/select-move.model';
-import { TypeEffChart } from '../core/models/type-eff.model';
+import { TypeEffectiveChart } from '../core/models/type-effective.model';
 import { EffectiveType } from '../components/Effective/enums/type-effective.enum';
 import { ItemTicketRewardType, TicketRewardType } from '../core/enums/information.enum';
 import {
@@ -191,6 +191,19 @@ export const HundoRate = styled(Rating)(() => ({
     color: 'red',
   },
 }));
+
+export const camelCase = (str: string | undefined | null, defaultText = '') => {
+  if (isNullOrUndefined(str)) {
+    return defaultText;
+  }
+
+  const words = str
+    .replace(/[-_\s]+/g, ' ')
+    .trim()
+    .split(' ');
+
+  return words.map((word, index) => (index === 0 ? word.toLowerCase() : capitalize(word))).join('');
+};
 
 export const capitalize = (str: string | undefined | null, defaultText = '') =>
   getValueOrDefault(String, str?.charAt(0).toUpperCase()) +
@@ -700,10 +713,10 @@ export const getKeysObj = (data: object) =>
     .map((v) => getValueOrDefault<string>(String, v.toString()))
     .filter((_, i) => i < Object.values(data).length / 2);
 
-export const getValuesObj = <T extends object>(data: T) =>
+export const getValuesObj = <T extends object>(data: T, divide = 2) =>
   Object.keys(data)
     .map((v) => v as unknown as T)
-    .filter((_, i) => i < Object.keys(data).length / 2);
+    .filter((_, i) => i < Object.keys(data).length / divide);
 
 export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   if (!pokemon) {
@@ -1243,7 +1256,7 @@ export const generateParamForm = (form: string | undefined, pokemonType = Pokemo
   return '';
 };
 
-export const getMultiplyTypeEffect = (data: TypeEffChart, valueEffective: number, key: string) => {
+export const getMultiplyTypeEffect = (data: TypeEffectiveChart, valueEffective: number, key: string) => {
   if (valueEffective >= EffectiveType.VeryWeakness && !isIncludeList(data.veryWeak, key)) {
     data.veryWeak?.push(key);
   } else if (valueEffective >= EffectiveType.Weakness && !isIncludeList(data.weak, key)) {

@@ -22,7 +22,7 @@ import {
   IStatsRankSta,
   IStatsRankProd,
 } from '../../core/models/stats.model';
-import { ITypeEffChart } from '../../core/models/type-eff.model';
+import { ITypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ISelectMoveModel, ISelectMovePokemonModel } from '../Input/models/select-move.model';
 import { IPokemonDetail, IPokemonDetailInfo } from '../../core/models/API/info.model';
 import { InputType, SelectPosition } from '../Input/enums/input-type.enum';
@@ -85,7 +85,7 @@ export interface ICardWeatherComponent {
 }
 
 export interface ITypeEffectiveComponent {
-  typeEffective: ITypeEffChart | undefined;
+  typeEffective: ITypeEffectiveChart | undefined;
 }
 
 export interface ITypeEffectiveSelectComponent {

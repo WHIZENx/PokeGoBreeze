@@ -31,6 +31,7 @@ import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDat
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
+import { getTypes } from '../../../utils/helpers/context.helpers';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -204,7 +205,6 @@ class PokemonTypeData implements IPokemonTypeData {
 const SearchTypes = (props: IStyleSheetData) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
   const data = useSelector((state: StoreState) => state.store.data);
-  const [typeList, setTypeList] = useState<string[]>([]);
 
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -254,14 +254,10 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [releasedGO, data.combats, data.pokemons]);
 
   useEffect(() => {
-    setTypeList(Object.keys(data.typeEff));
-  }, [data.typeEff]);
-
-  useEffect(() => {
-    if (isNotEmpty(typeList) && !currentType) {
-      setCurrentType(typeList[0]);
+    if (isNotEmpty(getTypes()) && !currentType) {
+      setCurrentType(getTypes()[0]);
     }
-  }, [typeList, currentType]);
+  }, [currentType]);
 
   useEffect(() => {
     if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
@@ -303,7 +299,7 @@ const SearchTypes = (props: IStyleSheetData) => {
             {showType && (
               <div className="result-type">
                 <ul>
-                  {Object.keys(data.typeEff)
+                  {getTypes()
                     .filter((value) => !isEqual(value, currentType))
                     .map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeType(value)}>

@@ -4,9 +4,8 @@ import Affect from './Affect';
 import Effect from './Effect';
 
 import './Weather.scss';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
 import { useTitle } from '../../utils/hooks/useTitle';
+import { getTypeEffective, getWeatherBoost } from '../../utils/helpers/context.helpers';
 
 const Weather = () => {
   useTitle({
@@ -15,17 +14,15 @@ const Weather = () => {
       'Learn about weather effects and Pokémon type boosts in Pokémon GO. Discover which Pokémon types are boosted under different weather conditions.',
     keywords: ['weather boosts', 'Pokémon GO weather', 'type boosts', 'weather effects'],
   });
-  const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
-  const weatherBoosts = useSelector((state: StoreState) => state.store.data.weatherBoost);
 
   return (
     <div className="container mt-2">
       <div className="container w-75">
-        <Affect weathers={weatherBoosts} />
+        <Affect weathers={getWeatherBoost()} />
       </div>
       <hr className="my-3" />
       <div className="container w-75">
-        <Effect weathers={weatherBoosts} types={typeEffective} />
+        <Effect weathers={getWeatherBoost()} types={getTypeEffective()} />
       </div>
     </div>
   );

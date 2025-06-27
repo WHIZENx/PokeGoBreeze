@@ -1,6 +1,5 @@
 import { ICombat } from '../../../core/models/combat.model';
 import { TypeAction } from '../../../enums/type.enum';
-import { IDataModel } from '../../../store/models/store.model';
 import { calculateStatsBattle, getTypeEffective } from '../../../utils/calculate';
 import { findStabType } from '../../../utils/compute';
 import { isNotEmpty, toNumber } from '../../../utils/extension';
@@ -50,7 +49,6 @@ export const updateState = (timeline: ITimeline[], value: TimelineConfig) => {
 };
 
 export const calculateMoveDmgActual = (
-  dataStore: IDataModel,
   pokemon: IPokemonBattleData,
   pokemonOpponent: IPokemonBattleData,
   move: ICombat | undefined
@@ -73,7 +71,7 @@ export const calculateMoveDmgActual = (
         move.pvpPower *
         (findStabType(pokemon.pokemon?.types, move.type) ? battleStab() : 1) *
         getDmgMultiplyBonus(pokemon.pokemonType, TypeAction.Atk) *
-        getTypeEffective(dataStore.typeEff, move.type, pokemonOpponent.pokemon?.types)) /
+        getTypeEffective(move.type, pokemonOpponent.pokemon?.types)) /
       (defPokemonOpponent * getDmgMultiplyBonus(pokemonOpponent.pokemonType, TypeAction.Def))
     );
   }

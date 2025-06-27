@@ -5,7 +5,7 @@ import { getValueOrDefault, isEqual, isInclude } from '../utils/extension';
 import { EqualMode, IncludeMode } from '../utils/enums/string.enum';
 import { ItemEvolutionRequireType, ItemLureRequireType } from '../core/enums/option.enum';
 import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../utils/utils';
-import { PokemonTypeBadge } from '../core/models/type.model';
+import { PokemonTypeBadge } from '../core/enums/pokemon-type.enum';
 import { ScoreType } from '../utils/enums/constants.enum';
 import {
   defaultSpriteName,

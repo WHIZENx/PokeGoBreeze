@@ -176,7 +176,7 @@ const Battle = () => {
     resetTimeline();
     clearInterval(timelineInterval);
 
-    const battle = BattlePVP.create(pokemonCurr, pokemonObj, dataStore);
+    const battle = BattlePVP.create(pokemonCurr, pokemonObj);
 
     timelineInterval = setInterval(() => {
       battle.updateBattle();

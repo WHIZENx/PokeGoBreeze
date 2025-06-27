@@ -1,18 +1,15 @@
 import React, { Fragment } from 'react';
-import { useSelector } from 'react-redux';
 import APIService from '../../services/api.service';
 import { capitalize } from '../../utils/utils';
 
 import './TypeEffectiveSelect.scss';
-import { StoreState } from '../../store/models/state.model';
-import { TypeEffChart } from '../../core/models/type-eff.model';
+import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
 import { combineClasses, isNotEmpty, toFloat } from '../../utils/extension';
 import { EffectiveType } from './enums/type-effective.enum';
+import { getTypeEffective } from '../../utils/helpers/context.helpers';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
-  const typeEffective = useSelector((state: StoreState) => state.store.data.typeEff);
-
   const renderEffective = (amount: EffectiveType, data: string[] | undefined) => (
     <Fragment>
       {isNotEmpty(data) && (
@@ -44,7 +41,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   );
 
   const getTypeEffect = (effect: EffectiveType, types: string[] | undefined) => {
-    const data = TypeEffChart.create({
+    const data = TypeEffectiveChart.create({
       veryWeak: [],
       weak: [],
       superResist: [],
@@ -53,7 +50,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
       neutral: [],
     });
     if (effect === EffectiveType.Weakness) {
-      Object.entries(typeEffective).forEach(([key, value]) => {
+      Object.entries(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
@@ -72,7 +69,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === EffectiveType.Neutral) {
-      Object.entries(typeEffective).forEach(([key, value]) => {
+      Object.entries(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];
@@ -87,7 +84,7 @@ const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
         </div>
       );
     } else if (effect === EffectiveType.Resistance) {
-      Object.entries(typeEffective).forEach(([key, value]) => {
+      Object.entries(getTypeEffective()).forEach(([key, value]) => {
         let valueEffective = 1;
         types?.forEach((type) => {
           valueEffective *= value[type.toUpperCase()];

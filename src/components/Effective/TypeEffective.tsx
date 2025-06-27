@@ -6,7 +6,7 @@ import { isNotEmpty, toFloat } from '../../utils/extension';
 import { EffectiveType } from './enums/type-effective.enum';
 import { getKeyWithData } from '../../utils/utils';
 
-const TypeEffective = (props: ITypeEffectiveComponent) => {
+const TypeEffectiveComponent = (props: ITypeEffectiveComponent) => {
   const noneSprit = () => (
     <div className="mt-2 d-flex ms-3">
       <div className="text-center" key={0}>
@@ -88,4 +88,4 @@ const TypeEffective = (props: ITypeEffectiveComponent) => {
   );
 };
 
-export default TypeEffective;
+export default TypeEffectiveComponent;

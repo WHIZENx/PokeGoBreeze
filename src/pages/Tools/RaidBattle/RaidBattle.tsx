@@ -382,8 +382,8 @@ const RaidBattle = () => {
             return;
           }
 
-          const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-          const dpsAtk = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+          const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
+          const dpsAtk = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
 
           const ttkAtk = TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk); // Time to Attacker kill Defender
           const ttkDef = TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef); // Time to Defender kill Attacker
@@ -520,8 +520,8 @@ const RaidBattle = () => {
         isStab: isWeatherBoss,
       });
 
-      const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-      const dpsAtk = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+      const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
+      const dpsAtk = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
 
       const ttkAtk = enableTimeAllow
         ? Math.min(timeAllow - timer, TimeToKill(Math.floor(toNumber(statsDefender.hp)), dpsAtk))

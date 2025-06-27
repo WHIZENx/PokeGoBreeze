@@ -20,8 +20,6 @@ import {
   StatsPokemonGO,
   IStatsPokemonGO,
 } from '../core/models/stats.model';
-import { ITypeEff } from '../core/models/type-eff.model';
-import { IWeatherBoost } from '../core/models/weatherBoost.model';
 import dataCPM from '../data/cp_multiplier.json';
 import { MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
 import { Delay, IOptionOtherDPS, OptionOtherDPS, Specific } from '../store/models/options.model';
@@ -34,6 +32,7 @@ import {
   getMoveType,
   getAllMoves,
   moveTypeToFormType,
+  camelCase,
 } from './utils';
 import {
   BattleLeagueCalculate,
@@ -68,7 +67,6 @@ import {
 } from './models/pokemon-top-move.model';
 import {
   DynamicObj,
-  getValueOrDefault,
   isEqual,
   isInclude,
   isIncludeList,
@@ -108,33 +106,25 @@ import {
   cpDiffRatio,
   minCp,
   stepLevel,
+  getTypeEffective as getTypeEffectiveScalar,
+  getWeatherBoost,
 } from './helpers/context.helpers';
 
-const weatherMultiple = (
-  weatherBoost: IWeatherBoost | undefined,
-  weather: string | undefined,
-  type: string | undefined
-) =>
-  (weatherBoost as unknown as DynamicObj<string[]>)[
-    getValueOrDefault(String, weather?.toUpperCase().replaceAll(' ', '_'))
-  ]?.find((item) => isEqual(item, type?.replaceAll(' ', '_'), EqualMode.IgnoreCaseSensitive))
+const weatherMultiple = (weather: string | undefined, type: string | undefined) =>
+  (getWeatherBoost() as unknown as DynamicObj<string[]>)[camelCase(weather)]?.find((item) =>
+    isEqual(item, camelCase(type), EqualMode.IgnoreCaseSensitive)
+  )
     ? battleStab()
     : 1;
 
-export const getTypeEffective = (
-  typeEffective: ITypeEff | undefined,
-  typeMove: string | undefined,
-  typesObj: string[] | undefined
-) => {
+export const getTypeEffective = (typeMove: string | undefined, typesObj: string[] | undefined) => {
   let valueEffective = 1;
-  if (!typeEffective) {
+  if (!getTypeEffectiveScalar()) {
     return valueEffective;
   }
-  const moveType = getValueOrDefault(String, typeMove).toUpperCase();
-  typesObj?.forEach((type) => {
-    type = getValueOrDefault(String, type).toUpperCase();
-    valueEffective *= toNumber((typeEffective as unknown as DynamicObj<DynamicObj<number>>)[moveType][type], 1);
-  });
+  const moveType = camelCase(typeMove);
+  const typeScalar = (getTypeEffectiveScalar() as unknown as DynamicObj<DynamicObj<number>>)[moveType];
+  typesObj?.forEach((type) => (valueEffective *= toNumber((typeScalar[camelCase(type)], 1))));
   return valueEffective;
 };
 
@@ -839,8 +829,6 @@ const calculateDPS = (data: ICalculateDPS, specific?: Specific) => {
 };
 
 export const calculateAvgDPS = (
-  typeEff: ITypeEff | undefined,
-  weatherBoost: IWeatherBoost | undefined,
   fMove: ICombat | undefined,
   cMove: ICombat | undefined,
   atk: number,
@@ -881,18 +869,18 @@ export const calculateAvgDPS = (
       FPow *
       FMulti *
       atkBonus *
-      weatherMultiple(weatherBoost, options.weatherBoosts, FType) *
+      weatherMultiple(options.weatherBoosts, FType) *
       multiplyLevelFriendship;
     CDmgBase =
       defaultDamageMultiply() *
       CPow *
       CMulti *
       atkBonus *
-      weatherMultiple(weatherBoost, options.weatherBoosts, CType) *
+      weatherMultiple(options.weatherBoosts, CType) *
       multiplyLevelFriendship;
 
-    const FTypeEff = getTypeEffective(typeEff, FType, options.objTypes);
-    const CTypeEff = getTypeEffective(typeEff, CType, options.objTypes);
+    const FTypeEff = getTypeEffective(FType, options.objTypes);
+    const CTypeEff = getTypeEffective(CType, options.objTypes);
 
     FDmg = Math.floor((FDmgBase * atk * FTypeEff) / options.pokemonDefObj) + defaultDamageConst();
     CDmg = Math.floor((CDmgBase * atk * CTypeEff) / options.pokemonDefObj) + defaultDamageConst();
@@ -945,12 +933,7 @@ export const calculateTDO = (def: number, hp: number, dps: number, pokemonType =
   return (hp / y) * dps;
 };
 
-export const calculateBattleDPSDefender = (
-  typeEff: ITypeEff | undefined,
-  weatherBoost: IWeatherBoost | undefined,
-  attacker: IBattleCalculate,
-  defender: IBattleCalculate
-) => {
+export const calculateBattleDPSDefender = (attacker: IBattleCalculate, defender: IBattleCalculate) => {
   const defPokemonType = defaultPokemonShadow() ? PokemonType.Shadow : defender.pokemonType;
   const atkPokemonType = defaultPokemonShadow() ? PokemonType.Shadow : attacker.pokemonType;
   const stabMultiply = battleStab();
@@ -978,16 +961,16 @@ export const calculateBattleDPSDefender = (
     FPowDef *
     FMultiDef *
     atkBonus *
-    (defender.isStab ? stabMultiply : weatherMultiple(weatherBoost, defender.weatherBoosts, FTypeDef));
+    (defender.isStab ? stabMultiply : weatherMultiple(defender.weatherBoosts, FTypeDef));
   const CDmgBaseDef =
     defaultDamageMultiply() *
     CPowDef *
     CMultiDef *
     atkBonus *
-    (defender.isStab ? stabMultiply : weatherMultiple(weatherBoost, defender.weatherBoosts, CTypeDef));
+    (defender.isStab ? stabMultiply : weatherMultiple(defender.weatherBoosts, CTypeDef));
 
-  const FTypeEff = getTypeEffective(typeEff, FTypeDef, attacker.types);
-  const CTypeEff = getTypeEffective(typeEff, CTypeDef, attacker.types);
+  const FTypeEff = getTypeEffective(FTypeDef, attacker.types);
+  const CTypeEff = getTypeEffective(CTypeDef, attacker.types);
 
   const FDmgDef =
     Math.floor((FDmgBaseDef * toNumber(defender.atk) * FTypeEff) / (attacker.def * defBonus)) + defaultDamageConst();
@@ -998,13 +981,7 @@ export const calculateBattleDPSDefender = (
   return DefDmg / defDuration;
 };
 
-export const calculateBattleDPS = (
-  typeEff: ITypeEff | undefined,
-  weatherBoost: IWeatherBoost | undefined,
-  attacker: IBattleCalculate,
-  defender: IBattleCalculate,
-  DPSDef: number
-) => {
+export const calculateBattleDPS = (attacker: IBattleCalculate, defender: IBattleCalculate, DPSDef: number) => {
   const atkPokemonType = defaultPokemonShadow() ? PokemonType.Shadow : attacker.pokemonType;
   const defPokemonType = defaultPokemonShadow() ? PokemonType.Shadow : defender.pokemonType;
   const stabMultiply = battleStab();
@@ -1030,18 +1007,18 @@ export const calculateBattleDPS = (
     FPow *
     FMulti *
     atkBonus *
-    (attacker.isStab ? stabMultiply : weatherMultiple(weatherBoost, attacker.weatherBoosts, FType)) *
+    (attacker.isStab ? stabMultiply : weatherMultiple(attacker.weatherBoosts, FType)) *
     (attacker.isPokemonFriend ? multiplyLevelFriendship : 1);
   const CDmgBase =
     defaultDamageMultiply() *
     CPow *
     CMulti *
     atkBonus *
-    (attacker.isStab ? stabMultiply : weatherMultiple(weatherBoost, attacker.weatherBoosts, CType)) *
+    (attacker.isStab ? stabMultiply : weatherMultiple(attacker.weatherBoosts, CType)) *
     (attacker.isPokemonFriend ? multiplyLevelFriendship : 1);
 
-  const FTypeEff = getTypeEffective(typeEff, FType, defender.types);
-  const CTypeEff = getTypeEffective(typeEff, CType, defender.types);
+  const FTypeEff = getTypeEffective(FType, defender.types);
+  const CTypeEff = getTypeEffective(CType, defender.types);
 
   const FDmg =
     Math.floor((FDmgBase * toNumber(attacker.atk) * FTypeEff) / (defender.def * defBonus)) + defaultDamageConst();
@@ -1080,10 +1057,10 @@ export const calculateBattleDPS = (
       CPowSec *
       CMultiSec *
       atkBonus *
-      weatherMultiple(weatherBoost, attacker.weatherBoosts, CTypeSec) *
+      weatherMultiple(attacker.weatherBoosts, CTypeSec) *
       (attacker.isPokemonFriend ? multiplyLevelFriendship : 1);
 
-    const CTypeEffSec = getTypeEffective(typeEff, CTypeSec, defender.types);
+    const CTypeEffSec = getTypeEffective(CTypeSec, defender.types);
 
     const CDmgSec =
       Math.floor((CDmgBaseSec * toNumber(attacker.atk) * CTypeEffSec) / (defender.def * defBonus)) +
@@ -1107,12 +1084,7 @@ export const calculateBattleDPS = (
 
 export const TimeToKill = (hp: number, dpsDef: number) => hp / dpsDef;
 
-export const queryTopMove = (
-  pokemonList: IPokemonData[] | undefined,
-  typeEff: ITypeEff | undefined,
-  weatherBoost: IWeatherBoost | undefined,
-  move: ICombat | undefined
-) => {
+export const queryTopMove = (pokemonList: IPokemonData[] | undefined, move: ICombat | undefined) => {
   const dataPri: IPokemonTopMove[] = [];
   if (move) {
     pokemonList?.forEach((pokemon) => {
@@ -1127,16 +1099,7 @@ export const queryTopMove = (
           const statsAtkBattle = calculateStatsBattle(stats.atk, maxIv(), defaultPokemonLevel());
           const statsDefBattle = calculateStatsBattle(stats.def, maxIv(), defaultPokemonLevel());
           const statsStaBattle = calculateStatsBattle(stats.sta, maxIv(), defaultPokemonLevel());
-          const dps = calculateAvgDPS(
-            typeEff,
-            weatherBoost,
-            move,
-            move,
-            statsAtkBattle,
-            statsDefBattle,
-            statsStaBattle,
-            pokemon.types
-          );
+          const dps = calculateAvgDPS(move, move, statsAtkBattle, statsDefBattle, statsStaBattle, pokemon.types);
           const tdo = calculateTDO(statsDefBattle, statsStaBattle, dps);
 
           dataPri.push(
@@ -1188,8 +1151,6 @@ const queryMove = (data: QueryMovesPokemon, mf: ICombat, cMove: string[], fMoveT
         const pokemonType = moveTypeToFormType(cMoveType);
 
         const offensive = calculateAvgDPS(
-          data.typeEff,
-          data.weatherBoost,
           mf,
           mc,
           statsAtkBattle,
@@ -1199,8 +1160,6 @@ const queryMove = (data: QueryMovesPokemon, mf: ICombat, cMove: string[], fMoveT
           pokemonType
         );
         const defensive = calculateAvgDPS(
-          data.typeEff,
-          data.weatherBoost,
           mf,
           mc,
           statsAtkBattle,
@@ -1218,8 +1177,6 @@ const queryMove = (data: QueryMovesPokemon, mf: ICombat, cMove: string[], fMoveT
 };
 
 export const rankMove = (
-  typeEff: ITypeEff | undefined,
-  weatherBoost: IWeatherBoost | undefined,
   combats: ICombat[],
   pokemon: Partial<IPokemonDetail> | undefined,
   atk: number | undefined,
@@ -1230,7 +1187,7 @@ export const rankMove = (
   if (!pokemon) {
     return new PokemonQueryRankMove();
   }
-  const data = new QueryMovesPokemon(typeEff, weatherBoost, combats, pokemon, atk, def, sta, types);
+  const data = new QueryMovesPokemon(combats, pokemon, atk, def, sta, types);
   const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
   const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
   setQueryMove(data, fastMoveSet, chargedMoveSet);
@@ -1447,8 +1404,6 @@ const queryMoveCounter = (data: QueryMovesCounterPokemon, mf: ICombat, cMove: st
         const pokemonType = moveTypeToFormType(cMoveType);
 
         const dpsOff = calculateAvgDPS(
-          data.typeEff,
-          data.weatherBoost,
           mf,
           mc,
           calculateStatsBattle(data.pokemon.statsGO.atk, options.ivAtk, options.pokemonLevel, true),
@@ -1477,8 +1432,6 @@ const queryMoveCounter = (data: QueryMovesCounterPokemon, mf: ICombat, cMove: st
 
 export const counterPokemon = (
   pokemonList: IPokemonData[],
-  typeEff: ITypeEff | undefined,
-  weatherBoost: IWeatherBoost | undefined,
   def: number,
   types: string[] | undefined,
   combats: ICombat[]
@@ -1490,7 +1443,7 @@ export const counterPokemon = (
       !isInclude(pokemon.fullName, '_FEMALE') &&
       !isEqual(pokemon.pokemonType, PokemonType.GMax)
     ) {
-      const data = new QueryMovesCounterPokemon(typeEff, weatherBoost, combats, pokemon, def, types, dataList);
+      const data = new QueryMovesCounterPokemon(combats, pokemon, def, types, dataList);
       const fastMoveSet = getAllMoves(pokemon, TypeMove.Fast);
       const chargedMoveSet = getAllMoves(pokemon, TypeMove.Charge);
       setQueryMoveCounter(data, fastMoveSet, chargedMoveSet);

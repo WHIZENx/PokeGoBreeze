@@ -4,7 +4,7 @@ import APIService from '../../../../services/api.service';
 import { EqualMode } from '../../../../utils/enums/string.enum';
 import { combineClasses, isEqual } from '../../../../utils/extension';
 import { capitalize, getDataWithKey } from '../../../../utils/utils';
-import { PokemonTypeBadge } from '../../../../core/models/type.model';
+import { PokemonTypeBadge } from '../../../../core/enums/pokemon-type.enum';
 
 import Bug from '../../../../assets/types/POKEMON_TYPE_BUG.png';
 import Dark from '../../../../assets/types/POKEMON_TYPE_DARK.png';

@@ -3,8 +3,8 @@ import { ISearchingModel } from '../../store/models/searching.model';
 import { IBattlePokemonData } from '../../core/models/pvp.model';
 import { IPokemonBattle } from '../PVP/models/battle.model';
 import { IPokemonDmgOption } from '../../core/models/damage.model';
-import { ITypeEff } from '../../core/models/type-eff.model';
-import { IWeatherBoost } from '../../core/models/weatherBoost.model';
+import { ITypeEffectiveModel } from '../../core/models/type-effective.model';
+import { IWeatherBoost } from '../../core/models/weather-boost.model';
 import { PokemonType } from '../../enums/type.enum';
 import { SearchOption } from '../Search/Pokemon/models/pokemon-search.model';
 import { IStyleData } from '../../utils/models/util.model';
@@ -73,7 +73,7 @@ export interface IStatsTableComponent {
 }
 
 export interface ITypeEffComponent {
-  types: ITypeEff | undefined;
+  types: ITypeEffectiveModel | undefined;
 }
 
 export interface IWeatherAffComponent {
@@ -82,5 +82,5 @@ export interface IWeatherAffComponent {
 
 export interface IWeatherEffComponent {
   weathers: IWeatherBoost | undefined;
-  types: ITypeEff | undefined;
+  types: ITypeEffectiveModel | undefined;
 }

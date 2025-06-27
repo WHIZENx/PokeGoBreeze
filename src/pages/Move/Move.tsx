@@ -47,7 +47,7 @@ import {
   toNumber,
 } from '../../utils/extension';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
-import { PokemonTypeBadge } from '../../core/models/type.model';
+import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
 import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
@@ -56,7 +56,7 @@ import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTa
 import { IMenuItem } from '../../components/models/component.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
-import { battleStab } from '../../utils/helpers/context.helpers';
+import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/context.helpers';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -190,7 +190,7 @@ const Move = (props: IMovePage) => {
   ];
 
   const getWeatherEffective = (type: string | undefined) => {
-    const result = Object.entries(data.weatherBoost)?.find(([, value]: [string, string[]]) => {
+    const result = Object.entries(getWeatherBoost())?.find(([, value]: [string, string[]]) => {
       if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive)) {
         return value;
       }
@@ -300,11 +300,11 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     if (move && isNotEmpty(data.pokemons)) {
-      const result = queryTopMove(data.pokemons, data.typeEff, data.weatherBoost, move);
+      const result = queryTopMove(data.pokemons, move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, data.pokemons, data.typeEff, data.weatherBoost]);
+  }, [move, data.pokemons]);
 
   useEffect(() => {
     setTopListFilter(
@@ -367,7 +367,7 @@ const Move = (props: IMovePage) => {
               }}
               value={moveType}
             >
-              {Object.keys(data.typeEff)
+              {getTypes()
                 .filter(
                   (type) =>
                     !isEqual(

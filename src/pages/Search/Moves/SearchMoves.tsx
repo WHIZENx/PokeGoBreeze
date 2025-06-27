@@ -26,7 +26,8 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { PokemonTypeBadge } from '../../../core/models/type.model';
+import { PokemonTypeBadge } from '../../../core/enums/pokemon-type.enum';
+import { getTypes } from '../../../utils/helpers/context.helpers';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -120,7 +121,6 @@ const Search = () => {
     keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
   });
   const combat = useSelector((state: StoreState) => state.store.data.combats);
-  const types = useSelector((state: StoreState) => state.store.data.typeEff);
 
   const [filters, setFilters] = useState(new Filter());
 
@@ -211,7 +211,7 @@ const Search = () => {
                         <MenuItem value={SelectType.All} defaultChecked>
                           {getKeyWithData(SelectType, SelectType.All)}
                         </MenuItem>
-                        {Object.keys(types).map((value, index) => (
+                        {getTypes().map((value, index) => (
                           <MenuItem
                             key={index}
                             value={getDataWithKey<PokemonTypeBadge>(

@@ -169,19 +169,17 @@ export const loadGameMaster = async (
 
       const league = optionLeagues(gm.data, pokemon);
 
-      const typeEff = optionPokemonTypes(gm.data);
+      const typeEffective = optionPokemonTypes(gm.data);
       const weatherBoost = optionPokemonWeather(gm.data);
 
       dispatch(SpinnerActions.SetPercent.create(60));
 
-      const options = optionSettings(gm.data);
+      const options = optionSettings(gm.data, typeEffective, weatherBoost);
       dispatch(StoreActions.SetOptions.create(options));
       loadCPM(dispatch, options.playerSetting.cpMultipliers);
       dispatch(StoreActions.SetTrainer.create(optionTrainer(gm.data)));
-      dispatch(StoreActions.SetTypeEff.create(typeEff));
-      dispatch(StoreActions.SetWeatherBoost.create(weatherBoost));
       dispatch(StoreActions.SetSticker.create(optionSticker(gm.data, pokemon)));
-      const combat = optionCombat(gm.data, typeEff);
+      const combat = optionCombat(gm.data, typeEffective);
       dispatch(StoreActions.SetCombat.create(combat));
       dispatch(StoreActions.SetEvolutionChain.create(optionEvolutionChain(gm.data, pokemon)));
       dispatch(StoreActions.SetInformation.create(optionInformation(gm.data, pokemon)));

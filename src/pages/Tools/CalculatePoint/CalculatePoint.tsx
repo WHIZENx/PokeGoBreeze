@@ -17,7 +17,7 @@ import DEF_LOGO from '../../../assets/defense.png';
 import APIService from '../../../services/api.service';
 import { useSelector } from 'react-redux';
 import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
-import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { IPokemonFormModify } from '../../../core/models/API/form.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
@@ -48,7 +48,6 @@ const CalculatePoint = () => {
       'team optimization',
     ],
   });
-  const typeEff = useSelector((state: StoreState) => state.store.data.typeEff);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
 
   const [move, setMove] = useState<ICombat>();
@@ -205,7 +204,7 @@ const CalculatePoint = () => {
       def,
       toNumber(!isRaid && pvpDmg ? move?.pvpPower : move?.pvePower),
       BattleState.create({
-        effective: getTypeEffective(typeEff, move?.type, pokemon?.form?.types),
+        effective: getTypeEffective(move?.type, pokemon?.form?.types),
         isStab: findStabType(pokemonDef?.form?.types, move?.type),
         isWb: (!pvpDmg || isRaid) && weatherBoosts,
       }),

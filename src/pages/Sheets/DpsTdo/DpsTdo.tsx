@@ -8,7 +8,6 @@ import {
   getKeyWithData,
   getMoveType,
   generateParamForm,
-  getKeysObj,
   getAllMoves,
   isSpecialMegaFormType,
 } from '../../../utils/utils';
@@ -65,13 +64,20 @@ import {
 import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
-import { TypeEff } from '../../../core/models/type-eff.model';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { defaultSheetPage, defaultSheetRow, maxIv, minIv, minLevel } from '../../../utils/helpers/context.helpers';
+import {
+  defaultSheetPage,
+  defaultSheetRow,
+  getTypes,
+  getWeatherTypes,
+  maxIv,
+  minIv,
+  minLevel,
+} from '../../../utils/helpers/context.helpers';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -279,8 +285,6 @@ const DpsTdo = () => {
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
   const router = useSelector((state: RouterState) => state.router);
 
-  const [types, setTypes] = useState(getKeysObj(new TypeEff()));
-
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
   const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -393,13 +397,11 @@ const DpsTdo = () => {
               weatherBoosts: options.weatherBoosts,
             });
 
-            const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-            dps = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+            const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
+            dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
             tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
           } else {
             dps = calculateAvgDPS(
-              data.typeEff,
-              data.weatherBoost,
               statsAttacker.fMove,
               statsAttacker.cMove,
               statsAttacker.atk,
@@ -556,12 +558,6 @@ const DpsTdo = () => {
   };
 
   useEffect(() => {
-    if (data.typeEff) {
-      setTypes(Object.keys(data.typeEff));
-    }
-  }, [data.typeEff]);
-
-  useEffect(() => {
     if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
       setIsShowSpinner(true);
       const debounced = debounce(() => {
@@ -572,15 +568,7 @@ const DpsTdo = () => {
         debounced.cancel();
       };
     }
-  }, [
-    dataTargetPokemon,
-    fMoveTargetPokemon,
-    cMoveTargetPokemon,
-    data.pokemons,
-    data.combats,
-    data.typeEff,
-    data.weatherBoost,
-  ]);
+  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, data.pokemons, data.combats]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
@@ -685,7 +673,7 @@ const DpsTdo = () => {
       <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100 m-0 types-select-btn">
-          {types.map((item, index) => (
+          {getTypes().map((item, index) => (
             <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
@@ -1212,7 +1200,7 @@ const DpsTdo = () => {
                     }
                   >
                     <option value="">Extreme</option>
-                    {Object.keys(data.weatherBoost).map((value, index) => (
+                    {getWeatherTypes().map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
                       </option>
