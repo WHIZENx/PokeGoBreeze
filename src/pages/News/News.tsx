@@ -22,7 +22,7 @@ import {
   toNumber,
   UniqValueInArray,
 } from '../../utils/extension';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { DateEvent, TitleName } from './enums/item-type.enum';
 import { IInformation, ITicketReward, RewardPokemon } from '../../core/models/information';
 import { ItemTicketRewardType, TicketRewardType } from '../../core/enums/information.enum';

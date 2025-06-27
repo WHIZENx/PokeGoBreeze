@@ -4,7 +4,7 @@ import { BackgroundType } from '../enums/model-type.enum';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { PokemonVersus } from '../../../core/models/pvp.model';
 import { PokemonType } from '../../../enums/type.enum';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { findAssetForm, computeBgType } from '../../../utils/compute';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty } from '../../../utils/extension';
 import {

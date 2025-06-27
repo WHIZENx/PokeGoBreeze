@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import './Select.scss';
 import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../utils/utils';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
 import { StoreState } from '../../store/models/state.model';

@@ -3,7 +3,7 @@ import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Accordion, Form, useAccordionButton } from 'react-bootstrap';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './Leagues.scss';
 import React, { Fragment, useEffect, useState } from 'react';

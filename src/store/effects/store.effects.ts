@@ -22,7 +22,7 @@ import {
   optionTrainer,
 } from '../../core/options';
 import { pvpConvertPath } from '../../core/pvp';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { APIUrl } from '../../services/constants';
 import { getDbPokemonEncounter } from '../../services/db.service';
 import { APITreeRoot, APITree } from '../../services/models/api.model';

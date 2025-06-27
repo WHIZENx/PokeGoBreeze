@@ -5,7 +5,7 @@ import { Badge, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 import './SearchBattle.scss';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import {
   capitalize,

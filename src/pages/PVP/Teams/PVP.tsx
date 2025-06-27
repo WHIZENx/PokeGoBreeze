@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import {
   convertNameRankingToForm,

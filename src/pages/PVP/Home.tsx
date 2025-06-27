@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { leaguesTeamBattle } from '../../utils/constants';
 import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { Link } from 'react-router-dom';

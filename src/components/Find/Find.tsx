@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';

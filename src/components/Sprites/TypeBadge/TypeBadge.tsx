@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './TypeBadge.scss';

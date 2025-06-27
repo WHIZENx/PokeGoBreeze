@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import TypeInfo from '../Sprites/Type/Type';
 import { ITypeEffectiveComponent } from '../models/component.model';
 import { isNotEmpty, toFloat } from '../../utils/extension';

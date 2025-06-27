@@ -12,7 +12,7 @@ import {
   isSpecialFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './Form.scss';
 import Gender from '../Gender';

@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import SelectPoke from './Select';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import {
   convertNameRankingToOri,
   getArrayBySeq,

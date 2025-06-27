@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 import { IDamageTableComponent } from '../../models/page.model';

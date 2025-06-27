@@ -4,7 +4,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 
 import './PokemonModel.scss';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
 import { SearchingState, StoreState } from '../../../store/models/state.model';

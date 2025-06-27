@@ -14,7 +14,7 @@ import { useSnackbar } from 'notistack';
 
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { useSelector } from 'react-redux';
 import { TypeAction, TypeMove, VariantType } from '../../../enums/type.enum';
 import { SearchingState, StoreState } from '../../../store/models/state.model';

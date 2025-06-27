@@ -1,6 +1,6 @@
 import React from 'react';
 import { IIconTypeComponent } from '../../../models/component.model';
-import APIService from '../../../../services/API.service';
+import APIService from '../../../../services/api.service';
 import { EqualMode } from '../../../../utils/enums/string.enum';
 import { combineClasses, isEqual } from '../../../../utils/extension';
 import { capitalize, getDataWithKey } from '../../../../utils/utils';

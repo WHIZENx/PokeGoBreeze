@@ -13,7 +13,7 @@ import {
 import { calculateStatsByTag } from '../../../utils/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import {
   computeBgType,
   findAssetForm,

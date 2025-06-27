@@ -23,7 +23,7 @@ import {
   PokemonProgress,
   PokemonSpecie,
 } from '../../core/models/pokemon.model';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { RouterState, StoreState, SpinnerState, SearchingState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {

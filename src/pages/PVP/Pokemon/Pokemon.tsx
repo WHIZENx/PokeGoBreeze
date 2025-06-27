@@ -11,7 +11,7 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import {
   computeBgType,

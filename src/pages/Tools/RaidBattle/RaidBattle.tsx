@@ -29,7 +29,7 @@ import {
 import { Badge, Checkbox, FormControlLabel, Switch } from '@mui/material';
 
 import './RaidBattle.scss';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
 

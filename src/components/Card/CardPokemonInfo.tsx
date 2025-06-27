@@ -4,7 +4,7 @@ import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '.
 import TypeInfo from '../Sprites/Type/Type';
 import './CardPokemonInfo.scss';
 
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { ICardPokemonInfoComponent } from '../models/component.model';
 import { combineClasses } from '../../utils/extension';
 import { PokemonType } from '../../enums/type.enum';

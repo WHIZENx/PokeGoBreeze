@@ -1,5 +1,5 @@
 import React from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { splitAndCapitalize } from '../../../utils/utils';
 import './TypeBar.scss';
 import { ITypeBarComponent } from '../../models/component.model';

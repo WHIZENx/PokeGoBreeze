@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SpecialForm.scss';

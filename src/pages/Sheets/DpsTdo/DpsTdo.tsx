@@ -24,7 +24,7 @@ import {
   calculateStatsBattle,
 } from '../../../utils/calculate';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';

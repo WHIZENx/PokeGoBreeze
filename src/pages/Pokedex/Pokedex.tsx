@@ -5,7 +5,7 @@ import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { queryAssetForm } from '../../utils/compute';
 import { genList, regionList, versionList } from '../../utils/constants';
 import {

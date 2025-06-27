@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import {
   checkPokemonGO,
   convertPokemonDataName,

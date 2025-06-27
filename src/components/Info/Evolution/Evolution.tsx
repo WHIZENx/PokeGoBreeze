@@ -15,7 +15,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import React, { Fragment, useEffect, useState } from 'react';
 import Xarrow, { cAnchorEdge } from 'react-xarrows';
 import { Link } from 'react-router-dom';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './Evolution.scss';
 import {

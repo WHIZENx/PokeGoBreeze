@@ -1,7 +1,7 @@
 import { IAsset } from '../core/models/asset.model';
 import { Color, ICandy } from '../core/models/candy.model';
 import { PokemonClass, PokemonType } from '../enums/type.enum';
-import APIService from '../services/API.service';
+import APIService from '../services/api.service';
 import { BattleLeagueCPType, BattleLeagueIconType, FormType } from './enums/compute.enum';
 import { EqualMode, IncludeMode } from './enums/string.enum';
 import { getValueOrDefault, isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from './extension';

@@ -22,7 +22,7 @@ import {
   IPokemonFormDetail,
 } from '../core/models/API/form.model';
 import { PokemonSearching } from '../core/models/pokemon-searching.model';
-import APIService from '../services/API.service';
+import APIService from '../services/api.service';
 import { TableStyles } from 'react-data-table-component';
 import {
   DynamicObj,

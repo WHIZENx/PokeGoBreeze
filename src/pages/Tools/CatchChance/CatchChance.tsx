@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import SelectBadge from '../../../components/Input/SelectBadge';
 import Find from '../../../components/Find/Find';
 import Circle from '../../../components/Sprites/Circle/Circle';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { calculateCatchChance, calculateCP } from '../../../utils/calculate';
 import {
   getItemSpritePath,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
 import './Types.scss';
 import CardType from '../../../components/Card/CardType';

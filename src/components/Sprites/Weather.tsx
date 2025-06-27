@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { splitAndCapitalize } from '../../utils/utils';
 import { IWeatherComponent } from '../models/component.model';
 import { isNotEmpty } from '../../utils/extension';

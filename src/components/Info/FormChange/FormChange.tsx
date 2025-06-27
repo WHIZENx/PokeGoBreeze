@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';

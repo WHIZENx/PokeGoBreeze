@@ -19,7 +19,7 @@ import {
 import { Box, FormControlLabel, Radio } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import './CalculateStats.scss';
 

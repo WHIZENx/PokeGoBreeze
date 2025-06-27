@@ -3,7 +3,7 @@ import { Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } fr
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 
 import './Sticker.scss';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import React, { Fragment, useEffect, useState } from 'react';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';

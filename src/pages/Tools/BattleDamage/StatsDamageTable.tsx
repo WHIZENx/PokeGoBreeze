@@ -10,7 +10,7 @@ import {
 } from '../../../utils/utils';
 import { calculateStatsBattle } from '../../../utils/calculate';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';

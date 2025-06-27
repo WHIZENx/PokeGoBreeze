@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { capitalize } from '../../utils/utils';
 
 import './TypeEffectiveSelect.scss';

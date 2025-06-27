@@ -16,7 +16,7 @@ import { getBarCharge, queryTopMove } from '../../utils/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import './Move.scss';
 
 import DoneIcon from '@mui/icons-material/Done';
