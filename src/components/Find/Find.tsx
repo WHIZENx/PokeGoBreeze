@@ -4,7 +4,7 @@ import FormSelect from './FormSelect';
 
 import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../utils/utils';
-import { SearchingState, StatsState, StoreState } from '../../store/models/state.model';
+import { SearchingState, StatsState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
@@ -13,6 +13,7 @@ import { combineClasses, getValueOrDefault, isInclude, isNotEmpty, toNumber } fr
 import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
+import { getDataPokemons } from '../../utils/helpers/data-context.helpers';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -22,7 +23,7 @@ const Find = (props: IFindComponent) => {
 
   const stats = useSelector((state: StatsState) => state.stats);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
+  const pokemons = getDataPokemons();
 
   const [id, setId] = useState(
     searching
@@ -40,11 +41,11 @@ const Find = (props: IFindComponent) => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isNotEmpty(pokemonData)) {
-      const result = mappingPokemonName(pokemonData);
+    if (isNotEmpty(pokemons)) {
+      const result = mappingPokemonName();
       setPokemonList(result);
     }
-  }, [pokemonData]);
+  }, [pokemons]);
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
@@ -71,7 +72,7 @@ const Find = (props: IFindComponent) => {
   };
 
   const getInfoPoke = (value: IPokemonSearching) => {
-    const currentPokemon = getPokemonById(pokemonData, value.id);
+    const currentPokemon = getPokemonById(value.id);
     setId(value.id);
     if (props.setId) {
       props.setId(value.id);
@@ -95,9 +96,9 @@ const Find = (props: IFindComponent) => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(pokemonData, id);
+    const currentPokemon = getPokemonById(id);
     if (currentPokemon) {
-      const current = getPokemonById(pokemonData, currentPokemon.id + modify);
+      const current = getPokemonById(currentPokemon.id + modify);
       if (current) {
         setId(current.id);
         if (props.setId) {
@@ -195,7 +196,6 @@ const Find = (props: IFindComponent) => {
             id={id}
             setName={props.setName}
             name={pokemonList.find((item) => item.id === id)?.name}
-            pokemonData={pokemonData}
             stats={stats}
             onHandleSetStats={handleSetStats}
             onClearStats={props.clearStats}

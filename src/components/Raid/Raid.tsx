@@ -9,20 +9,19 @@ import ATK_LOGO from '../../assets/attack.png';
 import DEF_LOGO from '../../assets/defense.png';
 import STA_LOGO from '../../assets/stamina.png';
 
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
 import { getKeyWithData, isSpecialMegaFormType } from '../../utils/utils';
 import { IRaidComponent } from '../models/component.model';
 import { toNumber } from '../../utils/extension';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
+import { getDataPokemons } from '../../utils/helpers/data-context.helpers';
 
 const Raid = (props: IRaidComponent) => {
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
+  const pokemons = getDataPokemons();
   const [tier, setTier] = useState(1);
   const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
 
   useEffect(() => {
-    const pokemonClass = pokemonData.find((item) => item.num === props.id)?.pokemonClass;
+    const pokemonClass = pokemons.find((item) => item.num === props.id)?.pokemonClass;
     if (pokemonClass) {
       setPokemonClass(pokemonClass);
     }

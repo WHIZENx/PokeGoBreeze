@@ -22,8 +22,10 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import { getDataPokemons } from '../../../utils/helpers/data-context.helpers';
 
 const BodyPVP = (props: BodyComponent) => {
+  const pokemons = getDataPokemons();
   const [matchups, setMatchups] = useState<IBody[]>();
   const [counters, setCounters] = useState<IBody[]>();
 
@@ -32,7 +34,7 @@ const BodyPVP = (props: BodyComponent) => {
       ?.sort((a, b) => a.rating - b.rating)
       .map((versus) => {
         const name = convertNameRankingToOri(versus.opponent, convertNameRankingToForm(versus.opponent));
-        const pokemon = props.pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
+        const pokemon = pokemons.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
         const form = findAssetForm(props.assets, pokemon?.num, pokemon?.form);
         let pokemonType;

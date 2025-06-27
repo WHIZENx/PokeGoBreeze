@@ -290,12 +290,7 @@ const Counter = (props: ICounterComponent) => {
 
       const resolveHandler = () => {
         if (props.pokemonData) {
-          result = counterPokemon(
-            data.pokemons,
-            toNumber(props.pokemonData.statsGO?.def),
-            props.pokemonData.types,
-            data.combats
-          );
+          result = counterPokemon(toNumber(props.pokemonData.statsGO?.def), props.pokemonData.types);
         }
 
         if (signal instanceof AbortSignal) {
@@ -334,7 +329,7 @@ const Counter = (props: ICounterComponent) => {
               return true;
             }
             if (!pokemon.releasedGO) {
-              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemons);
+              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName));
             }
             return pokemon.releasedGO;
           })

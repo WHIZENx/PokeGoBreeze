@@ -53,6 +53,7 @@ import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
+import { getDataPokemons } from '../../../utils/helpers/data-context.helpers';
 
 const FindBattle = () => {
   useTitle({
@@ -70,6 +71,7 @@ const FindBattle = () => {
   });
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
+  const pokemons = getDataPokemons();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [maxCP, setMaxCP] = useState(0);
@@ -99,7 +101,7 @@ const FindBattle = () => {
       if (!isNotEmpty(currId)) {
         return arr;
       }
-      const curr = dataStore.pokemons.find((item) => isIncludeList(currId, item.num) && isInclude(item.form, form));
+      const curr = pokemons.find((item) => isIncludeList(currId, item.num) && isInclude(item.form, form));
       if (
         !isIncludeList(
           arr.map((i) => i.id),
@@ -124,7 +126,7 @@ const FindBattle = () => {
         arr
       );
     },
-    [dataStore.pokemons]
+    [pokemons]
   );
 
   const prevEvoChain = useCallback(
@@ -147,7 +149,7 @@ const FindBattle = () => {
       obj.evoList?.forEach((i) => {
         currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = dataStore.pokemons.filter((item) =>
+      const curr = pokemons.filter((item) =>
         item.evoList?.find((i) => obj.num === i.evoToId && isEqual(i.evoToForm, defaultForm))
       );
       if (isNotEmpty(curr)) {
@@ -156,30 +158,30 @@ const FindBattle = () => {
         result.push(arr);
       }
     },
-    [currEvoChain, dataStore.pokemons]
+    [currEvoChain, pokemons]
   );
 
   const getEvoChain = useCallback(
     (id: number) => {
       const currentForm = convertPokemonAPIDataName(pokemon?.form?.form?.formName, formNormal());
-      let curr = dataStore.pokemons.filter((item) =>
+      let curr = pokemons.filter((item) =>
         item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm))
       );
       if (!isNotEmpty(curr)) {
         if (currentForm === formNormal()) {
-          curr = dataStore.pokemons.filter((item) => id === item.num && isEqual(currentForm, item.form));
+          curr = pokemons.filter((item) => id === item.num && isEqual(currentForm, item.form));
         } else {
-          curr = dataStore.pokemons.filter((item) => id === item.num && isInclude(item.form, currentForm));
+          curr = pokemons.filter((item) => id === item.num && isInclude(item.form, currentForm));
         }
       }
       if (!isNotEmpty(curr)) {
-        curr = dataStore.pokemons.filter((item) => id === item.num && item.form === formNormal());
+        curr = pokemons.filter((item) => id === item.num && item.form === formNormal());
       }
       const result: IEvolution[][] = [];
       curr?.forEach((item) => prevEvoChain(item, currentForm, [], result));
       return result;
     },
-    [prevEvoChain, pokemon?.form, dataStore.pokemons]
+    [prevEvoChain, pokemon?.form, pokemons]
   );
 
   const searchStatsPoke = useCallback(
@@ -188,7 +190,7 @@ const FindBattle = () => {
       getEvoChain(toNumber(pokemon?.form?.defaultId)).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(dataStore.pokemons, value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(value, level, ATKIv, DEFIv, STAIv);
           if (data.id === pokemon?.form?.defaultId) {
             setMaxCP(data.maxCP);
           }

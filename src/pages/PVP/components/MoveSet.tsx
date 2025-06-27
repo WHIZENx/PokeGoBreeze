@@ -25,8 +25,10 @@ import { PokemonRankingMove } from '../../../core/models/pvp.model';
 import { IMoveSet, MoveSetModel } from '../models/move-set.model';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
+import { getDataCombats } from '../../../utils/helpers/data-context.helpers';
 
 const MoveSet = (props: MoveSetComponent) => {
+  const combats = getDataCombats();
   const [fastMoves, setFastMoves] = useState<IMoveSet[]>();
   const [chargedMoves, setChargedMoves] = useState<IMoveSet[]>();
 
@@ -150,7 +152,7 @@ const MoveSet = (props: MoveSetComponent) => {
       })
       .sort((a, b) => toNumber(b.uses) - toNumber(a.uses))
       .map((move) => {
-        const combat = props.combatData.find((m) => isEqual(m.name, move.moveId));
+        const combat = combats.find((m) => isEqual(m.name, move.moveId));
         if (combat) {
           combat.moveType = getMoveType(props.pokemon, move.moveId);
           return MoveSetModel.create({ ...combat, uses: toNumber(move.uses) });

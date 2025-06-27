@@ -64,6 +64,7 @@ import CircularProgressTable from '../../../components/Sprites/CircularProgress/
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/models/component.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
+import { getDataPokemons } from '../../../utils/helpers/data-context.helpers';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -221,7 +222,7 @@ const StatsRanking = () => {
   ];
 
   const stats = useSelector((state: StatsState) => state.stats);
-  const pokemons = useSelector((state: StoreState) => state.store.data.pokemons);
+  const pokemons = getDataPokemons();
   const [pokemon, setPokemon] = useState<IPokemonDetail>();
 
   const addShadowPurificationForms = (result: IPokemonStatsRanking[], value: IPokemonData, details: IPokemonData) => {
@@ -284,7 +285,7 @@ const StatsRanking = () => {
   const mappingData = (pokemon: IPokemonData[]) => {
     const result: IPokemonStatsRanking[] = [];
     pokemon.forEach((data) => {
-      const details = getPokemonDetails(pokemon, data.num, data.fullName, data.pokemonType, true);
+      const details = getPokemonDetails(data.num, data.fullName, data.pokemonType, true);
       if (isSpecialFormType(data.pokemonType)) {
         details.pokemonType = PokemonType.Normal;
       }
@@ -462,8 +463,7 @@ const StatsRanking = () => {
     if (!select && isNotEmpty(pokemonList)) {
       const result = pokemonFilter[0];
 
-      const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
-      const details = getPokemonDetails(pokemon, result.num, result.fullName, result.pokemonType, true);
+      const details = getPokemonDetails(result.num, result.fullName, result.pokemonType, true);
       const pokemonDetails = PokemonDetail.setData(details);
       setPokemon(pokemonDetails);
 
@@ -487,8 +487,7 @@ const StatsRanking = () => {
       if (index > -1) {
         const result = pokemonFilter[index];
 
-        const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
-        const details = getPokemonDetails(pokemon, id, result.fullName, result.pokemonType, true);
+        const details = getPokemonDetails(id, result.fullName, result.pokemonType, true);
         details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
@@ -541,8 +540,7 @@ const StatsRanking = () => {
           ((!formType && !isSpecialFormType(row.pokemonType)) || row.pokemonType === pokemonType)
       );
       if (result) {
-        const pokemon = pokemons.filter((pokemon) => pokemon.num > 0);
-        const details = getPokemonDetails(pokemon, paramId, result.fullName, result.pokemonType, true);
+        const details = getPokemonDetails(paramId, result.fullName, result.pokemonType, true);
         details.pokemonType = formType ? pokemonType : result.pokemonType ?? PokemonType.Normal;
         const pokemonDetails = PokemonDetail.setData(details);
         setPokemon(pokemonDetails);
