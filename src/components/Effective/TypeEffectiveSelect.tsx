@@ -7,7 +7,7 @@ import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeEffectiveSelectComponent } from '../models/component.model';
 import { combineClasses, isNotEmpty, toFloat } from '../../utils/extension';
 import { EffectiveType } from './enums/type-effective.enum';
-import { getTypeEffective } from '../../utils/helpers/context.helpers';
+import { getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
 const TypeEffectiveSelect = (props: ITypeEffectiveSelectComponent) => {
   const renderEffective = (amount: EffectiveType, data: string[] | undefined) => (

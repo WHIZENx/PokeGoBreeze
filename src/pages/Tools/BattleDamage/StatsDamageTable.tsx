@@ -18,7 +18,7 @@ import HP_LOGO from '../../../assets/hp.png';
 import { IStatsTableComponent } from '../../models/page.model';
 import { PokemonType, TypeAction } from '../../../enums/type.enum';
 import { toNumber } from '../../../utils/extension';
-import { maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/context.helpers';
+import { maxIv, minLevel, maxLevel, stepLevel } from '../../../utils/helpers/options-context.helpers';
 
 const StatsTable = (props: IStatsTableComponent) => {
   const [currStatLevel, setCurrStatLevel] = useState(1);

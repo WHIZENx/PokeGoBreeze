@@ -56,7 +56,7 @@ import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTa
 import { IMenuItem } from '../../components/models/component.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
-import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/context.helpers';
+import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();

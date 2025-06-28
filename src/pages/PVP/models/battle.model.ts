@@ -17,7 +17,7 @@ import {
   defaultBlock,
   defaultPlusSize,
   defaultSize,
-} from '../../../utils/helpers/context.helpers';
+} from '../../../utils/helpers/options-context.helpers';
 import { IBattleBaseStats } from '../../../utils/models/calculate.model';
 import { getPokemonType } from '../../../utils/utils';
 import { AttackType } from '../Battle/enums/attack-type.enum';

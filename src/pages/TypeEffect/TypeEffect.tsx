@@ -6,7 +6,6 @@ import Defender from './Defender';
 
 import './TypeEffect.scss';
 import { useTitle } from '../../utils/hooks/useTitle';
-import { getTypeEffective } from '../../utils/helpers/context.helpers';
 
 const TypeEffect = () => {
   useTitle({
@@ -27,10 +26,10 @@ const TypeEffect = () => {
     <div className="container mt-2 pb-3">
       <Row>
         <Col>
-          <Attacker types={getTypeEffective()} />
+          <Attacker />
         </Col>
         <Col>
-          <Defender types={getTypeEffective()} />
+          <Defender />
         </Col>
       </Row>
     </div>

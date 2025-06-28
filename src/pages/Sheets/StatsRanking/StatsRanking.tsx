@@ -63,7 +63,7 @@ import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { IMenuItem } from '../../../components/models/component.model';
-import { formNormal } from '../../../utils/helpers/context.helpers';
+import { formNormal } from '../../../utils/helpers/options-context.helpers';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {

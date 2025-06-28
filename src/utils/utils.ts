@@ -77,7 +77,7 @@ import {
   formStandard,
   maxIv,
   minIv,
-} from './helpers/context.helpers';
+} from './helpers/options-context.helpers';
 
 class Mask {
   value: number;
@@ -198,6 +198,7 @@ export const camelCase = (str: string | undefined | null, defaultText = '') => {
   }
 
   const words = str
+    .replace(/(?=[A-Z])+/g, ' ')
     .replace(/[-_\s]+/g, ' ')
     .trim()
     .split(' ');

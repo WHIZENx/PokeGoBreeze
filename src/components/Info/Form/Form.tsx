@@ -34,7 +34,7 @@ import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { SearchingActions } from '../../../store/actions';
 import { PokemonGenderRatio } from '../../../core/models/pokemon.model';
 import { PokemonDetail } from '../../../core/models/API/info.model';
-import { formNormal } from '../../../utils/helpers/context.helpers';
+import { formNormal } from '../../../utils/helpers/options-context.helpers';
 
 const FormComponent = (props: IFormInfoComponent) => {
   const dispatch = useDispatch();

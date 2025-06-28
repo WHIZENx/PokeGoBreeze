@@ -1,18 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffectiveComponent from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
-import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../utils/utils';
-import { ITypeEffectiveChart, TypeEffectiveModel, TypeEffectiveChart } from '../../core/models/type-effective.model';
-import { ITypeEffComponent } from '../models/page.model';
+import { camelCase, capitalize, getMultiplyTypeEffect } from '../../utils/utils';
+import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { ITypeModel, TypeModel } from '../../core/models/type.model';
-import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
-import { DynamicObj, getValueOrDefault } from '../../utils/extension';
-import { getTypes } from '../../utils/helpers/context.helpers';
+import { DynamicObj, getPropertyName } from '../../utils/extension';
+import { getTypes } from '../../utils/helpers/options-context.helpers';
+import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
 
-const Attacker = (prop: ITypeEffComponent) => {
-  const [currentType, setCurrentType] = useState(
-    getValueOrDefault(String, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase())
-  );
+const Attacker = () => {
+  const typesEffective = getTypeEffectiveContext();
+  const [currentType, setCurrentType] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [showType, setShowType] = useState(false);
 
   const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();
@@ -26,11 +24,11 @@ const Attacker = (prop: ITypeEffComponent) => {
       resist: [],
       neutral: [],
     });
-    Object.entries(
-      ((prop.types ?? new TypeEffectiveModel()) as unknown as DynamicObj<ITypeModel>)[currentType] ?? new TypeModel()
-    ).forEach(([key, value]: [string, number]) => getMultiplyTypeEffect(data, value, key));
+    Object.entries((typesEffective as unknown as DynamicObj<ITypeModel>)[currentType] ?? new TypeModel()).forEach(
+      ([key, value]: [string, number]) => getMultiplyTypeEffect(data, value, key)
+    );
     setTypeEffective(data);
-  }, [currentType, prop.types]);
+  }, [currentType, typesEffective]);
 
   useEffect(() => {
     getTypeEffective();
@@ -38,7 +36,7 @@ const Attacker = (prop: ITypeEffComponent) => {
 
   const changeType = (value: string) => {
     setShowType(false);
-    setCurrentType(value);
+    setCurrentType(camelCase(value));
     getTypeEffective();
   };
 

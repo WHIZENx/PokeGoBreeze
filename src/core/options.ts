@@ -105,7 +105,7 @@ import {
   minLevel,
   pathAssetPokeGo,
   stepLevel,
-} from '../utils/helpers/context.helpers';
+} from '../utils/helpers/options-context.helpers';
 import { IWeatherBoost } from './models/weather-boost.model';
 import { PokemonTypeBadge } from './enums/pokemon-type.enum';
 
@@ -1540,7 +1540,7 @@ const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
       const [firstText] = srcText.split('_');
       if (isNumber(firstText) && !itemSettings.globalEventTicket.titleImageUrl) {
         const descKey = itemSettings.globalEventTicket.itemBagDescriptionKey.split('_');
-        return descKey[descKey.length - 1]?.split(/(?=[A-Z])/).join(' ');
+        return splitAndCapitalize(descKey[descKey.length - 1], /(?=[A-Z])/, ' ');
       }
       descKey = srcText.split('_');
       if (/^PGO/i.test(descKey[0])) {

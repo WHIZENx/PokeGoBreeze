@@ -108,7 +108,7 @@ import {
   stepLevel,
   getTypeEffective as getTypeEffectiveScalar,
   getWeatherBoost,
-} from './helpers/context.helpers';
+} from './helpers/options-context.helpers';
 
 const weatherMultiple = (weather: string | undefined, type: string | undefined) =>
   (getWeatherBoost() as unknown as DynamicObj<string[]>)[camelCase(weather)]?.find((item) =>
@@ -119,12 +119,14 @@ const weatherMultiple = (weather: string | undefined, type: string | undefined) 
 
 export const getTypeEffective = (typeMove: string | undefined, typesObj: string[] | undefined) => {
   let valueEffective = 1;
-  if (!getTypeEffectiveScalar()) {
+  if (!typeMove || !getTypeEffectiveScalar() || !isNotEmpty(typesObj)) {
     return valueEffective;
   }
-  const moveType = camelCase(typeMove);
-  const typeScalar = (getTypeEffectiveScalar() as unknown as DynamicObj<DynamicObj<number>>)[moveType];
-  typesObj?.forEach((type) => (valueEffective *= toNumber((typeScalar[camelCase(type)], 1))));
+  const types = getTypeEffectiveScalar() as unknown as DynamicObj<DynamicObj<number>>;
+  const typeScalar = types[camelCase(typeMove)] || types[typeMove?.toLowerCase()];
+  typesObj?.forEach(
+    (type) => (valueEffective *= toNumber(typeScalar[camelCase(type)] || typeScalar[type.toLowerCase()], 1))
+  );
   return valueEffective;
 };
 

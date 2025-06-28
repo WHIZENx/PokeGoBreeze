@@ -61,7 +61,7 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { formShadow } from '../../../utils/helpers/context.helpers';
+import { formShadow } from '../../../utils/helpers/options-context.helpers';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();

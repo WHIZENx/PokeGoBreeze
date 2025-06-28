@@ -77,7 +77,7 @@ import {
   maxIv,
   minIv,
   minLevel,
-} from '../../../utils/helpers/context.helpers';
+} from '../../../utils/helpers/options-context.helpers';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;

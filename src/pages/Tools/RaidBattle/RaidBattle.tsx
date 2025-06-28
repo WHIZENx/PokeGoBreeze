@@ -98,7 +98,7 @@ import CustomPopover from '../../../components/Popover/CustomPopover';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { StatsIV } from '../../../core/models/stats.model';
-import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/context.helpers';
+import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
 
 const RaidBattle = () => {
   useTitle({
@@ -705,10 +705,7 @@ const RaidBattle = () => {
   const resultBattle = (bossHp: number, timer: number) => {
     const status =
       enableTimeAllow && timer >= timeAllow ? RaidState.TimeOut : bossHp > 0 ? RaidState.Loss : RaidState.Win;
-    const result = getKeyWithData(RaidState, status)
-      ?.split(/(?=[A-Z])/)
-      .join(' ')
-      .toUpperCase();
+    const result = splitAndCapitalize(getKeyWithData(RaidState, status), /(?=[A-Z])/, ' ').toUpperCase();
     return (
       <td
         colSpan={3}

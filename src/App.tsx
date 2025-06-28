@@ -53,7 +53,7 @@ import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
 import optionsObserver from './utils/hooks/optionsObserver';
-import { loadDataDelay, transitionTime } from './utils/helpers/context.helpers';
+import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,

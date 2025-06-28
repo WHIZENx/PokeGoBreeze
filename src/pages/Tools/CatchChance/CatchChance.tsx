@@ -70,7 +70,7 @@ import {
   silverPinapsIncChance,
   stepLevel,
   ultraBallIncChance,
-} from '../../../utils/helpers/context.helpers';
+} from '../../../utils/helpers/options-context.helpers';
 
 const balls: PokeBallThreshold[] = [
   {

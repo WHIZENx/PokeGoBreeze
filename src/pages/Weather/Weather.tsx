@@ -5,7 +5,6 @@ import Effect from './Effect';
 
 import './Weather.scss';
 import { useTitle } from '../../utils/hooks/useTitle';
-import { getTypeEffective, getWeatherBoost } from '../../utils/helpers/context.helpers';
 
 const Weather = () => {
   useTitle({
@@ -18,11 +17,11 @@ const Weather = () => {
   return (
     <div className="container mt-2">
       <div className="container w-75">
-        <Affect weathers={getWeatherBoost()} />
+        <Affect />
       </div>
       <hr className="my-3" />
       <div className="container w-75">
-        <Effect weathers={getWeatherBoost()} types={getTypeEffective()} />
+        <Effect />
       </div>
     </div>
   );

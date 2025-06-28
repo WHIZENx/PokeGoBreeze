@@ -1,20 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardType from '../../components/Card/CardType';
 import WeatherTypeEffective from '../../components/Effective/WeatherTypeEffective';
-import { capitalize, getKeyWithData } from '../../utils/utils';
-import { IWeatherEffComponent } from '../models/page.model';
-import { TypeEffectiveModel } from '../../core/models/type-effective.model';
-import { WeatherBoost } from '../../core/models/weather-boost.model';
-import { isEmpty, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
-import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
+import { camelCase, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
+import { getPropertyName, isEmpty, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
+import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
-const Effect = (prop: IWeatherEffComponent) => {
+const Effect = () => {
+  const weathersBoost = getWeatherBoost();
+  const typesEffective = getTypeEffective();
+
   const [types, setTypes] = useState<string[]>([]);
 
-  const [currentTypePri, setCurrentTypePri] = useState(
-    getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase()
-  );
+  const [currentTypePri, setCurrentTypePri] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
   const [showTypePri, setShowTypePri] = useState(false);
@@ -24,7 +22,7 @@ const Effect = (prop: IWeatherEffComponent) => {
 
   const getWeatherEffective = useCallback(() => {
     const data: string[] = [];
-    Object.entries(prop.weathers ?? new WeatherBoost()).forEach(([key, value]: [string, string[]]) => {
+    Object.entries(weathersBoost).forEach(([key, value]: [string, string[]]) => {
       if (isIncludeList(value, currentTypePri) && !isIncludeList(data, key)) {
         data.push(key);
       }
@@ -33,25 +31,25 @@ const Effect = (prop: IWeatherEffComponent) => {
       }
     });
     setWeatherEffective(data);
-  }, [currentTypePri, currentTypeSec, prop.weathers]);
+  }, [currentTypePri, currentTypeSec, weathersBoost]);
 
   useEffect(() => {
-    const results = Object.keys(prop.types ?? new TypeEffectiveModel()).filter(
+    const results = Object.keys(typesEffective).filter(
       (item) => !isEqual(item, currentTypePri) && !isEqual(item, currentTypeSec)
     );
     setTypes(results);
     getWeatherEffective();
-  }, [currentTypePri, currentTypeSec, getWeatherEffective, prop.types]);
+  }, [currentTypePri, currentTypeSec, getWeatherEffective, typesEffective]);
 
   const changeTypePri = (value: string) => {
     setShowTypePri(false);
-    setCurrentTypePri(value);
+    setCurrentTypePri(camelCase(value));
     getWeatherEffective();
   };
 
   const changeTypeSec = (value: string) => {
     setShowTypeSec(false);
-    setCurrentTypeSec(value);
+    setCurrentTypeSec(camelCase(value));
     getWeatherEffective();
   };
 
@@ -78,14 +76,14 @@ const Effect = (prop: IWeatherEffComponent) => {
               onBlur={() => setShowTypePri(false)}
             >
               <div className="card-select">
-                <CardType value={capitalize(currentTypePri)} />
+                <CardType value={splitAndCapitalize(currentTypePri, /(?=[A-Z])/, ' ')} />
               </div>
               {showTypePri && (
                 <div className="result-type result-type-weather">
                   <ul>
                     {types.map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypePri(value)}>
-                        <CardType value={capitalize(value)} />
+                        <CardType value={splitAndCapitalize(value, /(?=[A-Z])/, ' ')} />
                       </li>
                     ))}
                   </ul>
@@ -112,7 +110,7 @@ const Effect = (prop: IWeatherEffComponent) => {
               ) : (
                 <div className="type-sec">
                   <div className="card-select">
-                    <CardType value={capitalize(currentTypeSec)} />
+                    <CardType value={splitAndCapitalize(currentTypeSec, /(?=[A-Z])/, ' ')} />
                     <button
                       type="button"
                       className="btn-close btn-close-white remove-close"
@@ -127,7 +125,7 @@ const Effect = (prop: IWeatherEffComponent) => {
                   <ul>
                     {types.map((value, index) => (
                       <li className="container card-pokemon" key={index} onMouseDown={() => changeTypeSec(value)}>
-                        <CardType value={capitalize(value)} />
+                        <CardType value={splitAndCapitalize(value, /(?=[A-Z])/, ' ')} />
                       </li>
                     ))}
                   </ul>

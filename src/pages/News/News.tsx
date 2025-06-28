@@ -31,7 +31,7 @@ import { useTitle } from '../../utils/hooks/useTitle';
 import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.model';
 import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
-import { formNormal } from '../../utils/helpers/context.helpers';
+import { formNormal } from '../../utils/helpers/options-context.helpers';
 
 const News = () => {
   useTitle({
@@ -86,11 +86,9 @@ const News = () => {
         reward.pokemon?.form && !isEqual(reward.pokemon?.form, formNormal()) ? `_${reward.pokemon?.form}` : ''
       }`.replace(/_MR_/i, '_MR._');
     } else if (reward?.type === TicketRewardType.PokeCoin) {
-      result = getKeyWithData(TicketRewardType, TicketRewardType.PokeCoin)
-        ?.split(/(?=[A-Z])/)
-        .join('_');
+      result = splitAndCapitalize(getKeyWithData(TicketRewardType, TicketRewardType.PokeCoin), /(?=[A-Z])/, '_');
     } else if (reward?.type === TicketRewardType.Stardust) {
-      result = getKeyWithData(TicketRewardType, TicketRewardType.Stardust);
+      result = splitAndCapitalize(getKeyWithData(TicketRewardType, TicketRewardType.Stardust), /(?=[A-Z])/, '_');
     } else if (reward?.type === TicketRewardType.Exp) {
       result = TitleName.Exp;
     } else if (reward?.type === TicketRewardType.Avatar) {

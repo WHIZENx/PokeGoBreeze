@@ -2,19 +2,18 @@ import React, { useEffect, useState, useCallback } from 'react';
 import TypeEffectiveComponent from '../../components/Effective/TypeEffective';
 import CardType from '../../components/Card/CardType';
 import { capitalize, getKeyWithData, getMultiplyTypeEffect } from '../../utils/utils';
-import { ITypeEffectiveChart, TypeEffectiveModel, TypeEffectiveChart } from '../../core/models/type-effective.model';
-import { ITypeEffComponent } from '../models/page.model';
-import { DynamicObj, getValueOrDefault, isEmpty } from '../../utils/extension';
-import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
+import { ITypeEffectiveChart, TypeEffectiveChart } from '../../core/models/type-effective.model';
+import { DynamicObj, getPropertyName, isEmpty } from '../../utils/extension';
 import { EffectiveType } from '../../components/Effective/enums/type-effective.enum';
-import { getTypes } from '../../utils/helpers/context.helpers';
+import { getTypes } from '../../utils/helpers/options-context.helpers';
+import { getTypeEffective as getTypeEffectiveContext } from '../../utils/helpers/options-context.helpers';
+import { camelCase } from 'lodash';
 
-const Defender = (prop: ITypeEffComponent) => {
+const Defender = () => {
+  const typesEffective = getTypeEffectiveContext();
   const [typeEffective, setTypeEffective] = useState<ITypeEffectiveChart>();
 
-  const [currentTypePri, setCurrentTypePri] = useState(
-    getValueOrDefault(String, getKeyWithData(PokemonTypeBadge, PokemonTypeBadge.Bug)?.toUpperCase())
-  );
+  const [currentTypePri, setCurrentTypePri] = useState(camelCase(getPropertyName(typesEffective, (o) => o.bug)));
   const [currentTypeSec, setCurrentTypeSec] = useState('');
 
   const [showTypePri, setShowTypePri] = useState(false);
@@ -29,14 +28,14 @@ const Defender = (prop: ITypeEffComponent) => {
       resist: [],
       neutral: [],
     });
-    Object.entries(prop.types ?? new TypeEffectiveModel()).forEach(([key, value]: [string, DynamicObj<number>]) => {
+    Object.entries(typesEffective).forEach(([key, value]: [string, DynamicObj<number>]) => {
       let valueEffective = 1;
       valueEffective *= value[currentTypePri];
       valueEffective *= isEmpty(currentTypeSec) ? 1 : value[currentTypeSec];
       getMultiplyTypeEffect(data, valueEffective, key);
     });
     setTypeEffective(data);
-  }, [currentTypePri, currentTypeSec, prop.types]);
+  }, [currentTypePri, currentTypeSec, typesEffective]);
 
   useEffect(() => {
     getTypeEffective();
@@ -44,13 +43,13 @@ const Defender = (prop: ITypeEffComponent) => {
 
   const changeTypePri = (value: string) => {
     setShowTypePri(false);
-    setCurrentTypePri(value);
+    setCurrentTypePri(camelCase(value));
     getTypeEffective();
   };
 
   const changeTypeSec = (value: string) => {
     setShowTypeSec(false);
-    setCurrentTypeSec(value);
+    setCurrentTypeSec(camelCase(value));
     getTypeEffective();
   };
 

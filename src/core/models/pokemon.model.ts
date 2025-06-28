@@ -15,7 +15,7 @@ import { getValueOrDefault, isUndefined, toNumber, UniqValueInArray } from '../.
 import { ItemEvolutionType, ItemLureType } from '../enums/option.enum';
 import { GlobalType, MoveType, PokemonClass, PokemonType } from '../../enums/type.enum';
 import { Species, Variety } from './API/species.model';
-import { minLevel, formNormal, defaultSpriteName } from '../../utils/helpers/context.helpers';
+import { minLevel, formNormal, defaultSpriteName } from '../../utils/helpers/options-context.helpers';
 
 export interface OptionsPokemon {
   prev?: IPokemonName;

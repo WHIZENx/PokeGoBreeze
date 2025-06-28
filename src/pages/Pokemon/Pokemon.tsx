@@ -72,7 +72,7 @@ import { SearchingActions } from '../../store/actions';
 import { StatsPokemonGO } from '../../core/models/stats.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
-import { formStandard, keyLeft, keyRight } from '../../utils/helpers/context.helpers';
+import { formStandard, keyLeft, keyRight } from '../../utils/helpers/options-context.helpers';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
