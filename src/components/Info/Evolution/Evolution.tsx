@@ -36,7 +36,7 @@ import { OverlayTrigger } from 'react-bootstrap';
 import CustomPopover from '../../Popover/CustomPopover';
 import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
-import { RouterState, StoreState } from '../../../store/models/state.model';
+import { RouterState } from '../../../store/models/state.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
@@ -56,6 +56,7 @@ import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../Sprites/Icon/Type/Type';
 import { APIUrl } from '../../../services/constants';
 import { formNormal, formStandard } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 interface IPokemonEvo {
   prev?: string;
@@ -99,8 +100,7 @@ class PokemonEvo implements IPokemonEvo {
 
 const Evolution = (props: IEvolutionComponent) => {
   const router = useSelector((state: RouterState) => state.router);
-  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
-  const evolutionChains = useSelector((state: StoreState) => state.store.data.evolutionChains);
+  const dataStore = useDataStore();
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
   const [idEvoChain, setIdEvoChain] = useState(0);
@@ -186,7 +186,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getPrevEvoChainStore = (id: number | undefined, form: string | undefined, result: IPokemonEvo[][]) => {
     const evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonData.filter((pokemon) =>
+    const pokemon = dataStore.pokemons.filter((pokemon) =>
       pokemon.evoList?.find((evo) => evo.evoToId === id && isEqual(evo.evoToForm, form))
     );
     if (!isNotEmpty(pokemon)) {
@@ -212,7 +212,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getCurrEvoChainStore = (poke: Partial<IPokemonDetail>, result: IPokemonEvo[][]) => {
     let evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonData.find((pokemon) =>
+    const pokemon = dataStore.pokemons.find((pokemon) =>
       pokemon.evoList?.find(
         (evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace(`_${formStandard()}`, ''))
       )
@@ -276,7 +276,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
 
     evoList?.forEach((evo) => {
-      const pokemon = pokemonData.find(
+      const pokemon = dataStore.pokemons.find(
         (pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.form, evo.evoToForm)
       );
       getNextEvoChainStore(pokemon?.name, pokemon?.evoList, result);
@@ -286,7 +286,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string | undefined) => {
-    const pokemonChain = evolutionChains.find((chain) => chain.id === id);
+    const pokemonChain = dataStore.evolutionChains.find((chain) => chain.id === id);
     if (pokemonChain) {
       const chainForms = pokemonChain.evolutionInfos.filter((info) =>
         isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
@@ -369,7 +369,7 @@ const Evolution = (props: IEvolutionComponent) => {
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
   const getQuestEvo = (prevId: number, form: string) => {
-    const pokemon = pokemonData.find((item) =>
+    const pokemon = dataStore.pokemons.find((item) =>
       item.evoList?.find(
         (value) =>
           (isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
@@ -385,13 +385,13 @@ const Evolution = (props: IEvolutionComponent) => {
           item.evoToId === prevId
       );
     } else {
-      const pokemonChain = evolutionChains.find((chain) => chain.id === prevId);
+      const pokemonChain = dataStore.evolutionChains.find((chain) => chain.id === prevId);
       if (pokemonChain) {
         const chainForm = pokemonChain.evolutionInfos.find(
           (info) => info.id !== prevId && isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
         );
         if (chainForm && prevId === props.id) {
-          const pokemon = pokemonData.find((item) => item.evoList?.find((value) => value.evoToId === prevId));
+          const pokemon = dataStore.pokemons.find((item) => item.evoList?.find((value) => value.evoToId === prevId));
           if (pokemon) {
             return pokemon.evoList?.find((item) => item.evoToId === prevId);
           }

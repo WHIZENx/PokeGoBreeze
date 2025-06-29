@@ -14,10 +14,11 @@ import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon
 import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { combineClasses, isNotEmpty, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
+import { useDataStore } from '../../../composables/useDataStore';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const assets = useSelector((state: StoreState) => state.store.data.assets);
+  const dataStore = useDataStore();
   const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
@@ -25,7 +26,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const [asset, setAsset] = useState<IAsset>();
 
   const getImageList = (id: number | undefined, genderRatio: IPokemonGenderRatio) => {
-    const pokemonAsset = assets.find((item) => item.id === id);
+    const pokemonAsset = dataStore.assets.find((item) => item.id === id);
     setAsset(pokemonAsset);
     setGender({
       malePercent: genderRatio.M,
@@ -39,10 +40,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(assets) && pokemonData?.fullName && pokemonData.genderRatio) {
+    if (isNotEmpty(dataStore.assets) && pokemonData?.fullName && pokemonData.genderRatio) {
       setPokeAssets(getImageList(pokemonData.id, pokemonData.genderRatio));
     }
-  }, [assets, pokemonData]);
+  }, [dataStore.assets, pokemonData]);
 
   return (
     <div className="mt-2 position-relative">

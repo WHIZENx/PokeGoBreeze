@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import './News.scss';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
 import { Accordion } from 'react-bootstrap';
 import {
   generateParamForm,
@@ -32,6 +30,7 @@ import { INewsModel, IRewardNews, NewsModel, RewardNews } from './models/news.mo
 import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import Candy from '../../components/Sprites/Candy/Candy';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
+import { useDataStore } from '../../composables/useDataStore';
 
 const News = () => {
   useTitle({
@@ -47,17 +46,16 @@ const News = () => {
       'upcoming features',
     ],
   });
-  const information = useSelector((state: StoreState) => state.store.data.information);
-  const assets = useSelector((state: StoreState) => state.store.data.assets);
+  const dataStore = useDataStore();
 
   const [data, setData] = useState<INewsModel[]>([]);
 
   useEffect(() => {
-    if (information.isLoaded && !isNotEmpty(data)) {
-      const result = mapDataInformation(information.data);
+    if (dataStore.information.isLoaded && !isNotEmpty(data)) {
+      const result = mapDataInformation(dataStore.information.data);
       setData(result);
     }
-  }, [information, data]);
+  }, [dataStore.information, data]);
 
   const mapDataInformation = (information: IInformation[]) =>
     information.map((info) =>
@@ -111,7 +109,7 @@ const News = () => {
   };
 
   const getImageList = (pokemon: RewardPokemon | undefined) => {
-    const model = assets.find((item) => item.id === pokemon?.id);
+    const model = dataStore.assets.find((item) => item.id === pokemon?.id);
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
       (value) => new PokemonModelComponent(value, model?.image)
     );
@@ -218,7 +216,7 @@ const News = () => {
   );
 
   const reload = (element: JSX.Element) => {
-    if (information.isLoaded) {
+    if (dataStore.information.isLoaded) {
       return element;
     }
     return (

@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { capitalize, getDataWithKey, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SearchMoves.scss';
-import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { ColumnType, TypeMove, VariantType } from '../../../enums/type.enum';
-import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
@@ -28,6 +26,7 @@ import CircularProgressTable from '../../../components/Sprites/CircularProgress/
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
 import { PokemonTypeBadge } from '../../../core/enums/pokemon-type.enum';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 const nameSort = (rowA: ICombat, rowB: ICombat) => {
   const a = rowA.name.toLowerCase();
@@ -120,7 +119,7 @@ const Search = () => {
       'Search and filter Pokémon GO moves by type, power, energy, and more. Find the best moves for your Pokémon in battles and raids.',
     keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
   });
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const dataStore = useDataStore();
 
   const [filters, setFilters] = useState(new Filter());
 
@@ -134,11 +133,11 @@ const Search = () => {
   const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
 
   useEffect(() => {
-    if (isNotEmpty(combat)) {
-      setCombatFMoves(combat.filter((item) => item.typeMove === TypeMove.Fast));
-      setCombatCMoves(combat.filter((item) => item.typeMove === TypeMove.Charge));
+    if (isNotEmpty(dataStore.combats)) {
+      setCombatFMoves(dataStore.combats.filter((item) => item.typeMove === TypeMove.Fast));
+      setCombatCMoves(dataStore.combats.filter((item) => item.typeMove === TypeMove.Charge));
     }
-  }, [combat]);
+  }, [dataStore.combats]);
 
   useEffect(() => {
     const debounced = debounce(() => {

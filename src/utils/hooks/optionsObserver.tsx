@@ -1,16 +1,15 @@
 // Some React component
 import { useEffect } from 'react';
 import { updateCurrentOptions } from '../helpers/options-context.helpers';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
 import { defaultOptions } from '../../contexts/options.context';
+import useDataStore from '../../composables/useDataStore';
 
 const optionsObserver = () => {
-  const options = useSelector((state: StoreState) => state.store.data.options);
+  const dataStore = useDataStore();
 
   useEffect(() => {
-    updateCurrentOptions(options || defaultOptions);
-  }, [options]);
+    updateCurrentOptions(dataStore.options || defaultOptions);
+  }, [dataStore.options]);
 
   return null;
 };

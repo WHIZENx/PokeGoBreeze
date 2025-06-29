@@ -30,7 +30,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
-import { StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
+import { StatsState, TimestampState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
@@ -67,8 +67,6 @@ import useDataStore from '../../../composables/useDataStore';
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const dataStore = useDataStore();
-  const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
-  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const params = useParams();
 
@@ -144,7 +142,7 @@ const TeamPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvp);
+    loadPVP(dispatch, timestamp, dataStore.pvp);
   }, []);
 
   useEffect(() => {
@@ -251,8 +249,8 @@ const TeamPVP = (props: IStyleSheetData) => {
     };
     if (
       !rankingData &&
-      isNotEmpty(pvp.rankings) &&
-      isNotEmpty(pvp.trains) &&
+      isNotEmpty(dataStore.pvp.rankings) &&
+      isNotEmpty(dataStore.pvp.trains) &&
       isNotEmpty(dataStore.combats) &&
       isNotEmpty(dataStore.pokemons) &&
       isNotEmpty(dataStore.assets) &&
@@ -271,8 +269,8 @@ const TeamPVP = (props: IStyleSheetData) => {
     params.cp,
     params.serie,
     rankingData,
-    pvp.rankings,
-    pvp.trains,
+    dataStore.pvp.rankings,
+    dataStore.pvp.trains,
     dataStore.combats,
     dataStore.pokemons,
     dataStore.assets,
@@ -284,7 +282,7 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvp.trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = dataStore.pvp.trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -345,7 +343,11 @@ const TeamPVP = (props: IStyleSheetData) => {
       }
     }
 
-    nameSet = findMoveTeam(tag, allMoves, true);
+    nameSet = findMoveTeam(
+      tag,
+      dataStore.combats.map((item) => item.name),
+      true
+    );
     move = dataStore.combats.find(
       (item) =>
         (item.abbreviation && isEqual(item.abbreviation, tag)) ||

@@ -3,23 +3,22 @@ import APIService from '../../../services/api.service';
 import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './TypeBadge.scss';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { ITypeBadgeComponent } from '../../models/component.model';
 import { combineClasses, getValueOrDefault, isEqual, isNotEmpty } from '../../../utils/extension';
 import { MoveType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
+import { useDataStore } from '../../../composables/useDataStore';
 
 const TypeBadge = (props: ITypeBadgeComponent) => {
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const dataStore = useDataStore();
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {
-    if (props.move?.name && isNotEmpty(combat)) {
-      setMove(combat.find((item) => isEqual(item.name, props.move?.name)));
+    if (props.move?.name && isNotEmpty(dataStore.combats)) {
+      setMove(dataStore.combats.find((item) => isEqual(item.name, props.move?.name)));
     }
-  }, [combat, props.move?.name]);
+  }, [dataStore.combats, props.move?.name]);
 
   return (
     <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>

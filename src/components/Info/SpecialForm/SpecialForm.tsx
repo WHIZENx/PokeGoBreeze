@@ -1,10 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import APIService from '../../../services/api.service';
 import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
-
 import './SpecialForm.scss';
-import { StoreState } from '../../../store/models/state.model';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
 import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../utils/extension';
@@ -12,10 +9,10 @@ import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
+import { useDataStore } from '../../../composables/useDataStore';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
-  const evoData = useSelector((state: StoreState) => state.store.data.pokemons);
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const dataStore = useDataStore();
 
   const [pokemonType, setPokemonType] = useState(PokemonType.None);
   const [arrEvoList, setArrEvoList] = useState<IForm[]>();
@@ -48,7 +45,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
 
   const getQuestEvo = (name: string) => {
     name = splitAndCapitalize(name, '-', '_').toUpperCase();
-    const pokemonEvo = evoData
+    const pokemonEvo = dataStore.pokemons
       .find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)))
       ?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     return TempEvo.create({
@@ -58,7 +55,8 @@ const SpecialForm = (props: IFormSpecialComponent) => {
     });
   };
 
-  const getCombatMove = (moveName: string | undefined) => combat.find((item) => isEqual(item.name, moveName));
+  const getCombatMove = (moveName: string | undefined) =>
+    dataStore.combats.find((item) => isEqual(item.name, moveName));
 
   return (
     <Fragment>

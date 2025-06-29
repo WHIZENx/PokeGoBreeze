@@ -9,13 +9,12 @@ import React, { Fragment, useEffect, useState } from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Form, OverlayTrigger } from 'react-bootstrap';
 import CustomPopover from '../../components/Popover/CustomPopover';
-import { useSelector } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
 import { GlobalType } from '../../enums/type.enum';
 import { ShopType } from './enums/sticker-type.enum';
+import useDataStore from '../../composables/useDataStore';
 
 interface PokemonStickerModel {
   id?: number;
@@ -33,13 +32,13 @@ const Sticker = () => {
   const [shopType, setShopType] = useState(ShopType.All);
   const [pokemonStickerFilter, setPokemonStickerFilter] = useState<ISticker[]>([]);
 
-  const pokeStickerList = useSelector((state: StoreState) => state.store.data.stickers);
+  const dataStore = useDataStore();
 
   const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 
   useEffect(() => {
-    if (isNotEmpty(pokeStickerList) && !isNotEmpty(selectPokemon)) {
-      const result = pokeStickerList
+    if (isNotEmpty(dataStore.stickers) && !isNotEmpty(selectPokemon)) {
+      const result = dataStore.stickers
         .reduce((prev: PokemonStickerModel[], curr) => {
           if (
             curr.pokemonName &&
@@ -58,12 +57,12 @@ const Sticker = () => {
         .sort((a, b) => toNumber(a.id) - toNumber(b.id));
       setSelectPokemon(result);
     }
-  }, [pokeStickerList, selectPokemon]);
+  }, [dataStore.stickers, selectPokemon]);
 
   useEffect(() => {
-    if (isNotEmpty(pokeStickerList)) {
+    if (isNotEmpty(dataStore.stickers)) {
       setPokemonStickerFilter(
-        pokeStickerList
+        dataStore.stickers
           .filter((item) => {
             if (shopType === ShopType.All) {
               return true;
@@ -82,7 +81,7 @@ const Sticker = () => {
           })
       );
     }
-  }, [id, shopType, pokeStickerList]);
+  }, [id, shopType, dataStore.stickers]);
 
   return (
     <div className="container p-3">

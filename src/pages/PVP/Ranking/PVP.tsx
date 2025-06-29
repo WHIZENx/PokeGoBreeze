@@ -32,7 +32,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { Params } from '../../../utils/constants';
-import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
+import { RouterState, StatsState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
@@ -73,7 +73,6 @@ const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const dataStore = useDataStore();
-  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const router = useSelector((state: RouterState) => state.router);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
 
@@ -113,7 +112,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvp);
+    loadPVP(dispatch, timestamp, dataStore.pvp);
   }, []);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
@@ -270,8 +269,8 @@ const RankingPVP = (props: IStyleSheetData) => {
     };
     if (
       statsRanking &&
-      isNotEmpty(pvp.rankings) &&
-      isNotEmpty(pvp.trains) &&
+      isNotEmpty(dataStore.pvp.rankings) &&
+      isNotEmpty(dataStore.pvp.trains) &&
       isNotEmpty(dataStore.combats) &&
       isNotEmpty(dataStore.pokemons) &&
       isNotEmpty(dataStore.assets)
@@ -285,7 +284,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonRanking, rankingData, pvp.rankings, pvp.trains, router.action, dispatch]);
+  }, [fetchPokemonRanking, rankingData, dataStore.pvp.rankings, dataStore.pvp.trains, router.action, dispatch]);
 
   const renderItem = (data: IPokemonBattleRanking, key: number) => (
     <Accordion.Item eventKey={key.toString()}>
@@ -392,7 +391,7 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvp.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = dataStore.pvp.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league ? (

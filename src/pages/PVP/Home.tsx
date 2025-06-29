@@ -5,7 +5,7 @@ import APIService from '../../services/api.service';
 import { leaguesTeamBattle } from '../../utils/constants';
 import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { Link } from 'react-router-dom';
-import { SpinnerState, StoreState, TimestampState } from '../../store/models/state.model';
+import { SpinnerState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../utils/compute';
 import { useTitle } from '../../utils/hooks/useTitle';
@@ -15,6 +15,7 @@ import { isEqual, isInclude, isNotEmpty } from '../../utils/extension';
 import { EqualMode } from '../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../utils/enums/compute.enum';
+import useDataStore from '../../composables/useDataStore';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -40,8 +41,7 @@ const PVPHome = () => {
     keywords: ['PVP simulator', 'Pokémon GO battles', 'battle simulator', 'PVP team builder', 'battle strategies'],
   });
   const dispatch = useDispatch();
-  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const combat = useSelector((state: StoreState) => state.store.data.combats);
+  const dataStore = useDataStore();
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
 
@@ -50,28 +50,28 @@ const PVPHome = () => {
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvp);
+    loadPVP(dispatch, timestamp, dataStore.pvp);
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
     if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [spinner, combat, dispatch]);
+  }, [spinner, dataStore.combats, dispatch]);
 
   useEffect(() => {
-    if (!rank && !team && isNotEmpty(pvp.rankings) && isNotEmpty(pvp.trains)) {
+    if (!rank && !team && isNotEmpty(dataStore.pvp.rankings) && isNotEmpty(dataStore.pvp.trains)) {
       setOptions(
         OptionsHome.create({
-          rank: pvp.rankings.at(0),
-          team: pvp.trains.at(0),
+          rank: dataStore.pvp.rankings.at(0),
+          team: dataStore.pvp.trains.at(0),
         })
       );
     }
-  }, [rank, team, pvp.rankings, pvp.trains]);
+  }, [rank, team, dataStore.pvp.rankings, dataStore.pvp.trains]);
 
   const renderLeagueLogo = (logo: string | undefined, cp: number) => {
     if (
@@ -133,12 +133,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: pvp.rankings.find((item) => isEqual(item.id, e.target.value)),
+                rank: dataStore.pvp.rankings.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvp.rankings.map((value, index) => (
+          {dataStore.pvp.rankings.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -177,12 +177,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: pvp.trains.find((item) => isEqual(item.id, e.target.value)),
+                team: dataStore.pvp.trains.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvp.trains.map((value, index) => (
+          {dataStore.pvp.trains.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>

@@ -1,10 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import APIService from '../../../services/api.service';
 import { generateParamForm, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 import Xarrow from 'react-xarrows';
 import Candy from '../../Sprites/Candy/Candy';
-import { StoreState } from '../../../store/models/state.model';
 import { IPokemonModelComponent, PokemonModelComponent } from '../Assets/models/pokemon-model.model';
 import { IFromChangeComponent } from '../../models/component.model';
 import {
@@ -19,9 +17,10 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
+import { useDataStore } from '../../../composables/useDataStore';
 
 const FromChange = (props: IFromChangeComponent) => {
-  const assets = useSelector((state: StoreState) => state.store.data.assets);
+  const dataStore = useDataStore();
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
   const [dataSrc, setDataSrc] = useState<string>();
@@ -29,7 +28,7 @@ const FromChange = (props: IFromChangeComponent) => {
   const [pokemon, setPokemon] = useState<Partial<IPokemonDetail>>();
 
   const getImageList = (id: number | undefined) => {
-    const model = assets.find((item) => item.id === id);
+    const model = dataStore.assets.find((item) => item.id === id);
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
       (value) => new PokemonModelComponent(value, model?.image)
     );
@@ -43,10 +42,10 @@ const FromChange = (props: IFromChangeComponent) => {
       setPokemon(undefined);
       return;
     }
-    if (toNumber(props.currentId) > 0 && isNotEmpty(assets)) {
+    if (toNumber(props.currentId) > 0 && isNotEmpty(dataStore.assets)) {
       setPokeAssets(getImageList(props.currentId));
     }
-  }, [assets, props.currentId, props.pokemonData]);
+  }, [dataStore.assets, props.currentId, props.pokemonData]);
 
   useEffect(() => {
     if (isNotEmpty(pokeAssets) && props.pokemonData?.fullName) {
