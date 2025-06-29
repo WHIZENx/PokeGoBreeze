@@ -34,7 +34,7 @@ import { PokemonPVPMove } from '../../core/models/pvp.model';
  */
 export const useDataStore = () => {
   const dispatch = useDispatch();
-  const data = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useSelector((state: StoreState) => state.store.data);
 
   /**
    * Update options in the store
@@ -133,7 +133,7 @@ export const useDataStore = () => {
   };
 
   return {
-    ...data,
+    ...dataStore,
     setOptions,
     setPokemons,
     setStickers,

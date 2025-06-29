@@ -1,15 +1,14 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import CardType from '../Card/CardType';
 import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../utils/utils';
-import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
-import { StoreState } from '../../store/models/state.model';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
+import useDataStore from '../../utils/hooks/useDataStore';
 
 const Move = (props: IMoveComponent) => {
-  const data = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
 
   const [countFM, setCountFM] = useState(0);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
@@ -18,14 +17,14 @@ const Move = (props: IMoveComponent) => {
 
   const findMoveData = useCallback(
     (move: string | undefined) => {
-      return data.combats.find((item) => isEqual(item.name, move));
+      return dataStore.combats.find((item) => isEqual(item.name, move));
     },
-    [data.combats]
+    [dataStore.combats]
   );
 
   const findMove = useCallback(
     (value: IMoveComponent) => {
-      const result = retrieveMoves(data.pokemons, value.id, value.form, value.pokemonType);
+      const result = retrieveMoves(dataStore.pokemons, value.id, value.form, value.pokemonType);
       if (result) {
         let simpleMove: ISelectMoveModel[] = [];
         if (!props.type || props.type === TypeMove.Fast) {
@@ -49,7 +48,7 @@ const Move = (props: IMoveComponent) => {
         return setResultMove(simpleMove);
       }
     },
-    [props.type, data.pokemons, currentMove]
+    [props.type, dataStore.pokemons, currentMove]
   );
 
   useEffect(() => {

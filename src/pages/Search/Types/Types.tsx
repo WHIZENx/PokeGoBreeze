@@ -32,6 +32,7 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../utils/hooks/useDataStore';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -204,7 +205,7 @@ class PokemonTypeData implements IPokemonTypeData {
 
 const SearchTypes = (props: IStyleSheetData) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
 
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -242,16 +243,16 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data.combats) && isNotEmpty(data.pokemons)) {
+    if (isNotEmpty(dataStore.combats) && isNotEmpty(dataStore.pokemons)) {
       setAllData(
         PokemonTypeData.create({
-          pokemon: data.pokemons.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-          fastMoves: data.combats.filter((type) => type.typeMove === TypeMove.Fast).length,
-          chargedMoves: data.combats.filter((type) => type.typeMove === TypeMove.Charge).length,
+          pokemon: dataStore.pokemons.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+          fastMoves: dataStore.combats.filter((type) => type.typeMove === TypeMove.Fast).length,
+          chargedMoves: dataStore.combats.filter((type) => type.typeMove === TypeMove.Charge).length,
         })
       );
     }
-  }, [releasedGO, data.combats, data.pokemons]);
+  }, [releasedGO, dataStore.combats, dataStore.pokemons]);
 
   useEffect(() => {
     if (isNotEmpty(getTypes()) && !currentType) {
@@ -260,20 +261,22 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
+    if (isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.combats)) {
       setResult(
         PokemonTypeMove.create({
-          pokemonList: data.pokemons
+          pokemonList: dataStore.pokemons
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
-          fastMove: data.combats.filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
-          chargedMove: data.combats.filter(
+          fastMove: dataStore.combats.filter(
+            (type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)
+          ),
+          chargedMove: dataStore.combats.filter(
             (type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)
           ),
         })
       );
     }
-  }, [currentType, releasedGO, data.pokemons, data.combats]);
+  }, [currentType, releasedGO, dataStore.pokemons, dataStore.combats]);
 
   const changeType = (value: string) => {
     setShowType(false);
