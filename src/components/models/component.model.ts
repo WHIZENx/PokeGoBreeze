@@ -132,6 +132,7 @@ export interface IFormSelectComponent {
   setForm?: (form: IPokemonFormModify | undefined) => void;
   stats: IStatsRank | null;
   onHandleSetStats?: (type: TypeAction, value: number) => void;
+  pokemonData: IPokemonData[];
   isObjective?: boolean;
 }
 

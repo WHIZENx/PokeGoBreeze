@@ -78,7 +78,6 @@ import {
   minIv,
   minLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import { getDataCombats, getDataPokemons } from '../../../utils/helpers/data-context.helpers';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -282,8 +281,7 @@ const DpsTdo = () => {
   });
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const pokemons = getDataPokemons();
-  const combats = getDataCombats();
+  const data = useSelector((state: StoreState) => state.store.data);
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
   const router = useSelector((state: RouterState) => state.router);
 
@@ -362,7 +360,7 @@ const DpsTdo = () => {
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc: string) => {
-      const cMove = combats.find((item) => isEqual(item.name, vc));
+      const cMove = data.combats.find((item) => isEqual(item.name, vc));
 
       if (cMove) {
         const cMoveType = getMoveType(pokemon, vc);
@@ -393,8 +391,8 @@ const DpsTdo = () => {
               atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
               def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
               hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
-              fMove: combats.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
-              cMove: combats.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
+              fMove: data.combats.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
+              cMove: data.combats.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
               types: dataTargetPokemon.types,
               weatherBoosts: options.weatherBoosts,
             });
@@ -434,7 +432,7 @@ const DpsTdo = () => {
 
   const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[]) => {
     movePoke.forEach((vf) => {
-      const fMove = combats.find((item) => isEqual(item.name, vf));
+      const fMove = data.combats.find((item) => isEqual(item.name, vf));
       if (!fMove) {
         return;
       }
@@ -458,7 +456,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
-    pokemons.forEach((pokemon) => {
+    data.pokemons.forEach((pokemon) => {
       addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
     setIsShowSpinner(false);
@@ -512,7 +510,8 @@ const DpsTdo = () => {
       if (releasedGO) {
         const isReleasedGO = checkPokemonGO(
           item.pokemon.num,
-          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId)
+          getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
+          data.pokemons
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
       }
@@ -559,7 +558,7 @@ const DpsTdo = () => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(pokemons) && isNotEmpty(combats)) {
+    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
       setIsShowSpinner(true);
       const debounced = debounce(() => {
         setDpsTable(calculateDPSTable());
@@ -569,7 +568,7 @@ const DpsTdo = () => {
         debounced.cancel();
       };
     }
-  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, pokemons, combats]);
+  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, data.pokemons, data.combats]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {

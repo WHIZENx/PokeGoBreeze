@@ -24,7 +24,6 @@ import { ISticker, Sticker } from './models/sticker.model';
 import pokemonStoreData from '../data/pokemon.json';
 import textEng from '../data/text_english.json';
 import {
-  camelCase,
   capitalize,
   checkMoveSetAvailable,
   convertPokemonDataName,
@@ -38,6 +37,7 @@ import {
   isSpecialMegaFormType,
   replacePokemonGoForm,
   replaceTempMoveName,
+  splitAndCamelCase,
   splitAndCapitalize,
 } from '../utils/utils';
 import { BuffType, MoveType, PokemonType, TypeAction, TypeMove } from '../enums/type.enum';
@@ -229,8 +229,9 @@ export const optionPokemonTypes = (data: PokemonDataGM[]) => {
     .filter((item) => /^POKEMON_TYPE*/g.test(item.templateId))
     .forEach((item) => {
       const rootType = item.templateId.replace(`${PokemonConfig.Type}_`, '');
+      const typesRoot = types[splitAndCamelCase(rootType, '_', '')];
       typeSet.forEach((type, index) => {
-        types[camelCase(rootType)][camelCase(type)] = item.data.typeEffective.attackScalar[index];
+        typesRoot[splitAndCamelCase(type, '_', '')] = item.data.typeEffective.attackScalar[index];
       });
     });
   return types as unknown as ITypeEffectiveModel;
@@ -242,8 +243,8 @@ export const optionPokemonWeather = (data: PokemonDataGM[]) => {
     .filter((item) => /^WEATHER_AFFINITY*/g.test(item.templateId) && item.data.weatherAffinities)
     .forEach((item) => {
       const rootType = item.data.weatherAffinities.weatherCondition;
-      weather[camelCase(rootType)] = item.data.weatherAffinities.pokemonType.map((type) =>
-        type.replace(`${PokemonConfig.Type}_`, '').toLowerCase()
+      weather[splitAndCamelCase(rootType, '_', '')] = item.data.weatherAffinities.pokemonType.map((type) =>
+        splitAndCamelCase(type.replace(`${PokemonConfig.Type}_`, ''), '_', '')
       );
     });
   return weather as unknown as IWeatherBoost;
@@ -965,7 +966,7 @@ export const optionAssets = (pokemon: IPokemonData[], imgs: string[], sounds: st
   });
 };
 
-export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel) => {
+export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel): ICombat[] => {
   const moves = extractBasicMoves(data);
   const sequence = extractMoveSequences(data);
   const moveSet = processCombatMoves(data, moves, sequence);
@@ -1138,7 +1139,7 @@ export const optionCombat = (data: PokemonDataGM[], types: ITypeEffectiveModel) 
     result.staminaLossScalar = move.staminaLossScalar;
   }
 
-  function processSpecialMoves(data: PokemonDataGM[], moveSet: ICombat[], types: ITypeEffectiveModel) {
+  function processSpecialMoves(data: PokemonDataGM[], moveSet: Combat[], types: ITypeEffectiveModel) {
     const result = [...moveSet];
 
     moveSet
@@ -1540,7 +1541,7 @@ const getInformationTitle = (itemSettings: ItemSettings | undefined) => {
       const [firstText] = srcText.split('_');
       if (isNumber(firstText) && !itemSettings.globalEventTicket.titleImageUrl) {
         const descKey = itemSettings.globalEventTicket.itemBagDescriptionKey.split('_');
-        return descKey[descKey.length - 1]?.split(/(?=[A-Z])/).join(' ');
+        return splitAndCapitalize(descKey[descKey.length - 1], /(?=[A-Z])/, ' ');
       }
       descKey = srcText.split('_');
       if (/^PGO/i.test(descKey[0])) {

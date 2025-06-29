@@ -1,36 +1,35 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CardWeather from '../../components/Card/CardWeather';
 import WeatherEffective from '../../components/Effective/WeatherEffective';
-import { splitAndCapitalize } from '../../utils/utils';
-import { IWeatherAffComponent } from '../models/page.model';
+import { camelCase, splitAndCapitalize } from '../../utils/utils';
 import { WeatherBoost } from '../../core/models/weather-boost.model';
 import { DynamicObj, getPropertyName, isEqual } from '../../utils/extension';
+import { getWeatherBoost } from '../../utils/helpers/options-context.helpers';
 
-const Affect = (prop: IWeatherAffComponent) => {
+const Affect = () => {
+  const weathersBoost = getWeatherBoost();
   const [weathers, setWeathers] = useState<string[]>([]);
 
-  const [currentWeather, setCurrentWeather] = useState(getPropertyName(prop.weathers, (o) => o.CLEAR));
+  const [currentWeather, setCurrentWeather] = useState(camelCase(getPropertyName(weathersBoost, (o) => o.clear)));
   const [showWeather, setShowWeather] = useState(false);
 
   const [weatherEffective, setWeatherEffective] = useState<string[]>([]);
 
   const getWeatherEffective = useCallback(() => {
     setWeatherEffective(
-      Object.values(
-        ((prop.weathers ?? new WeatherBoost()) as unknown as DynamicObj<string>)[currentWeather] ?? new WeatherBoost()
-      )
+      Object.values((weathersBoost as unknown as DynamicObj<string>)[currentWeather] ?? new WeatherBoost())
     );
-  }, [currentWeather, prop.weathers]);
+  }, [currentWeather, weathersBoost]);
 
   useEffect(() => {
-    const results = Object.keys(prop.weathers ?? new WeatherBoost()).filter((item) => !isEqual(item, currentWeather));
+    const results = Object.keys(weathersBoost).filter((item) => !isEqual(item, currentWeather));
     setWeathers(results);
     getWeatherEffective();
-  }, [currentWeather, getWeatherEffective, prop.weathers]);
+  }, [currentWeather, getWeatherEffective, weathersBoost]);
 
   const changeWeather = (value: string) => {
     setShowWeather(false);
-    setCurrentWeather(value);
+    setCurrentWeather(camelCase(value));
     getWeatherEffective();
   };
 
@@ -53,14 +52,14 @@ const Affect = (prop: IWeatherAffComponent) => {
                 onBlur={() => setShowWeather(false)}
               >
                 <div className="card-select">
-                  <CardWeather value={splitAndCapitalize(currentWeather, '_', ' ')} />
+                  <CardWeather value={splitAndCapitalize(currentWeather, /(?=[A-Z])/, ' ')} />
                 </div>
                 {showWeather && (
                   <div className="result-weather">
                     <ul>
                       {weathers.map((value, index) => (
                         <li className="container card-pokemon" key={index} onMouseDown={() => changeWeather(value)}>
-                          <CardWeather value={splitAndCapitalize(value, '_', ' ')} />
+                          <CardWeather value={splitAndCapitalize(value, /(?=[A-Z])/, ' ')} />
                         </li>
                       ))}
                     </ul>

@@ -6,16 +6,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import './Select.scss';
 import { addSelectMovesByType, retrieveMoves, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/api.service';
+import { useSelector } from 'react-redux';
 import { TypeMove } from '../../enums/type.enum';
+import { StoreState } from '../../store/models/state.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISelectPokemonComponent } from '../models/component.model';
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, isUndefined } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import { SelectPosition } from './enums/input-type.enum';
-import { getDataPokemons } from '../../utils/helpers/data-context.helpers';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const pokemons = getDataPokemons();
+  const pokemonData = useSelector((state: StoreState) => state.store.data.pokemons);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -79,7 +80,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   };
 
   const findMove = (value: IPokemonData, type: TypeMove) => {
-    const result = retrieveMoves(value.num, value.form, value.pokemonType);
+    const result = retrieveMoves(pokemonData, value.num, value.form, value.pokemonType);
     if (result) {
       const simpleMove = addSelectMovesByType(result, type);
       return simpleMove[0];
@@ -87,11 +88,11 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(pokemons)) {
+    if (isNotEmpty(pokemonData)) {
       setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
       setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
     }
-  }, [props.pokemon, pokemons]);
+  }, [props.pokemon, pokemonData]);
 
   const setPos = (position = SelectPosition.Down) => (
     <div
@@ -104,7 +105,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       style={{ maxHeight: props.maxHeight ?? 274 }}
     >
       <div>
-        {pokemons
+        {pokemonData
           .filter(
             (item) =>
               item.num > 0 &&

@@ -21,10 +21,7 @@ const DamageTable = (props: IDamageTableComponent) => {
       label: toFloat(amount, 3),
       style: getValueOrDefault(
         String,
-        getKeyWithData(EffectiveType, amount)
-          ?.split(/(?=[A-Z])/)
-          .join('-')
-          .toLowerCase()
+        splitAndCapitalize(getKeyWithData(EffectiveType, amount), /(?=[A-Z])/, '-').toLowerCase()
       ),
     });
 

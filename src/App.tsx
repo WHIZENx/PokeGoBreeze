@@ -54,8 +54,6 @@ import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
 import optionsObserver from './utils/hooks/optionsObserver';
 import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
-import { DataContext, defaultData } from './contexts/data.context';
-import dataObserver from './utils/hooks/dataObserver';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -78,7 +76,6 @@ function App() {
   const [currentVersion, setCurrentVersion] = useState<string>();
   const styleSheet = useRef(getStyleList());
 
-  dataObserver();
   optionsObserver();
 
   useEffect(() => {
@@ -227,11 +224,9 @@ export default function Main() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <ErrorBoundary>
-          <DataContext.Provider value={defaultData}>
-            <OptionsContext.Provider value={defaultOptions}>
-              <App />
-            </OptionsContext.Provider>
-          </DataContext.Provider>
+          <OptionsContext.Provider value={defaultOptions}>
+            <App />
+          </OptionsContext.Provider>
         </ErrorBoundary>
       </ThemeProvider>
     </ColorModeContext.Provider>

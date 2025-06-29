@@ -104,7 +104,6 @@ import {
   minLevel,
   stepLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import { getDataPokemons } from '../../../utils/helpers/data-context.helpers';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -126,7 +125,6 @@ class BattleState implements IBattleState {
 const Battle = () => {
   const dispatch = useDispatch();
   const dataStore = useSelector((state: StoreState) => state.store.data);
-  const pokemons = getDataPokemons();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -296,7 +294,7 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
             if (!pokemon) {
               return new BattlePokemonData();
             }
@@ -339,14 +337,14 @@ const Battle = () => {
         }
       }
     },
-    [pokemons, dataStore.assets, dispatch]
+    [dataStore.pokemons, dataStore.assets, dispatch]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (isNotEmpty(pokemons) && isNotEmpty(dataStore.assets)) {
+    if (isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.assets)) {
       fetchPokemon(league);
     }
     return () => {

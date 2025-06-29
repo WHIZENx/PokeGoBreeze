@@ -8,7 +8,7 @@ import Pokemon from '../../Pokemon/Pokemon';
 import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../../utils/utils';
 import { Action } from 'history';
-import { RouterState, SearchingState } from '../../../store/models/state.model';
+import { RouterState, SearchingState, StoreState } from '../../../store/models/state.model';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
@@ -17,7 +17,6 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
 import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
-import { getDataPokemons } from '../../../utils/helpers/data-context.helpers';
 
 const Search = () => {
   useTitle({
@@ -28,7 +27,7 @@ const Search = () => {
   });
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
-  const pokemons = getDataPokemons();
+  const pokemonName = useSelector((state: StoreState) => state.store.data.pokemons);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -52,11 +51,11 @@ const Search = () => {
   const resultsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isNotEmpty(pokemons)) {
-      const result = mappingPokemonName();
+    if (isNotEmpty(pokemonName)) {
+      const result = mappingPokemonName(pokemonName);
       setPokemonList(result);
     }
-  }, [pokemons]);
+  }, [pokemonName]);
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
@@ -93,7 +92,7 @@ const Search = () => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(selectId + modify);
+    const currentPokemon = getPokemonById(pokemonName, selectId + modify);
     if (currentPokemon) {
       setSelectId(selectId + modify);
       setSearchOption({ id: toNumber(currentPokemon.id) });
@@ -101,10 +100,10 @@ const Search = () => {
   };
 
   const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
-    const currentPokemon = getPokemonById(selectId);
+    const currentPokemon = getPokemonById(pokemonName, selectId);
     if (currentPokemon) {
-      const prev = getPokemonById(currentPokemon.id - 1);
-      const next = getPokemonById(currentPokemon.id + 1);
+      const prev = getPokemonById(pokemonName, currentPokemon.id - 1);
+      const next = getPokemonById(pokemonName, currentPokemon.id + 1);
       if (isNotEmpty(pokemonListFilter) && event.keyCode === keyEnter()) {
         const input = document.getElementById('input-search-pokemon');
         input?.blur();

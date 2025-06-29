@@ -78,7 +78,6 @@ import {
   maxIv,
   minIv,
 } from './helpers/options-context.helpers';
-import { getDataPokemons } from './helpers/data-context.helpers';
 
 class Mask {
   value: number;
@@ -199,12 +198,28 @@ export const camelCase = (str: string | undefined | null, defaultText = '') => {
   }
 
   const words = str
+    .replace(/(?=[A-Z])+/g, ' ')
     .replace(/[-_\s]+/g, ' ')
     .trim()
     .split(' ');
 
   return words.map((word, index) => (index === 0 ? word.toLowerCase() : capitalize(word))).join('');
 };
+
+export const splitAndCamelCase = (
+  str: string | undefined | null,
+  splitBy: string | RegExp,
+  joinBy: string,
+  defaultText = ''
+) =>
+  getValueOrDefault(
+    String,
+    str
+      ?.split(splitBy)
+      .map((text, index) => (index === 0 ? text.toLowerCase() : capitalize(text)))
+      .join(joinBy),
+    defaultText
+  );
 
 export const capitalize = (str: string | undefined | null, defaultText = '') =>
   getValueOrDefault(String, str?.charAt(0).toUpperCase()) +
@@ -502,8 +517,8 @@ export const findMoveTeam = (move: string, moveSet: string[], isSelectFirst = fa
   return mSet;
 };
 
-export const checkPokemonGO = (id: number, name: string | undefined) =>
-  getDataPokemons().find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
+export const checkPokemonGO = (id: number, name: string | undefined, details: IPokemonData[]) =>
+  details.find((pokemon) => pokemon.num === id && isEqual(pokemon.fullName, name))?.releasedGO;
 
 export const convertFormGif = (name: string | undefined) => {
   if (isEqual(name, 'nidoran')) {
@@ -562,8 +577,8 @@ export const checkRankAllAvailable = (pokemonStats: IStatsRank, stats: IStatsPok
 export const calRank = (pokemonStats: DynamicObj<OptionsRank>, type: string, rank: number) =>
   ((pokemonStats[type].maxRank - rank + 1) * 100) / pokemonStats[type].maxRank;
 
-export const mappingPokemonName = () =>
-  getDataPokemons()
+export const mappingPokemonName = (pokemonData: IPokemonData[]) =>
+  pokemonData
     .filter(
       (pokemon) =>
         pokemon.num > 0 &&
@@ -572,8 +587,8 @@ export const mappingPokemonName = () =>
     .map((pokemon) => new PokemonSearching(pokemon))
     .sort((a, b) => a.id - b.id);
 
-export const getPokemonById = (id: number) => {
-  const result = getDataPokemons()
+export const getPokemonById = (pokemonData: IPokemonData[], id: number) => {
+  const result = pokemonData
     .filter((pokemon) => pokemon.num === id)
     .find(
       (pokemon) =>
@@ -733,8 +748,8 @@ export const checkMoveSetAvailable = (pokemon: IPokemonData | undefined) => {
   );
 };
 
-export const checkPokemonIncludeShadowForm = (form: string) =>
-  getDataPokemons().some(
+export const checkPokemonIncludeShadowForm = (pokemon: IPokemonData[], form: string) =>
+  pokemon.some(
     (p) => p.hasShadowForm && isEqual(convertPokemonAPIDataName(form), getValueOrDefault(String, p.fullName, p.name))
   );
 
@@ -912,6 +927,7 @@ export const generateFormName = (form: string | null | undefined, pokemonType: P
 };
 
 export const generatePokemonGoForms = (
+  pokemonData: IPokemonData[],
   dataFormList: IPokemonFormDetail[][],
   formListResult: IPokemonFormModify[][],
   id: number,
@@ -919,7 +935,7 @@ export const generatePokemonGoForms = (
   index = 0
 ) => {
   const formList = dataFormList.flatMap((form) => form).map((p) => convertPokemonAPIDataName(p.formName, formNormal()));
-  getDataPokemons()
+  pokemonData
     .filter((pokemon) => pokemon.num === id)
     .forEach((pokemon) => {
       const isIncludeFormGO = formList.some((form) => isInclude(pokemon.form, form));
@@ -1009,12 +1025,17 @@ export const getFormFromForms = (
   return filterForm;
 };
 
-export const retrieveMoves = (id: number | undefined, form: string | undefined, pokemonType = PokemonType.None) => {
-  if (isNotEmpty(getDataPokemons())) {
+export const retrieveMoves = (
+  pokemon: IPokemonData[],
+  id: number | undefined,
+  form: string | undefined,
+  pokemonType = PokemonType.None
+) => {
+  if (isNotEmpty(pokemon)) {
     if (pokemonType === PokemonType.GMax) {
-      return getDataPokemons().find((item) => item.num === id && isEqual(item.form, formGmax()));
+      return pokemon.find((item) => item.num === id && isEqual(item.form, formGmax()));
     }
-    const resultFilter = getDataPokemons().filter((item) => item.num === id);
+    const resultFilter = pokemon.filter((item) => item.num === id);
     const pokemonForm = getValueOrDefault(
       String,
       form?.replaceAll('-', '_').toUpperCase().replace(`_${formStandard()}`, '').replace(formGmax(), formNormal()),
@@ -1026,6 +1047,7 @@ export const retrieveMoves = (id: number | undefined, form: string | undefined, 
 };
 
 export const getPokemonDetails = (
+  pokemonData: IPokemonData[],
   id: number | undefined,
   form: string | undefined,
   pokemonType = PokemonType.None,
@@ -1040,12 +1062,12 @@ export const getPokemonDetails = (
         .replaceAll(' ', '-'),
       pokemonType
     );
-    let pokemonForm = getDataPokemons().find(
+    let pokemonForm = pokemonData.find(
       (item) => item.num === id && isEqual(item.fullName, name, EqualMode.IgnoreCaseSensitive)
     );
 
     if (isDefault && !pokemonForm) {
-      pokemonForm = getDataPokemons().find(
+      pokemonForm = pokemonData.find(
         (item) =>
           item.num === id && (item.form === formNormal() || (item.baseForme && isEqual(item.baseForme, item.form)))
       );

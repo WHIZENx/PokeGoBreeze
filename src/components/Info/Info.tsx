@@ -8,7 +8,7 @@ import { SearchingState } from '../../store/models/state.model';
 import { TypeEffectiveChart } from '../../core/models/type-effective.model';
 import { DynamicObj, isIncludeList, isNotEmpty, toNumber } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
-import { getMultiplyTypeEffect } from '../../utils/utils';
+import { camelCase, getMultiplyTypeEffect } from '../../utils/utils';
 import { getWeatherBoost, getTypeEffective } from '../../utils/helpers/options-context.helpers';
 
 const Info = () => {
@@ -47,7 +47,7 @@ const Info = () => {
       if (isNotEmpty(types)) {
         let valueEffective = 1;
         types?.forEach((type) => {
-          valueEffective *= toNumber(value[type.toUpperCase()], 1);
+          valueEffective *= toNumber(value[camelCase(type)] || value[type.toLowerCase()], 1);
         });
         getMultiplyTypeEffect(data, valueEffective, key);
       }

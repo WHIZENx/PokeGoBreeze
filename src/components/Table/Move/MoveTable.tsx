@@ -3,10 +3,12 @@ import { getAllMoves, getKeyWithData, splitAndCapitalize } from '../../../utils/
 import { rankMove } from '../../../utils/calculate';
 
 import './MoveTable.scss';
+import { useSelector } from 'react-redux';
 import { Tab, Tabs } from 'react-bootstrap';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { StoreState } from '../../../store/models/state.model';
 import { Combat, ICombat } from '../../../core/models/combat.model';
 import {
   IPokemonQueryMove,
@@ -31,7 +33,6 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import IconType from '../../Sprites/Icon/Type/Type';
-import { getDataCombats } from '../../../utils/helpers/data-context.helpers';
 
 interface PokemonMoves {
   fastMoves: ICombat[];
@@ -78,7 +79,7 @@ class TableSort implements ITableSort {
 }
 
 const TableMove = (props: ITableMoveComponent) => {
-  const combats = getDataCombats();
+  const data = useSelector((state: StoreState) => state.store.data);
   const [move, setMove] = useState<IPokemonQueryRankMove>(new PokemonQueryRankMove());
   const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
 
@@ -107,7 +108,7 @@ const TableMove = (props: ITableMoveComponent) => {
     return getValueOrDefault(
       Array,
       moves
-        ?.map((move) => combats.find((item) => isEqual(item.name, move)) ?? new Combat())
+        ?.map((move) => data.combats.find((item) => isEqual(item.name, move)) ?? new Combat())
         .filter((move) => move.id > 0)
     );
   };
@@ -139,7 +140,7 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const setRankMove = (result: Partial<IPokemonDetail>) => {
-    return rankMove(result, result.statsGO?.atk, result.statsGO?.def, result.statsGO?.sta, result.types);
+    return rankMove(data.combats, result, result.statsGO?.atk, result.statsGO?.def, result.statsGO?.sta, result.types);
   };
 
   useEffect(() => {

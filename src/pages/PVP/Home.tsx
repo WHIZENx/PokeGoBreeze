@@ -15,7 +15,6 @@ import { isEqual, isInclude, isNotEmpty } from '../../utils/extension';
 import { EqualMode } from '../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../utils/enums/compute.enum';
-import { getDataCombats } from '../../utils/helpers/data-context.helpers';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -42,7 +41,7 @@ const PVPHome = () => {
   });
   const dispatch = useDispatch();
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
-  const combats = getDataCombats();
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
 
@@ -55,13 +54,13 @@ const PVPHome = () => {
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(combats) && combats.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(combat) && combat.every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
     if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [spinner, combats, dispatch]);
+  }, [spinner, combat, dispatch]);
 
   useEffect(() => {
     if (!rank && !team && isNotEmpty(pvp.rankings) && isNotEmpty(pvp.trains)) {

@@ -107,7 +107,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         )
         .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
-      generatePokemonGoForms(dataFormList, formListResult, specie.id, specie.name);
+      generatePokemonGoForms(props.pokemonData, dataFormList, formListResult, specie.id, specie.name);
 
       setPokeData(dataPokeList);
       setFormList(formListResult);
@@ -203,7 +203,13 @@ const FormSelect = (props: IFormSelectComponent) => {
         currentForm.form.formName,
         currentForm.defaultName
       );
-      const details = getPokemonDetails(id, formName, currentForm.form.pokemonType, currentForm.form.isDefault);
+      const details = getPokemonDetails(
+        props.pokemonData,
+        id,
+        formName,
+        currentForm.form.pokemonType,
+        currentForm.form.isDefault
+      );
       details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
       if (
         props.searching?.object?.pokemon?.id !== props.id ||
@@ -224,12 +230,12 @@ const FormSelect = (props: IFormSelectComponent) => {
   useEffect(() => {
     const id = toNumber(props.id);
     if (isNotEmpty(props.pokemonData) && id > 0) {
-      const currentPokemon = getPokemonById(id);
+      const currentPokemon = getPokemonById(props.pokemonData, id);
       if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(currentPokemon.id - 1),
-          current: getPokemonById(currentPokemon.id),
-          next: getPokemonById(currentPokemon.id + 1),
+          prev: getPokemonById(props.pokemonData, currentPokemon.id - 1),
+          current: getPokemonById(props.pokemonData, currentPokemon.id),
+          next: getPokemonById(props.pokemonData, currentPokemon.id + 1),
         });
       }
     }

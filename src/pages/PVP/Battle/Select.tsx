@@ -6,8 +6,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateStatsByTag, calculateStatsTopRank } from '../../../utils/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Checkbox } from '@mui/material';
+import { StoreState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
 import { ISelectPokeComponent } from '../../models/page.model';
@@ -16,11 +17,10 @@ import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNu
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
-import { getDataCombats } from '../../../utils/helpers/data-context.helpers';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const dispatch = useDispatch();
-  const combats = getDataCombats();
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -59,15 +59,15 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
-    const fMoveCombat = combats.find((item) => isEqual(item.name, fMove));
+    const fMoveCombat = combat.find((item) => isEqual(item.name, fMove));
     setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
 
-    const cMovePriCombat = combats.find((item) => isEqual(item.name, cMovePri));
+    const cMovePriCombat = combat.find((item) => isEqual(item.name, cMovePri));
     setCMovePri(cMovePriCombat);
     cMoveSec = replaceTempMovePvpName(cMoveSec);
 
-    const cMoveSecCombat = combats.find((item) => isEqual(item.name, cMoveSec));
+    const cMoveSecCombat = combat.find((item) => isEqual(item.name, cMoveSec));
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
@@ -258,7 +258,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div>
                 {props.data
                   .find((value) => isEqual(value.speciesId, pokemon.speciesId))
-                  ?.moves.fastMoves.map((value) => combats.find((item) => isEqual(item.name, value.moveId)))
+                  ?.moves.fastMoves.map((value) => combat.find((item) => isEqual(item.name, value.moveId)))
                   .filter((value) => value && !isEqual(value.name, fMove?.name))
                   .map((value, index) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
@@ -326,7 +326,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return combats.find((item) => isEqual(item.name, move));
+                      return combat.find((item) => isEqual(item.name, move));
                     })
                     .filter(
                       (value) => value && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name)
@@ -411,7 +411,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return combats.find((item) => isEqual(item.name, move));
+                      return combat.find((item) => isEqual(item.name, move));
                     })
                     .filter(
                       (value) =>

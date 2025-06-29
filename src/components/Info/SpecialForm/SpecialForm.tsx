@@ -1,8 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import APIService from '../../../services/api.service';
 import { getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 
 import './SpecialForm.scss';
+import { StoreState } from '../../../store/models/state.model';
 import { Form, IForm } from '../../../core/models/API/form.model';
 import { IFormSpecialComponent } from '../../models/component.model';
 import { getValueOrDefault, isEqual, isNotEmpty, isUndefined } from '../../../utils/extension';
@@ -10,11 +12,10 @@ import { TempEvo } from '../../../core/models/evolution.model';
 import { PokemonType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import IconType from '../../Sprites/Icon/Type/Type';
-import { getDataCombats, getDataPokemons } from '../../../utils/helpers/data-context.helpers';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
-  const pokemons = getDataPokemons();
-  const combats = getDataCombats();
+  const evoData = useSelector((state: StoreState) => state.store.data.pokemons);
+  const combat = useSelector((state: StoreState) => state.store.data.combats);
 
   const [pokemonType, setPokemonType] = useState(PokemonType.None);
   const [arrEvoList, setArrEvoList] = useState<IForm[]>();
@@ -47,7 +48,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
 
   const getQuestEvo = (name: string) => {
     name = splitAndCapitalize(name, '-', '_').toUpperCase();
-    const pokemonEvo = pokemons
+    const pokemonEvo = evoData
       .find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)))
       ?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     return TempEvo.create({
@@ -57,7 +58,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
     });
   };
 
-  const getCombatMove = (moveName: string | undefined) => combats.find((item) => isEqual(item.name, moveName));
+  const getCombatMove = (moveName: string | undefined) => combat.find((item) => isEqual(item.name, moveName));
 
   return (
     <Fragment>

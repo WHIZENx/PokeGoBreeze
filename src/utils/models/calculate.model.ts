@@ -302,12 +302,20 @@ export class BattleLeague implements IBattleLeague {
 }
 
 export class QueryMovesCounterPokemon {
+  combats: ICombat[] = [];
   pokemon: IPokemonData;
   def: number;
   types: string[] | undefined = [];
   dataList: IPokemonQueryCounter[];
 
-  constructor(pokemon: IPokemonData, def: number, types: string[] | undefined, dataList: IPokemonQueryCounter[] = []) {
+  constructor(
+    combats: ICombat[],
+    pokemon: IPokemonData,
+    def: number,
+    types: string[] | undefined,
+    dataList: IPokemonQueryCounter[] = []
+  ) {
+    this.combats = combats;
     this.pokemon = pokemon;
     this.def = def;
     this.types = getValueOrDefault(Array, types);
@@ -316,6 +324,7 @@ export class QueryMovesCounterPokemon {
 }
 
 export class QueryMovesPokemon {
+  combats: ICombat[] = [];
   pokemon: Partial<IPokemonDetail>;
   atk: number;
   def: number;
@@ -324,6 +333,7 @@ export class QueryMovesPokemon {
   dataList: IPokemonQueryMove[];
 
   constructor(
+    combats: ICombat[],
     pokemon: Partial<IPokemonDetail>,
     atk: number | undefined,
     def: number | undefined,
@@ -331,6 +341,7 @@ export class QueryMovesPokemon {
     types: string[] | undefined,
     dataList: IPokemonQueryMove[] = []
   ) {
+    this.combats = combats;
     this.pokemon = pokemon;
     this.atk = toNumber(atk);
     this.def = toNumber(def);
