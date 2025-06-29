@@ -11,7 +11,7 @@ import {
   splitAndCapitalize,
 } from '../../../utils/utils';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import {
   computeBgType,
@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { Button } from 'react-bootstrap';
 import { Params } from '../../../utils/constants';
-import { RouterState, StatsState, StoreState, TimestampState } from '../../../store/models/state.model';
+import { RouterState, StatsState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
@@ -46,13 +46,13 @@ import { AxiosError } from 'axios';
 import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
-import { formShadow } from '../../../utils/helpers/context.helpers';
+import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
-  const pvp = useSelector((state: StoreState) => state.store.data.pvp);
+  const dataStore = useDataStore();
   const router = useSelector((state: RouterState) => state.router);
 
   const [searchParams] = useSearchParams();
@@ -65,7 +65,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   const [isFound, setIsFound] = useState(true);
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvp);
+    loadPVP(dispatch, timestamp, dataStore.pvp);
   }, []);
 
   const setPokemonPVPTitle = (isNotFound = false) => {
@@ -226,8 +226,8 @@ const PokemonPVP = (props: IStyleSheetData) => {
     };
     if (
       statsRanking &&
-      isNotEmpty(pvp.rankings) &&
-      isNotEmpty(pvp.trains) &&
+      isNotEmpty(dataStore.pvp.rankings) &&
+      isNotEmpty(dataStore.pvp.trains) &&
       isNotEmpty(dataStore.combats) &&
       isNotEmpty(dataStore.pokemons) &&
       isNotEmpty(dataStore.assets)
@@ -241,11 +241,13 @@ const PokemonPVP = (props: IStyleSheetData) => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonInfo, rankingPoke, pvp.rankings, pvp.trains, router.action, dispatch]);
+  }, [fetchPokemonInfo, rankingPoke, dataStore.pvp.rankings, dataStore.pvp.trains, router.action, dispatch]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvp.rankings.find((item) => item.id === LeagueBattleType.All && isIncludeList(item.cp, cp));
+    const league = dataStore.pvp.rankings.find(
+      (item) => item.id === LeagueBattleType.All && isIncludeList(item.cp, cp)
+    );
     return (
       <Fragment>
         {league && (

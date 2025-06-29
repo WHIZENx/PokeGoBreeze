@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ATK_LOGO from '../../../assets/attack.png';
 import DEF_LOGO from '../../../assets/defense.png';
 import HP_LOGO from '../../../assets/hp.png';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import { capitalize, getKeyWithData, splitAndCapitalize } from '../../../utils/utils';
 import { IDamageTableComponent } from '../../models/page.model';
@@ -13,7 +13,7 @@ import { LabelDamage } from '../../../core/models/damage.model';
 import { combineClasses, getValueOrDefault, toFloat, toFloatWithPadding, toNumber } from '../../../utils/extension';
 import { PokemonType } from '../../../enums/type.enum';
 import { EffectiveType } from '../../../components/Effective/enums/type-effective.enum';
-import { getThrowCharge } from '../../../utils/helpers/context.helpers';
+import { getThrowCharge } from '../../../utils/helpers/options-context.helpers';
 
 const DamageTable = (props: IDamageTableComponent) => {
   const setLabelDamage = (amount: EffectiveType) =>
@@ -21,10 +21,7 @@ const DamageTable = (props: IDamageTableComponent) => {
       label: toFloat(amount, 3),
       style: getValueOrDefault(
         String,
-        getKeyWithData(EffectiveType, amount)
-          ?.split(/(?=[A-Z])/)
-          .join('-')
-          .toLowerCase()
+        splitAndCapitalize(getKeyWithData(EffectiveType, amount), /(?=[A-Z])/, '-').toLowerCase()
       ),
     });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert } from 'react-bootstrap';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { splitAndCapitalize, getPokemonFormWithNoneSpecialForm } from '../../../utils/utils';
 import { IAlertReleasedComponent } from '../../models/page.model';
 import { VariantType } from '../../../enums/type.enum';

@@ -5,7 +5,7 @@ import { Badge, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 import './SearchBattle.scss';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import {
   capitalize,
@@ -23,7 +23,7 @@ import { marks, PokeGoSlider } from '../../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
-import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { IEvolution } from '../../../core/models/evolution.model';
 import {
   BattleBaseStats,
@@ -52,7 +52,8 @@ import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName }
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
-import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/context.helpers';
+import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 const FindBattle = () => {
   useTitle({
@@ -69,7 +70,7 @@ const FindBattle = () => {
     ],
   });
   const dispatch = useDispatch();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [maxCP, setMaxCP] = useState(0);

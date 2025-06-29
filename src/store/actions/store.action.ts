@@ -1,14 +1,12 @@
 import { Action } from 'redux';
 import { ICPM } from '../../core/models/cpm.model';
 import { IOptions } from '../../core/models/options.model';
-import { ITypeSet } from '../../core/models/type.model';
 import { IPokemonData } from '../../core/models/pokemon.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { ICombat } from '../../core/models/combat.model';
 import { IAsset } from '../../core/models/asset.model';
 import { LeagueData } from '../../core/models/league.model';
 import { PokemonPVPMove } from '../../core/models/pvp.model';
-import { DynamicObj } from '../../utils/extension';
 import { IEvolutionChain } from '../../core/models/evolution-chain.model';
 import { IInformation } from '../../core/models/information';
 import { ITrainerLevelUp } from '../../core/models/trainer.model';
@@ -16,8 +14,6 @@ import { ITrainerLevelUp } from '../../core/models/trainer.model';
 export enum StoreActionTypes {
   getStore = '[Store] GetStore',
   setOptions = '[Store] SetOptions',
-  setTypeEff = '[Store] SetTypeEff',
-  setWeatherBoost = '[Store] SetWeatherBoost',
   setPokemon = '[Store] SetPokemon',
   setSticker = '[Store] SetSticker',
   setCombat = '[Store] SetCombat',
@@ -51,34 +47,6 @@ export class SetOptions implements Action {
 
   static create(value: IOptions) {
     const { type, payload } = new SetOptions(value);
-    return {
-      type,
-      payload,
-    };
-  }
-}
-
-export class SetTypeEff implements Action {
-  readonly type = StoreActionTypes.setTypeEff;
-
-  constructor(public payload: ITypeSet) {}
-
-  static create(value: ITypeSet) {
-    const { type, payload } = new SetTypeEff(value);
-    return {
-      type,
-      payload,
-    };
-  }
-}
-
-export class SetWeatherBoost implements Action {
-  readonly type = StoreActionTypes.setWeatherBoost;
-
-  constructor(public payload: DynamicObj<string[]>) {}
-
-  static create(value: DynamicObj<string[]>) {
-    const { type, payload } = new SetWeatherBoost(value);
     return {
       type,
       payload,
@@ -268,8 +236,6 @@ export class ResetStore implements Action {
 export type StoreActionsUnion =
   | LoadStore
   | SetOptions
-  | SetTypeEff
-  | SetWeatherBoost
   | SetPokemon
   | SetSticker
   | SetCombat

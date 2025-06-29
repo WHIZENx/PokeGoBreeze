@@ -10,8 +10,6 @@ import { IPVPDataModel, PVPDataModel } from '../../core/models/pvp.model';
 import { SearchingOptionsModel } from '../../core/models/searching.model';
 import { ISticker } from '../../core/models/sticker.model';
 import { ITrainerLevelUp } from '../../core/models/trainer.model';
-import { ITypeEff, TypeEff } from '../../core/models/type-eff.model';
-import { IWeatherBoost, WeatherBoost } from '../../core/models/weatherBoost.model';
 
 export interface StoreModel {
   icon?: string;
@@ -27,8 +25,6 @@ export class Store implements StoreModel {
 
 export interface IDataModel {
   cpm: ICPM[];
-  typeEff: ITypeEff;
-  weatherBoost: IWeatherBoost;
   options: IOptions;
   pokemons: IPokemonData[];
   stickers: ISticker[];
@@ -43,8 +39,6 @@ export interface IDataModel {
 
 export class Data implements IDataModel {
   cpm: ICPM[] = [];
-  typeEff = new TypeEff();
-  weatherBoost = new WeatherBoost();
   options = new Options();
   pokemons: IPokemonData[] = [];
   stickers: ISticker[] = [];

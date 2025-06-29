@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import {
   checkPokemonGO,
   convertPokemonDataName,
@@ -42,7 +42,8 @@ import { debounce } from 'lodash';
 import CustomDataTable from '../CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
-import { counterDelay } from '../../../utils/helpers/context.helpers';
+import { counterDelay } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 const customStyles: TableStyles = {
   head: {
@@ -117,7 +118,7 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 const Counter = (props: ICounterComponent) => {
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
 
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
@@ -160,7 +161,7 @@ const Counter = (props: ICounterComponent) => {
       id: ColumnType.Pokemon,
       name: 'Pokémon',
       selector: (row) => {
-        const assets = findAssetForm(data.assets, row.pokemonId, row.pokemonForm);
+        const assets = findAssetForm(dataStore.assets, row.pokemonId, row.pokemonForm);
         return (
           <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForm, row.pokemonType)}`}>
             <div className="d-flex justify-content-center">
@@ -291,12 +292,10 @@ const Counter = (props: ICounterComponent) => {
       const resolveHandler = () => {
         if (props.pokemonData) {
           result = counterPokemon(
-            data.pokemons,
-            data.typeEff,
-            data.weatherBoost,
+            dataStore.pokemons,
             toNumber(props.pokemonData.statsGO?.def),
             props.pokemonData.types,
-            data.combats
+            dataStore.combats
           );
         }
 
@@ -336,7 +335,7 @@ const Counter = (props: ICounterComponent) => {
               return true;
             }
             if (!pokemon.releasedGO) {
-              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), data.pokemons);
+              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), dataStore.pokemons);
             }
             return pokemon.releasedGO;
           })

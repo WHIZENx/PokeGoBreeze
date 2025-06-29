@@ -8,7 +8,6 @@ import {
   getKeyWithData,
   getMoveType,
   generateParamForm,
-  getKeysObj,
   getAllMoves,
   isSpecialMegaFormType,
 } from '../../../utils/utils';
@@ -24,7 +23,7 @@ import {
   calculateStatsBattle,
 } from '../../../utils/calculate';
 
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 
 import TypeInfo from '../../../components/Sprites/Type/Type';
 import { Checkbox, FormControlLabel, Switch } from '@mui/material';
@@ -65,13 +64,21 @@ import {
 import { InputType } from '../../../components/Input/enums/input-type.enum';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import Loading from '../../../components/Sprites/Loading/Loading';
-import { TypeEff } from '../../../core/models/type-eff.model';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import IconType from '../../../components/Sprites/Icon/Type/Type';
 import { debounce } from 'lodash';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { defaultSheetPage, defaultSheetRow, maxIv, minIv, minLevel } from '../../../utils/helpers/context.helpers';
+import {
+  defaultSheetPage,
+  defaultSheetRow,
+  getTypes,
+  getWeatherTypes,
+  maxIv,
+  minIv,
+  minLevel,
+} from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -275,11 +282,9 @@ const DpsTdo = () => {
   });
   const dispatch = useDispatch();
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
   const router = useSelector((state: RouterState) => state.router);
-
-  const [types, setTypes] = useState(getKeysObj(new TypeEff()));
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
   const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
@@ -356,7 +361,7 @@ const DpsTdo = () => {
     pokemonType = PokemonType.Normal
   ) => {
     movePoke?.forEach((vc: string) => {
-      const cMove = data.combats.find((item) => isEqual(item.name, vc));
+      const cMove = dataStore.combats.find((item) => isEqual(item.name, vc));
 
       if (cMove) {
         const cMoveType = getMoveType(pokemon, vc);
@@ -387,19 +392,17 @@ const DpsTdo = () => {
               atk: calculateStatsBattle(statsDef.atk, ivAtk, pokemonLevel),
               def: calculateStatsBattle(statsDef.def, ivDef, pokemonLevel),
               hp: calculateStatsBattle(statsDef.sta, ivHp, pokemonLevel),
-              fMove: data.combats.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
-              cMove: data.combats.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
+              fMove: dataStore.combats.find((item) => isEqual(item.name, fMoveTargetPokemon.name)),
+              cMove: dataStore.combats.find((item) => isEqual(item.name, cMoveTargetPokemon.name)),
               types: dataTargetPokemon.types,
               weatherBoosts: options.weatherBoosts,
             });
 
-            const dpsDef = calculateBattleDPSDefender(data.typeEff, data.weatherBoost, statsAttacker, statsDefender);
-            dps = calculateBattleDPS(data.typeEff, data.weatherBoost, statsAttacker, statsDefender, dpsDef);
+            const dpsDef = calculateBattleDPSDefender(statsAttacker, statsDefender);
+            dps = calculateBattleDPS(statsAttacker, statsDefender, dpsDef);
             tdo = dps * TimeToKill(Math.floor(toNumber(statsAttacker.hp)), dpsDef);
           } else {
             dps = calculateAvgDPS(
-              data.typeEff,
-              data.weatherBoost,
               statsAttacker.fMove,
               statsAttacker.cMove,
               statsAttacker.atk,
@@ -430,7 +433,7 @@ const DpsTdo = () => {
 
   const addFPokeData = (dataList: PokemonSheetData[], pokemon: IPokemonData, movePoke: string[]) => {
     movePoke.forEach((vf) => {
-      const fMove = data.combats.find((item) => isEqual(item.name, vf));
+      const fMove = dataStore.combats.find((item) => isEqual(item.name, vf));
       if (!fMove) {
         return;
       }
@@ -454,7 +457,7 @@ const DpsTdo = () => {
 
   const calculateDPSTable = () => {
     const dataList: PokemonSheetData[] = [];
-    data.pokemons.forEach((pokemon) => {
+    dataStore.pokemons.forEach((pokemon) => {
       addFPokeData(dataList, pokemon, getAllMoves(pokemon, TypeMove.Fast));
     });
     setIsShowSpinner(false);
@@ -509,7 +512,7 @@ const DpsTdo = () => {
         const isReleasedGO = checkPokemonGO(
           item.pokemon.num,
           getValueOrDefault(String, item.pokemon.fullName, item.pokemon.pokemonId),
-          data.pokemons
+          dataStore.pokemons
         );
         boolReleaseGO = getValueOrDefault(Boolean, item.pokemon.releasedGO, isReleasedGO);
       }
@@ -556,13 +559,7 @@ const DpsTdo = () => {
   };
 
   useEffect(() => {
-    if (data.typeEff) {
-      setTypes(Object.keys(data.typeEff));
-    }
-  }, [data.typeEff]);
-
-  useEffect(() => {
-    if (isNotEmpty(data.pokemons) && isNotEmpty(data.combats)) {
+    if (isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.combats)) {
       setIsShowSpinner(true);
       const debounced = debounce(() => {
         setDpsTable(calculateDPSTable());
@@ -572,15 +569,7 @@ const DpsTdo = () => {
         debounced.cancel();
       };
     }
-  }, [
-    dataTargetPokemon,
-    fMoveTargetPokemon,
-    cMoveTargetPokemon,
-    data.pokemons,
-    data.combats,
-    data.typeEff,
-    data.weatherBoost,
-  ]);
+  }, [dataTargetPokemon, fMoveTargetPokemon, cMoveTargetPokemon, dataStore.pokemons, dataStore.combats]);
 
   useEffect(() => {
     if (isNotEmpty(dpsTable)) {
@@ -685,7 +674,7 @@ const DpsTdo = () => {
       <div className="text-center w-100">
         <div className="head-types">Filter Moves By Types</div>
         <div className="row w-100 m-0 types-select-btn">
-          {types.map((item, index) => (
+          {getTypes().map((item, index) => (
             <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}
@@ -1212,7 +1201,7 @@ const DpsTdo = () => {
                     }
                   >
                     <option value="">Extreme</option>
-                    {Object.keys(data.weatherBoost).map((value, index) => (
+                    {getWeatherTypes().map((value, index) => (
                       <option key={index} value={value}>
                         {splitAndCapitalize(value, '_', ' ')}
                       </option>

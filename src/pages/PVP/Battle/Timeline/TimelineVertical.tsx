@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Badge } from '@mui/material';
 import { ICombat } from '../../../../core/models/combat.model';
-import APIService from '../../../../services/API.service';
+import APIService from '../../../../services/api.service';
 import { combineClasses } from '../../../../utils/extension';
 import { splitAndCapitalize } from '../../../../utils/utils';
 import { IPokemonBattle } from '../../models/battle.model';

@@ -1,125 +1,41 @@
-export enum PokemonTypeBadge {
-  Normal,
-  Fighting,
-  Flying,
-  Poison,
-  Ground,
-  Rock,
-  Bug,
-  Ghost,
-  Steel,
-  Fire,
-  Water,
-  Grass,
-  Electric,
-  Psychic,
-  Ice,
-  Dragon,
-  Dark,
-  Fairy,
-}
-
-export interface ITypeSet {
-  NORMAL: ITypeModel;
-  FIGHTING: ITypeModel;
-  FLYING: ITypeModel;
-  POISON: ITypeModel;
-  GROUND: ITypeModel;
-  ROCK: ITypeModel;
-  BUG: ITypeModel;
-  GHOST: ITypeModel;
-  STEEL: ITypeModel;
-  FIRE: ITypeModel;
-  WATER: ITypeModel;
-  GRASS: ITypeModel;
-  ELECTRIC: ITypeModel;
-  PSYCHIC: ITypeModel;
-  ICE: ITypeModel;
-  DRAGON: ITypeModel;
-  DARK: ITypeModel;
-  FAIRY: ITypeModel;
-}
-
-interface ITypeModel {
-  NORMAL: number;
-  FIGHTING: number;
-  FLYING: number;
-  POISON: number;
-  GROUND: number;
-  ROCK: number;
-  BUG: number;
-  GHOST: number;
-  STEEL: number;
-  FIRE: number;
-  WATER: number;
-  GRASS: number;
-  ELECTRIC: number;
-  PSYCHIC: number;
-  ICE: number;
-  DRAGON: number;
-  DARK: number;
-  FAIRY: number;
-}
-
-export class TypeSet implements ITypeSet {
-  NORMAL = new TypeModel();
-  FIGHTING = new TypeModel();
-  FLYING = new TypeModel();
-  POISON = new TypeModel();
-  GROUND = new TypeModel();
-  ROCK = new TypeModel();
-  BUG = new TypeModel();
-  GHOST = new TypeModel();
-  STEEL = new TypeModel();
-  FIRE = new TypeModel();
-  WATER = new TypeModel();
-  GRASS = new TypeModel();
-  ELECTRIC = new TypeModel();
-  PSYCHIC = new TypeModel();
-  ICE = new TypeModel();
-  DRAGON = new TypeModel();
-  DARK = new TypeModel();
-  FAIRY = new TypeModel();
+export interface ITypeModel {
+  normal: number;
+  fighting: number;
+  flying: number;
+  poison: number;
+  ground: number;
+  rock: number;
+  bug: number;
+  ghost: number;
+  steel: number;
+  fire: number;
+  water: number;
+  grass: number;
+  electric: number;
+  psychic: number;
+  ice: number;
+  dragon: number;
+  dark: number;
+  fairy: number;
 }
 
 export class TypeModel implements ITypeModel {
-  NORMAL = 0;
-  FIGHTING = 0;
-  FLYING = 0;
-  POISON = 0;
-  GROUND = 0;
-  ROCK = 0;
-  BUG = 0;
-  GHOST = 0;
-  STEEL = 0;
-  FIRE = 0;
-  WATER = 0;
-  GRASS = 0;
-  ELECTRIC = 0;
-  PSYCHIC = 0;
-  ICE = 0;
-  DRAGON = 0;
-  DARK = 0;
-  FAIRY = 0;
-}
-
-export interface TypeMultiply {
-  NORMAL: number;
-  FIGHTING: number;
-  FLYING: number;
-  POISON: number;
-  GROUND: number;
-  ROCK: number;
-  BUG: number;
-  GHOST: number;
-  STEEL: number;
-  FIRE: number;
-  WATER: number;
-  GRASS: number;
-  ELECTRIC: number;
-  PSYCHIC: number;
-  ICE: number;
-  DRAGON: number;
-  DARK: number;
-  FAIRY: number;
+  normal = 0;
+  fighting = 0;
+  flying = 0;
+  poison = 0;
+  ground = 0;
+  rock = 0;
+  bug = 0;
+  ghost = 0;
+  steel = 0;
+  fire = 0;
+  water = 0;
+  grass = 0;
+  electric = 0;
+  psychic = 0;
+  ice = 0;
+  dragon = 0;
+  dark = 0;
+  fairy = 0;
 }

@@ -6,7 +6,7 @@ import {
 } from '../../../../core/models/pokemon.model';
 import { IStatsIV, StatsIV } from '../../../../core/models/stats.model';
 import { PokemonType } from '../../../../enums/type.enum';
-import { minLevel } from '../../../../utils/helpers/context.helpers';
+import { minLevel } from '../../../../utils/helpers/options-context.helpers';
 import { SortDirectionType } from '../../../Sheets/DpsTdo/enums/column-select-type.enum';
 import { SortType } from '../enums/raid-state.enum';
 

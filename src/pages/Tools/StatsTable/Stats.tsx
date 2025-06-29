@@ -20,7 +20,7 @@ import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { debounce } from 'lodash';
 import CircularProgressTable from '../../../components/Sprites/CircularProgress/CircularProgress';
 import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDataTable';
-import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/context.helpers';
+import { maxIv, minCp, minIv, statsDelay } from '../../../utils/helpers/options-context.helpers';
 
 const numSortStatsProd = (rowA: IBattleBaseStats, rowB: IBattleBaseStats) => {
   const a = toFloat(toNumber(rowA.stats?.statPROD) / 1000);

@@ -16,7 +16,7 @@ import { getBarCharge, queryTopMove } from '../../utils/calculate';
 
 import TypeBar from '../../components/Sprites/TypeBar/TypeBar';
 
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import './Move.scss';
 
 import DoneIcon from '@mui/icons-material/Done';
@@ -47,7 +47,7 @@ import {
   toNumber,
 } from '../../utils/extension';
 import { EqualMode, IncludeMode } from '../../utils/enums/string.enum';
-import { PokemonTypeBadge } from '../../core/models/type.model';
+import { PokemonTypeBadge } from '../../core/enums/pokemon-type.enum';
 import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import { BonusType } from '../../core/enums/bonus-type.enum';
 import Candy from '../../components/Sprites/Candy/Candy';
@@ -56,7 +56,8 @@ import CustomDataTable from '../../components/Table/CustomDataTable/CustomDataTa
 import { IMenuItem } from '../../components/models/component.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
-import { battleStab } from '../../utils/helpers/context.helpers';
+import { battleStab, getTypes, getWeatherBoost } from '../../utils/helpers/options-context.helpers';
+import useDataStore from '../../composables/useDataStore';
 
 const nameSort = (rowA: IPokemonTopMove, rowB: IPokemonTopMove) => {
   const a = rowA.name.toLowerCase();
@@ -145,7 +146,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
 
 const Move = (props: IMovePage) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -190,7 +191,7 @@ const Move = (props: IMovePage) => {
   ];
 
   const getWeatherEffective = (type: string | undefined) => {
-    const result = Object.entries(data.weatherBoost)?.find(([, value]: [string, string[]]) => {
+    const result = Object.entries(getWeatherBoost())?.find(([, value]: [string, string[]]) => {
       if (isIncludeList(value, type, IncludeMode.IncludeIgnoreCaseSensitive)) {
         return value;
       }
@@ -221,8 +222,8 @@ const Move = (props: IMovePage) => {
 
   const queryMoveData = useCallback(
     (id: number) => {
-      if (isNotEmpty(data.combats)) {
-        const moves = data.combats.filter((item) => item.track === id || item.id === id);
+      if (isNotEmpty(dataStore.combats)) {
+        const moves = dataStore.combats.filter((item) => item.track === id || item.id === id);
         let move = moves.find((item) => item.id === id);
         if (move?.isMultipleWithType) {
           let type = searchParams.get(Params.MoveType);
@@ -273,13 +274,13 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, data.combats]
+    [enqueueSnackbar, dataStore.combats]
   );
 
   const getMoveIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(data.combats)) {
-      const move = data.combats.find((m) =>
+    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(dataStore.combats)) {
+      const move = dataStore.combats.find((m) =>
         isEqual(m.name.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
       );
       if (move) {
@@ -296,15 +297,15 @@ const Move = (props: IMovePage) => {
         queryMoveData(id);
       }
     }
-  }, [params.id, props.id, queryMoveData, move, data.combats]);
+  }, [params.id, props.id, queryMoveData, move, dataStore.combats]);
 
   useEffect(() => {
-    if (move && isNotEmpty(data.pokemons)) {
-      const result = queryTopMove(data.pokemons, data.typeEff, data.weatherBoost, move);
+    if (move && isNotEmpty(dataStore.pokemons)) {
+      const result = queryTopMove(dataStore.pokemons, move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, data.pokemons, data.typeEff, data.weatherBoost]);
+  }, [move, dataStore.pokemons]);
 
   useEffect(() => {
     setTopListFilter(
@@ -316,7 +317,7 @@ const Move = (props: IMovePage) => {
           return checkPokemonGO(
             pokemon.num,
             convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')),
-            data.pokemons
+            dataStore.pokemons
           );
         }
         return pokemon.releasedGO;
@@ -326,17 +327,17 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     const type = searchParams.get(Params.MoveType);
-    if (isNotEmpty(data.combats) && move?.isMultipleWithType && type) {
+    if (isNotEmpty(dataStore.combats) && move?.isMultipleWithType && type) {
       searchParams.set(Params.MoveType, type.toLowerCase());
       setSearchParams(searchParams);
       setMove(
-        data.combats.find(
+        dataStore.combats.find(
           (item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)
         )
       );
       setMoveType(type.toUpperCase());
     }
-  }, [move?.isMultipleWithType, searchParams, data.combats]);
+  }, [move?.isMultipleWithType, searchParams, dataStore.combats]);
 
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">
@@ -367,7 +368,7 @@ const Move = (props: IMovePage) => {
               }}
               value={moveType}
             >
-              {Object.keys(data.typeEff)
+              {getTypes()
                 .filter(
                   (type) =>
                     !isEqual(

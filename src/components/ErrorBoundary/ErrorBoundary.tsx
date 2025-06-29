@@ -82,12 +82,12 @@ class ErrorBoundary extends Component<Props, IState> {
             </Button>
           </div>
           {process.env.REACT_APP_DEPLOYMENT_MODE === 'development' && (
-            <div className="mt-4 text-left mw-100 overflow-auto">
+            <div className="mt-4 mw-100 overflow-auto">
               <Typography variant="subtitle2" component="h3" gutterBottom>
                 Error Details (Deployment Only):
               </Typography>
               {this.state.error && (
-                <pre className="theme-custom-selected-bg p-2 rounded-1 mw-100 overflow-x-auto">
+                <pre className="theme-custom-selected-bg p-2 rounded-1 mw-100 overflow-x-auto text-start">
                   {this.state.error.toString()}
                   {this.state.errorInfo?.componentStack}
                 </pre>

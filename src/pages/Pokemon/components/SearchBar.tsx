@@ -1,5 +1,5 @@
 import React from 'react';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';

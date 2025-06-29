@@ -14,7 +14,7 @@ import { ScoreType } from '../../../utils/enums/constants.enum';
 import { EqualMode } from '../../../utils/enums/string.enum';
 import { AnimationType } from '../../../components/Sprites/Hexagon/enums/hexagon.enum';
 import { IStatsPokemonGO } from '../../../core/models/stats.model';
-import { maxLevel, maxIv } from '../../../utils/helpers/context.helpers';
+import { maxLevel, maxIv } from '../../../utils/helpers/options-context.helpers';
 
 const OverAllStats = (props: OverAllStatsComponent) => {
   const [pokemonAllStats, setPokemonAllStats] = useState<IPokemonAllStats>();

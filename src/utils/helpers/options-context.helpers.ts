@@ -2,6 +2,10 @@ import { defaultOptions } from '../../contexts/options.context';
 import { IOptions } from '../../core/models/options.model';
 import { ThrowType } from '../../enums/type.enum';
 import { IConfig } from '../../core/models/options.model';
+import { getValuesObj } from '../utils';
+import { WeatherBoost } from '../../core/models/weather-boost.model';
+import { isNotEmpty } from '../extension';
+import { TypeModel } from '../../core/models/type.model';
 
 if (!process.env.REACT_APP_CONFIG) {
   throw new Error('Missing config environment variable');
@@ -78,6 +82,22 @@ export const getBuddyFriendship = () => currentOptions.buddyFriendship;
 // Trainer settings
 export const getTrainerFriendship = () => currentOptions.trainerFriendship;
 export const getMultiplyFriendship = (level = 1) => currentOptions.trainerFriendship[level.toString()]?.atkBonus || 1;
+
+// Type settings
+export const getTypes = () =>
+  isNotEmpty(currentOptions.types) ? currentOptions.types : (getValuesObj(new TypeModel(), 1) as unknown as string[]);
+
+// Weather types
+export const getWeatherTypes = () =>
+  isNotEmpty(currentOptions.weatherTypes)
+    ? currentOptions.weatherTypes
+    : (getValuesObj(new WeatherBoost(), 1) as unknown as string[]);
+
+// Type effective
+export const getTypeEffective = () => currentOptions.typeEffective;
+
+// Weather boost
+export const getWeatherBoost = () => currentOptions.weatherBoost;
 
 // Config
 export const getConfig = () => currentOptions.config;

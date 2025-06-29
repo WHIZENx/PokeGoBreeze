@@ -1,7 +1,7 @@
 import React from 'react';
 import { IPokemonIconTypeComponent } from '../../models/component.model';
 import { PokemonType } from '../../../enums/type.enum';
-import APIService from '../../../services/API.service';
+import APIService from '../../../services/api.service';
 import { combineClasses } from '../../../utils/extension';
 
 const PokemonIconType = (props: IPokemonIconTypeComponent) => {

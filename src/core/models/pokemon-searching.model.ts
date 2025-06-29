@@ -1,4 +1,4 @@
-import APIService from '../../services/API.service';
+import APIService from '../../services/api.service';
 import { splitAndCapitalize } from '../../utils/utils';
 import { IPokemonData } from './pokemon.model';
 

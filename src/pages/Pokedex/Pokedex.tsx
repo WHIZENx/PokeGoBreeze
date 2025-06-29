@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
-import { getKeysObj, getKeyWithData, splitAndCapitalize } from '../../utils/utils';
-import APIService from '../../services/API.service';
+import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
+import APIService from '../../services/api.service';
 import { queryAssetForm } from '../../utils/compute';
 import { genList, regionList, versionList } from '../../utils/constants';
 import {
@@ -36,12 +36,12 @@ import {
 } from '../../utils/extension';
 import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../../components/Sprites/Loading/LoadingGroup';
-import { TypeEff } from '../../core/models/type-eff.model';
 import { ScrollModifyEvent } from '../../utils/models/overrides/dom.model';
 import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
-import { transitionTime } from '../../utils/helpers/context.helpers';
+import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
+import useDataStore from '../../composables/useDataStore';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -111,9 +111,8 @@ const Pokedex = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
 
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const data = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
 
-  const [types, setTypes] = useState(getKeysObj(new TypeEff()));
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
   const [selectTypes, setSelectTypes] = useState<string[]>([]);
   const [listOfPokemon, setListOfPokemon] = useState<IPokemonHomeModel[]>([]);
@@ -151,21 +150,17 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    setTypes(Object.keys(data.typeEff));
-  }, [data.typeEff]);
-
-  useEffect(() => {
-    if (isNotEmpty(data.assets) && isNotEmpty(data.pokemons)) {
+    if (isNotEmpty(dataStore.assets) && isNotEmpty(dataStore.pokemons)) {
       setDataList(
-        data.pokemons
+        dataStore.pokemons
           .map((item) => {
-            const assetForm = queryAssetForm(data.assets, item.num, item.form);
+            const assetForm = queryAssetForm(dataStore.assets, item.num, item.form);
             return new PokemonHomeModel(item, assetForm);
           })
           .sort((a, b) => a.id - b.id)
       );
     }
-  }, [data.assets, data.pokemons]);
+  }, [dataStore.assets, dataStore.pokemons]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -340,7 +335,7 @@ const Pokedex = (props: IStyleSheetData) => {
       <div className="text-center w-100">
         <div className="head-types">Filter By Types (Maximum 2)</div>
         <div className="row w-100 m-0 types-select-btn">
-          {types.map((item, index) => (
+          {getTypes().map((item, index) => (
             <div key={index} className="col img-group m-0 p-0">
               <button
                 value={item}

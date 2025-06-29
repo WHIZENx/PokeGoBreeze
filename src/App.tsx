@@ -45,7 +45,7 @@ import { getDesignThemes } from './utils/models/overrides/themes.model';
 import { TypeTheme } from './enums/type.enum';
 import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/local-storage';
-import { RouterState, StoreState, TimestampState } from './store/models/state.model';
+import { RouterState, TimestampState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
@@ -53,7 +53,8 @@ import { clearLocalStorageExcept } from './utils/configs/local-storage.config';
 import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
 import optionsObserver from './utils/hooks/optionsObserver';
-import { loadDataDelay, transitionTime } from './utils/helpers/context.helpers';
+import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
+import useDataStore from './composables/useDataStore';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -61,7 +62,7 @@ const ColorModeContext = createContext({
 
 function App() {
   const dispatch = useDispatch();
-  const data = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const router = useSelector((state: RouterState) => state.router);
 
@@ -133,7 +134,7 @@ function App() {
   const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = loadDataDelay()) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
-        resolve(await loadTimestamp(dispatch, data, timestamp, isCurrentVersion));
+        resolve(await loadTimestamp(dispatch, dataStore, timestamp, isCurrentVersion));
       };
 
       const debouncedResolve = debounce(resolveHandler, delay);
