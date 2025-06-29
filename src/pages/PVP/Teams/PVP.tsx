@@ -62,10 +62,11 @@ import { IStyleSheetData } from '../../models/page.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
   const allMoves = useSelector((state: StoreState) => state.store.data.combats.map((c) => c.name));
   const pvp = useSelector((state: StoreState) => state.store.data.pvp);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);

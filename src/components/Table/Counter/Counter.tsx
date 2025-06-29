@@ -43,7 +43,7 @@ import CustomDataTable from '../CustomDataTable/CustomDataTable';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
 import { counterDelay } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../utils/hooks/useDataStore';
+import useDataStore from '../../../composables/useDataStore';
 
 const customStyles: TableStyles = {
   head: {

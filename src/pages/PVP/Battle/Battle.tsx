@@ -46,13 +46,12 @@ import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useSnackbar } from 'notistack';
-import { StoreState } from '../../../store/models/state.model';
 import { BattlePokemonData, IBattlePokemonData, RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { ICombat } from '../../../core/models/combat.model';
 import {
@@ -104,6 +103,7 @@ import {
   minLevel,
   stepLevel,
 } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -124,7 +124,7 @@ class BattleState implements IBattleState {
 
 const Battle = () => {
   const dispatch = useDispatch();
-  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 

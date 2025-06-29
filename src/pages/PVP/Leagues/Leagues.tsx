@@ -17,12 +17,10 @@ import {
   getValidPokemonImgPath,
 } from '../../../utils/utils';
 import { findAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
-import { useSelector } from 'react-redux';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
 import Xarrow from 'react-xarrows';
-import { StoreState } from '../../../store/models/state.model';
 import {
   ILeague,
   IPokemonRewardSetLeague,
@@ -47,6 +45,7 @@ import { PokemonType, VariantType } from '../../../enums/type.enum';
 import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { debounce } from 'lodash';
+import useDataStore from '../../../composables/useDataStore';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -62,7 +61,7 @@ const Leagues = () => {
       'Complete list of all battle leagues in Pokémon GO. Find information about CP limits, rules, and available Pokémon for each league.',
     keywords: ['battle leagues', 'PVP leagues', 'Pokémon GO battles', 'Great League', 'Ultra League', 'Master League'],
   });
-  const dataStore = useSelector((state: StoreState) => state.store.data);
+  const dataStore = useDataStore();
 
   const [leagues, setLeagues] = useState<ILeague[]>([]);
   const [openedLeague, setOpenedLeague] = useState<ILeague[]>([]);

@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { StoreState } from '../../store/models/state.model';
+import { StoreState } from '../store/models/state.model';
 import {
   SetOptions,
   SetPokemon,
@@ -13,18 +13,18 @@ import {
   SetTrainer,
   SetPVP,
   SetPVPMoves,
-} from '../../store/actions/store.action';
-import { IOptions } from '../../core/models/options.model';
-import { IPokemonData } from '../../core/models/pokemon.model';
-import { ISticker } from '../../core/models/sticker.model';
-import { ICombat } from '../../core/models/combat.model';
-import { IEvolutionChain } from '../../core/models/evolution-chain.model';
-import { IInformation } from '../../core/models/information';
-import { IAsset } from '../../core/models/asset.model';
-import { LeagueData } from '../../core/models/league.model';
-import { ICPM } from '../../core/models/cpm.model';
-import { ITrainerLevelUp } from '../../core/models/trainer.model';
-import { PokemonPVPMove } from '../../core/models/pvp.model';
+} from '../store/actions/store.action';
+import { IOptions } from '../core/models/options.model';
+import { IPokemonData } from '../core/models/pokemon.model';
+import { ISticker } from '../core/models/sticker.model';
+import { ICombat } from '../core/models/combat.model';
+import { IEvolutionChain } from '../core/models/evolution-chain.model';
+import { IInformation } from '../core/models/information';
+import { IAsset } from '../core/models/asset.model';
+import { LeagueData } from '../core/models/league.model';
+import { ICPM } from '../core/models/cpm.model';
+import { ITrainerLevelUp } from '../core/models/trainer.model';
+import { PokemonPVPMove } from '../core/models/pvp.model';
 
 /**
  * Custom hook to access and update the data from Redux store

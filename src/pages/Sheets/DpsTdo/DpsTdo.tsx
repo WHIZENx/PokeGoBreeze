@@ -78,7 +78,7 @@ import {
   minIv,
   minLevel,
 } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../utils/hooks/useDataStore';
+import useDataStore from '../../../composables/useDataStore';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;

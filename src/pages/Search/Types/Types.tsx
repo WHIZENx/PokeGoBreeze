@@ -32,7 +32,7 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
-import useDataStore from '../../../utils/hooks/useDataStore';
+import useDataStore from '../../../composables/useDataStore';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());

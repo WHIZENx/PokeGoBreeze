@@ -31,7 +31,7 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import { IPokemonDetail } from '../../../core/models/API/info.model';
 import IconType from '../../Sprites/Icon/Type/Type';
-import useDataStore from '../../../utils/hooks/useDataStore';
+import useDataStore from '../../../composables/useDataStore';
 
 interface PokemonMoves {
   fastMoves: ICombat[];

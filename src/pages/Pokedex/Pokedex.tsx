@@ -41,7 +41,7 @@ import { debounce } from 'lodash';
 import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
 import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
-import useDataStore from '../../utils/hooks/useDataStore';
+import useDataStore from '../../composables/useDataStore';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {

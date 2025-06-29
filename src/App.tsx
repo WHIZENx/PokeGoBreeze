@@ -54,7 +54,7 @@ import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
 import optionsObserver from './utils/hooks/optionsObserver';
 import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
-import useDataStore from './utils/hooks/useDataStore';
+import useDataStore from './composables/useDataStore';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,

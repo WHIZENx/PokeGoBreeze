@@ -5,7 +5,7 @@ import { TypeMove } from '../../enums/type.enum';
 import { ISelectMoveModel } from '../Input/models/select-move.model';
 import { IMoveComponent } from '../models/component.model';
 import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../utils/extension';
-import useDataStore from '../../utils/hooks/useDataStore';
+import useDataStore from '../../composables/useDataStore';
 
 const Move = (props: IMoveComponent) => {
   const dataStore = useDataStore();
