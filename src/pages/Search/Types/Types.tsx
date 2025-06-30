@@ -243,16 +243,16 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(combatsData()) && isNotEmpty(pokemonsData())) {
+    if (isNotEmpty(combatsData) && isNotEmpty(pokemonsData)) {
       setAllData(
         PokemonTypeData.create({
-          pokemon: pokemonsData().filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-          fastMoves: combatsData().filter((type) => type.typeMove === TypeMove.Fast).length,
-          chargedMoves: combatsData().filter((type) => type.typeMove === TypeMove.Charge).length,
+          pokemon: pokemonsData.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+          fastMoves: combatsData.filter((type) => type.typeMove === TypeMove.Fast).length,
+          chargedMoves: combatsData.filter((type) => type.typeMove === TypeMove.Charge).length,
         })
       );
     }
-  }, [releasedGO, combatsData(), pokemonsData()]);
+  }, [releasedGO, combatsData, pokemonsData]);
 
   useEffect(() => {
     if (isNotEmpty(getTypes()) && !currentType) {
@@ -261,20 +261,20 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData()) && isNotEmpty(combatsData())) {
+    if (isNotEmpty(pokemonsData) && isNotEmpty(combatsData)) {
       setResult(
         PokemonTypeMove.create({
-          pokemonList: pokemonsData()
+          pokemonList: pokemonsData
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
-          fastMove: combatsData().filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
-          chargedMove: combatsData().filter(
+          fastMove: combatsData.filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
+          chargedMove: combatsData.filter(
             (type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)
           ),
         })
       );
     }
-  }, [currentType, releasedGO, pokemonsData(), combatsData()]);
+  }, [currentType, releasedGO, pokemonsData, combatsData]);
 
   const changeType = (value: string) => {
     setShowType(false);

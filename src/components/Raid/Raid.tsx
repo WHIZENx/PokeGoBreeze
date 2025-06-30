@@ -21,7 +21,7 @@ const Raid = (props: IRaidComponent) => {
   const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
 
   useEffect(() => {
-    const pokemonClass = pokemonsData().find((item) => item.num === props.id)?.pokemonClass;
+    const pokemonClass = pokemonsData.find((item) => item.num === props.id)?.pokemonClass;
     if (pokemonClass) {
       setPokemonClass(pokemonClass);
     }

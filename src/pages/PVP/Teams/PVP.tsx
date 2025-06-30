@@ -85,9 +85,9 @@ const TeamPVP = (props: IStyleSheetData) => {
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-    const pokemon = pokemonsData().find((pokemon) => isEqual(pokemon.slug, name));
+    const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
-    const form = findAssetForm(assetsData(), pokemon?.num, pokemon?.form);
+    const form = findAssetForm(assetsData, pokemon?.num, pokemon?.form);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -147,10 +147,10 @@ const TeamPVP = (props: IStyleSheetData) => {
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(combatsData()) && combatsData().every((combat) => !combat.archetype)) {
+    if (isNotEmpty(combatsData) && combatsData.every((combat) => !combat.archetype)) {
       loadPVPMoves();
     }
-  }, [combatsData()]);
+  }, [combatsData]);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PVP Teams',
@@ -250,11 +250,11 @@ const TeamPVP = (props: IStyleSheetData) => {
     };
     if (
       !rankingData &&
-      isNotEmpty(pvpData().rankings) &&
-      isNotEmpty(pvpData().trains) &&
-      isNotEmpty(combatsData()) &&
-      isNotEmpty(pokemonsData()) &&
-      isNotEmpty(assetsData()) &&
+      isNotEmpty(pvpData.rankings) &&
+      isNotEmpty(pvpData.trains) &&
+      isNotEmpty(combatsData) &&
+      isNotEmpty(pokemonsData) &&
+      isNotEmpty(assetsData) &&
       statsRanking?.attack?.ranking &&
       statsRanking?.defense?.ranking &&
       statsRanking?.stamina?.ranking &&
@@ -270,11 +270,11 @@ const TeamPVP = (props: IStyleSheetData) => {
     params.cp,
     params.serie,
     rankingData,
-    pvpData().rankings,
-    pvpData().trains,
-    combatsData(),
-    pokemonsData(),
-    assetsData(),
+    pvpData.rankings,
+    pvpData.trains,
+    combatsData,
+    pokemonsData,
+    assetsData,
     statsRanking?.attack?.ranking,
     statsRanking?.defense?.ranking,
     statsRanking?.stamina?.ranking,
@@ -283,7 +283,7 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvpData().trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = pvpData.trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -334,7 +334,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     }
 
     for (const name of nameSet) {
-      move = combatsData().find(
+      move = combatsData.find(
         (item) =>
           (item.abbreviation && isEqual(item.abbreviation, tag)) ||
           (!item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(name)))
@@ -346,10 +346,10 @@ const TeamPVP = (props: IStyleSheetData) => {
 
     nameSet = findMoveTeam(
       tag,
-      combatsData().map((item) => item.name),
+      combatsData.map((item) => item.name),
       true
     );
-    move = combatsData().find(
+    move = combatsData.find(
       (item) =>
         (item.abbreviation && isEqual(item.abbreviation, tag)) ||
         (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))

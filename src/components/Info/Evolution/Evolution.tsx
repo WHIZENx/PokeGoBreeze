@@ -186,7 +186,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getPrevEvoChainStore = (id: number | undefined, form: string | undefined, result: IPokemonEvo[][]) => {
     const evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonsData().filter((pokemon) =>
+    const pokemon = pokemonsData.filter((pokemon) =>
       pokemon.evoList?.find((evo) => evo.evoToId === id && isEqual(evo.evoToForm, form))
     );
     if (!isNotEmpty(pokemon)) {
@@ -212,7 +212,7 @@ const Evolution = (props: IEvolutionComponent) => {
 
   const getCurrEvoChainStore = (poke: Partial<IPokemonDetail>, result: IPokemonEvo[][]) => {
     let evoList: IPokemonEvo[] = [];
-    const pokemon = pokemonsData().find((pokemon) =>
+    const pokemon = pokemonsData.find((pokemon) =>
       pokemon.evoList?.find(
         (evo) => evo.evoToId === poke.id && isEqual(evo.evoToForm, poke.form?.replace(`_${formStandard()}`, ''))
       )
@@ -276,7 +276,7 @@ const Evolution = (props: IEvolutionComponent) => {
     }
 
     evoList?.forEach((evo) => {
-      const pokemon = pokemonsData().find(
+      const pokemon = pokemonsData.find(
         (pokemon) => pokemon.num === evo.evoToId && isEqual(pokemon.form, evo.evoToForm)
       );
       getNextEvoChainStore(pokemon?.name, pokemon?.evoList, result);
@@ -286,7 +286,7 @@ const Evolution = (props: IEvolutionComponent) => {
   };
 
   const getCombineEvoChainFromPokeGo = (result: IPokemonEvo[][], id: number | undefined, form: string | undefined) => {
-    const pokemonChain = evolutionChainsData().find((chain) => chain.id === id);
+    const pokemonChain = evolutionChainsData.find((chain) => chain.id === id);
     if (pokemonChain) {
       const chainForms = pokemonChain.evolutionInfos.filter((info) =>
         isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
@@ -369,7 +369,7 @@ const Evolution = (props: IEvolutionComponent) => {
   }, [props.pokemonData, props.pokemonData?.pokemonType]);
 
   const getQuestEvo = (prevId: number, form: string) => {
-    const pokemon = pokemonsData().find((item) =>
+    const pokemon = pokemonsData.find((item) =>
       item.evoList?.find(
         (value) =>
           (isInclude(value.evoToForm, form, IncludeMode.IncludeIgnoreCaseSensitive) ||
@@ -385,13 +385,13 @@ const Evolution = (props: IEvolutionComponent) => {
           item.evoToId === prevId
       );
     } else {
-      const pokemonChain = evolutionChainsData().find((chain) => chain.id === prevId);
+      const pokemonChain = evolutionChainsData.find((chain) => chain.id === prevId);
       if (pokemonChain) {
         const chainForm = pokemonChain.evolutionInfos.find(
           (info) => info.id !== prevId && isEqual(info.form, form, EqualMode.IgnoreCaseSensitive)
         );
         if (chainForm && prevId === props.id) {
-          const pokemon = pokemonsData().find((item) => item.evoList?.find((value) => value.evoToId === prevId));
+          const pokemon = pokemonsData.find((item) => item.evoList?.find((value) => value.evoToId === prevId));
           if (pokemon) {
             return pokemon.evoList?.find((item) => item.evoToId === prevId);
           }

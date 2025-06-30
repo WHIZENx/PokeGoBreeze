@@ -45,7 +45,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
 
   const getQuestEvo = (name: string) => {
     name = splitAndCapitalize(name, '-', '_').toUpperCase();
-    const pokemonEvo = pokemonsData()
+    const pokemonEvo = pokemonsData
       .find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)))
       ?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     return TempEvo.create({
@@ -55,7 +55,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
     });
   };
 
-  const getCombatMove = (moveName: string | undefined) => combatsData().find((item) => isEqual(item.name, moveName));
+  const getCombatMove = (moveName: string | undefined) => combatsData.find((item) => isEqual(item.name, moveName));
 
   return (
     <Fragment>

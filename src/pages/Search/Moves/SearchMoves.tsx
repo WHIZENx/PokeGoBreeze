@@ -133,11 +133,11 @@ const Search = () => {
   const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
 
   useEffect(() => {
-    if (isNotEmpty(combatsData())) {
-      setCombatFMoves(combatsData().filter((item) => item.typeMove === TypeMove.Fast));
-      setCombatCMoves(combatsData().filter((item) => item.typeMove === TypeMove.Charge));
+    if (isNotEmpty(combatsData)) {
+      setCombatFMoves(combatsData.filter((item) => item.typeMove === TypeMove.Fast));
+      setCombatCMoves(combatsData.filter((item) => item.typeMove === TypeMove.Charge));
     }
-  }, [combatsData()]);
+  }, [combatsData]);
 
   useEffect(() => {
     const debounced = debounce(() => {

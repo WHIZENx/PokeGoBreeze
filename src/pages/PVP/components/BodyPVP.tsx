@@ -34,9 +34,9 @@ const BodyPVP = (props: BodyComponent) => {
       ?.sort((a, b) => a.rating - b.rating)
       .map((versus) => {
         const name = convertNameRankingToOri(versus.opponent, convertNameRankingToForm(versus.opponent));
-        const pokemon = pokemonsData().find((pokemon) => isEqual(pokemon.slug, name));
+        const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(assetsData(), pokemon?.num, pokemon?.form);
+        const form = findAssetForm(assetsData, pokemon?.num, pokemon?.form);
         let pokemonType;
         if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;

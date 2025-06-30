@@ -123,9 +123,9 @@ const PokemonPVP = (props: IStyleSheetData) => {
         }
 
         const name = convertNameRankingToOri(pokemonData.speciesId, pokemonData.speciesName);
-        const pokemon = pokemonsData().find((pokemon) => isEqual(pokemon.slug, name));
+        const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(assetsData(), pokemon?.num, pokemon?.form);
+        const form = findAssetForm(assetsData, pokemon?.num, pokemon?.form);
         setTitleProps({
           title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
             cp
@@ -157,11 +157,11 @@ const PokemonPVP = (props: IStyleSheetData) => {
         cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
         cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
-        const fMove = combatsData().find((item) => isEqual(item.name, fMoveData));
-        const cMovePri = combatsData().find((item) => isEqual(item.name, cMoveDataPri));
+        const fMove = combatsData.find((item) => isEqual(item.name, fMoveData));
+        const cMovePri = combatsData.find((item) => isEqual(item.name, cMoveDataPri));
         let cMoveSec;
         if (cMoveDataSec) {
-          cMoveSec = combatsData().find((item) => isEqual(item.name, cMoveDataSec));
+          cMoveSec = combatsData.find((item) => isEqual(item.name, cMoveDataSec));
         }
 
         let pokemonType = PokemonType.Normal;
@@ -214,9 +214,9 @@ const PokemonPVP = (props: IStyleSheetData) => {
     params.cp,
     searchParams,
     statsRanking,
-    combatsData(),
-    pokemonsData(),
-    assetsData(),
+    combatsData,
+    pokemonsData,
+    assetsData,
     dispatch,
   ]);
 
@@ -227,13 +227,13 @@ const PokemonPVP = (props: IStyleSheetData) => {
     };
     if (
       statsRanking &&
-      isNotEmpty(pvpData().rankings) &&
-      isNotEmpty(pvpData().trains) &&
-      isNotEmpty(combatsData()) &&
-      isNotEmpty(pokemonsData()) &&
-      isNotEmpty(assetsData())
+      isNotEmpty(pvpData.rankings) &&
+      isNotEmpty(pvpData.trains) &&
+      isNotEmpty(combatsData) &&
+      isNotEmpty(pokemonsData) &&
+      isNotEmpty(assetsData)
     ) {
-      if (combatsData().every((combat) => !combat.archetype)) {
+      if (combatsData.every((combat) => !combat.archetype)) {
         loadPVPMoves();
       } else if (router.action) {
         fetchPokemon();
@@ -242,11 +242,11 @@ const PokemonPVP = (props: IStyleSheetData) => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonInfo, rankingPoke, pvpData().rankings, pvpData().trains, router.action, dispatch]);
+  }, [fetchPokemonInfo, rankingPoke, pvpData.rankings, pvpData.trains, router.action, dispatch]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = pvpData().rankings.find((item) => item.id === LeagueBattleType.All && isIncludeList(item.cp, cp));
+    const league = pvpData.rankings.find((item) => item.id === LeagueBattleType.All && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (

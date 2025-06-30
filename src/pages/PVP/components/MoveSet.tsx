@@ -152,7 +152,7 @@ const MoveSet = (props: MoveSetComponent) => {
       })
       .sort((a, b) => toNumber(b.uses) - toNumber(a.uses))
       .map((move) => {
-        const combat = combatsData().find((m) => isEqual(m.name, move.moveId));
+        const combat = combatsData.find((m) => isEqual(m.name, move.moveId));
         if (combat) {
           combat.moveType = getMoveType(props.pokemon, move.moveId);
           return MoveSetModel.create({ ...combat, uses: toNumber(move.uses) });

@@ -16,11 +16,11 @@ const CardMoveSmall = (props: ICardSmallComponent) => {
   const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
-    if (!props.isEmpty && isNotEmpty(combatsData()) && props.value) {
-      const move = combatsData().find((item) => isEqual(item.name, props.value?.name));
+    if (!props.isEmpty && isNotEmpty(combatsData) && props.value) {
+      const move = combatsData.find((item) => isEqual(item.name, props.value?.name));
       setMove(move);
     }
-  }, [combatsData(), props.value, props.isEmpty]);
+  }, [combatsData, props.value, props.isEmpty]);
 
   return (
     <Fragment>

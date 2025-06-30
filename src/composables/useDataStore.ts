@@ -300,17 +300,17 @@ export const useDataStore = () => {
     });
   };
 
-  const pokemonsData = () => dataStore.pokemons;
-  const stickersData = () => dataStore.stickers;
-  const combatsData = () => dataStore.combats;
-  const evolutionChainsData = () => dataStore.evolutionChains;
-  const informationData = () => dataStore.information;
-  const assetsData = () => dataStore.assets;
-  const leaguesData = () => dataStore.leagues;
-  const cpmData = () => dataStore.cpm;
-  const trainersData = () => dataStore.trainers;
-  const pvpData = () => dataStore.pvp;
-  const optionsData = () => dataStore.options;
+  const pokemonsData = dataStore.pokemons;
+  const stickersData = dataStore.stickers;
+  const combatsData = dataStore.combats;
+  const evolutionChainsData = dataStore.evolutionChains;
+  const informationData = dataStore.information;
+  const assetsData = dataStore.assets;
+  const leaguesData = dataStore.leagues;
+  const cpmData = dataStore.cpm;
+  const trainersData = dataStore.trainers;
+  const pvpData = dataStore.pvp;
+  const optionsData = dataStore.options;
 
   const getAuthorizationHeaders = {
     headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },

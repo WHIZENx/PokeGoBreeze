@@ -295,13 +295,13 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = pokemonsData().find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
             if (!pokemon) {
               return new BattlePokemonData();
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(assetsData(), pokemon.num, pokemon.form);
+            const form = findAssetForm(assetsData, pokemon.num, pokemon.form);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -338,14 +338,14 @@ const Battle = () => {
         }
       }
     },
-    [pokemonsData(), assetsData(), dispatch]
+    [pokemonsData, assetsData, dispatch]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (isNotEmpty(pokemonsData()) && isNotEmpty(assetsData())) {
+    if (isNotEmpty(pokemonsData) && isNotEmpty(assetsData)) {
       fetchPokemon(league);
     }
     return () => {

@@ -37,8 +37,8 @@ const Sticker = () => {
   const [selectPokemon, setSelectPokemon] = useState<PokemonStickerModel[]>([]);
 
   useEffect(() => {
-    if (isNotEmpty(stickersData()) && !isNotEmpty(selectPokemon)) {
-      const result = stickersData()
+    if (isNotEmpty(stickersData) && !isNotEmpty(selectPokemon)) {
+      const result = stickersData
         .reduce((prev: PokemonStickerModel[], curr) => {
           if (
             curr.pokemonName &&
@@ -57,12 +57,12 @@ const Sticker = () => {
         .sort((a, b) => toNumber(a.id) - toNumber(b.id));
       setSelectPokemon(result);
     }
-  }, [stickersData(), selectPokemon]);
+  }, [stickersData, selectPokemon]);
 
   useEffect(() => {
-    if (isNotEmpty(stickersData())) {
+    if (isNotEmpty(stickersData)) {
       setPokemonStickerFilter(
-        stickersData()
+        stickersData
           .filter((item) => {
             if (shopType === ShopType.All) {
               return true;
@@ -81,7 +81,7 @@ const Sticker = () => {
           })
       );
     }
-  }, [id, shopType, stickersData()]);
+  }, [id, shopType, stickersData]);
 
   return (
     <div className="container p-3">

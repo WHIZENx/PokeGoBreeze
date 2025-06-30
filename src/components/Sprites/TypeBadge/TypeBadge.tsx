@@ -15,10 +15,10 @@ const TypeBadge = (props: ITypeBadgeComponent) => {
 
   const [move, setMove] = useState<ICombat>();
   useEffect(() => {
-    if (props.move?.name && isNotEmpty(combatsData())) {
-      setMove(combatsData().find((item) => isEqual(item.name, props.move?.name)));
+    if (props.move?.name && isNotEmpty(combatsData)) {
+      setMove(combatsData.find((item) => isEqual(item.name, props.move?.name)));
     }
-  }, [combatsData(), props.move?.name]);
+  }, [combatsData, props.move?.name]);
 
   return (
     <div className={combineClasses('type-badge-container', props.isGrow ? 'filter-shadow' : '')} style={props.style}>

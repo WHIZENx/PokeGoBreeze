@@ -28,7 +28,7 @@ const SelectMove = (props: ISelectMoveComponent) => {
 
   const findMove = useCallback(
     (selectPokemon: ISelectMovePokemonModel | undefined, type: TypeMove, selected = false) => {
-      const result = retrieveMoves(pokemonsData(), selectPokemon?.id, selectPokemon?.form, selectPokemon?.pokemonType);
+      const result = retrieveMoves(pokemonsData, selectPokemon?.id, selectPokemon?.form, selectPokemon?.pokemonType);
       if (result) {
         const simpleMove = addSelectMovesByType(result, type);
         if (props.setMovePokemon && (!selected || !props.move) && !props.move) {
@@ -41,14 +41,14 @@ const SelectMove = (props: ISelectMoveComponent) => {
   );
 
   useEffect(() => {
-    if (isNotEmpty(pokemonsData())) {
+    if (isNotEmpty(pokemonsData)) {
       if (toNumber(props.pokemon?.id) > 0) {
         findMove(props.pokemon, props.moveType, props.isSelected);
       } else if (resultMove.length > 0) {
         setResultMove([]);
       }
     }
-  }, [props.pokemon, props.isSelected, resultMove.length, pokemonsData(), findMove]);
+  }, [props.pokemon, props.isSelected, resultMove.length, pokemonsData, findMove]);
 
   const smallCardInput = () => (
     <CardMoveSmall

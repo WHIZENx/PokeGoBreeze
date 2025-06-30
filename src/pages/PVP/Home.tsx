@@ -55,24 +55,24 @@ const PVPHome = () => {
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(combatsData()) && combatsData().every((combat) => !combat.archetype)) {
+    if (isNotEmpty(combatsData) && combatsData.every((combat) => !combat.archetype)) {
       loadPVPMoves();
     }
     if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [spinner, combatsData(), dispatch]);
+  }, [spinner, combatsData, dispatch]);
 
   useEffect(() => {
-    if (!rank && !team && isNotEmpty(pvpData().rankings) && isNotEmpty(pvpData().trains)) {
+    if (!rank && !team && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
       setOptions(
         OptionsHome.create({
-          rank: pvpData().rankings.at(0),
-          team: pvpData().trains.at(0),
+          rank: pvpData.rankings.at(0),
+          team: pvpData.trains.at(0),
         })
       );
     }
-  }, [rank, team, pvpData().rankings, pvpData().trains]);
+  }, [rank, team, pvpData.rankings, pvpData.trains]);
 
   const renderLeagueLogo = (logo: string | undefined, cp: number) => {
     if (
@@ -134,12 +134,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: pvpData().rankings.find((item) => isEqual(item.id, e.target.value)),
+                rank: pvpData.rankings.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvpData().rankings.map((value, index) => (
+          {pvpData.rankings.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -178,12 +178,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: pvpData().trains.find((item) => isEqual(item.id, e.target.value)),
+                team: pvpData.trains.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {pvpData().trains.map((value, index) => (
+          {pvpData.trains.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>

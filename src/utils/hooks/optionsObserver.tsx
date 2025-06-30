@@ -8,8 +8,8 @@ const optionsObserver = () => {
   const { optionsData } = useDataStore();
 
   useEffect(() => {
-    updateCurrentOptions(optionsData() || defaultOptions);
-  }, [optionsData()]);
+    updateCurrentOptions(optionsData || defaultOptions);
+  }, [optionsData]);
 
   return null;
 };

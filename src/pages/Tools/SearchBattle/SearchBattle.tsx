@@ -100,7 +100,7 @@ const FindBattle = () => {
       if (!isNotEmpty(currId)) {
         return arr;
       }
-      const curr = pokemonsData().find((item) => isIncludeList(currId, item.num) && isInclude(item.form, form));
+      const curr = pokemonsData.find((item) => isIncludeList(currId, item.num) && isInclude(item.form, form));
       if (
         !isIncludeList(
           arr.map((i) => i.id),
@@ -125,7 +125,7 @@ const FindBattle = () => {
         arr
       );
     },
-    [pokemonsData()]
+    [pokemonsData]
   );
 
   const prevEvoChain = useCallback(
@@ -148,7 +148,7 @@ const FindBattle = () => {
       obj.evoList?.forEach((i) => {
         currEvoChain([i.evoToId], i.evoToForm, arr);
       });
-      const curr = pokemonsData().filter((item) =>
+      const curr = pokemonsData.filter((item) =>
         item.evoList?.find((i) => obj.num === i.evoToId && isEqual(i.evoToForm, defaultForm))
       );
       if (isNotEmpty(curr)) {
@@ -157,30 +157,30 @@ const FindBattle = () => {
         result.push(arr);
       }
     },
-    [currEvoChain, pokemonsData()]
+    [currEvoChain, pokemonsData]
   );
 
   const getEvoChain = useCallback(
     (id: number) => {
       const currentForm = convertPokemonAPIDataName(pokemon?.form?.form?.formName, formNormal());
-      let curr = pokemonsData().filter((item) =>
+      let curr = pokemonsData.filter((item) =>
         item.evoList?.find((i) => id === i.evoToId && isEqual(currentForm, i.evoToForm))
       );
       if (!isNotEmpty(curr)) {
         if (currentForm === formNormal()) {
-          curr = pokemonsData().filter((item) => id === item.num && isEqual(currentForm, item.form));
+          curr = pokemonsData.filter((item) => id === item.num && isEqual(currentForm, item.form));
         } else {
-          curr = pokemonsData().filter((item) => id === item.num && isInclude(item.form, currentForm));
+          curr = pokemonsData.filter((item) => id === item.num && isInclude(item.form, currentForm));
         }
       }
       if (!isNotEmpty(curr)) {
-        curr = pokemonsData().filter((item) => id === item.num && item.form === formNormal());
+        curr = pokemonsData.filter((item) => id === item.num && item.form === formNormal());
       }
       const result: IEvolution[][] = [];
       curr?.forEach((item) => prevEvoChain(item, currentForm, [], result));
       return result;
     },
-    [prevEvoChain, pokemon?.form, pokemonsData()]
+    [prevEvoChain, pokemon?.form, pokemonsData]
   );
 
   const searchStatsPoke = useCallback(
@@ -189,7 +189,7 @@ const FindBattle = () => {
       getEvoChain(toNumber(pokemon?.form?.defaultId)).forEach((item) => {
         const tempArr: IQueryStatesEvoChain[] = [];
         item.forEach((value) => {
-          const data = queryStatesEvoChain(pokemonsData(), value, level, ATKIv, DEFIv, STAIv);
+          const data = queryStatesEvoChain(pokemonsData, value, level, ATKIv, DEFIv, STAIv);
           if (data.id === pokemon?.form?.defaultId) {
             setMaxCP(data.maxCP);
           }
@@ -369,7 +369,7 @@ const FindBattle = () => {
   };
 
   const renderPokemon = (value: IBattleBaseStats | IQueryStatesEvoChain, className?: string, height = 100) => {
-    const assets = findAssetForm(assetsData(), value.id, pokemon?.form?.form?.formName);
+    const assets = findAssetForm(assetsData, value.id, pokemon?.form?.form?.formName);
     return (
       <img
         className={className}

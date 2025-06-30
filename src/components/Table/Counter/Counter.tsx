@@ -161,7 +161,7 @@ const Counter = (props: ICounterComponent) => {
       id: ColumnType.Pokemon,
       name: 'Pokémon',
       selector: (row) => {
-        const assets = findAssetForm(assetsData(), row.pokemonId, row.pokemonForm);
+        const assets = findAssetForm(assetsData, row.pokemonId, row.pokemonForm);
         return (
           <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForm, row.pokemonType)}`}>
             <div className="d-flex justify-content-center">
@@ -292,10 +292,10 @@ const Counter = (props: ICounterComponent) => {
       const resolveHandler = () => {
         if (props.pokemonData) {
           result = counterPokemon(
-            pokemonsData(),
+            pokemonsData,
             toNumber(props.pokemonData.statsGO?.def),
             props.pokemonData.types,
-            combatsData()
+            combatsData
           );
         }
 
@@ -335,7 +335,7 @@ const Counter = (props: ICounterComponent) => {
               return true;
             }
             if (!pokemon.releasedGO) {
-              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), pokemonsData());
+              return checkPokemonGO(pokemon.pokemonId, convertPokemonDataName(pokemon.pokemonName), pokemonsData);
             }
             return pokemon.releasedGO;
           })

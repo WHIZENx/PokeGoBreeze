@@ -103,7 +103,7 @@ export const useTimestamp = () => {
           if (!timestampLoaded.isCurrentGameMaster || !timestampLoaded.isCurrentVersion) {
             await loadGameMaster(imageRoot.data, soundsRoot.data, timestampLoaded);
           } else if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound) {
-            await loadAssets(imageRoot.data, soundsRoot.data, pokemonsData(), timestampLoaded);
+            await loadAssets(imageRoot.data, soundsRoot.data, pokemonsData, timestampLoaded);
           } else {
             dispatch(SpinnerActions.SetPercent.create(100));
             setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);

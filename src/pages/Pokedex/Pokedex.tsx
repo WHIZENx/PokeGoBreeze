@@ -150,17 +150,17 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(assetsData()) && isNotEmpty(pokemonsData())) {
+    if (isNotEmpty(assetsData) && isNotEmpty(pokemonsData)) {
       setDataList(
-        pokemonsData()
+        pokemonsData
           .map((item) => {
-            const assetForm = queryAssetForm(assetsData(), item.num, item.form);
+            const assetForm = queryAssetForm(assetsData, item.num, item.form);
             return new PokemonHomeModel(item, assetForm);
           })
           .sort((a, b) => a.id - b.id)
       );
     }
-  }, [assetsData(), pokemonsData()]);
+  }, [assetsData, pokemonsData]);
 
   useEffect(() => {
     setIsLoading(true);

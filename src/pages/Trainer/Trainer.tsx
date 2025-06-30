@@ -19,14 +19,14 @@ const Trainer = () => {
   const [data, setData] = useState<TrainerLevelUp>();
 
   useEffect(() => {
-    if (isNotEmpty(trainersData())) {
-      const result = trainersData().find((trainer) => trainer.level === level);
+    if (isNotEmpty(trainersData)) {
+      const result = trainersData.find((trainer) => trainer.level === level);
       setData({
         levelUps: getValueOrDefault(Array, result?.items),
         itemUnlocks: result?.itemsUnlock,
       });
     }
-  }, [trainersData(), level]);
+  }, [trainersData, level]);
 
   return (
     <div className="container p-3">
@@ -34,7 +34,7 @@ const Trainer = () => {
       <hr />
       <div>
         <Form.Select onChange={(e) => setLevel(toNumber(e.target.value))} defaultValue={level}>
-          {trainersData().map((value, index) => (
+          {trainersData.map((value, index) => (
             <option key={index} value={value.level}>
               Level {value.level}
             </option>
