@@ -54,7 +54,7 @@ export const useSpinner = () => {
   const spinnerBar = spinnerData.bar;
   const spinnerPercent = spinnerData.bar.percent;
   const spinnerBarIsShow = spinnerData.bar.isShow;
-  const spinnerIsMsg = spinnerData.error?.isError;
+  const spinnerIsError = spinnerData.error?.isError;
   const spinnerMessage = spinnerData.error?.message;
   const spinnerIsLoading = spinnerData.isLoading;
 
@@ -69,7 +69,7 @@ export const useSpinner = () => {
     spinnerPercent,
     spinnerMessage,
     spinnerBarIsShow,
-    spinnerIsMsg,
+    spinnerIsError,
     spinnerIsLoading,
   };
 };

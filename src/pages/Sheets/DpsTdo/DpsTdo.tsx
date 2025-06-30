@@ -34,10 +34,9 @@ import './DpsTdo.scss';
 import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
-import { OptionsSheetState, RouterState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
@@ -80,6 +79,8 @@ import {
 } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
+import useOptionStore from '../../../composables/useOptions';
+import useRouter from '../../../composables/useRouter';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -284,40 +285,36 @@ const DpsTdo = () => {
   const dispatch = useDispatch();
   const { iconData } = useIcon();
   const { pokemonsData, combatsData } = useDataStore();
-  const optionStore = useSelector((state: OptionsSheetState) => state.options);
-  const router = useSelector((state: RouterState) => state.router);
+  const { optionsDpsSheet } = useOptionStore();
+  const { routerAction } = useRouter();
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
   const [dataFilter, setDataFilter] = useState<PokemonSheetData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [dataTargetPokemon, setDataTargetPokemon] = useState<IPokemonData | undefined>(
-    optionStore?.dpsSheet?.dataTargetPokemon
+    optionsDpsSheet?.dataTargetPokemon
   );
   const [fMoveTargetPokemon, setFMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(
-    optionStore?.dpsSheet?.fMoveTargetPokemon
+    optionsDpsSheet?.fMoveTargetPokemon
   );
   const [cMoveTargetPokemon, setCMoveTargetPokemon] = useState<ISelectMoveModel | undefined>(
-    optionStore?.dpsSheet?.cMoveTargetPokemon
+    optionsDpsSheet?.cMoveTargetPokemon
   );
 
   const [defaultPage, setDefaultPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultPage
-      ? optionStore.dpsSheet.defaultPage
-      : defaultSheetPage()
+    routerAction === Action.Pop && optionsDpsSheet?.defaultPage ? optionsDpsSheet.defaultPage : defaultSheetPage()
   );
   const [defaultRowPerPage, setDefaultRowPerPage] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultRowPerPage
-      ? optionStore.dpsSheet.defaultRowPerPage
+    routerAction === Action.Pop && optionsDpsSheet?.defaultRowPerPage
+      ? optionsDpsSheet.defaultRowPerPage
       : defaultSheetRow()
   );
   const [defaultSorted, setDefaultSorted] = useState(
-    router.action === Action.Pop && optionStore?.dpsSheet?.defaultSorted
-      ? optionStore.dpsSheet.defaultSorted
-      : new OptionDPSSort()
+    routerAction === Action.Pop && optionsDpsSheet?.defaultSorted ? optionsDpsSheet.defaultSorted : new OptionDPSSort()
   );
 
-  const [filters, setFilters] = useState(optionStore?.dpsSheet?.filters ?? new OptionFiltersDPS());
+  const [filters, setFilters] = useState(optionsDpsSheet?.filters ?? new OptionFiltersDPS());
 
   const {
     isMatch,
@@ -351,7 +348,7 @@ const DpsTdo = () => {
   const { weatherBoosts, isTrainerFriend, pokemonFriendLevel, pokemonDefObj } = options;
 
   const [isShowSpinner, setIsShowSpinner] = useState(false);
-  const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionStore?.dpsSheet?.selectTypes));
+  const [selectTypes, setSelectTypes] = useState(getValueOrDefault(Array, optionsDpsSheet?.selectTypes));
 
   const addCPokeData = (
     dataList: PokemonSheetData[],

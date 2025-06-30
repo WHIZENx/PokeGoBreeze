@@ -8,7 +8,7 @@ import Pokemon from '../../Pokemon/Pokemon';
 import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../../utils/utils';
 import { Action } from 'history';
-import { RouterState, SearchingState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { IPokemonSearching } from '../../../core/models/pokemon-searching.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { PokemonType } from '../../../enums/type.enum';
@@ -18,6 +18,7 @@ import { SearchOption } from './models/pokemon-search.model';
 import { debounce } from 'lodash';
 import { keyDown, keyEnter, keyUp } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import useRouter from '../../../composables/useRouter';
 
 const Search = () => {
   useTitle({
@@ -26,7 +27,7 @@ const Search = () => {
       'Search and filter Pokémon in Pokémon GO by type, stats, moves, and more. Find the best Pokémon for your battle teams.',
     keywords: ['Pokémon search', 'find Pokémon', 'Pokémon filter', 'Pokémon GO search', 'Pokémon database'],
   });
-  const router = useSelector((state: RouterState) => state.router);
+  const { routerAction } = useRouter();
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
   const { pokemonsData } = useDataStore();
 
@@ -35,12 +36,12 @@ const Search = () => {
   const eachCounter = useRef(10);
 
   const [searchOption, setSearchOption] = useState<SearchOption>({
-    id: router.action === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1,
-    form: router.action === Action.Pop && searching ? searching.form?.form?.formName : '',
+    id: routerAction === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1,
+    form: routerAction === Action.Pop && searching ? searching.form?.form?.formName : '',
     pokemonType: PokemonType.Normal,
   });
   const [selectId, setSelectId] = useState(
-    router.action === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1
+    routerAction === Action.Pop && searching ? toNumber(searching.pokemon?.id, 1) : 1
   );
 
   const [searchTerm, setSearchTerm] = useState('');

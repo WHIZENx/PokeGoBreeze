@@ -24,9 +24,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Params } from '../../../utils/constants';
-import { RouterState, StatsState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
 import { SpinnerActions } from '../../../store/actions';
@@ -64,6 +63,8 @@ import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
+import useRouter from '../../../composables/useRouter';
+import useStats from '../../../composables/useStats';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
@@ -71,8 +72,8 @@ const RankingPVP = (props: IStyleSheetData) => {
   const { assetsData, pokemonsData, combatsData, pvpData } = useDataStore();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
-  const router = useSelector((state: RouterState) => state.router);
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const { routerAction } = useRouter();
+  const { statsData } = useStats();
 
   const [searchParams] = useSearchParams();
   const params = useParams();
@@ -84,8 +85,6 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const [search, setSearch] = useState('');
   const [isFound, setIsFound] = useState(true);
-
-  const statsRanking = useSelector((state: StatsState) => state.stats);
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -110,7 +109,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(timestamp);
+    loadPVP();
   }, []);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
@@ -124,10 +123,10 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const fetchPokemonRanking = useCallback(async () => {
     if (
-      statsRanking?.attack?.ranking &&
-      statsRanking?.defense?.ranking &&
-      statsRanking?.stamina?.ranking &&
-      statsRanking?.statProd?.ranking
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
     ) {
       dispatch(SpinnerActions.ShowSpinner.create());
       try {
@@ -220,10 +219,10 @@ const RankingPVP = (props: IStyleSheetData) => {
             form,
             pokemon,
             stats,
-            atk: statsRanking.attack?.ranking?.find((i) => i.attack === stats.atk),
-            def: statsRanking.defense?.ranking?.find((i) => i.defense === stats.def),
-            sta: statsRanking.stamina?.ranking?.find((i) => i.stamina === stats.sta),
-            prod: statsRanking.statProd?.ranking?.find((i) => i.product === stats.prod),
+            atk: statsData?.attack?.ranking?.find((i) => i.attack === stats.atk),
+            def: statsData?.defense?.ranking?.find((i) => i.defense === stats.def),
+            sta: statsData?.stamina?.ranking?.find((i) => i.stamina === stats.sta),
+            prod: statsData?.statProd?.ranking?.find((i) => i.product === stats.prod),
             fMove,
             cMovePri,
             cMoveSec,
@@ -250,10 +249,10 @@ const RankingPVP = (props: IStyleSheetData) => {
     searchParams,
     params.serie,
     params.cp,
-    statsRanking?.attack?.ranking,
-    statsRanking?.defense?.ranking,
-    statsRanking?.stamina?.ranking,
-    statsRanking?.statProd?.ranking,
+    statsData?.attack?.ranking,
+    statsData?.defense?.ranking,
+    statsData?.stamina?.ranking,
+    statsData?.statProd?.ranking,
     combatsData,
     pokemonsData,
     assetsData,
@@ -263,10 +262,9 @@ const RankingPVP = (props: IStyleSheetData) => {
   useEffect(() => {
     const fetchPokemon = async () => {
       await fetchPokemonRanking();
-      router.action = null;
     };
     if (
-      statsRanking &&
+      statsData &&
       isNotEmpty(pvpData.rankings) &&
       isNotEmpty(pvpData.trains) &&
       isNotEmpty(combatsData) &&
@@ -275,14 +273,14 @@ const RankingPVP = (props: IStyleSheetData) => {
     ) {
       if (combatsData.every((combat) => !combat.archetype)) {
         loadPVPMoves();
-      } else if (router.action) {
+      } else if (routerAction) {
         fetchPokemon();
       }
     }
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonRanking, rankingData, pvpData.rankings, pvpData.trains, router.action, dispatch]);
+  }, [fetchPokemonRanking, rankingData, pvpData.rankings, pvpData.trains, routerAction, dispatch]);
 
   const renderItem = (data: IPokemonBattleRanking, key: number) => (
     <Accordion.Item eventKey={key.toString()}>
@@ -352,12 +350,7 @@ const RankingPVP = (props: IStyleSheetData) => {
                 <hr />
               </div>
               <div className="stats-container">
-                <OverAllStats
-                  data={data}
-                  statsRanking={statsRanking}
-                  cp={params.cp}
-                  type={searchParams.get(Params.LeagueType)}
-                />
+                <OverAllStats data={data} cp={params.cp} type={searchParams.get(Params.LeagueType)} />
               </div>
               <div className="container">
                 <hr />

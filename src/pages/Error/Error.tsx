@@ -2,19 +2,19 @@ import React, { useEffect } from 'react';
 import { Location, useLocation } from 'react-router-dom';
 
 import './Error.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { SpinnerState } from '../../store/models/state.model';
+import { useDispatch } from 'react-redux';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { SpinnerActions } from '../../store/actions';
 import { LocationState } from '../../core/models/router.model';
 import { LinkToTop } from '../../utils/hooks/LinkToTop';
 import { IErrorPage } from '../models/page.model';
 import { isUndefined } from '../../utils/extension';
+import useSpinner from '../../composables/useSpinner';
 
 const Error = (props: IErrorPage) => {
   const dispatch = useDispatch();
   const location = useLocation() as unknown as Location<LocationState>;
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
+  const { spinnerIsLoading } = useSpinner();
   if (props.isError && props.isShowTitle) {
     useTitle({
       title:
@@ -29,10 +29,10 @@ const Error = (props: IErrorPage) => {
   }
 
   useEffect(() => {
-    if (spinner.isLoading) {
+    if (spinnerIsLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [spinner.isLoading, dispatch]);
+  }, [spinnerIsLoading, dispatch]);
 
   return (
     <>

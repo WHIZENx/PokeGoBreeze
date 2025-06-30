@@ -23,8 +23,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { StatsState, TimestampState } from '../../../store/models/state.model';
+import { useDispatch } from 'react-redux';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
@@ -59,18 +58,18 @@ import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
+import useStats from '../../../composables/useStats';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const { combatsData, pokemonsData, pvpData } = useDataStore();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const { statsData } = useStats();
   const params = useParams();
 
   const [rankingData, setRankingData] = useState<TeamsPVP>();
   const [search, setSearch] = useState('');
-  const statsRanking = useSelector((state: StatsState) => state.stats);
   const [sortedBy, setSortedBy] = useState(SortType.TeamScore);
   const [sorted, setSorted] = useState(SortDirectionType.DESC);
 
@@ -128,9 +127,9 @@ const TeamPVP = (props: IStyleSheetData) => {
       pokemonData: pokemon,
       form,
       stats,
-      atk: statsRanking?.attack?.ranking?.find((i) => i.attack === stats.atk),
-      def: statsRanking?.defense?.ranking?.find((i) => i.defense === stats.def),
-      sta: statsRanking?.stamina?.ranking?.find((i) => i.stamina === stats.sta),
+      atk: statsData?.attack?.ranking?.find((i) => i.attack === stats.atk),
+      def: statsData?.defense?.ranking?.find((i) => i.defense === stats.def),
+      sta: statsData?.stamina?.ranking?.find((i) => i.stamina === stats.sta),
       fMove,
       cMovePri,
       cMoveSec,
@@ -140,7 +139,7 @@ const TeamPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(timestamp);
+    loadPVP();
   }, []);
 
   useEffect(() => {
@@ -251,10 +250,10 @@ const TeamPVP = (props: IStyleSheetData) => {
       isNotEmpty(pvpData.trains) &&
       isNotEmpty(combatsData) &&
       isNotEmpty(pokemonsData) &&
-      statsRanking?.attack?.ranking &&
-      statsRanking?.defense?.ranking &&
-      statsRanking?.stamina?.ranking &&
-      statsRanking?.statProd?.ranking
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
     ) {
       fetchPokemon();
     }
@@ -270,10 +269,10 @@ const TeamPVP = (props: IStyleSheetData) => {
     pvpData.trains,
     combatsData,
     pokemonsData,
-    statsRanking?.attack?.ranking,
-    statsRanking?.defense?.ranking,
-    statsRanking?.stamina?.ranking,
-    statsRanking?.statProd?.ranking,
+    statsData?.attack?.ranking,
+    statsData?.defense?.ranking,
+    statsData?.stamina?.ranking,
+    statsData?.statProd?.ranking,
   ]);
 
   const renderLeague = () => {

@@ -14,7 +14,6 @@ import {
   getCustomThemeDataTable,
 } from '../../../utils/utils';
 import { ConditionalStyles, TableStyles } from 'react-data-table-component';
-import { useSelector } from 'react-redux';
 import Stats from '../../../components/Info/Stats/Stats';
 import TableMove from '../../../components/Table/Move/MoveTable';
 
@@ -25,7 +24,6 @@ import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
-import { RouterState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import {
   IPokemonStatsRanking,
@@ -67,6 +65,7 @@ import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useStats from '../../../composables/useStats';
+import useRouter from '../../../composables/useRouter';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -194,7 +193,7 @@ class Filter implements IFilter {
 const defaultPerPages = 25;
 
 const StatsRanking = () => {
-  const router = useSelector((state: RouterState) => state.router);
+  const { routerAction } = useRouter();
   const { iconData } = useIcon();
   useTitle({
     title: 'PokéGO Breeze - Stats Ranking',
@@ -533,7 +532,7 @@ const StatsRanking = () => {
 
   useEffect(() => {
     const paramId = toNumber(searchParams.get(Params.Id));
-    if (paramId > 0 && router.action === Action.Pop && isNotEmpty(pokemonList)) {
+    if (paramId > 0 && routerAction === Action.Pop && isNotEmpty(pokemonList)) {
       const form = getValueOrDefault(String, searchParams.get(Params.Form), formNormal()).replaceAll('-', '_');
       const formType = searchParams.get(Params.FormType);
       const pokemonType = getPokemonType(formType);
@@ -552,7 +551,7 @@ const StatsRanking = () => {
         setSelect(result);
       }
     }
-  }, [router, pokemonList, searchParams]);
+  }, [routerAction, pokemonList, searchParams]);
 
   return (
     <div className="pb-3 position-relative poke-container container">
@@ -601,7 +600,6 @@ const StatsRanking = () => {
         statDEF={select?.def}
         statSTA={select?.sta}
         statProd={select?.prod}
-        pokemonStats={statsData}
         id={select?.num}
         form={select?.form}
         isDisabled

@@ -10,7 +10,7 @@ import { SetDpsSheetOptions, SetCounterOptions } from '../store/actions/options.
  *
  * @returns The options state object with all properties and update methods
  */
-export const useOptions = () => {
+export const useOptionStore = () => {
   const dispatch = useDispatch();
   const optionsData = useSelector((state: OptionsSheetState) => state.options);
 
@@ -31,7 +31,7 @@ export const useOptions = () => {
   };
 
   const optionsDpsSheet = optionsData?.dpsSheet;
-  const optionsCounter = optionsData?.counter;
+  const optionsCounter = optionsData?.counter || new OptionFiltersCounter();
 
   return {
     optionsData,
@@ -42,4 +42,4 @@ export const useOptions = () => {
   };
 };
 
-export default useOptions;
+export default useOptionStore;

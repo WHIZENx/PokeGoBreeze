@@ -1,10 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import APIService from '../../services/api.service';
 import { leaguesTeamBattle } from '../../utils/constants';
 import { Link } from 'react-router-dom';
-import { SpinnerState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../utils/compute';
 import { useTitle } from '../../utils/hooks/useTitle';
@@ -16,6 +15,8 @@ import { LeagueBattleType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../utils/enums/compute.enum';
 import useDataStore from '../../composables/useDataStore';
 import usePVP from '../../composables/usePVP';
+import useSpinner from '../../composables/useSpinner';
+import useTimestamp from '../../composables/useTimestamp';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -43,25 +44,25 @@ const PVPHome = () => {
   const dispatch = useDispatch();
   const { pvpData, combatsData } = useDataStore();
   const { loadPVP, loadPVPMoves } = usePVP();
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const { spinnerIsLoading } = useSpinner();
+  const { timestampPVP } = useTimestamp();
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
 
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(timestamp);
+    loadPVP();
   }, []);
 
   useEffect(() => {
     if (isNotEmpty(combatsData) && combatsData.every((combat) => !combat.archetype)) {
       loadPVPMoves();
     }
-    if (spinner.isLoading) {
+    if (spinnerIsLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [spinner, combatsData, dispatch]);
+  }, [spinnerIsLoading, combatsData, dispatch]);
 
   useEffect(() => {
     if (!rank && !team && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {
@@ -112,9 +113,9 @@ const PVPHome = () => {
 
   return (
     <div className="container mt-2 pb-3">
-      {timestamp.pvp > 0 && (
+      {timestampPVP > 0 && (
         <h4>
-          <b>Updated: {getTime(timestamp.pvp, true)}</b>
+          <b>Updated: {getTime(timestampPVP, true)}</b>
         </h4>
       )}
       <p className="text-danger">

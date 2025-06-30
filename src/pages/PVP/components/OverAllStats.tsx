@@ -134,7 +134,6 @@ const OverAllStats = (props: OverAllStatsComponent) => {
             statDEF={props.data?.def}
             statSTA={props.data?.sta}
             statProd={props.data?.prod}
-            pokemonStats={props.statsRanking}
             id={props.data?.pokemon?.num}
             form={props.data?.pokemon?.form}
             isDisabled={!props.data}

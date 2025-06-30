@@ -6,32 +6,28 @@ import { pvpConvertPath } from '../core/pvp';
 import { APIUrl } from '../services/constants';
 import { APITreeRoot, APITree } from '../services/models/api.model';
 import { TimestampActions, StoreActions } from '../store/actions';
-import { TimestampModel } from '../store/reducers/timestamp.reducer';
 import { isNotEmpty, getValueOrDefault } from '../utils/extension';
 import APIService from '../services/api.service';
 import useDataStore from './useDataStore';
+import useTimestamp from './useTimestamp';
 
 /**
- * Custom hook to access and update the stats state from Redux store
- * This replaces direct usage of useSelector((state: StatsState) => state.stats)
+ * Custom hook to access and update the pvp state from Redux store
+ * This replaces direct usage of useSelector((state: StoreState) => state.store.data.pvp)
  *
- * @returns The stats state and update methods
+ * @returns The pvp state and update methods
  */
 export const usePVP = () => {
   const dispatch = useDispatch();
   const pvpData = useSelector((state: StoreState) => state.store.data.pvp);
   const { getAuthorizationHeaders } = useDataStore();
+  const { timestampPVP } = useTimestamp();
 
-  const loadPVP = (timestamp: TimestampModel) => {
+  const loadPVP = () => {
     APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_PVP_DATA, getAuthorizationHeaders).then((res) => {
       if (isNotEmpty(res.data)) {
         const pvpTimestamp = new Date(getValueOrDefault(String, res.data[0].commit.committer.date)).getTime();
-        if (
-          pvpTimestamp !== timestamp.pvp ||
-          !pvpData ||
-          !isNotEmpty(pvpData.rankings) ||
-          !isNotEmpty(pvpData.trains)
-        ) {
+        if (pvpTimestamp !== timestampPVP || !pvpData || !isNotEmpty(pvpData.rankings) || !isNotEmpty(pvpData.trains)) {
           const pvpUrl = res.data[0].commit.tree.url;
           if (pvpUrl) {
             APIService.getFetchUrl<APITree>(pvpUrl, getAuthorizationHeaders)

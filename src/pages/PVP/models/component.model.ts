@@ -1,6 +1,5 @@
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { IMovePokemonRanking, RankingsPVP } from '../../../core/models/pvp.model';
-import { IStatsRank } from '../../../core/models/stats.model';
 import { IStyleData } from '../../../utils/models/util.model';
 import { IPokemonBattleRanking } from './battle.model';
 
@@ -22,7 +21,6 @@ export interface TypeEffectiveComponent {
 
 export interface OverAllStatsComponent {
   data: IPokemonBattleRanking | undefined;
-  statsRanking: IStatsRank | null;
   cp: string | undefined;
   type: string | null | undefined;
 }

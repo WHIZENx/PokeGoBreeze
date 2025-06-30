@@ -34,13 +34,10 @@ import {
 
 import { OverlayTrigger } from 'react-bootstrap';
 import CustomPopover from '../../Popover/CustomPopover';
-import { useSelector } from 'react-redux';
 import Candy from '../../Sprites/Candy/Candy';
-import { RouterState } from '../../../store/models/state.model';
 import { EvoList, EvolutionModel, EvolutionQuest, IEvoList, IEvolution } from '../../../core/models/evolution.model';
 import { IEvolutionComponent } from '../../models/component.model';
 import { PokemonType, TypeSex } from '../../../enums/type.enum';
-import { Action } from 'history';
 import { getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { ConditionType, QuestType } from '../../../core/enums/option.enum';
@@ -99,7 +96,6 @@ class PokemonEvo implements IPokemonEvo {
 }
 
 const Evolution = (props: IEvolutionComponent) => {
-  const router = useSelector((state: RouterState) => state.router);
   const { pokemonsData, evolutionChainsData } = useDataStore();
   const [arrEvoList, setArrEvoList] = useState<IPokemonEvo[][]>([]);
 
@@ -778,9 +774,6 @@ const Evolution = (props: IEvolutionComponent) => {
                         <div
                           className="select-evo"
                           onClick={() => {
-                            if (router.action === Action.Pop) {
-                              router.action = Action.Replace;
-                            }
                             props.setSearchOption?.({ id: value.id, form: value.form, pokemonType: value.pokemonType });
                           }}
                           title={`#${value.id} ${splitAndCapitalize(value.name, '-', ' ')}`}

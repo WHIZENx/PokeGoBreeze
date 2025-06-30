@@ -13,10 +13,8 @@ import {
 import { counterPokemon } from '../../../utils/calculate';
 
 import './Counter.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { OptionsSheetState } from '../../../store/models/state.model';
 import { TableStyles } from 'react-data-table-component';
-import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
+import { ICounterModel } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
 import { ColumnType, MoveType, PokemonType } from '../../../enums/type.enum';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
@@ -33,7 +31,6 @@ import {
   toNumber,
 } from '../../../utils/extension';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
-import { OptionsActions } from '../../../store/actions';
 import PokemonIconType from '../../Sprites/PokemonIconType/PokemonIconType';
 import { FloatPaddingOption } from '../../../utils/models/extension.model';
 import IconType from '../../Sprites/Icon/Type/Type';
@@ -45,6 +42,7 @@ import { counterDelay } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
+import useOptionStore from '../../../composables/useOptions';
 
 const customStyles: TableStyles = {
   head: {
@@ -117,17 +115,16 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 };
 
 const Counter = (props: ICounterComponent) => {
-  const dispatch = useDispatch();
   const { iconData } = useIcon();
   const { combatsData, pokemonsData } = useDataStore();
   const { findAssetForm } = useAssets();
-  const optionStore = useSelector((state: OptionsSheetState) => state.options);
+  const { optionsCounter, setCounterOptions } = useOptionStore();
 
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
   const [counterFilter, setCounterFilter] = useState<ICounterModel[]>([]);
   const [showFrame, setShowFrame] = useState(true);
 
-  const [options, setOptions] = useState(optionStore?.counter ?? new OptionFiltersCounter());
+  const [options, setOptions] = useState(optionsCounter);
 
   const { isMatch, isSearchId, showMegaPrimal, releasedGO, enableBest } = options;
 
@@ -321,7 +318,7 @@ const Counter = (props: ICounterComponent) => {
   };
 
   useEffect(() => {
-    dispatch(OptionsActions.SetCounterOptions.create(options));
+    setCounterOptions(options);
     if (isNotEmpty(counterList)) {
       const result = enableBest ? filterBestOptions(counterList) : counterList;
       setCounterFilter(
@@ -344,7 +341,7 @@ const Counter = (props: ICounterComponent) => {
       );
       setShowFrame(false);
     }
-  }, [dispatch, counterList, showMegaPrimal, releasedGO, enableBest]);
+  }, [counterList, showMegaPrimal, releasedGO, enableBest]);
 
   const filterBestOptions = (result: ICounterModel[]) => {
     const group = result.reduce((res, obj) => {

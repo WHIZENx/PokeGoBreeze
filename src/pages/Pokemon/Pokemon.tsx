@@ -24,7 +24,7 @@ import {
   PokemonSpecie,
 } from '../../core/models/pokemon.model';
 import APIService from '../../services/api.service';
-import { RouterState, SpinnerState, SearchingState } from '../../store/models/state.model';
+import { SearchingState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
   checkPokemonIncludeShadowForm,
@@ -75,6 +75,8 @@ import { TitleSEOProps } from '../../utils/models/hook.model';
 import { formStandard, keyLeft, keyRight } from '../../utils/helpers/options-context.helpers';
 import useDataStore from '../../composables/useDataStore';
 import useIcon from '../../composables/useIcon';
+import useSpinner from '../../composables/useSpinner';
+import useRouter from '../../composables/useRouter';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -91,10 +93,10 @@ class TypeCost implements ITypeCost {
 }
 
 const Pokemon = (props: IPokemonPage) => {
+  const { spinnerIsLoading } = useSpinner();
+  const { routerAction } = useRouter();
   const dispatch = useDispatch();
-  const router = useSelector((state: RouterState) => state.router);
   const { iconData } = useIcon();
-  const spinner = useSelector((state: SpinnerState) => state.spinner);
   const { pokemonsData } = useDataStore();
 
   const currentSearchingForm = useSelector((state: SearchingState) => state.searching.mainSearching?.form);
@@ -265,7 +267,7 @@ const Pokemon = (props: IPokemonPage) => {
         formParams += isNotEmpty(formParams) && isNotEmpty(formTypeParams) ? `-${formTypeParams}` : formTypeParams;
       }
       const defaultForm = formListResult.flatMap((item) => item).filter((item) => item.form.isDefault);
-      if (router.action === Action.Pop && props.searching && !params.id) {
+      if (routerAction === Action.Pop && props.searching && !params.id) {
         currentForm = formListResult
           .flatMap((form) => form)
           .find((item) =>
@@ -428,7 +430,7 @@ const Pokemon = (props: IPokemonPage) => {
     const id = getPokemonIdByParam();
     if (id > 0 && isNotEmpty(pokemonsData)) {
       const keyDownHandler = (event: KeyboardEvent) => {
-        if (!spinner.isLoading) {
+        if (!spinnerIsLoading) {
           const currentPokemon = getPokemonById(pokemonsData, id);
           if (currentPokemon) {
             const prev = getPokemonById(pokemonsData, currentPokemon.id - 1);
@@ -448,7 +450,7 @@ const Pokemon = (props: IPokemonPage) => {
         document.removeEventListener('keyup', keyDownHandler);
       };
     }
-  }, [params.id, props.searchOption?.id, spinner.isLoading, pokemonsData]);
+  }, [params.id, props.searchOption?.id, spinnerIsLoading, pokemonsData]);
 
   const checkReleased = (id: number, form: Partial<IPokemonFormModify> | undefined) => {
     if (!form) {
@@ -487,7 +489,7 @@ const Pokemon = (props: IPokemonPage) => {
         }
       }
       const nameInfo =
-        router.action === Action.Pop && props.searching && !params.id
+        routerAction === Action.Pop && props.searching && !params.id
           ? props.searching.form?.form?.name
           : currentSearchingForm.form?.isDefault
           ? currentSearchingForm.form.name
@@ -496,7 +498,7 @@ const Pokemon = (props: IPokemonPage) => {
           : data.name;
       setFormName(convertSexName(nameInfo));
       const originForm = splitAndCapitalize(
-        router.action === Action.Pop && props.searching && !params.id
+        routerAction === Action.Pop && props.searching && !params.id
           ? props.searching.form?.form?.formName
           : currentSearchingForm.form?.formName,
         '-',
@@ -544,7 +546,7 @@ const Pokemon = (props: IPokemonPage) => {
         if (props.searchOption.pokemonType !== PokemonType.Normal && pokemonType) {
           formType = pokemonType;
         }
-      } else if (router.action === Action.Pop && props.searching && !params.id) {
+      } else if (routerAction === Action.Pop && props.searching && !params.id) {
         form = getValueOrDefault(String, props.searching?.form?.form?.formName);
       } else if (!isNullOrUndefined(formType)) {
         form += isNotEmpty(form) && isNotEmpty(formType) ? `-${formType}` : formType;
