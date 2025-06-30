@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
 import './App.scss';
@@ -37,14 +37,12 @@ import CatchChance from './pages/Tools/CatchChance/CatchChance';
 import { useLocalStorage } from 'usehooks-ts';
 import SearchTypes from './pages/Search/Types/Types';
 import StatsRanking from './pages/Sheets/StatsRanking/StatsRanking';
-import { loadTheme } from './store/effects/theme.effects';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { getDesignThemes } from './utils/models/overrides/themes.model';
 import { TypeTheme } from './enums/type.enum';
-import { DeviceActions, SpinnerActions } from './store/actions';
 import { LocalStorageConfig } from './store/constants/local-storage';
-import { RouterState, TimestampState } from './store/models/state.model';
+import { RouterState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
@@ -54,15 +52,20 @@ import { defaultOptions, OptionsContext } from './contexts/options.context';
 import optionsObserver from './utils/hooks/optionsObserver';
 import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
 import useTimestamp from './composables/useTimestamp';
+import useSpinner from './composables/useSpinner';
+import useDevice from './composables/useDevice';
+import { useTheme as useThemeStore } from './composables/useTheme';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
 });
 
 function App() {
-  const dispatch = useDispatch();
   const { loadTimestamp } = useTimestamp();
-  const timestamp = useSelector((state: TimestampState) => state.timestamp);
+  const { timestamp } = useTimestamp();
+  const { setBar, setPercent } = useSpinner();
+  const { setDevice } = useDevice();
+  const { loadTheme } = useThemeStore();
   const router = useSelector((state: RouterState) => state.router);
 
   const theme = useTheme();
@@ -116,8 +119,8 @@ function App() {
     if (!isLoaded) {
       const currentVersion = process.env.REACT_APP_VERSION;
       setCurrentVersion(currentVersion);
-      dispatch(SpinnerActions.SetBar.create(true));
-      dispatch(SpinnerActions.SetPercent.create(0));
+      setBar(true);
+      setPercent(0);
       setIsLoaded(true);
       const isCurrentVersion = currentVersion === version;
       setStateVersion(currentVersion || '');
@@ -126,9 +129,9 @@ function App() {
   }, [isLoaded]);
 
   useEffect(() => {
-    dispatch(DeviceActions.SetDevice.create());
-    loadTheme(dispatch, stateTheme, setStateTheme);
-  }, [dispatch]);
+    setDevice();
+    loadTheme(stateTheme, setStateTheme);
+  }, []);
 
   const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = loadDataDelay()) => {
     return new Promise<void>((resolve, reject) => {
