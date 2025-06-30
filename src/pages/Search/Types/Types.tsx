@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import APIService from '../../../services/api.service';
 import { capitalize, generateParamForm, getItemSpritePath, splitAndCapitalize } from '../../../utils/utils';
 import './Types.scss';
@@ -9,7 +8,6 @@ import { Tabs, Tab } from 'react-bootstrap';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import { FormControlLabel, Switch } from '@mui/material';
 import { ColumnType, PokemonType, TypeMove } from '../../../enums/type.enum';
-import { StoreState } from '../../../store/models/state.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { TableColumnModify } from '../../../utils/models/overrides/data-table.model';
@@ -33,6 +31,7 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { getTypes } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import useIcon from '../../../composables/useIcon';
 
 const nameSort = (rowA: IPokemonData | ICombat, rowB: IPokemonData | ICombat) => {
   const a = getValueOrDefault(String, rowA.name.toLowerCase());
@@ -204,7 +203,7 @@ class PokemonTypeData implements IPokemonTypeData {
 }
 
 const SearchTypes = (props: IStyleSheetData) => {
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   const { pokemonsData, combatsData } = useDataStore();
 
   const [releasedGO, setReleaseGO] = useState(true);
@@ -323,7 +322,7 @@ const SearchTypes = (props: IStyleSheetData) => {
               width={28}
               height={28}
               alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(icon)}
+              src={APIService.getPokemonGoIcon(iconData)}
             />
             <b>{`Filter from ${allData?.pokemon} Pokémon`}</b>
           </span>

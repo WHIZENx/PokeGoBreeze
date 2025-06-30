@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import './Pokedex.scss';
 import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
@@ -21,7 +21,6 @@ import {
   SelectChangeEvent,
   Switch,
 } from '@mui/material';
-import { StoreState } from '../../store/models/state.model';
 import { IPokemonHomeModel, PokemonHomeModel } from '../../core/models/pokemon-home.model';
 import { useTitle } from '../../utils/hooks/useTitle';
 import { PokemonClass, PokemonType } from '../../enums/type.enum';
@@ -42,6 +41,7 @@ import { IStyleSheetData } from '../models/page.model';
 import { SpinnerActions } from '../../store/actions';
 import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
 import useDataStore from '../../composables/useDataStore';
+import useIcon from '../../composables/useIcon';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -109,8 +109,7 @@ const Pokedex = (props: IStyleSheetData) => {
   });
 
   const dispatch = useDispatch();
-
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   const { pokemonsData, assetsData } = useDataStore();
 
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
@@ -388,7 +387,7 @@ const Pokedex = (props: IStyleSheetData) => {
                           width={28}
                           height={28}
                           alt="Pokémon GO Icon"
-                          src={APIService.getPokemonGoIcon(icon)}
+                          src={APIService.getPokemonGoIcon(iconData)}
                         />
                       </span>
                     }
@@ -591,7 +590,7 @@ const Pokedex = (props: IStyleSheetData) => {
               id={row.id}
               types={row.types}
               pokemonStat={row.goStats}
-              icon={icon}
+              icon={iconData}
               releasedGO={row.releasedGO}
               styleList={props.styleSheet}
             />

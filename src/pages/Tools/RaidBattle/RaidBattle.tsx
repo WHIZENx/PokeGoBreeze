@@ -48,7 +48,7 @@ import { Modal, Button, Form, OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { StoreState, SearchingState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import {
   IPokemonData,
   IPokemonMoveData,
@@ -100,6 +100,7 @@ import PokemonIconType from '../../../components/Sprites/PokemonIconType/Pokemon
 import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import useIcon from '../../../composables/useIcon';
 
 const RaidBattle = () => {
   useTitle({
@@ -116,7 +117,7 @@ const RaidBattle = () => {
     ],
   });
   const dispatch = useDispatch();
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   const { pokemonsData, combatsData, assetsData } = useDataStore();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
@@ -832,7 +833,7 @@ const RaidBattle = () => {
                 width={28}
                 height={28}
                 alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(icon)}
+                src={APIService.getPokemonGoIcon(iconData)}
               />
             </span>
           }

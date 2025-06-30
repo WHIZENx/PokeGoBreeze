@@ -51,15 +51,8 @@ export const useSpinner = () => {
     dispatch(SetPercent.create(percent));
   };
 
-  /**
-   * Get current spinner loading state
-   * @returns The current loading state
-   */
-  const getSpinner = () => spinnerData;
-
   return {
     spinnerData,
-    getSpinner,
     showSpinner,
     hideSpinner,
     showSpinnerMsg,

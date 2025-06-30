@@ -37,7 +37,7 @@ import SelectMove from '../../../components/Input/SelectMove';
 import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
-import { OptionsSheetState, RouterState, StoreState } from '../../../store/models/state.model';
+import { OptionsSheetState, RouterState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { ISelectMoveModel, SelectMovePokemonModel } from '../../../components/Input/models/select-move.model';
@@ -79,6 +79,7 @@ import {
   minLevel,
 } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import useIcon from '../../../composables/useIcon';
 
 interface PokemonSheetData {
   pokemon: IPokemonData;
@@ -281,7 +282,7 @@ const DpsTdo = () => {
     keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
   });
   const dispatch = useDispatch();
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   const { pokemonsData, combatsData } = useDataStore();
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
   const router = useSelector((state: RouterState) => state.router);
@@ -963,7 +964,7 @@ const DpsTdo = () => {
                             width={28}
                             height={28}
                             alt="Pokémon GO Icon"
-                            src={APIService.getPokemonGoIcon(icon)}
+                            src={APIService.getPokemonGoIcon(iconData)}
                           />
                         </span>
                       }

@@ -26,10 +26,9 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { FormControlLabel, Checkbox } from '@mui/material';
-import { useSelector } from 'react-redux';
 import { Accordion, Form } from 'react-bootstrap';
 import { BuffType, ColumnType, MoveType, TypeAction, TypeMove, VariantType } from '../../enums/type.enum';
-import { StoreState } from '../../store/models/state.model';
+import { useIcon } from '../../composables/useIcon';
 import ChargedBar from '../../components/Sprites/ChargedBar/ChargedBar';
 import { BonusEffectType, ICombat } from '../../core/models/combat.model';
 import { IPokemonTopMove } from '../../utils/models/pokemon-top-move.model';
@@ -145,7 +144,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
 ];
 
 const Move = (props: IMovePage) => {
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   const { combatsData, pokemonsData } = useDataStore();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -173,7 +172,7 @@ const Move = (props: IMovePage) => {
                 width={28}
                 height={28}
                 alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(icon)}
+                src={APIService.getPokemonGoIcon(iconData)}
               />
             </span>
           }

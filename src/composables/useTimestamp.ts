@@ -121,16 +121,9 @@ export const useTimestamp = () => {
       });
   };
 
-  /**
-   * Get current timestamp value
-   * @returns The current timestamp
-   */
-  const getTimestamp = () => timestamp;
-
   return {
     timestamp,
     loadTimestamp,
-    getTimestamp,
     setTimestampGameMaster,
     setTimestampIcon,
     setTimestampAssets,

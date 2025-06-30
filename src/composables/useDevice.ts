@@ -19,15 +19,8 @@ export const useDevice = () => {
     dispatch(SetDevice.create());
   };
 
-  /**
-   * Get current device state
-   * @returns The current device state
-   */
-  const getDevice = () => deviceData;
-
   return {
     deviceData,
-    getDevice,
     setDevice,
   };
 };

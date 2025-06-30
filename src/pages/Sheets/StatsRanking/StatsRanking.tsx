@@ -25,7 +25,7 @@ import './StatsRanking.scss';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSearchParams } from 'react-router-dom';
-import { RouterState, StatsState, StoreState } from '../../../store/models/state.model';
+import { RouterState } from '../../../store/models/state.model';
 import { IPokemonData, PokemonProgress } from '../../../core/models/pokemon.model';
 import {
   IPokemonStatsRanking,
@@ -65,6 +65,8 @@ import CustomDataTable from '../../../components/Table/CustomDataTable/CustomDat
 import { IMenuItem } from '../../../components/models/component.model';
 import { formNormal } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import useIcon from '../../../composables/useIcon';
+import useStats from '../../../composables/useStats';
 
 const columnPokemon: TableColumnModify<IPokemonStatsRanking>[] = [
   {
@@ -193,7 +195,7 @@ const defaultPerPages = 25;
 
 const StatsRanking = () => {
   const router = useSelector((state: RouterState) => state.router);
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   useTitle({
     title: 'PokéGO Breeze - Stats Ranking',
     description:
@@ -221,7 +223,7 @@ const StatsRanking = () => {
     },
   ];
 
-  const stats = useSelector((state: StatsState) => state.stats);
+  const { statsData } = useStats();
   const { pokemonsData } = useDataStore();
   const [pokemon, setPokemon] = useState<IPokemonDetail>();
 
@@ -238,19 +240,19 @@ const StatsRanking = () => {
         fullName: details.fullName,
         atk: StatsAtk.create({
           attack: atkShadow,
-          rank: stats?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank,
+          rank: statsData?.attack?.ranking?.find((stat) => stat.attack === atkShadow)?.rank,
         }),
         def: StatsDef.create({
           defense: defShadow,
-          rank: stats?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank,
+          rank: statsData?.defense?.ranking?.find((stat) => stat.defense === defShadow)?.rank,
         }),
         sta: StatsSta.create({
           stamina: sta,
-          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
+          rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
         }),
         prod: StatsProd.create({
           product: prodShadow,
-          rank: stats?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank,
+          rank: statsData?.statProd?.ranking?.find((stat) => stat.product === prodShadow)?.rank,
         }),
       })
     );
@@ -264,19 +266,19 @@ const StatsRanking = () => {
         pokemonType: PokemonType.Purified,
         atk: StatsAtk.create({
           attack: atkPurification,
-          rank: stats?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank,
+          rank: statsData?.attack?.ranking?.find((stat) => stat.attack === atkPurification)?.rank,
         }),
         def: StatsDef.create({
           defense: defPurification,
-          rank: stats?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank,
+          rank: statsData?.defense?.ranking?.find((stat) => stat.defense === defPurification)?.rank,
         }),
         sta: StatsSta.create({
           stamina: sta,
-          rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
+          rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === sta)?.rank,
         }),
         prod: StatsProd.create({
           product: prodPurification,
-          rank: stats?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank,
+          rank: statsData?.statProd?.ranking?.find((stat) => stat.product === prodPurification)?.rank,
         }),
       })
     );
@@ -297,19 +299,19 @@ const StatsRanking = () => {
           fullName: details.fullName,
           atk: StatsAtk.create({
             attack: details.statsGO.atk,
-            rank: stats?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank,
+            rank: statsData?.attack?.ranking?.find((stat) => stat.attack === details.statsGO.atk)?.rank,
           }),
           def: StatsDef.create({
             defense: details.statsGO.def,
-            rank: stats?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank,
+            rank: statsData?.defense?.ranking?.find((stat) => stat.defense === details.statsGO.def)?.rank,
           }),
           sta: StatsSta.create({
             stamina: details.statsGO.sta,
-            rank: stats?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank,
+            rank: statsData?.stamina?.ranking?.find((stat) => stat.stamina === details.statsGO.sta)?.rank,
           }),
           prod: StatsProd.create({
             product: details.statsGO.prod,
-            rank: stats?.statProd?.ranking?.find((stat) => stat.product === details.statsGO.prod)?.rank,
+            rank: statsData?.statProd?.ranking?.find((stat) => stat.product === details.statsGO.prod)?.rank,
           }),
         })
       );
@@ -432,7 +434,7 @@ const StatsRanking = () => {
                 width={28}
                 height={28}
                 alt="Pokémon GO Icon"
-                src={APIService.getPokemonGoIcon(icon)}
+                src={APIService.getPokemonGoIcon(iconData)}
               />
             </span>
           }
@@ -445,10 +447,10 @@ const StatsRanking = () => {
     if (
       isNotEmpty(pokemonsData) &&
       !isNotEmpty(pokemonList) &&
-      stats?.attack?.ranking &&
-      stats?.defense?.ranking &&
-      stats?.stamina?.ranking &&
-      stats?.statProd?.ranking
+      statsData?.attack?.ranking &&
+      statsData?.defense?.ranking &&
+      statsData?.stamina?.ranking &&
+      statsData?.statProd?.ranking
     ) {
       const pokemon = pokemonsData.filter((pokemon) => pokemon.num > 0);
       const mapping = mappingData(pokemon);
@@ -457,7 +459,7 @@ const StatsRanking = () => {
       setPokemonFilter(pokemonList);
       setProgress((p) => PokemonProgress.create({ ...p, isLoadedForms: true }));
     }
-  }, [pokemonList, pokemonsData, stats]);
+  }, [pokemonList, pokemonsData, statsData]);
 
   useEffect(() => {
     if (!select && isNotEmpty(pokemonList)) {
@@ -599,7 +601,7 @@ const StatsRanking = () => {
         statDEF={select?.def}
         statSTA={select?.sta}
         statProd={select?.prod}
-        pokemonStats={stats}
+        pokemonStats={statsData}
         id={select?.num}
         form={select?.form}
         isDisabled

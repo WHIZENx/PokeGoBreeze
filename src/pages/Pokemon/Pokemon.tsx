@@ -24,7 +24,7 @@ import {
   PokemonSpecie,
 } from '../../core/models/pokemon.model';
 import APIService from '../../services/api.service';
-import { RouterState, StoreState, SpinnerState, SearchingState } from '../../store/models/state.model';
+import { RouterState, SpinnerState, SearchingState } from '../../store/models/state.model';
 import { PokemonTypeCost } from '../../core/models/evolution.model';
 import {
   checkPokemonIncludeShadowForm,
@@ -74,6 +74,7 @@ import { useTitle } from '../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../utils/models/hook.model';
 import { formStandard, keyLeft, keyRight } from '../../utils/helpers/options-context.helpers';
 import useDataStore from '../../composables/useDataStore';
+import useIcon from '../../composables/useIcon';
 
 interface ITypeCost {
   purified: PokemonTypeCost;
@@ -92,7 +93,7 @@ class TypeCost implements ITypeCost {
 const Pokemon = (props: IPokemonPage) => {
   const dispatch = useDispatch();
   const router = useSelector((state: RouterState) => state.router);
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const { pokemonsData } = useDataStore();
 
@@ -616,7 +617,7 @@ const Pokemon = (props: IPokemonPage) => {
         )}
       >
         <div className="w-100 text-center d-inline-block align-middle my-3">
-          <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={icon} />
+          <AlertReleased formName={formName} pokemonType={currentSearchingForm?.form?.pokemonType} icon={iconData} />
           <div className="d-inline-block img-desc">
             <img
               className="pokemon-main-sprite v-align-baseline"

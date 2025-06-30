@@ -26,16 +26,9 @@ export const useTheme = () => {
     return setTheme(stateTheme);
   };
 
-  /**
-   * Get current theme state
-   * @returns The current theme state
-   */
-  const getTheme = () => themeData;
-
   return {
     themeData,
     loadTheme,
-    getTheme,
     setTheme,
   };
 };

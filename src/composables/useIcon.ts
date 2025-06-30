@@ -20,15 +20,8 @@ export const useIcon = () => {
     dispatch(SetLogoPokeGO.create(icon.replace('Images/App Icons/', '').replace('.png', '')));
   };
 
-  /**
-   * Get current icon state
-   * @returns The current icon state
-   */
-  const getIcon = () => iconData;
-
   return {
     iconData,
-    getIcon,
     setIcon,
   };
 };

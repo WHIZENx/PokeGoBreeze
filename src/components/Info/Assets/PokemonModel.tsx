@@ -6,8 +6,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 import './PokemonModel.scss';
 import APIService from '../../../services/api.service';
 import { capitalize, getValidPokemonImgPath, splitAndCapitalize } from '../../../utils/utils';
-import { useSelector } from 'react-redux';
-import { SearchingState, StoreState } from '../../../store/models/state.model';
+import { SearchingState } from '../../../store/models/state.model';
 import { IAsset } from '../../../core/models/asset.model';
 import { IPokemonModelComponent, PokemonModelComponent } from './models/pokemon-model.model';
 import { IPokemonGenderRatio, PokemonGender } from '../../../core/models/pokemon.model';
@@ -15,9 +14,11 @@ import { IAssetPokemonModelComponent } from '../../models/component.model';
 import { combineClasses, isNotEmpty, UniqValueInArray } from '../../../utils/extension';
 import { GenderType } from '../../../core/enums/asset.enum';
 import { useDataStore } from '../../../composables/useDataStore';
+import { useIcon } from '../../../composables/useIcon';
+import { useSelector } from 'react-redux';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   const { assetsData } = useDataStore();
   const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
 
@@ -49,7 +50,13 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
     <div className="mt-2 position-relative">
       <h4 className="title-evo">
         <b>{`Assets of ${splitAndCapitalize(pokemonData?.pokemonId, '-', ' ')} in Pokémon GO`}</b>
-        <img className="ms-1" width={36} height={36} alt="Pokémon GO Icon" src={APIService.getPokemonGoIcon(icon)} />
+        <img
+          className="ms-1"
+          width={36}
+          height={36}
+          alt="Pokémon GO Icon"
+          src={APIService.getPokemonGoIcon(iconData)}
+        />
       </h4>
       {!props.isLoadedForms ? (
         <div className="ph-item w-100 m-0 p-0" style={{ height: 176 }}>

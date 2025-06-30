@@ -21,15 +21,8 @@ export const useStats = () => {
     dispatch(SetStats.create(stats));
   };
 
-  /**
-   * Get current stats state
-   * @returns The current stats state
-   */
-  const getStats = () => statsData;
-
   return {
     statsData,
-    getStats,
     setStats,
   };
 };

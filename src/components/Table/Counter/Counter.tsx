@@ -15,7 +15,7 @@ import { counterPokemon } from '../../../utils/calculate';
 
 import './Counter.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { OptionsSheetState, StoreState } from '../../../store/models/state.model';
+import { OptionsSheetState } from '../../../store/models/state.model';
 import { TableStyles } from 'react-data-table-component';
 import { ICounterModel, OptionFiltersCounter } from './models/counter.model';
 import { ICounterComponent } from '../../models/component.model';
@@ -44,6 +44,7 @@ import { IncludeMode } from '../../../utils/enums/string.enum';
 import { IMenuItem } from '../../models/component.model';
 import { counterDelay } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import useIcon from '../../../composables/useIcon';
 
 const customStyles: TableStyles = {
   head: {
@@ -117,7 +118,7 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 
 const Counter = (props: ICounterComponent) => {
   const dispatch = useDispatch();
-  const icon = useSelector((state: StoreState) => state.store.icon);
+  const { iconData } = useIcon();
   const { combatsData, pokemonsData, assetsData } = useDataStore();
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
 
@@ -370,7 +371,7 @@ const Counter = (props: ICounterComponent) => {
               width={28}
               height={28}
               alt="Pokémon GO Icon"
-              src={APIService.getPokemonGoIcon(icon)}
+              src={APIService.getPokemonGoIcon(iconData)}
             />
           </span>
         }
