@@ -1,13 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
 import APIService from '../../services/api.service';
 import { leaguesTeamBattle } from '../../utils/constants';
 import { Link } from 'react-router-dom';
 import { PVPInfo } from '../../core/models/pvp.model';
 import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../utils/compute';
 import { useTitle } from '../../utils/hooks/useTitle';
-import { SpinnerActions } from '../../store/actions';
 import { getTime } from '../../utils/utils';
 import { isEqual, isInclude, isNotEmpty } from '../../utils/extension';
 import { EqualMode } from '../../utils/enums/string.enum';
@@ -41,10 +39,9 @@ const PVPHome = () => {
       'Simulate Pokémon GO PVP battles with our comprehensive battle simulator. Test different teams, moves, and strategies for Great, Ultra, and Master League.',
     keywords: ['PVP simulator', 'Pokémon GO battles', 'battle simulator', 'PVP team builder', 'battle strategies'],
   });
-  const dispatch = useDispatch();
   const { pvpData, combatsData } = useDataStore();
   const { loadPVP, loadPVPMoves } = usePVP();
-  const { spinnerIsLoading } = useSpinner();
+  const { spinnerIsLoading, hideSpinner } = useSpinner();
   const { timestampPVP } = useTimestamp();
 
   const [options, setOptions] = useState<IOptionsHome>(new OptionsHome());
@@ -60,9 +57,9 @@ const PVPHome = () => {
       loadPVPMoves();
     }
     if (spinnerIsLoading) {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     }
-  }, [spinnerIsLoading, combatsData, dispatch]);
+  }, [spinnerIsLoading, combatsData]);
 
   useEffect(() => {
     if (!rank && !team && isNotEmpty(pvpData.rankings) && isNotEmpty(pvpData.trains)) {

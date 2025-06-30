@@ -46,7 +46,6 @@ import { useSnackbar } from 'notistack';
 import { Modal, Button, Form, OverlayTrigger } from 'react-bootstrap';
 
 import update from 'immutability-helper';
-import { useDispatch, useSelector } from 'react-redux';
 import { SearchingState } from '../../../store/models/state.model';
 import {
   IPokemonData,
@@ -65,7 +64,6 @@ import {
 import { MoveType, PokemonType, TypeMove, VariantType } from '../../../enums/type.enum';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { BattleCalculate } from '../../../utils/models/calculate.model';
-import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
   DynamicObj,
@@ -101,6 +99,8 @@ import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/option
 import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
 import useAssets from '../../../composables/useAssets';
+import useSpinner from '../../../composables/useSpinner';
+import { useSelector } from 'react-redux';
 
 const RaidBattle = () => {
   useTitle({
@@ -116,10 +116,10 @@ const RaidBattle = () => {
       'raid team builder',
     ],
   });
-  const dispatch = useDispatch();
   const { iconData } = useIcon();
   const { pokemonsData, combatsData } = useDataStore();
   const { findAssetForm } = useAssets();
+  const { showSpinner, hideSpinner } = useSpinner();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [statBossATK, setStatBossATK] = useState(0);
@@ -482,7 +482,7 @@ const RaidBattle = () => {
         .map((pokemon) => pokemon.reduce((p, c) => (p.dpsAtk > c.dpsAtk ? p : c)))
         .sort((a, b) => b.dpsAtk - a.dpsAtk);
       setResult(dataList);
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     }
   };
 
@@ -659,7 +659,7 @@ const RaidBattle = () => {
   }, [pokemonsData, pokemon?.form]);
 
   const handleCalculate = () => {
-    dispatch(SpinnerActions.ShowSpinner.create());
+    showSpinner();
     setTimeout(() => {
       calculateBossBattle();
     }, 500);

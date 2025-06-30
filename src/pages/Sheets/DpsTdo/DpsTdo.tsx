@@ -34,7 +34,6 @@ import './DpsTdo.scss';
 import { Form } from 'react-bootstrap';
 import SelectPokemon from '../../../components/Input/SelectPokemon';
 import SelectMove from '../../../components/Input/SelectMove';
-import { useDispatch } from 'react-redux';
 import { Action } from 'history';
 import { ColumnType, MoveType, PokemonClass, PokemonType, TypeMove } from '../../../enums/type.enum';
 import { ICombat } from '../../../core/models/combat.model';
@@ -44,7 +43,6 @@ import { Delay, OptionDPSSort, OptionFiltersDPS, OptionOtherDPS } from '../../..
 import { BattleCalculate } from '../../../utils/models/calculate.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
 import { BestOptionType, SortDirectionType } from './enums/column-select-type.enum';
-import { OptionsActions } from '../../../store/actions';
 import { SortOrderType, TableColumnModify } from '../../../utils/models/overrides/data-table.model';
 import {
   combineClasses,
@@ -282,10 +280,9 @@ const DpsTdo = () => {
       'Analyze Pokémon GO DPS (Damage Per Second) and TDO (Total Damage Output) with our comprehensive sheets. Optimize your raid counters and battle teams.',
     keywords: ['DPS TDO calculator', 'Pokémon GO damage', 'raid counters', 'best attackers', 'Pokémon battle damage'],
   });
-  const dispatch = useDispatch();
   const { iconData } = useIcon();
   const { pokemonsData, combatsData } = useDataStore();
-  const { optionsDpsSheet } = useOptionStore();
+  const { optionsDpsSheet, setDpsSheetOptions } = useOptionStore();
   const { routerAction } = useRouter();
 
   const [dpsTable, setDpsTable] = useState<PokemonSheetData[]>([]);
@@ -619,22 +616,19 @@ const DpsTdo = () => {
   ]);
 
   useEffect(() => {
-    dispatch(
-      OptionsActions.SetDpsSheetOptions.create({
-        filters,
-        options,
-        selectTypes,
-        dataTargetPokemon,
-        fMoveTargetPokemon,
-        cMoveTargetPokemon,
-        searchTerm,
-        defaultPage,
-        defaultRowPerPage,
-        defaultSorted,
-      })
-    );
+    setDpsSheetOptions({
+      filters,
+      options,
+      selectTypes,
+      dataTargetPokemon,
+      fMoveTargetPokemon,
+      cMoveTargetPokemon,
+      searchTerm,
+      defaultPage,
+      defaultRowPerPage,
+      defaultSorted,
+    });
   }, [
-    dispatch,
     filters,
     options,
     selectTypes,

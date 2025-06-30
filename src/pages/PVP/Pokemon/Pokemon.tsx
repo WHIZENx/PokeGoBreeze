@@ -16,12 +16,10 @@ import { calculateStatsByTag } from '../../../utils/calculate';
 import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
 import Error from '../../Error/Error';
-import { useDispatch } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { Params } from '../../../utils/constants';
 import { RankingsPVP } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
-import { SpinnerActions } from '../../../store/actions';
 import { isEqual, isInclude, isIncludeList, isNotEmpty, toNumber } from '../../../utils/extension';
 import { EqualMode, IncludeMode } from '../../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
@@ -45,15 +43,16 @@ import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
+import useSpinner from '../../../composables/useSpinner';
 
 const PokemonPVP = (props: IStyleSheetData) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pvpData, assetsData, combatsData, pokemonsData } = useDataStore();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const { routerAction } = useRouter();
   const { statsData } = useStats();
+  const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
   const [searchParams] = useSearchParams();
 
@@ -99,7 +98,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
       statsData?.stamina?.ranking &&
       statsData?.statProd?.ranking
     ) {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         const cp = toNumber(params.cp);
         const paramName = params.pokemon?.replaceAll('-', '_').toLowerCase().replace('clodsiresb', 'clodsire');
@@ -191,31 +190,19 @@ const PokemonPVP = (props: IStyleSheetData) => {
             pokemonType,
           })
         );
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setTitleProps(setPokemonPVPTitle(true));
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     }
-  }, [
-    params.serie,
-    params.pokemon,
-    params.cp,
-    searchParams,
-    statsData,
-    combatsData,
-    pokemonsData,
-    assetsData,
-    dispatch,
-  ]);
+  }, [params.serie, params.pokemon, params.cp, searchParams, statsData, combatsData, pokemonsData, assetsData]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -236,9 +223,9 @@ const PokemonPVP = (props: IStyleSheetData) => {
       }
     }
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
-  }, [fetchPokemonInfo, rankingPoke, pvpData.rankings, pvpData.trains, routerAction, dispatch]);
+  }, [fetchPokemonInfo, rankingPoke, pvpData.rankings, pvpData.trains, routerAction]);
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);

@@ -6,7 +6,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import CardMoveSmall from '../../../components/Card/CardMoveSmall';
 import { calculateStatsByTag, calculateStatsTopRank } from '../../../utils/calculate';
 import CardPokemon from '../../../components/Card/CardPokemon';
-import { useDispatch } from 'react-redux';
 import { Checkbox } from '@mui/material';
 import { ICombat } from '../../../core/models/combat.model';
 import { IBattlePokemonData } from '../../../core/models/pvp.model';
@@ -15,12 +14,12 @@ import { ChargeType, PokemonBattle, PokemonBattleData } from '../models/battle.m
 import { combineClasses, getValueOrDefault, isEqual, isInclude, isNotEmpty, toNumber } from '../../../utils/extension';
 import { IncludeMode } from '../../../utils/enums/string.enum';
 import { MoveType } from '../../../enums/type.enum';
-import { SpinnerActions } from '../../../store/actions';
 import useDataStore from '../../../composables/useDataStore';
+import useSpinner from '../../../composables/useSpinner';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
-  const dispatch = useDispatch();
   const { combatsData } = useDataStore();
+  const { showSpinner, hideSpinner } = useSpinner();
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -105,7 +104,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
         pokemonType: getPokemonType(value.speciesId),
       })
     );
-    dispatch(SpinnerActions.HideSpinner.create());
+    hideSpinner();
   };
 
   const selectFMove = (value: ICombat | undefined) => {
@@ -230,7 +229,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                 className="card-pokemon-select"
                 key={index}
                 onMouseDown={() => {
-                  dispatch(SpinnerActions.ShowSpinner.create());
+                  showSpinner();
                   setTimeout(() => selectPokemon(value), 200);
                 }}
               >

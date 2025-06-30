@@ -23,12 +23,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { useDispatch } from 'react-redux';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
 import { PokemonTeamData } from '../models/battle.model';
 import { Params } from '../../../utils/constants';
-import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
   DynamicObj,
@@ -59,10 +57,11 @@ import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useStats from '../../../composables/useStats';
+import useSpinner from '../../../composables/useSpinner';
 
 const TeamPVP = (props: IStyleSheetData) => {
-  const dispatch = useDispatch();
   const { combatsData, pokemonsData, pvpData } = useDataStore();
+  const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const { statsData } = useStats();
@@ -159,7 +158,7 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   useEffect(() => {
     const fetchPokemon = async () => {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         const cp = toNumber(params.cp);
         const file = (await APIService.getFetchUrl<TeamsPVP>(APIService.getTeamFile('analysis', params.serie, cp)))
@@ -230,17 +229,15 @@ const TeamPVP = (props: IStyleSheetData) => {
           });
         });
         setRankingData(file);
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     };
@@ -258,10 +255,9 @@ const TeamPVP = (props: IStyleSheetData) => {
       fetchPokemon();
     }
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
   }, [
-    dispatch,
     params.cp,
     params.serie,
     rankingData,

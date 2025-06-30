@@ -20,7 +20,7 @@ import { Accordion, useAccordionButton } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 
 import { marks, PokeGoSlider } from '../../../utils/utils';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Candy from '../../../components/Sprites/Candy/Candy';
 import CandyXL from '../../../components/Sprites/Candy/CandyXL';
 import { SearchingState } from '../../../store/models/state.model';
@@ -34,7 +34,6 @@ import {
 import DynamicInputCP from '../../../components/Input/DynamicInputCP';
 import { IPokemonData } from '../../../core/models/pokemon.model';
 import { useTitle } from '../../../utils/hooks/useTitle';
-import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
   DynamicObj,
@@ -55,6 +54,7 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useAssets from '../../../composables/useAssets';
+import useSpinner from '../../../composables/useSpinner';
 
 const FindBattle = () => {
   useTitle({
@@ -70,9 +70,9 @@ const FindBattle = () => {
       'PVP optimization',
     ],
   });
-  const dispatch = useDispatch();
   const { pokemonsData } = useDataStore();
   const { findAssetForm } = useAssets();
+  const { hideSpinner, showSpinner } = useSpinner();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [maxCP, setMaxCP] = useState(0);
@@ -262,7 +262,7 @@ const FindBattle = () => {
           bestLeague = evoBaseStats.filter((item) => toNumber(item.ratio) > ratio);
         }
         if (!isNotEmpty(bestLeague)) {
-          dispatch(SpinnerActions.HideSpinner.create());
+          hideSpinner();
           return setBestInLeague([currBastStats]);
         }
         if (ratio >= 90) {
@@ -278,9 +278,9 @@ const FindBattle = () => {
           300
         );
       }
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     },
-    [dispatch, ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
+    [ATKIv, DEFIv, STAIv, getEvoChain, pokemon?.form?.defaultId]
   );
 
   const onSearchStatsPoke = useCallback(
@@ -289,7 +289,7 @@ const FindBattle = () => {
       if (toNumber(searchCP) < minCp()) {
         return enqueueSnackbar(`Please input CP greater than or equal to ${minCp()}`, { variant: VariantType.Error });
       }
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       const statATK = toNumber(pokemon?.pokemon?.statsGO?.atk);
       const statDEF = toNumber(pokemon?.pokemon?.statsGO?.def);
       const statSTA = toNumber(pokemon?.pokemon?.statsGO?.sta);
@@ -299,7 +299,6 @@ const FindBattle = () => {
       }, 200);
     },
     [
-      dispatch,
       searchStatsPoke,
       ATKIv,
       DEFIv,
@@ -316,7 +315,7 @@ const FindBattle = () => {
   const processStatsPoke = (result: StatsCalculate) => {
     const name = splitAndCapitalize(pokemon?.pokemon?.fullName, '_', ' ');
     if (result.level === 0) {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
       return enqueueSnackbar(
         `At CP: ${result.CP} and IV ${result.IV.atkIV}/${result.IV.defIV}/${result.IV.staIV} impossible found in ${name}`,
         {

@@ -46,7 +46,6 @@ import HP_LOGO from '../../../assets/hp.png';
 import CircleBar from '../../../components/Sprites/ProgressBar/Circle';
 import HpBar from '../../../components/Sprites/ProgressBar/HpBar';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -65,7 +64,6 @@ import {
 import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../utils/models/calculate.model';
 import { AttackType } from './enums/attack-type.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
-import { SpinnerActions } from '../../../store/actions';
 import {
   DynamicObj,
   getPropertyName,
@@ -105,6 +103,7 @@ import {
 import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
+import useSpinner from '../../../composables/useSpinner';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -124,10 +123,10 @@ class BattleState implements IBattleState {
 }
 
 const Battle = () => {
-  const dispatch = useDispatch();
   const { pokemonsData, assetsData } = useDataStore();
   const { loadPVPMoves } = usePVP();
   const { findAssetForm } = useAssets();
+  const { hideSpinner, showSpinner, showSpinnerMsg } = useSpinner();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -265,7 +264,7 @@ const Battle = () => {
 
   const fetchPokemonBattle = useCallback(
     async (league: number) => {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         clearData();
         const file = (
@@ -326,21 +325,19 @@ const Battle = () => {
           })
           .filter((pokemon) => pokemon.id > 0);
         setData(result);
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     },
-    [pokemonsData, assetsData, dispatch]
+    [pokemonsData, assetsData]
   );
 
   useEffect(() => {
@@ -351,9 +348,9 @@ const Battle = () => {
       fetchPokemon(league);
     }
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
-  }, [fetchPokemonBattle, league, dispatch]);
+  }, [fetchPokemonBattle, league]);
 
   useEffect(() => {
     loadPVPMoves();

@@ -24,11 +24,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { useDispatch } from 'react-redux';
 import { Params } from '../../../utils/constants';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
 import { IPokemonBattleRanking, PokemonBattleRanking } from '../models/battle.model';
-import { SpinnerActions } from '../../../store/actions';
 import {
   combineClasses,
   DynamicObj,
@@ -65,15 +63,16 @@ import usePVP from '../../../composables/usePVP';
 import useAssets from '../../../composables/useAssets';
 import useRouter from '../../../composables/useRouter';
 import useStats from '../../../composables/useStats';
+import useSpinner from '../../../composables/useSpinner';
 
 const RankingPVP = (props: IStyleSheetData) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { assetsData, pokemonsData, combatsData, pvpData } = useDataStore();
   const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const { routerAction } = useRouter();
   const { statsData } = useStats();
+  const { showSpinner, hideSpinner, showSpinnerMsg } = useSpinner();
 
   const [searchParams] = useSearchParams();
   const params = useParams();
@@ -128,7 +127,7 @@ const RankingPVP = (props: IStyleSheetData) => {
       statsData?.stamina?.ranking &&
       statsData?.statProd?.ranking
     ) {
-      dispatch(SpinnerActions.ShowSpinner.create());
+      showSpinner();
       try {
         const cp = toNumber(params.cp);
         const pvpType = getValueOrDefault(
@@ -231,17 +230,15 @@ const RankingPVP = (props: IStyleSheetData) => {
         });
         setRankingData(filePVP);
         setStoreStats([...Array(filePVP.length).keys()].map(() => false));
-        dispatch(SpinnerActions.HideSpinner.create());
+        hideSpinner();
       } catch (e) {
         if ((e as AxiosError)?.status === 404) {
           setIsFound(false);
         } else {
-          dispatch(
-            SpinnerActions.ShowSpinnerMsg.create({
-              isError: true,
-              message: (e as AxiosError).message,
-            })
-          );
+          showSpinnerMsg({
+            isError: true,
+            message: (e as AxiosError).message,
+          });
         }
       }
     }
@@ -256,7 +253,6 @@ const RankingPVP = (props: IStyleSheetData) => {
     combatsData,
     pokemonsData,
     assetsData,
-    dispatch,
   ]);
 
   useEffect(() => {
@@ -278,9 +274,9 @@ const RankingPVP = (props: IStyleSheetData) => {
       }
     }
     return () => {
-      dispatch(SpinnerActions.HideSpinner.create());
+      hideSpinner();
     };
-  }, [fetchPokemonRanking, rankingData, pvpData.rankings, pvpData.trains, routerAction, dispatch]);
+  }, [fetchPokemonRanking, rankingData, pvpData.rankings, pvpData.trains, routerAction]);
 
   const renderItem = (data: IPokemonBattleRanking, key: number) => (
     <Accordion.Item eventKey={key.toString()}>
