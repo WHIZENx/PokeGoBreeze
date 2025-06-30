@@ -22,8 +22,10 @@ import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import PokemonIconType from '../../../components/Sprites/PokemonIconType/PokemonIconType';
 import { ScoreType } from '../../../utils/enums/constants.enum';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
+import useDataStore from '../../../composables/useDataStore';
 
 const BodyPVP = (props: BodyComponent) => {
+  const { assetsData, pokemonsData } = useDataStore();
   const [matchups, setMatchups] = useState<IBody[]>();
   const [counters, setCounters] = useState<IBody[]>();
 
@@ -32,9 +34,9 @@ const BodyPVP = (props: BodyComponent) => {
       ?.sort((a, b) => a.rating - b.rating)
       .map((versus) => {
         const name = convertNameRankingToOri(versus.opponent, convertNameRankingToForm(versus.opponent));
-        const pokemon = props.pokemonData.find((pokemon) => isEqual(pokemon.slug, name));
+        const pokemon = pokemonsData().find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(props.assets, pokemon?.num, pokemon?.form);
+        const form = findAssetForm(assetsData(), pokemon?.num, pokemon?.form);
         let pokemonType;
         if (isInclude(versus.opponent, `_${formShadow()}`, IncludeMode.IncludeIgnoreCaseSensitive)) {
           pokemonType = PokemonType.Shadow;

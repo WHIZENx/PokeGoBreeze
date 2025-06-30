@@ -15,7 +15,7 @@ import { SelectPosition } from './enums/input-type.enum';
 import { useDataStore } from '../../composables/useDataStore';
 
 const SelectPokemon = (props: ISelectPokemonComponent) => {
-  const dataStore = useDataStore();
+  const { pokemonsData } = useDataStore();
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -79,7 +79,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   };
 
   const findMove = (value: IPokemonData, type: TypeMove) => {
-    const result = retrieveMoves(dataStore.pokemons, value.num, value.form, value.pokemonType);
+    const result = retrieveMoves(pokemonsData(), value.num, value.form, value.pokemonType);
     if (result) {
       const simpleMove = addSelectMovesByType(result, type);
       return simpleMove[0];
@@ -87,11 +87,11 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.pokemons)) {
+    if (isNotEmpty(pokemonsData())) {
       setPokemonIcon(props.pokemon ? APIService.getPokeIconSprite(props.pokemon.sprite) : undefined);
       setSearch(props.pokemon ? splitAndCapitalize(props.pokemon.name.replaceAll('_', '-'), '-', ' ') : '');
     }
-  }, [props.pokemon, dataStore.pokemons]);
+  }, [props.pokemon, pokemonsData()]);
 
   const setPos = (position = SelectPosition.Down) => (
     <div
@@ -104,7 +104,7 @@ const SelectPokemon = (props: ISelectPokemonComponent) => {
       style={{ maxHeight: props.maxHeight ?? 274 }}
     >
       <div>
-        {dataStore.pokemons
+        {pokemonsData()
           .filter(
             (item) =>
               item.num > 0 &&

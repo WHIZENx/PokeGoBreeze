@@ -124,7 +124,7 @@ class BattleState implements IBattleState {
 
 const Battle = () => {
   const dispatch = useDispatch();
-  const dataStore = useDataStore();
+  const { pokemonsData, assetsData } = useDataStore();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -294,13 +294,13 @@ const Battle = () => {
           .filter((pokemon) => !isInclude(pokemon.speciesId, '_xs'))
           .map((item) => {
             const name = convertNameRankingToOri(item.speciesId, item.speciesName);
-            const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+            const pokemon = pokemonsData().find((pokemon) => isEqual(pokemon.slug, name));
             if (!pokemon) {
               return new BattlePokemonData();
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(dataStore.assets, pokemon.num, pokemon.form);
+            const form = findAssetForm(assetsData(), pokemon.num, pokemon.form);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 
@@ -337,14 +337,14 @@ const Battle = () => {
         }
       }
     },
-    [dataStore.pokemons, dataStore.assets, dispatch]
+    [pokemonsData(), assetsData(), dispatch]
   );
 
   useEffect(() => {
     const fetchPokemon = async (league: number) => {
       await fetchPokemonBattle(league);
     };
-    if (isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.assets)) {
+    if (isNotEmpty(pokemonsData()) && isNotEmpty(assetsData())) {
       fetchPokemon(league);
     }
     return () => {

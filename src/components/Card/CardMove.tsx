@@ -8,16 +8,16 @@ import IconType from '../Sprites/Icon/Type/Type';
 import { useDataStore } from '../../composables/useDataStore';
 
 const CardMove = (props: ICardMoveComponent) => {
-  const dataStore = useDataStore();
+  const { combatsData } = useDataStore();
 
   const [move, setMove] = useState<ICombat>();
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combats) && props.value) {
-      const move = dataStore.combats.find((item) => isEqual(item.name, props.value?.name));
+    if (isNotEmpty(combatsData()) && props.value) {
+      const move = combatsData().find((item) => isEqual(item.name, props.value?.name));
       setMove(move);
     }
-  }, [dataStore.combats, props.value]);
+  }, [combatsData(), props.value]);
 
   return (
     <Fragment>

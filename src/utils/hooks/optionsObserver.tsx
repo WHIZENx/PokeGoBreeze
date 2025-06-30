@@ -5,11 +5,11 @@ import { defaultOptions } from '../../contexts/options.context';
 import useDataStore from '../../composables/useDataStore';
 
 const optionsObserver = () => {
-  const dataStore = useDataStore();
+  const { optionsData } = useDataStore();
 
   useEffect(() => {
-    updateCurrentOptions(dataStore.options || defaultOptions);
-  }, [dataStore.options]);
+    updateCurrentOptions(optionsData() || defaultOptions);
+  }, [optionsData()]);
 
   return null;
 };

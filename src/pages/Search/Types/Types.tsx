@@ -205,7 +205,7 @@ class PokemonTypeData implements IPokemonTypeData {
 
 const SearchTypes = (props: IStyleSheetData) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const dataStore = useDataStore();
+  const { pokemonsData, combatsData } = useDataStore();
 
   const [releasedGO, setReleaseGO] = useState(true);
 
@@ -243,16 +243,16 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combats) && isNotEmpty(dataStore.pokemons)) {
+    if (isNotEmpty(combatsData()) && isNotEmpty(pokemonsData())) {
       setAllData(
         PokemonTypeData.create({
-          pokemon: dataStore.pokemons.filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
-          fastMoves: dataStore.combats.filter((type) => type.typeMove === TypeMove.Fast).length,
-          chargedMoves: dataStore.combats.filter((type) => type.typeMove === TypeMove.Charge).length,
+          pokemon: pokemonsData().filter((pokemon) => (releasedGO ? pokemon.releasedGO : true)).length - 1,
+          fastMoves: combatsData().filter((type) => type.typeMove === TypeMove.Fast).length,
+          chargedMoves: combatsData().filter((type) => type.typeMove === TypeMove.Charge).length,
         })
       );
     }
-  }, [releasedGO, dataStore.combats, dataStore.pokemons]);
+  }, [releasedGO, combatsData(), pokemonsData()]);
 
   useEffect(() => {
     if (isNotEmpty(getTypes()) && !currentType) {
@@ -261,22 +261,20 @@ const SearchTypes = (props: IStyleSheetData) => {
   }, [currentType]);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.pokemons) && isNotEmpty(dataStore.combats)) {
+    if (isNotEmpty(pokemonsData()) && isNotEmpty(combatsData())) {
       setResult(
         PokemonTypeMove.create({
-          pokemonList: dataStore.pokemons
+          pokemonList: pokemonsData()
             .filter((pokemon) => (releasedGO ? pokemon.releasedGO : true))
             .filter((pokemon) => isIncludeList(pokemon.types, currentType)),
-          fastMove: dataStore.combats.filter(
-            (type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)
-          ),
-          chargedMove: dataStore.combats.filter(
+          fastMove: combatsData().filter((type) => type.typeMove === TypeMove.Fast && isEqual(type.type, currentType)),
+          chargedMove: combatsData().filter(
             (type) => type.typeMove === TypeMove.Charge && isEqual(type.type, currentType)
           ),
         })
       );
     }
-  }, [currentType, releasedGO, dataStore.pokemons, dataStore.combats]);
+  }, [currentType, releasedGO, pokemonsData(), combatsData()]);
 
   const changeType = (value: string) => {
     setShowType(false);

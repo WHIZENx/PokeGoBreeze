@@ -48,7 +48,7 @@ interface OptionsPokemon {
 
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
-  const dataStore = useDataStore();
+  const { pokemonsData } = useDataStore();
 
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
@@ -89,7 +89,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         return;
       });
 
-      const pokemon = dataStore.pokemons.find((item) => item.num === specie.id);
+      const pokemon = pokemonsData().find((item) => item.num === specie.id);
       const isShadow = Boolean(
         pokemon?.hasShadowForm && toNumber(pokemon.purified?.candy) >= 0 && toNumber(pokemon.purified?.stardust) >= 0
       );
@@ -109,7 +109,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         )
         .sort((a, b) => toNumber(a[0]?.form.id) - toNumber(b[0]?.form.id));
 
-      generatePokemonGoForms(dataStore.pokemons, dataFormList, formListResult, specie.id, specie.name);
+      generatePokemonGoForms(pokemonsData(), dataFormList, formListResult, specie.id, specie.name);
 
       setPokeData(dataPokeList);
       setFormList(formListResult);
@@ -185,7 +185,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(dataStore.pokemons)) {
+    if (id > 0 && toNumber(data?.id) !== id && isNotEmpty(pokemonsData())) {
       clearData();
       queryPokemon(id);
     }
@@ -194,7 +194,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         APIService.cancel(axiosSource.current);
       }
     };
-  }, [props.id, dataStore.pokemons, data?.id, queryPokemon]);
+  }, [props.id, pokemonsData(), data?.id, queryPokemon]);
 
   useEffect(() => {
     const id = toNumber(props.id);
@@ -206,7 +206,7 @@ const FormSelect = (props: IFormSelectComponent) => {
         currentForm.defaultName
       );
       const details = getPokemonDetails(
-        dataStore.pokemons,
+        pokemonsData(),
         id,
         formName,
         currentForm.form.pokemonType,
@@ -227,21 +227,21 @@ const FormSelect = (props: IFormSelectComponent) => {
         }
       }
     }
-  }, [currentForm, props.isObjective, dispatch, dataStore.pokemons]);
+  }, [currentForm, props.isObjective, dispatch, pokemonsData()]);
 
   useEffect(() => {
     const id = toNumber(props.id);
-    if (isNotEmpty(dataStore.pokemons) && id > 0) {
-      const currentPokemon = getPokemonById(dataStore.pokemons, id);
+    if (isNotEmpty(pokemonsData()) && id > 0) {
+      const currentPokemon = getPokemonById(pokemonsData(), id);
       if (currentPokemon) {
         setDataStorePokemon({
-          prev: getPokemonById(dataStore.pokemons, currentPokemon.id - 1),
-          current: getPokemonById(dataStore.pokemons, currentPokemon.id),
-          next: getPokemonById(dataStore.pokemons, currentPokemon.id + 1),
+          prev: getPokemonById(pokemonsData(), currentPokemon.id - 1),
+          current: getPokemonById(pokemonsData(), currentPokemon.id),
+          next: getPokemonById(pokemonsData(), currentPokemon.id + 1),
         });
       }
     }
-  }, [dataStore.pokemons, props.id]);
+  }, [pokemonsData(), props.id]);
 
   const clearData = () => {
     setCurrentForm(undefined);

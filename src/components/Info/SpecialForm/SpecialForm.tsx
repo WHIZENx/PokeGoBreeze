@@ -12,7 +12,7 @@ import IconType from '../../Sprites/Icon/Type/Type';
 import { useDataStore } from '../../../composables/useDataStore';
 
 const SpecialForm = (props: IFormSpecialComponent) => {
-  const dataStore = useDataStore();
+  const { pokemonsData, combatsData } = useDataStore();
 
   const [pokemonType, setPokemonType] = useState(PokemonType.None);
   const [arrEvoList, setArrEvoList] = useState<IForm[]>();
@@ -45,7 +45,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
 
   const getQuestEvo = (name: string) => {
     name = splitAndCapitalize(name, '-', '_').toUpperCase();
-    const pokemonEvo = dataStore.pokemons
+    const pokemonEvo = pokemonsData()
       .find((item) => item.tempEvo?.find((value) => isEqual(value.tempEvolutionName, name)))
       ?.tempEvo?.find((item) => isEqual(item.tempEvolutionName, name));
     return TempEvo.create({
@@ -55,8 +55,7 @@ const SpecialForm = (props: IFormSpecialComponent) => {
     });
   };
 
-  const getCombatMove = (moveName: string | undefined) =>
-    dataStore.combats.find((item) => isEqual(item.name, moveName));
+  const getCombatMove = (moveName: string | undefined) => combatsData().find((item) => isEqual(item.name, moveName));
 
   return (
     <Fragment>

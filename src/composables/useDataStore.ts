@@ -132,8 +132,31 @@ export const useDataStore = () => {
     dispatch(SetPVPMoves.create(pvpMoves));
   };
 
+  const pokemonsData = () => dataStore.pokemons;
+  const stickersData = () => dataStore.stickers;
+  const combatsData = () => dataStore.combats;
+  const evolutionChainsData = () => dataStore.evolutionChains;
+  const informationData = () => dataStore.information;
+  const assetsData = () => dataStore.assets;
+  const leaguesData = () => dataStore.leagues;
+  const cpmData = () => dataStore.cpm;
+  const trainersData = () => dataStore.trainers;
+  const pvpData = () => dataStore.pvp;
+  const optionsData = () => dataStore.options;
+
   return {
-    ...dataStore,
+    dataStore,
+    pokemonsData,
+    stickersData,
+    combatsData,
+    evolutionChainsData,
+    informationData,
+    assetsData,
+    leaguesData,
+    cpmData,
+    trainersData,
+    pvpData,
+    optionsData,
     setOptions,
     setPokemons,
     setStickers,

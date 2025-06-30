@@ -111,7 +111,7 @@ const Pokedex = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
 
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const dataStore = useDataStore();
+  const { pokemonsData, assetsData } = useDataStore();
 
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
   const [selectTypes, setSelectTypes] = useState<string[]>([]);
@@ -150,17 +150,17 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.assets) && isNotEmpty(dataStore.pokemons)) {
+    if (isNotEmpty(assetsData()) && isNotEmpty(pokemonsData())) {
       setDataList(
-        dataStore.pokemons
+        pokemonsData()
           .map((item) => {
-            const assetForm = queryAssetForm(dataStore.assets, item.num, item.form);
+            const assetForm = queryAssetForm(assetsData(), item.num, item.form);
             return new PokemonHomeModel(item, assetForm);
           })
           .sort((a, b) => a.id - b.id)
       );
     }
-  }, [dataStore.assets, dataStore.pokemons]);
+  }, [assetsData(), pokemonsData()]);
 
   useEffect(() => {
     setIsLoading(true);

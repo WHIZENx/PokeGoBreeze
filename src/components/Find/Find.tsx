@@ -23,7 +23,7 @@ const Find = (props: IFindComponent) => {
 
   const stats = useSelector((state: StatsState) => state.stats);
   const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
-  const dataStore = useDataStore();
+  const { pokemonsData } = useDataStore();
 
   const [id, setId] = useState(
     searching
@@ -41,11 +41,11 @@ const Find = (props: IFindComponent) => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.pokemons)) {
-      const result = mappingPokemonName(dataStore.pokemons);
+    if (isNotEmpty(pokemonsData())) {
+      const result = mappingPokemonName(pokemonsData());
       setPokemonList(result);
     }
-  }, [dataStore.pokemons]);
+  }, [pokemonsData()]);
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
@@ -72,7 +72,7 @@ const Find = (props: IFindComponent) => {
   };
 
   const getInfoPoke = (value: IPokemonSearching) => {
-    const currentPokemon = getPokemonById(dataStore.pokemons, value.id);
+    const currentPokemon = getPokemonById(pokemonsData(), value.id);
     setId(value.id);
     if (props.setId) {
       props.setId(value.id);
@@ -96,9 +96,9 @@ const Find = (props: IFindComponent) => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(dataStore.pokemons, id);
+    const currentPokemon = getPokemonById(pokemonsData(), id);
     if (currentPokemon) {
-      const current = getPokemonById(dataStore.pokemons, currentPokemon.id + modify);
+      const current = getPokemonById(pokemonsData(), currentPokemon.id + modify);
       if (current) {
         setId(current.id);
         if (props.setId) {

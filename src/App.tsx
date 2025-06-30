@@ -62,7 +62,7 @@ const ColorModeContext = createContext({
 
 function App() {
   const dispatch = useDispatch();
-  const dataStore = useDataStore();
+  const { dataStore } = useDataStore();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const router = useSelector((state: RouterState) => state.router);
 

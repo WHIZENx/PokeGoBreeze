@@ -61,7 +61,7 @@ const Leagues = () => {
       'Complete list of all battle leagues in Pokémon GO. Find information about CP limits, rules, and available Pokémon for each league.',
     keywords: ['battle leagues', 'PVP leagues', 'Pokémon GO battles', 'Great League', 'Ultra League', 'Master League'],
   });
-  const dataStore = useDataStore();
+  const { leaguesData, assetsData } = useDataStore();
 
   const [leagues, setLeagues] = useState<ILeague[]>([]);
   const [openedLeague, setOpenedLeague] = useState<ILeague[]>([]);
@@ -72,7 +72,7 @@ const Leagues = () => {
   const [showData, setShowData] = useState<LeagueData>();
 
   const getAssetPokeGo = (id: number | undefined, formName: string | undefined) =>
-    findAssetForm(dataStore.assets, id, formName);
+    findAssetForm(assetsData(), id, formName);
 
   const LeaveToggle = (props: Toggle) => {
     const decoratedOnClick = useAccordionButton(props.eventKey);
@@ -87,20 +87,20 @@ const Leagues = () => {
   };
 
   useEffect(() => {
-    const leagues = dataStore.leagues;
+    const leagues = leaguesData();
     if (isNotEmpty(leagues.data)) {
       setLeagues(leagues.data);
       setOpenedLeague(leagues.data.filter((league) => isIncludeList(leagues.allowLeagues, league.id)));
       setSetting(leagues.season.settings.find((data) => data.rankLevel === rank + 1));
     }
-  }, [dataStore.leagues]);
+  }, [leaguesData()]);
 
   useEffect(() => {
     if (isNotEmpty(leagues)) {
       const debounced = debounce(() => {
         setLeagueFilter(
           leagues.filter((value) => {
-            if (isIncludeList(dataStore.leagues.allowLeagues, value.id)) {
+            if (isIncludeList(leaguesData().allowLeagues, value.id)) {
               return false;
             }
             const textTitle = splitAndCapitalize(value.id?.toLowerCase(), '_', ' ');
@@ -121,7 +121,7 @@ const Leagues = () => {
     if (type === RewardType.Pokemon) {
       const result: IPokemonRewardSetLeague[] = [];
       setShow(true);
-      Object.values(dataStore.leagues.season.rewards.pokemon).forEach((value) => {
+      Object.values(leaguesData().season.rewards.pokemon).forEach((value) => {
         if (toNumber(value.rank) <= rank) {
           let tireRewards: IPokemonRewardSetLeague[] = [];
           if (track === LeagueRewardType.Free) {
@@ -198,7 +198,7 @@ const Leagues = () => {
                   alt="Image League"
                   height={140}
                   src={APIService.getAssetPokeGo(
-                    dataStore.leagues.data.find((item) =>
+                    leaguesData().data.find((item) =>
                       isEqual(item.id, league.leagueBattleType, EqualMode.IgnoreCaseSensitive)
                     )?.iconUrl
                   )}
@@ -368,10 +368,10 @@ const Leagues = () => {
       <div className="row m-0 row-gap-2">
         <div className="col-md-8 d-flex justify-content-start align-items-center p-0">
           <span className="fw-medium">
-            <span>Season Date: {getTime(dataStore.leagues.season.timestamp.start)}</span>
+            <span>Season Date: {getTime(leaguesData().season.timestamp.start)}</span>
             <span>
               {' - '}
-              {getTime(dataStore.leagues.season.timestamp.end)}
+              {getTime(leaguesData().season.timestamp.end)}
             </span>
           </span>
         </div>
@@ -381,13 +381,13 @@ const Leagues = () => {
               setRank(toNumber(e.target.value));
               if (toNumber(e.target.value) < 24) {
                 setSetting(
-                  dataStore.leagues.season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1)
+                  leaguesData().season.settings.find((data) => data.rankLevel === toNumber(e.target.value) + 1)
                 );
               }
             }}
             defaultValue={rank}
           >
-            {Object.keys(dataStore.leagues.season.rewards.rank).map((value, index) => (
+            {Object.keys(leaguesData().season.rewards.rank).map((value, index) => (
               <option key={index} value={value}>
                 Rank {value} {toNumber(value) > 20 && `( ${rankName(toNumber(value))} )`}
               </option>
@@ -395,12 +395,12 @@ const Leagues = () => {
           </Form.Select>
         </div>
       </div>
-      {isNotEmpty(dataStore.leagues.data) ? (
+      {isNotEmpty(leaguesData().data) ? (
         <Fragment>
           <div className="d-flex justify-content-center mt-2">
             <div className="season-league">
               <div className="group-rank-league reward-league text-center">
-                <div className="rank-header">Season {dataStore.leagues.season.season}</div>
+                <div className="rank-header">Season {leaguesData().season.season}</div>
                 <Badge
                   color="primary"
                   className="position-relative d-inline-block img-link pt-4 pb-2 mw-9"
@@ -429,7 +429,7 @@ const Leagues = () => {
                   <span className="caption theme-text-primary">Premium</span>
                 </Badge>
               </div>
-              {dataStore.leagues.season.rewards.rank[rank].free.map((value, index) => (
+              {leaguesData().season.rewards.rank[rank].free.map((value, index) => (
                 <Fragment key={index}>
                   <div className="group-rank-league text-center">
                     <div className="rank-header">Win Stack {value.step}</div>
@@ -514,21 +514,21 @@ const Leagues = () => {
                       color="primary"
                       className={combineClasses(
                         'position-relative d-inline-block img-link mnw-9',
-                        dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
-                          dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
+                        leaguesData().season.rewards.rank[rank].premium[index].type === RewardType.Pokemon ||
+                          leaguesData().season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot
                           ? 'pb-0'
                           : 'pb-4'
                       )}
                       overlap="circular"
-                      badgeContent={dataStore.leagues.season.rewards.rank[rank].premium[index].count}
+                      badgeContent={leaguesData().season.rewards.rank[rank].premium[index].count}
                       max={BattleLeagueCPType.InsMaster}
                     >
-                      {!dataStore.leagues.season.rewards.rank[rank].premium[index].type && (
+                      {!leaguesData().season.rewards.rank[rank].premium[index].type && (
                         <Fragment>
                           <CloseIcon fontSize="large" sx={{ color: 'red', height: 82 }} />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Pokemon && (
+                      {leaguesData().season.rewards.rank[rank].premium[index].type === RewardType.Pokemon && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium w-9"
@@ -541,7 +541,7 @@ const Leagues = () => {
                             className="view-pokemon theme-text-primary u-fs-3"
                             onClick={() =>
                               handleShow(
-                                dataStore.leagues.season.rewards.rank[rank].premium[index].type,
+                                leaguesData().season.rewards.rank[rank].premium[index].type,
                                 LeagueRewardType.Premium,
                                 value.step
                               )
@@ -549,7 +549,7 @@ const Leagues = () => {
                           />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot && (
+                      {leaguesData().season.rewards.rank[rank].premium[index].type === RewardType.ItemLoot && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium w-9"
@@ -562,7 +562,7 @@ const Leagues = () => {
                             className="view-pokemon theme-text-primary u-fs-3"
                             onClick={() =>
                               handleShow(
-                                dataStore.leagues.season.rewards.rank[rank].premium[index].type,
+                                leaguesData().season.rewards.rank[rank].premium[index].type,
                                 LeagueRewardType.Premium,
                                 value.step
                               )
@@ -570,7 +570,7 @@ const Leagues = () => {
                           />
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.RareCandy && (
+                      {leaguesData().season.rewards.rank[rank].premium[index].type === RewardType.RareCandy && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium w-9"
@@ -581,7 +581,7 @@ const Leagues = () => {
                           <span className="caption theme-text-primary">Rare Candy</span>
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.Stardust && (
+                      {leaguesData().season.rewards.rank[rank].premium[index].type === RewardType.Stardust && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium w-9"
@@ -592,7 +592,7 @@ const Leagues = () => {
                           <span className="caption theme-text-primary">Stardust</span>
                         </Fragment>
                       )}
-                      {dataStore.leagues.season.rewards.rank[rank].premium[index].type === RewardType.MoveReRoll && (
+                      {leaguesData().season.rewards.rank[rank].premium[index].type === RewardType.MoveReRoll && (
                         <Fragment>
                           <img
                             className="pokemon-sprite-medium w-9"

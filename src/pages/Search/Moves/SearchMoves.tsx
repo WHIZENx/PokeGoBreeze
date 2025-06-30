@@ -119,7 +119,7 @@ const Search = () => {
       'Search and filter Pokémon GO moves by type, power, energy, and more. Find the best moves for your Pokémon in battles and raids.',
     keywords: ['Pokémon moves', 'move search', 'best moves', 'PVP moves', 'raid moves', 'Pokémon GO attacks'],
   });
-  const dataStore = useDataStore();
+  const { combatsData } = useDataStore();
 
   const [filters, setFilters] = useState(new Filter());
 
@@ -133,11 +133,11 @@ const Search = () => {
   const [cMoveIsLoad, setCMoveIsLoad] = useState(false);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combats)) {
-      setCombatFMoves(dataStore.combats.filter((item) => item.typeMove === TypeMove.Fast));
-      setCombatCMoves(dataStore.combats.filter((item) => item.typeMove === TypeMove.Charge));
+    if (isNotEmpty(combatsData())) {
+      setCombatFMoves(combatsData().filter((item) => item.typeMove === TypeMove.Fast));
+      setCombatCMoves(combatsData().filter((item) => item.typeMove === TypeMove.Charge));
     }
-  }, [dataStore.combats]);
+  }, [combatsData()]);
 
   useEffect(() => {
     const debounced = debounce(() => {

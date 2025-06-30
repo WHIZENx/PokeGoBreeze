@@ -18,7 +18,7 @@ import { useDataStore } from '../../../composables/useDataStore';
 
 const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const dataStore = useDataStore();
+  const { assetsData } = useDataStore();
   const pokemonData = useSelector((state: SearchingState) => state.searching.mainSearching?.pokemon);
 
   const [pokeAssets, setPokeAssets] = useState<IPokemonModelComponent[]>([]);
@@ -26,7 +26,7 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   const [asset, setAsset] = useState<IAsset>();
 
   const getImageList = (id: number | undefined, genderRatio: IPokemonGenderRatio) => {
-    const pokemonAsset = dataStore.assets.find((item) => item.id === id);
+    const pokemonAsset = assetsData().find((item) => item.id === id);
     setAsset(pokemonAsset);
     setGender({
       malePercent: genderRatio.M,
@@ -40,10 +40,10 @@ const PokemonAssetComponent = (props: IAssetPokemonModelComponent) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.assets) && pokemonData?.fullName && pokemonData.genderRatio) {
+    if (isNotEmpty(assetsData()) && pokemonData?.fullName && pokemonData.genderRatio) {
       setPokeAssets(getImageList(pokemonData.id, pokemonData.genderRatio));
     }
-  }, [dataStore.assets, pokemonData]);
+  }, [assetsData(), pokemonData]);
 
   return (
     <div className="mt-2 position-relative">

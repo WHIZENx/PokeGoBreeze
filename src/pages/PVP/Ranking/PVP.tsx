@@ -72,7 +72,7 @@ import useDataStore from '../../../composables/useDataStore';
 const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const dataStore = useDataStore();
+  const { assetsData, pokemonsData, combatsData, pvpData } = useDataStore();
   const router = useSelector((state: RouterState) => state.router);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
 
@@ -112,7 +112,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, dataStore.pvp);
+    loadPVP(dispatch, timestamp, pvpData());
   }, []);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
@@ -186,9 +186,9 @@ const RankingPVP = (props: IStyleSheetData) => {
         }
         const filePVP = file.map((data) => {
           const name = convertNameRankingToOri(data.speciesId, data.speciesName);
-          const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+          const pokemon = pokemonsData().find((pokemon) => isEqual(pokemon.slug, name));
           const id = pokemon?.num;
-          const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
+          const form = findAssetForm(assetsData(), pokemon?.num, pokemon?.form);
 
           const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -197,11 +197,11 @@ const RankingPVP = (props: IStyleSheetData) => {
           cMoveDataPri = replaceTempMovePvpName(cMoveDataPri);
           cMoveDataSec = replaceTempMovePvpName(cMoveDataSec);
 
-          const fMove = dataStore.combats.find((item) => isEqual(item.name, fMoveData));
-          const cMovePri = dataStore.combats.find((item) => isEqual(item.name, cMoveDataPri));
+          const fMove = combatsData().find((item) => isEqual(item.name, fMoveData));
+          const cMovePri = combatsData().find((item) => isEqual(item.name, cMoveDataPri));
           let cMoveSec;
           if (cMoveDataSec) {
-            cMoveSec = dataStore.combats.find((item) => isEqual(item.name, cMoveDataSec));
+            cMoveSec = combatsData().find((item) => isEqual(item.name, cMoveDataSec));
           }
 
           data.scorePVP = HexagonStats.create(data.scores);
@@ -256,9 +256,9 @@ const RankingPVP = (props: IStyleSheetData) => {
     statsRanking?.defense?.ranking,
     statsRanking?.stamina?.ranking,
     statsRanking?.statProd?.ranking,
-    dataStore.combats,
-    dataStore.pokemons,
-    dataStore.assets,
+    combatsData(),
+    pokemonsData(),
+    assetsData(),
     dispatch,
   ]);
 
@@ -269,13 +269,13 @@ const RankingPVP = (props: IStyleSheetData) => {
     };
     if (
       statsRanking &&
-      isNotEmpty(dataStore.pvp.rankings) &&
-      isNotEmpty(dataStore.pvp.trains) &&
-      isNotEmpty(dataStore.combats) &&
-      isNotEmpty(dataStore.pokemons) &&
-      isNotEmpty(dataStore.assets)
+      isNotEmpty(pvpData().rankings) &&
+      isNotEmpty(pvpData().trains) &&
+      isNotEmpty(combatsData()) &&
+      isNotEmpty(pokemonsData()) &&
+      isNotEmpty(assetsData())
     ) {
-      if (dataStore.combats.every((combat) => !combat.archetype)) {
+      if (combatsData().every((combat) => !combat.archetype)) {
         loadPVPMoves(dispatch);
       } else if (router.action) {
         fetchPokemon();
@@ -284,7 +284,7 @@ const RankingPVP = (props: IStyleSheetData) => {
     return () => {
       dispatch(SpinnerActions.HideSpinner.create());
     };
-  }, [fetchPokemonRanking, rankingData, dataStore.pvp.rankings, dataStore.pvp.trains, router.action, dispatch]);
+  }, [fetchPokemonRanking, rankingData, pvpData().rankings, pvpData().trains, router.action, dispatch]);
 
   const renderItem = (data: IPokemonBattleRanking, key: number) => (
     <Accordion.Item eventKey={key.toString()}>
@@ -343,8 +343,6 @@ const RankingPVP = (props: IStyleSheetData) => {
                 <HeaderPVP data={data} />
                 <hr />
                 <BodyPVP
-                  assets={dataStore.assets}
-                  pokemonData={dataStore.pokemons}
                   data={data.data}
                   cp={params.cp}
                   serie={params.serie}
@@ -368,7 +366,7 @@ const RankingPVP = (props: IStyleSheetData) => {
                 <TypeEffectivePVP types={data.pokemon?.types} />
               </div>
               <div className="container">
-                <MoveSet moves={data.data?.moves} pokemon={data.pokemon} combatData={dataStore.combats} />
+                <MoveSet moves={data.data?.moves} pokemon={data.pokemon} />
               </div>
             </div>
             <LeaveToggle eventKey={key.toString()}>
@@ -391,7 +389,7 @@ const RankingPVP = (props: IStyleSheetData) => {
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = dataStore.pvp.rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = pvpData().rankings.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league ? (

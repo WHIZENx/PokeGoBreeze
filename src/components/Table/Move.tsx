@@ -8,7 +8,7 @@ import { combineClasses, isEqual, isIncludeList, isNotEmpty } from '../../utils/
 import useDataStore from '../../composables/useDataStore';
 
 const Move = (props: IMoveComponent) => {
-  const dataStore = useDataStore();
+  const { combatsData, pokemonsData } = useDataStore();
 
   const [countFM, setCountFM] = useState(0);
   const [resultMove, setResultMove] = useState<ISelectMoveModel[]>([]);
@@ -17,14 +17,14 @@ const Move = (props: IMoveComponent) => {
 
   const findMoveData = useCallback(
     (move: string | undefined) => {
-      return dataStore.combats.find((item) => isEqual(item.name, move));
+      return combatsData().find((item) => isEqual(item.name, move));
     },
-    [dataStore.combats]
+    [combatsData()]
   );
 
   const findMove = useCallback(
     (value: IMoveComponent) => {
-      const result = retrieveMoves(dataStore.pokemons, value.id, value.form, value.pokemonType);
+      const result = retrieveMoves(pokemonsData(), value.id, value.form, value.pokemonType);
       if (result) {
         let simpleMove: ISelectMoveModel[] = [];
         if (!props.type || props.type === TypeMove.Fast) {
@@ -48,7 +48,7 @@ const Move = (props: IMoveComponent) => {
         return setResultMove(simpleMove);
       }
     },
-    [props.type, dataStore.pokemons, currentMove]
+    [props.type, pokemonsData(), currentMove]
   );
 
   useEffect(() => {

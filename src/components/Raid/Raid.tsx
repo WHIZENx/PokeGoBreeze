@@ -16,12 +16,12 @@ import { PokemonClass, PokemonType } from '../../enums/type.enum';
 import { useDataStore } from '../../composables/useDataStore';
 
 const Raid = (props: IRaidComponent) => {
-  const dataStore = useDataStore();
+  const { pokemonsData } = useDataStore();
   const [tier, setTier] = useState(1);
   const [pokemonClass, setPokemonClass] = useState(PokemonClass.None);
 
   useEffect(() => {
-    const pokemonClass = dataStore.pokemons.find((item) => item.num === props.id)?.pokemonClass;
+    const pokemonClass = pokemonsData().find((item) => item.num === props.id)?.pokemonClass;
     if (pokemonClass) {
       setPokemonClass(pokemonClass);
     }

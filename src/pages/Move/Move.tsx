@@ -146,7 +146,7 @@ const columns: TableColumnModify<IPokemonTopMove>[] = [
 
 const Move = (props: IMovePage) => {
   const icon = useSelector((state: StoreState) => state.store.icon);
-  const dataStore = useDataStore();
+  const { combatsData, pokemonsData } = useDataStore();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -222,8 +222,8 @@ const Move = (props: IMovePage) => {
 
   const queryMoveData = useCallback(
     (id: number) => {
-      if (isNotEmpty(dataStore.combats)) {
-        const moves = dataStore.combats.filter((item) => item.track === id || item.id === id);
+      if (isNotEmpty(combatsData())) {
+        const moves = combatsData().filter((item) => item.track === id || item.id === id);
         let move = moves.find((item) => item.id === id);
         if (move?.isMultipleWithType) {
           let type = searchParams.get(Params.MoveType);
@@ -274,13 +274,13 @@ const Move = (props: IMovePage) => {
         }
       }
     },
-    [enqueueSnackbar, dataStore.combats]
+    [enqueueSnackbar, combatsData()]
   );
 
   const getMoveIdByParam = () => {
     let id = toNumber(params.id ? params.id.toLowerCase() : props.id);
-    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(dataStore.combats)) {
-      const move = dataStore.combats.find((m) =>
+    if (id === 0 && params.id && isNotEmpty(params.id) && isNotEmpty(combatsData())) {
+      const move = combatsData().find((m) =>
         isEqual(m.name.replaceAll('_', '-'), params.id, EqualMode.IgnoreCaseSensitive)
       );
       if (move) {
@@ -297,15 +297,15 @@ const Move = (props: IMovePage) => {
         queryMoveData(id);
       }
     }
-  }, [params.id, props.id, queryMoveData, move, dataStore.combats]);
+  }, [params.id, props.id, queryMoveData, move, combatsData()]);
 
   useEffect(() => {
-    if (move && isNotEmpty(dataStore.pokemons)) {
-      const result = queryTopMove(dataStore.pokemons, move);
+    if (move && isNotEmpty(pokemonsData())) {
+      const result = queryTopMove(pokemonsData(), move);
       setTopList(result);
       setProgress(true);
     }
-  }, [move, dataStore.pokemons]);
+  }, [move, pokemonsData()]);
 
   useEffect(() => {
     setTopListFilter(
@@ -317,7 +317,7 @@ const Move = (props: IMovePage) => {
           return checkPokemonGO(
             pokemon.num,
             convertPokemonDataName(pokemon.sprite, pokemon.name.replaceAll(' ', '_')),
-            dataStore.pokemons
+            pokemonsData()
           );
         }
         return pokemon.releasedGO;
@@ -327,17 +327,17 @@ const Move = (props: IMovePage) => {
 
   useEffect(() => {
     const type = searchParams.get(Params.MoveType);
-    if (isNotEmpty(dataStore.combats) && move?.isMultipleWithType && type) {
+    if (isNotEmpty(combatsData()) && move?.isMultipleWithType && type) {
       searchParams.set(Params.MoveType, type.toLowerCase());
       setSearchParams(searchParams);
       setMove(
-        dataStore.combats.find(
+        combatsData().find(
           (item) => item.track === move.track && isEqual(item.type, type, EqualMode.IgnoreCaseSensitive)
         )
       );
       setMoveType(type.toUpperCase());
     }
-  }, [move?.isMultipleWithType, searchParams, dataStore.combats]);
+  }, [move?.isMultipleWithType, searchParams, combatsData()]);
 
   const renderReward = (itemName: string) => (
     <div className="d-flex align-items-center flex-column">

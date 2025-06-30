@@ -66,7 +66,7 @@ import useDataStore from '../../../composables/useDataStore';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
-  const dataStore = useDataStore();
+  const { combatsData, pokemonsData, pvpData, assetsData } = useDataStore();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const params = useParams();
 
@@ -84,9 +84,9 @@ const TeamPVP = (props: IStyleSheetData) => {
   const mappingPokemonData = (data: string) => {
     const [speciesId, moveSet] = data.split(' ');
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
-    const pokemon = dataStore.pokemons.find((pokemon) => isEqual(pokemon.slug, name));
+    const pokemon = pokemonsData().find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
-    const form = findAssetForm(dataStore.assets, pokemon?.num, pokemon?.form);
+    const form = findAssetForm(assetsData(), pokemon?.num, pokemon?.form);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -142,14 +142,14 @@ const TeamPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, dataStore.pvp);
+    loadPVP(dispatch, timestamp, pvpData());
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(combatsData()) && combatsData().every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
-  }, [dispatch, dataStore.combats]);
+  }, [dispatch, combatsData()]);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PVP Teams',
@@ -249,11 +249,11 @@ const TeamPVP = (props: IStyleSheetData) => {
     };
     if (
       !rankingData &&
-      isNotEmpty(dataStore.pvp.rankings) &&
-      isNotEmpty(dataStore.pvp.trains) &&
-      isNotEmpty(dataStore.combats) &&
-      isNotEmpty(dataStore.pokemons) &&
-      isNotEmpty(dataStore.assets) &&
+      isNotEmpty(pvpData().rankings) &&
+      isNotEmpty(pvpData().trains) &&
+      isNotEmpty(combatsData()) &&
+      isNotEmpty(pokemonsData()) &&
+      isNotEmpty(assetsData()) &&
       statsRanking?.attack?.ranking &&
       statsRanking?.defense?.ranking &&
       statsRanking?.stamina?.ranking &&
@@ -269,11 +269,11 @@ const TeamPVP = (props: IStyleSheetData) => {
     params.cp,
     params.serie,
     rankingData,
-    dataStore.pvp.rankings,
-    dataStore.pvp.trains,
-    dataStore.combats,
-    dataStore.pokemons,
-    dataStore.assets,
+    pvpData().rankings,
+    pvpData().trains,
+    combatsData(),
+    pokemonsData(),
+    assetsData(),
     statsRanking?.attack?.ranking,
     statsRanking?.defense?.ranking,
     statsRanking?.stamina?.ranking,
@@ -282,7 +282,7 @@ const TeamPVP = (props: IStyleSheetData) => {
 
   const renderLeague = () => {
     const cp = toNumber(params.cp);
-    const league = dataStore.pvp.trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
+    const league = pvpData().trains.find((item) => isEqual(item.id, params.serie) && isIncludeList(item.cp, cp));
     return (
       <Fragment>
         {league && (
@@ -333,7 +333,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     }
 
     for (const name of nameSet) {
-      move = dataStore.combats.find(
+      move = combatsData().find(
         (item) =>
           (item.abbreviation && isEqual(item.abbreviation, tag)) ||
           (!item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(name)))
@@ -345,10 +345,10 @@ const TeamPVP = (props: IStyleSheetData) => {
 
     nameSet = findMoveTeam(
       tag,
-      dataStore.combats.map((item) => item.name),
+      combatsData().map((item) => item.name),
       true
     );
-    move = dataStore.combats.find(
+    move = combatsData().find(
       (item) =>
         (item.abbreviation && isEqual(item.abbreviation, tag)) ||
         (isNotEmpty(nameSet) && !item.abbreviation && isEqual(item.name, reverseReplaceTempMovePvpName(nameSet[0])))

@@ -78,7 +78,7 @@ class TableSort implements ITableSort {
 }
 
 const TableMove = (props: ITableMoveComponent) => {
-  const dataStore = useDataStore();
+  const { combatsData } = useDataStore();
   const [move, setMove] = useState<IPokemonQueryRankMove>(new PokemonQueryRankMove());
   const [moveOrigin, setMoveOrigin] = useState<PokemonMoves>();
 
@@ -107,7 +107,7 @@ const TableMove = (props: ITableMoveComponent) => {
     return getValueOrDefault(
       Array,
       moves
-        ?.map((move) => dataStore.combats.find((item) => isEqual(item.name, move)) ?? new Combat())
+        ?.map((move) => combatsData().find((item) => isEqual(item.name, move)) ?? new Combat())
         .filter((move) => move.id > 0)
     );
   };
@@ -139,14 +139,7 @@ const TableMove = (props: ITableMoveComponent) => {
   };
 
   const setRankMove = (result: Partial<IPokemonDetail>) => {
-    return rankMove(
-      dataStore.combats,
-      result,
-      result.statsGO?.atk,
-      result.statsGO?.def,
-      result.statsGO?.sta,
-      result.types
-    );
+    return rankMove(combatsData(), result, result.statsGO?.atk, result.statsGO?.def, result.statsGO?.sta, result.types);
   };
 
   useEffect(() => {

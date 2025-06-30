@@ -20,7 +20,7 @@ import useDataStore from '../../../composables/useDataStore';
 
 const SelectPoke = (props: ISelectPokeComponent) => {
   const dispatch = useDispatch();
-  const dataStore = useDataStore();
+  const { combatsData } = useDataStore();
   const [show, setShow] = useState(false);
   const [showFMove, setShowFMove] = useState(false);
   const [showCMovePri, setShowCMovePri] = useState(false);
@@ -59,15 +59,15 @@ const SelectPoke = (props: ISelectPokeComponent) => {
     setPokemonIcon(APIService.getPokeIconSprite(value.pokemon.sprite));
     setPokemon(value);
 
-    const fMoveCombat = dataStore.combats.find((item) => isEqual(item.name, fMove));
+    const fMoveCombat = combatsData().find((item) => isEqual(item.name, fMove));
     setFMove(fMoveCombat);
     cMovePri = replaceTempMovePvpName(cMovePri);
 
-    const cMovePriCombat = dataStore.combats.find((item) => isEqual(item.name, cMovePri));
+    const cMovePriCombat = combatsData().find((item) => isEqual(item.name, cMovePri));
     setCMovePri(cMovePriCombat);
     cMoveSec = replaceTempMovePvpName(cMoveSec);
 
-    const cMoveSecCombat = dataStore.combats.find((item) => isEqual(item.name, cMoveSec));
+    const cMoveSecCombat = combatsData().find((item) => isEqual(item.name, cMoveSec));
     setCMoveSec(cMoveSecCombat);
 
     const stats = calculateStatsByTag(value.pokemon, value.pokemon.baseStats, value.pokemon.slug);
@@ -258,7 +258,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
               <div>
                 {props.data
                   .find((value) => isEqual(value.speciesId, pokemon.speciesId))
-                  ?.moves.fastMoves.map((value) => dataStore.combats.find((item) => isEqual(item.name, value.moveId)))
+                  ?.moves.fastMoves.map((value) => combatsData().find((item) => isEqual(item.name, value.moveId)))
                   .filter((value) => value && !isEqual(value.name, fMove?.name))
                   .map((value, index) => (
                     <div className="card-move" key={index} onMouseDown={() => selectFMove(value)}>
@@ -326,7 +326,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return dataStore.combats.find((item) => isEqual(item.name, move));
+                      return combatsData().find((item) => isEqual(item.name, move));
                     })
                     .filter(
                       (value) => value && !isEqual(value.name, cMovePri?.name) && !isEqual(value.name, cMoveSec?.name)
@@ -411,7 +411,7 @@ const SelectPoke = (props: ISelectPokeComponent) => {
                     .find((value) => isEqual(value.speciesId, pokemon.speciesId))
                     ?.moves.chargedMoves.map((value) => {
                       const move = replaceTempMovePvpName(value.moveId);
-                      return dataStore.combats.find((item) => isEqual(item.name, move));
+                      return combatsData().find((item) => isEqual(item.name, move));
                     })
                     .filter(
                       (value) =>

@@ -46,16 +46,16 @@ const News = () => {
       'upcoming features',
     ],
   });
-  const dataStore = useDataStore();
+  const { informationData, assetsData } = useDataStore();
 
   const [data, setData] = useState<INewsModel[]>([]);
 
   useEffect(() => {
-    if (dataStore.information.isLoaded && !isNotEmpty(data)) {
-      const result = mapDataInformation(dataStore.information.data);
+    if (informationData().isLoaded && !isNotEmpty(data)) {
+      const result = mapDataInformation(informationData().data);
       setData(result);
     }
-  }, [dataStore.information, data]);
+  }, [informationData(), data]);
 
   const mapDataInformation = (information: IInformation[]) =>
     information.map((info) =>
@@ -109,7 +109,7 @@ const News = () => {
   };
 
   const getImageList = (pokemon: RewardPokemon | undefined) => {
-    const model = dataStore.assets.find((item) => item.id === pokemon?.id);
+    const model = assetsData().find((item) => item.id === pokemon?.id);
     const result = UniqValueInArray(model?.image.map((item) => item.form)).map(
       (value) => new PokemonModelComponent(value, model?.image)
     );
@@ -216,7 +216,7 @@ const News = () => {
   );
 
   const reload = (element: JSX.Element) => {
-    if (dataStore.information.isLoaded) {
+    if (informationData().isLoaded) {
       return element;
     }
     return (

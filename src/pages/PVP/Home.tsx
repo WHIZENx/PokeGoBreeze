@@ -41,7 +41,7 @@ const PVPHome = () => {
     keywords: ['PVP simulator', 'Pokémon GO battles', 'battle simulator', 'PVP team builder', 'battle strategies'],
   });
   const dispatch = useDispatch();
-  const dataStore = useDataStore();
+  const { pvpData, combatsData } = useDataStore();
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
 
@@ -50,28 +50,28 @@ const PVPHome = () => {
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, dataStore.pvp);
+    loadPVP(dispatch, timestamp, pvpData());
   }, []);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.combats) && dataStore.combats.every((combat) => !combat.archetype)) {
+    if (isNotEmpty(combatsData()) && combatsData().every((combat) => !combat.archetype)) {
       loadPVPMoves(dispatch);
     }
     if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());
     }
-  }, [spinner, dataStore.combats, dispatch]);
+  }, [spinner, combatsData(), dispatch]);
 
   useEffect(() => {
-    if (!rank && !team && isNotEmpty(dataStore.pvp.rankings) && isNotEmpty(dataStore.pvp.trains)) {
+    if (!rank && !team && isNotEmpty(pvpData().rankings) && isNotEmpty(pvpData().trains)) {
       setOptions(
         OptionsHome.create({
-          rank: dataStore.pvp.rankings.at(0),
-          team: dataStore.pvp.trains.at(0),
+          rank: pvpData().rankings.at(0),
+          team: pvpData().trains.at(0),
         })
       );
     }
-  }, [rank, team, dataStore.pvp.rankings, dataStore.pvp.trains]);
+  }, [rank, team, pvpData().rankings, pvpData().trains]);
 
   const renderLeagueLogo = (logo: string | undefined, cp: number) => {
     if (
@@ -133,12 +133,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                rank: dataStore.pvp.rankings.find((item) => isEqual(item.id, e.target.value)),
+                rank: pvpData().rankings.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {dataStore.pvp.rankings.map((value, index) => (
+          {pvpData().rankings.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>
@@ -177,12 +177,12 @@ const PVPHome = () => {
             setOptions(
               OptionsHome.create({
                 ...options,
-                team: dataStore.pvp.trains.find((item) => isEqual(item.id, e.target.value)),
+                team: pvpData().trains.find((item) => isEqual(item.id, e.target.value)),
               })
             )
           }
         >
-          {dataStore.pvp.trains.map((value, index) => (
+          {pvpData().trains.map((value, index) => (
             <option key={index} value={value.id}>
               {value.name}
             </option>

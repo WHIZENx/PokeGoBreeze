@@ -28,7 +28,7 @@ const Search = () => {
   });
   const router = useSelector((state: RouterState) => state.router);
   const searching = useSelector((state: SearchingState) => state.searching.mainSearching);
-  const dataStore = useDataStore();
+  const { pokemonsData } = useDataStore();
 
   const [startIndex, setStartIndex] = useState(0);
   const firstInit = useRef(20);
@@ -52,11 +52,11 @@ const Search = () => {
   const resultsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isNotEmpty(dataStore.pokemons)) {
-      const result = mappingPokemonName(dataStore.pokemons);
+    if (isNotEmpty(pokemonsData())) {
+      const result = mappingPokemonName(pokemonsData());
       setPokemonList(result);
     }
-  }, [dataStore.pokemons]);
+  }, [pokemonsData()]);
 
   useEffect(() => {
     if (isNotEmpty(pokemonList)) {
@@ -93,7 +93,7 @@ const Search = () => {
   };
 
   const modifyId = (modify: number) => {
-    const currentPokemon = getPokemonById(dataStore.pokemons, selectId + modify);
+    const currentPokemon = getPokemonById(pokemonsData(), selectId + modify);
     if (currentPokemon) {
       setSelectId(selectId + modify);
       setSearchOption({ id: toNumber(currentPokemon.id) });
@@ -101,10 +101,10 @@ const Search = () => {
   };
 
   const onChangeSelect = (event: React.KeyboardEvent<HTMLInputElement>, search: string) => {
-    const currentPokemon = getPokemonById(dataStore.pokemons, selectId);
+    const currentPokemon = getPokemonById(pokemonsData(), selectId);
     if (currentPokemon) {
-      const prev = getPokemonById(dataStore.pokemons, currentPokemon.id - 1);
-      const next = getPokemonById(dataStore.pokemons, currentPokemon.id + 1);
+      const prev = getPokemonById(pokemonsData(), currentPokemon.id - 1);
+      const next = getPokemonById(pokemonsData(), currentPokemon.id + 1);
       if (isNotEmpty(pokemonListFilter) && event.keyCode === keyEnter()) {
         const input = document.getElementById('input-search-pokemon');
         input?.blur();
