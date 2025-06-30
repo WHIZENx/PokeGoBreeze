@@ -14,8 +14,8 @@ import {
   SetPVP,
   SetPVPMoves,
 } from '../store/actions/store.action';
-import { IOptions } from '../core/models/options.model';
-import { IPokemonData } from '../core/models/pokemon.model';
+import { IOptions, PokemonDataGM } from '../core/models/options.model';
+import { IPokemonData, PokemonEncounter } from '../core/models/pokemon.model';
 import { ISticker } from '../core/models/sticker.model';
 import { ICombat } from '../core/models/combat.model';
 import { IEvolutionChain } from '../core/models/evolution-chain.model';
@@ -25,6 +25,34 @@ import { LeagueData } from '../core/models/league.model';
 import { ICPM } from '../core/models/cpm.model';
 import { ITrainerLevelUp } from '../core/models/trainer.model';
 import { PokemonPVPMove } from '../core/models/pvp.model';
+import { isEqual } from 'lodash';
+import { Database } from '../core/models/API/db.model';
+import {
+  optionPokemonData,
+  optionLeagues,
+  optionPokemonTypes,
+  optionPokemonWeather,
+  optionSettings,
+  optionTrainer,
+  optionSticker,
+  optionCombat,
+  optionEvolutionChain,
+  optionInformation,
+  mappingMoveSetPokemonGO,
+  optionPokeImg,
+  optionPokeSound,
+  optionAssets,
+  mappingReleasedPokemonGO,
+} from '../core/options';
+import { APIUrl } from '../services/constants';
+import { getDbPokemonEncounter } from '../services/db.service';
+import { APITreeRoot, APITree } from '../services/models/api.model';
+import { SpinnerActions, StoreActions, StatsActions, TimestampActions } from '../store/actions';
+import { loadCPM } from '../store/effects/store.effects';
+import { isInclude, isNotEmpty } from '../utils/extension';
+import APIService from '../services/api.service';
+import { Timestamp } from '../store/models/timestamp.model';
+import { Files } from '../store/models/store.model';
 
 /**
  * Custom hook to access and update the data from Redux store
@@ -132,6 +160,141 @@ export const useDataStore = () => {
     dispatch(SetPVPMoves.create(pvpMoves));
   };
 
+  const loadPokeGOLogo = (url: string, iconTimestamp: number) =>
+    APIService.getFetchUrl<Files>(url, getAuthorizationHeaders)
+      .then((file) => {
+        if (file?.data) {
+          const files = file.data.files;
+          if (isNotEmpty(files)) {
+            const res = files.find((item) => isInclude(item.filename, 'Images/App Icons/'));
+            if (res) {
+              dispatch(
+                StoreActions.SetLogoPokeGO.create(res.filename.replace('Images/App Icons/', '').replace('.png', ''))
+              );
+              dispatch(TimestampActions.SetTimestampIcon.create(iconTimestamp));
+            }
+          }
+        }
+      })
+      .catch(() => dispatch(StoreActions.SetLogoPokeGO.create()));
+
+  const loadGameMaster = async (imageRoot: APITreeRoot[], soundsRoot: APITreeRoot[], timestampLoaded: Timestamp) => {
+    APIService.getFetchUrl<PokemonDataGM[]>(APIUrl.GAMEMASTER)
+      .then(async (gm) => {
+        if (!gm || !isNotEmpty(gm.data)) {
+          dispatch(
+            SpinnerActions.ShowSpinnerMsg.create({
+              isError: true,
+            })
+          );
+          return;
+        }
+        let pokemonEncounter = new Database<PokemonEncounter>();
+        try {
+          pokemonEncounter = await getDbPokemonEncounter();
+        } catch (e) {
+          dispatch(
+            SpinnerActions.ShowSpinnerMsg.create({
+              isError: true,
+              message: (e as Error).message,
+            })
+          );
+          return;
+        }
+
+        const pokemon = optionPokemonData(gm.data, pokemonEncounter.rows);
+
+        const league = optionLeagues(gm.data, pokemon);
+
+        const typeEffective = optionPokemonTypes(gm.data);
+        const weatherBoost = optionPokemonWeather(gm.data);
+
+        dispatch(SpinnerActions.SetPercent.create(60));
+
+        const options = optionSettings(gm.data, typeEffective, weatherBoost);
+        dispatch(StoreActions.SetOptions.create(options));
+        loadCPM(dispatch, options.playerSetting.cpMultipliers);
+        dispatch(StoreActions.SetTrainer.create(optionTrainer(gm.data)));
+        dispatch(StoreActions.SetSticker.create(optionSticker(gm.data, pokemon)));
+        const combat = optionCombat(gm.data, typeEffective);
+        dispatch(StoreActions.SetCombat.create(combat));
+        dispatch(StoreActions.SetEvolutionChain.create(optionEvolutionChain(gm.data, pokemon)));
+        dispatch(StoreActions.SetInformation.create(optionInformation(gm.data, pokemon)));
+        dispatch(StoreActions.SetLeagues.create(league));
+
+        mappingMoveSetPokemonGO(pokemon, combat);
+
+        if (!timestampLoaded.isCurrentImage || !timestampLoaded.isCurrentSound || !timestampLoaded.isCurrentVersion) {
+          await loadAssets(imageRoot, soundsRoot, pokemon, timestampLoaded);
+        }
+
+        dispatch(SpinnerActions.SetPercent.create(90));
+        dispatch(StatsActions.SetStats.create(pokemon));
+
+        dispatch(TimestampActions.SetTimestampGameMaster.create(timestampLoaded.gamemasterTimestamp));
+        dispatch(SpinnerActions.SetPercent.create(100));
+        setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);
+      })
+      .catch((e: ErrorEvent) => {
+        dispatch(SpinnerActions.SetBar.create(false));
+        dispatch(
+          SpinnerActions.ShowSpinnerMsg.create({
+            isError: true,
+            message: e.message,
+          })
+        );
+      });
+  };
+
+  const loadAssets = async (
+    imageRoot: APITreeRoot[],
+    soundsRoot: APITreeRoot[],
+    pokemon: IPokemonData[],
+    timestamp: Timestamp
+  ) => {
+    if (!isNotEmpty(imageRoot) || !isNotEmpty(soundsRoot)) {
+      return;
+    }
+    await Promise.all([
+      APIService.getFetchUrl<APITree>(imageRoot[0].commit.tree.url, getAuthorizationHeaders),
+      APIService.getFetchUrl<APITree>(soundsRoot[0].commit.tree.url, getAuthorizationHeaders),
+    ]).then(async ([imageFolder, soundFolder]) => {
+      const imageFolderPath = imageFolder.data.tree.find((item) => isEqual(item.path, 'Images'));
+      const soundFolderPath = soundFolder.data.tree.find((item) => isEqual(item.path, 'Sounds'));
+
+      if (imageFolderPath && soundFolderPath) {
+        await Promise.all([
+          APIService.getFetchUrl<APITree>(imageFolderPath.url, getAuthorizationHeaders),
+          APIService.getFetchUrl<APITree>(soundFolderPath.url, getAuthorizationHeaders),
+        ]).then(async ([image, sound]) => {
+          const imagePath = image.data.tree.find((item) => isEqual(item.path, 'Pokemon - 256x256'));
+          const soundPath = sound.data.tree.find((item) => isEqual(item.path, 'Pokemon Cries'));
+
+          if (imagePath && soundPath) {
+            await Promise.all([
+              APIService.getFetchUrl<APITree>(`${imagePath.url}?recursive=1`, getAuthorizationHeaders),
+              APIService.getFetchUrl<APITree>(`${soundPath.url}?recursive=1`, getAuthorizationHeaders),
+            ]).then(([imageData, soundData]) => {
+              const assetImgFiles = optionPokeImg(imageData.data);
+              const assetSoundFiles = optionPokeSound(soundData.data);
+
+              const assetsPokemon = optionAssets(pokemon, assetImgFiles, assetSoundFiles);
+              mappingReleasedPokemonGO(pokemon, assetsPokemon);
+
+              dispatch(StoreActions.SetAssets.create(assetsPokemon));
+              dispatch(StoreActions.SetPokemon.create(pokemon));
+
+              dispatch(TimestampActions.SetTimestampAssets.create(timestamp.assetsTimestamp));
+              dispatch(TimestampActions.SetTimestampSounds.create(timestamp.soundsTimestamp));
+              dispatch(SpinnerActions.SetPercent.create(100));
+              setTimeout(() => dispatch(SpinnerActions.SetBar.create(false)), 500);
+            });
+          }
+        });
+      }
+    });
+  };
+
   const pokemonsData = () => dataStore.pokemons;
   const stickersData = () => dataStore.stickers;
   const combatsData = () => dataStore.combats;
@@ -144,8 +307,15 @@ export const useDataStore = () => {
   const pvpData = () => dataStore.pvp;
   const optionsData = () => dataStore.options;
 
+  const getAuthorizationHeaders = {
+    headers: { Authorization: `token ${process.env.REACT_APP_TOKEN_PRIVATE_REPO}` },
+  };
+
   return {
     dataStore,
+    loadPokeGOLogo,
+    loadGameMaster,
+    loadAssets,
     pokemonsData,
     stickersData,
     combatsData,
@@ -169,6 +339,7 @@ export const useDataStore = () => {
     setTrainers,
     setPVP,
     setPVPMoves,
+    getAuthorizationHeaders,
   };
 };
 

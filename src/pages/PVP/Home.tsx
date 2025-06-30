@@ -3,7 +3,6 @@ import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import APIService from '../../services/api.service';
 import { leaguesTeamBattle } from '../../utils/constants';
-import { loadPVP, loadPVPMoves } from '../../store/effects/store.effects';
 import { Link } from 'react-router-dom';
 import { SpinnerState, TimestampState } from '../../store/models/state.model';
 import { PVPInfo } from '../../core/models/pvp.model';
@@ -16,6 +15,7 @@ import { EqualMode } from '../../utils/enums/string.enum';
 import { LeagueBattleType } from '../../core/enums/league.enum';
 import { BattleLeagueIconType } from '../../utils/enums/compute.enum';
 import useDataStore from '../../composables/useDataStore';
+import usePVP from '../../composables/usePVP';
 
 interface IOptionsHome {
   rank?: PVPInfo;
@@ -42,6 +42,7 @@ const PVPHome = () => {
   });
   const dispatch = useDispatch();
   const { pvpData, combatsData } = useDataStore();
+  const { loadPVP, loadPVPMoves } = usePVP();
   const spinner = useSelector((state: SpinnerState) => state.spinner);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
 
@@ -50,12 +51,12 @@ const PVPHome = () => {
   const { rank, team } = options;
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData());
+    loadPVP(timestamp);
   }, []);
 
   useEffect(() => {
     if (isNotEmpty(combatsData()) && combatsData().every((combat) => !combat.archetype)) {
-      loadPVPMoves(dispatch);
+      loadPVPMoves();
     }
     if (spinner.isLoading) {
       dispatch(SpinnerActions.HideSpinner.create());

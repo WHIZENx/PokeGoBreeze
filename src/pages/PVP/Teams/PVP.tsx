@@ -29,7 +29,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { StatsState, TimestampState } from '../../../store/models/state.model';
 import { ICombat } from '../../../core/models/combat.model';
 import { IPerformers, ITeams, Performers, Teams, TeamsPVP } from '../../../core/models/pvp.model';
@@ -63,10 +62,12 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import usePVP from '../../../composables/usePVP';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const { combatsData, pokemonsData, pvpData, assetsData } = useDataStore();
+  const { loadPVP, loadPVPMoves } = usePVP();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const params = useParams();
 
@@ -142,14 +143,14 @@ const TeamPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData());
+    loadPVP(timestamp);
   }, []);
 
   useEffect(() => {
     if (isNotEmpty(combatsData()) && combatsData().every((combat) => !combat.archetype)) {
-      loadPVPMoves(dispatch);
+      loadPVPMoves();
     }
-  }, [dispatch, combatsData()]);
+  }, [combatsData()]);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
     title: 'PVP Teams',

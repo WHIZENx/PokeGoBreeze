@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { loadTimestamp } from './store/effects/store.effects';
 
 import './App.scss';
 
@@ -54,7 +53,7 @@ import { getStyleList } from './utils/utils';
 import { defaultOptions, OptionsContext } from './contexts/options.context';
 import optionsObserver from './utils/hooks/optionsObserver';
 import { loadDataDelay, transitionTime } from './utils/helpers/options-context.helpers';
-import useDataStore from './composables/useDataStore';
+import useTimestamp from './composables/useTimestamp';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -62,7 +61,7 @@ const ColorModeContext = createContext({
 
 function App() {
   const dispatch = useDispatch();
-  const { dataStore } = useDataStore();
+  const { loadTimestamp } = useTimestamp();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const router = useSelector((state: RouterState) => state.router);
 
@@ -134,7 +133,7 @@ function App() {
   const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = loadDataDelay()) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
-        resolve(await loadTimestamp(dispatch, dataStore, timestamp, isCurrentVersion));
+        resolve(await loadTimestamp(timestamp, isCurrentVersion));
       };
 
       const debouncedResolve = debounce(resolveHandler, delay);

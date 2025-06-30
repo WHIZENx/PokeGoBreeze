@@ -66,7 +66,6 @@ import { BattleBaseStats, IBattleBaseStats, StatsCalculate } from '../../../util
 import { AttackType } from './enums/attack-type.enum';
 import { PokemonType, TypeAction, VariantType } from '../../../enums/type.enum';
 import { SpinnerActions } from '../../../store/actions';
-import { loadPVPMoves } from '../../../store/effects/store.effects';
 import {
   DynamicObj,
   getPropertyName,
@@ -104,6 +103,7 @@ import {
   stepLevel,
 } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import usePVP from '../../../composables/usePVP';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -125,6 +125,7 @@ class BattleState implements IBattleState {
 const Battle = () => {
   const dispatch = useDispatch();
   const { pokemonsData, assetsData } = useDataStore();
+  const { loadPVPMoves } = usePVP();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -353,8 +354,8 @@ const Battle = () => {
   }, [fetchPokemonBattle, league, dispatch]);
 
   useEffect(() => {
-    loadPVPMoves(dispatch);
-  }, [dispatch]);
+    loadPVPMoves();
+  }, []);
 
   const clearDataPokemonCurr = (removeCMoveSec: boolean) => {
     setPokemonObj(PokemonBattle.create({ ...pokemonObj, timeline: [] }));

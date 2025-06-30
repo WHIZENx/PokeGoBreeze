@@ -22,7 +22,6 @@ import {
 
 import Error from '../../Error/Error';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { Button } from 'react-bootstrap';
 import { Params } from '../../../utils/constants';
 import { RouterState, StatsState, TimestampState } from '../../../store/models/state.model';
@@ -48,11 +47,13 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import usePVP from '../../../composables/usePVP';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pvpData, assetsData, combatsData, pokemonsData } = useDataStore();
+  const { loadPVP, loadPVPMoves } = usePVP();
   const router = useSelector((state: RouterState) => state.router);
 
   const [searchParams] = useSearchParams();
@@ -65,7 +66,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
   const [isFound, setIsFound] = useState(true);
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData());
+    loadPVP(timestamp);
   }, []);
 
   const setPokemonPVPTitle = (isNotFound = false) => {
@@ -233,7 +234,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
       isNotEmpty(assetsData())
     ) {
       if (combatsData().every((combat) => !combat.archetype)) {
-        loadPVPMoves(dispatch);
+        loadPVPMoves();
       } else if (router.action) {
         fetchPokemon();
       }

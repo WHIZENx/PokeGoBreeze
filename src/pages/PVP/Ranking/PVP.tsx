@@ -30,7 +30,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { loadPVP, loadPVPMoves } from '../../../store/effects/store.effects';
 import { Params } from '../../../utils/constants';
 import { RouterState, StatsState, TimestampState } from '../../../store/models/state.model';
 import { RankingsPVP, Toggle } from '../../../core/models/pvp.model';
@@ -68,11 +67,13 @@ import { useTitle } from '../../../utils/hooks/useTitle';
 import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import usePVP from '../../../composables/usePVP';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { assetsData, pokemonsData, combatsData, pvpData } = useDataStore();
+  const { loadPVP, loadPVPMoves } = usePVP();
   const router = useSelector((state: RouterState) => state.router);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
 
@@ -112,7 +113,7 @@ const RankingPVP = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    loadPVP(dispatch, timestamp, pvpData());
+    loadPVP(timestamp);
   }, []);
 
   const [titleProps, setTitleProps] = useState<TitleSEOProps>({
@@ -276,7 +277,7 @@ const RankingPVP = (props: IStyleSheetData) => {
       isNotEmpty(assetsData())
     ) {
       if (combatsData().every((combat) => !combat.archetype)) {
-        loadPVPMoves(dispatch);
+        loadPVPMoves();
       } else if (router.action) {
         fetchPokemon();
       }

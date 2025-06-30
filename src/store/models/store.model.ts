@@ -58,3 +58,11 @@ export class Data implements IDataModel {
     return obj;
   }
 }
+
+export interface Files {
+  files: FileName[];
+}
+
+export interface FileName {
+  filename: string;
+}
