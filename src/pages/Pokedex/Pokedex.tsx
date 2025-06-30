@@ -6,7 +6,6 @@ import CardPokemonInfo from '../../components/Card/CardPokemonInfo';
 import TypeInfo from '../../components/Sprites/Type/Type';
 import { getKeyWithData, splitAndCapitalize } from '../../utils/utils';
 import APIService from '../../services/api.service';
-import { queryAssetForm } from '../../utils/compute';
 import { genList, regionList, versionList } from '../../utils/constants';
 import {
   Checkbox,
@@ -42,6 +41,7 @@ import { SpinnerActions } from '../../store/actions';
 import { getTypes, transitionTime } from '../../utils/helpers/options-context.helpers';
 import useDataStore from '../../composables/useDataStore';
 import useIcon from '../../composables/useIcon';
+import useAssets from '../../composables/useAssets';
 
 const versionProps: Partial<MenuProps> = {
   PaperProps: {
@@ -110,7 +110,8 @@ const Pokedex = (props: IStyleSheetData) => {
 
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { pokemonsData, assetsData } = useDataStore();
+  const { pokemonsData } = useDataStore();
+  const { queryAssetForm } = useAssets();
 
   const [dataList, setDataList] = useState<IPokemonHomeModel[]>([]);
   const [selectTypes, setSelectTypes] = useState<string[]>([]);
@@ -149,17 +150,17 @@ const Pokedex = (props: IStyleSheetData) => {
   };
 
   useEffect(() => {
-    if (isNotEmpty(assetsData) && isNotEmpty(pokemonsData)) {
+    if (isNotEmpty(pokemonsData)) {
       setDataList(
         pokemonsData
           .map((item) => {
-            const assetForm = queryAssetForm(assetsData, item.num, item.form);
+            const assetForm = queryAssetForm(item.num, item.form);
             return new PokemonHomeModel(item, assetForm);
           })
           .sort((a, b) => a.id - b.id)
       );
     }
-  }, [assetsData, pokemonsData]);
+  }, [pokemonsData]);
 
   useEffect(() => {
     setIsLoading(true);

@@ -11,7 +11,6 @@ import { toNumber } from 'lodash';
 import { APIUrl } from '../services/constants';
 import { APITreeRoot } from '../services/models/api.model';
 import { SpinnerActions } from '../store/actions';
-import { TimestampModel } from '../store/reducers/timestamp.reducer';
 import { isNotEmpty } from '../utils/extension';
 import APIService from '../services/api.service';
 import { useDataStore } from '../composables/useDataStore';
@@ -69,7 +68,7 @@ export const useTimestamp = () => {
     dispatch(SetTimestampPVP.create(newTimestamp));
   };
 
-  const loadTimestamp = async (timestamp: TimestampModel, isCurrentVersion: boolean) => {
+  const loadTimestamp = async (isCurrentVersion: boolean) => {
     await Promise.all([
       APIService.getFetchUrl<string>(APIUrl.TIMESTAMP),
       APIService.getFetchUrl<APITreeRoot[]>(APIUrl.FETCH_POKEGO_IMAGES_ICON_SHA, getAuthorizationHeaders),
@@ -121,6 +120,12 @@ export const useTimestamp = () => {
       });
   };
 
+  const timestampPVP = timestamp?.pvp;
+  const timestampGameMaster = timestamp?.gamemaster;
+  const timestampIcon = timestamp?.icon;
+  const timestampAssets = timestamp?.assets;
+  const timestampSounds = timestamp?.sounds;
+
   return {
     timestamp,
     loadTimestamp,
@@ -129,6 +134,11 @@ export const useTimestamp = () => {
     setTimestampAssets,
     setTimestampSounds,
     setTimestampPVP,
+    timestampPVP,
+    timestampGameMaster,
+    timestampIcon,
+    timestampAssets,
+    timestampSounds,
   };
 };
 

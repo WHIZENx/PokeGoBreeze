@@ -13,12 +13,7 @@ import {
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import APIService from '../../../services/api.service';
 import { calculateStatsByTag } from '../../../utils/calculate';
-import {
-  computeBgType,
-  findAssetForm,
-  getPokemonBattleLeagueIcon,
-  getPokemonBattleLeagueName,
-} from '../../../utils/compute';
+import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
 import Error from '../../Error/Error';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,11 +43,13 @@ import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
 
 const PokemonPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pvpData, assetsData, combatsData, pokemonsData } = useDataStore();
+  const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const router = useSelector((state: RouterState) => state.router);
 
@@ -125,7 +122,7 @@ const PokemonPVP = (props: IStyleSheetData) => {
         const name = convertNameRankingToOri(pokemonData.speciesId, pokemonData.speciesName);
         const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
         const id = pokemon?.num;
-        const form = findAssetForm(assetsData, pokemon?.num, pokemon?.form);
+        const form = findAssetForm(pokemon?.num, pokemon?.form);
         setTitleProps({
           title: `#${toNumber(id)} ${splitAndCapitalize(name, '-', ' ')} - ${getPokemonBattleLeagueName(
             cp

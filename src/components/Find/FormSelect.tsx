@@ -39,6 +39,7 @@ import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { ItemName } from '../../pages/News/enums/item-type.enum';
 import { formNormal } from '../../utils/helpers/options-context.helpers';
 import useDataStore from '../../composables/useDataStore';
+import useSearch from '../../composables/useSearch';
 
 interface OptionsPokemon {
   prev: IPokemonName | undefined;
@@ -49,6 +50,7 @@ interface OptionsPokemon {
 const FormSelect = (props: IFormSelectComponent) => {
   const dispatch = useDispatch();
   const { pokemonsData } = useDataStore();
+  const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
 
   const [pokeData, setPokeData] = useState<IPokemonDetailInfo[]>([]);
   const [formList, setFormList] = useState<IPokemonFormModify[][]>([]);
@@ -116,17 +118,15 @@ const FormSelect = (props: IFormSelectComponent) => {
 
       const defaultForm = formListResult.flatMap((value) => value).filter((item) => item.form.isDefault);
       let currentForm = defaultForm.find((item) => item.form.id === specie.id);
-      if (props.searching) {
+      if (searchingToolData) {
         const defaultFormSearch = formListResult
           .flatMap((value) => value)
           .find((item) =>
             isEqual(
               item.form.formName,
               props.isObjective
-                ? props.searching?.object
-                  ? props.searching.object.form?.form?.formName
-                  : ''
-                : props.searching?.current?.form?.form?.formName
+                ? searchingToolObjectData?.form?.form?.formName
+                : searchingToolCurrentData?.form?.form?.formName
             )
           );
         if (defaultFormSearch) {
@@ -150,7 +150,7 @@ const FormSelect = (props: IFormSelectComponent) => {
 
       setData(specie);
     },
-    [props.searching]
+    [searchingToolData]
   );
 
   const queryPokemon = useCallback(
@@ -214,8 +214,8 @@ const FormSelect = (props: IFormSelectComponent) => {
       );
       details.pokemonType = currentForm.form.pokemonType || PokemonType.Normal;
       if (
-        props.searching?.object?.pokemon?.id !== props.id ||
-        !isEqual(props.searching?.object?.form?.form?.formName, currentForm.form.formName)
+        searchingToolObjectData?.pokemon?.id !== props.id ||
+        !isEqual(searchingToolObjectData?.form?.form?.formName, currentForm.form.formName)
       ) {
         const pokemonDetails = PokemonDetail.setData(details);
         if (props.isObjective) {
@@ -454,7 +454,6 @@ const FormSelect = (props: IFormSelectComponent) => {
         setTier={onSetTier}
         id={dataStorePokemon?.current?.id}
         dataPoke={pokeData}
-        stats={props.stats}
         onSetStats={props.onHandleSetStats}
         onClearStats={props.onClearStats}
       />

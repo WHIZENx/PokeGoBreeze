@@ -2,9 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import APIService from '../../services/api.service';
 import FormSelect from './FormSelect';
 
-import { useSelector } from 'react-redux';
 import { getPokemonById, mappingPokemonName } from '../../utils/utils';
-import { SearchingState, StatsState } from '../../store/models/state.model';
 import { IPokemonSearching } from '../../core/models/pokemon-searching.model';
 
 import { IFindComponent } from '../models/component.model';
@@ -14,6 +12,7 @@ import { IncludeMode } from '../../utils/enums/string.enum';
 import LoadGroup from '../Sprites/Loading/LoadingGroup';
 import { debounce } from 'lodash';
 import { useDataStore } from '../../composables/useDataStore';
+import useSearch from '../../composables/useSearch';
 
 const Find = (props: IFindComponent) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -21,15 +20,14 @@ const Find = (props: IFindComponent) => {
   const eachCounter = useRef(10);
   const cardHeight = useRef(65);
 
-  const stats = useSelector((state: StatsState) => state.stats);
-  const searching = useSelector((state: SearchingState) => state.searching.toolSearching);
+  const { searchingToolData, searchingToolCurrentData, searchingToolObjectData } = useSearch();
   const { pokemonsData } = useDataStore();
 
   const [id, setId] = useState(
-    searching
+    searchingToolData
       ? props.isObjective
-        ? toNumber(searching?.object?.pokemon?.id, 1)
-        : toNumber(searching.current?.pokemon?.id, 1)
+        ? toNumber(searchingToolObjectData?.pokemon?.id, 1)
+        : toNumber(searchingToolCurrentData?.pokemon?.id, 1)
       : 1
   );
 
@@ -186,7 +184,6 @@ const Find = (props: IFindComponent) => {
       <div>
         {isNotEmpty(pokemonList) && (
           <FormSelect
-            searching={searching}
             isHide={props.isHide}
             isRaid={props.isRaid}
             setRaid={props.setRaid}
@@ -196,7 +193,6 @@ const Find = (props: IFindComponent) => {
             id={id}
             setName={props.setName}
             name={pokemonList.find((item) => item.id === id)?.name}
-            stats={stats}
             onHandleSetStats={handleSetStats}
             onClearStats={props.clearStats}
             onSetPrev={() => modifyId(-1)}

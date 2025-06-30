@@ -11,7 +11,7 @@ import {
   getValidPokemonImgPath,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateCP, calculateStatsByTag, getBaseStatsByIVandLevel } from '../../../utils/calculate';
 import { Accordion, Button, Card, Form, useAccordionButton } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -104,6 +104,7 @@ import {
 } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
 
 interface OptionsBattle {
   showTap: boolean;
@@ -126,6 +127,7 @@ const Battle = () => {
   const dispatch = useDispatch();
   const { pokemonsData, assetsData } = useDataStore();
   const { loadPVPMoves } = usePVP();
+  const { findAssetForm } = useAssets();
   const params = useParams();
   const navigateToTop = useNavigateToTop();
 
@@ -301,7 +303,7 @@ const Battle = () => {
             }
 
             const id = pokemon.num;
-            const form = findAssetForm(assetsData, pokemon.num, pokemon.form);
+            const form = findAssetForm(pokemon.num, pokemon.form);
 
             const stats = calculateStatsByTag(pokemon, pokemon.baseStats, pokemon.slug);
 

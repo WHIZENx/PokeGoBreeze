@@ -16,7 +16,7 @@ import {
   getKeyWithData,
   getValidPokemonImgPath,
 } from '../../../utils/utils';
-import { findAssetForm, rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
+import { rankIconCenterName, rankIconName, rankName } from '../../../utils/compute';
 import { Badge } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Modal, Button } from 'react-bootstrap';
@@ -46,6 +46,7 @@ import { ItemName } from '../../News/enums/item-type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { debounce } from 'lodash';
 import useDataStore from '../../../composables/useDataStore';
+import useAssets from '../../../composables/useAssets';
 
 interface LeagueData {
   data: IPokemonRewardSetLeague[];
@@ -61,7 +62,8 @@ const Leagues = () => {
       'Complete list of all battle leagues in Pokémon GO. Find information about CP limits, rules, and available Pokémon for each league.',
     keywords: ['battle leagues', 'PVP leagues', 'Pokémon GO battles', 'Great League', 'Ultra League', 'Master League'],
   });
-  const { leaguesData, assetsData } = useDataStore();
+  const { leaguesData } = useDataStore();
+  const { findAssetForm } = useAssets();
 
   const [leagues, setLeagues] = useState<ILeague[]>([]);
   const [openedLeague, setOpenedLeague] = useState<ILeague[]>([]);
@@ -70,9 +72,6 @@ const Leagues = () => {
   const [rank, setRank] = useState(1);
   const [setting, setSetting] = useState<SettingLeague>();
   const [showData, setShowData] = useState<LeagueData>();
-
-  const getAssetPokeGo = (id: number | undefined, formName: string | undefined) =>
-    findAssetForm(assetsData, id, formName);
 
   const LeaveToggle = (props: Toggle) => {
     const decoratedOnClick = useAccordionButton(props.eventKey);
@@ -292,13 +291,13 @@ const Leagues = () => {
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="Pokémon Image"
                           title={splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}
-                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
+                          src={APIService.getPokemonModel(findAssetForm(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = getValidPokemonImgPath(
                               e.currentTarget.src,
                               item.id,
-                              getAssetPokeGo(item.id, item.form)
+                              findAssetForm(item.id, item.form)
                             );
                           }}
                         />
@@ -331,13 +330,13 @@ const Leagues = () => {
                           className="pokemon-sprite-medium filter-shadow-hover"
                           alt="Pokémon Image"
                           title={splitAndCapitalize(item.name?.toLowerCase(), '_', ' ')}
-                          src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form), item.id)}
+                          src={APIService.getPokemonModel(findAssetForm(item.id, item.form), item.id)}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = getValidPokemonImgPath(
                               e.currentTarget.src,
                               item.id,
-                              getAssetPokeGo(item.id, item.form)
+                              findAssetForm(item.id, item.form)
                             );
                           }}
                         />
@@ -772,13 +771,13 @@ const Leagues = () => {
                         className="pokemon-sprite-medium filter-shadow-hover"
                         alt="Pokémon Image"
                         title={splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
-                        src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                        src={APIService.getPokemonModel(findAssetForm(item.id, item.form))}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = getValidPokemonImgPath(
                             e.currentTarget.src,
                             item.id,
-                            getAssetPokeGo(item.id, item.form)
+                            findAssetForm(item.id, item.form)
                           );
                         }}
                       />
@@ -806,13 +805,13 @@ const Leagues = () => {
                             className="pokemon-sprite-medium filter-shadow-hover"
                             alt="Pokémon Image"
                             title={splitAndCapitalize(item.name.toLowerCase(), '_', ' ')}
-                            src={APIService.getPokemonModel(getAssetPokeGo(item.id, item.form))}
+                            src={APIService.getPokemonModel(findAssetForm(item.id, item.form))}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = getValidPokemonImgPath(
                                 e.currentTarget.src,
                                 item.id,
-                                getAssetPokeGo(item.id, item.form)
+                                findAssetForm(item.id, item.form)
                               );
                             }}
                           />

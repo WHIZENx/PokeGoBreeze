@@ -30,7 +30,7 @@ interface ToggleMetadata {
 const NavbarComponent = (props: INavbarComponent) => {
   const { loadTheme } = useTheme();
   const { timestamp } = useTimestamp();
-  const { spinnerData } = useSpinner();
+  const { spinnerPercent, spinnerBarIsShow } = useSpinner();
 
   const [stateTheme, setStateTheme] = useLocalStorage(LocalStorageConfig.Theme, TypeTheme.Light);
   const [expanded, setExpanded] = useState(false);
@@ -208,9 +208,9 @@ const NavbarComponent = (props: INavbarComponent) => {
         </Navbar.Collapse>
         <div className="nav-info-top column-gap-2">{navigateInfo}</div>
       </Navbar>
-      {spinnerData.bar.isShow && (
+      {spinnerBarIsShow && (
         <Box className="w-100 position-absolute z-7">
-          <LinearProgress variant={VariantType.Determinate} value={spinnerData.bar.percent} />
+          <LinearProgress variant={VariantType.Determinate} value={spinnerPercent} />
         </Box>
       )}
     </Fragment>

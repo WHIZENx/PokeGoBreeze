@@ -48,12 +48,13 @@ import {
 } from '../../../utils/extension';
 import { Toggle } from '../../../core/models/pvp.model';
 import { LeagueBattleType } from '../../../core/enums/league.enum';
-import { findAssetForm, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
+import { getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { BattleLeagueCPType } from '../../../utils/enums/compute.enum';
 import { VariantType } from '../../../enums/type.enum';
 import { LinkToTop } from '../../../utils/hooks/LinkToTop';
 import { formNormal, maxIv, minCp, minIv } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
+import useAssets from '../../../composables/useAssets';
 
 const FindBattle = () => {
   useTitle({
@@ -70,7 +71,8 @@ const FindBattle = () => {
     ],
   });
   const dispatch = useDispatch();
-  const { assetsData, pokemonsData } = useDataStore();
+  const { pokemonsData } = useDataStore();
+  const { findAssetForm } = useAssets();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [maxCP, setMaxCP] = useState(0);
@@ -369,7 +371,7 @@ const FindBattle = () => {
   };
 
   const renderPokemon = (value: IBattleBaseStats | IQueryStatesEvoChain, className?: string, height = 100) => {
-    const assets = findAssetForm(assetsData, value.id, pokemon?.form?.form?.formName);
+    const assets = findAssetForm(value.id, pokemon?.form?.form?.formName);
     return (
       <img
         className={className}

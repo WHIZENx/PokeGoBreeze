@@ -8,6 +8,7 @@ import StatsBar from '../../Sprites/ProgressBar/StatsBar';
 import { IStatsComponent } from '../../models/component.model';
 import { TypeAction } from '../../../enums/type.enum';
 import { toFloatWithPadding, toNumber } from '../../../utils/extension';
+import useStats from '../../../composables/useStats';
 
 interface ICurrentStats {
   stats: IStatsPokemonGO;
@@ -32,18 +33,13 @@ class CurrentStats implements ICurrentStats {
 }
 
 const Stats = (props: IStatsComponent) => {
+  const { statsData } = useStats();
   const [availableRankGO, setAvailableRankGO] = useState(new StatsRankPokemonGO());
 
   const [currentStats, setCurrentStats] = useState(new CurrentStats());
 
   useEffect(() => {
-    if (
-      props.pokemonStats &&
-      props.pokemonStats.attack &&
-      props.pokemonStats.defense &&
-      props.pokemonStats.stamina &&
-      props.pokemonStats.statProd
-    ) {
+    if (statsData?.attack && statsData?.defense && statsData?.stamina && statsData?.statProd) {
       const atk = setStats(
         props.stats || props.statATK
           ? props.statATK
@@ -71,16 +67,16 @@ const Stats = (props: IStatsComponent) => {
         TypeAction.Prod
       );
       const statsPokemonGO = StatsPokemonGO.create(atk, def, sta, prod);
-      setAvailableRankGO(checkRankAllAvailable(props.pokemonStats, statsPokemonGO));
+      setAvailableRankGO(checkRankAllAvailable(statsData, statsPokemonGO));
       setCurrentStats({
         stats: statsPokemonGO,
-        atkPercent: (atk * 100) / toNumber(props.pokemonStats.attack.maxStats, 1),
-        defPercent: (def * 100) / toNumber(props.pokemonStats.defense.maxStats, 1),
-        staPercent: (sta * 100) / toNumber(props.pokemonStats.stamina.maxStats, 1),
-        prodPercent: (prod * 100) / toNumber(props.pokemonStats.statProd.maxStats, 1),
+        atkPercent: (atk * 100) / toNumber(statsData.attack.maxStats, 1),
+        defPercent: (def * 100) / toNumber(statsData.defense.maxStats, 1),
+        staPercent: (sta * 100) / toNumber(statsData.stamina.maxStats, 1),
+        prodPercent: (prod * 100) / toNumber(statsData.statProd.maxStats, 1),
       });
     }
-  }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType, props.pokemonStats]);
+  }, [props.stats, props.statATK, props.statDEF, props.statSTA, props.statProd, props.pokemonType, statsData]);
 
   const setStats = (stats: number, type: TypeAction) =>
     Math.round(stats * getDmgMultiplyBonus(props.pokemonType, type));
@@ -94,7 +90,7 @@ const Stats = (props: IStatsComponent) => {
         rank={
           availableRankGO.attackRank ? availableRankGO.attackRank : props.statATK ? props.statATK.rank : 'Unavailable'
         }
-        pokemonStatsRank={props.pokemonStats?.attack}
+        pokemonStatsRank={statsData?.attack}
         currentStats={currentStats.stats.atk}
         id={props.id}
         form={props.form}
@@ -109,7 +105,7 @@ const Stats = (props: IStatsComponent) => {
         rank={
           availableRankGO.defenseRank ? availableRankGO.defenseRank : props.statDEF ? props.statDEF.rank : 'Unavailable'
         }
-        pokemonStatsRank={props.pokemonStats?.defense}
+        pokemonStatsRank={statsData?.defense}
         currentStats={currentStats.stats.def}
         id={props.id}
         form={props.form}
@@ -124,7 +120,7 @@ const Stats = (props: IStatsComponent) => {
         rank={
           availableRankGO.staminaRank ? availableRankGO.staminaRank : props.statSTA ? props.statSTA.rank : 'Unavailable'
         }
-        pokemonStatsRank={props.pokemonStats?.stamina}
+        pokemonStatsRank={statsData?.stamina}
         currentStats={currentStats.stats.sta}
         id={props.id}
         form={props.form}
@@ -143,7 +139,7 @@ const Stats = (props: IStatsComponent) => {
             ? props.statProd.rank
             : 'Unavailable'
         }
-        pokemonStatsRank={props.pokemonStats?.statProd}
+        pokemonStatsRank={statsData?.statProd}
         currentStats={currentStats.stats.prod}
         optionalStats={`${toFloatWithPadding(currentStats.stats.prod / Math.pow(10, 6), 2)} MM`}
         id={props.id}

@@ -13,12 +13,7 @@ import {
   reverseReplaceTempMovePvpName,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import {
-  computeBgType,
-  findAssetForm,
-  getPokemonBattleLeagueIcon,
-  getPokemonBattleLeagueName,
-} from '../../../utils/compute';
+import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 import { calculateStatsByTag } from '../../../utils/calculate';
 import { Accordion } from 'react-bootstrap';
 import TypeBadge from '../../../components/Sprites/TypeBadge/TypeBadge';
@@ -63,10 +58,12 @@ import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
 
 const TeamPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
-  const { combatsData, pokemonsData, pvpData, assetsData } = useDataStore();
+  const { combatsData, pokemonsData, pvpData } = useDataStore();
+  const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
   const params = useParams();
@@ -87,7 +84,7 @@ const TeamPVP = (props: IStyleSheetData) => {
     const name = convertNameRankingToOri(speciesId, convertNameRankingToForm(speciesId));
     const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
     const id = pokemon?.num;
-    const form = findAssetForm(assetsData, pokemon?.num, pokemon?.form);
+    const form = findAssetForm(pokemon?.num, pokemon?.form);
 
     const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 
@@ -254,7 +251,6 @@ const TeamPVP = (props: IStyleSheetData) => {
       isNotEmpty(pvpData.trains) &&
       isNotEmpty(combatsData) &&
       isNotEmpty(pokemonsData) &&
-      isNotEmpty(assetsData) &&
       statsRanking?.attack?.ranking &&
       statsRanking?.defense?.ranking &&
       statsRanking?.stamina?.ranking &&
@@ -274,7 +270,6 @@ const TeamPVP = (props: IStyleSheetData) => {
     pvpData.trains,
     combatsData,
     pokemonsData,
-    assetsData,
     statsRanking?.attack?.ranking,
     statsRanking?.defense?.ranking,
     statsRanking?.stamina?.ranking,

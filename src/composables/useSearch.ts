@@ -27,7 +27,7 @@ import { IPokemonDetail } from '../core/models/API/info.model';
  */
 export const useSearch = () => {
   const dispatch = useDispatch();
-  const searching = useSelector((state: StoreState) => state.store.searching);
+  const searchData = useSelector((state: StoreState) => state.store.searching);
 
   // Main Pokemon Search
   const setPokemonMainSearch = (value: ISearchingModel) => {
@@ -86,16 +86,16 @@ export const useSearch = () => {
     dispatch(ResetToolObjectPokemon.create());
   };
 
-  const searchingMainData = () => searching?.mainSearching;
-  const searchingMainForm = () => searching?.mainSearching?.form;
-  const searchingMainDetails = () => searching?.mainSearching?.pokemon;
+  const searchingMainData = searchData?.mainSearching;
+  const searchingMainForm = searchData?.mainSearching?.form;
+  const searchingMainDetails = searchData?.mainSearching?.pokemon;
 
-  const searchingToolData = () => searching?.toolSearching;
-  const searchingToolCurrentData = () => searching?.toolSearching?.current;
-  const searchingToolObjectData = () => searching?.toolSearching?.object;
+  const searchingToolData = searchData?.toolSearching;
+  const searchingToolCurrentData = searchData?.toolSearching?.current;
+  const searchingToolObjectData = searchData?.toolSearching?.object;
 
   return {
-    searching,
+    searchData,
     setPokemonMainSearch,
     resetPokemonMainSearch,
     setPokemonToolSearch,

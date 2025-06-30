@@ -16,7 +16,6 @@ import {
   retrieveMoves,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { findAssetForm } from '../../../utils/compute';
 import { levelList, RAID_BOSS_TIER } from '../../../utils/constants';
 import {
   calculateBattleDPS,
@@ -101,6 +100,7 @@ import { StatsIV } from '../../../core/models/stats.model';
 import { defaultPokemonLevel, maxIv, minIv } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
+import useAssets from '../../../composables/useAssets';
 
 const RaidBattle = () => {
   useTitle({
@@ -118,7 +118,8 @@ const RaidBattle = () => {
   });
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { pokemonsData, combatsData, assetsData } = useDataStore();
+  const { pokemonsData, combatsData } = useDataStore();
+  const { findAssetForm } = useAssets();
   const pokemon = useSelector((state: SearchingState) => state.searching.toolSearching?.current);
 
   const [statBossATK, setStatBossATK] = useState(0);
@@ -1226,7 +1227,7 @@ const RaidBattle = () => {
   };
 
   const renderPokemon = (value: IPokemonMoveData) => {
-    const assets = findAssetForm(assetsData, value.pokemon?.num, value.pokemon?.form);
+    const assets = findAssetForm(value.pokemon?.num, value.pokemon?.form);
     return (
       <LinkToTop
         to={`/pokemon/${value.pokemon?.num}${generateParamForm(value.pokemon?.form, value.pokemonType)}`}

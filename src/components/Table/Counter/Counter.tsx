@@ -10,7 +10,6 @@ import {
   isSpecialMegaFormType,
   splitAndCapitalize,
 } from '../../../utils/utils';
-import { findAssetForm } from '../../../utils/compute';
 import { counterPokemon } from '../../../utils/calculate';
 
 import './Counter.scss';
@@ -45,6 +44,7 @@ import { IMenuItem } from '../../models/component.model';
 import { counterDelay } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import useIcon from '../../../composables/useIcon';
+import useAssets from '../../../composables/useAssets';
 
 const customStyles: TableStyles = {
   head: {
@@ -119,7 +119,8 @@ const numSortRatio = (rowA: ICounterModel, rowB: ICounterModel) => {
 const Counter = (props: ICounterComponent) => {
   const dispatch = useDispatch();
   const { iconData } = useIcon();
-  const { combatsData, pokemonsData, assetsData } = useDataStore();
+  const { combatsData, pokemonsData } = useDataStore();
+  const { findAssetForm } = useAssets();
   const optionStore = useSelector((state: OptionsSheetState) => state.options);
 
   const [counterList, setCounterList] = useState<ICounterModel[]>([]);
@@ -162,7 +163,7 @@ const Counter = (props: ICounterComponent) => {
       id: ColumnType.Pokemon,
       name: 'Pokémon',
       selector: (row) => {
-        const assets = findAssetForm(assetsData, row.pokemonId, row.pokemonForm);
+        const assets = findAssetForm(row.pokemonId, row.pokemonForm);
         return (
           <LinkToTop to={`/pokemon/${row.pokemonId}${generateParamForm(row.pokemonForm, row.pokemonType)}`}>
             <div className="d-flex justify-content-center">

@@ -14,12 +14,7 @@ import { calculateStatsByTag } from '../../../utils/calculate';
 import { Accordion, Button, useAccordionButton } from 'react-bootstrap';
 
 import APIService from '../../../services/api.service';
-import {
-  computeBgType,
-  findAssetForm,
-  getPokemonBattleLeagueIcon,
-  getPokemonBattleLeagueName,
-} from '../../../utils/compute';
+import { computeBgType, getPokemonBattleLeagueIcon, getPokemonBattleLeagueName } from '../../../utils/compute';
 
 import update from 'immutability-helper';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -68,11 +63,13 @@ import { TitleSEOProps } from '../../../utils/models/hook.model';
 import { formShadow } from '../../../utils/helpers/options-context.helpers';
 import useDataStore from '../../../composables/useDataStore';
 import usePVP from '../../../composables/usePVP';
+import useAssets from '../../../composables/useAssets';
 
 const RankingPVP = (props: IStyleSheetData) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { assetsData, pokemonsData, combatsData, pvpData } = useDataStore();
+  const { findAssetForm } = useAssets();
   const { loadPVP, loadPVPMoves } = usePVP();
   const router = useSelector((state: RouterState) => state.router);
   const timestamp = useSelector((state: TimestampState) => state.timestamp);
@@ -189,7 +186,7 @@ const RankingPVP = (props: IStyleSheetData) => {
           const name = convertNameRankingToOri(data.speciesId, data.speciesName);
           const pokemon = pokemonsData.find((pokemon) => isEqual(pokemon.slug, name));
           const id = pokemon?.num;
-          const form = findAssetForm(assetsData, pokemon?.num, pokemon?.form);
+          const form = findAssetForm(pokemon?.num, pokemon?.form);
 
           const stats = calculateStatsByTag(pokemon, pokemon?.baseStats, pokemon?.slug);
 

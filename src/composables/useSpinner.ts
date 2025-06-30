@@ -51,6 +51,13 @@ export const useSpinner = () => {
     dispatch(SetPercent.create(percent));
   };
 
+  const spinnerBar = spinnerData.bar;
+  const spinnerPercent = spinnerData.bar.percent;
+  const spinnerBarIsShow = spinnerData.bar.isShow;
+  const spinnerIsMsg = spinnerData.error?.isError;
+  const spinnerMessage = spinnerData.error?.message;
+  const spinnerIsLoading = spinnerData.isLoading;
+
   return {
     spinnerData,
     showSpinner,
@@ -58,6 +65,12 @@ export const useSpinner = () => {
     showSpinnerMsg,
     setBar,
     setPercent,
+    spinnerBar,
+    spinnerPercent,
+    spinnerMessage,
+    spinnerBarIsShow,
+    spinnerIsMsg,
+    spinnerIsLoading,
   };
 };
 

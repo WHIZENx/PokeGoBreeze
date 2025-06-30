@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
 import './App.scss';
@@ -42,7 +41,6 @@ import Box from '@mui/material/Box';
 import { getDesignThemes } from './utils/models/overrides/themes.model';
 import { TypeTheme } from './enums/type.enum';
 import { LocalStorageConfig } from './store/constants/local-storage';
-import { RouterState } from './store/models/state.model';
 import { Action } from 'history';
 import { debounce } from 'lodash';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
@@ -55,6 +53,7 @@ import useTimestamp from './composables/useTimestamp';
 import useSpinner from './composables/useSpinner';
 import useDevice from './composables/useDevice';
 import { useTheme as useThemeStore } from './composables/useTheme';
+import useRouter from './composables/useRouter';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => true,
@@ -62,11 +61,11 @@ const ColorModeContext = createContext({
 
 function App() {
   const { loadTimestamp } = useTimestamp();
-  const { timestamp } = useTimestamp();
+  const { timestampGameMaster } = useTimestamp();
   const { setBar, setPercent } = useSpinner();
   const { setDevice } = useDevice();
   const { loadTheme } = useThemeStore();
-  const router = useSelector((state: RouterState) => state.router);
+  const { routerData, routerAction } = useRouter();
 
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
@@ -93,7 +92,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (router && router.action === Action.Pop) {
+    if (routerData && routerAction === Action.Pop) {
       const debounced = debounce(() => {
         window.scrollTo({
           top: 0,
@@ -106,13 +105,13 @@ function App() {
         debounced.cancel();
       };
     }
-  }, [router]);
+  }, [routerData]);
 
   useEffect(() => {
-    if (timestamp?.gamemaster) {
-      setStateTimestamp(timestamp.gamemaster);
+    if (timestampGameMaster) {
+      setStateTimestamp(timestampGameMaster);
     }
-  }, [timestamp?.gamemaster]);
+  }, [timestampGameMaster]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -136,7 +135,7 @@ function App() {
   const loadData = (signal: AbortSignal, isCurrentVersion: boolean, delay = loadDataDelay()) => {
     return new Promise<void>((resolve, reject) => {
       const resolveHandler = async () => {
-        resolve(await loadTimestamp(timestamp, isCurrentVersion));
+        resolve(await loadTimestamp(isCurrentVersion));
       };
 
       const debouncedResolve = debounce(resolveHandler, delay);

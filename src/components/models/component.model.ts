@@ -7,10 +7,8 @@ import {
   IPokemonGenderRatio,
   PokemonRaidModel,
 } from '../../core/models/pokemon.model';
-import { IToolSearching } from '../../core/models/searching.model';
 import {
   IStatsPokemon,
-  IStatsRank,
   IStatsAtk,
   IStatsDef,
   IStatsProd,
@@ -117,7 +115,6 @@ export interface IFindComponent {
 }
 
 export interface IFormSelectComponent {
-  searching: IToolSearching | null;
   isRaid?: boolean;
   tier?: number;
   id?: number;
@@ -130,7 +127,6 @@ export interface IFormSelectComponent {
   isHide?: boolean;
   setRaid?: React.Dispatch<React.SetStateAction<boolean>>;
   setForm?: (form: IPokemonFormModify | undefined) => void;
-  stats: IStatsRank | null;
   onHandleSetStats?: (type: TypeAction, value: number) => void;
   isObjective?: boolean;
 }
@@ -138,7 +134,6 @@ export interface IFormSelectComponent {
 export interface IToolsComponent {
   id: number | undefined;
   dataPoke: IPokemonDetailInfo[];
-  stats: IStatsRank | null;
   onSetStats: ((type: TypeAction, value: number) => void) | undefined;
   onClearStats: ((reset?: boolean) => void) | undefined;
   isRaid: boolean | undefined;
@@ -183,7 +178,6 @@ export interface IFormSpecialComponent {
 
 export interface IStatsComponent {
   pokemonType?: PokemonType;
-  pokemonStats: IStatsRank | null;
   stats?: IStatsPokemon;
   statATK?: IStatsAtk;
   statDEF?: IStatsDef;
